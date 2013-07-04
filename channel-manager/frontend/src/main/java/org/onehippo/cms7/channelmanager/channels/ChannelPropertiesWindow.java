@@ -206,7 +206,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         }
                     }
                 }
-                target.addComponent(container);
+                target.add(container);
             }
         });
         addEventListener(EVENT_SAVE_CHANNEL, new ExtEventListener() {
@@ -215,13 +215,13 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                 try {
                     save();
                 } catch (ActionFailedException e) {
-                    target.appendJavascript("(function(instance) {Hippo.Msg.alert(instance.resources['channel-properties-editor-error'], instance.resources['could-not-save-changes'], function(id) {\n" +
+                    target.appendJavaScript("(function(instance) {Hippo.Msg.alert(instance.resources['channel-properties-editor-error'], instance.resources['could-not-save-changes'], function(id) {\n" +
                             "                instance.pageContainer.refreshIframe();\n" +
                             "            }, instance); })(Hippo.ChannelManager.TemplateComposer.Instance)");
                 }
 
                 channelStore.reload();
-                target.prependJavascript("Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();");
+                target.prependJavaScript("Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();");
             }
         });
     }

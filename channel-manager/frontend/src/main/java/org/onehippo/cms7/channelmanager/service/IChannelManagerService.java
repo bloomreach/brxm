@@ -15,7 +15,7 @@
  */
 package org.onehippo.cms7.channelmanager.service;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Provides channel manager functionality to other CMS plugins.

@@ -16,9 +16,10 @@
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public class TemplateComposerApiResourceBehavior implements IHeaderContributor {
 
@@ -32,18 +33,26 @@ public class TemplateComposerApiResourceBehavior implements IHeaderContributor {
             "VariantAdder.js",
             "PlainVariantAdder.js"
     };
-    private static final String ALL_JAVASCRIPT = "template-composer-api-all.js";
+    private static final JavaScriptResourceReference[] JAVASCRIPT_REFERENCES;
+
+    private static final JavaScriptResourceReference ALL_JAVASCRIPT =
+            new JavaScriptResourceReference(TemplateComposerApiResourceBehavior.class, "template-composer-api-all.js");
+
+    static {
+        JAVASCRIPT_REFERENCES = new JavaScriptResourceReference[JAVASCRIPT_FILES.length];
+        for (int i = 0; i < JAVASCRIPT_FILES.length; i++) {
+            JAVASCRIPT_REFERENCES[i] = new JavaScriptResourceReference(TemplateComposerApiResourceBehavior.class, JAVASCRIPT_FILES[i]);
+        }
+    }
 
     @Override
     public void renderHead(final IHeaderResponse response) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            for (String jsFile : JAVASCRIPT_FILES) {
-                IHeaderContributor contributor = JavascriptPackageResource.getHeaderContribution(TemplateComposerApiResourceBehavior.class, jsFile);
-                contributor.renderHead(response);
+            for (JavaScriptResourceReference resourceReference : JAVASCRIPT_REFERENCES) {
+                response.render(JavaScriptHeaderItem.forReference(resourceReference));
             }
         } else {
-            IHeaderContributor contributor =JavascriptPackageResource.getHeaderContribution(TemplateComposerApiResourceBehavior.class, ALL_JAVASCRIPT);
-            contributor.renderHead(response);
+            response.render(JavaScriptHeaderItem.forReference(ALL_JAVASCRIPT));
         }
     }
 }

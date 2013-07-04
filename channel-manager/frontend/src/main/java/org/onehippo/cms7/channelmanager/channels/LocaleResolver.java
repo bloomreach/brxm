@@ -20,7 +20,7 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 

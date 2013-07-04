@@ -17,7 +17,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
 import java.io.Serializable;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * A skin around a channel in the template composer that represents a 'device' (phone, tablet, etc.).

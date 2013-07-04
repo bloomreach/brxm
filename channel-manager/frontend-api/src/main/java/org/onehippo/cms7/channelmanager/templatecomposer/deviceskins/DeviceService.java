@@ -17,7 +17,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Loads available device skins.

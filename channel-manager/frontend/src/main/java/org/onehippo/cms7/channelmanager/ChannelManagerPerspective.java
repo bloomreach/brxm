@@ -19,13 +19,16 @@ package org.onehippo.cms7.channelmanager;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
@@ -47,6 +50,8 @@ import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_
 @SuppressWarnings("serial")
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
+    private static final CssResourceReference CHANNEL_MANAGER_PERSPECTIVE_CSS = new CssResourceReference(ChannelManagerPerspective.class, "ChannelManagerPerspective.css");
+
     private RootPanel rootPanel;
     private boolean siteIsUp;
     private List<IRenderService> childservices = new LinkedList<IRenderService>();
@@ -64,8 +69,6 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         // TODO use proper dependency management. This is a very fragile dependency management workaround.
         // It depends on the channel manager being rendered before the widget.
         context.registerService(new TemplateComposerApiResourceBehavior(), ExtWidgetRegistry.EXT_WIDGET_SERVICE_ID);
-
-        add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
 
         if (siteIsUp) {
             IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
@@ -94,9 +97,9 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     @Override
     public ResourceReference getIcon(IconSize type) {
         if (siteIsUp) {
-            return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
+            return new PackageResourceReference(ChannelManagerPerspective.class, "channel-manager-" + type.getSize() + ".png");
         } else {
-            return new ResourceReference(ChannelManagerPerspective.class, "channel-manager-dimmed-" + type.getSize() + ".png");
+            return new PackageResourceReference(ChannelManagerPerspective.class, "channel-manager-dimmed-" + type.getSize() + ".png");
         }
     }
 
@@ -111,6 +114,13 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
                 child.render(target);
             }
         }
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(CHANNEL_MANAGER_PERSPECTIVE_CSS));
     }
 
     public void removeRenderService(final IRenderService service) {

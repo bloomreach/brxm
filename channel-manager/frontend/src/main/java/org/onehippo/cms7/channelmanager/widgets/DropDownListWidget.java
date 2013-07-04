@@ -46,7 +46,7 @@ public class DropDownListWidget extends Panel {
 
         dropDown.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(DropDownListWidget.this);
+                target.add(DropDownListWidget.this);
             }
         });
 

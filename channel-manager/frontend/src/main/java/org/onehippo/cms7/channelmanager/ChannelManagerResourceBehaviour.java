@@ -16,45 +16,58 @@
 package org.onehippo.cms7.channelmanager;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
 import org.onehippo.cms7.channelmanager.common.CommonBundle;
 
-public class ChannelManagerResourceBehaviour extends AbstractBehavior {
+public class ChannelManagerResourceBehaviour extends Behavior {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String ROOT_PANEL = "RootPanel.js";
+    private static final JavaScriptResourceReference ALL = new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class,
+            "channel-manager-all.js");
 
-    public static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";
+    private static final String ROOT_PANEL = "RootPanel.js";
+    private static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";
+    private static final String CHANNEL_FORM_PANEL = "ChannelFormPanel.js";
+    private static final String BREADCRUMB_TOOLBAR = "BreadcrumbToolbar.js";
 
-    public static final String CHANNEL_FORM_PANEL = "ChannelFormPanel.js";
+    private static final JavaScriptResourceReference[] JAVASCRIPT_RESOURCE_REFERENCES;
 
-    public static final String BREADCRUMB_TOOLBAR = "BreadcrumbToolbar.js";
+    static {
+        List<JavaScriptResourceReference> references = new ArrayList<JavaScriptResourceReference>();
+        references.add(new JavaScriptResourceReference(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
+        references.add(new JavaScriptResourceReference(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
+        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, BREADCRUMB_TOOLBAR));
+        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, ROOT_PANEL));
+        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, BLUEPRINT_LIST_PANEL));
+        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, CHANNEL_FORM_PANEL));
+        references.add(new JavaScriptResourceReference(ChannelOverview.class, ChannelOverview.CHANNEL_OVERVIEW_PANEL_JS));
+        references.add(new JavaScriptResourceReference(ChannelPropertiesWindow.class, ChannelPropertiesWindow.CHANNEL_PROPERTIES_WINDOW_JS));
+        references.add(new JavaScriptResourceReference(ChannelGridPanel.class, ChannelGridPanel.CHANNEL_GRID_PANEL_JS));
+        references.add(new JavaScriptResourceReference(ChannelIconPanel.class, ChannelIconPanel.CHANNEL_ICON_PANEL_JS));
+        JAVASCRIPT_RESOURCE_REFERENCES = references.toArray(new JavaScriptResourceReference[references.size()]);
+    }
 
-    public static final String ALL = "channel-manager-all.js";
-
-    public void bind(Component component) {
+    @Override
+    public void renderHead(Component component, final IHeaderResponse response) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            component.add(JavascriptPackageResource.getHeaderContribution(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
-
-            component.add(JavascriptPackageResource.getHeaderContribution(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BREADCRUMB_TOOLBAR));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ROOT_PANEL));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BLUEPRINT_LIST_PANEL));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, CHANNEL_FORM_PANEL));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelOverview.class, ChannelOverview.CHANNEL_OVERVIEW_PANEL_JS));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelPropertiesWindow.class, ChannelPropertiesWindow.CHANNEL_PROPERTIES_WINDOW_JS));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelGridPanel.class, ChannelGridPanel.CHANNEL_GRID_PANEL_JS));
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelIconPanel.class, ChannelIconPanel.CHANNEL_ICON_PANEL_JS));
+            for (JavaScriptResourceReference resourceReference : JAVASCRIPT_RESOURCE_REFERENCES) {
+                response.render(JavaScriptHeaderItem.forReference(resourceReference));
+            }
         } else {
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ALL));
+            response.render(JavaScriptHeaderItem.forReference(ALL));
         }
     }
 

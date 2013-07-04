@@ -20,12 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Resource;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -45,7 +49,7 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
  * @version "$Id$"
  */
 @ExtClass("Hippo.ChannelManager.DeviceManager")
-public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
+public class DeviceManager extends ToolbarPlugin {
 
     private static Logger log = LoggerFactory.getLogger(DeviceManager.class);
 
@@ -66,8 +70,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
             service = defaultDeviceService;
         }
 
-        addHeadContribution();
-
         final List<DeviceSkin> deviceSkins = service.getDeviceSkins();
         List<DeviceSkinDetails> detailsList = new ArrayList<DeviceSkinDetails>();
         for (DeviceSkin skin : deviceSkins) {
@@ -80,14 +82,17 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     /**
      * Adding js file and generating dynamic css.
      */
-    public void addHeadContribution() {
-        add(JavascriptPackageResource.getHeaderContribution(DeviceManager.class, DEVICE_MANAGER_JS));
+    @Override
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        super.renderHead(component, response);
+
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(DeviceManager.class, DEVICE_MANAGER_JS)));
 
         ResourceReference resourceReference = new ResourceReference(DeviceManager.class, "dynamic.css") {
 
             @Override
-            protected Resource newResource() {
-                return new Resource() {
+            public IResource getResource() {
+                return new ResourceStreamResource() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
@@ -101,9 +106,8 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
                 };
             }
         };
-        add(CSSPackageResource.getHeaderContribution(resourceReference));
+        response.render(CssHeaderItem.forReference(resourceReference));
     }
-
 
     @Override
     protected void preRenderExtHead(StringBuilder js) {
@@ -128,7 +132,8 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
             this.name = skin.getName();
 
             RequestCycle rc = RequestCycle.get();
-            this.imageUrl = rc.urlFor(skin.getImage()).toString();
+            this.imageUrl = rc.urlFor(new ResourceReferenceRequestHandler(
+                    skin.getImage())).toString();
         }
 
         public String getId() {

@@ -30,13 +30,17 @@ import javax.jcr.Value;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.wicket.Application;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
@@ -82,6 +86,37 @@ public class PageEditor extends ExtPanel {
 
     private static final Boolean DEFAULT_PREVIEW_MODE = Boolean.TRUE;
     private static final Boolean DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT = Boolean.TRUE;
+
+    private static final PackageResourceReference ERROR_HTML = new PackageResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML);
+    private static final PackageResourceReference CHANNEL_MANAGER_IFRAME_CSS = new PackageResourceReference(IFrameBundle.class, IFrameBundle.CHANNEL_MANAGER_IFRAME_CSS);
+
+    private static final PackageResourceReference[] DEVELOPMENT_REFERENCES;
+    private static final PackageResourceReference[] DEPLOYMENT_REFERENCES;
+
+    static {
+        List<PackageResourceReference> developmentRefs = new ArrayList<PackageResourceReference>();
+        developmentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE));
+        developmentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN));
+        developmentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN));
+        developmentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI));
+
+        developmentRefs.add(new PackageResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL));
+        developmentRefs.add(new PackageResourceReference(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.UTIL));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.DRAG_DROP));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.FACTORY));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.PAGE));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT));
+        developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.LAST));
+        DEVELOPMENT_REFERENCES = developmentRefs.toArray(new PackageResourceReference[developmentRefs.size()]);
+
+        List<PackageResourceReference> deploymentRefs = new ArrayList<PackageResourceReference>();
+        deploymentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN));
+        deploymentRefs.add(new PackageResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL));
+        deploymentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.ALL));
+        DEPLOYMENT_REFERENCES = deploymentRefs.toArray(new PackageResourceReference[deploymentRefs.size()]);
+    }
 
     @ExtProperty
     private Boolean debug = false;
@@ -169,8 +204,6 @@ public class PageEditor extends ExtPanel {
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
 
-        add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
-        add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/vtabs/VerticalTabPanel.css"));
         add(new TemplateComposerResourceBehavior());
 
         this.channelPropertiesWindow = new ChannelPropertiesWindow(context, (ChannelStore) channelStoreFuture.getStore());
@@ -226,7 +259,7 @@ public class PageEditor extends ExtPanel {
                 try {
                     final String paramChannelId = (String) getValue(parameters, "channelId");
                     final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");
-                    target.prependJavascript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
+                    target.prependJavaScript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
                     hstConfigEditor.setMountPoint(target, paramChannelId, paramHstMountPoint);
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
@@ -256,6 +289,14 @@ public class PageEditor extends ExtPanel {
                 }
             }
         });
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PageEditor.class, "plugins/colorfield/colorfield.css")));
+        response.render(CssHeaderItem.forReference(new CssResourceReference(PageEditor.class, "plugins/vtabs/VerticalTabPanel.css")));
     }
 
     private static boolean canUnlockChannels(final String user, final IPluginConfig config) {
@@ -378,33 +419,23 @@ public class PageEditor extends ExtPanel {
         properties.put("channelPropertiesWindowId", this.channelPropertiesWindow.getMarkupId());
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
         properties.put("iFrameErrorPage", Arrays.asList(
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
+                rc.urlFor(new ResourceReferenceRequestHandler(ERROR_HTML)).toString()));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
-                rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.CHANNEL_MANAGER_IFRAME_CSS)).toString()));
+                rc.urlFor(new ResourceReferenceRequestHandler(CHANNEL_MANAGER_IFRAME_CSS)).toString()));
         properties.put("toolbarPlugins", createToolbarPluginConfigs());
-        if (debug) {
-            properties.put("iFrameJsHeadContributions", Arrays.asList(
-                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
-                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN)).toString(),
-                    rc.urlFor(
-                            new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
-                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
 
-                    rc.urlFor(new ResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL)).toString(),
-                    rc.urlFor(new ResourceReference(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.DRAG_DROP)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.LAST)).toString()));
+        PackageResourceReference[] references;
+        if (debug) {
+            references = DEVELOPMENT_REFERENCES;
         } else {
-            properties.put("iFrameJsHeadContributions", Arrays.asList(
-                    rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(),
-                    rc.urlFor(new ResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()));
+            references = DEPLOYMENT_REFERENCES;
         }
+
+        List<String> headContributionUrls = new ArrayList<String>();
+        for (PackageResourceReference reference : references) {
+            headContributionUrls.add(rc.urlFor(new ResourceReferenceRequestHandler(reference)).toString());
+        }
+        properties.put("iFrameJsHeadContributions", headContributionUrls);
     }
 
     private JSONArray createToolbarPluginConfigs() throws JSONException {
@@ -446,11 +477,11 @@ public class PageEditor extends ExtPanel {
         if (redraw) {
             JSONObject update = new JSONObject();
             ExtPropertyConverter.addProperties(this, getClass(), update);
-            target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').browseTo(" + update.toString() + ");");
+            target.appendJavaScript("Ext.getCmp('" + getMarkupId() + "').browseTo(" + update.toString() + ");");
             redraw = false;
         } else if (refreshIFrame) {
             refreshIFrame = false;
-            target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
+            target.appendJavaScript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
         }
     }
 

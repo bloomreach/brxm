@@ -87,7 +87,7 @@ public class JcrPathWidget extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 JcrPathWidget.this.updateDisplay(null);
-                target.addComponent(JcrPathWidget.this);
+                target.add(JcrPathWidget.this);
             }
 
         };
@@ -193,7 +193,7 @@ public class JcrPathWidget extends Panel {
 
                     public void setObject(String uuid) {
                         updateDisplay(uuid);
-                        AjaxRequestTarget.get().addComponent(JcrPathWidget.this);
+                        getRequestCycle().find(AjaxRequestTarget.class).add(JcrPathWidget.this);
                     }
 
                     public IModel<?> getChainedModel() {

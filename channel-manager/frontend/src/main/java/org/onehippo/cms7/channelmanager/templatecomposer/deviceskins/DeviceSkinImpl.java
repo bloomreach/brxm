@@ -18,7 +18,8 @@ package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +129,7 @@ public class DeviceSkinImpl implements DeviceSkin {
     @Override
     public ResourceReference getImage() {
         final String imageLocation = templateProperties.get("image.location");
-        return new ResourceReference(getClass(), imageLocation);
+        return new PackageResourceReference(getClass(), imageLocation);
     }
 
     @Override

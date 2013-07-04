@@ -168,7 +168,7 @@ public class HstConfigEditor extends ExtPanel {
         }
         configEditorControl = createPerspective(context, channelId, mountPoint, fineGrainedLocking);
         configEditorControl.start();
-        target.addComponent(container);
+        target.add(container);
     }
 
 }

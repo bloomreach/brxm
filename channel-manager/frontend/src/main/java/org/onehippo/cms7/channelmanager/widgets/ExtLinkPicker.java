@@ -22,9 +22,12 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogAction;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -72,6 +75,7 @@ public class ExtLinkPicker extends ExtObservable {
     private static final String EVENT_PICK_PARAM_CURRENT = "current";
     private static final String EVENT_PICK_PARAM_PICKER_CONFIG = "pickerConfig";
     private static final long serialVersionUID = 1L;
+    private static final JavaScriptResourceReference LINKPICKER_JS = new JavaScriptResourceReference(ExtLinkPicker.class, "ExtLinkPicker.js");
 
     private final Logger log = LoggerFactory.getLogger(ExtLinkPicker.class);
 
@@ -113,9 +117,9 @@ public class ExtLinkPicker extends ExtObservable {
     }
 
     @Override
-    public void bind(final Component component) {
-        super.bind(component);
-        component.add(JavascriptPackageResource.getHeaderContribution(ExtLinkPicker.class, "ExtLinkPicker.js"));
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        response.render(JavaScriptHeaderItem.forReference(LINKPICKER_JS));
+        super.renderHead(component, response);
     }
 
     IPluginConfig parsePickerConfig(final JSONObject json, String current, boolean isRelativePath, String rootPath) {
@@ -198,12 +202,12 @@ public class ExtLinkPicker extends ExtObservable {
 
             if (enabledEvents) {
                 // notify the client that a new path has been picked
-                AjaxRequestTarget target = AjaxRequestTarget.get();
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target == null) {
                     log.warn("Cannot invoke callback for picked path '{}': no ajax request target available", path);
                     return;
                 }
-                target.prependJavascript("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '" + path + "')");
+                target.prependJavaScript("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '" + path + "')");
             }
         }
 

@@ -31,11 +31,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.protocol.http.WicketURLEncoder;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IRestProxyService;
@@ -280,7 +282,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
-            javax.jcr.Session session = ((UserSession) requestCycle.getSession()).getJcrSession();
+            javax.jcr.Session session = UserSession.get().getJcrSession();
             try {
                 if (session.nodeExists(channelIconPath)) {
                     String url = encodeUrl("binaries" + channelIconPath);
@@ -297,7 +299,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private String encodeUrl(String path) {
         String[] elements = StringUtils.split(path, '/');
         for (int i = 0; i < elements.length; i++) {
-            elements[i] = WicketURLEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
+            elements[i] = UrlEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
         }
         return StringUtils.join(elements, '/');
     }
@@ -321,9 +323,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private String getIconResourceReferenceUrl(final String resource) {
         RequestCycle requestCycle = RequestCycle.get();
         if (requestCycle != null) {
-            ResourceReference iconResource = new ResourceReference(getClass(), resource);
-            iconResource.bind(requestCycle.getApplication());
-            CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
+            ResourceReference iconResource = new PackageResourceReference(getClass(), resource);
+            CharSequence typeImgUrl = requestCycle.urlFor(new ResourceReferenceRequestHandler(iconResource));
             return typeImgUrl.toString();
         }
         return null;
@@ -390,9 +391,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     public void reload() {
         channels = null;
 
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.prependJavascript("Ext.StoreMgr.lookup('" + this.storeId + "').reload();");
+            target.prependJavaScript("Ext.StoreMgr.lookup('" + this.storeId + "').reload();");
         }
     }
 

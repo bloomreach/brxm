@@ -15,29 +15,29 @@
 */
 package org.onehippo.cms7.channelmanager.hstconfig;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
 public class HstConfigEditorResourceBehaviour extends AbstractYuiBehavior {
 
-    public static final String HST_EXTWIREFRAME_JS = "ExtWireframe.js";
-    public static final String HST_CONFIG_EDITOR_JS = "HstConfigEditor.js";
     private static final long serialVersionUID = 1L;
 
+    private static final JavaScriptResourceReference EXTWIREFRAME_JS = new JavaScriptResourceReference(HstConfigEditor.class, "ExtWireframe.js");
+    private static final JavaScriptResourceReference HST_CONFIG_EDITOR_JS = new JavaScriptResourceReference(HstConfigEditor.class, "HstConfigEditor.js");
+
     @Override
-    public void bind(final Component component) {
-        super.bind(component);
-        component.add(JavascriptPackageResource.getHeaderContribution(HstConfigEditor.class, HST_CONFIG_EDITOR_JS));
+    public void onRenderHead(IHeaderResponse response) {
+        response.render(JavaScriptHeaderItem.forReference(HST_CONFIG_EDITOR_JS));
     }
 
     @Override
     public void addHeaderContribution(final IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
-        context.addJavascriptReference(new JavascriptResourceReference(HstConfigEditor.class, HST_EXTWIREFRAME_JS));
+        context.addJavascriptReference(EXTWIREFRAME_JS);
     }
 
 }

@@ -15,9 +15,10 @@
  */
 package org.onehippo.cms7.channelmanager;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.js.HippoFutureResourceBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -44,6 +45,7 @@ import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_
 public class RootPanel extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
+    private static final PackageResourceReference BREADCRUMB_ARROW = new PackageResourceReference(RootPanel.class, "breadcrumb-arrow.png");
 
     public enum CardId {
         CHANNEL_MANAGER(0),
@@ -142,7 +144,7 @@ public class RootPanel extends ExtPanel {
             } catch (JSONException e) {
                 throw new RuntimeException("could not populate property updates", e);
             }
-            target.appendJavascript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
+            target.appendJavaScript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
             redraw = false;
         }
     }
@@ -161,8 +163,10 @@ public class RootPanel extends ExtPanel {
         properties.put("blueprintStore", new JSONIdentifier(this.blueprintStore.getJsObjectId()));
         properties.put("channelStore", new JSONIdentifier(this.channelStore.getJsObjectId()));
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
+
         RequestCycle rc = RequestCycle.get();
-        properties.put("breadcrumbIconUrl", rc.urlFor(new ResourceReference(RootPanel.class, "breadcrumb-arrow.png")));
+        properties.put("breadcrumbIconUrl", rc.urlFor(new ResourceReferenceRequestHandler(
+                BREADCRUMB_ARROW)));
     }
 
     public PageEditor getPageEditor() {

@@ -96,7 +96,7 @@ public class ImageSetPathWidget extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 ImageSetPathWidget.this.updateDisplay(null);
-                target.addComponent(ImageSetPathWidget.this);
+                target.add(ImageSetPathWidget.this);
             }
 
         };
@@ -144,7 +144,7 @@ public class ImageSetPathWidget extends Panel {
 
                     public void setObject(String uuid) {
                         updateDisplay(uuid);
-                        AjaxRequestTarget.get().addComponent(ImageSetPathWidget.this);
+                        getRequestCycle().find(AjaxRequestTarget.class).add(ImageSetPathWidget.this);
                     }
 
                     public IModel<?> getChainedModel() {
