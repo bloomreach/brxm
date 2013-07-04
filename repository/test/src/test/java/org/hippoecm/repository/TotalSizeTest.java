@@ -103,8 +103,6 @@ public class TotalSizeTest extends RepositoryTestCase {
         NodeIterator adminIterator = adminResult.getNodes();
         // getTotalSize return -1 for searches without order by
         assertEquals(-1L, ((HippoNodeIterator) adminIterator).getTotalSize());
-        System.out.println(adminIterator.getSize());
-        System.out.println(((HippoNodeIterator) adminIterator).getTotalSize());
 
         Query authorQuery = authorSession.getWorkspace().getQueryManager().createQuery(queryStatement, queryLanguage);
         QueryResult authorResult = authorQuery.execute();
