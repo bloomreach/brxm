@@ -64,7 +64,7 @@ public class HstConfigurationUtils {
         session.save();
         if (pathsToBeChanged != null) {
             // TODO switch on below after REPO-684 is fixed
-            hstManager.invalidate(pathsToBeChanged);
+            // hstManager.invalidate(pathsToBeChanged);
         }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),buffer.toString());
