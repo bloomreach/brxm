@@ -17,12 +17,13 @@ package org.onehippo.repository.modules;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
@@ -31,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ModuleRegistry {
+
+    private static final Logger log = LoggerFactory.getLogger(ModuleRegistry.class);
 
     private List<ModuleRegistration> registrations = new ArrayList<ModuleRegistration>();
 
@@ -47,6 +50,68 @@ class ModuleRegistry {
         registrations = updated;
     }
 
+    /*
+     * Implementation of the Kahn's topological sort algorithm as described at http://en.wikipedia.org/wiki/Topological_sorting
+     */
+    private List<ModuleRegistration> sortModules(final List<ModuleRegistration> regs) {
+        final List<ModuleRegistration> result = new ArrayList<ModuleRegistration>(regs.size());
+        final Queue<ModuleRegistration> startNodes = new LinkedList<ModuleRegistration>();
+        final List<ModuleRegistration[]> edges = new LinkedList<ModuleRegistration[]>();
+        for (ModuleRegistration reg : regs) {
+            if (reg.requirements().isEmpty()) {
+                startNodes.add(reg);
+            } else {
+                for (ModuleRegistration other : regs) {
+                    if (reg.requires(other)) {
+                        edges.add(new ModuleRegistration[] {reg, other});
+                    }
+                }
+            }
+        }
+        while (!startNodes.isEmpty()) {
+            ModuleRegistration reg = startNodes.remove();
+            result.add(reg);
+            List<ModuleRegistration> deps = new ArrayList<ModuleRegistration>();
+            for (ModuleRegistration[] edge : edges) {
+                if (edge[1].equals(reg)) {
+                    deps.add(edge[0]);
+                }
+            }
+            for (ModuleRegistration dep : deps) {
+                boolean hasMoreDeps = false;
+                Iterator<ModuleRegistration[]> iter = edges.iterator();
+                while (iter.hasNext()) {
+                    ModuleRegistration[] edge = iter.next();
+                    if (!edge[0].equals(dep)) {
+                        continue;
+                    }
+                    if (edge[1].equals(reg)) {
+                        iter.remove();
+                        if (hasMoreDeps) {
+                            break;
+                        }
+                    } else {
+                        hasMoreDeps = true;
+                    }
+                }
+                if (!hasMoreDeps) {
+                    startNodes.add(dep);
+                }
+            }
+        }
+        if (!edges.isEmpty()) {
+            StringBuilder buf = new StringBuilder();
+            for (ModuleRegistration[] edge : edges) {
+                buf.append(edge[0].getModuleName() != null ? edge[0].getModuleName() : edge[0].getModuleClass());
+                buf.append(" requires ");
+                buf.append(edge[1].getModuleName() != null ? edge[1].getModuleName() : edge[1].getModuleClass());
+            }
+            log.error("Circular dependency detected among modules: {}", buf);
+        }
+        return result;
+    }
+
+    /*
     private List<ModuleRegistration> sortModules(final List<ModuleRegistration> registrations) {
         // collect the lists of dependencies of all registrations
         final Map<ModuleRegistration, List<ModuleRegistration>> dependencies =
@@ -116,6 +181,7 @@ class ModuleRegistry {
         }
         return result;
     }
+    */
 
     List<ModuleRegistration> getModuleRegistrations() {
         registrations = sortModules(registrations);

@@ -16,11 +16,9 @@
 package org.onehippo.repository.modules;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.jcr.Session;
 
@@ -78,6 +76,7 @@ class ModuleRegistration {
         return false;
     }
 
+    /*
     int compare(ModuleRegistration other, List<ModuleRegistration> all) {
         if (this.requires(other)) {
             return 1;
@@ -112,6 +111,7 @@ class ModuleRegistration {
         }
         return moduleName.compareTo(other.moduleName);
     }
+    */
 
     void setSession(final Session session) {
         this.session = session;
