@@ -48,12 +48,14 @@ public class ModuleRegistryTest {
 
         final List<ModuleRegistration> registrations = registry.getModuleRegistrations();
 
+        assertEquals(3, registrations.size());
         assertEquals("test3", registrations.get(0).getModuleName());
         assertEquals("test2", registrations.get(1).getModuleName());
         assertEquals("test1", registrations.get(2).getModuleName());
 
         final List<ModuleRegistration> reverse = registry.getModuleRegistrationsReverseOrder();
 
+        assertEquals(3, registrations.size());
         assertEquals("test1", reverse.get(0).getModuleName());
         assertEquals("test2", reverse.get(1).getModuleName());
         assertEquals("test3", reverse.get(2).getModuleName());

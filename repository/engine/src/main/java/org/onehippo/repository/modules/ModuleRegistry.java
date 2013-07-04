@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,22 +47,83 @@ class ModuleRegistry {
         registrations = updated;
     }
 
-    private void sortModules(final List<ModuleRegistration> registrations) {
-        Collections.sort(registrations, new Comparator<ModuleRegistration>() {
+    private List<ModuleRegistration> sortModules(final List<ModuleRegistration> registrations) {
+        // collect the lists of dependencies of all registrations
+        final Map<ModuleRegistration, List<ModuleRegistration>> dependencies =
+                new HashMap<ModuleRegistration, List<ModuleRegistration>>();
+        for (ModuleRegistration registration : registrations) {
+            final List<ModuleRegistration> deps = new ArrayList<ModuleRegistration>();
+            for (ModuleRegistration dependency : registrations) {
+                if (registration.requires(dependency)) {
+                    deps.add(dependency);
+                }
+            }
+            if (!deps.isEmpty()) {
+                dependencies.put(registration, deps);
+            }
+        }
+        // sort all the individual lists of dependencies internally
+        final List<List<ModuleRegistration>> alldeps = new ArrayList<List<ModuleRegistration>>();
+        for (Map.Entry<ModuleRegistration, List<ModuleRegistration>> entry : dependencies.entrySet()) {
+            final List<ModuleRegistration> deps = entry.getValue();
+            Collections.sort(deps, new Comparator<ModuleRegistration>() {
+                @Override
+                public int compare(final ModuleRegistration o1, final ModuleRegistration o2) {
+                    if (o1.requires(o2)) {
+                        return 1;
+                    }
+                    if (o2.requires(o1)) {
+                        return -1;
+                    }
+                    return 0;
+                }
+            });
+            deps.add(entry.getKey());
+            alldeps.add(deps);
+        }
+        // sort the lists of dependencies among each other
+        Collections.sort(alldeps, new Comparator<List<ModuleRegistration>>() {
             @Override
-            public int compare(final ModuleRegistration o1, final ModuleRegistration o2) {
-                return o1.compare(o2, registrations);
+            public int compare(final List<ModuleRegistration> o1, final List<ModuleRegistration> o2) {
+                for (ModuleRegistration r1 : o1) {
+                    for (ModuleRegistration r2 : o2) {
+                        if (r1.requires(r2)) {
+                            return 1;
+                        }
+                        if (r2.requires(r1)) {
+                            return -1;
+                        }
+                    }
+                }
+                return 0;
             }
         });
+        // merge all the lists of dependencies into the result
+        List<ModuleRegistration> result = new ArrayList<ModuleRegistration>();
+        for (List<ModuleRegistration> deps : alldeps) {
+            for (ModuleRegistration dep : deps) {
+                if (!result.contains(dep)) {
+                    result.add(dep);
+                }
+            }
+
+        }
+        // add the rest of the registrations to the end of the result
+        for (ModuleRegistration registration : registrations) {
+            if (!result.contains(registration)) {
+                result.add(registration);
+            }
+        }
+        return result;
     }
 
     List<ModuleRegistration> getModuleRegistrations() {
-        sortModules(registrations);
+        registrations = sortModules(registrations);
         return Collections.unmodifiableList(registrations);
     }
 
     List<ModuleRegistration> getModuleRegistrationsReverseOrder() {
-        sortModules(registrations);
+        registrations = sortModules(registrations);
         final ArrayList<ModuleRegistration> moduleRegistrations = new ArrayList<ModuleRegistration>(registrations);
         Collections.reverse(moduleRegistrations);
         return Collections.unmodifiableList(moduleRegistrations);
