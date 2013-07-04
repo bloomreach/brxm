@@ -87,8 +87,6 @@
     <module>dependencies</module>
     <module>repository-dependencies</module>
 
-    <module>upgrade-test</module>
-
   </modules>
 
   <properties>
