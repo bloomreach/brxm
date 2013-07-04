@@ -56,14 +56,14 @@ class ModuleRegistry {
     private List<ModuleRegistration> sortModules(final List<ModuleRegistration> regs) {
         final List<ModuleRegistration> result = new ArrayList<ModuleRegistration>(regs.size());
         final Queue<ModuleRegistration> startNodes = new LinkedList<ModuleRegistration>();
-        final List<ModuleRegistration[]> edges = new LinkedList<ModuleRegistration[]>();
+        final List<Edge> edges = new LinkedList<Edge>();
         for (ModuleRegistration reg : regs) {
             if (reg.requirements().isEmpty()) {
                 startNodes.add(reg);
             } else {
                 for (ModuleRegistration other : regs) {
                     if (reg.requires(other)) {
-                        edges.add(new ModuleRegistration[] {reg, other});
+                        edges.add(new Edge(reg, other));
                     }
                 }
             }
@@ -72,20 +72,20 @@ class ModuleRegistry {
             ModuleRegistration reg = startNodes.remove();
             result.add(reg);
             List<ModuleRegistration> deps = new ArrayList<ModuleRegistration>();
-            for (ModuleRegistration[] edge : edges) {
-                if (edge[1].equals(reg)) {
-                    deps.add(edge[0]);
+            for (Edge edge : edges) {
+                if (edge.dependency.equals(reg)) {
+                    deps.add(edge.dependent);
                 }
             }
             for (ModuleRegistration dep : deps) {
                 boolean hasMoreDeps = false;
-                Iterator<ModuleRegistration[]> iter = edges.iterator();
+                Iterator<Edge> iter = edges.iterator();
                 while (iter.hasNext()) {
-                    ModuleRegistration[] edge = iter.next();
-                    if (!edge[0].equals(dep)) {
+                    Edge edge = iter.next();
+                    if (!edge.dependent.equals(dep)) {
                         continue;
                     }
-                    if (edge[1].equals(reg)) {
+                    if (edge.dependency.equals(reg)) {
                         iter.remove();
                         if (hasMoreDeps) {
                             break;
@@ -101,88 +101,16 @@ class ModuleRegistry {
         }
         if (!edges.isEmpty()) {
             StringBuilder buf = new StringBuilder();
-            for (ModuleRegistration[] edge : edges) {
-                buf.append(edge[0].getModuleName() != null ? edge[0].getModuleName() : edge[0].getModuleClass());
+            for (Edge edge : edges) {
+                buf.append(edge.dependent.getModuleName() != null ? edge.dependent.getModuleName() : edge.dependent.getModuleClass());
                 buf.append(" requires ");
-                buf.append(edge[1].getModuleName() != null ? edge[1].getModuleName() : edge[1].getModuleClass());
+                buf.append(edge.dependency.getModuleName() != null ? edge.dependency.getModuleName() : edge.dependency.getModuleClass());
                 buf.append('\n');
             }
             log.error("Circular dependency detected among modules: {}", buf);
         }
         return result;
     }
-
-    /*
-    private List<ModuleRegistration> sortModules(final List<ModuleRegistration> registrations) {
-        // collect the lists of dependencies of all registrations
-        final Map<ModuleRegistration, List<ModuleRegistration>> dependencies =
-                new HashMap<ModuleRegistration, List<ModuleRegistration>>();
-        for (ModuleRegistration registration : registrations) {
-            final List<ModuleRegistration> deps = new ArrayList<ModuleRegistration>();
-            for (ModuleRegistration dependency : registrations) {
-                if (registration.requires(dependency)) {
-                    deps.add(dependency);
-                }
-            }
-            if (!deps.isEmpty()) {
-                dependencies.put(registration, deps);
-            }
-        }
-        // sort all the individual lists of dependencies internally
-        final List<List<ModuleRegistration>> alldeps = new ArrayList<List<ModuleRegistration>>();
-        for (Map.Entry<ModuleRegistration, List<ModuleRegistration>> entry : dependencies.entrySet()) {
-            final List<ModuleRegistration> deps = entry.getValue();
-            Collections.sort(deps, new Comparator<ModuleRegistration>() {
-                @Override
-                public int compare(final ModuleRegistration o1, final ModuleRegistration o2) {
-                    if (o1.requires(o2)) {
-                        return 1;
-                    }
-                    if (o2.requires(o1)) {
-                        return -1;
-                    }
-                    return 0;
-                }
-            });
-            deps.add(entry.getKey());
-            alldeps.add(deps);
-        }
-        // sort the lists of dependencies among each other
-        Collections.sort(alldeps, new Comparator<List<ModuleRegistration>>() {
-            @Override
-            public int compare(final List<ModuleRegistration> o1, final List<ModuleRegistration> o2) {
-                for (ModuleRegistration r1 : o1) {
-                    for (ModuleRegistration r2 : o2) {
-                        if (r1.requires(r2)) {
-                            return 1;
-                        }
-                        if (r2.requires(r1)) {
-                            return -1;
-                        }
-                    }
-                }
-                return 0;
-            }
-        });
-        // merge all the lists of dependencies into the result
-        List<ModuleRegistration> result = new ArrayList<ModuleRegistration>();
-        for (List<ModuleRegistration> deps : alldeps) {
-            for (ModuleRegistration dep : deps) {
-                if (!result.contains(dep)) {
-                    result.add(dep);
-                }
-            }
-
-        }
-        // add the rest of the registrations to the end of the result
-        for (ModuleRegistration registration : registrations) {
-            if (!result.contains(registration)) {
-                result.add(registration);
-            }
-        }
-        return result;
-    }
-    */
 
     List<ModuleRegistration> getModuleRegistrations() {
         registrations = sortModules(registrations);
@@ -233,6 +161,15 @@ class ModuleRegistry {
         registrations.add(registration);
         for (ModuleRegistration requirement : requirements.get(registration)) {
             detectCircularDependency(requirement, requirements, new HashSet<ModuleRegistration>(registrations));
+        }
+    }
+
+    private static class Edge {
+        private final ModuleRegistration dependent;
+        private final ModuleRegistration dependency;
+        private Edge(final ModuleRegistration dependent, final ModuleRegistration dependency) {
+            this.dependent = dependent;
+            this.dependency = dependency;
         }
     }
 }
