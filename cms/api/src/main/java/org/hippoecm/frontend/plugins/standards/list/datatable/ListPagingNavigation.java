@@ -33,7 +33,7 @@ public class ListPagingNavigation extends AjaxPagingNavigation {
     }
  
     @Override
-    protected Link newPagingNavigationLink(String id, IPageable pageable, int pageIndex) {
+    protected Link newPagingNavigationLink(String id, IPageable pageable, long pageIndex) {
         return new AjaxPagingNavigationLink(id, pageable, pageIndex);
     }
 }

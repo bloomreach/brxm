@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 

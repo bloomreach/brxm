@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.markup.html.IHeaderContributor;
 
 public interface IListColumnProvider extends IClusterable {

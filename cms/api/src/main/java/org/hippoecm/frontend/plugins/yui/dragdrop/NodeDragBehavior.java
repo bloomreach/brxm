@@ -48,7 +48,7 @@ public class NodeDragBehavior extends DragBehavior {
     }
 
     protected String getLabel() {
-        return (String) new NodeTranslator(nodeModel).getNodeName().getObject();
+        return new NodeTranslator(nodeModel).getNodeName().getObject();
     }
 
     @Override

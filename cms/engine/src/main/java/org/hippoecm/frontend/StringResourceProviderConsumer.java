@@ -35,7 +35,9 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class StringResourceProviderConsumer implements IStringResourceLoader {
 
-    public String loadStringResource(Component component, String key) {
+
+    @Override
+    public String loadStringResource(final Component component, final String key, final Locale locale, final String style, final String variation) {
         IStringResourceProvider provider;
         if (component instanceof IStringResourceProvider) {
             provider = (IStringResourceProvider) component;
@@ -59,8 +61,6 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
                 realKey = key;
             }
             keys.put(HippoNodeType.HIPPO_KEY, realKey);
-
-            Locale locale = component.getLocale();
             keys.put(HippoNodeType.HIPPO_LANGUAGE, locale.getLanguage());
 
             String value = locale.getCountry();
@@ -86,7 +86,8 @@ public class StringResourceProviderConsumer implements IStringResourceLoader {
         return null;
     }
 
-    public String loadStringResource(Class clazz, String key, Locale locale, String style) {
+    @Override
+    public String loadStringResource(final Class<?> clazz, final String key, final Locale locale, final String style, final String variation) {
         return null;
     }
 }

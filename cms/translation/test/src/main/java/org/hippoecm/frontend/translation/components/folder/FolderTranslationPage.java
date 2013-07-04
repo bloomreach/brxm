@@ -15,11 +15,12 @@
  */
 package org.hippoecm.frontend.translation.components.folder;
 
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.translation.components.TestLocaleProvider;
 import org.hippoecm.frontend.translation.components.folder.model.T9Node;
 import org.hippoecm.frontend.translation.components.folder.model.T9Tree;
@@ -27,7 +28,10 @@ import org.hippoecm.frontend.translation.components.folder.model.T9Tree;
 public class FolderTranslationPage extends WebPage {
 
     public FolderTranslationPage(PageParameters parameters) {
-        String folder = parameters.getString("folder", "evenements");
+        StringValue folderValue = parameters.get("folder");
+        if (folderValue.isNull()) {
+            folderValue = StringValue.valueOf("evenements");
+        }
         LoadableDetachableModel<T9Tree> treeModel = new LoadableDetachableModel<T9Tree>() {
             private static final long serialVersionUID = 1L;
 
@@ -36,7 +40,7 @@ public class FolderTranslationPage extends WebPage {
                 return new JsonT9Tree();
             }
         };
-        IModel<T9Node> t9NodeModel = new Model<T9Node>(treeModel.getObject().getNode(folder));
+        IModel<T9Node> t9NodeModel = new Model<T9Node>(treeModel.getObject().getNode(folderValue.toString()));
         add(new FolderTranslationView("grid", treeModel, t9NodeModel, new TestLocaleProvider()));
     }
 }

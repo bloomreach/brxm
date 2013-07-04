@@ -20,8 +20,8 @@ import java.util.Collection;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import org.apache.wicket.markup.html.tree.DefaultTreeState;
-import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.junit.Before;
 import org.junit.Test;
 

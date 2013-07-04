@@ -19,10 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -30,23 +33,31 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.MultiFileUploadField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.IMultipartWebRequest;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.convert.ConversionException;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.util.upload.FileItem;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 
 public class MultiFileUploadComponent extends Panel {
 
-    private static final ResourceReference JS = new JavascriptResourceReference(
+    private static final JavaScriptResourceReference JS = new JavaScriptResourceReference(
             MultiFileUploadComponent.class, "MultiFileUploadFieldCustomized.js");
-    private static final ResourceReference CSS = new JavascriptResourceReference(
+    private static final CssResourceReference CSS = new CssResourceReference(
             MultiFileUploadComponent.class, "res/MultiFileUpload.css");
 
+
+    private static FileUploadWidgetSettings createFileUploadSettings(final int max) {
+        FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
+        settings.setMaxNumberOfFiles(max);
+        return settings;
+    }
 
     private final UploadField uploadField;
     private FileUploadWidgetSettings settings;
@@ -72,16 +83,11 @@ public class MultiFileUploadComponent extends Panel {
         form.add(uploadField);
     }
 
-    private static FileUploadWidgetSettings createFileUploadSettings(final int max) {
-        FileUploadWidgetSettings settings = new FileUploadWidgetSettings();
-        settings.setMaxNumberOfFiles(max);
-        return settings;
-    }
-
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
-        container.getHeaderResponse().renderCSSReference(CSS);
+
+        container.getHeaderResponse().render(CssHeaderItem.forReference(CSS));
     }
 
     public Collection<FileUpload> getUploads() {
@@ -117,12 +123,12 @@ public class MultiFileUploadComponent extends Panel {
 
         @Override
         public void renderHead(IHeaderResponse response) {
-            response.renderJavascriptReference(JS);
+            response.render(JavaScriptHeaderItem.forReference(JS));
 
-            PackagedTextTemplate template =
-                    new PackagedTextTemplate(MultiFileUploadComponent.class, "createMultiSelector.tpl");
-            response.renderOnDomReadyJavascript(template.asString(getSettingsAsMap()));
+            PackageTextTemplate template = new PackageTextTemplate(MultiFileUploadComponent.class, "createMultiSelector.tpl");
+            response.render(OnDomReadyHeaderItem.forScript(template.asString(getSettingsAsMap())));
         }
+
 
         private Map<String,Object> getSettingsAsMap() {
             Map<String, Object> settingsAsMap = new HashMap<String, Object>();
@@ -148,7 +154,10 @@ public class MultiFileUploadComponent extends Panel {
                 final IMultipartWebRequest request = (IMultipartWebRequest) getRequest();
                 uploads = new ArrayList<FileUpload>(fileNames.length);
                 for (String filename : fileNames) {
-                    uploads.add(new FileUpload(new MagicMimeTypeFileItem(request.getFile(filename))));
+                    List<FileItem> fileItems = request.getFile(filename);
+                    for (FileItem fileItem : fileItems) {
+                        uploads.add(new FileUpload(new MagicMimeTypeFileItem(fileItem)));
+                    }
                 }
             }
             return uploads;

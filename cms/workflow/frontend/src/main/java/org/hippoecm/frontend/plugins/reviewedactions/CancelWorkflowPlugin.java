@@ -24,9 +24,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -71,7 +72,7 @@ public class CancelWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "delete-16.png");
+                return new PackageResourceReference(getClass(), "delete-16.png");
             }
 
             @Override

@@ -17,7 +17,7 @@ package org.hippoecm.frontend.types;
 
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.event.IObservable;
 
 /**

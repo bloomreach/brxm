@@ -28,6 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -85,9 +86,9 @@ public class FieldEditor extends Panel {
 
             private void showError(final String msg) {
                 error(msg);
-                AjaxRequestTarget target = AjaxRequestTarget.get();
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
-                    target.addComponent(FieldEditor.this);
+                    target.add(FieldEditor.this);
                 }
             }
 

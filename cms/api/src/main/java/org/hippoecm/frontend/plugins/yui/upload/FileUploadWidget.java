@@ -23,12 +23,14 @@ import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
@@ -51,6 +53,7 @@ import org.slf4j.LoggerFactory;
 public class FileUploadWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
+    private static final CssResourceReference UPLOAD_WIDGET_STYLESHEET = new CssResourceReference(FileUploadWidget.class, "FileUploadWidget.css");
 
     final Logger log = LoggerFactory.getLogger(FileUploadWidget.class);
 
@@ -92,8 +95,13 @@ public class FileUploadWidget extends Panel {
         this.settings = settings;
         this.validator = validator;
 
-        add(CSSPackageResource.getHeaderContribution(FileUploadWidget.class, "FileUploadWidget.css"));
         add(panel = new EmptyPanel(COMPONENT_ID));
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(UPLOAD_WIDGET_STYLESHEET));
     }
 
     /**
@@ -107,7 +115,7 @@ public class FileUploadWidget extends Panel {
         if (settings.isFlashUploadEnabled()) {
             if (detectedFlash == null) {
                 Page page = getPage();
-                for (IBehavior behavior : page.getBehaviors()) {
+                for (Behavior behavior : page.getBehaviors()) {
                     if (behavior instanceof WebAppBehavior) {
                         detectedFlash = ((WebAppBehavior) behavior).getFlash();
                     }

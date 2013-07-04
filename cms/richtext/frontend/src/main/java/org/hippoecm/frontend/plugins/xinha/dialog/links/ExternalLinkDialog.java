@@ -63,8 +63,8 @@ public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(protocolsChoice);
-                target.addComponent(this);
+                target.add(protocolsChoice);
+                target.add(this);
             }
         };
         addressTextField.setOutputMarkupId(true);

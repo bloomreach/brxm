@@ -29,16 +29,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Resource;
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.WebResource;
+import org.apache.wicket.core.util.resource.UrlResourceStream;
+import org.apache.wicket.core.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.resource.IPropertiesFactory;
 import org.apache.wicket.resource.Properties;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.UrlResourceStream;
-import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -216,12 +216,12 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
         return pads;
     }
 
-    public Resource getIcon() {
-        return new WebResource() {
+    public IResource getIcon() {
+        return new ResourceStreamResource() {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public IResourceStream getResourceStream() {
+            protected IResourceStream getResourceStream() {
                 ClassLoader cl = clModel.getObject();
                 URL url = null;
                 if (variant != null) {
@@ -238,6 +238,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
                             + "/no-layout.png"));
                 }
             }
+
         };
     }
 
@@ -268,7 +269,7 @@ public class XmlLayoutDescriptor implements ILayoutDescriptor {
 
                 Locale locale = Session.get().getLocale();
                 String name = location.substring(location.lastIndexOf('/') + 1);
-                ResourceNameIterator iterator = new ResourceNameIterator(location, variant, locale, null);
+                ResourceNameIterator iterator = new ResourceNameIterator(location, null, variant, locale, null, false);
                 while (iterator.hasNext()) {
                     String path = iterator.next();
                     final Properties props = propertiesFactory.load(null, path);

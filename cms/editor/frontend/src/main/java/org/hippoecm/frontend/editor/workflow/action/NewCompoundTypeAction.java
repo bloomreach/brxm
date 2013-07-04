@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.editor.workflow.action;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
@@ -77,7 +78,7 @@ public class NewCompoundTypeAction extends Action {
     
     @Override
     protected ResourceReference getIcon() {
-        return new ResourceReference(StdWorkflow.class, "compound-new-16.png");
+        return new PackageResourceReference(StdWorkflow.class, "compound-new-16.png");
     }
     
 }

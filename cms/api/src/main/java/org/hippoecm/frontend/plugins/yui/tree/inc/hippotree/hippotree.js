@@ -40,7 +40,6 @@ YAHOO.namespace("hippo");
         }
         args[1] = [ config.treeData ];
 
-        this.callbackUrl = config.callbackUrl;
         this.callbackMethod = config.callbackFunction;
 
         YAHOO.hippo.HippoTree.superclass.constructor.apply(this, args);
@@ -54,17 +53,15 @@ YAHOO.namespace("hippo");
             me = this;
             if (config.registerOnDoubleclick) {
                 dblClick = function(args) {
-                    var uuid = args.node.data.uuid,
-                        url = me.callbackUrl + '&action=dblClick&UUID=' + encodeURIComponent(uuid);
-                    me.callbackMethod(url);
+                    var uuid = args.node.data.uuid;
+                    me.callbackMethod({ action: 'dblClick', UUID: uuid });
                 };
                 this.subscribe("dblClickEvent", dblClick);
             }
             if (config.registerOnclick) {
                 click = function(args) {
-                    var uuid = args.node.data.uuid,
-                        url = me.callbackUrl + '&action=click&UUID=' + encodeURIComponent(uuid);
-                    me.callbackMethod(url);
+                    var uuid = args.node.data.uuid;
+                    me.callbackMethod({ action: 'click', UUID: uuid });
                 };
                 this.subscribe("clickEvent", click);
             }

@@ -49,7 +49,7 @@ public class JcrPropertiesProvider extends NodeModelWrapper<Void> implements IDa
 
     // IDataProvider implementation, provides the properties of the chained nodeModel
 
-    public Iterator<Property> iterator(int first, int count) {
+    public Iterator<Property> iterator(long first, long count) {
         List<Property> list = new ArrayList<Property>();
         try {
             if (nodeModel.getObject() != null) {
@@ -78,12 +78,12 @@ public class JcrPropertiesProvider extends NodeModelWrapper<Void> implements IDa
         return new JcrPropertyModel(object);
     }
 
-    public int size() {
-        int result = 0;
+    public long size() {
+        long result = 0;
         try {
             if (nodeModel.getObject() != null) {
                 PropertyIterator it = nodeModel.getObject().getProperties();
-                result = (int) it.getSize();
+                result = it.getSize();
 
 //                result = result - 1; // For jcr:primaryType
 //                result = nodeModel.getNode().hasProperty("jcr:mixinTypes") ? result -1 : result;

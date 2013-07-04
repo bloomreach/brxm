@@ -25,9 +25,10 @@ import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 import javax.jcr.version.Version;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -97,7 +98,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         add(new StdWorkflow("restore", new StringResourceModel("restore", this, null).getString(), null, context, this) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "restore-16.png");
+                return new PackageResourceReference(getClass(), "restore-16.png");
             }
 
             @Override
@@ -182,7 +183,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         add(new StdWorkflow("select", new StringResourceModel("select", this, null).getString(), null, context, this) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "select-16.png");
+                return new PackageResourceReference(getClass(), "select-16.png");
             }
 
             @Override

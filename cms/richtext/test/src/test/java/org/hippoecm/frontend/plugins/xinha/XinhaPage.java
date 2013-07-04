@@ -15,16 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
-import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 
 public class XinhaPage extends WebPage {
 
+    private static final JavaScriptResourceReference CONSOLE_JS = new JavaScriptResourceReference(XinhaPage.class, "console.js");
+
     public XinhaPage() {
         add(new WebAppBehavior(new WebAppSettings()));
-        add(HeaderContributor.forJavaScript(XinhaPage.class, "console.js"));
     }
 
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(CONSOLE_JS));
+    }
 }

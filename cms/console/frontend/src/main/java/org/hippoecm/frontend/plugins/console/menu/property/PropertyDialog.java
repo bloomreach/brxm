@@ -24,19 +24,18 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutocompleteTextField;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -44,6 +43,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -219,8 +219,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 return result.iterator();
             }
         };
-        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
-                "DefaultCssAutocompleteTextField.css"));
 
         // dynamic update of related components when name is updated
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -228,13 +226,20 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(ddChoice);
-                target.addComponent(checkBox);
+                target.add(ddChoice);
+                target.add(checkBox);
             }
         });
 
         add(setFocus(nameField));
         add(new TextArea<String>("value", new PropertyModel<String>(this, "value")));
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(new CssResourceReference(DefaultCssAutoCompleteTextField.class,
+                "DefaultCssAutocompleteTextField.css")));
     }
 
     @Override

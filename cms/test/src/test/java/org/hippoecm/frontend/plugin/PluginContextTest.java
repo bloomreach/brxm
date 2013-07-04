@@ -18,12 +18,9 @@ package org.hippoecm.frontend.plugin;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.PluginPage;
-import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -176,17 +173,6 @@ public class PluginContextTest {
         if (tester != null) {
             tester.destroy();
         }
-    }
-
-    protected void refreshPage() {
-        WebRequestCycle requestCycle = tester.setupRequestAndResponse(true);
-        ;
-        HippoTester.callOnBeginRequest(requestCycle);
-        AjaxRequestTarget target = new PluginRequestTarget(home);
-        requestCycle.setRequestTarget(target);
-
-        // process the request target
-        tester.processRequestCycle(requestCycle);
     }
 
     @Test

@@ -135,7 +135,7 @@ AutoSave.prototype = {
         var xmlHttpReq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
             url = this.editor.config.callbackUrl,
             body = wicketSerialize(Wicket.$(this.getId())),
-            afterCallbackHandler = function() {
+            afterCallbackHandler = jQuery.proxy(function() {
                 if (throttled) {
                     this.saving = false;
                 }
@@ -146,7 +146,7 @@ AutoSave.prototype = {
                 } else if (failure) {
                     failure();
                 }
-            }.bind(this);
+            }, this);
 
         xmlHttpReq.open('POST', url, throttled || false);
         xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');

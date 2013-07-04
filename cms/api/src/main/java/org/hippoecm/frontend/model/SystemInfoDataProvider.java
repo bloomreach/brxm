@@ -80,7 +80,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         refresh();
     }
 
-    public Iterator<Entry<String, String>> iterator(int first, int count) {
+    public Iterator<Entry<String, String>> iterator(long first, long count) {
         return info.entrySet().iterator();
     }
 
@@ -120,7 +120,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         info.put("Processors", "# " + runtime.availableProcessors());
     }
 
-    public int size() {
+    public long size() {
         return info.size();
     }
 

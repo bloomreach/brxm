@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.util.resource.IResourceStream;
 import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
 
@@ -53,9 +51,7 @@ public class LayoutDescriptorTest extends PluginTest {
     public void testNoIcon() throws Exception {
         ILayoutDescriptor descriptor = new XmlLayoutDescriptor(new ClassLoaderModel(),
                                                                getClass().getPackage().getName() + ".NonExistingTest");
-        IResourceStream stream = descriptor.getIcon().getResourceStream();
-        InputStream input = stream.getInputStream();
-        input.close();
+        tester.startResource(descriptor.getIcon());
     }
 
     /**

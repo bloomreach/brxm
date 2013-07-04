@@ -17,17 +17,20 @@ package org.hippoecm.frontend.js;
 
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 
-public class HippoFutureResourceBehavior extends AbstractBehavior {
+public class HippoFutureResourceBehavior extends Behavior {
 
     public static final String FUTURE = "future.js";
 
-    public void bind(Component component) {
+    private static final ResourceReference FUTURE_REFERENCE = new JavaScriptResourceReference(HippoFutureResourceBehavior.class, FUTURE);
 
-        component.add(JavascriptPackageResource.getHeaderContribution(HippoFutureResourceBehavior.class, FUTURE));
-
+    @Override
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        response.render(JavaScriptReferenceHeaderItem.forReference(FUTURE_REFERENCE));
     }
-
 }

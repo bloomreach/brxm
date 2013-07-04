@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -193,7 +194,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                                     new Class[]{String.class, WorkflowDescriptorModel.class});
                             plugin = (Panel) constructor.newInstance(new Object[]{"item", pluginModel});
                         } else {
-                            plugin = new Panel("id");
+                            plugin = new EmptyPanel("id");
                         }
                     }
                 }
@@ -212,7 +213,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                 observers.add(observer);
                 context.registerService(observer, IObserver.class.getName());
 
-                plugin.visitChildren(new MenuVisitor(menu, category));
+                plugin.visitChildren(Panel.class, new MenuVisitor(menu, category));
                 plugin.setVisible(false);
                 list.add(plugin);
             } catch (ClassNotFoundException ex) {

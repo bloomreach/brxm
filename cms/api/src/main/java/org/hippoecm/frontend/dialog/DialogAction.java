@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public class DialogAction implements IClusterable {
     private static final long serialVersionUID = 1L;

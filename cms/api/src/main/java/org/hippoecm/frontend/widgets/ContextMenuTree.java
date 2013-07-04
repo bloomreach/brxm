@@ -20,39 +20,51 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.CancelEventIfAjaxListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tree.DefaultAbstractTree;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
 /**
- * 
+ *
  */
 public class ContextMenuTree extends DefaultAbstractTree {
 
     private static final long serialVersionUID = 1L;
 
-    /** use own styling */
-    private static final ResourceReference TREE_STYLE = new ResourceReference(JcrTree.class, "res/tree.css");
+    /**
+     * use own styling
+     */
+    private static final ResourceReference TREE_STYLE = new CssResourceReference(JcrTree.class, "res/tree.css");
 
-    /** Reference to the icon for context menus */
-    private static final ResourceReference MENU = new ResourceReference(ContextMenuTree.class, "res/menu.gif");
+    /**
+     * Reference to the icon for context menus
+     */
+    private static final ResourceReference MENU = new PackageResourceReference(ContextMenuTree.class, "res/menu.gif");
 
-    /** Reference to the javascript that adds hover behavior to the tree's div */
-    private static final ResourceReference IE6_HOVER_FIX = new ResourceReference(ContextMenuTree.class,
+    /**
+     * Reference to the javascript that adds hover behavior to the tree's div
+     */
+    private static final ResourceReference IE6_HOVER_FIX = new PackageResourceReference(ContextMenuTree.class,
             "res/ie6_hover_fix.js");
 
     public ContextMenuTree(String id, TreeModel model) {
@@ -82,7 +94,9 @@ public class ContextMenuTree extends DefaultAbstractTree {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                tag.put("style", "background-image: url('" + RequestCycle.get().urlFor(getMenuIcon(node)) + "')");
+                tag.put("style", "background-image: url('" + RequestCycle.get().urlFor(
+                        new ResourceReferenceRequestHandler(
+                                getMenuIcon(node))) + "')");
             }
         };
 
@@ -93,7 +107,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     protected MarkupContainer newContextLink(final MarkupContainer parent, String id, final TreeNode node,
-            MarkupContainer content) {
+                                             MarkupContainer content) {
         AjaxLink<Void> link = new ContextLink(id, content, parent) {
             private static final long serialVersionUID = 1L;
 
@@ -103,7 +117,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
                 // getTreeState().selectNode(node, !getTreeState().isNodeSelected(node));
                 updateTree(target);
                 content.setVisible(true);
-                target.addComponent(parent);
+                target.add(parent);
                 IContextMenuManager menuManager = findParent(IContextMenuManager.class);
                 if (menuManager != null) {
                     menuManager.showContextMenu(this);
@@ -156,7 +170,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
         // do distinguish between selected and unselected rows we add an
         // behavior
         // that modifies row css class.
-        item.add(new AbstractBehavior() {
+        item.add(new Behavior() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -179,9 +193,8 @@ public class ContextMenuTree extends DefaultAbstractTree {
 
     /**
      * This method is called for every node to get it's string representation.
-     * 
-     * @param node
-     *            The tree node to get the string representation of
+     *
+     * @param node The tree node to get the string representation of
      * @return The string representation
      */
     protected String renderNode(TreeNode node, int level) {
@@ -191,14 +204,14 @@ public class ContextMenuTree extends DefaultAbstractTree {
     @Override
     public void onTargetRespond(AjaxRequestTarget target) {
         super.onTargetRespond(target);
-        WebClientInfo info = (WebClientInfo) getRequestCycle().getClientInfo();
+        WebClientInfo info = getWebSession().getClientInfo();
         if (info != null) {
             String userAgent = info.getUserAgent().toLowerCase();
             if (userAgent.indexOf("msie 6") > -1) {
                 target
                         .getHeaderResponse()
-                        .renderOnDomReadyJavascript(
-                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
+                        .render(OnDomReadyHeaderItem.forScript(
+                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');"));
             }
         }
     }
@@ -206,15 +219,15 @@ public class ContextMenuTree extends DefaultAbstractTree {
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
-        WebClientInfo info = (WebClientInfo) getRequestCycle().getClientInfo();
+        WebClientInfo info = getWebSession().getClientInfo();
         if (info != null) {
             String userAgent = info.getUserAgent().toLowerCase();
             if (userAgent.indexOf("msie 6") > -1) {
-                container.getHeaderResponse().renderJavascriptReference(IE6_HOVER_FIX);
+                container.getHeaderResponse().render(JavaScriptHeaderItem.forReference(IE6_HOVER_FIX));
                 container
                         .getHeaderResponse()
-                        .renderOnDomReadyJavascript(
-                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');");
+                        .render(OnDomReadyHeaderItem.forScript(
+                                "fixIE6Hover('row', 'div', 'context-hover'); fixIE6Hover('row-selected', 'div', 'context-hover-selected');"));
             }
         }
     }
@@ -234,13 +247,15 @@ public class ContextMenuTree extends DefaultAbstractTree {
         public void collapse(AjaxRequestTarget target) {
             if (content.isVisible()) {
                 content.setVisible(false);
-                target.addComponent(parent);
+                target.add(parent);
             }
         }
 
         @Override
-        protected IAjaxCallDecorator getAjaxCallDecorator() {
-            return new EventStoppingDecorator(super.getAjaxCallDecorator());
+        protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+            super.updateAjaxAttributes(attributes);
+            attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
         }
+
     }
 }

@@ -32,7 +32,7 @@ public final class NextLink extends AbstractWizardLink {
     @Override
     public void onClick(AjaxRequestTarget target) {
         getWizardModel().next();
-        target.addComponent(getWizard());
+        target.add(getWizard());
     }
 
 }

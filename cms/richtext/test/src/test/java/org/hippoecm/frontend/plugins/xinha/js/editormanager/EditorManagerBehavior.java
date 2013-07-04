@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Page;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 import org.hippoecm.frontend.plugins.xinha.XinhaNamespace;
 import org.hippoecm.frontend.plugins.xinha.js.editormanager.XinhaExtension.ListEntry;
@@ -37,7 +37,7 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
+    private final PackageTextTemplate XINHA_INIT_GLOBALS = new PackageTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
     DynamicTextTemplate globals;
@@ -53,8 +53,7 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
             @Override
             protected Map<String, Object> getVariables() {
                 final Page page = getComponent().getPage();
-                String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy()
-                        .rewriteStaticRelativeUrl("xinha/");
+                String url = RequestCycle.get().getUrlRenderer().renderContextRelativeUrl("xinha/");
                 String lang = page.getLocale().getLanguage();
                 String skin = "hippo-lite";
 
@@ -83,7 +82,7 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
                 config.put("focus", focussed);
 
                 List<ListEntry> properties = new LinkedList<ListEntry>();
-                for (IBehavior behavior : getComponent().getBehaviors()) {
+                for (Behavior behavior : getComponent().getBehaviors()) {
                     if (behavior instanceof XinhaExtension) {
                         ((XinhaExtension) behavior).populateProperties(properties);
                     }

@@ -18,9 +18,9 @@ package org.hippoecm.frontend.editor.builder;
 import java.util.Map;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.locator.IResourceStreamLocator;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginEditorPlugin;
 import org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin;

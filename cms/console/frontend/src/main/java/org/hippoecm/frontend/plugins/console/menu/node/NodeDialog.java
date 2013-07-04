@@ -32,10 +32,12 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteSettings;
 import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutocompleteTextField;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.extensions.ajax.markup.html.autocomplete.DefaultCssAutoCompleteTextField;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -156,8 +158,6 @@ public class NodeDialog extends AbstractDialog<Node> {
                 return result.iterator();
             }
         };
-        typeField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
-                "DefaultCssAutocompleteTextField.css"));
         add(typeField);
 
         final Model<String> nameModel = new Model<String>() {
@@ -214,14 +214,12 @@ public class NodeDialog extends AbstractDialog<Node> {
                 return result.iterator();
             }
         };
-        nameField.add(CSSPackageResource.getHeaderContribution(DefaultCssAutocompleteTextField.class,
-                "DefaultCssAutocompleteTextField.css"));
         nameField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(typeField);
+                target.add(typeField);
             }
         });
         typeField.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -229,11 +227,18 @@ public class NodeDialog extends AbstractDialog<Node> {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-                target.addComponent(nameField);
+                target.add(nameField);
             }
         });
         add(setFocus(nameField));
 
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(new CssResourceReference(DefaultCssAutoCompleteTextField.class,
+                "DefaultCssAutocompleteTextField.css")));
     }
 
     @Override

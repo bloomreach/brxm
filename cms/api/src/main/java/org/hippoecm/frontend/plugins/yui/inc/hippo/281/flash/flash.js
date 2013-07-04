@@ -39,9 +39,12 @@ if (!YAHOO.hippo.Flash) {
 
             probe : function() {
                 if (this.config !== null && this.config !== undefined) {
-                    var playerVersion = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion(),
-                        url = this.config.callbackUrl + '&major=' + playerVersion.major + '&minor=' + playerVersion.minor + '&rev=' + playerVersion.rev;
-                    this.config.callbackFunction(url);
+                    var playerVersion = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
+                    this.config.callbackFunction({
+                        major: playerVersion.major,
+                        minor: playerVersion.minor,
+                        rev: playerVersion.rev
+                    });
                 }
             }
         };

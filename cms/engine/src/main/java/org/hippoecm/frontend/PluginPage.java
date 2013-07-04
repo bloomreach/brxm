@@ -15,15 +15,15 @@
  */
 package org.hippoecm.frontend;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ajax.WicketAjaxReference;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.markup.html.WicketEventReference;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.hippoecm.frontend.behaviors.ContextMenuBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.dialog.DialogServiceFactory;
@@ -84,9 +84,6 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         context.registerService(this, Home.class.getName());
         registerGlobalBehaviorTracker();
 
-        add(JavascriptPackageResource.getHeaderContribution(WicketEventReference.INSTANCE));
-        add(JavascriptPackageResource.getHeaderContribution(WicketAjaxReference.INSTANCE));
-        
         add(menuBehavior = new ContextMenuBehavior());
 
         IClusterConfig pluginCluster = pluginConfigService.getDefaultCluster();
@@ -96,31 +93,37 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         IController controller = context.getService(IController.class.getName(), IController.class);
         if (controller != null) {
             WebRequest request = (WebRequest) RequestCycle.get().getRequest();
-            controller.process(request.getParameterMap());
+            controller.process(request.getRequestParameters());
         }
     }
 
     private void registerGlobalBehaviorTracker() {
         final String[] serviceIds = {
                 context.getReference(this).getServiceId(),
-                IBehavior.class.getName()
+                Behavior.class.getName()
         };
         for (String serviceId : serviceIds) {
-            ServiceTracker<IBehavior> tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
+            ServiceTracker<Behavior> tracker = new ServiceTracker<Behavior>(Behavior.class) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                public void onServiceAdded(IBehavior behavior, String name) {
+                public void onServiceAdded(Behavior behavior, String name) {
                     add(behavior);
                 }
 
                 @Override
-                public void onRemoveService(IBehavior behavior, String name) {
+                public void onRemoveService(Behavior behavior, String name) {
                     remove(behavior);
                 }
             };
             context.registerTracker(tracker, serviceId);
         }
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        CoreLibrariesContributor.contribute(Application.get(), response);
+        super.renderHead(response);
     }
 
     public Component getComponent() {
@@ -193,11 +196,6 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         // FF3 bug: no-store shouldn't be necessary
         response.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate"); // no-store
         response.setHeader("X-Frame-Options", "sameorigin");
-    }
-
-    @Override
-    public final void onNewBrowserWindow() {
-        setResponsePage(getClass());
     }
 
     public void addService(IRenderService service, String name) {

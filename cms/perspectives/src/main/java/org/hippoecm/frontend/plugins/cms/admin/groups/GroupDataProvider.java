@@ -24,6 +24,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -36,7 +37,7 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
 
     public GroupDataProvider() {
         super(QUERY_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
-        setSort("groupname", true);
+        setSort("groupname", SortOrder.ASCENDING);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
     }
 
     @Override
-    public Iterator<Group> iterator(int first, int count) {
+    public Iterator<Group> iterator(long first, long count) {
         List<Group> groupList = new ArrayList<Group>(getList());
 
         Collections.sort(groupList, new Comparator<Group>() {
@@ -61,6 +62,6 @@ public class GroupDataProvider extends SearchableDataProvider<Group> {
             }
         });
 
-        return groupList.subList(first, Math.min(first + count, groupList.size())).iterator();
+        return groupList.subList((int) first, (int) Math.min(first + count, groupList.size())).iterator();
     }
 }

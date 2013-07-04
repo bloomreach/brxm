@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.collections.comparators.NullComparator;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -38,7 +39,7 @@ public class UserDataProvider extends SearchableDataProvider<User> {
 
     public UserDataProvider() {
         super(QUERY_USER_LIST, "/hippo:configuration/hippo:users", HippoNodeType.NT_USER, HippoNodeType.NT_USERFOLDER);
-        setSort("username", true);
+        setSort("username", SortOrder.ASCENDING);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class UserDataProvider extends SearchableDataProvider<User> {
     }
 
     @Override
-    public Iterator<User> iterator(int first, int count) {
+    public Iterator<User> iterator(long first, long count) {
         List<User> userList = new ArrayList<User>(getList());
 
         final Comparator<String> nullSafeComparator = new NullComparator(false);
@@ -71,6 +72,6 @@ public class UserDataProvider extends SearchableDataProvider<User> {
             }
         });
 
-        return userList.subList(first, Math.min(first + count, userList.size())).iterator();
+        return userList.subList((int) first, (int) Math.min(first + count, userList.size())).iterator();
     }
 }

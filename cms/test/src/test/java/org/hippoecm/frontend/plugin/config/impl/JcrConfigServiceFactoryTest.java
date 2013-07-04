@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import javax.servlet.ServletContext;
-
-import org.apache.wicket.protocol.http.MockServletContext;
+import org.apache.wicket.protocol.http.mock.MockServletContext;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.PluginTest;
@@ -53,15 +51,10 @@ public class JcrConfigServiceFactoryTest extends PluginTest {
 
     @Test
     public void testFirstApplicationIsUsedAsFallback() throws Exception {
-        HippoTester second = new HippoTester(new PluginTestApplication()) {
-
-            @Override
-            public ServletContext newServletContext(String path) {
-                MockServletContext mock =  (MockServletContext) super.newServletContext(path);
-                mock.addInitParameter("config", "second-app");
-                return mock;
-            }
-        };
+        PluginTestApplication secondApp = new PluginTestApplication();
+        MockServletContext servletContext = new MockServletContext(secondApp, null);
+        servletContext.addInitParameter("config", "second-app");
+        HippoTester second = new HippoTester(secondApp, servletContext);
 
         try {
             PluginPage home = (PluginPage) second.startPluginPage();

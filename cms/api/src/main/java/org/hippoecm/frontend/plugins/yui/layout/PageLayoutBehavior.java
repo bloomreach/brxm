@@ -15,9 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.Component;
+import java.util.Arrays;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
@@ -42,7 +47,7 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
 
     private static final long serialVersionUID = 1L;
 
-    private final PackagedTextTemplate INIT_PAGE = new PackagedTextTemplate(PageLayoutBehavior.class, "init_page.js");
+    private final PackageTextTemplate INIT_PAGE = new PackageTextTemplate(PageLayoutBehavior.class, "init_page.js");
 
     private PageLayoutSettings settings;
     private HippoTextTemplate template;
@@ -68,24 +73,61 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
                 jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
                 return jsonConfig;
             }
+
         };
     }
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
-        context.addTemplate(template);
+        context.addTemplate(new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(getHeaderItem());
+            }
+        });
         context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
     }
 
     @Override
     public void resize(final AjaxRequestTarget target) {
-        target.appendJavascript("YAHOO.hippo.LayoutManager.render()");
+        target.appendJavaScript("YAHOO.hippo.LayoutManager.render()");
     }
 
     @Override
-    public void detach(Component component) {
-        template.detach();
+    public HeaderItem getHeaderItem() {
+        return new OnDomReadyHeaderItem("not-empty") {
+
+            private String getId() {
+                return getComponent().getMarkupId(true) + "-wireframe-behavior";
+            }
+
+            @Override
+            public int hashCode() {
+                return getId().hashCode();
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (obj == this) {
+                    return true;
+                }
+                if (obj instanceof OnDomReadyHeaderItem) {
+                    return getRenderTokens().equals(((OnDomReadyHeaderItem) obj).getRenderTokens());
+                }
+                return false;
+            }
+
+            @Override
+            public CharSequence getJavaScript() {
+                return template.getString();
+            }
+
+            @Override
+            public Iterable<?> getRenderTokens() {
+                return Arrays.asList(getId());
+            }
+        };
     }
 
     //Implement IWireframeService

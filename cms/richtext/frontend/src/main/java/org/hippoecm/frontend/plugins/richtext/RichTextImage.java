@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.richtext;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
@@ -88,8 +88,7 @@ public class RichTextImage implements IClusterable {
         } else {
             url = RichTextUtil.encode(docUrl);
         }
-        url = RequestCycle.get().getResponse().encodeURL(url).toString();
-        return RichTextUtil.encodeResourceURL(url);
+        return RequestCycle.get().getResponse().encodeURL(url).toString();
     }
 
     public boolean isValid() {

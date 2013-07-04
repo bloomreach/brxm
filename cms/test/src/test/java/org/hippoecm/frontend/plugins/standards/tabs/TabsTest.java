@@ -15,12 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
@@ -39,6 +37,8 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class TabsTest extends PluginTest {
 
@@ -157,18 +157,18 @@ public class TabsTest extends PluginTest {
 
         // re-render with panel
         refreshPage();
-        tester.assertContains("tabs-container");
+        tester.assertContains("class=\"tab-row\"");
         tester.assertLabel("root:tabs:tabs-container:tabs:0:container:link:title", "first");
 
         // change title
         model.setObject("second");
         refreshPage();
-        tester.assertContains("tabs-container");
+        tester.assertContains("class=\"tab-row\"");
 
         // re-register panel
         panel.reregister();
         refreshPage();
-        tester.assertContains("tabs-container");
+        tester.assertContains("class=\"tab-row\"");
     }
 
     @Test

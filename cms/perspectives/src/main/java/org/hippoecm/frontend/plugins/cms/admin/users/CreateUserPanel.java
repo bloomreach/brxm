@@ -78,7 +78,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         RequiredTextField<String> usernameField = new RequiredTextField<String>("username");
         usernameField.add(StringValidator.minimumLength(2));
         usernameField.add(new UsernameValidator());
-        usernameField.setPersistent(true);
         form.add(usernameField);
 
         TextField<String> firstNameField = new TextField<String>("firstName");
@@ -161,7 +160,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
-                target.addComponent(CreateUserPanel.this);
+                target.add(CreateUserPanel.this);
             }
         });
 

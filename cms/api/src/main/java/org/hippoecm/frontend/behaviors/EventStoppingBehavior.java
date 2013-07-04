@@ -16,10 +16,10 @@
 package org.hippoecm.frontend.behaviors;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 
-public class EventStoppingBehavior extends AbstractBehavior {
+public class EventStoppingBehavior extends Behavior {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +33,7 @@ public class EventStoppingBehavior extends AbstractBehavior {
     public void onComponentTag(Component component, ComponentTag tag) {
         super.onComponentTag(component, tag);
 
-        tag.put(event, "Wicket.stopEvent(event);");
+        tag.put(event, "Wicket.Event.stop(event);");
     }
 
 }

@@ -106,7 +106,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
 
         List<IColumn> columns = new ArrayList<IColumn>();
 
-        columns.add(new AbstractColumn<User>(new ResourceModel("user-username"), "username") {
+        columns.add(new AbstractColumn<User, String>(new ResourceModel("user-username"), "username") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<User>> item, final String componentId, final IModel<User> model) {
@@ -123,7 +123,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                 cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<String>(model, "email")));
             }
         });
-        columns.add(new AbstractColumn<User>(new ResourceModel("user-group")) {
+        columns.add(new AbstractColumn<User, String>(new ResourceModel("user-group")) {
             @Override
             public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId, final IModel<User> model) {
                 User user = model.getObject();
@@ -134,7 +134,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                 cellItem.add(groupsLinkListPanel);
             }
         });
-        columns.add(new AbstractColumn<User>(new Model<String>("Type")) {
+        columns.add(new AbstractColumn<User, String>(new Model<String>("Type")) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(Item<ICellPopulator<User>> cellItem, String componentId, IModel<User> model) {
@@ -146,7 +146,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                 }
             }
         });
-        columns.add(new AbstractColumn<User>(new ResourceModel("user-view-actions-title")) {
+        columns.add(new AbstractColumn<User, String>(new ResourceModel("user-view-actions-title")) {
             @Override
             public void populateItem(final Item<ICellPopulator<User>> item, final String componentId, final IModel<User> model) {
 
@@ -179,7 +179,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
-                target.addComponent(table);
+                target.add(table);
             }
         });
 

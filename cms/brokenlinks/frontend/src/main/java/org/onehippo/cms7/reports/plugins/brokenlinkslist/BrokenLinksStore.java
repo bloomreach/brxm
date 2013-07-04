@@ -23,8 +23,9 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
@@ -148,10 +149,10 @@ public class BrokenLinksStore extends ExtJsonStore<Object> {
     }
 
     private int parseIntParameter(ServletWebRequest request, String name, int defaultValue) {
-        String param = request.getParameter(name);
-        if (param != null) {
+        StringValue param = request.getRequestParameters().getParameterValue(name);
+        if (!param.isNull()) {
             try {
-                return Integer.parseInt(param);
+                return Integer.parseInt(param.toString());
             } catch (NumberFormatException e) {
                 log.warn("Value of parameter '" + name + "' is not an integer: '" + param
                         + "', using default value '" + defaultValue + "'");

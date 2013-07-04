@@ -21,14 +21,13 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Response;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.resource.ContentDisposition;
 import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -166,18 +165,19 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
     private Fragment createEmbedFragment(String id, final JcrResourceStream resource, final String filename) {
         Fragment fragment = new Fragment(id, "embed", this);
-        fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
+        fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length().bytes()))));
         fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
         fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void configureResponse(Response response) {
-                if (response instanceof WebResponse) {
-                    ((WebResponse) response).setHeader("Content-Disposition", "attachment; filename="
-                            + filename);
-                }
+            protected ResourceResponse newResourceResponse(final Attributes attributes) {
+                ResourceResponse response = super.newResourceResponse(attributes);
+                response.setContentDisposition(ContentDisposition.ATTACHMENT);
+                response.setFileName(filename);
+                return response;
             }
+
         }) {
             private static final long serialVersionUID = 1L;
 

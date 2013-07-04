@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.model.event;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * The context representing the observer registry to the observable.

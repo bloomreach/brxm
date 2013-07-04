@@ -20,11 +20,13 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
@@ -45,7 +47,7 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
 
     static final Logger log = LoggerFactory.getLogger(DocumentListingPlugin.class);
 
-    private static final String DOCUMENT_LISTING_CSS = "DocumentListingPlugin.css";
+    private static final ResourceReference LISTING_SKIN = new CssResourceReference(DocumentListingPlugin.class, "DocumentListingPlugin.css");
 
     public DocumentListingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -55,9 +57,9 @@ public abstract class DocumentListingPlugin<T> extends ExpandCollapseListingPlug
     }
 
     @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        container.getHeaderResponse().renderCSSReference(new ResourceReference(DocumentListingPlugin.class, DOCUMENT_LISTING_CSS));
-        super.renderHead(container);
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(LISTING_SKIN));
     }
 
     @Override

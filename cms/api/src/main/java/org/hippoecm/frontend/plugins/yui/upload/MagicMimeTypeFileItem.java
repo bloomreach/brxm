@@ -136,7 +136,7 @@ public class MagicMimeTypeFileItem implements FileItem {
         return delegate.getString();
     }
 
-    public void write(File file) throws Exception {
+    public void write(File file) throws IOException {
         delegate.write(file);
     }
 

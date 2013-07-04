@@ -15,9 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.list;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.DocumentAttributeComparator;
@@ -35,24 +44,24 @@ import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-
 public class ReviewedActionsListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
 
     private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(ReviewedActionsListColumnProviderPlugin.class);
-    
+    private static final CssResourceReference COLUMN_SKIN = new CssResourceReference(ReviewedActionsListColumnProviderPlugin.class, "style.css");
+
     public ReviewedActionsListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(ReviewedActionsListColumnProviderPlugin.class, "style.css");
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(CssHeaderItem.forReference(COLUMN_SKIN));
+            }
+        };
     }
 
     @Override

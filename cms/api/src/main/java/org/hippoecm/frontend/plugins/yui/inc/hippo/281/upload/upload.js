@@ -244,7 +244,7 @@ if (!YAHOO.hippo.Upload) {
                         offsetY = el.pageYOffset || el.scrollTop;
                         sc = offsetY + sizes.wrap.h;
                         pixFromBottom = el.scrollHeight - sc;
-                        this.scrollData = '&scrollPosY=' + pixFromBottom;
+                        this.scrollData = { scrollPosY: pixFromBottom };
                     }
                 }
             },
@@ -363,8 +363,6 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onAfterUpload : function() {
-                var url;
-
                 if (this.numberOfUploads === 0) {
                     if (Lang.isValue(this.indicator)) {
                         this.indicator.hide();
@@ -376,12 +374,12 @@ if (!YAHOO.hippo.Upload) {
                         this.clearAfterUpload();
                     }
 
-                    url = this.config.callbackUrl + "&finished=true";
+                    var params = { finished: true };
                     if (Lang.isValue(this.scrollData)) {
-                        url = url + this.scrollData;
+                        YAHOO.extend(params, this.scrollData);
                         this.scrollData = null;
                     }
-                    this.config.callbackFunction.call(this, url);
+                    this.config.callbackFunction.call(this, { finished: true });
                 }
             },
 

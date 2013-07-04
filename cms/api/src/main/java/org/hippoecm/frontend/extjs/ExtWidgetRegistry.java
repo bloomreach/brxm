@@ -17,9 +17,11 @@ package org.hippoecm.frontend.extjs;
 
 import java.util.List;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.wicketstuff.js.ext.ExtObservable;
 
@@ -35,12 +37,13 @@ public class ExtWidgetRegistry extends ExtObservable {
 
     public static final String EXT_WIDGET_SERVICE_ID = ExtWidgetRegistry.class.getName();
 
+    private static final JavaScriptResourceReference EXT_WIDGET_REGISTRY_JS = new JavaScriptResourceReference(ExtWidgetRegistry.class, "ExtWidgetRegistry.js");
+
     private final IPluginContext context;
     private boolean loadedWidgets;
 
     public ExtWidgetRegistry(IPluginContext context) {
         this.context = context;
-        add(JavascriptPackageResource.getHeaderContribution(ExtWidgetRegistry.class, "ExtWidgetRegistry.js"));
     }
 
     /**
@@ -51,8 +54,10 @@ public class ExtWidgetRegistry extends ExtObservable {
      * @param response
      */
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public void renderHead(Component component, IHeaderResponse response) {
         if (!loadedWidgets) {
+            response.render(JavaScriptHeaderItem.forReference(EXT_WIDGET_REGISTRY_JS));
+
             List<IHeaderContributor> contributors = context.getServices(EXT_WIDGET_SERVICE_ID, IHeaderContributor.class);
             for (IHeaderContributor contributor : contributors) {
                 if (!(contributor instanceof ExtWidget)) {
@@ -65,7 +70,7 @@ public class ExtWidgetRegistry extends ExtObservable {
             }
             loadedWidgets = true;
         }
-        super.renderHead(response);
+        super.renderHead(component, response);
     }
 
 }

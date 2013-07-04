@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.viewer;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -53,8 +54,12 @@ public class ViewerPlugin extends RenderPlugin {
         engineId = context.getReference(factory).getServiceId();
 
         addExtensionPoint("template");
+    }
 
-        add(EditorResources.getCss());
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(EditorResources.getCss());
     }
 
     @Override

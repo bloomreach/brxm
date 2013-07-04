@@ -21,7 +21,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.model.IModel;
@@ -31,7 +30,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class UnpublishedReferenceNodeProvider implements ISortableDataProvider<Node> {
+public final class UnpublishedReferenceNodeProvider implements ISortableDataProvider<Node, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +42,8 @@ public final class UnpublishedReferenceNodeProvider implements ISortableDataProv
         this.referenced = referenced;
     }
 
-    public Iterator<? extends Node> iterator(int first, int count) {
+    @Override
+    public Iterator<? extends Node> iterator(long first, long count) {
         final Iterator<String> upstream = referenced.iterator(first, count);
         return new Iterator<Node>() {
 
@@ -71,11 +71,13 @@ public final class UnpublishedReferenceNodeProvider implements ISortableDataProv
         };
     }
 
+    @Override
     public IModel<Node> model(Node object) {
         return new JcrNodeModel(object);
     }
 
-    public int size() {
+    @Override
+    public long size() {
         return referenced.size();
     }
 

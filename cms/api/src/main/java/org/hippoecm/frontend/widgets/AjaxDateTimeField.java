@@ -78,7 +78,7 @@ public class AjaxDateTimeField extends DateTimeField {
             setModelObject(date.toDate());
 
             if (target != null) {
-                target.addComponent(this);
+                target.add(this);
             }
         } catch (RuntimeException e) {
             error(e.getMessage());

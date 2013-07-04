@@ -19,16 +19,15 @@ package org.hippoecm.frontend.plugins.login;
 import java.util.StringTokenizer;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowserCheckBehavior extends AbstractBehavior {
+public class BrowserCheckBehavior extends Behavior {
     private static final long serialVersionUID = 1L;
 
     static Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
@@ -257,7 +256,7 @@ public class BrowserCheckBehavior extends AbstractBehavior {
     public void bind(Component component) {
         super.bind(component);
 
-        WebClientInfo info = (WebClientInfo) RequestCycle.get().getClientInfo();
+        WebClientInfo info = WebSession.get().getClientInfo();
         if (check != null && !check.isSupported(new WicketBrowserInfo(info))) {
             component.info(new ClassResourceModel("browser.unsupported.warning", LoginPlugin.class).getObject());
         }

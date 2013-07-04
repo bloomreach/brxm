@@ -19,7 +19,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -56,8 +56,9 @@ class MenuButton extends Panel implements IContextMenu {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
             }
 
             void updateContent() {
@@ -65,7 +66,7 @@ class MenuButton extends Panel implements IContextMenu {
                     MarkupContainer descriptionContent = description.getContent();
                     if (descriptionContent != null) {
                         menu.clear();
-                        descriptionContent.visitChildren(new MenuVisitor(menu, "list"));
+                        descriptionContent.visitChildren(Panel.class, new MenuVisitor(menu, "list"));
                         menu.flatten();
                         content.update();
                     }
@@ -75,7 +76,7 @@ class MenuButton extends Panel implements IContextMenu {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 content.setVisible(!content.isVisible());
-                target.addComponent(MenuButton.this);
+                target.add(MenuButton.this);
                 if (content.isVisible()) {
                     updateContent();
                     IContextMenuManager manager = getContextMenuManager();
@@ -106,7 +107,7 @@ class MenuButton extends Panel implements IContextMenu {
     public void collapse(AjaxRequestTarget target) {
         if (content.isVisible()) {
             content.setVisible(false);
-            target.addComponent(MenuButton.this);
+            target.add(MenuButton.this);
         }
     }
 

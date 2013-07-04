@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * A service factory intercepts access to a service.  This allows the factory to create an implementation

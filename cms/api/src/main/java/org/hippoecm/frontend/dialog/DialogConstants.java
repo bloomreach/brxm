@@ -15,13 +15,14 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
 public interface DialogConstants {
 
-    ResourceReference AJAX_LOADER_GIF = new ResourceReference(DialogConstants.class, "ajax-loader.gif");
+    ResourceReference AJAX_LOADER_GIF = new PackageResourceReference(DialogConstants.class, "ajax-loader.gif");
 
     String BUTTON = "button";
 

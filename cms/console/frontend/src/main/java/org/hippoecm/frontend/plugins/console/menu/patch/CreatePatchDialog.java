@@ -29,15 +29,14 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.plugins.console.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -200,7 +199,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
             final StringWriter writer = new StringWriter();
             createDiff(writer);
             diff.setDefaultModel(new Model<String>(writer.getBuffer().toString()));
-            AjaxRequestTarget.get().addComponent(diff);
+            RequestCycle.get().find(AjaxRequestTarget.class).add(diff);
             return 1;
         }
 

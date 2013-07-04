@@ -22,7 +22,7 @@ Hippo.EnterHandler = function(elementId) {
 
     objonchange = obj.onchange;
     obj.onkeypress = function(event) {
-        Wicket.stopEvent(event);
+        Wicket.Event.stop(event);
         var key = wicketKeyCode(Wicket.fixEvent(event));
         if (key === 13) {
             objonchange();
@@ -32,12 +32,12 @@ Hippo.EnterHandler = function(elementId) {
     };
 
     obj.onkeyup = function(event) {
-        Wicket.stopEvent(event);
+        Wicket.Event.stop(event);
         return true;
     };
 
     obj.onchange = function(event) {
-        Wicket.stopEvent(event);
+        Wicket.Event.stop(event);
         return false;
     };
 

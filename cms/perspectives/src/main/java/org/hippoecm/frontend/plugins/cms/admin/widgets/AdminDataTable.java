@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.widgets;
 
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
@@ -28,19 +29,20 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 
-public class AdminDataTable<T> extends DataTable<T> {
+public class AdminDataTable<T> extends DataTable<T, String> {
 
 
     private static final long serialVersionUID = 1L;
 
-    public AdminDataTable(String id, final List<IColumn<T>> columns,
-                          ISortableDataProvider<T> dataProvider, int rowsPerPage) {
-        this(id, columns.toArray(new IColumn[columns.size()]), dataProvider, rowsPerPage);
+    public AdminDataTable(String id, final List<IColumn<T, String>> columns,
+                          ISortableDataProvider<T, String> dataProvider, long rowsPerPage) {
+        super(id, columns, dataProvider, rowsPerPage);
     }
 
-    public AdminDataTable(String id, final IColumn<T>[] columns, ISortableDataProvider<T> dataProvider,
-                          int rowsPerPage) {
-        super(id, columns, dataProvider, rowsPerPage);
+    public AdminDataTable(String id, final IColumn<T, String>[] columns, ISortableDataProvider<T, String> dataProvider,
+                          long rowsPerPage) {
+        this(id, Arrays.asList(columns), dataProvider, rowsPerPage);
+
         setOutputMarkupId(true);
         setVersioned(false);
         addTopToolbar(new AjaxNavigationToolbar(this));

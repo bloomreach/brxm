@@ -31,7 +31,7 @@ public final class FacetSearchListingPlugin extends DocumentListingPlugin<Node> 
     }
 
     @Override
-    protected ISortableDataProvider<Node> newDataProvider() {
+    protected ISortableDataProvider<Node, String> newDataProvider() {
         return new FacetSearchProvider((JcrNodeModel) getDefaultModel(), getTableDefinition().getComparators());
     }
 

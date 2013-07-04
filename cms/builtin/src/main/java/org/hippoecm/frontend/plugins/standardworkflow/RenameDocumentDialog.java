@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -61,10 +63,16 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
             protected void onUpdate(AjaxRequestTarget target) {
                 if (!uriModified) {
                     uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
-                    target.addComponent(uriComponent);
+                    target.add(uriComponent);
                 }
             }
-        }.setThrottleDelay(Duration.milliseconds(500)));
+
+            @Override
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(RenameDocumentDialog.this.getPath(), Duration.milliseconds(500)));
+            }
+        });
 
         nameComponent.setOutputMarkupId(true);
         setFocus(nameComponent);
@@ -100,7 +108,7 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
                 } else {
                     target.focusComponent(uriComponent);
                 }
-                target.addComponent(RenameDocumentDialog.this);
+                target.add(RenameDocumentDialog.this);
             }
         };
         uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {

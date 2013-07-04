@@ -28,16 +28,20 @@ import java.util.TreeMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
 import org.apache.wicket.Session;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.behavior.HeaderContributor;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.response.StringResponse;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -80,7 +84,7 @@ import org.slf4j.LoggerFactory;
  * A list of service names for child render services.  These child services will be
  * added to the plugin directly.
  * <li><b>wicket.behavior</b>
- * A list of service names for {@link IBehaviorService}s.  The behaviors that are exposed
+ * A list of service names for {@link org.hippoecm.frontend.service.IBehaviorService}s.  The behaviors that are exposed
  * by these services are added to the Component.
  * <li><b>wicket.variant (Layout)</b>
  * The layout variantion to use.  In contrast with Wickets default, the variation is not
@@ -197,8 +201,14 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         String[] skins = config.getStringArray(SKIN_ID);
         if (skins != null) {
             for (String skin : skins) {
-                HeaderContributor cssContributor = HeaderContributor.forCss(skin);
-                add(cssContributor);
+                final UrlResourceReference cssContributor = new UrlResourceReference(Url.parse(skin));
+                cssContributor.setContextRelative(true);
+                add(new Behavior() {
+                    @Override
+                    public void renderHead(final Component component, final IHeaderResponse response) {
+                        response.render(CssHeaderItem.forReference(cssContributor));
+                    }
+                });
                 context.registerService(cssContributor, IDialogService.class.getName());
             }
         }
@@ -395,7 +405,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     public void render(PluginRequestTarget target) {
         if (redraw) {
             if (target != null && isActive()) {
-                target.addComponent(this);
+                target.add(this);
             }
         }
         for (Map.Entry<String, ExtensionPoint> entry : children.entrySet()) {
@@ -533,9 +543,8 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     }
 
     @Override
-    protected void onComponentTagBody(MarkupStream markupStream, final ComponentTag openTag) {
-        MarkupStream originalMarkupStream = getMarkupStream();
-        int beginOfBodyIndex = originalMarkupStream.getCurrentIndex();
+    public void onComponentTagBody(MarkupStream markupStream, final ComponentTag openTag) {
+        int beginOfBodyIndex = markupStream.getCurrentIndex();
         Response response = new StringResponse();
         RequestCycle requestCycle = getRequestCycle();
         Response webResponse = requestCycle.setResponse(response);

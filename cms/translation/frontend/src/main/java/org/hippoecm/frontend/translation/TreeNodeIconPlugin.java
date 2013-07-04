@@ -19,8 +19,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;

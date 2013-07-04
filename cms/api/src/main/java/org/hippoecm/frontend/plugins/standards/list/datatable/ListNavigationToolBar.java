@@ -34,7 +34,7 @@ public class ListNavigationToolBar extends AbstractToolbar {
 
         WebMarkupContainer span = new WebMarkupContainer("span");
         add(span);
-        span.add(new AttributeModifier("colspan", true, new Model(String.valueOf(table.getColumns().length))));
+        span.add(new AttributeModifier("colspan", true, new Model(String.valueOf(table.getColumns().size()))));
 
         PagingNavigator pagingNavigator = newPagingNavigator("navigator", table, pagingDefinition);
         span.add(pagingNavigator);
@@ -59,7 +59,7 @@ public class ListNavigationToolBar extends AbstractToolbar {
              */
             @Override
             protected void onAjaxEvent(AjaxRequestTarget target) {
-                target.addComponent(table);
+                target.add(table);
             }
         };
     }

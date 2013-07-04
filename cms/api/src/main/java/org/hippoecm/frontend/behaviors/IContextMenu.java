@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.behaviors;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 /**

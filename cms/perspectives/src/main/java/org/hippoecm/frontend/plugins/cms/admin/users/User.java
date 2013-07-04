@@ -35,9 +35,9 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
@@ -437,7 +437,7 @@ public class User implements Comparable<User>, IClusterable {
         relPath.append("/");
         relPath.append(NodeNameCodec.encode(getUsername(), true));
 
-        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_USER);
+        node = UserSession.get().getRootNode().addNode(relPath.toString(), NT_USER);
         setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
         setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
         setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
@@ -509,7 +509,7 @@ public class User implements Comparable<User>, IClusterable {
         // remember old password
         if (node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
             String oldPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
-            Value[] newValues = null;
+            Value[] newValues;
             if (node.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
                 Value[] oldValues = node.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
                 newValues = new Value[oldValues.length + 1];
@@ -517,7 +517,7 @@ public class User implements Comparable<User>, IClusterable {
             } else {
                 newValues = new Value[1];
             }
-            newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
+            newValues[0] = UserSession.get().getJcrSession().getValueFactory().createValue(oldPassword);
             node.setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
         }
 

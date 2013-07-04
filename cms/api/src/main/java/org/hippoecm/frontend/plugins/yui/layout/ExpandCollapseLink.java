@@ -16,23 +16,16 @@
 package org.hippoecm.frontend.plugins.yui.layout;
 
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 
-public class ExpandCollapseLink<T> extends AjaxLink<T> {
-
+public class ExpandCollapseLink extends WebMarkupContainer {
 
     private Boolean hasExpandableParent;
 
     public ExpandCollapseLink(String id) {
         super(id);
-    }
-
-    @Override
-    public void onClick(AjaxRequestTarget target) {
-        //do nothing
     }
 
     @Override
@@ -50,7 +43,7 @@ public class ExpandCollapseLink<T> extends AjaxLink<T> {
             hasExpandableParent = false;
             MarkupContainer parent = getParent();
             while (parent != null) {
-                for (IBehavior behavior : parent.getBehaviors()) {
+                for (Behavior behavior : parent.getBehaviors()) {
                     if (behavior instanceof WireframeBehavior) {
                         WireframeBehavior wireframe = (WireframeBehavior) behavior;
                         if (wireframe.hasExpandableUnit()) {
@@ -66,21 +59,9 @@ public class ExpandCollapseLink<T> extends AjaxLink<T> {
     }
 
     @Override
-    protected IAjaxCallDecorator getAjaxCallDecorator() {
-        return new IAjaxCallDecorator() {
-
-            public CharSequence decorateScript(CharSequence script) {
-                return "var wcall = true; YAHOO.hippo.LayoutManager.handleExpandCollapse(this);";
-            }
-
-            public CharSequence decorateOnSuccessScript(CharSequence script) {
-                return script;
-            }
-
-            public CharSequence decorateOnFailureScript(CharSequence script) {
-                return script;
-            }
-        };
+    protected void onComponentTag(final ComponentTag tag) {
+        super.onComponentTag(tag);
+        tag.put("onclick", "YAHOO.hippo.LayoutManager.handleExpandCollapse(this); return false;");
     }
 
     @Override

@@ -29,8 +29,8 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.util.ISO9075;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.jackrabbit.util.Text;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;

@@ -233,7 +233,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                                     return "group-delete-role-domain-text";
                                 }
                             });
-                    target.addComponent(ViewGroupPanel.this);
+                    target.add(ViewGroupPanel.this);
                 }
             });
         }
@@ -338,7 +338,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                                 return "group-delete-member-text";
                             }
                         });
-                target.addComponent(ViewGroupPanel.this);
+                target.add(ViewGroupPanel.this);
             }
         }
     }

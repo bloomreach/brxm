@@ -20,8 +20,10 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -38,6 +40,8 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TranslationsColumnProviderPlugin.class);
+    private static final CssResourceReference TRANSLATION_COLUMNS_CSS = new CssResourceReference(TranslationsColumnProviderPlugin.class,
+            "TranslationColumns.css");
 
     public TranslationsColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -45,8 +49,13 @@ public class TranslationsColumnProviderPlugin extends AbstractListColumnProvider
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(TranslationsColumnProviderPlugin.class,
-                "TranslationColumns.css");
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+
+                response.render(CssHeaderItem.forReference(TRANSLATION_COLUMNS_CSS));
+            }
+        };
     }
 
     @Override

@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.collections.MiniMap;

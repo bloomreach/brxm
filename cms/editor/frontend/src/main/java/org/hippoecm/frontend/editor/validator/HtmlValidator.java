@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.google.common.base.CharMatcher;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.cyberneko.html.parsers.SAXParser;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.xml.sax.Attributes;

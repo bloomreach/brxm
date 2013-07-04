@@ -17,7 +17,7 @@ package org.hippoecm.frontend.service.social;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Provides access to social media.

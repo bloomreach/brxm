@@ -34,17 +34,17 @@ public interface IPasswordValidator extends Serializable {
      * @return  the validation status
      * @throws RepositoryException
      */
-    public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException;
+    PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException;
     
     /**
      * If this validator is optional then it is part of a set of validators for which
      * a configured number of them must pass.
      */
-    public boolean isOptional();
+    boolean isOptional();
     
     /**
      * Internationalized description of what rule this validator checks.
      */
-    public String getDescription();
+    String getDescription();
     
 }

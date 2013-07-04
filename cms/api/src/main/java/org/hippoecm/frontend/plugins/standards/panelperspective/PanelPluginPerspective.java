@@ -18,10 +18,14 @@ package org.hippoecm.frontend.plugins.standards.panelperspective;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbBar;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.IPanelPluginParticipant;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbBar;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
@@ -30,6 +34,7 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 public abstract class PanelPluginPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
+    private static final CssResourceReference PANEL_PLUGIN_STYLESHEET = new CssResourceReference(PanelPluginPerspective.class, "panel-plugin-perspective.css");
 
     private final BreadCrumbBar breadCrumbBar;
 
@@ -68,8 +73,22 @@ public abstract class PanelPluginPerspective extends Perspective {
             WireframeSettings wfSettings = new WireframeSettings(wfConfig);
             add(new WireframeBehavior(wfSettings));
         }
+    }
 
-        add(CSSPackageResource.getHeaderContribution(PanelPluginPerspective.class, "panel-plugin-perspective.css"));
+    @Override
+    public void render(final PluginRequestTarget target) {
+        super.render(target);
+        final IBreadCrumbParticipant active = breadCrumbBar.getActive();
+        if (active instanceof IPanelPluginParticipant) {
+            IPanelPluginParticipant participant = (IPanelPluginParticipant) active;
+            participant.render(target);
+        }
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(PANEL_PLUGIN_STYLESHEET));
     }
 
     public void showDialog(IDialogService.Dialog dialog) {

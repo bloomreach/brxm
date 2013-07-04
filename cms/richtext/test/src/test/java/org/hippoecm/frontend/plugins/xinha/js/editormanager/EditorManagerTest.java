@@ -67,7 +67,7 @@ public class EditorManagerTest extends XinhaTest {
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     label.setDefaultModel(new Model("clicked"));
-                    target.addComponent(label);
+                    target.add(label);
                 }
                 
             };
@@ -84,7 +84,7 @@ public class EditorManagerTest extends XinhaTest {
                 protected void onEvent(AjaxRequestTarget target) {
                     amb.setEditorStarted(true);
                     amb.setFocusAfterLoad(true);
-                    target.addComponent(container);
+                    target.add(container);
                 }
             });
             TextArea<String> tif = new TextArea<String>("xinha", new IModel<String>() {

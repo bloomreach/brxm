@@ -15,6 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.repeater.Item;
@@ -43,18 +50,12 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.types.ITypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> {
 
@@ -89,7 +90,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
     @Override
     protected ListDataTable<Node> newListDataTable(String id,
                                                    TableDefinition<Node> tableDefinition,
-                                                   ISortableDataProvider<Node> dataProvider,
+                                                   ISortableDataProvider<Node, String> dataProvider,
                                                    TableSelectionListener<Node> selectionListener,
                                                    final boolean triState,
                                                    ListPagingDefinition pagingDefinition) {
@@ -97,7 +98,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
     }
 
     @Override
-    protected ISortableDataProvider<Node> newDataProvider() {
+    protected ISortableDataProvider<Node, String> newDataProvider() {
         return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
     }
@@ -161,7 +162,7 @@ public final class TypesListingPlugin extends ExpandCollapseListingPlugin<Node> 
 
         private TypesDataTable(String id,
                                TableDefinition<Node> tableDefinition,
-                               ISortableDataProvider<Node> dataProvider,
+                               ISortableDataProvider<Node, String> dataProvider,
                                TableSelectionListener<Node> selectionListener,
                                boolean triState,
                                IPagingDefinition pagingDefinition) {

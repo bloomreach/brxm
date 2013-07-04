@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;

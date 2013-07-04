@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.behaviors;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.IBehavior;
 
 /**
  * Marker interface for IContextMenuManager {@link Component}s.  All {@link IContextMenu}s
@@ -24,7 +23,7 @@ import org.apache.wicket.behavior.IBehavior;
  * manager is notified.  Other context menu managers (and their sub-trees) are excluded
  * from the hierarchical search.
  * <p>
- * The interface can be set on a {@link Component} or one of it's {@link IBehavior}s.
+ * The interface can be set on a {@link Component} or one of it's {@link Behavior}s.
  * When an ancestor context menu manager searches for context menu's, it 
  */
 public interface IContextMenuManager {

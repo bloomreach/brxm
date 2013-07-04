@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugin;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;

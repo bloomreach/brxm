@@ -16,10 +16,8 @@
 package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.SimpleCredentials;
@@ -27,26 +25,24 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
-import org.apache.wicket.PageParameters;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.IFormVisitorParticipant;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.PluginPage;
@@ -93,7 +89,7 @@ public class LoginPlugin extends RenderPlugin {
     @Override
     public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
-        container.getHeaderResponse().renderOnLoadJavascript("document.forms.signInForm.username.focus();");
+        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("document.forms.signInForm.username.focus();"));
     }
 
     protected class SignInForm extends Form {
@@ -105,14 +101,15 @@ public class LoginPlugin extends RenderPlugin {
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
         private Label userLabel;
-        private Map<String, String[]> parameters;
+        private PageParameters parameters;
 
         public SignInForm(final String id) {
             super(id);
 
             setOutputMarkupId(true);
 
-            parameters = RequestCycle.get().getRequest().getParameterMap();
+            parameters = new PageParametersEncoder().decodePageParameters(
+                    RequestCycle.get().getRequest().getUrl());
 
             String[] localeArray = getPluginConfig().getStringArray("locales");
             if (localeArray == null) {
@@ -127,7 +124,7 @@ public class LoginPlugin extends RenderPlugin {
             }
 
             // check if user has previously selected a locale
-            Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getHttpServletRequest().getCookies();
+            Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (LOCALE_COOKIE.equals(cookie.getName())) {
@@ -178,7 +175,7 @@ public class LoginPlugin extends RenderPlugin {
                     localeCookie.setMaxAge(365 * 24 * 3600); // expire one year from now
                     WebApplicationHelper.retrieveWebResponse().addCookie(localeCookie);
                     getSession().setLocale(new Locale(selectedLocale));
-                    target.addComponent(SignInForm.this);
+                    target.add(SignInForm.this);
                 }
             });
 
@@ -187,7 +184,7 @@ public class LoginPlugin extends RenderPlugin {
 
                 protected void onUpdate(AjaxRequestTarget target) {
                     String username = this.getComponent().getDefaultModelObjectAsString();
-                    HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest()
+                    HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
                             .getSession(true);
 
                     if (ConcurrentLoginFilter.isConcurrentSession(session, username)) {
@@ -198,7 +195,7 @@ public class LoginPlugin extends RenderPlugin {
                         userLabel.setDefaultModel(new Model<String>(""));
                     }
 
-                    target.addComponent(userLabel);
+                    target.add(userLabel);
                     LoginPlugin.this.username = username;
                 }
             });
@@ -217,8 +214,8 @@ public class LoginPlugin extends RenderPlugin {
 
         @Override
         public void onDetach() {
-            WebRequest webRequest = ((WebRequestCycle) RequestCycle.get()).getWebRequest();
-            if (!webRequest.getHttpServletRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
+            ServletWebRequest webRequest = (ServletWebRequest) RequestCycle.get().getRequest();
+            if (!webRequest.getContainerRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
                 UserSession.get().releaseJcrSession();
             }
             super.onDetach();
@@ -228,7 +225,7 @@ public class LoginPlugin extends RenderPlugin {
         public void onSubmit() {
             PluginUserSession userSession = (PluginUserSession) getSession();
             String username = usernameTextField.getDefaultModelObjectAsString();
-            HttpSession session = ((WebRequest) SignInForm.this.getRequest()).getHttpServletRequest().getSession(true);
+            HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest().getSession(true);
 
             boolean success = true;
             PageParameters loginExceptionPageParameters = null;
@@ -245,30 +242,20 @@ public class LoginPlugin extends RenderPlugin {
             redirect(success, loginExceptionPageParameters);
         }
 
-        protected void redirect(boolean success, PageParameters pageParameters) {
+        protected void redirect(boolean success, PageParameters errorParameters) {
             if (success == false) {
                 Main main = (Main) Application.get();
                 main.resetConnection();
 
-                if (pageParameters != null) {
-                    throw new RestartResponseException(new InvalidLoginPage(pageParameters));
+                if (errorParameters != null) {
+                    throw new RestartResponseException(new InvalidLoginPage(errorParameters));
                 } else {
                     throw new RestartResponseException(InvalidLoginPage.class);
                 }
             }
 
             if (parameters != null) {
-                visitFormComponents(new FormComponent.IVisitor() {
-                    public Object formComponent(IFormVisitorParticipant formComponent) {
-                        if (formComponent instanceof FormComponent) {
-                            parameters.remove(((FormComponent<?>) formComponent).getInputName());
-                        }
-
-                        return Component.IVisitor.CONTINUE_TRAVERSAL;
-                    }
-                });
-                parameters.remove(getHiddenFieldId());
-                setResponsePage(PluginPage.class, new PageParameters(parameters));
+                setResponsePage(PluginPage.class, parameters);
             } else {
                 setResponsePage(PluginPage.class);
             }
@@ -279,10 +266,9 @@ public class LoginPlugin extends RenderPlugin {
         }
 
         protected PageParameters buildPageParameters(LoginException.CAUSE cause) {
-            Map<String, String> pageParameters = new HashMap<String, String>(1);
-            
-            pageParameters.put(PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE, cause.name());
-            return new PageParameters(pageParameters);
+            PageParameters pageParameters = new PageParameters();
+            pageParameters.add(PAGE_PARAMS_KEY_LOGIN_EXCEPTION_CAUSE, cause.name());
+            return pageParameters;
         }
 
     }

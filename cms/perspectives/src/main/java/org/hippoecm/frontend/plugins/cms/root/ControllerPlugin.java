@@ -15,12 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import java.util.Map;
-
 import javax.jcr.Node;
 
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.protocol.http.WicketURLDecoder;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.encoding.UrlDecoder;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -60,14 +61,15 @@ public class ControllerPlugin extends Plugin implements IController {
         if (modelReference != null) {
             final PathInUrlController controller = new PathInUrlController(modelReference, URL_PARAMETER_PATH);
             context.registerService(controller, IObserver.class.getName());
-            context.registerService(controller, IBehavior.class.getName());
+            context.registerService(controller, Behavior.class.getName());
         }
     }
 
-    public void process(Map parameters) {
-        String[] urlPaths = (String[]) parameters.get(URL_PARAMETER_PATH);
-        if (urlPaths != null && urlPaths.length > 0) {
-            String jcrPath = WicketURLDecoder.PATH_INSTANCE.decode(urlPaths[0]);
+    public void process(IRequestParameters parameters) {
+        RequestCycle rc = RequestCycle.get();
+        StringValue urlPaths = parameters.getParameterValue(URL_PARAMETER_PATH);
+        if (urlPaths != null) {
+            String jcrPath = UrlDecoder.PATH_INSTANCE.decode(urlPaths.toString(), rc.getRequest().getCharset());
             JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
 
             IPluginContext context = getPluginContext();
@@ -80,11 +82,11 @@ public class ControllerPlugin extends Plugin implements IController {
                 log.info("Could not find browse service - document " + jcrPath + " will not be selected");
             }
 
-            if (parameters.containsKey(URL_PARAMETER_MODE)) {
-                String[] modeStr = (String[]) parameters.get(URL_PARAMETER_MODE);
-                if (modeStr != null && modeStr.length > 0) {
+            if (parameters.getParameterNames().contains(URL_PARAMETER_MODE)) {
+                StringValue modeStr = parameters.getParameterValue(URL_PARAMETER_MODE);
+                if (modeStr != null) {
                     IEditor.Mode mode;
-                    if (URL_PARAMETER_MODE_VALUE_EDIT.equals(modeStr[0])) {
+                    if (URL_PARAMETER_MODE_VALUE_EDIT.equals(modeStr.toString())) {
                         mode = IEditor.Mode.EDIT;
                     } else {
                         mode = IEditor.Mode.VIEW;

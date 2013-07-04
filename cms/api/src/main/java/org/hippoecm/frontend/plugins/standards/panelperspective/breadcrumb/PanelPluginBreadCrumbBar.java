@@ -27,7 +27,6 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
 public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
     private static final long serialVersionUID = 1L;
@@ -36,7 +35,7 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
     private static final class BreadCrumbComponent extends Panel {
         private static final long serialVersionUID = 1L;
 
-        public BreadCrumbComponent(String id, int index, IBreadCrumbModel breadCrumbModel,
+        public BreadCrumbComponent(String id, long index, IBreadCrumbModel breadCrumbModel,
                 final IBreadCrumbParticipant participant, boolean enableLink) {
             super(id);
 
@@ -55,7 +54,7 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
             if (participant instanceof IPanelPluginParticipant) {
                 title = ((IPanelPluginParticipant) participant).getTitle(this);
             } else {
-                title = new Model<String>(participant.getTitle());
+                title = participant.getTitle();
             }
             link.add(new Label("label", title).setRenderBodyOnly(true));
         }
@@ -87,7 +86,7 @@ public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
     }
 
     @Override
-    protected Component newBreadCrumbComponent(String id, int index, int total,
+    protected Component newBreadCrumbComponent(String id, long index, int total,
             IBreadCrumbParticipant breadCrumbParticipant) {
         boolean enableLink = getEnableLinkToCurrent() || (index < (total - 1));
         return new BreadCrumbComponent(id, index, this, breadCrumbParticipant, enableLink);

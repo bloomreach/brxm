@@ -15,19 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.xinha;
 
+import java.nio.charset.Charset;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.protocol.http.WicketURLDecoder;
-import org.apache.wicket.protocol.http.WicketURLEncoder;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.encoding.UrlDecoder;
+import org.apache.wicket.util.encoding.UrlEncoder;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
@@ -219,7 +224,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
             protected void insertImage(JcrNodeModel model, AjaxRequestTarget target) {
                 String returnScript = imageService.attach(model);
                 if (returnScript != null) {
-                    target.getHeaderResponse().renderOnDomReadyJavascript(returnScript);
+                    target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(returnScript));
                 }
             }
 
@@ -233,7 +238,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
             protected void insertLink(JcrNodeModel model, AjaxRequestTarget target) {
                 String returnScript = linkService.attach(model);
                 if (returnScript != null) {
-                    target.getHeaderResponse().renderOnDomReadyJavascript(returnScript);
+                    target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(returnScript));
                 }
             }
 
@@ -293,14 +298,15 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
         private static final long serialVersionUID = 1L;
 
-        private static final String JS_STOP_EVENT = "Wicket.stopEvent(event);";
+        private static final String JS_STOP_EVENT = "Wicket.Event.stop(event)";
 
         @Override
         protected void respond(AjaxRequestTarget target) {
             Request request = RequestCycle.get().getRequest();
-            String link = request.getParameter("link");
-            link = WicketURLDecoder.PATH_INSTANCE.decode(link);
-            if (link != null) {
+            final StringValue linkValue = request.getRequestParameters().getParameterValue("link");
+            if (linkValue != null) {
+                String link = linkValue.toString();
+                link = UrlDecoder.PATH_INSTANCE.decode(link, request.getCharset());
                 IBrowseService browser = getPluginContext().getService(
                         getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
                 if (browser != null) {
@@ -326,9 +332,11 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
         }
 
         public String internalLink(String link) {
-            String url = getCallbackUrl(false) + "&link=" + WicketURLEncoder.QUERY_INSTANCE.encode(link);
-            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + generateCallbackScript("wicketAjaxGet('" + url + "'")
-                    + "\"";
+            final AjaxRequestAttributes attributes = getAttributes();
+            final Charset charset = getRequestCycle().getRequest().getCharset();
+            attributes.getExtraParameters().put("link", UrlEncoder.QUERY_INSTANCE.encode(link, charset));
+            CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
+            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + "Wicket.Ajax.ajax(" + asString + ");\"";
         }
 
         public String externalLink(String link) {

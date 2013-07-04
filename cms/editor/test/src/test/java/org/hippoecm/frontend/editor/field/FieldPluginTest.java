@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.ITemplateEngine;

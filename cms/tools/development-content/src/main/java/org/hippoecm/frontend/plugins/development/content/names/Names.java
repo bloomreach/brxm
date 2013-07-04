@@ -9,7 +9,7 @@ package org.hippoecm.frontend.plugins.development.content.names;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-Hippo = Hippo || {};
+if (typeof(Hippo) === 'undefined') {
+    window.Hippo = {};
+}
+
 Hippo.Tree = Hippo.Tree || {};
 Hippo.Tree.addShortcuts = function(callbackUrl) {
 
     var register = function(key) {
         shortcut.add(key, function() {
-            wicketAjaxGet(callbackUrl+'&key=' + key);
+            Wicket.Ajax.get(callbackUrl+'&key=' + key);
         }, {
             'disable_in_input': true
         });

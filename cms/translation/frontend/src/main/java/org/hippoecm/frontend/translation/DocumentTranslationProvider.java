@@ -78,13 +78,15 @@ public class DocumentTranslationProvider implements IDataProvider<HippoLocale> {
         }
     }
 
-    public Iterator<? extends HippoLocale> iterator(int first, int count) {
+    @Override
+    public Iterator<? extends HippoLocale> iterator(long first, long count) {
         load();
 
         List<HippoLocale> values = new ArrayList<HippoLocale>(locales.values());
-        return values.subList(first, first + count).iterator();
+        return values.subList((int) first, (int) (first + count)).iterator();
     }
 
+    @Override
     public IModel<HippoLocale> model(HippoLocale object) {
         final String name = object.getName();
         return new LoadableDetachableModel<HippoLocale>() {
@@ -102,11 +104,13 @@ public class DocumentTranslationProvider implements IDataProvider<HippoLocale> {
         return locales.containsKey(locale);
     }
 
-    public int size() {
+    @Override
+    public long size() {
         load();
         return locales.size();
     }
 
+    @Override
     public void detach() {
         locales = null;
         model.detach();

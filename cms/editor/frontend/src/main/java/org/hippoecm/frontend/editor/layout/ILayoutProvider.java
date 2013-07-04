@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.layout;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface ILayoutProvider extends IClusterable {
 

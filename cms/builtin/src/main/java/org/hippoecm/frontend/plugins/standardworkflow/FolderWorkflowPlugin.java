@@ -31,9 +31,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
-import org.apache.wicket.markup.html.PackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -41,6 +39,9 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResource;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
@@ -48,7 +49,6 @@ import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -86,8 +86,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
-    private static final String ROOT_PATH = "/content/documents/";
-
     public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -99,7 +97,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "rename-16.png");
+                return new PackageResourceReference(getClass(), "rename-16.png");
             }
 
             @Override
@@ -159,7 +157,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "reorder-16.png");
+                return new PackageResourceReference(getClass(), "reorder-16.png");
             }
 
             @Override
@@ -179,7 +177,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "delete-16.png");
+                return new PackageResourceReference(getClass(), "delete-16.png");
             }
 
             @Override
@@ -205,14 +203,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             break;
                         }
                         StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
-                                FolderWorkflowPlugin.this, null, new Object[]{folderName}) {
-
-                            @Override
-                            public void detach() {
-                                folderName.detach();
-                                super.detach();
-                            }
-                        };
+                                FolderWorkflowPlugin.this, null, new Object[]{folderName});
                         return new DeleteDialog(messageModel, this, deleteAllowed);
 
                     } catch (RepositoryException e) {
@@ -281,12 +272,10 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 for (final String category : prototypes.keySet()) {
                     IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
                             new Object[]{new StringResourceModel(category, this, null)});
-                    ResourceReference iconResource = new ResourceReference(getClass(), category + "-16.png");
-                    iconResource.bind(getApplication());
+                    ResourceReference iconResource = new PackageResourceReference(getClass(), category + "-16.png");
                     if (iconResource.getResource() == null ||
-                            (iconResource.getResource() instanceof PackageResource && ((PackageResource) iconResource.getResource()).getResourceStream(false) == null)) {
-                        iconResource = new ResourceReference(getClass(), "new-document-16.png");
-                        iconResource.bind(getApplication());
+                            (iconResource.getResource() instanceof PackageResource && ((PackageResource) iconResource.getResource()).getResourceStream() == null)) {
+                        iconResource = new PackageResourceReference(getClass(), "new-document-16.png");
                     }
                     list.add(new StdWorkflow<FolderWorkflow>("id", categoryLabel, iconResource, getPluginContext(), model) {
 

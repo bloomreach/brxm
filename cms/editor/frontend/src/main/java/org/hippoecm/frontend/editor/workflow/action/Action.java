@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.workflow.action;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.frontend.editor.workflow.NamespaceWorkflowPlugin;

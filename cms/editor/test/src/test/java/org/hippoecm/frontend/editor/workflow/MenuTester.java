@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -29,6 +28,8 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 
 public class MenuTester extends DataView {
@@ -45,21 +46,24 @@ public class MenuTester extends DataView {
 
             private List<WorkflowAction> list;
 
-            public Iterator iterator(final int first, final int count) {
+            @Override
+            public Iterator iterator(final long first, final long count) {
                 attach();
 
-                int toIndex = first + count;
+                long toIndex = first + count;
                 if (toIndex > list.size()) {
                     toIndex = list.size();
                 }
-                return list.subList(first, toIndex).listIterator();
+                return list.subList((int) first, (int) toIndex).listIterator();
             }
 
+            @Override
             public IModel model(Object object) {
                 return new Model((Serializable) object);
             }
 
-            public int size() {
+            @Override
+            public long size() {
                 attach();
                 return list.size();
             }
@@ -68,17 +72,17 @@ public class MenuTester extends DataView {
             void attach() {
                 if (list == null) {
                     list = new LinkedList<WorkflowAction>();
-                    container.visitChildren(new IVisitor() {
-                        public Object component(Component component) {
-                            if (component instanceof WorkflowAction) {
-                                list.add((WorkflowAction) component);
-                            }
-                            return IVisitor.CONTINUE_TRAVERSAL;
+                    container.visitChildren(WorkflowAction.class, new IVisitor<WorkflowAction, Void>() {
+
+                        @Override
+                        public void component(WorkflowAction component, IVisit<Void> visit) {
+                            list.add(component);
                         }
                     });
                 }
             }
 
+            @Override
             public void detach() {
                 list = null;
             }

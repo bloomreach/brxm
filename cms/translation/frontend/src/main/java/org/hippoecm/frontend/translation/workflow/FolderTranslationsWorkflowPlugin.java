@@ -17,8 +17,8 @@ package org.hippoecm.frontend.translation.workflow;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -42,7 +42,7 @@ public final class FolderTranslationsWorkflowPlugin extends RenderPlugin {
         super(context, config);
 
         add(new StdWorkflow("folder-translations", new StringResourceModel("folder-translations", this, null),
-                            new ResourceReference(FolderTranslationsWorkflowPlugin.class, "translations-16.png"),
+                            new PackageResourceReference(FolderTranslationsWorkflowPlugin.class, "translations-16.png"),
                             context, (WorkflowDescriptorModel) getDefaultModel()) {
             private static final long serialVersionUID = 1L;
 

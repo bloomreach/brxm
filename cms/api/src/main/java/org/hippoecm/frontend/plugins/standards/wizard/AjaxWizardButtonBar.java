@@ -89,7 +89,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
                         "org.apache.wicket.extensions.wizard.NextButton.step.did.not.complete", this));
             }
 
-            target.addComponent(wizard);
+            target.add(wizard);
         }
 
     }
@@ -111,7 +111,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
         @Override
         protected void onClick(AjaxRequestTarget target, Form form) {
             getWizardModel().previous();
-            target.addComponent(wizard);
+            target.add(wizard);
         }
     }
 
@@ -143,7 +143,7 @@ public class AjaxWizardButtonBar extends WizardButtonBar {
                 error(getLocalizer().getString(
                         "org.apache.wicket.extensions.wizard.FinishButton.step.did.not.complete", this));
             }
-            // target.addComponent(wizard);
+            // target.add(wizard);
         }
     }
 }

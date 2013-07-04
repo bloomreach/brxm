@@ -15,16 +15,18 @@
  */
 package org.hippoecm.frontend.perspectives.common;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 
 public class ErrorMessagePanel extends Panel {
 
     private static final long serialVersionUID = 1L;
+    private static final CssResourceReference ERROR_MESSAGE_STYLESHEET = new CssResourceReference(ErrorMessagePanel.class, "ErrorMessagePanel.css");
 
     public ErrorMessagePanel(String id) {
         this(id, null);
@@ -38,8 +40,11 @@ public class ErrorMessagePanel extends Panel {
         } else {
             add(new Label("siteStatusLabel", new ResourceModel("error.status.message", "This perspective could not be loaded. Please contact your systems administrator.")));
         }
+    }
 
-        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(ErrorMessagePanel.class, "ErrorMessagePanel.css")));
+    @Override
+    public void renderHead(final HtmlHeaderContainer container) {
+        container.getHeaderResponse().render(CssHeaderItem.forReference(ERROR_MESSAGE_STYLESHEET));
     }
 
 }

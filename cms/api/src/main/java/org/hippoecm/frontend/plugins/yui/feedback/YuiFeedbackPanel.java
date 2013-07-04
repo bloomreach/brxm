@@ -49,7 +49,7 @@ public class YuiFeedbackPanel extends Panel {
     public void render(AjaxRequestTarget target) {
         if (target != null) {
             if (feedback.anyMessage()) {
-                target.addComponent(feedback);
+                target.add(feedback);
             }
         }
     }

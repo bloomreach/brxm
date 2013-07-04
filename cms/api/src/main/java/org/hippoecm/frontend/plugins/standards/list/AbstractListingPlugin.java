@@ -20,7 +20,10 @@ import java.util.Iterator;
 import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -51,7 +54,7 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
     protected ListDataTable<Node> dataTable;
     private TableDefinition<Node> tableDefinition;
     private ListPagingDefinition pagingDefinition;
-    private ISortableDataProvider<Node> provider;
+    private ISortableDataProvider<Node, String> provider;
     private IObserver<?> providerObserver;
 
     @SuppressWarnings("unchecked")
@@ -66,8 +69,13 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         }
 
         add(new EmptyPanel("table"));
+    }
 
-        add(BrowserStyle.getStyleSheet());
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(BrowserStyle.getStyleSheet()));
     }
 
     protected IModel<Node> getSelectedModel() {
@@ -115,18 +123,18 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
     }
 
     protected ListDataTable<Node> getListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener,
+            ISortableDataProvider<Node, String> dataProvider, TableSelectionListener<Node> selectionListener,
             final boolean triState, ListPagingDefinition pagingDefinition) {
         return newListDataTable(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
     protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
+            ISortableDataProvider<Node, String> dataProvider, TableSelectionListener<Node> selectionListener, boolean triState,
             ListPagingDefinition pagingDefinition) {
         return new ListDataTable<Node>(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
 
-    private ISortableDataProvider<Node> getDataProvider() {
+    private ISortableDataProvider<Node, String> getDataProvider() {
         if (provider == null) {
             provider = newDataProvider();
             if (provider instanceof IObservable) {
@@ -172,7 +180,7 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         }
     }
 
-    protected abstract ISortableDataProvider<Node> newDataProvider();
+    protected abstract ISortableDataProvider<Node, String> newDataProvider();
 
     protected abstract TableDefinition<Node> newTableDefinition();
 
@@ -213,19 +221,19 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
             return;
         }
 
-        ISortState sortState = provider.getSortState();
+        ISortState<String> sortState = provider.getSortState();
 
         dataTable.destroy();
         dumpDataProvider();
         dumpTableDefinition();
 
         TableDefinition<Node> tableDefinition = getTableDefinition();
-        ISortableDataProvider<Node> dataProvider = getDataProvider();
+        ISortableDataProvider<Node, String> dataProvider = getDataProvider();
 
-        ISortState newSortState = dataProvider.getSortState();
-        for (ListColumn column : tableDefinition.getColumns()) {
+        ISortState<String> newSortState = dataProvider.getSortState();
+        for (ListColumn<Node> column : tableDefinition.getColumns()) {
             String sortProperty = column.getSortProperty();
-            int propertySortOrder = sortState.getPropertySortOrder(sortProperty);
+            SortOrder propertySortOrder = sortState.getPropertySortOrder(sortProperty);
             if (propertySortOrder != newSortState.getPropertySortOrder(sortProperty)) {
                 newSortState.setPropertySortOrder(sortProperty, propertySortOrder);
             }

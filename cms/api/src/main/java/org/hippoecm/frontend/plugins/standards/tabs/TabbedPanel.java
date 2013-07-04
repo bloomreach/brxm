@@ -25,16 +25,14 @@ import java.util.Set;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.ajax.CancelEventIfAjaxListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -42,13 +40,18 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.Loop;
-import org.apache.wicket.markup.html.list.Loop.LoopItem;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.html.list.LoopItem;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.string.StringValue;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
@@ -100,7 +103,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
             @Override
             protected void populateItem(LoopItem item) {
-                final int index = item.getIteration();
+                final int index = item.getIndex();
 
                 final WebMarkupContainer titleMarkupContainer = getTitleMarkupContainer(index);
                 item.add(titleMarkupContainer);
@@ -115,13 +118,13 @@ public class TabbedPanel extends WebMarkupContainer {
                         @Override
                         protected void respond(AjaxRequestTarget target) {
                             getContextmenu().setVisible(true);
-                            target.addComponent(getComponentToUpdate());
+                            target.add(getComponentToUpdate());
                             IContextMenuManager menuManager = findParent(IContextMenuManager.class);
                             if (menuManager != null) {
                                 menuManager.showContextMenu(this);
-                                String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
-                                String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
-                                target.appendJavascript(
+                                StringValue x = RequestCycle.get().getRequest().getQueryParameters().getParameterValue(MOUSE_X_PARAM);
+                                StringValue y = RequestCycle.get().getRequest().getQueryParameters().getParameterValue(MOUSE_Y_PARAM);
+                                target.appendJavaScript(
                                         "Hippo.ContextMenu.renderAtPosition('" + menu.getMarkupId() + "', " + x + ", " + y + ");");
                             }
                         }
@@ -207,16 +210,16 @@ public class TabbedPanel extends WebMarkupContainer {
             @Override
             protected void onComponentTag(ComponentTag tag) {
                 super.onComponentTag(tag);
-                String cssClass = (String) tag.getString("class");
+                String cssClass = (String) tag.getAttribute("class");
                 if (cssClass == null) {
                     cssClass = " ";
                 }
-                cssClass += " tab" + getIteration();
+                cssClass += " tab" + getIndex();
 
-                if (getIteration() == getSelectedTab()) {
+                if (getIndex() == getSelectedTab()) {
                     cssClass += " selected";
                 }
-                if (getIteration() == getTabs().size() - 1) {
+                if (getIndex() == getTabs().size() - 1) {
                     cssClass += " last";
                 }
                 tag.put("class", cssClass.trim());
@@ -251,9 +254,9 @@ public class TabbedPanel extends WebMarkupContainer {
         };
 
         ResourceReference iconResource = tab.getIcon(iconType);
-        Image image;
+        Component image;
         if (iconResource == null) {
-            image = new Image("icon");
+            image = new EmptyPanel("icon");
             image.setVisible(false);
         } else {
             image = new Image("icon", iconResource);
@@ -298,7 +301,7 @@ public class TabbedPanel extends WebMarkupContainer {
         return container;
     }
 
-    protected IBehavior newBehavior(final int tabIndex) {
+    protected Behavior newBehavior(final int tabIndex) {
         return new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
 
@@ -308,19 +311,16 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new CancelEventIfNoAjaxDecorator(null);
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
             }
+
         };
     }
 
     public void setMaxTitleLength(int maxTitleLength) {
         this.maxTabLength = maxTitleLength;
-    }
-
-    @Override
-    public boolean isTransparentResolver() {
-        return true;
     }
 
     public void redraw() {
@@ -346,7 +346,7 @@ public class TabbedPanel extends WebMarkupContainer {
         cardView.onPopulate();
         if (redraw) {
             if (target != null) {
-                target.addComponent(tabsContainer);
+                target.add(tabsContainer);
                 cardView.updateCards(target);
             }
             redraw = false;
@@ -377,7 +377,7 @@ public class TabbedPanel extends WebMarkupContainer {
 
         ITab tab = tabs.get(index);
 
-        Panel panel = tab.getPanel(TAB_PANEL_ID);
+        WebMarkupContainer panel = tab.getPanel(TAB_PANEL_ID);
 
         if (panel == null) {
             throw new WicketRuntimeException(
@@ -534,43 +534,37 @@ public class TabbedPanel extends WebMarkupContainer {
                 ListItem<TabsPlugin.Tab> item = newItem(tabbie);
                 add(item);
 
-                if (hasBeenRendered()) {
-                    target.prependJavascript(
-                            "var element = document.createElement('div');" +
-                            "element.setAttribute('id', '" + item.getMarkupId() + "');" +
-                            "Wicket.$('" + getParent().getMarkupId() + "').appendChild(element);");
-                    target.addComponent(item);
-                }
+                target.prependJavaScript(
+                        "var element = document.createElement('div');" +
+                                "element.setAttribute('id', '" + item.getMarkupId() + "');" +
+                                "Wicket.$('" + getParent().getMarkupId() + "').appendChild(element);");
+                target.add(item);
             }
-            Iterator<ListItem<TabsPlugin.Tab>> children = (Iterator<ListItem<TabsPlugin.Tab>>) iterator();
+            Iterator<Component> children = iterator();
             while (children.hasNext()) {
-                ListItem<TabsPlugin.Tab> item = children.next();
-                if (removed.contains(item.getModelObject())) {
-                    if (hasBeenRendered()) {
-                        target.appendJavascript(
-                                "var element = Wicket.$('" + item.getMarkupId() + "');" +
-                                        "element.parentNode.removeChild(element);");
-                    }
+                Component item = children.next();
+                if (removed.contains(item.getDefaultModelObject())) {
+                    target.appendJavaScript(
+                            "var element = Wicket.$('" + item.getMarkupId() + "');" +
+                                    "element.parentNode.removeChild(element);");
                     children.remove();
                 }
             }
 
-            children = (Iterator<ListItem<TabsPlugin.Tab>>) iterator();
+            children = iterator();
             while (children.hasNext()) {
-                ListItem<TabsPlugin.Tab> item = children.next();
+                Component item = children.next();
                 String display = "none";
-                if (item.getModelObject() == selected) {
+                if (item.getDefaultModelObject() == selected) {
                     display = "block";
                 }
 
-                if (hasBeenRendered()) {
-                    target.appendJavascript(
+                target.appendJavaScript(
                         "var element = Wicket.$('" + item.getMarkupId() + "');" +
-                        "element.setAttribute('style', 'display: " + display + ";');");
-                }
+                                "element.setAttribute('style', 'display: " + display + ";');");
 
-                if (item.getModelObject() == selected) {
-                    renderWireframes(item, target);
+                if (item.getDefaultModelObject() == selected) {
+                    renderWireframes((MarkupContainer) item, target);
                 }
             }
 
@@ -580,16 +574,16 @@ public class TabbedPanel extends WebMarkupContainer {
 
         void renderWireframes(MarkupContainer cont, final AjaxRequestTarget target) {
             //Visit child components in order to find components that contain a {@link WireframeBehavior}.
-            cont.visitChildren(new IVisitor<Component>() {
-                public Object component(Component component) {
+            cont.visitChildren(Component.class, new IVisitor<Component, Void>() {
+                public void component(Component component, IVisit<Void> visit) {
                     for (Object behavior : component.getBehaviors()) {
                         if (behavior instanceof IWireframe) {
                             IWireframe wireframe = (IWireframe) behavior;
                             wireframe.resize(target);
-                            return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                            visit.dontGoDeeper();
+                            return;
                         }
                     }
-                    return IVisitor.CONTINUE_TRAVERSAL;
                 }
             });
 

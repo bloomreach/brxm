@@ -15,249 +15,135 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.Collection;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.internal.HeaderResponse;
-import org.apache.wicket.response.StringResponse;
-import org.apache.wicket.util.string.JavascriptUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.ILogData;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.component.IRequestablePage;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of
  * {@link Component}s that have been added.
  * <p>
- * This implementation of the AjaxRequestTarget allows components to be
- * added to the request target even when they are later on removed from the
- * (visible) component tree.  The default wicket way requires that the
- * component that responds to an ajax request knows which components need to
- * be redrawn and which changes are made in the component hierarchy.
- * <p>
- * For the CMS plugin framework, this coupling has been lifted using this
- * extension, the PluginRequestTarget.  In the processing of ajax requests,
- * the action phase (invocation of the listener) marks components that need
- * to be redrawn (see RenderService#redraw), that later on can actually
- * register for rendering (IRenderService#render).
- * <p>
- * For regular wicket components, this is not an option.  So for those are
- * still able to rerender themselves after e.g. a model change.  Since other
- * plugins might change the hierarchy in response to the changes, the
- * component might no longer be there during the rendering though.  The
- * PluginRequestTarget handles this case by discarding the component.
+ * This class used to handle the case that nested components were added to the request target.
+ * While necessary in Wicket-1.4.x, in Wicket-6, this is handled by the framework.
  */
-public class PluginRequestTarget extends AjaxRequestTarget implements AjaxRequestTarget.IListener {
+public final class PluginRequestTarget implements AjaxRequestTarget {
 
-    private static final Logger log = LoggerFactory.getLogger(PluginRequestTarget.class);
+    private final AjaxRequestTarget upstream;
 
-    private Set<Component> updates;
-    private List<IListener> listeners;
-
-    private final List<String> appendJavascripts = new ArrayList<String>();
-    private final List<String> domReadyJavascripts = new ArrayList<String>();
-
-    public PluginRequestTarget(Page page) {
-        super(page);
-
-        this.updates = new HashSet<Component>();
-
-        super.addListener(this);
+    public PluginRequestTarget(final AjaxRequestTarget upstream) {
+        this.upstream = upstream;
     }
 
     @Override
-    public void addComponent(Component component) {
-        if (component == null) {
-            throw new IllegalArgumentException("component cannot be null");
-        }
-        if (component.getOutputMarkupId() == false) {
-            throw new IllegalArgumentException("cannot update component that does not have setOutputMarkupId property set to true. Component: " + component.toString());
-        }
-        if (component.findParent(Page.class) != getPage()) {
-            log.debug("ignoring component {} belonging to outdated page version", component.getId());
-            return;
-        }
-        this.updates.add(component);
+    public void add(final Component component, final String markupId) {
+        upstream.add(component, markupId);
     }
 
     @Override
-    public void addListener(IListener listener) {
-        if (listener == null) {
-            throw new IllegalArgumentException("Argument `listener` cannot be null");
-        }
-
-        if (listeners == null) {
-            listeners = new LinkedList();
-        }
-
-        if (!listeners.contains(listener)) {
-            listeners.add(listener);
-        }
+    public void add(final Component... components) {
+        upstream.add(components);
     }
 
-    // implement AjaxRequestTarget.IListener
-
-    public void onBeforeRespond(Map existing, AjaxRequestTarget target) {
-        if (existing.size() > 0) {
-            log.warn("Some components have already been added to the target.");
-        }
-
-        if (listeners != null) {
-            Iterator it = listeners.iterator();
-            while (it.hasNext()) {
-                ((IListener) it.next()).onBeforeRespond(existing, this);
-            }
-        }
-
-        TreeMap<String, Component> toUpdate = new TreeMap<String, Component>();
-        Iterator<Component> components = updates.iterator();
-        while (components.hasNext()) {
-            Component component = components.next();
-            if (!component.isVisibleInHierarchy()) {
-                continue;
-            }
-
-            MarkupContainer parent = component.getParent();
-            while (parent != null) {
-                if (parent instanceof Page) {
-                    toUpdate.put(component.getPath(), component);
-                    break;
-                } else if (updates.contains(parent)) {
-                    break;
-                }
-                parent = parent.getParent();
-            }
-        }
-        for (Component component : toUpdate.values()) {
-            super.addComponent(component);
-        }
+    @Override
+    public void addChildren(final MarkupContainer parent, final Class<?> childCriteria) {
+        upstream.addChildren(parent, childCriteria);
     }
 
-    public void onAfterRespond(Map map, IJavascriptResponse response) {
-        if (listeners != null) {
-            Iterator<IListener> it = listeners.iterator();
-            while (it.hasNext()) {
-                it.next().onAfterRespond(map, response);
-            }
-        }
-
-        // execute the dom ready javascripts as first javascripts
-        // after component replacement
-        Response webResponse = RequestCycle.get().getResponse();
-        Iterator<String> it = domReadyJavascripts.iterator();
-        while (it.hasNext()) {
-            String js = it.next();
-            respondInvocation(webResponse, js);
-        }
-        it = appendJavascripts.iterator();
-        while (it.hasNext()) {
-            String js = it.next();
-            respondInvocation(webResponse, js);
-        }
+    @Override
+    public void addListener(final IListener listener) {
+        upstream.addListener(listener);
     }
 
-    private void respondInvocation(final Response response, final String js) {
-        boolean encoded = false;
-        String javascript = js;
+    @Override
+    public void appendJavaScript(final CharSequence javascript) {
+        upstream.appendJavaScript(javascript);
+    }
 
-        // encode the response if needed
-        if (needsEncoding(js)) {
-            encoded = true;
-            javascript = encode(js);
-        }
+    @Override
+    public void prependJavaScript(final CharSequence javascript) {
+        upstream.prependJavaScript(javascript);
+    }
 
-        response.write("<evaluate");
-        if (encoded) {
-            response.write(" encoding=\"");
-            response.write(getEncodingName());
-            response.write("\"");
-        }
-        response.write(">");
-        response.write("<![CDATA[");
-        response.write(javascript);
-        response.write("]]>");
-        response.write("</evaluate>");
+    @Override
+    public void registerRespondListener(final ITargetRespondListener listener) {
+        upstream.registerRespondListener(listener);
+    }
+
+    @Override
+    public Collection<? extends Component> getComponents() {
+        return upstream.getComponents();
+    }
+
+    @Override
+    public void focusComponent(final Component component) {
+        upstream.focusComponent(component);
     }
 
     @Override
     public IHeaderResponse getHeaderResponse() {
-        return new HeaderResponse() {
-            private final StringResponse bufferedResponse = new StringResponse();
+        return upstream.getHeaderResponse();
+    }
 
-            @Override
-            public void close() {
-                super.close();
+    @Override
+    public String getLastFocusedElementId() {
+        return upstream.getLastFocusedElementId();
+    }
 
-                Response realResponse = RequestCycle.get().getResponse();
-                CharSequence output = bufferedResponse.getBuffer();
-                if (output.length() > 0) {
-                    realResponse.write(output);
-                }
-                bufferedResponse.reset();
-            }
+    @Override
+    public Page getPage() {
+        return upstream.getPage();
+    }
 
-            @Override
-            public void renderJavascript(final CharSequence javascript, final String id) {
-                if (javascript == null) {
-                    throw new IllegalArgumentException("javascript cannot be null");
-                }
-                List<Object> token = Arrays.asList(new Object[]{javascript.toString(), id});
-                if (wasRendered(token) == false) {
-                    JavascriptUtils.writeJavascript(RequestCycle.get().getResponse(), javascript, id);
-                    markRendered(token);
-                }
-            }
+    @Override
+    public Integer getPageId() {
+        return upstream.getPageId();
+    }
 
-            @Override
-            public void renderString(final CharSequence string) {
-                if (string == null) {
-                    throw new IllegalArgumentException("string cannot be null");
-                }
-                String token = string.toString();
-                if (wasRendered(token) == false)
-                {
-                    RequestCycle.get().getResponse().write(string);
-                    markRendered(token);
-                }
-            }
+    @Override
+    public boolean isPageInstanceCreated() {
+        return upstream.isPageInstanceCreated();
+    }
 
-            @Override
-            public void renderOnDomReadyJavascript(String javascript) {
-                List<String> token = Arrays.asList(new String[]{"javascript-event", "window", "domready", javascript});
-                if (wasRendered(token) == false) {
-                    domReadyJavascripts.add(javascript);
-                    markRendered(token);
-                }
-            }
+    @Override
+    public Integer getRenderCount() {
+        return upstream.getRenderCount();
+    }
 
-            @Override
-            public void renderOnLoadJavascript(String javascript) {
-                List<String> token = Arrays.asList(new String[]{"javascript-event", "window", "load", javascript});
-                if (wasRendered(token) == false) {
-                    // execute the javascript after all other scripts are executed
-                    appendJavascripts.add(javascript);
-                    markRendered(token);
-                }
-            }
+    @Override
+    public Class<? extends IRequestablePage> getPageClass() {
+        return upstream.getPageClass();
+    }
 
-            @Override
-            protected Response getRealResponse() {
-                return bufferedResponse;
-            }
-        };
+    @Override
+    public PageParameters getPageParameters() {
+        return upstream.getPageParameters();
+    }
+
+    @Override
+    public void respond(final IRequestCycle requestCycle) {
+        IRequestablePage page = upstream.getPage();
+        if ((page instanceof Home)) {
+            ((Home) page).render(this);
+        }
+        upstream.respond(requestCycle);
+    }
+
+    @Override
+    public void detach(final IRequestCycle requestCycle) {
+        upstream.detach(requestCycle);
+    }
+
+    @Override
+    public ILogData getLogData() {
+        return upstream.getLogData();
     }
 
     @Override

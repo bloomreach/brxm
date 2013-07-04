@@ -44,7 +44,7 @@ public class JcrNodeTypesProvider extends NodeModelWrapper<Void> implements IDat
         super(nodeModel);
     }
 
-    public Iterator<NodeType> iterator(int first, int count) {
+    public Iterator<NodeType> iterator(long first, long count) {
         List<NodeType> list = new ArrayList<NodeType>();
         Node node = nodeModel.getObject();
         if (node != null) {
@@ -62,8 +62,8 @@ public class JcrNodeTypesProvider extends NodeModelWrapper<Void> implements IDat
         return new JcrNodeTypeModel(object);
     }
 
-    public int size() {
-        int result = 0;
+    public long size() {
+        long result = 0;
         try {
             if (nodeModel.getObject() != null) {
                 NodeType[] nodeTypes = nodeModel.getObject().getMixinNodeTypes();

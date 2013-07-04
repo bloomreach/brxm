@@ -29,13 +29,12 @@ public class DragSettings extends DragDropSettings {
     private static final BooleanSetting RESIZE_FRAME = new BooleanSetting("resizeFrame", false);
     private static final StringSetting LABEL = new StringSetting("label", null);
 
-    private static final StringSetting IE_FALLBACK_CLASS = new StringSetting("ieFallbackClass", "ie-fallback-marker");
     private static final StringSetting WRAPPED_MODEL_CLASS = new StringSetting("wrappedModelClass",
             "YAHOO.hippo.DDModel", false);
     private static final StringSetting FIRST_ANCESTOR_TO_BLUR = new StringSetting("firstAncestorToBlur", "");
 
     private static final YuiType TYPE = new YuiType(DragDropSettings.TYPE, CENTER_FRAME, RESIZE_FRAME, LABEL,
-            IE_FALLBACK_CLASS, WRAPPED_MODEL_CLASS, FIRST_ANCESTOR_TO_BLUR);
+            WRAPPED_MODEL_CLASS, FIRST_ANCESTOR_TO_BLUR);
 
     public DragSettings(IPluginConfig config) {
         super(TYPE, config);
@@ -53,11 +52,6 @@ public class DragSettings extends DragDropSettings {
 
     public DragSettings setLabel(String label) {
         LABEL.set(label, this);
-        return this;
-    }
-
-    public DragSettings setIeFallbackClass(String className) {
-        IE_FALLBACK_CLASS.set(className, this);
         return this;
     }
 

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.widgets;
 
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
@@ -76,7 +76,7 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
         return cols;
     }
     
-    public void addBehaviourOnFormComponent(IBehavior behavior){
+    public void addBehaviourOnFormComponent(Behavior behavior){
         textArea.add(behavior);
     }
 

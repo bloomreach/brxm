@@ -15,14 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
+import java.nio.charset.Charset;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.protocol.http.WicketURLDecoder;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.encoding.UrlDecoder;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
 public class RichTextProcessor {
@@ -39,7 +41,7 @@ public class RichTextProcessor {
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
     private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
 
-    private static ResourceReference BROKEN_IMAGE = new ResourceReference(RichTextProcessor.class, "broken-image-32.png");
+    private static ResourceReference BROKEN_IMAGE = new PackageResourceReference(RichTextProcessor.class, "broken-image-32.png");
 
     /**
      * Decorate the targets of relative image links in a text.  Text and decorator may
@@ -150,7 +152,8 @@ public class RichTextProcessor {
             } else {
                 linkName = link;
             }
-            linkName = WicketURLDecoder.PATH_INSTANCE.decode(linkName);
+            final Charset charset = RequestCycle.get().getRequest().getCharset();
+            linkName = UrlDecoder.PATH_INSTANCE.decode(linkName, charset);
             links.add(linkName);
         }
         return links;

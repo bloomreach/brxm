@@ -20,14 +20,14 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class UnlockWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "unlock-16.png");
+                return new PackageResourceReference(getClass(), "unlock-16.png");
             }
 
             @Override
@@ -61,7 +61,7 @@ public class UnlockWorkflowPlugin extends RenderPlugin {
 
         if (model != null) {
             try {
-                Map<String, Serializable> hints = ((WorkflowDescriptor) model.getObject()).hints();
+                Map<String, Serializable> hints = model.getObject().hints();
                 if (hints.containsKey("unlock") && (hints.get("unlock") instanceof Boolean) && !(Boolean) hints.get(
                         "unlock")) {
                     unlockAction.setVisible(false);

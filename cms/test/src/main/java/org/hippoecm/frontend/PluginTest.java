@@ -22,13 +22,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.Component.IVisitor;
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.util.value.ValueMap;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.DummyPlugin;
@@ -52,9 +53,9 @@ public abstract class PluginTest extends RepositoryTestCase {
         }
 
         @Override
-        public String getConfigurationType() {
+        public RuntimeConfigurationType getConfigurationType() {
             // suppress development mode warning from test output
-            return Application.DEPLOYMENT;
+            return RuntimeConfigurationType.DEPLOYMENT;
         }
 
         @Override
@@ -73,7 +74,7 @@ public abstract class PluginTest extends RepositoryTestCase {
         }
 
         @Override
-        public PluginUserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
+        public PluginUserSession newSession(Request request, Response response) {
             PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
 
             try {
@@ -182,26 +183,26 @@ public abstract class PluginTest extends RepositoryTestCase {
     }
 
     protected void printComponents(final PrintStream out) {
-        home.visitChildren(new IVisitor<Component>() {
+        home.visitChildren(new IVisitor<Component, Void>() {
 
-            public Object component(Component component) {
+            @Override
+            public void component(Component component, IVisit<Void> visit) {
                 String name = component.getClass().getName();
                 name = name.substring(name.lastIndexOf('.') + 1);
                 out.println(component.getPageRelativePath() + ": " + name);
-                return IVisitor.CONTINUE_TRAVERSAL;
             }
 
         });
     }
     
     protected void refreshPage() {
-        WebRequestCycle requestCycle = tester.setupRequestAndResponse(true);
-        HippoTester.callOnBeginRequest(requestCycle);
-        AjaxRequestTarget target = new PluginRequestTarget(home);
-        requestCycle.setRequestTarget(target);
+        tester.runInAjax(home, new Runnable(){
 
-        // process the request target
-        tester.processRequestCycle(requestCycle);
+            @Override
+            public void run() {
+            }
+        });
+
     }
 
     /**

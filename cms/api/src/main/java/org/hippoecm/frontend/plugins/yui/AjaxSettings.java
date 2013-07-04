@@ -15,34 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
-import java.util.Map;
-
 public class AjaxSettings implements IAjaxSettings {
 
-    private String callbackUrl;
     private JsFunction callbackFunction;
-    private Map<String, ?> callbackParameters;
-
-    public void setCallbackUrl(String url) {
-        this.callbackUrl = url;
-    }
 
     public void setCallbackFunction(JsFunction function) {
         this.callbackFunction = function;
     }
 
-    public void setCallbackParameters(Map<String, Object> map) {
-        this.callbackParameters = map;
-    }
-
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
-
-    public Map<String, ?> getCallbackParameters() {
-        return callbackParameters;
-    }
-
     public JsFunction getCallbackFunction() {
         return callbackFunction;
-    }}
+    }
+}

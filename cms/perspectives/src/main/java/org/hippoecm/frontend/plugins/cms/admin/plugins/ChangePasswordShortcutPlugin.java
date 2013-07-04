@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
@@ -32,6 +31,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -325,10 +325,10 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             // empty the current password
             currentPassword = "";
             setFocus(currentWidget);
-            AjaxRequestTarget target = AjaxRequestTarget.get();
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.addComponent(currentWidget);
-                target.addComponent(label);
+                target.add(currentWidget);
+                target.add(label);
             }
         }
 

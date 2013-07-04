@@ -19,7 +19,7 @@ package org.hippoecm.frontend.plugins.standards.util;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Formats numeric byte values into human-readable strings.

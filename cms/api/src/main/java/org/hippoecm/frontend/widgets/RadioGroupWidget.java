@@ -28,7 +28,6 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.string.AppendingStringBuffer;
 
 public class RadioGroupWidget<T> extends Panel {
     private static final long serialVersionUID = 1L;
@@ -67,12 +66,13 @@ public class RadioGroupWidget<T> extends Panel {
                         onChange(target, group.getModelObject());
                     }
 
+                    /*
                     @Override
                     protected CharSequence getEventHandler() {
                         return generateCallbackScript(new AppendingStringBuffer("wicketAjaxPost('").append(
                                 getCallbackUrl()).append(
                                 "', wicketSerialize(document.getElementById('" + radio.getMarkupId() + "'))"));
-                    }
+                    }*/
                 });
                 item.add(radio);
 

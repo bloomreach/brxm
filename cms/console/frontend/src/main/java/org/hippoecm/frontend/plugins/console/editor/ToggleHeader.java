@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 
 /**
  * A clickable header that toggles the visbility of another element by calling the javascript function 'toggleBox'.
@@ -42,7 +42,7 @@ class ToggleHeader extends Panel {
         final Label textLabel = new Label("text", text);
         add(textLabel);
 
-        final Image toggleImage = new Image("toggle-icon", new ResourceReference(ToggleHeader.class, "group-expanded.png"));
+        final Image toggleImage = new Image("toggle-icon", new PackageResourceReference(ToggleHeader.class, "group-expanded.png"));
         toggleImage.setMarkupId("toggle-" + name);
         toggleImage.setOutputMarkupId(true);
         add(toggleImage);

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Marker class for translation lookup

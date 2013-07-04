@@ -34,7 +34,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -184,13 +184,15 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             });
         }
 
-        public Iterator<? extends HippoLocale> iterator(int first, int count) {
+        @Override
+        public Iterator<? extends HippoLocale> iterator(long first, long count) {
             if (availableLocales == null) {
                 load();
             }
-            return availableLocales.subList(first, first + count).iterator();
+            return availableLocales.subList((int) first, (int)(first + count)).iterator();
         }
 
+        @Override
         public IModel<HippoLocale> model(HippoLocale object) {
             final String id = object.getName();
             return new LoadableDetachableModel<HippoLocale>() {
@@ -204,7 +206,8 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             };
         }
 
-        public int size() {
+        @Override
+        public long size() {
             if (availableLocales == null) {
                 load();
             }

@@ -15,10 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import java.util.Map;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestParameters;
 
 public abstract class DropBehavior extends AbstractDragDropBehavior {
 
@@ -46,6 +45,6 @@ public abstract class DropBehavior extends AbstractDragDropBehavior {
         return "YAHOO.hippo.DDDropModel";
     }
 
-    public abstract void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target);
+    public abstract void onDrop(IModel model, IRequestParameters parameters, AjaxRequestTarget target);
 
 }

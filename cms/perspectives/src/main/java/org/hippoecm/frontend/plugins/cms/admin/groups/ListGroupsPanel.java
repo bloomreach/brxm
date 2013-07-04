@@ -91,9 +91,9 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
             }
         });
 
-        List<IColumn<Group>> columns = new ArrayList<IColumn<Group>>();
+        List<IColumn<Group, String>> columns = new ArrayList<IColumn<Group, String>>();
 
-        columns.add(new AbstractColumn<Group>(new ResourceModel("group-name"), "groupname") {
+        columns.add(new AbstractColumn<Group, String>(new ResourceModel("group-name"), "groupname") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId, final IModel<Group> model) {
@@ -103,7 +103,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
             }
         });
 
-        columns.add(new PropertyColumn<Group>(new ResourceModel("group-description"), "description"));
+        columns.add(new PropertyColumn<Group, String>(new ResourceModel("group-description"), "description"));
 
         columns.add(new GroupDeleteLinkColumn(new ResourceModel("group-view-actions-title")));
 
@@ -124,7 +124,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
-                target.addComponent(table);
+                target.add(table);
             }
         });
 
@@ -168,7 +168,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         return new ResourceModel("admin-groups-title");
     }
 
-    private class GroupDeleteLinkColumn extends AbstractColumn<Group> {
+    private class GroupDeleteLinkColumn extends AbstractColumn<Group, String> {
         private static final long serialVersionUID = 1L;
 
         private GroupDeleteLinkColumn(final IModel<String> displayModel) {

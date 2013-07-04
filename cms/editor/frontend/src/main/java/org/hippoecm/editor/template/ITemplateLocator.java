@@ -17,7 +17,7 @@ package org.hippoecm.editor.template;
 
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 

@@ -25,7 +25,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -94,7 +94,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                         }
                         if (isTypeInCategory(descriptor)) {
                             TypeTranslator translator = new TypeTranslator(new JcrNodeTypeModel(descriptor.getName()));
-                            String name = (String) translator.getTypeName().getObject();
+                            String name = translator.getTypeName().getObject();
                             types.put(name, descriptor);
                         }
                     } catch (TemplateEngineException ex) {
@@ -107,24 +107,28 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
         abstract boolean isTypeInCategory(ITypeDescriptor descriptor);
 
-        public Iterator<ITypeDescriptor> iterator(int first, int count) {
+        @Override
+        public Iterator<ITypeDescriptor> iterator(long first, long count) {
             load();
-            int toIndex = first + count;
+            long toIndex = first + count;
             if (toIndex > list.size()) {
                 toIndex = list.size();
             }
-            return list.subList(first, toIndex).listIterator();
+            return list.subList((int) first, (int) toIndex).listIterator();
         }
 
+        @Override
         public IModel<ITypeDescriptor> model(ITypeDescriptor object) {
             return new Model<ITypeDescriptor>(object);
         }
 
-        public int size() {
+        @Override
+        public long size() {
             load();
             return list.size();
         }
 
+        @Override
         public void detach() {
             list = null;
         }
@@ -146,7 +150,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
             super.populateItem(item);
 
             final String name = item.getModelObject().getName();
-            item.add(new AbstractBehavior() {
+            item.add(new Behavior() {
                 private static final long serialVersionUID = 1L;
 
                 @Override

@@ -25,7 +25,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -76,7 +75,7 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
     }
 
     @Override
-    public Iterator<Node> iterator(int first, int count) {
+    public Iterator<Node> iterator(long first, long count) {
         QueryResult result = (QueryResult) getObject();
         if (result != null) {
             try {
@@ -115,7 +114,7 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
     }
 
     @Override
-    public int size() {
+    public long size() {
         QueryResult result = (QueryResult) getObject();
         if (result != null) {
             try {

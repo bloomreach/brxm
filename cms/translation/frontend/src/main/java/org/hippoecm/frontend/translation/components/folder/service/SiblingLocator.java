@@ -20,17 +20,17 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.translation.components.folder.model.T9Node;
 import org.hippoecm.frontend.translation.components.folder.model.T9Tree;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wicketstuff.js.ext.ExtObservable;
-import org.wicketstuff.js.ext.data.AbstractExtBehavior;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtJsonRequestTarget;
 import org.wicketstuff.js.ext.util.ExtPropertyConverter;
@@ -47,17 +47,17 @@ public final class SiblingLocator extends ExtObservable {
 
     public SiblingLocator(IModel<T9Tree> data) {
         this.data = data;
-        this.behavior = new AbstractExtBehavior() {
+        this.behavior = new AbstractAjaxBehavior() {
             private static final long serialVersionUID = 1L;
             
             @Override
             public void onRequest() {
                 final RequestCycle requestCycle = RequestCycle.get();
-                String t9Id = requestCycle.getRequest().getParameter(T9ID_ID);
-                if (t9Id != null) {
+                StringValue t9Id = requestCycle.getRequest().getRequestParameters().getParameterValue(T9ID_ID);
+                if (!t9Id.isNull()) {
                     try {
-                        JSONObject siblingsAsJson = getSiblingsAsJSON(t9Id);
-                        requestCycle.setRequestTarget(new ExtJsonRequestTarget(siblingsAsJson));
+                        JSONObject siblingsAsJson = getSiblingsAsJSON(t9Id.toString());
+                        requestCycle.scheduleRequestHandlerAfterCurrent(new ExtJsonRequestTarget(siblingsAsJson));
                     } catch (JSONException e) {
                         throw new WicketRuntimeException("Could not build map of siblings");
                     }

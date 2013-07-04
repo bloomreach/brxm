@@ -33,7 +33,7 @@ public class UnpublishedReferencesDialog extends AbstractWorkflowDialog {
 
     static final Logger log = LoggerFactory.getLogger(UnpublishedReferencesDialog.class);
 
-    public UnpublishedReferencesDialog(IWorkflowInvoker invoker, ISortableDataProvider<Node> provider, IEditorManager mgr) {
+    public UnpublishedReferencesDialog(IWorkflowInvoker invoker, ISortableDataProvider<Node, String> provider, IEditorManager mgr) {
         super(null, invoker);
 
         setOutputMarkupId(true);

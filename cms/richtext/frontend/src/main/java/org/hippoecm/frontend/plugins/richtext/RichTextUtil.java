@@ -16,17 +16,15 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.RequestContext;
-import org.apache.wicket.protocol.http.WicketURLDecoder;
-import org.apache.wicket.protocol.http.WicketURLEncoder;
-import org.apache.wicket.protocol.http.portlet.PortletRequestContext;
+import org.apache.wicket.util.encoding.UrlDecoder;
+import org.apache.wicket.util.encoding.UrlEncoder;
 
 public class RichTextUtil {
 
     public static final String encode(String path) {
         String[] elements = StringUtils.split(path, '/');
         for (int i = 0; i < elements.length; i++) {
-            elements[i] = WicketURLEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
+            elements[i] = UrlEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
         }
         return StringUtils.join(elements, '/');
     }
@@ -34,25 +32,9 @@ public class RichTextUtil {
     public static final String decode(String path) {
         String[] elements = StringUtils.split(path, '/');
         for (int i = 0; i < elements.length; i++) {
-            elements[i] = WicketURLDecoder.PATH_INSTANCE.decode(elements[i], "UTF-8");
+            elements[i] = UrlDecoder.PATH_INSTANCE.decode(elements[i], "UTF-8");
         }
         return StringUtils.join(elements, '/');
-    }
-
-    public static final String encodeResourceURL(String url) {
-        // if it is in portlet environment, just wrap the url in portlet resource url.
-        RequestContext requestContext = RequestContext.get();
-        if (requestContext.isPortletRequest()) {
-            url = ((PortletRequestContext) requestContext).encodeResourceURL(url).toString();
-            // use relative url (FIXME: why?)
-            if (url.startsWith("http:") || url.startsWith("https:")) {
-                int offset = url.indexOf('/', 8);
-                if (offset != -1) {
-                    url = url.substring(offset);
-                }
-            }
-        }
-        return url;
     }
 
 }

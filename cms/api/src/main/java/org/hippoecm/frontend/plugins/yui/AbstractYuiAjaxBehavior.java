@@ -15,19 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
-
-import java.util.Map;
 
 /**
  * Base class for {@link AbstractDefaultAjaxBehavior}s that want to use YUI modules. It uses a {@link IYuiContext} to
  * register all required components. The {@link IYuiContext} is created by a (global) {@link IYuiManager} which, in this
- * case, lives inside the {@link Page} (as an {@link IBehavior}) that is retrieved by <code>component.getPage()</code>
+ * case, lives inside the {@link Page} (as an {@link Behavior}) that is retrieved by <code>component.getPage()</code>
  * 
  * <p>
  * To allow clientside javascript components to do callbacks in a more flexible way than, for example, just sticking 
@@ -60,9 +60,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
 
     protected void updateAjaxSettings() {
         if (settings != null) {
-            settings.setCallbackUrl(getCallbackUrl().toString());
-            settings.setCallbackFunction(new JsFunction(getCallbackFunction()));
-            settings.setCallbackParameters(getCallbackParameters());
+            settings.setCallbackFunction(new JsFunction(getCallback()));
         }
     }
 
@@ -72,20 +70,19 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
      *
      * @return A javascript function that takes a callback URL as parameter and executes wicketAjax-GET
      */
-    protected String getCallbackFunction() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("function (myCallbackUrl) { ");
-        buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
-        return buf.toString();
+    private String getCallback() {
+        CharSequence ajaxAttributes = renderAjaxAttributes(getComponent().getPage());
+        return "function(params) {\n" +
+                "  var call = new Wicket.Ajax.Call(),\n" +
+                "      attributes = jQuery.extend({}, " + ajaxAttributes + ");\n" +
+                "  return call.ajax(attributes);\n" +
+                "}";
     }
 
-    /**
-     * Provide custom callbackParameters
-     * 
-     * @return JavascriptObjectMap containing key/value pairs that should be used as callbackParameters
-     */
-    protected Map<String, Object> getCallbackParameters() {
-        return null;
+    @Override
+    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+        super.updateAjaxAttributes(attributes);
+        attributes.getDynamicExtraParameters().add("return params;");
     }
 
     /**
@@ -102,10 +99,10 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
      * TODO: webapp ajax is configurable, maybe check here and still load it.
      */
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public void renderHead(Component component, IHeaderResponse response) {
         if (context == null) {
-            Page page = getComponent().getPage();
-            for (IBehavior behavior : page.getBehaviors()) {
+            Page page = component.getPage();
+            for (Behavior behavior : page.getBehaviors()) {
                 if (behavior instanceof IYuiManager) {
                     context = ((IYuiManager) behavior).newContext();
                     addHeaderContribution(context);

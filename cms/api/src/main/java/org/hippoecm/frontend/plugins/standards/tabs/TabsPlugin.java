@@ -21,13 +21,12 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -36,6 +35,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -166,7 +168,14 @@ public class TabsPlugin extends RenderPlugin {
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
 
-        add(JavascriptPackageResource.getHeaderContribution(TabsPlugin.class, "TabsPlugin.js"));
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+
+        JavaScriptResourceReference tabsPluginJs = new JavaScriptResourceReference(TabsPlugin.class, "TabsPlugin.js");
+        response.render(JavaScriptReferenceHeaderItem.forReference(tabsPluginJs));
     }
 
     @Override
@@ -225,7 +234,7 @@ public class TabsPlugin extends RenderPlugin {
         final String tabId = tab.getDecoratorId();
         if (tabId != null) {
             final String fireEventJavascript = String.format("window.Hippo.fireTabSelectionEvent('%s');", tabId);
-            target.appendJavascript(fireEventJavascript);
+            target.appendJavaScript(fireEventJavascript);
         }
     }
 
@@ -691,7 +700,7 @@ public class TabsPlugin extends RenderPlugin {
                         closeDialog();
                     } catch (Exception ex) {
                         exceptionLabel.setDefaultModel(new Model<String>(ex.getMessage()));
-                        target.addComponent(exceptionLabel);
+                        target.add(exceptionLabel);
                     }
                 }
             };
@@ -719,7 +728,7 @@ public class TabsPlugin extends RenderPlugin {
                         closeDialog();
                     } catch (Exception ex) {
                         exceptionLabel.setDefaultModel(new Model<String>(ex.getMessage()));
-                        target.addComponent(exceptionLabel);
+                        target.add(exceptionLabel);
                     }
                 }
             };

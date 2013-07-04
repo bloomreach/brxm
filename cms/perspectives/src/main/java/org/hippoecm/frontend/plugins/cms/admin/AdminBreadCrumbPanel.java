@@ -19,6 +19,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 /**
@@ -55,9 +56,9 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
     }
 
     protected void redraw() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.addComponent(this);
+            target.add(this);
         }
     }
 

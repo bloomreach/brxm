@@ -18,7 +18,7 @@ package org.hippoecm.frontend.dialog;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.extensions.wizard.IWizardModel;
@@ -47,7 +47,7 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
 
             @Override
             protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(DialogConstants.AJAX_LOADER_GIF);
+                return RequestCycle.get().urlFor(DialogConstants.AJAX_LOADER_GIF, null);
             }
         });
     }
@@ -106,9 +106,9 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
     @Override
     public void onActiveStepChanged(final IWizardStep newStep) {
         super.onActiveStepChanged(newStep);
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.addComponent(this);
+            target.add(this);
         }
     }
 
@@ -157,7 +157,7 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
 
     public void render(PluginRequestTarget target) {
         if (target != null) {
-            target.addComponent(getForm().get(FEEDBACK_ID));
+            target.add(getForm().get(FEEDBACK_ID));
             if (focusComponent != null) {
                 target.focusComponent(focusComponent);
                 focusComponent = null;

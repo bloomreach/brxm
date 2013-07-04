@@ -16,13 +16,14 @@
 
 package org.hippoecm.frontend.plugins.xinha.dragdrop;
 
-import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestParameters;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -61,7 +62,7 @@ public abstract class XinhaDropBehavior extends DropBehavior {
     }
 
     @Override
-    public void onDrop(IModel model, Map<String, String[]> parameters, AjaxRequestTarget target) {
+    public void onDrop(IModel model, IRequestParameters parameters, AjaxRequestTarget target) {
         if (model instanceof JcrNodeModel) {
             JcrNodeModel nodeModel = (JcrNodeModel) model;
 
@@ -75,9 +76,9 @@ public abstract class XinhaDropBehavior extends DropBehavior {
                 nodeModel = nodeModel.getParentModel();
             }
 
-            String activeElement = parameters.containsKey("activeElement") ? parameters.get("activeElement")[0] : "";
-            boolean emptySelection = parameters.containsKey("emptySelection") ? Boolean.parseBoolean(parameters
-                    .get("emptySelection")[0]) : true;
+            final Set<String> parameterNames = parameters.getParameterNames();
+            String activeElement = parameterNames.contains("activeElement") ? parameters.getParameterValue("activeElement").toString() : "";
+            boolean emptySelection = parameterNames.contains("emptySelection") ? Boolean.parseBoolean(parameters.getParameterValue("emptySelection").toString()) : true;
 
             switch (type) {
             case Image:

@@ -28,7 +28,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.repository.api.HippoNode;

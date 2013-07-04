@@ -15,10 +15,12 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,6 +37,7 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TextTemplatePlugin.class);
+    private static final CssResourceReference DIFF_CSS = new CssResourceReference(HtmlDiffModel.class, "diff.css");
 
     public TextTemplatePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -48,7 +51,6 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             }
             add(widget);
         } else if (IEditor.Mode.COMPARE == mode) {
-            add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));
 
             final IModel<String> baseModel = context.getService(config.getString("model.compareTo"),
                     IModelReference.class).getModel();
@@ -58,6 +60,15 @@ public class TextTemplatePlugin extends RenderPlugin<String> {
             add(new Label("value", compareModel).setEscapeModelStrings(false));
         } else {
             add(new Label("value", new NewLinesToBrModel(valueModel)).setEscapeModelStrings(false));
+        }
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode", "view"));
+        if (IEditor.Mode.COMPARE == mode) {
+            response.render(CssHeaderItem.forReference(DIFF_CSS));
         }
     }
 

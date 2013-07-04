@@ -17,7 +17,7 @@ package org.hippoecm.frontend.validation;
 
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IValidationListener extends IClusterable {
 

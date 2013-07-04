@@ -70,10 +70,12 @@ public class SystemPropertiesDataProvider extends SortableDataProvider {
 //        }
     }
 
-    public Iterator<Entry<String, String>> iterator(int first, int count) {
-        return list.subList(first, first + count).iterator();
+    @Override
+    public Iterator<Entry<String, String>> iterator(long first, long count) {
+        return list.subList((int) first, (int) (first + count)).iterator();
     }
 
+    @Override
     public IModel model(final Object object) {
         return new AbstractReadOnlyModel() {
         private static final long serialVersionUID = 1L;
@@ -82,7 +84,8 @@ public class SystemPropertiesDataProvider extends SortableDataProvider {
         }};
     }
 
-    public int size() {
+    @Override
+    public long size() {
         return list.size();
     }
 }

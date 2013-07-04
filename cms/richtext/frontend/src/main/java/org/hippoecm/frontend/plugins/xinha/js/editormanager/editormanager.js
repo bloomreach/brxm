@@ -81,10 +81,10 @@ if (!YAHOO.hippo.EditorManager) {
                 }, this);
 
                 //Save open editors when a WicketAjax callback is executed
-                var preCall = function() {
+                var preCall = jQuery.proxy(function() {
                     this.saveEditors();
-                }.bind(this);
-                Wicket.Ajax.registerPreCallHandler(preCall);
+                }, this);
+                Wicket.Event.subscribe('/ajax/call/before', preCall);
             },
 
             /**
@@ -690,7 +690,7 @@ if (!YAHOO.hippo.EditorManager) {
                 window.xinha_editors[this.name] = xinha;
 
                 _name = this.name;
-                this.xinha._onGenerate = function() {
+                this.xinha._onGenerate = jQuery.proxy(function() {
                     this.onEditorLoaded();
                     this.context.editorLoaded(_name);
 
@@ -701,7 +701,7 @@ if (!YAHOO.hippo.EditorManager) {
                         }), 1);
                     }
 
-                }.bind(this);
+                }, this);
 
                 Dom.setStyle(this.name, 'visibility', 'hidden');
                 Xinha.startEditors([this.xinha]);
@@ -916,12 +916,12 @@ if (!YAHOO.hippo.EditorManager) {
                     try {
                         var data = this.xinha.getInnerHTML(), success, failure;
                         if (data !== this.lastData) {
-                            success = function() {
+                            success = jQuery.proxy(function() {
                                     this.lastData = data;
-                                }.bind(this);
-                            failure = function() {
+                            }, this);
+                            failure = jQuery.proxy(function() {
                                 error('failed to save');
-                            }.bind(this);
+                            }, this);
 
                             this.xinha.plugins.AutoSave.instance.save(throttled, success, failure);
                         }

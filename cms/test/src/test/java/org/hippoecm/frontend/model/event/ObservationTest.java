@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.page.IPageManager;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -40,7 +42,6 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -411,31 +412,44 @@ public class ObservationTest extends PluginTest {
 
     // disabling unit test;
     // running with JDK-1.6.0_16 on linux-2.6.31 x86 seems fine. 
-    @Ignore
+//    @Ignore  // re-enabled to test whether still fine after wicket-6 upgrade
     @Test
     /**
      * test whether event listeners are garbage collected.
      */
     public void testListenerEviction() throws Exception {
+        IPageManager pageManager = Session.get().getPageManager();
+
         Node root = session.getRootNode();
         List<IEvent> events = new LinkedList<IEvent>();
         context.registerService(new TestObserver(new JcrNodeModel(root), events), IObserver.class.getName());
 
-        // remove all references
-        Session.get().getDefaultPageMap().remove(home);
         // need to do this twice, test application maintains a reference to the previously rendered page
         home = tester.startPluginPage();
         home = tester.startPluginPage();
         context = new PluginContext(((PluginPage) home).getPluginManager(), new JavaPluginConfig("test"));
-        System.gc();
+
+        // remove from page manager
+        pageManager.sessionExpired(Session.get().getId());
+
+        gc();
 
         root.addNode("test", "nt:unstructured");
-        session.save();
+        this.session.save();
 
         Thread.sleep(1000);
         home.processEvents();
 
         assertEquals(0, events.size());
+    }
+
+    public static void gc() {
+        Object obj = new Object();
+        WeakReference ref = new WeakReference<Object>(obj);
+        obj = null;
+        while(ref.get() != null) {
+            System.gc();
+        }
     }
 
     private static class SerializationTestContext implements Serializable {

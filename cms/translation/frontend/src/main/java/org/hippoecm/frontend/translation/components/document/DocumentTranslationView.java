@@ -17,12 +17,16 @@ package org.hippoecm.frontend.translation.components.document;
 
 import java.util.List;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.LocaleImageService;
@@ -43,6 +47,11 @@ public class DocumentTranslationView extends ExtPanel {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(DocumentTranslationView.class);
+    private static final PackageResourceReference EMPTY_PNG = new PackageResourceReference(DocumentTranslationView.class, "empty.png");
+    private static final PackageResourceReference FOLDER_PNG = new PackageResourceReference(DocumentTranslationView.class, "folder.png");
+    private static final PackageResourceReference DOCUMENT_PNG = new PackageResourceReference(DocumentTranslationView.class, "doc.png");
+    private static final JavaScriptResourceReference TRANSLATE_DOCUMENT_JS = new JavaScriptResourceReference(DocumentTranslationView.class, "translate-document.js");
+    private static final CssResourceReference TRANSLATE_DOCUMENT_SKIN = new CssResourceReference(DocumentTranslationView.class, "style.css");
 
     private ExtJsonStore<FolderTranslation> store;
     private AbstractAjaxBehavior codecBehavior;
@@ -68,12 +77,19 @@ public class DocumentTranslationView extends ExtPanel {
         imageService = new LocaleImageService(provider);
         add(imageService);
 
-        add(TranslationResources.getTranslationsHeaderContributor());
-        add(JavascriptPackageResource.getHeaderContribution(DocumentTranslationView.class, "translate-document.js"));
         codecBehavior = new NodeNameCodecBehavior(codec);
         add(codecBehavior);
+
         add(new ExtHippoThemeBehavior());
-        add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        TranslationResources.getTranslationsHeaderContributor().renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(TRANSLATE_DOCUMENT_JS));
+        response.render(CssHeaderItem.forReference(TRANSLATE_DOCUMENT_SKIN));
     }
 
     @Override
@@ -90,11 +106,11 @@ public class DocumentTranslationView extends ExtPanel {
         RequestCycle rc = RequestCycle.get();
         properties.put("store", new JSONIdentifier(store.getJsObjectId()));
         properties.put("codecUrl", codecBehavior.getCallbackUrl());
-        properties.put("imageService", imageService.getCallbackUrl(false));
+        properties.put("imageService", imageService.getCallbackUrl());
 
-        properties.put("emptyImg", rc.urlFor(new ResourceReference(getClass(), "empty.png")));
-        properties.put("folderImg", rc.urlFor(new ResourceReference(getClass(), "folder.png")));
-        properties.put("documentImg", rc.urlFor(new ResourceReference(getClass(), "doc.png")));
+        properties.put("emptyImg", rc.urlFor(new ResourceReferenceRequestHandler(EMPTY_PNG)));
+        properties.put("folderImg", rc.urlFor(new ResourceReferenceRequestHandler(FOLDER_PNG)));
+        properties.put("documentImg", rc.urlFor(new ResourceReferenceRequestHandler(DOCUMENT_PNG)));
     }
 
 }

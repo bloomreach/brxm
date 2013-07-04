@@ -74,31 +74,32 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
         this.history = history;
 
         final SortState state = new SortState();
-        this.provider = new ISortableDataProvider() {
+        this.provider = new ISortableDataProvider<Revision, String>() {
             private static final long serialVersionUID = 1L;
 
-            public void setSortState(ISortState arg0) {
-                throw new UnsupportedOperationException();
-            }
-
+            @Override
             public ISortState getSortState() {
                 return state;
             }
 
+            @Override
             public void detach() {
                 // TODO Auto-generated method stub
             }
 
-            public int size() {
+            @Override
+            public long size() {
                 return getRevisions().size();
             }
 
-            public IModel model(Object object) {
-                return new Model((Revision) object);
+            @Override
+            public IModel<Revision> model(Revision revision) {
+                return Model.of(revision);
             }
 
-            public Iterator<Revision> iterator(int first, int count) {
-                return getRevisions().subList(first, first + count).iterator();
+            @Override
+            public Iterator<Revision> iterator(long first, long count) {
+                return getRevisions().subList((int) first, (int) (first + count)).iterator();
             }
         };
 

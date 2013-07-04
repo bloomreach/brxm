@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -24,21 +24,23 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrHelper;
@@ -77,6 +79,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     private static final String IMAGE_FOLDER_TYPE = "hippogallery:stdImageGallery";
     private static final int DEFAULT_THUMBNAIL_SIZE = 60;
     private static final int DEFAULT_THUMBNAIL_OFFSET = 40;
+    public static final ResourceReference CSS_RESOURCE_REFERENCE = new CssResourceReference(ImageGalleryPlugin.class, IMAGE_GALLERY_CSS);
 
     enum Mode {
         LIST, THUMBNAILS
@@ -146,15 +149,14 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     }
 
     @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        super.renderHead(container);
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
 
-        ResourceReference cssResourceReference = new ResourceReference(ImageGalleryPlugin.class, IMAGE_GALLERY_CSS);
-        container.getHeaderResponse().renderCSSReference(cssResourceReference);
+        response.render(CssHeaderItem.forReference(CSS_RESOURCE_REFERENCE));
     }
 
     @Override
-    protected ISortableDataProvider<Node> newDataProvider() {
+    protected ISortableDataProvider<Node, String> newDataProvider() {
         return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
     }
@@ -324,9 +326,9 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
             setSelectedModel(listItem.getModel());
 
             if (previousSelected != null) {
-                target.addComponent(previousSelected);
+                target.add(previousSelected);
             }
-            target.addComponent(listItem);
+            target.add(listItem);
             target.focusComponent(listItem);
 
             previousSelected = listItem;

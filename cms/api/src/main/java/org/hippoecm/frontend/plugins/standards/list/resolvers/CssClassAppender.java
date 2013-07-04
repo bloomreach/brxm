@@ -21,6 +21,7 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
@@ -70,9 +71,9 @@ public class CssClassAppender extends AttributeModifier implements IObservable {
                 }
 
                 public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.addComponent(component);
+                        target.add(component);
                     }
                 }
                 

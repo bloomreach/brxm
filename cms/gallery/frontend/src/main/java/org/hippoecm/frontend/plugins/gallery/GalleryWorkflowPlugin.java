@@ -24,7 +24,6 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -34,6 +33,8 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -131,7 +132,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                         .getDefaultModel();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager
-                        .getWorkflow((WorkflowDescriptor) workflowDescriptorModel.getObject());
+                        .getWorkflow(workflowDescriptorModel.getObject());
                 String nodeName = getNodeNameCodec().encode(filename);
                 String localName = getLocalizeCodec().encode(filename);
                 Document document = workflow.createGalleryItem(nodeName, type);
@@ -211,7 +212,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "image-add-16.png");
+                return new PackageResourceReference(getClass(), "image-add-16.png");
             }
 
             @Override

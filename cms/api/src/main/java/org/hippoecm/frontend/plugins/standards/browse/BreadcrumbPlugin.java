@@ -15,6 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -28,6 +37,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -41,14 +51,6 @@ import org.hippoecm.frontend.util.MaxLengthStringFormatter;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
 public class BreadcrumbPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
@@ -161,7 +163,7 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
         } else {
             up.setEnabled(true);
         }
-        AjaxRequestTarget.get().addComponent(this);
+        RequestCycle.get().find(AjaxRequestTarget.class).add(this);
     }
 
     private ListView<NodeItem> getListView(JcrNodeModel model) {

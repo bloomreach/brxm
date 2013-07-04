@@ -21,16 +21,21 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
 
     private static final long serialVersionUID = 1L;
+    private static final JavaScriptResourceReference CONTEXTMENU_JS = new JavaScriptResourceReference(ContextMenuBehavior.class, "contextmenu.js");
 
     private boolean shown = false;
 
@@ -43,20 +48,21 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public void renderHead(Component component, IHeaderResponse response) {
         String markupId = getMarkupId();
 
-        response.renderJavascriptReference(new ResourceReference(ContextMenuBehavior.class, "contextmenu.js"));
-        response.renderOnLoadJavascript(((getComponent() instanceof Page) ? "document.body" : "Wicket.$('" + markupId + "')")
-                + ".onclick = function() { " + getCallbackScript() + " };");
-        response.renderOnDomReadyJavascript("Hippo.ContextMenu.init();");
+        response.render(JavaScriptHeaderItem.forReference(CONTEXTMENU_JS));
+        final String loadScript = ((getComponent() instanceof Page) ? "document.body" : "Wicket.$('" + markupId + "')")
+                + ".onclick = function() { " + getCallbackScript() + " };";
+        response.render(OnDomReadyHeaderItem.forScript(loadScript));
+        response.render(OnDomReadyHeaderItem.forScript("Hippo.ContextMenu.init();"));
     }
 
     /**
      * Activate (show) the context menu.  Other open menus will be closed. 
      */
     public void activate(IContextMenu active) {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         for (IContextMenu menu : getMenus(false)) {
             if (menu != active) {
                 menu.collapse(target);
@@ -69,7 +75,7 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
      * Close all open context menu's.
      */
     public void collapseAll() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         for (IContextMenu menu : getMenus(false)) {
             menu.collapse(target);
         }
@@ -102,41 +108,40 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private void show(AjaxRequestTarget target) {
-        target.appendJavascript("Hippo.ContextMenu.show('" + getMarkupId() + "');");
+        target.appendJavaScript("Hippo.ContextMenu.show('" + getMarkupId() + "');");
         shown = true;
     }
 
     private void hide(AjaxRequestTarget target) {
-        target.appendJavascript("Hippo.ContextMenu.hide('" + getMarkupId() + "');");
+        target.appendJavaScript("Hippo.ContextMenu.hide('" + getMarkupId() + "');");
         shown = false;
     }
 
     private List<IContextMenu> getMenus(final boolean visibleOnly) {
         final List<IContextMenu> menus = new LinkedList<IContextMenu>();
-        ((MarkupContainer) getComponent()).visitChildren(new IVisitor() {
+        ((MarkupContainer) getComponent()).visitChildren(new IVisitor<Component, Void>() {
 
             @SuppressWarnings("unchecked")
-            public Object component(Component component) {
+            public void component(Component component, IVisit<Void> visit) {
                 if (component instanceof IContextMenu) {
                     if (!visibleOnly || component.isVisible()) {
                         menus.add((IContextMenu) component);
                     }
-                    return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                    visit.dontGoDeeper();
                 } else if (component instanceof IContextMenuManager) {
-                    return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                    visit.dontGoDeeper();
                 } else {
-                    for (IBehavior behavior : (List<IBehavior>) component.getBehaviors()) {
+                    for (Behavior behavior : (List<Behavior>) component.getBehaviors()) {
                         if (behavior instanceof IContextMenu) {
                             if (!visibleOnly || component.isVisible()) {
                                 menus.add((IContextMenu) behavior);
                             }
-                            return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                            visit.dontGoDeeper();
                         } else if (behavior instanceof IContextMenuManager) {
-                            return CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                            visit.dontGoDeeper();
                         }
                     }
                 }
-                return CONTINUE_TRAVERSAL;
             }
 
         });

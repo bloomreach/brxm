@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.service.social;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * Provides access to a social medium.

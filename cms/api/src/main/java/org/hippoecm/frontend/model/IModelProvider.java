@@ -17,7 +17,7 @@ package org.hippoecm.frontend.model;
 
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IModelProvider<T extends IModel> extends IClusterable {

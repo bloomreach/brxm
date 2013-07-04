@@ -119,7 +119,7 @@ class PropertyValueEditor extends DataView {
                         }
                         NodeEditor editor = findParent(NodeEditor.class);
                         if (editor != null) {
-                            target.addComponent(editor);
+                            target.add(editor);
                         }
                     }
                 });

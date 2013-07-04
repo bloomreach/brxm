@@ -18,8 +18,11 @@ package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 
 public interface IPanelPluginParticipant extends IBreadCrumbParticipant {
 
     IModel<String> getTitle(Component component);
+
+    void render(PluginRequestTarget target);
 }

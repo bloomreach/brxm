@@ -16,28 +16,26 @@
 
 package org.hippoecm.frontend.plugins.yui.header.templates;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.IDetachable;
+import java.io.Serializable;
+import java.util.Map;
+
 import org.apache.wicket.util.collections.MiniMap;
-import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.util.template.TextTemplate;
 import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 
-import java.io.Serializable;
-import java.util.Map;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
-public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
+public class DynamicTextTemplate implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    private TextTemplateHeaderContributor headerContributor;
+    private PackageTextTemplate template;
     private Map<String, Object> variables;
 
     private Serializable configuration;
@@ -45,31 +43,16 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
     private String moduleClass;
 
     public DynamicTextTemplate(Class<?> clazz, String filename) {
-        this(new PackagedTextTemplate(clazz, filename));
+        this(new PackageTextTemplate(clazz, filename));
     }
-    
-    public DynamicTextTemplate(PackagedTextTemplate template) {
-        headerContributor = TextTemplateHeaderContributor.forJavaScript(template, new AbstractReadOnlyModel<Map<String, Object>>() {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            public Map<String, Object> getObject() {
-                return DynamicTextTemplate.this.getVariables();
-            }
-        });
+    public DynamicTextTemplate(PackageTextTemplate template) {
+        this(template, null);
     }
-    
-    public DynamicTextTemplate(PackagedTextTemplate template, Serializable settings) {
-        this(template);
+
+    public DynamicTextTemplate(PackageTextTemplate template, Serializable settings) {
+        this.template = template;
         this.configuration = settings;
-    }
-
-    public void renderHead(IHeaderResponse response) {
-        headerContributor.renderHead(response);
-    }
-
-    public void detach() {
-        headerContributor.detach(null);
     }
 
     protected Map<String, Object> getVariables() {
@@ -86,6 +69,11 @@ public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
             variables.put("class", getModuleClass());
         }
         return variables;
+    }
+
+    public CharSequence getString() {
+        final TextTemplate textTemplate = template.interpolate(getVariables());
+        return textTemplate.getString();
     }
 
     public final String getConfigurationAsJSON() {

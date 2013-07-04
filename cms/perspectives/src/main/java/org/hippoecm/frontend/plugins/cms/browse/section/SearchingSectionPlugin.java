@@ -20,12 +20,12 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -37,6 +37,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
@@ -63,6 +65,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(SearchingSectionPlugin.class);
+    private static final CssResourceReference SEARCH_SKIN = new CssResourceReference(SearchingSectionPlugin.class, "search.css");
 
     private final class SubmittingTextField extends TextField<String> implements IFormSubmittingComponent {
         private static final long serialVersionUID = 1L;
@@ -74,24 +77,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator() {
-                    return new IAjaxCallDecorator() {
-
-                        public CharSequence decorateScript(CharSequence script) {
-                            return script;
-                        }
-
-                        public CharSequence decorateOnSuccessScript(CharSequence script) {
-                            return script;
-                        }
-
-                        public CharSequence decorateOnFailureScript(CharSequence script) {
-                            return script;
-                        }
-                    };
-                }
-                
-                @Override
                 protected void onSubmit(AjaxRequestTarget target) {
                     updateSearch(true);
                 }
@@ -102,11 +87,26 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             });
         }
 
+        @Override
+        public Component setDefaultFormProcessing(final boolean defaultFormProcessing) {
+            return this;
+        }
+
+        @Override
         public boolean getDefaultFormProcessing() {
             return true;
         }
 
+        @Override
         public void onSubmit() {
+        }
+
+        @Override
+        public void onAfterSubmit() {
+        }
+
+        @Override
+        public void onError() {
         }
     }
 
@@ -167,8 +167,6 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         });
-
-        add(CSSPackageResource.getHeaderContribution(SearchingSectionPlugin.class, "search.css"));
 
         container = new Form("container") {
             private static final long serialVersionUID = 1L;
@@ -318,10 +316,17 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     public void render(PluginRequestTarget target) {
         if (target != null) {
             if (redrawSearch) {
-                target.addComponent(container);
+                target.add(container);
             }
         }
         super.render(target);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(SEARCH_SKIN));
     }
 
     public void onFolderChange(IModel<Node> model) {

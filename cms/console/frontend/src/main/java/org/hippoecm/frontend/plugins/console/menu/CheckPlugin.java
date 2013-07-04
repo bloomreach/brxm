@@ -24,20 +24,18 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CheckPlugin extends RenderPlugin {
 
@@ -57,13 +55,13 @@ public class CheckPlugin extends RenderPlugin {
                 String result = CheckPlugin.this.check();
                 message.setDefaultModel(new Model(result));
                 setModel(new Model(result));
-                target.addComponent(message);
+                target.add(message);
             }
         });
 
         UserSession session = getSession();
         /* Uncommented at this time, the console can always show this plugin */
-        if (session.getApplication().getConfigurationType().equals(Application.DEPLOYMENT)) {
+        if (session.getApplication().getConfigurationType().equals(RuntimeConfigurationType.DEPLOYMENT)) {
             setVisible(false);
         }
     }

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface to intercept editor lifecycle events.

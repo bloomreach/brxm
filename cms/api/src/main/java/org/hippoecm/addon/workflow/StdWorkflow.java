@@ -16,13 +16,14 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -164,7 +165,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         if (iconModel != null) {
             return iconModel;
         } else {
-            return new ResourceReference(StdWorkflow.class, "workflow-16.png");
+            return new PackageResourceReference(StdWorkflow.class, "workflow-16.png");
         }
     }
 

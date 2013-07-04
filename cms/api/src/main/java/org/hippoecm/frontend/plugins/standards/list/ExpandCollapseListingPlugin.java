@@ -22,17 +22,17 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -76,8 +76,8 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
             }
         });
 
-        ExpandCollapseLink<String> link = new ExpandCollapseLink<String>("toggleFullscreen");
-        ResourceReference toggleFullscreenImage = new ResourceReference(ExpandCollapseListingPlugin.class,
+        ExpandCollapseLink link = new ExpandCollapseLink("toggleFullscreen");
+        ResourceReference toggleFullscreenImage = new PackageResourceReference(ExpandCollapseListingPlugin.class,
                 TOGGLE_FULLSCREEN_IMG);
         link.add(new Image("toggleFullscreenImage", toggleFullscreenImage));
 
@@ -127,7 +127,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     @Override
     protected final ListDataTable<Node> getListDataTable(String id,
                                                          TableDefinition<Node> tableDefinition,
-                                                         ISortableDataProvider<Node> dataProvider,
+                                                         ISortableDataProvider<Node, String> dataProvider,
                                                          ListDataTable.TableSelectionListener<Node> selectionListener,
                                                          boolean triState,
                                                          ListPagingDefinition pagingDefinition) {
@@ -143,7 +143,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
 
 
     protected ListDataTable<Node> newListDataTable(String id, TableDefinition<Node> tableDefinition,
-            ISortableDataProvider<Node> dataProvider, ListDataTable.TableSelectionListener<Node> selectionListener, boolean triState,
+            ISortableDataProvider<Node, String> dataProvider, ListDataTable.TableSelectionListener<Node> selectionListener, boolean triState,
             ListPagingDefinition pagingDefinition) {
         return new Grid(id, tableDefinition, dataProvider, selectionListener, triState, pagingDefinition);
     }
@@ -161,8 +161,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     }
 
     @Override
-    public void renderHead(HtmlHeaderContainer container) {
-        IHeaderResponse response = container.getHeaderResponse();
+    public void renderHead(IHeaderResponse response) {
         for (IListColumnProvider provider : getListColumnProviders()) {
             IHeaderContributor providerHeader = provider.getHeaderContributor();
             if (providerHeader != null) {
@@ -175,7 +174,7 @@ public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlug
     public void render(final PluginRequestTarget target) {
         super.render(target);
         if (target != null && updateDatatable && isVisible()) {
-            target.appendJavascript(behavior.getUpdateScript());
+            target.appendJavaScript(behavior.getUpdateScript());
         }
         updateDatatable = false;
     }

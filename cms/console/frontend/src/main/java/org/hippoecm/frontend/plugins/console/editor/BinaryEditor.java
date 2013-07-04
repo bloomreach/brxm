@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.console.editor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -25,12 +24,14 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Resource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.resource.AbstractResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Time;
@@ -50,7 +51,7 @@ public class BinaryEditor extends Panel {
     public BinaryEditor(String id, JcrPropertyModel model) {
         super(id);
         final IResourceStream stream = new BinaryResourceStream(model);
-        final Link link = new ResourceLink("binary-link", new Resource() {
+        final Link link = new ResourceLink("binary-link", new ResourceStreamResource() {
             @Override
             public IResourceStream getResourceStream() {
                 return stream;
@@ -60,7 +61,11 @@ public class BinaryEditor extends Panel {
         add(link);
     }
 
-    private static String getSizeString(final long length) {
+    private static String getSizeString(final Bytes bytes) {
+        if (bytes == null) {
+            return "unknown size";
+        }
+        long length = bytes.bytes();
         String sizeString;
         if (length / ONE_GB > 0) {
             sizeString = String.valueOf(length / ONE_GB) + " GB";
@@ -74,7 +79,7 @@ public class BinaryEditor extends Panel {
         return sizeString;
     }
 
-    private static class BinaryResourceStream implements IResourceStream, Serializable {
+    private static class BinaryResourceStream extends AbstractResourceStream {
 
         private transient InputStream is;
         private JcrPropertyModel model;
@@ -95,11 +100,11 @@ public class BinaryEditor extends Panel {
         }
 
         @Override
-        public long length() {
+        public Bytes length() {
             try {
-                return model.getProperty().getLength();
+                return Bytes.bytes(model.getProperty().getLength());
             } catch (RepositoryException e) {
-                return -1;
+                return null;
             }
         }
 
@@ -137,7 +142,7 @@ public class BinaryEditor extends Panel {
             } catch (RepositoryException e) {
                 log.error("Unexpected exception while determining last modified date", e);
             }
-            return Time.valueOf(new Date().getTime());
+            return Time.valueOf(new Date());
         }
     }
 }

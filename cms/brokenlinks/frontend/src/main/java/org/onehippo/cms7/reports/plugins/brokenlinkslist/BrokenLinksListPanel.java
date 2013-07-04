@@ -16,6 +16,7 @@
 package org.onehippo.cms7.reports.plugins.brokenlinkslist;
 
 import java.util.Calendar;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -24,26 +25,26 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.repository.api.HippoNodeType;
-
-import org.onehippo.cms7.reports.plugins.ReportPanel;
-import org.onehippo.cms7.reports.plugins.ReportUtil;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.reports.plugins.ReportPanel;
+import org.onehippo.cms7.reports.plugins.ReportUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
@@ -61,6 +62,8 @@ public class BrokenLinksListPanel extends ReportPanel {
     private static final String TITLE_TRANSLATOR_KEY = "title";
     private static final String NO_DATA_TRANSLATOR_KEY = "no-data";
     private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final CssResourceReference BROKENLINKS_CSS = new CssResourceReference(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.css");
+    private static final JavaScriptResourceReference BROKENLINKS_JS = new JavaScriptResourceReference(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.js");
 
     private final Logger log = LoggerFactory.getLogger(BrokenLinksListPanel.class);
     private final IPluginContext context;
@@ -77,9 +80,6 @@ public class BrokenLinksListPanel extends ReportPanel {
         columns = new BrokenLinksListColumns(config.getStringArray(CONFIG_COLUMNS));
         store = new BrokenLinksStore(query, columns, pageSize);
         add(store);
-
-        add(CSSPackageResource.getHeaderContribution(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.css"));
-        add(JavascriptPackageResource.getHeaderContribution(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.js"));
 
         updateText = null;
         try {
@@ -114,10 +114,18 @@ public class BrokenLinksListPanel extends ReportPanel {
             @Override
             public void onEvent(final AjaxRequestTarget ajaxRequestTarget, java.util.Map<java.lang.String,org.json.JSONArray> parameters) {
                 Request request = RequestCycle.get().getRequest();
-                String path = request.getParameter("path");
+                String path = request.getRequestParameters().getParameterValue("path").toString();
                 browseToDocument(path);
             }
         });
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(BROKENLINKS_CSS));
+        response.render(createReportHeaderItem(BROKENLINKS_JS));
     }
 
     private Node getNode(String path) {

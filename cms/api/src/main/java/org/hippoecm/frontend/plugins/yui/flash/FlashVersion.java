@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.flash;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public class FlashVersion implements IClusterable {
     int major = 0;

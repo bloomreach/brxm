@@ -15,24 +15,16 @@
  */
 package org.hippoecm.frontend.behaviors;
 
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.AjaxPreprocessingCallDecorator;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
 
-public final class EventStoppingDecorator extends AjaxPreprocessingCallDecorator {
+public final class EventStoppingDecorator extends AjaxCallListener {
 
     private static final long serialVersionUID = 1L;
 
-    public EventStoppingDecorator() {
-        this((IAjaxCallDecorator) null);
-    }
-
-    public EventStoppingDecorator(IAjaxCallDecorator delegate) {
-        super(delegate);
-    }
-
     @Override
-    public final CharSequence preDecorateScript(CharSequence script) {
-        return "Wicket.stopEvent(event); " + script;
+    public final CharSequence getBeforeHandler(Component component) {
+        return "Wicket.Event.stop(event); ";
     }
 
 }

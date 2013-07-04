@@ -15,9 +15,11 @@
  */
 package org.hippoecm.addon.workflow;
 
-import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
-class MenuVisitor implements Component.IVisitor {
+class MenuVisitor implements IVisitor<Panel, Void> {
 
     private final MenuHierarchy menu;
     private final String category;
@@ -27,12 +29,11 @@ class MenuVisitor implements Component.IVisitor {
         this.category = category;
     }
 
-    public Object component(Component component) {
+    public void component(Panel component, IVisit<Void> visit) {
         if (component instanceof ActionDescription) {
             menu.put(category, (ActionDescription) component);
         } else if (component instanceof MenuDescription) {
             menu.put(category, (MenuDescription) component);
         }
-        return Component.IVisitor.CONTINUE_TRAVERSAL;
     }
 }

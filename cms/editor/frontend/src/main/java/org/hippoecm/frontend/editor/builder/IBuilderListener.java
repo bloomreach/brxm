@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IBuilderListener extends IClusterable {
 

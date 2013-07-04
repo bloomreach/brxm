@@ -57,13 +57,13 @@ public class UnpublishedReferencesView extends Panel implements IPagingDefinitio
 
     static final Logger log = LoggerFactory.getLogger(UnpublishedReferencesView.class);
 
-    private ISortableDataProvider<Node> provider;
+    private ISortableDataProvider<Node, String> provider;
     private IEditorManager editorMgr;
     private ListDataTable dataTable;
     private WebMarkupContainer actionContainer;
     private List<IModel<Node>> selectedDocuments = new LinkedList<IModel<Node>>();
 
-    public UnpublishedReferencesView(String id, ISortableDataProvider<Node> provider, IEditorManager mgr) {
+    public UnpublishedReferencesView(String id, ISortableDataProvider<Node, String> provider, IEditorManager mgr) {
         super(id);
 
         this.provider = provider;
@@ -76,7 +76,7 @@ public class UnpublishedReferencesView extends Panel implements IPagingDefinitio
 
             @Override
             protected String load() {
-                ISortableDataProvider<Node> provider = UnpublishedReferencesView.this.provider;
+                ISortableDataProvider<Node, String> provider = UnpublishedReferencesView.this.provider;
                 if (provider.size() > 1) {
                     return new StringResourceModel("message", UnpublishedReferencesView.this, new Model(provider))
                             .getObject();
@@ -116,12 +116,12 @@ public class UnpublishedReferencesView extends Panel implements IPagingDefinitio
             @Override
             public void onClick(AjaxRequestTarget target) {
                 selectedDocuments.clear();
-                ISortableDataProvider<Node> provider = UnpublishedReferencesView.this.provider;
+                ISortableDataProvider<Node, String> provider = UnpublishedReferencesView.this.provider;
                 Iterator<? extends Node> iter = provider.iterator(0, provider.size());
                 while (iter.hasNext()) {
                     selectedDocuments.add(provider.model(iter.next()));
                 }
-                target.addComponent(UnpublishedReferencesView.this);
+                target.add(UnpublishedReferencesView.this);
             }
         };
         actionContainer.add(selectAll);
@@ -132,7 +132,7 @@ public class UnpublishedReferencesView extends Panel implements IPagingDefinitio
             @Override
             public void onClick(AjaxRequestTarget target) {
                 selectedDocuments.clear();
-                target.addComponent(UnpublishedReferencesView.this);
+                target.add(UnpublishedReferencesView.this);
             }
         };
         actionContainer.add(selectNone);

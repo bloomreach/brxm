@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -26,13 +26,13 @@ import org.hippoecm.frontend.service.IBehaviorService;
  * Special purpose {@link Plugin} that allows us to add the behavior through configuration instead of adding it 
  * in code to our component.  
  * 
- * See {@link IBehaviorService} for info how to configure this.
+ * See {@link org.hippoecm.frontend.service.IBehaviorService} for info how to configure this.
  */
 public class WireframePlugin extends Plugin implements IBehaviorService {
 
     private static final long serialVersionUID = 1L;
 
-    private IBehavior behavior;
+    private Behavior behavior;
 
     public WireframePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -44,7 +44,7 @@ public class WireframePlugin extends Plugin implements IBehaviorService {
         return getPluginConfig().getString(IBehaviorService.PATH);
     }
 
-    public IBehavior getBehavior() {
+    public Behavior getBehavior() {
         return behavior;
     }
 }

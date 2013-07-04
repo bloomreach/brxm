@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.system;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,10 +41,10 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
     public SystemInfoPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
-        ICellPopulator[] columns = new ICellPopulator[2];
-        columns[0] = new PropertyPopulator("Key");
-        columns[1] = new PropertyPopulator("Value");
+
+        List<ICellPopulator> columns = new ArrayList<ICellPopulator>(2);
+        columns.add(new PropertyPopulator("Key"));
+        columns.add(new PropertyPopulator("Value"));
         add(new DataGridView("rows", columns, memoryInfo) {
             private static final long serialVersionUID = 1L;
 
@@ -56,7 +59,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 memoryInfo.refresh();
-                target.addComponent(SystemInfoPanel.this);
+                target.add(SystemInfoPanel.this);
             }
         });
         
@@ -67,7 +70,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
             public void onClick(AjaxRequestTarget target) {
                 System.gc();
                 memoryInfo.refresh();
-                target.addComponent(SystemInfoPanel.this);
+                target.add(SystemInfoPanel.this);
             }
         });
     }

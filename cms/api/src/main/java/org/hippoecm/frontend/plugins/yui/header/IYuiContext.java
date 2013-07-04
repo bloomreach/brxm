@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.yui.header;
 
 import java.util.Map;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;

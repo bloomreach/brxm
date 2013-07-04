@@ -33,6 +33,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
@@ -99,7 +100,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
-                target.addComponent(CreateGroupPanel.this);
+                target.add(CreateGroupPanel.this);
             }
         });
 
@@ -120,16 +121,13 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
         private static final long serialVersionUID = 1L;
 
         @Override
-        protected void onValidate(IValidatable validatable) {
+        public void validate(IValidatable validatable) {
+            super.validate(validatable);
+
             String groupname = (String) validatable.getValue();
             if (Group.exists(groupname)) {
-                error(validatable);
+                validatable.error(new ValidationError(this, "GroupnameValidator.exists"));
             }
-        }
-
-        @Override
-        protected String resourceKey() {
-            return "GroupnameValidator.exists";
         }
     }
 

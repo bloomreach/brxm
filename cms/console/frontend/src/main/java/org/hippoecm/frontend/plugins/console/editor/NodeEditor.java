@@ -245,13 +245,13 @@ class NodeEditor extends Form<Node> {
         }
 
         @Override
-        public Iterator<? extends NamespacePropertiesProvider> iterator(final int first, final int count) {
+        public Iterator<? extends NamespacePropertiesProvider> iterator(final long first, final long count) {
             load();
-            return namespaces.subList(first, first + count).iterator();
+            return namespaces.subList((int) first, (int) (first + count)).iterator();
         }
 
         @Override
-        public int size() {
+        public long size() {
             load();
             return namespaces.size();
         }
@@ -323,16 +323,16 @@ class NodeEditor extends Form<Node> {
         }
         
         @Override
-        public Iterator iterator(final int first, final int count) {
+        public Iterator iterator(final long first, final long count) {
             if (!sorted) {
                 Collections.sort(properties, PROPERTY_COMPARATOR);
                 sorted = true;
             }
-            return properties.subList(first, first + count).iterator();
+            return properties.subList((int) first, (int) (first + count)).iterator();
         }
 
         @Override
-        public int size() {
+        public long size() {
             return properties.size();
         }
 

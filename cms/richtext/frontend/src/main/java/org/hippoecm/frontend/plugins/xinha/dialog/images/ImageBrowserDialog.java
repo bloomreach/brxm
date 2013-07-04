@@ -35,15 +35,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -55,7 +54,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
@@ -87,17 +88,17 @@ import org.slf4j.LoggerFactory;
 public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implements IHeaderContributor {
     private static final long serialVersionUID = 1L;
 
-
     static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
-    public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
+    private static final ResourceReference DIALOG_SKIN = new CssResourceReference(ImageBrowserDialog.class, "ImageBrowserDialog.css");
     private static final String CONFIG_KEY_PREFERRED_RESOURCE_NAMES = "preferred.resource.names";
     private static final String GALLERY_TYPE_SELECTOR_ID = "galleryType";
+
+    public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
 
     DropDownChoice<String> type;
 
     private LinkedHashMap<String, String> nameTypeMap;
-
     private IModel<XinhaImage> imageModel;
     private boolean uploadSelected;
     private AjaxButton uploadButton;
@@ -189,9 +190,9 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         if (type != null) {
             // if an preexisting image is selected, the constructor is not yet called so the class members are not initialized
             setPreferredTypeChoice();
-            AjaxRequestTarget target = AjaxRequestTarget.get();
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.addComponent(type);
+                target.add(type);
             }
         }
     }
@@ -211,10 +212,10 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         // function is called by parent constructor, when our constructor hasn't run yet...
         if (uploadTypeSelector != null && uploadButton != null) {
 
-            AjaxRequestTarget target = AjaxRequestTarget.get();
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.addComponent(uploadTypeSelector);
-                target.addComponent(uploadButton);
+                target.add(uploadTypeSelector);
+                target.add(uploadButton);
             }
         }
     }
@@ -345,7 +346,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                                 getGalleryProcessor().makeImage(node, istream, mimetype, filename);
                                 node.getSession().save();
                                 uploadField.setModel(null);
-                                target.addComponent(uploadField);
+                                target.add(uploadField);
                             } catch (RepositoryException ex) {
                                 log.error(ex.getMessage());
                                 error(ex);
@@ -388,7 +389,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
             @Override
             protected void onEvent(AjaxRequestTarget target) {
                 uploadSelected = true;
-                target.addComponent(uploadButton);
+                target.add(uploadButton);
             }
         });
         uploadForm.add(uploadField);
@@ -396,8 +397,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
         uploadForm.add(uploadButton);
 
         //OMG: ugly workaround.. Input[type=file] is rendered differently on OSX in all browsers..
-        WebRequestCycle requestCycle = (WebRequestCycle) RequestCycle.get();
-        HttpServletRequest httpServletReq = requestCycle.getWebRequest().getHttpServletRequest();
+        HttpServletRequest httpServletReq = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
         String ua = httpServletReq.getHeader("User-Agent");
         if (ua.contains("Macintosh")) {
             uploadField.add(new AttributeAppender("class", true, new Model<String>("browse-button-osx"), " "));
@@ -433,9 +433,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
     @Override
     public void renderHead(IHeaderResponse response) {
-        final String IMAGE_BROWSER_DIALOG_CSS = "ImageBrowserDialog.css";
-        ResourceReference dialogCSS = new ResourceReference(ImageBrowserDialog.class, IMAGE_BROWSER_DIALOG_CSS);
-        response.renderCSSReference(dialogCSS);
+        response.render(CssHeaderItem.forReference(DIALOG_SKIN));
     }
 
     @Override

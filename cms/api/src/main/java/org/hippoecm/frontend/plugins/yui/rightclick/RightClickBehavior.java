@@ -15,14 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.yui.rightclick;
 
+import java.util.List;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
 /**
- * This behavior adds a right-click event-handler to the component. 
+ * This behavior adds a right-click event-handler to the component.
  */
 public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior implements IContextMenu {
 
@@ -30,55 +35,53 @@ public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior imp
 
     public static final String MOUSE_X_PARAM = "x";
     public static final String MOUSE_Y_PARAM = "y";
-    
+
     MarkupContainer contextmenu;
     MarkupContainer componentToUpdate;
-    
+
     public RightClickBehavior(MarkupContainer contextmenu, MarkupContainer componentToUpdate) {
         this.contextmenu = contextmenu;
         this.componentToUpdate = componentToUpdate;
     }
-    
-    /**
-     * Set up a YUI 'contextmenu' event listener on the component. The callback function is
-     * parameterized with the x&y coordinates of the click event.
-     * Also stop the contextmenu event from propagating to prevent the browser's contextmenu
-     * from rendering. 
-     */
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
 
-        String handler = getCallbackScript().toString();
-        String addEvent = "YAHOO.util.Event.addListener('" + getComponent().getMarkupId()
-                + "','contextmenu', " +
-                " function(env) { var " + MOUSE_X_PARAM + " = YAHOO.util.Event.getPageX(env); " +
-                "var " + MOUSE_Y_PARAM + " = YAHOO.util.Event.getPageY(env);" +
-                "YAHOO.util.Event.stopEvent(env); " + handler + " });";
-        response.renderOnDomReadyJavascript(addEvent);
-    }
-    
     /**
-     * Add the x&y coordinates to the callback url by concatenating them. The endresults should be something like 
-     * var wcall=Wicket.Ajax.get('?wicket:interface:etc:etc:etc&mouseX=' + x + '&mosueY= ' + y + ''); 
-     * The end single quote is needed because the result of this method is escaped with single quotes, 
-     * resulting in the somewhat ugly + ''
+     * Set up a YUI 'contextmenu' event listener on the component. The callback function is parameterized with the x&y
+     * coordinates of the click event. Also stop the contextmenu event from propagating to prevent the browser's
+     * contextmenu from rendering.
      */
     @Override
-    public CharSequence getCallbackUrl(boolean onlyTargetActivePage) {
-        String url = super.getCallbackUrl(onlyTargetActivePage).toString();
-        url += "&" + MOUSE_X_PARAM + "=' + x + '&" + MOUSE_Y_PARAM + "=' + y + '";
-        return url;
+    public void renderHead(Component component, IHeaderResponse response) {
+        super.renderHead(component, response);
+
+        String attributesAsJson = renderAjaxAttributes(component).toString();
+        String addEvent =
+                "YAHOO.util.Event.addListener('" + component.getMarkupId() + "','contextmenu', " +
+                        "function(env) {\n" +
+                        "  var x = YAHOO.util.Event.getPageX(env),\n" +
+                        "      y = YAHOO.util.Event.getPageY(env),\n" +
+                        "      call = new Wicket.Ajax.Call(),\n" +
+                        "      attributes = jQuery.extend({}, " + attributesAsJson + ");\n"+
+                        "  YAHOO.util.Event.stopEvent(env);\n" +
+                        "  call.ajax(attributes);\n" +
+                        "});";
+        response.render(OnDomReadyHeaderItem.forScript(addEvent));
     }
-    
+
+    @Override
+    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+        super.updateAjaxAttributes(attributes);
+        final List<CharSequence> dep = attributes.getDynamicExtraParameters();
+        dep.add("return { " + MOUSE_X_PARAM + ": x , " + MOUSE_Y_PARAM + ": y };");
+    }
+
     public void collapse(AjaxRequestTarget target) {
         final MarkupContainer menu = getContextmenu();
         if (menu.isVisible() && getComponentToUpdate().isVisible()) {
             menu.setVisible(false);
-            target.addComponent(getComponentToUpdate());
+            target.add(getComponentToUpdate());
         }
     }
-    
+
     public MarkupContainer getContextmenu() {
         return contextmenu;
     }

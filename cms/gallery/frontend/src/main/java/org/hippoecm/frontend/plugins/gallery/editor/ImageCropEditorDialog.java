@@ -30,11 +30,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -83,7 +84,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
         regionField.setOutputMarkupId(true);
         add(regionField);
 
-        Image originalImage, imgPreview;
+        Component originalImage, imgPreview;
         try {
             Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             originalImageDimension = new Dimension(
@@ -98,8 +99,8 @@ public class ImageCropEditorDialog extends AbstractDialog {
         } catch (RepositoryException e) {
             log.error("Cannot retrieve original image", e);
             error(e);
-            originalImage = new Image("image");
-            imgPreview = new Image("imagepreview");
+            originalImage = new EmptyPanel("image");
+            imgPreview = new EmptyPanel("imagepreview");
         }
 
         WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");

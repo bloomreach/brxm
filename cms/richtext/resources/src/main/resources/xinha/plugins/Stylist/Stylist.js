@@ -115,13 +115,23 @@ Stylist.loadAssets = function() {
             } else {
                 this.assetsLoaded = true;
 
-                if (rangy !== undefined) {
-                    rangy.init();
-                } else {
-                    XinhaTools.error('Failed to load Rangy library.');
-                }
+    var next = jQuery.proxy(function() {
+        if (modules.length > 0) {
+            var url = _editor_url + 'plugins/Stylist/' + modules.shift();
+            Xinha._getback(url, function(data) {
+                eval.apply(window, [data]);
+                next();
+            });
+        } else {
+            this.assetsLoaded = true;
+
+            if (rangy !== undefined) {
+                rangy.init();
+            } else {
+                console.error('Failed to load Rangy library.');
             }
-        }.bind(this);
+        }
+    }, this);
 
     next();
 };

@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -83,16 +84,20 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
         });
         nameComponent.setRequired(true);
         nameComponent.setLabel(new StringResourceModel("name-label", this, null));
-        AjaxEventBehavior behavior;
-        nameComponent.add(behavior = new OnChangeAjaxBehavior() {
+        nameComponent.add(new OnChangeAjaxBehavior() {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 if (!uriModified) {
-                    target.addComponent(uriComponent);
+                    target.add(uriComponent);
                 }
             }
+
+            @Override
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(AddDocumentDialog.this.getPath(), Duration.milliseconds(500)));
+            }
         });
-        behavior.setThrottleDelay(Duration.milliseconds(500));
         nameComponent.setOutputMarkupId(true);
         setFocus(nameComponent);
         add(nameComponent);
@@ -108,7 +113,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
             folderChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(folderChoice);
+                    target.add(folderChoice);
                 }
             });
             folderChoice.setNullValid(false);
@@ -168,7 +173,7 @@ public class AddDocumentDialog extends AbstractWorkflowDialog<AddDocumentArgumen
                 } else {
                     target.focusComponent(uriComponent);
                 }
-                target.addComponent(AddDocumentDialog.this);
+                target.add(AddDocumentDialog.this);
             }
         };
         uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {

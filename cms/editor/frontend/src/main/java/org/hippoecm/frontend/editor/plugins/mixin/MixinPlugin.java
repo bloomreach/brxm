@@ -117,7 +117,7 @@ public class MixinPlugin extends RenderPlugin {
                                 cluster.stop();
                             }
                         }
-                        target.addComponent(this);
+                        target.add(this);
                     }
 
                 };

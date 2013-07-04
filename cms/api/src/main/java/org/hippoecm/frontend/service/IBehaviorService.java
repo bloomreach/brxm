@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.service;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IBehaviorService extends IClusterable {
 
@@ -28,9 +28,9 @@ public interface IBehaviorService extends IClusterable {
      * Returned behaviors should implement {@link #equals(Object)} and {@link #hashCode()} such that
      * multiple requests yield equivalent results.
      * 
-     * @return the {@link IBehavior} to be attached to the component.
+     * @return the {@link Behavior} to be attached to the component.
      */
-    IBehavior getBehavior();
+    Behavior getBehavior();
 
     String getComponentPath();
 }

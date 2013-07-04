@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.layout;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface ILayoutTransition extends IClusterable {
 

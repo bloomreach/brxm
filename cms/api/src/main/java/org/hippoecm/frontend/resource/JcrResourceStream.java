@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.time.Time;
@@ -52,6 +53,7 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
         super(model);
     }
 
+    @Override
     public void close() throws IOException {
         if (stream != null) {
             stream.close();
@@ -59,6 +61,7 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
         }
     }
 
+    @Override
     public String getContentType() {
         try {
             Node node = getNode();
@@ -73,6 +76,7 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
         return null;
     }
 
+    @Override
     public InputStream getInputStream() throws ResourceStreamNotFoundException {
         try {
             if (stream != null) {
@@ -92,29 +96,49 @@ public class JcrResourceStream extends NodeModelWrapper<Void> implements IResour
         return stream;
     }
 
-    public Locale getLocale() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public long length() {
+    @Override
+    public Bytes length() {
         long length = -1;
         try {
             Node node = getNode();
             if (node == null) {
-                return 0;
+                return null;
             }
             length = node.getProperty("jcr:data").getLength();
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        return length;
+        return Bytes.bytes(length);
     }
 
+    @Override
+    public Locale getLocale() {
+        return null;
+    }
+
+    @Override
     public void setLocale(Locale locale) {
-        // TODO Auto-generated method stub
     }
 
+    @Override
+    public String getStyle() {
+        return null;
+    }
+
+    @Override
+    public void setStyle(final String style) {
+    }
+
+    @Override
+    public String getVariation() {
+        return null;
+    }
+
+    @Override
+    public void setVariation(final String variation) {
+    }
+
+    @Override
     public Time lastModifiedTime() {
         try {
             Node node = getNode();

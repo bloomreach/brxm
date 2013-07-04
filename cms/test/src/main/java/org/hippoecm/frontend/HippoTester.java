@@ -46,13 +46,18 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.retention.RetentionManager;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
+import javax.servlet.ServletContext;
 import javax.transaction.xa.XAResource;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.page.IPageManagerContext;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.util.tester.WicketTester;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
@@ -345,56 +350,39 @@ public class HippoTester extends WicketTester {
     }
 
     public HippoTester() {
-        this(new Main() {
-
-            @Override
-            public String getConfigurationType() {
-                // suppress development mode warning from test output
-                return Application.DEPLOYMENT;
-            }
-
-            @Override
-            public HippoRepository getRepository() throws RepositoryException {
-                return null;
-            }
-
-            @Override
-            public IApplicationFactory getApplicationFactory(final Session jcrSession) {
-                return new TestApplicationFactory();
-            }
-
-            @Override
-            public UserSession newSession(Request request, Response response) {
-                return new PluginUserSession(request, new LoadableDetachableModel<Session>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected Session load() {
-                        return new DummySession();
-                    }
-
-                });
-            }
-        });
+        this(new HippoTesterApplication());
     }
 
     public HippoTester(Main main) {
         super(main);
     }
 
-    @Deprecated
-    public HippoTester(Main main, IApplicationFactory appFactory) {
-        this(main);
+    public HippoTester(Main main, ServletContext context) {
+        super(main, context);
     }
 
     public Home startPluginPage() {
         Home home;
         // create a request cycle, but don't use it.
         // this is a workaround for mockwebapplication's retaining of these cycles.
-        RequestCycle rc = createRequestCycle();
-        home = (Home) super.startPage(PluginPage.class);
-        rc.detach();
+        // FIXME: still necessary?
+//        RequestCycle rc = createRequestCycle();
+        home = super.startPage(PluginPage.class);
+//        rc.detach();
+
+        Behavior behavior = new TestExecutorBehavior();
+        home.add(behavior);
         return home;
+    }
+
+    public IPageManagerContext getPageManagerContext() {
+        return ((Main) Application.get()).getPageManagerContext();
+    }
+
+    public void runInAjax(Home page, Runnable callback) {
+        final TestExecutorBehavior executor = page.getBehaviors(TestExecutorBehavior.class).get(0);
+        executor.setCallback(callback);
+        executeBehavior(executor);
     }
 
     static class TestApplicationFactory implements IApplicationFactory {
@@ -408,6 +396,56 @@ public class HippoTester extends WicketTester {
             JavaClusterConfig plugins = new JavaClusterConfig();
             configService.addClusterConfig("test", plugins);
             return configService;
+        }
+    }
+
+    private static class TestExecutorBehavior extends AbstractDefaultAjaxBehavior {
+
+        private Runnable callback;
+
+        void setCallback(Runnable callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        protected void respond(final AjaxRequestTarget target) {
+            try {
+                callback.run();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static class HippoTesterApplication extends Main {
+
+        @Override
+        public RuntimeConfigurationType getConfigurationType() {
+            // suppress development mode warning from test output
+            return RuntimeConfigurationType.DEPLOYMENT;
+        }
+
+        @Override
+        public HippoRepository getRepository() throws RepositoryException {
+            return null;
+        }
+
+        @Override
+        public IApplicationFactory getApplicationFactory(final Session jcrSession) {
+            return new TestApplicationFactory();
+        }
+
+        @Override
+        public UserSession newSession(Request request, Response response) {
+            return new PluginUserSession(request, new LoadableDetachableModel<Session>() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected Session load() {
+                    return new DummySession();
+                }
+
+            });
         }
     }
 }

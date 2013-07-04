@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.comparators;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNode;
 

@@ -28,14 +28,17 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -65,6 +68,7 @@ public class EditPerspective extends Perspective {
     static final Logger log = LoggerFactory.getLogger(EditPerspective.class);
 
     private static final long serialVersionUID = 1L;
+    private static final CssResourceReference PERSPECTIVE_SKIN = new CssResourceReference(EditPerspective.class, "edit-perspective.css");
 
     private String topHeight;
     private WireframeSettings wfSettings;
@@ -114,9 +118,9 @@ public class EditPerspective extends Perspective {
                 }
 
                 public void onValidation(IValidationResult result) {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.addComponent(feedback);
+                        target.add(feedback);
                     }
                 }
 
@@ -131,8 +135,13 @@ public class EditPerspective extends Perspective {
         UnitSettings topSettings = wfSettings.getUnit("top");
         topHeight = topSettings.getHeight();
         add(new WireframeBehavior(wfSettings));
+    }
 
-        add(CSSPackageResource.getHeaderContribution(EditPerspective.class, "edit-perspective.css"));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(PERSPECTIVE_SKIN));
     }
 
     @Override
@@ -153,9 +162,9 @@ public class EditPerspective extends Perspective {
         }
         if (updateTop && isVisibleInHierarchy() && target != null) {
             String topId = topSettings.getId().getElementId();
-            target.appendJavascript("YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get('" + topId
+            target.appendJavaScript("YAHOO.hippo.LayoutManager.findLayoutUnit(YAHOO.util.Dom.get('" + topId
                     + "')).set('height', " + topSettings.getHeight() + ");");
-            target.addComponent(feedback);
+            target.add(feedback);
         }
     }
 

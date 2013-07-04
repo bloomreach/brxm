@@ -21,21 +21,25 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class PathInUrlController extends AbstractBehavior implements IObserver<IModelReference<Node>> {
+class PathInUrlController extends Behavior implements IObserver<IModelReference<Node>> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PathInUrlController.class);
+    private static final JavaScriptResourceReference URLCONTROLLER_JS = new JavaScriptResourceReference(PathInUrlController.class, "PathInUrlController.js");
 
     private final IModelReference<Node> modelReference;
     private final String parameterName;
@@ -46,9 +50,8 @@ class PathInUrlController extends AbstractBehavior implements IObserver<IModelRe
     }
 
     @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.renderJavascriptReference(new JavascriptResourceReference(PathInUrlController.class, "PathInUrlController.js"));
+    public void renderHead(Component component, final IHeaderResponse response) {
+        response.render(JavaScriptHeaderItem.forReference(URLCONTROLLER_JS));
     }
 
     @Override
@@ -78,10 +81,10 @@ class PathInUrlController extends AbstractBehavior implements IObserver<IModelRe
     }
 
     private void showPathInUrl(final String path) {
-        final AjaxRequestTarget requestTarget = AjaxRequestTarget.get();
+        final AjaxRequestTarget requestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
         if (requestTarget != null) {
             final String javascript = String.format("Hippo.showParameterInUrl('%s', '%s');", parameterName, path);
-            requestTarget.appendJavascript(javascript);
+            requestTarget.appendJavaScript(javascript);
         }
     }
 

@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.yui.header.templates;
 
 import java.util.Map;
 
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
 public abstract class HippoTextTemplate extends DynamicTextTemplate {
 
@@ -27,13 +27,13 @@ public abstract class HippoTextTemplate extends DynamicTextTemplate {
 
     private String moduleClass;
 
-    public HippoTextTemplate(PackagedTextTemplate template, String moduleClass) {
+    public HippoTextTemplate(PackageTextTemplate template, String moduleClass) {
         super(template);
         this.moduleClass = moduleClass;
     }
 
     public HippoTextTemplate(Class<?> clazz, String filename, String moduleClass) {
-        this(new PackagedTextTemplate(clazz, filename), moduleClass);
+        this(new PackageTextTemplate(clazz, filename), moduleClass);
     }
 
     @Override

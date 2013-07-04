@@ -19,17 +19,13 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 
-import java.util.Map;
-
 public class AjaxSettings extends YuiObject implements IAjaxSettings {
 
     private static final long serialVersionUID = 1L;
 
-    protected static final StringSetting CALLBACK_URL = new StringSetting("callbackUrl", "");
-    protected static final StringSetting CALLBACK_FUNCTION = new StringSetting("callbackFunction", "", false);
-    protected static final StringMapSetting CALLBACK_PARAMETERS = new StringMapSetting("callbackParameters", null);
+    protected static final FunctionSetting CALLBACK_FUNCTION = new FunctionSetting("callbackFunction", new JsFunction("function(){}"), false);
 
-    protected static final YuiType TYPE = new YuiType(CALLBACK_URL, CALLBACK_FUNCTION, CALLBACK_PARAMETERS);
+    protected static final YuiType TYPE = new YuiType(CALLBACK_FUNCTION);
 
     public AjaxSettings(YuiType type) {
         super(type);
@@ -39,16 +35,8 @@ public class AjaxSettings extends YuiObject implements IAjaxSettings {
         super(type, config);
     }
 
-    public void setCallbackUrl(String url) {
-        CALLBACK_URL.set(url, this);
-    }
-
     public void setCallbackFunction(JsFunction function) {
-        CALLBACK_FUNCTION.set(function.getFunction(), this);
-    }
-
-    public void setCallbackParameters(Map<String, Object> map) {
-        CALLBACK_PARAMETERS.set(map, this);
+        CALLBACK_FUNCTION.set(function, this);
     }
 
 }

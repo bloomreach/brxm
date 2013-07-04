@@ -18,10 +18,11 @@ package org.hippoecm.frontend.plugins.websiteactions;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.link.PopupSettings;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -92,7 +93,7 @@ public class WebsiteActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), (documentLive ? "live" : "preview") + "-icon-16.png");
+                return new PackageResourceReference(getClass(), (documentLive ? "live" : "preview") + "-icon-16.png");
             }
 
             @Override

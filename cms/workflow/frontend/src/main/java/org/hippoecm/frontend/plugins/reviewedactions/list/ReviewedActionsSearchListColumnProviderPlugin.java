@@ -20,8 +20,10 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.list.comparators.StateComparator;
@@ -34,6 +36,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 public class ReviewedActionsSearchListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
 
     private static final long serialVersionUID = 1L;
+    private static final CssResourceReference SEARCHLISTCOLUMN_SKIN = new CssResourceReference(ReviewedActionsListColumnProviderPlugin.class, "style.css");
 
     public ReviewedActionsSearchListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -41,7 +44,12 @@ public class ReviewedActionsSearchListColumnProviderPlugin extends AbstractListC
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(ReviewedActionsListColumnProviderPlugin.class, "style.css");
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(CssHeaderItem.forReference(SEARCHLISTCOLUMN_SKIN));
+            }
+        };
     }
 
     @Override
@@ -50,7 +58,7 @@ public class ReviewedActionsSearchListColumnProviderPlugin extends AbstractListC
 
         ListColumn<Node> column = new ListColumn<Node>(new ClassResourceModel("doclisting-state", getClass()), "state");
         column.setComparator(new StateComparator());
-        column.setRenderer(new EmptyRenderer());
+        column.setRenderer(new EmptyRenderer<Node>());
         column.setAttributeModifier(new StateIconAttributeModifier());
         column.setCssClass("doclisting-state");
         columns.add(column);

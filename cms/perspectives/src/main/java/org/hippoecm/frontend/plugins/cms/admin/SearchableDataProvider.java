@@ -30,7 +30,6 @@ import javax.jcr.query.Query;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -51,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * TODO: Remove primitive total count accounting when it's possible to get the size of the resultset without going
  * through the accessmanager.
  */
-public abstract class SearchableDataProvider<T extends Comparable<T>> extends SortableDataProvider<T> implements IObservable {
+public abstract class SearchableDataProvider<T extends Comparable<T>> extends SortableDataProvider<T, String> implements IObservable {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SearchableDataProvider.class);
@@ -112,16 +111,18 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
      */
     protected abstract T createBean(Node node) throws RepositoryException;
 
-    public Iterator<T> iterator(int first, int count) {
+    @Override
+    public Iterator<T> iterator(long first, long count) {
         populateList(query);
         List<T> result = new ArrayList<T>();
-        for (int i = first; i < (count + first); i++) {
-            result.add(list.get(i));
+        for (long i = first; i < (count + first); i++) {
+            result.add(list.get((int) i));
         }
         return result.iterator();
     }
 
-    public int size() {
+    @Override
+    public long size() {
         populateList(query);
         return list.size();
     }

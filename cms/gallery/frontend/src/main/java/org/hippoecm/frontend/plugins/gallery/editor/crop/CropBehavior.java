@@ -20,14 +20,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.onehippo.yui.YahooNamespace;
 
 public class CropBehavior extends AbstractYuiBehavior {
+
+    private static final CssResourceReference CROPPER_SKIN = new CssResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath() + "imagecropper/assets/skins/sam/imagecropper-skin.css");
+    private static final CssResourceReference RESIZE_SKIN = new CssResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath() + "resize/assets/skins/sam/resize-skin.css");
+    private static final CssResourceReference DIALOG_SKIN = new CssResourceReference(CropBehavior.class, "crop-editor-dialog.css");
 
     private String regionInputId;
     private String imagePreviewContainerId;
@@ -61,14 +65,14 @@ public class CropBehavior extends AbstractYuiBehavior {
                 return getInitString();
             }
         });
-        context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"imagecropper/assets/skins/sam/imagecropper-skin.css"));
-        context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath()+"resize/assets/skins/sam/resize-skin.css"));
-        context.addCssReference(new ResourceReference(CropBehavior.class, "crop-editor-dialog.css"));
+        context.addCssReference(CROPPER_SKIN);
+        context.addCssReference(RESIZE_SKIN);
+        context.addCssReference(DIALOG_SKIN);
     }
 
 
     private String getInitString() {
-        PackagedTextTemplate cropperJsTemplate = new PackagedTextTemplate(CropBehavior.class, "Hippo.ImageCropper.js");
+        PackageTextTemplate cropperJsTemplate = new PackageTextTemplate(CropBehavior.class, "Hippo.ImageCropper.js");
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("originalImageMarkupId", getComponent().getMarkupId());
         parameters.put("imagePreviewContainerMarkupId", imagePreviewContainerId);

@@ -18,19 +18,22 @@ package org.hippoecm.frontend.plugins.yui.upload;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxCallListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.IAjaxCallListener;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
+import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -67,33 +70,40 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (widget.isFlashUpload()) {
-                    target.appendJavascript(widget.getStartAjaxUploadScript());
+                    target.appendJavaScript(widget.getStartAjaxUploadScript());
                 } else {
                     handleSubmit();
-                    target.addComponent(MultiFileUploadDialog.this);
+                    target.add(MultiFileUploadDialog.this);
                 }
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new EventStoppingDecorator(
-                    new IAjaxCallDecorator() {
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                final List<IAjaxCallListener> ajaxCallListeners = attributes.getAjaxCallListeners();
+                ajaxCallListeners.add(new EventStoppingDecorator());
+                ajaxCallListeners.add(new AjaxCallListener() {
 
-                        @Override
-                        public CharSequence decorateScript(final CharSequence script) {
-                            return "if (" + widget.hasFileSelectedScript() + ") { this.disabled = true;" + script + "} return false;";
-                        }
+                    @Override
+                    public CharSequence getBeforeHandler(final Component component) {
+                        return "if (" + widget.hasFileSelectedScript() + ") { this.disabled = true; }";
+                    }
 
-                        @Override
-                        public CharSequence decorateOnSuccessScript(final CharSequence script) {
-                            return "if (Wicket.$('" + getMarkupId() + "') != null) { Wicket.$('" + getMarkupId() + "').disabled = true; }" + script;
-                        }
+                    @Override
+                    public CharSequence getPrecondition(Component component) {
+                        return widget.hasFileSelectedScript();
+                    }
 
-                        @Override
-                        public CharSequence decorateOnFailureScript(final CharSequence script) {
-                            return "if (Wicket.$('" + getMarkupId() + "') != null) { Wicket.$('" + getMarkupId() + "').disabled = false; }" + script;
-                        }
-                    });
+                    @Override
+                    public CharSequence getSuccessHandler(Component component) {
+                        return "if (Wicket.$('" + getMarkupId() + "') != null) { Wicket.$('" + getMarkupId() + "').disabled = true; }";
+                    }
+
+                    @Override
+                    public CharSequence getFailureHandler(Component component) {
+                        return "if (Wicket.$('" + getMarkupId() + "') != null) { Wicket.$('" + getMarkupId() + "').disabled = false; }";
+                    }
+                });
             }
 
         };
@@ -141,7 +151,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                 handleErrors();
 
                 if (hasFeedbackMessage() || MultiFileUploadDialog.this.hasFeedbackMessage()) {
-                    transformIntoErrorDialog(AjaxRequestTarget.get());
+                    transformIntoErrorDialog(RequestCycle.get().find(AjaxRequestTarget.class));
                 }
             }
 
@@ -155,7 +165,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                 } else {
                     MultiFileUploadDialog.super.handleSubmit();
                 }
-                target.appendJavascript(widget.getAjaxIndicatorStopScript());
+                target.appendJavaScript(widget.getAjaxIndicatorStopScript());
             }
 
         };
@@ -190,7 +200,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         widget.setVisible(false);
 
         if (target != null) {
-            target.addComponent(MultiFileUploadDialog.this);
+            target.add(MultiFileUploadDialog.this);
         }
     }
 
@@ -211,12 +221,12 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     }
 
     @Override
-    public void process(IFormSubmittingComponent component) {
+    public void process(IFormSubmitter component) {
         final WebRequest request = (WebRequest) RequestCycle.get().getRequest();
-        if (request.isAjax() && AjaxRequestTarget.get() == null) {
+        if (request.isAjax() && RequestCycle.get().find(AjaxRequestTarget.class) == null) {
             WebApplication app = (WebApplication) getComponent().getApplication();
             AjaxRequestTarget target = app.newAjaxRequestTarget(getComponent().getPage());
-            RequestCycle.get().setRequestTarget(target);
+            RequestCycle.get().scheduleRequestHandlerAfterCurrent(target);
         }
         super.process(component);
     }

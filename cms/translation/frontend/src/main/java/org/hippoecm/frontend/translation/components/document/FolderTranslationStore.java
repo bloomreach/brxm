@@ -18,7 +18,7 @@ package org.hippoecm.frontend.translation.components.document;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.wicket.util.lang.PropertyResolver;
+import org.apache.wicket.core.util.lang.PropertyResolver;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

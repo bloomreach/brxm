@@ -63,9 +63,9 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         this.retrieveUnpublished = retrieveUnpublished;
     }
 
-    public Iterator iterator(int first, int count) {
+    public Iterator iterator(long first, long count) {
         load();
-        return entries.subList(first, first + count).iterator();
+        return entries.subList((int) first, (int) (first + count)).iterator();
     }
 
     public IModel model(Object object) {
@@ -86,7 +86,7 @@ public class ReferringDocumentsProvider extends NodeModelWrapper implements ISor
         return 100;
     }
     
-    public int size() {
+    public long size() {
         load();
         return entries.size();
     }

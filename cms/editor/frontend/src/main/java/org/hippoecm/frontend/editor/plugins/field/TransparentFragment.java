@@ -15,10 +15,15 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.resolver.IComponentResolver;
 
-public class TransparentFragment extends Fragment {
+@Deprecated
+public class TransparentFragment extends Fragment implements IComponentResolver {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,7 +32,18 @@ public class TransparentFragment extends Fragment {
     }
 
     @Override
+    public Component resolve(final MarkupContainer container, final MarkupStream markupStream, final ComponentTag tag) {
+        final String id = tag.getId();
+        final Component child = get(id);
+        if (child != null) {
+            return child;
+        }
+        return getParent().get(id);
+    }
+
+/*
+    @Override
     public boolean isTransparentResolver() {
         return true;
-    }
+    }*/
 }

@@ -18,9 +18,12 @@ package org.hippoecm.frontend.plugins.gallery;
 import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -40,17 +43,24 @@ public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
+    private static final CssReferenceHeaderItem ASSET_GALLERY_CSS = CssHeaderItem.forReference(new CssResourceReference(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
+
     public AssetGalleryPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         setClassName("asset-gallery-plugin");
         getSettings().setAutoWidthClassName("assetgallery-name");
-
-        add(CSSPackageResource.getHeaderContribution(AssetGalleryPlugin.class, "AssetGalleryPlugin.css"));
     }
 
     @Override
-    protected ISortableDataProvider<Node> newDataProvider() {
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(ASSET_GALLERY_CSS);
+    }
+
+    @Override
+    protected ISortableDataProvider<Node, String> newDataProvider() {
         return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
     }
@@ -58,7 +68,7 @@ public class AssetGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     @Override
     protected ListDataTable<Node> newListDataTable(String id,
                                                    TableDefinition<Node> tableDefinition,
-                                                   ISortableDataProvider<Node> dataProvider,
+                                                   ISortableDataProvider<Node, String> dataProvider,
                                                    ListDataTable.TableSelectionListener<Node> selectionListener,
                                                    boolean triState,
                                                    ListPagingDefinition pagingDefinition) {

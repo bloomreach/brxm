@@ -16,7 +16,10 @@
 package org.hippoecm.frontend.extjs;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.wicketstuff.js.ext.util.ExtCustomThemeBehavior;
 
 /**
@@ -24,9 +27,12 @@ import org.wicketstuff.js.ext.util.ExtCustomThemeBehavior;
  */
 public class ExtHippoThemeBehavior extends ExtCustomThemeBehavior {
 
-    @Override
-    protected void addCustomTheme(final Component component) {
-        component.add(CSSPackageResource.getHeaderContribution(getClass(), "hippotheme/ExtHippoTheme.css"));
-    }
+    private final static ResourceReference HIPPO_THEME_STYLESHEET = new CssResourceReference(ExtHippoThemeBehavior.class, "hippotheme/ExtHippoTheme.css");
 
+    @Override
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        super.renderHead(component, response);
+
+        response.render(CssHeaderItem.forReference(HIPPO_THEME_STYLESHEET));
+    }
 }

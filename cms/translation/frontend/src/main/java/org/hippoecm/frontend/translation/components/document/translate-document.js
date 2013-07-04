@@ -53,7 +53,8 @@ if (Hippo.Translation.WicketHook === undefined) {
 
         };
     }());
-    Wicket.Ajax.registerPreCallHandler(function() {
+
+    Wicket.Event.subscribe('/ajax/call/before', function() {
         Hippo.Translation.WicketHook.preAjaxCall();
     });
 }

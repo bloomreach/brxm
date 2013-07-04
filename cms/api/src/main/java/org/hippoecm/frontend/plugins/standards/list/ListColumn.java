@@ -23,13 +23,15 @@ import java.util.List;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.CancelEventIfAjaxListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.string.AppendingStringBuffer;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -47,7 +49,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
  * By default, the renderer used is the {@link NameRenderer}, that renders the (translated)
  * name of a JCR node.
  */
-public class ListColumn<T> extends AbstractColumn<T> {
+public class ListColumn<T> extends AbstractColumn<T, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -141,7 +143,7 @@ public class ListColumn<T> extends AbstractColumn<T> {
         return true;
     }
 
-
+    @Override
     public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
         addLinkBehavior(item, model);
 
@@ -173,9 +175,9 @@ public class ListColumn<T> extends AbstractColumn<T> {
                             }
 
                             public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                                AjaxRequestTarget target = AjaxRequestTarget.get();
+                                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                                 if (target != null) {
-                                    target.addComponent(cell);
+                                    target.add(cell);
                                 }
                             }
 
@@ -194,8 +196,10 @@ public class ListColumn<T> extends AbstractColumn<T> {
             item.add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;
 
-                protected CharSequence getEventHandler() {
-                    return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
+                @Override
+                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
                 }
 
                 @Override

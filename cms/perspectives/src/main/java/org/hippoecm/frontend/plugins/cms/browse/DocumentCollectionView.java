@@ -133,7 +133,7 @@ public abstract class DocumentCollectionView extends WebMarkupContainer {
     public void render(PluginRequestTarget target) {
         if (redraw) {
             if (target != null) {
-                target.addComponent(this);
+                target.add(this);
             }
         }
         if (doclisting != null) {

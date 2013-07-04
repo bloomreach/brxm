@@ -55,14 +55,14 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
         }
 
         @Override
-        public Iterator<PanelPlugin> iterator(final int first, final int count) {
+        public Iterator<PanelPlugin> iterator(final long first, final long count) {
             load();
 
-            return services.subList(first, first + count).iterator();
+            return services.subList((int) first, (int) (first + count)).iterator();
         }
 
         @Override
-        public int size() {
+        public long size() {
             load();
             return services.size();
         }
@@ -116,9 +116,9 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
     }
 
     protected void redraw() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.addComponent(this);
+            target.add(this);
         }
     }
 

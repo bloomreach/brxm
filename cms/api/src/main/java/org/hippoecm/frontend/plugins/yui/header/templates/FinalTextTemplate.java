@@ -16,44 +16,29 @@
 
 package org.hippoecm.frontend.plugins.yui.header.templates;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
 public class FinalTextTemplate implements IHeaderContributor {
 
     private static final long serialVersionUID = 1L;
 
-    private TextTemplateHeaderContributor headerContributor;
+    private final String script;
 
-    public FinalTextTemplate(PackagedTextTemplate template, Map<String, Object> parameters) {
-        headerContributor = TextTemplateHeaderContributor.forJavaScript(template, new ReadOnlyModel(parameters));
+    public FinalTextTemplate(PackageTextTemplate template, Map<String, Object> parameters) {
+        this.script = template.interpolate(parameters).getString();
     }
 
     public FinalTextTemplate(Class<?> clazz, String filename, Map<String, Object> parameters) {
-        this(new PackagedTextTemplate(clazz, filename), parameters);
+        this(new PackageTextTemplate(clazz, filename), parameters);
     }
 
     public void renderHead(IHeaderResponse response) {
-        headerContributor.renderHead(response);
+        response.render(OnDomReadyHeaderItem.forScript(script));
     }
 
-    private static class ReadOnlyModel extends AbstractReadOnlyModel {
-        private static final long serialVersionUID = 1L;
-        private Map<String, Object> values  = new HashMap<String, Object>();
-
-        public ReadOnlyModel(Map<String, Object> values) {
-            this.values.putAll(values);
-        }
-
-        @Override
-        public Object getObject() {
-            return values;
-        }
-    }
 }

@@ -18,9 +18,10 @@ package org.hippoecm.frontend.plugins.yui.ajax;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.extensions.ajax.markup.html.WicketAjaxIndicatorAppender;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
@@ -30,18 +31,18 @@ public class AjaxIndicatorBehavior extends AbstractYuiBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AjaxIndicatorBehavior.class,
+    private final static ResourceReference AJAX_LOADER_GIF = new PackageResourceReference(AjaxIndicatorBehavior.class,
             "ajax-loader.gif");
 
-    final private WicketAjaxIndicatorAppender ajaxIndicator;
+    final private AjaxIndicatorAppender ajaxIndicator;
 
     public AjaxIndicatorBehavior() {
-        ajaxIndicator = new WicketAjaxIndicatorAppender() {
+        ajaxIndicator = new AjaxIndicatorAppender() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
+                return RequestCycle.get().urlFor(AJAX_LOADER_GIF, null);
             }
         };
     }

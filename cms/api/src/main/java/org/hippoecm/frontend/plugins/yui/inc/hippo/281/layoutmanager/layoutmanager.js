@@ -60,7 +60,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             root            : null,
             wireframes      : new YAHOO.hippo.HashMap(),
             _w              : new YAHOO.hippo.HashMap(),
-            renderQueue     : new YAHOO.hippo.FunctionQueue('render'),
             throttler       : new Wicket.Throttler(true),
             throttleDelay   : 0,
             resizeEvent     : null,
@@ -113,18 +112,28 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             renderWireframes : function() {
-                this.renderQueue.handleQueue();
-                this._w.forEach(this, function(k, v) {
-                    var o = new v.clazz(k, v.config, this);
-                    this.wireframes.put(k, o);
-                    o.render();
-                });
-                this._w.clear();
+                var todo = [], index, e, k, v, o;
+                if (this.root !== null) {
+                    this._w.forEach(this, function(k, v) {
+                        todo.push({k: k, v: v});
+                    });
+                    this._w.clear();
+
+                    for (index = todo.length - 1; index >= 0; index--) {
+                        e = todo[index];
+                        k = e.k;
+                        v = e.v;
+                        o = new v.clazz(k, v.config, this);
+                        this.wireframes.put(k, o);
+                        o.render();
+                    }
+                }
             },
 
             addRoot : function(id, Clazz, config) {
                 this.root = new Clazz(id, config, this);
-                this.addToRenderQueue(this.root);
+                this.root.render();
+                this.renderWireframes();
             },
 
             addWireframe : function(id, clazz, config) {
@@ -139,7 +148,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             handleExpandCollapse : function(element) {
                 while (true) {
-                    var unit, layout, layoutId, wireframe, position, unitCfg, url;
+                    var unit, layout, layoutId, wireframe, position, unitCfg;
 
                     unit = this.findLayoutUnit(element);
                     if (unit === null) {
@@ -160,8 +169,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     unitCfg = wireframe.getUnitConfigByPosition(position);
                     if (unitCfg !== null && unitCfg.expandCollapseEnabled) {
                         //do callback
-                        url = wireframe.config.callbackUrl + '&position=' + position;
-                        wireframe.config.callbackFunction(url);
+                        wireframe.config.callbackFunction({position: position});
                         return;
                     }
                     element = Dom.get(wireframe.id);
@@ -178,12 +186,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 if (this.wireframes.containsKey(id)) {
                     this.wireframes.get(id).collapseUnit(position);
                 }
-            },
-
-            addToRenderQueue : function(wireframe) {
-                this.renderQueue.registerFunction(function() {
-                    wireframe.render();
-                });
             },
 
             getWireframe : function(id) {
@@ -500,6 +502,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             onEndResizeUnit : function(o, unit) {
                 var sizes, minWidth, newWidth, offset, diff;
+
                 //if the width of this unit is bigger than the layout width, it will
                 //overlap neighboring units. A 20px margin is used.
                 //Added check for minWidth as well
@@ -525,6 +528,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             newWidthIsOk : function() {
                 var result, i, len, unit, unitWidth;
+
                 result = 0;
                 for (i = 0, len = this.config.units.length; i < len; i++) {
                     unit = this.layout.getUnitByPosition(this.config.units[i].position);
@@ -544,6 +548,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             enhanceIds : function() {
                 var i, len, u, uid, unitEl;
+
                 YAHOO.hippo.Dom.enhance(HippoDom.resolveElement(this.id), this.id);
                 for (i = 0, len = this.config.units.length; i < len; i++) {
                     u = this.config.units[i];
@@ -574,6 +579,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             collapseUnit : function(position) {
                 var unit, config;
+
                 unit = this.layout.getUnitByPosition(position);
                 if (unit !== null) {
                     config = this.getUnitConfigByPosition(position);
@@ -589,6 +595,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             checkSizes : function() {
                 var i, len, unit;
+
                 for (i = 0, len = this.config.units.length; i < len; i++) {
                     unit = this.layout.getUnitByPosition(this.config.units[i].position);
                     this.onEndResizeUnit(null, unit);

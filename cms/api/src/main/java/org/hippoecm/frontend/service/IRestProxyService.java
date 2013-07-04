@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Creates proxies to talk to REST services. Proxies are generated from classes that specify the API of

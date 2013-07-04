@@ -19,12 +19,12 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public interface IPasswordValidationService extends IClusterable {
 
-    public List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException;
+    List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException;
     
-    public List<IPasswordValidator> getPasswordValidators();
+    List<IPasswordValidator> getPasswordValidators();
 }

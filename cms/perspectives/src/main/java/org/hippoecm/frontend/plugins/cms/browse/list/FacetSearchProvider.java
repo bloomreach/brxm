@@ -79,7 +79,8 @@ public final class FacetSearchProvider extends SortableDataProvider<Node> implem
 
     // impl IDataProvider
 
-    public Iterator<Node> iterator(int first, int count) {
+    @Override
+    public Iterator<Node> iterator(long first, long count) {
         List<Node> displayedList = new ArrayList<Node>(handleProvider.getObject());
         SortState sortState = getSortState();
         if (sortState != null && sortState.isSorted()) {
@@ -94,17 +95,20 @@ public final class FacetSearchProvider extends SortableDataProvider<Node> implem
                 }
             }
         }
-        return displayedList.subList(first, first + count).iterator();
+        return displayedList.subList((int) first, (int)(first + count)).iterator();
     }
 
+    @Override
     public IModel<Node> model(Node object) {
         return new JcrNodeModel(object);
     }
 
-    public int size() {
+    @Override
+    public long size() {
         return handleProvider.getObject().size();
     }
 
+    @Override
     public void detach() {
         handleProvider.detach();
         model.detach();

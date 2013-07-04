@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.service.preferences;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IPreferencesStore extends IClusterable {
     

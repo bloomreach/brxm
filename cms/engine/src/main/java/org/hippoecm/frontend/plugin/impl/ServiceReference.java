@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.impl;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IServiceReference;

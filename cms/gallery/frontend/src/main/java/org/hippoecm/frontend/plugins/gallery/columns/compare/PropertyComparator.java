@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns.compare;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 

@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.workflow;
 
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.LayoutHelper;

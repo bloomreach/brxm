@@ -15,7 +15,7 @@
  */
 package org.hippoecm.editor.prototype;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface IPrototypeStore<T> extends IClusterable {

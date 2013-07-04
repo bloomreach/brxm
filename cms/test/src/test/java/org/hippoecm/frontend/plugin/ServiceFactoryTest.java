@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugin;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginPage;

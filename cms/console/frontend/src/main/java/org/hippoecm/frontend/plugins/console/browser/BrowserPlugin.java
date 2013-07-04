@@ -21,19 +21,25 @@ import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.tree.DefaultTreeState;
-import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -72,6 +78,9 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
+    private static final JavaScriptResourceReference NAVIGATION_JS = new JavaScriptResourceReference(BrowserPlugin.class, "navigation.js");
+    private static final JavaScriptResourceReference SHORTCUTS_JS = new JavaScriptResourceReference(InputBehavior.class, "shortcuts.js");
+
 
     protected final JcrTree tree;
     private TreeWidgetBehavior treeBehavior;
@@ -98,8 +107,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         final JcrTree newTree = new BrowserTree(treeModel);
         newTree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
 
-        newTree.add(JavascriptPackageResource.getHeaderContribution(InputBehavior.class, "shortcuts.js"));
-        newTree.add(JavascriptPackageResource.getHeaderContribution(BrowserPlugin.class, "navigation.js"));
         newTree.add(new AbstractDefaultAjaxBehavior() {
 
             final TreeNavigator navigator = new TreeNavigator(newTree.getTreeState());
@@ -109,7 +116,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 navigating = true;
                 try {
                     RequestCycle rc = RequestCycle.get();
-                    String key = rc.getRequest().getParameter("key");
+                    String key = rc.getRequest().getQueryParameters().getParameterValue("key").toString();
                     if ("Up".equals(key)) {
                         navigator.up();
                         updateModel(target);
@@ -137,11 +144,12 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             }
 
             @Override
-            public void renderHead(final IHeaderResponse response) {
-                super.renderHead(response);
-                response.renderOnLoadJavascript("Hippo.Tree.addShortcuts('" + getCallbackUrl() + "');");
+            public void renderHead(Component component, final IHeaderResponse response) {
+                super.renderHead(component, response);
+                response.render(OnDomReadyHeaderItem.forScript("Hippo.Tree.addShortcuts('" + getCallbackUrl() + "');"));
             }
-        }); return newTree;
+        });
+        return newTree;
     }
 
     protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
@@ -151,7 +159,9 @@ public class BrowserPlugin extends RenderPlugin<Node> {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
-        tree.updateTree();
+        if (target != null) {
+            tree.updateTree();
+        }
         treeBehavior.render(target);
     }
 
@@ -181,6 +191,14 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         }
 
         @Override
+        public void renderHead(final IHeaderResponse response) {
+            super.renderHead(response);
+
+            response.render(JavaScriptHeaderItem.forReference(SHORTCUTS_JS));
+            response.render(JavaScriptHeaderItem.forReference(NAVIGATION_JS));
+        }
+
+        @Override
         protected ITreeState newTreeState() {
             DefaultTreeState state = new DefaultTreeState();
             JcrTreeModel model = (JcrTreeModel) getModelObject();
@@ -204,13 +222,14 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     @Override
                     protected void respond(AjaxRequestTarget target) {
                         getContextmenu().setVisible(true);
-                        target.addComponent(getComponentToUpdate());
+                        target.add(getComponentToUpdate());
                         IContextMenuManager menuManager = findParent(IContextMenuManager.class);
                         if (menuManager != null) {
                             menuManager.showContextMenu(this);
-                            String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);
-                            String y = RequestCycle.get().getRequest().getParameter(MOUSE_Y_PARAM);
-                            target.appendJavascript(
+                            final IRequestParameters requestParameters = getRequestParameters();
+                            StringValue x = requestParameters.getParameterValue(MOUSE_X_PARAM);
+                            StringValue y = requestParameters.getParameterValue(MOUSE_Y_PARAM);
+                            target.appendJavaScript(
                                     "Hippo.ContextMenu.renderAtPosition('" + menu.getMarkupId() + "', " + x + ", " + y + ");");
                         }
                     }
@@ -249,7 +268,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "add-node.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "add-node.png");
                 }
             };
             menuContainer.add(iconAddNode);
@@ -270,7 +289,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "delete-node.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "delete-node.png");
                 }
             };
             menuContainer.add(iconDeleteNode);
@@ -291,7 +310,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "copy-node.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "copy-node.png");
                 }
             };
             menuContainer.add(iconCopyNode);
@@ -312,7 +331,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "move-node.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "move-node.png");
                 }
             };
             menuContainer.add(iconMoveNode);
@@ -333,7 +352,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "rename-node.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "rename-node.png");
                 }
             };
             menuContainer.add(iconRenameNode);
@@ -354,7 +373,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "xml-export.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "xml-export.png");
                 }
             };
             menuContainer.add(iconXmlExport);
@@ -374,7 +393,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "xml-import.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "xml-import.png");
                 }
             };
             menuContainer.add(iconXmlImport);
@@ -396,7 +415,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "t9ids.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "t9ids.png");
                 }
             };
             menuContainer.add(iconT9ids);
@@ -416,7 +435,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new ResourceReference(BrowserPlugin.class, "t9ids.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "t9ids.png");
                 }
             };
             menuContainer.add(iconHippoPaths);
@@ -424,6 +443,10 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             return menuContainer;
         }
 
+    }
+
+    private IRequestParameters getRequestParameters() {
+        return RequestCycle.get().getRequest().getRequestParameters();
     }
 
 }

@@ -23,7 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.tree.TreePath;
 
-import org.apache.wicket.markup.html.tree.DefaultTreeState;
+import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;

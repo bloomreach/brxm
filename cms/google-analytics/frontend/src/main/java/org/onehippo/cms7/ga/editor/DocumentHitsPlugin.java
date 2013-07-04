@@ -39,7 +39,6 @@ import org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -112,11 +111,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     private Long numberofintervals;
     private Period period;
 
-    // result cache
-    private String graphUrl;
-    private String graphLabel;
-    private String graphInfo;
-    
     // variables for internal processing
     private List<Long> pageViewsList;
     private Long maxPageViews = -1L;
@@ -139,37 +133,10 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
             public Component getLazyLoadComponent(String markupId) {
                 Fragment fragment = new Fragment(markupId, "lazy-load-document-hits-container", DocumentHitsPlugin.this);
                 
-                Image image = new Image("document-hits-image");
-                image.add(new AttributeModifier("src", true, new AbstractReadOnlyModel<String>() {
-                    private static final long serialVersionUID = 1L;
-                    public final String getObject() {
-                        if (graphUrl == null) {
-                            graphUrl = getGraphUrl();
-                        }
-                        return graphUrl;
-                    }
-                }));
-                image.add(new AttributeModifier("title", true, new AbstractReadOnlyModel<String>() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public String getObject() {
-                        if (graphInfo == null) {
-                            graphInfo = getGraphInfo();
-                        }
-                        return graphInfo;
-                    }
-                }));
+                Image image = new Image("document-hits-image", getGraphUrl());
+                image.add(new AttributeModifier("title", getGraphInfo()));
                 fragment.add(image);
-                Label label = new Label("document-hits-label", new AbstractReadOnlyModel<String>() {
-                    private static final long serialVersionUID = 1L;
-                    @Override
-                    public String getObject() {
-                        if (graphLabel == null) {
-                            graphLabel = getGraphLabel();
-                        }
-                        return graphLabel;
-                    }
-                });
+                Label label = new Label("document-hits-label", getGraphLabel());
                 fragment.add(label);
                 return fragment;
             }
@@ -187,8 +154,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         if (!success) {
             return errorMessage;
         }
-        
-        
+
         return getTranslation(Period.getI18CaptionKey(period), new Model<String[]>(new String[] { mostRecentPageViews.toString() }));
     }
     
@@ -237,6 +203,8 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     }
     
     private void loadGraphData() {
+        loaded = true;
+        success = false;
         try {
             // Create Google analytics query
             DataQuery query = new DataQuery(new URL("https://www.google.com/analytics/feeds/data"));
@@ -266,9 +234,8 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 // remember the last number of page views in the data set
                 mostRecentPageViews = pageViews;
             }
-            loaded = true;
+            success = true;
         } catch (MalformedURLException e) {
-            success = false;
             errorMessage = e.getMessage();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to load google analytics graph data", e);
@@ -276,7 +243,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
             }
         } catch (RepositoryException e) {
-            success = false;
             errorMessage = e.getMessage();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to load google analytics graph data", e);
@@ -284,7 +250,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
             }
         } catch (AuthenticationException e) {
-            success = false;
             errorMessage = e.getMessage();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to load google analytics graph data", e);
@@ -292,7 +257,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
             }
         } catch (IOException e) {
-            success = false;
             errorMessage = e.getMessage();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to load google analytics graph data", e);
@@ -300,7 +264,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
                 log.warn("Failed to load google analytics graph data: " + e.getClass().getName() + ": " + e.getMessage());
             }
         } catch (ServiceException e) {
-            success = false;
             errorMessage = e.getMessage();
             if (log.isDebugEnabled()) {
                 log.warn("Failed to load google analytics graph data", e);
@@ -370,7 +333,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     }
     
     private String getScheme() {
-        return ((ServletWebRequest) getRequest()).getHttpServletRequest().getScheme();
+        return ((ServletWebRequest) getRequest()).getContainerRequest().getScheme();
     }
     
     private String getTranslation(String key, Model<String[]> model) {

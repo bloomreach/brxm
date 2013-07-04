@@ -50,16 +50,19 @@ public class ReferenceProvider extends NodeModelWrapper implements IDataProvider
         super(nodeModel);
     }
 
-    public Iterator<String> iterator(int first, int count) {
+    @Override
+    public Iterator<String> iterator(long first, long count) {
         load();
-        return entries.subList(first, first + count).iterator();
+        return entries.subList((int) first, (int) (first + count)).iterator();
     }
 
+    @Override
     public IModel<String> model(String object) {
         return new Model<String>(object);
     }
 
-    public int size() {
+    @Override
+    public long size() {
         load();
         return entries.size();
     }

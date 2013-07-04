@@ -15,16 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
-import org.apache.wicket.IClusterable;
-
-import java.util.Map;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IAjaxSettings extends IClusterable {
 
-    void setCallbackUrl(String url);
-
     void setCallbackFunction(JsFunction function);
-
-    void setCallbackParameters(Map< String, Object > map);
 
 }

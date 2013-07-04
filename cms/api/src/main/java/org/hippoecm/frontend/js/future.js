@@ -99,7 +99,7 @@
          * @return {Hippo.Future}
          */
         transform: function(transformer) {
-            return new Hippo.Future(function(onSuccess, onFail) {
+            return new Hippo.Future(jQuery.proxy(function(onSuccess, onFail) {
                 this.when(function(value) {
                     var transformed;
                     try {
@@ -110,7 +110,7 @@
                     }
                     onSuccess(transformed);
                 }).otherwise(onFail);
-            }.bind(this));
+            }, this));
         },
 
         /**
@@ -134,12 +134,12 @@
          * @return {Hippo.Future}
          */
         chain: function(futureFactory) {
-            return new Hippo.Future(function(onSuccess, onFail) {
+            return new Hippo.Future(jQuery.proxy(function(onSuccess, onFail) {
                 this.when(function(value) {
                     var future = futureFactory(value);
                     future.when(onSuccess).otherwise(onFail);
                 }).otherwise(onFail);
-            }.bind(this));
+            }, this));
         },
 
         /**
@@ -159,13 +159,13 @@
          * @return {Hippo.Future}
          */
         retry: function(futureFactory) {
-            return new Hippo.Future(function(onSuccess, onFail) {
+            return new Hippo.Future(jQuery.proxy(function(onSuccess, onFail) {
                 this.when(onSuccess)
                     .otherwise(function() {
                         var future = futureFactory();
                         future.when(onSuccess).otherwise(onFail);
                     });
-            }.bind(this));
+            }, this));
         },
 
         /**
@@ -230,7 +230,7 @@
             i, len;
         // use a for-loop to be compatible with IE8
         for (i = 0, len = publicMembers.length; i < len; i++) {
-            this[publicMembers[i]] = _future[publicMembers[i]].bind(_future);
+            this[publicMembers[i]] = jQuery.proxy(_future[publicMembers[i]], _future);
         }
     };
 

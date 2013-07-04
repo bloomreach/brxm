@@ -33,7 +33,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.development.content.names.Names;
 import org.hippoecm.frontend.plugins.development.content.names.NamesFactory;
 import org.hippoecm.frontend.session.UserSession;

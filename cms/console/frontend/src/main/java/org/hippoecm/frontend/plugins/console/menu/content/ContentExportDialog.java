@@ -99,7 +99,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
                     export = e.getMessage();
                 }
                 dump.setDefaultModel(new Model<String>(export));
-                target.addComponent(dump);
+                target.add(dump);
             }
         };
         viewLink.add(new Label("view-link-text", "Show export in this window"));

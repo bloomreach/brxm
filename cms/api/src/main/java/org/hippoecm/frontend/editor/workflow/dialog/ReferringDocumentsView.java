@@ -126,7 +126,7 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
                 while (iter.hasNext()) {
                     selectedDocuments.add((JcrNodeModel) provider.model(iter.next()));
                 }
-                target.addComponent(ReferringDocumentsView.this);
+                target.add(ReferringDocumentsView.this);
             }
         };
         actionContainer.add(selectAll);
@@ -137,7 +137,7 @@ public class ReferringDocumentsView extends Panel implements IPagingDefinition {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 selectedDocuments.clear();
-                target.addComponent(ReferringDocumentsView.this);
+                target.add(ReferringDocumentsView.this);
             }
         };
         actionContainer.add(selectNone);

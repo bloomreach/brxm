@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.plugin.IClusterControl;

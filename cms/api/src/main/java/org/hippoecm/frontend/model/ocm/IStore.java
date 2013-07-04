@@ -18,7 +18,7 @@ package org.hippoecm.frontend.model.ocm;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Store and retrieve objects.  It uses a lifecycle for objects that 

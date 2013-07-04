@@ -16,22 +16,24 @@
 package org.hippoecm.frontend.plugins.yui.accordion;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
+import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeUtils;
 
 public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
-    
-    
+
     //Provide a more generic approach by making the function call variable as well
-    private final PackagedTextTemplate INIT = new PackagedTextTemplate(AccordionManagerBehavior.class, "init.js");
-    
+    private final PackageTextTemplate INIT = new PackageTextTemplate(AccordionManagerBehavior.class, "init.js");
+
     private DynamicTextTemplate template;
-    private String id;
 
     public AccordionManagerBehavior(AccordionConfiguration accordionSettings) {
         this.template = new DynamicTextTemplate(INIT);
@@ -42,17 +44,22 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     public void bind(Component component) {
         super.bind(component);
         template.setId(component.getMarkupId());
-        this.id = component.getMarkupId();
     }
-    
+
     @Override
     public void addHeaderContribution(IYuiContext helper) {
         helper.addModule(HippoNamespace.NS, "accordionmanager");
-        helper.addTemplate(template);
+        helper.addTemplate(new IHeaderContributor() {
+
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                IWireframe parent = WireframeUtils.getParentWireframe(getComponent());
+                if (parent != null) {
+                    response.render(parent.getHeaderItem());
+                }
+                response.render(OnDomReadyHeaderItem.forScript(template.getString()));
+            }
+        });
     }
 
-    public IBehavior newSection() {
-        return new AccordionSectionBehavior(id);
-    }
-    
 }

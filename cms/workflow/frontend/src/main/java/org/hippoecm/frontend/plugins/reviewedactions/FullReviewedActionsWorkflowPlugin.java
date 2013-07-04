@@ -25,8 +25,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -36,6 +37,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
@@ -137,7 +140,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         add(editAction = new StdWorkflow("edit", new StringResourceModel("edit-label", this, null), getModel()) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "edit-16.png");
+                return new PackageResourceReference(getClass(), "edit-16.png");
             }
 
             @Override
@@ -166,7 +169,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "publish-16.png");
+                return new PackageResourceReference(getClass(), "publish-16.png");
             }
 
             @Override
@@ -198,7 +201,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "unpublish-16.png");
+                return new PackageResourceReference(getClass(), "unpublish-16.png");
             }
 
             @Override
@@ -224,7 +227,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             public Date date = new Date();
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "publish-schedule-16.png");
+                return new PackageResourceReference(getClass(), "publish-schedule-16.png");
             }
             @Override
             protected Dialog createRequestDialog() {
@@ -254,7 +257,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             public Date date = new Date();
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "unpublish-scheduled-16.png");
+                return new PackageResourceReference(getClass(), "unpublish-scheduled-16.png");
             }
 
             @Override
@@ -287,9 +290,9 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
-                    return new ResourceReference(getClass(), "rename-16.png");
+                    return new PackageResourceReference(getClass(), "rename-16.png");
                 } else {
-                    return new ResourceReference(getClass(), "rename-disabled-16.png");
+                    return new PackageResourceReference(getClass(), "rename-disabled-16.png");
                 }
             }
 
@@ -344,7 +347,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "copy-16.png");
+                return new PackageResourceReference(getClass(), "copy-16.png");
             }
 
             @Override
@@ -405,9 +408,9 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
-                    return new ResourceReference(getClass(), "move-16.png");
+                    return new PackageResourceReference(getClass(), "move-16.png");
                 } else {
-                    return new ResourceReference(getClass(), "move-disabled-16.png");
+                    return new PackageResourceReference(getClass(), "move-disabled-16.png");
                 }
             }
 
@@ -454,9 +457,9 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected ResourceReference getIcon() {
                 if (isEnabled()) {
-                    return new ResourceReference(getClass(), "delete-16.png");
+                    return new PackageResourceReference(getClass(), "delete-16.png");
                 } else {
-                    return new ResourceReference(getClass(), "delete-disabled-16.png");
+                    return new PackageResourceReference(getClass(), "delete-disabled-16.png");
                 }
             }
 
@@ -489,7 +492,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "where-used-16.png");
+                return new PackageResourceReference(getClass(), "where-used-16.png");
             }
 
             @Override
@@ -508,7 +511,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "revision-16.png");
+                return new PackageResourceReference(getClass(), "revision-16.png");
             }
 
             @Override
@@ -690,14 +693,21 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             nameComponent.setRequired(true);
             nameComponent.setLabel(new StringResourceModel("name-label", this, null));
             nameComponent.add(new OnChangeAjaxBehavior() {
+
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
                         uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
-                        target.addComponent(uriComponent);
+                        target.add(uriComponent);
                     }
                 }
-            }.setThrottleDelay(Duration.milliseconds(500)));
+
+                @Override
+                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    attributes.setThrottlingSettings(new ThrottlingSettings(nameComponent.getPath(), Duration.milliseconds(500)));
+                }
+            });
             nameComponent.setOutputMarkupId(true);
             setFocus(nameComponent);
             add(nameComponent);
@@ -727,7 +737,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                     } else {
                         target.focusComponent(uriComponent);
                     }
-                    target.addComponent(RenameDocumentDialog.this);
+                    target.add(RenameDocumentDialog.this);
                 }
             };
             uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {

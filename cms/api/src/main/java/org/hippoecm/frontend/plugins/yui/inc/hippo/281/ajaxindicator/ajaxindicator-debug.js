@@ -34,8 +34,8 @@
     this.elementId = _elId;
     
     var self = this;
-    Wicket.Ajax.registerPreCallHandler(function() { self.show(); });
-    Wicket.Ajax.registerPostCallHandler(function(){ self.hide(); });
+    Wicket.Event.subscribe('/ajax/call/beforeSend', function() { self.show(); });
+    Wicket.Event.subscribe('/ajax/call/complete', function(){ self.hide(); });
   };
 
   YAHOO.hippo.AjaxIndicator.prototype = {

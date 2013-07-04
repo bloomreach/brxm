@@ -96,16 +96,16 @@ public class SearchDocumentsProvider extends SortableDataProvider<Node> {
         }
     }
 
-    public Iterator<Node> iterator(int first, int count) {
+    public Iterator<Node> iterator(long first, long count) {
         load();
-        return entries.subList(first, first + count).iterator();
+        return entries.subList((int) first, (int) (first + count)).iterator();
     }
 
     public IModel<Node> model(Node object) {
         return new JcrNodeModel(object);
     }
 
-    public int size() {
+    public long size() {
         load();
         return entries.size();
     }

@@ -24,10 +24,10 @@ if (!YAHOO.hippo.ScrollStateSaver) {
             this.scrollElementId = null;
             this.cookiePrefix = cookiePrefix;
             var _this = this;
-            Wicket.Ajax.registerPreCallHandler(function() {
+            Wicket.Event.subscribe('/ajax/call/beforeSend', function() {
                 _this.saveScrollPosition();
             });
-            Wicket.Ajax.registerPostCallHandler(function() {
+            Wicket.Event.subscribe('/ajax/call/complete', function() {
                 _this.loadScrollPosition();
             });
         };

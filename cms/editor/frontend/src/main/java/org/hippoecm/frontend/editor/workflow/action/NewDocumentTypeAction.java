@@ -21,8 +21,9 @@ import java.util.List;
 import javax.jcr.ItemExistsException;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
@@ -125,7 +126,7 @@ public class NewDocumentTypeAction extends Action {
 
     @Override
     protected ResourceReference getIcon() {
-        return new ResourceReference(StdWorkflow.class, "doctype-new-16.png");
+        return new PackageResourceReference(StdWorkflow.class, "doctype-new-16.png");
     }
 
 }

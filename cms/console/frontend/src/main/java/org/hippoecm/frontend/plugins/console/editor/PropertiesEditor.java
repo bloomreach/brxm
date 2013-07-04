@@ -97,7 +97,7 @@ public class PropertiesEditor extends DataView {
                         log.error(e.getMessage());
                     }
                     NodeEditor editor = findParent(NodeEditor.class);
-                    target.addComponent(editor);
+                    target.add(editor);
                 }
             };
         }
@@ -126,7 +126,7 @@ public class PropertiesEditor extends DataView {
                 }
 
                 NodeEditor editor = findParent(NodeEditor.class);
-                target.addComponent(editor);
+                target.add(editor);
             }
         };
     }

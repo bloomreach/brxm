@@ -17,16 +17,17 @@ package org.hippoecm.frontend.dialog;
 
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.parser.XmlTag;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
 
 import wicket.contrib.input.events.EventType;
@@ -134,14 +135,14 @@ public class ButtonWrapper implements IClusterable {
         if (button != null) {
             button.setEnabled(isset);
             if (ajax) {
-                AjaxRequestTarget target = AjaxRequestTarget.get();
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
                     if (!isset) {
                         renderAttribute(target, "disabled", "disabled");
                     } else {
-                        target.appendJavascript("Wicket.$('" + button.getMarkupId() + "').removeAttribute('disabled')");
-                        for (IBehavior behavior : button.getBehaviors()) {
-                            ComponentTag tag = new ComponentTag("button", XmlTag.OPEN_CLOSE);
+                        target.appendJavaScript("Wicket.$('" + button.getMarkupId() + "').removeAttribute('disabled')");
+                        for (Behavior behavior : button.getBehaviors()) {
+                            ComponentTag tag = new ComponentTag("button", XmlTag.TagType.OPEN_CLOSE);
                             behavior.onComponentTag(button, tag);
 
                             for (Map.Entry<String, Object> entry : tag.getAttributes().entrySet()) {
@@ -171,7 +172,7 @@ public class ButtonWrapper implements IClusterable {
             value = Strings.replaceAll(value.toString(), "&quot;", "\\\"");
         }
 
-        target.appendJavascript(
+        target.appendJavaScript(
                 "Wicket.$('" + button.getMarkupId() + "').setAttribute('" + key + "', \"" + value + "\")");
     }
 
@@ -180,9 +181,9 @@ public class ButtonWrapper implements IClusterable {
         if (button != null && button.isVisible() != isset) {
             button.setVisible(isset);
             if (ajax) {
-                AjaxRequestTarget target = AjaxRequestTarget.get();
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 if (target != null) {
-                    target.addComponent(button);
+                    target.add(button);
                 }
             }
         }

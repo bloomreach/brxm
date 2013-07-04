@@ -18,7 +18,7 @@ package org.hippoecm.frontend.model.event;
 import java.util.EventListener;
 import java.util.Iterator;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 /**

@@ -45,7 +45,7 @@ public class NodeSortPanel extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 if(sorter.moveUp()) {
-                    target.addComponent(NodeSortPanel.this);
+                    target.add(NodeSortPanel.this);
                     onNodeSorted(target);
                 }
             }
@@ -62,7 +62,7 @@ public class NodeSortPanel extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 if(sorter.moveDown()) {
-                    target.addComponent(NodeSortPanel.this);
+                    target.add(NodeSortPanel.this);
                     onNodeSorted(target);
                 }
             }

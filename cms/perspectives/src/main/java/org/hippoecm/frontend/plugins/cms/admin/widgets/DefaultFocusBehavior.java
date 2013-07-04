@@ -16,28 +16,25 @@
 package org.hippoecm.frontend.plugins.cms.admin.widgets;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 
 /**
  * Focuses the component bound to this behavior after a page load or Ajax response. This behavior should be used
  * for one component only.
  */
-public class DefaultFocusBehavior extends AbstractBehavior {
+public class DefaultFocusBehavior extends Behavior {
 
     private static final long serialVersionUID = 1L;
 
-    private Component component;
-
     @Override
     public void bind(Component component) {
-        this.component = component;
         component.setOutputMarkupId(true);
     }
 
     @Override
-    public void renderHead(IHeaderResponse iHeaderResponse) {
-        super.renderHead(iHeaderResponse);
-        iHeaderResponse.renderOnLoadJavascript("document.getElementById('" + component.getMarkupId() + "').focus();");
+    public void renderHead(Component component, IHeaderResponse response) {
+        response.render(JavaScriptHeaderItem.forScript("document.getElementById('" + component.getMarkupId() + "').focus();", component.getPath() + "-focus"));
     }
 }

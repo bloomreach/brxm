@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
 
 /**

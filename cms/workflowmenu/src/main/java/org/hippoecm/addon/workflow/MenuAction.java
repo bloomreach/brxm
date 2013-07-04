@@ -39,7 +39,7 @@ class MenuAction extends Panel implements IContextMenu {
             @Override
             public void onClick() {
                 if (wf instanceof StdWorkflow) {
-                    ((StdWorkflow)wf).invoke();
+                    wf.invoke();
                 }
             }
 

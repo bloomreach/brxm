@@ -32,8 +32,8 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.wicket.markup.html.tree.DefaultTreeState;
-import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;

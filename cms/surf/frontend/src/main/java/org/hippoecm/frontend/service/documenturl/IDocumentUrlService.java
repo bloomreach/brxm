@@ -17,7 +17,7 @@ package org.hippoecm.frontend.service.documenturl;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Returns the external URL to a Hippo document node.

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.translation.components;
 
-import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.translation.components.document.DocumentMismatchingPage;
@@ -25,9 +25,9 @@ import org.hippoecm.frontend.translation.components.folder.FolderTranslationPage
 public class WicketApplication extends WebApplication {
 
     @Override
-    public String getConfigurationType() {
+    public RuntimeConfigurationType getConfigurationType() {
         // suppress development mode warning from test output
-        return Application.DEPLOYMENT;
+        return RuntimeConfigurationType.DEPLOYMENT;
     }
 
     @Override
@@ -38,8 +38,8 @@ public class WicketApplication extends WebApplication {
     @Override
     protected void init() {
         super.init();
-        mountBookmarkablePage("regular", DocumentRegularPage.class);
-        mountBookmarkablePage("mismatch", DocumentMismatchingPage.class);
-        mountBookmarkablePage("folders", FolderTranslationPage.class);
+        mountPage("regular", DocumentRegularPage.class);
+        mountPage("mismatch", DocumentMismatchingPage.class);
+        mountPage("folders", FolderTranslationPage.class);
     }
 }

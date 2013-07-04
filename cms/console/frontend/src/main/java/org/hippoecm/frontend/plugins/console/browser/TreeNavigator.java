@@ -19,8 +19,8 @@ import java.util.Collection;
 
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.util.io.IClusterable;
 
 public class TreeNavigator implements IClusterable {
     private final ITreeState treeState;

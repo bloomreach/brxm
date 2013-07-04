@@ -43,7 +43,7 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     }
 
     @Override
-    protected ISortableDataProvider<Node> newDataProvider() {
+    protected ISortableDataProvider<Node, String> newDataProvider() {
         return new SearchDocumentsProvider(getModel(), getTableDefinition().getComparators());
     }
 

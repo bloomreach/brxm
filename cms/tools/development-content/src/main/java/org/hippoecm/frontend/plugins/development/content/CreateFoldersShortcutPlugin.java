@@ -22,10 +22,13 @@ import java.util.List;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.wizard.dynamic.IDynamicWizardStep;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -39,6 +42,8 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 public class CreateFoldersShortcutPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
+
+    private static final ResourceReference STYLE_CSS = new CssResourceReference(CreateFoldersShortcutPlugin.class, "style.css");
 
     ContentBuilder builder;
 
@@ -62,12 +67,16 @@ public class CreateFoldersShortcutPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;
 
         public Dialog() {
-            add(CSSPackageResource.getHeaderContribution(CreateFoldersShortcutPlugin.class, "style.css"));
-            
             setOkVisible(false);
             setCancelVisible(false);
 
             add(new CreateFoldersWizard("wizard", getPluginContext(), getPluginConfig()));
+        }
+
+        @Override
+        public void renderHead(final IHeaderResponse response) {
+            super.renderHead(response);
+            response.render(CssHeaderItem.forReference(STYLE_CSS));
         }
 
         public IModel getTitle() {

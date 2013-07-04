@@ -16,19 +16,20 @@
 package org.hippoecm.frontend.plugins.yui.datetime;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.datetime.DateConverter;
 import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.image.Image;
@@ -36,6 +37,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -54,6 +57,7 @@ import org.joda.time.format.DateTimeFormatter;
 public class YuiDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
+    private static final CssResourceReference YUIDATETIME_STYLESHEET = new CssResourceReference(YuiDateTimeField.class, "yuidatetime.css");
 
     public static final String MINUTES_LABEL = "minutes-label";
     public static final String HOURS_LABEL = "hours-label";
@@ -80,7 +84,7 @@ public class YuiDateTimeField extends DateTimeField {
 
         //replace Wicket extensions YUI picker with our own
         DateTextField dateField = (DateTextField) get("date");
-        for (IBehavior b : dateField.getBehaviors()) {
+        for (Behavior b : dateField.getBehaviors()) {
             dateField.remove(b);
         }
         dateField.add(new YuiDatePicker(settings));
@@ -129,7 +133,7 @@ public class YuiDateTimeField extends DateTimeField {
                 setMinutes(date.getMinuteOfHour());
                 setDate(date.toDate());
                 if (target != null) {
-                    target.addComponent(YuiDateTimeField.this);
+                    target.add(YuiDateTimeField.this);
                 }
             }
 
@@ -139,7 +143,7 @@ public class YuiDateTimeField extends DateTimeField {
             }
         });
 
-        today.add(new Image("current-date-img", new ResourceReference(YuiDateTimeField.class,
+        today.add(new Image("current-date-img", new PackageResourceReference(YuiDateTimeField.class,
                 "resources/set-now-16.png")));
 
         //Add change behavior to super fields
@@ -153,8 +157,11 @@ public class YuiDateTimeField extends DateTimeField {
                 }
             });
         }
+    }
 
-        add(CSSPackageResource.getHeaderContribution(YuiDateTimeField.class, "yuidatetime.css"));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        response.render(CssHeaderItem.forReference(YUIDATETIME_STYLESHEET));
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
@@ -162,7 +169,7 @@ public class YuiDateTimeField extends DateTimeField {
         updateDateTime(getDate(), getHours(), getMinutes());
 
         if (target != null) {
-            target.addComponent(this);
+            target.add(this);
         }
     }
 
@@ -223,13 +230,13 @@ public class YuiDateTimeField extends DateTimeField {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public String getDatePattern() {
+            public String getDatePattern(Locale locale) {
                 return YuiDateTimeField.this.getDatePattern();
             }
 
             @Override
-            protected DateTimeFormatter getFormat() {
-                return DateTimeFormat.forPattern(getDatePattern()).withLocale(getLocale());
+            protected DateTimeFormatter getFormat(Locale locale) {
+                return DateTimeFormat.forPattern(YuiDateTimeField.this.getDatePattern()).withLocale(getLocale());
             }
         });
     }

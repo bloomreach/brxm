@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.search;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;

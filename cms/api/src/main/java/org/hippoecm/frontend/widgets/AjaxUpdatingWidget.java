@@ -17,6 +17,8 @@ package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -51,7 +53,7 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
     /**
      * Adds an ajax updating form component
      */
-    protected void addFormField(FormComponent<? extends T> component) {
+    protected void addFormField(final FormComponent<? extends T> component) {
         add(focus = component);
         component.setOutputMarkupId(true);
         if(throttleDelay == null) {
@@ -67,11 +69,17 @@ public abstract class AjaxUpdatingWidget<T> extends Panel {
             component.add(new OnChangeAjaxBehavior() {
 
                 @Override
+                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    attributes.setThrottlingSettings(new ThrottlingSettings(component.getMarkupId(), throttleDelay));
+                }
+
+                @Override
                 protected void onUpdate(AjaxRequestTarget target) {
                     AjaxUpdatingWidget.this.onUpdate(target);
                 }
 
-            }.setThrottleDelay(throttleDelay));
+            });
 
         }
     }

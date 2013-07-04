@@ -20,13 +20,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -55,9 +55,8 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
         }
 
         @Override
-        protected void onRender(MarkupStream markupStream) {
+        protected void onRender() {
         }
-
     }
 
     private Fragment feedbackContainer;
@@ -68,7 +67,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
         super(context, config);
 
         add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png"), getModel()) {
+                new PackageResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png"), getModel()) {
 
             @Override
             public boolean isFormSubmitted() {
@@ -103,7 +102,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png"), getModel()) {
+                new PackageResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png"), getModel()) {
 
             @Override
             public boolean isFormSubmitted() {
@@ -130,7 +129,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
     protected void showFeedback() {
         YuiFeedbackPanel yfp = (YuiFeedbackPanel) feedbackContainer.get("feedback");
-        yfp.render(AjaxRequestTarget.get());
+        yfp.render(RequestCycle.get().find(AjaxRequestTarget.class));
     }
 
     void validate() throws ValidationException {

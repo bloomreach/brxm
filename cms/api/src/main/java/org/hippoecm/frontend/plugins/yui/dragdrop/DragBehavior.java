@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 public abstract class DragBehavior extends AbstractDragDropBehavior {
 
@@ -46,12 +45,13 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
             return;
         }
 
-        final String targetId = getComponent().getRequest().getParameter("targetId");
-        final Map<String, String[]> parameters = getComponent().getRequest().getParameterMap();
+        final String targetId = getComponent().getRequest().getRequestParameters().getParameterValue("targetId").toString();
+        final IRequestParameters parameters = getComponent().getRequest().getRequestParameters();
 
         getComponent().getPage().visitChildren(new DropPointVisitor() {
+
             @Override
-            void visit(DropBehavior dropPoint) {
+            void visitDropBehavior(DropBehavior dropPoint) {
                 if (dropPoint.getComponentMarkupId().equals(targetId)) {
                     dropPoint.onDrop(draggedModel, parameters, target);
                 }
@@ -79,21 +79,19 @@ public abstract class DragBehavior extends AbstractDragDropBehavior {
         return "YAHOO.hippo.DDFallbackModel";
     }
 
-    private abstract class DropPointVisitor implements IVisitor {
+    private abstract class DropPointVisitor implements IVisitor<Component, Void> {
+
         @SuppressWarnings("unchecked")
-        public Object component(Component component) {
-            List<IBehavior> behaviors = component.getBehaviors();
-            for (int a = 0; a < behaviors.size(); a++) {
-                IBehavior behavior = behaviors.get(a);
+        public void component(Component component, IVisit<Void> visit) {
+            for (Behavior behavior : component.getBehaviors()) {
                 if (behavior instanceof DropBehavior) {
                     DropBehavior dropPoint = (DropBehavior) behavior;
-                    visit(dropPoint);
-                    return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
+                    visitDropBehavior(dropPoint);
+                    visit.dontGoDeeper();
                 }
             }
-            return IVisitor.CONTINUE_TRAVERSAL;
         }
 
-        abstract void visit(DropBehavior draggable);
+        abstract void visitDropBehavior(DropBehavior draggable);
     }
 }

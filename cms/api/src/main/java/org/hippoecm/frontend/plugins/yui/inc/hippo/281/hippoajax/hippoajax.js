@@ -126,7 +126,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
         YAHOO.hippo.HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
         
         tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
-        Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
+        Wicket.Ajax.Call.prototype.processComponent = function(context, node) {
             var compId, el, els, i, len;
 
             compId = node.getAttribute("id");
@@ -142,7 +142,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 }
                 YAHOO.util.Event.purgeElement(el, true);
             }
-            tmpFunc.call(this, steps, node);
+            tmpFunc.call(this, context, node);
         };
 
     }());

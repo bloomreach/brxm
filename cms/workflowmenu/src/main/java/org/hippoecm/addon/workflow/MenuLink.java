@@ -17,14 +17,13 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.ajax.CancelEventIfAjaxListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
-import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
@@ -55,12 +54,13 @@ abstract class MenuLink extends Link {
                     }
 
                     @Override
-                    protected void onError(final AjaxRequestTarget target) {
+                    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                        super.updateAjaxAttributes(attributes);
+                        attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
                     }
 
                     @Override
-                    protected IAjaxCallDecorator getAjaxCallDecorator() {
-                        return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
+                    protected void onError(final AjaxRequestTarget target) {
                     }
 
                     @Override
@@ -95,8 +95,9 @@ abstract class MenuLink extends Link {
                     }
 
                     @Override
-                    protected IAjaxCallDecorator getAjaxCallDecorator() {
-                        return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
+                    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                        super.updateAjaxAttributes(attributes);
+                        attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
                     }
 
                     @Override
@@ -135,10 +136,6 @@ abstract class MenuLink extends Link {
         } else {
             disableLink(tag);
         }
-    }
-
-    protected IAjaxCallDecorator getAjaxCallDecorator() {
-        return new EventStoppingDecorator(null);
     }
 
 }

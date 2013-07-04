@@ -34,9 +34,6 @@ import org.hippoecm.frontend.js.HippoFutureResourceBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
-import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.Browser;
-import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.StylesheetConfiguration;
-import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.UserAgent;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
@@ -172,11 +169,6 @@ public class RootPlugin extends TabsPlugin {
 
         add(view);
 
-        PageLayoutSettings plSettings = new PageLayoutSettings();
-        plSettings.setHeaderHeight(25);
-        // TODO: update settings from config
-        add(new PageLayoutBehavior(plSettings));
-
         add(new AjaxIndicatorBehavior());
 
         String[] browsers = config.getStringArray("browsers");
@@ -210,6 +202,11 @@ public class RootPlugin extends TabsPlugin {
 
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
+
+        PageLayoutSettings plSettings = new PageLayoutSettings();
+        plSettings.setHeaderHeight(25);
+        // TODO: update settings from config
+        add(new PageLayoutBehavior(plSettings));
     }
 
     @Override

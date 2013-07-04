@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugin;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * The service tracker interface makes service registry events accessible to plugins.

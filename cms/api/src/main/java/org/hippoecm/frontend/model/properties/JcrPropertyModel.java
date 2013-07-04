@@ -139,7 +139,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
     // (lists and tables)
 
     // FIXME: iterator should return domain objects (Value holders)
-    public Iterator iterator(int first, int count) {
+    public Iterator iterator(long first, long count) {
         List<IndexedValue> list = new ArrayList<IndexedValue>();
         try {
             Property prop = getProperty();
@@ -169,7 +169,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
         }
     }
 
-    public int size() {
+    public long size() {
         try {
             Property prop = getProperty();
             if (prop == null) {

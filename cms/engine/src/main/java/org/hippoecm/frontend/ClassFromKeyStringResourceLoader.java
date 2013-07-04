@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +29,11 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.core.util.resource.UrlResourceStream;
+import org.apache.wicket.core.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.resource.loader.ComponentStringResourceLoader;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
-import org.apache.wicket.util.resource.UrlResourceStream;
-import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.ValueMap;
 import org.slf4j.Logger;
@@ -95,22 +96,21 @@ public class ClassFromKeyStringResourceLoader extends ComponentStringResourceLoa
         String path = clazz.replace('.', '/');
 
         // Iterator over all the combinations
-        ResourceNameIterator iter = new ResourceNameIterator(path, style, locale, null);
+        ResourceNameIterator iter = new ResourceNameIterator(path, style, null, locale, Arrays.asList("properties", "xml"), false);
         while (iter.hasNext()) {
             String newPath = iter.next();
-            for (String extension : new String[] { "properties", "xml" }) {
-                Properties properties = getProperties(newPath + extension);
-                String value = properties.getProperty(realKey);
-                if (value != null) {
-                    return value;
-                }
+            Properties properties = getProperties(newPath);
+            String value = properties.getProperty(realKey);
+            if (value != null) {
+                return value;
             }
         }
         return null;
     }
 
     @Override
-    public String loadStringResource(Component component, String key) {
+    public String loadStringResource(final Component component, final String key,
+                                     final Locale locale, final String style, final String variation) {
         if (key.indexOf(',') > 0) {
             List<String> criteria = new LinkedList<String>();
             for (String subKey : key.split(",")) {
@@ -119,8 +119,6 @@ public class ClassFromKeyStringResourceLoader extends ComponentStringResourceLoa
 
             String realKey = key.substring(0, key.indexOf(','));
             ValueMap map = new ValueMap(key.substring(key.indexOf(',') + 1));
-            Locale locale = component.getLocale();
-            String style = component.getStyle();
             if (map.containsKey("class")) {
                 // remove class key from map and criteria
                 String clazz = (String) map.remove("class");

@@ -20,13 +20,15 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 import org.hippoecm.frontend.service.IconSize;
@@ -36,8 +38,6 @@ import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Standard attributes of a hippotranslation:translated document.  Figures out what css classes should be used to
@@ -47,7 +47,7 @@ public class TranslationRenderer extends AbstractNodeRenderer {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(TranslationRenderer.class);
+    private static final CssResourceReference TRANSLATION_RENDERER_CSS = new CssResourceReference(TranslationRenderer.class, "style.css");
 
     private ILocaleProvider provider;
 
@@ -83,8 +83,6 @@ public class TranslationRenderer extends AbstractNodeRenderer {
         public TranslationList(String id, Node document) throws RepositoryException {
             super(id);
 
-            add(CSSPackageResource.getHeaderContribution(getClass(), "style.css"));
-
             locale = document.getProperty(HippoTranslationNodeType.LOCALE).getString();
 
             final JcrNodeModel docModel = new JcrNodeModel(document);
@@ -104,6 +102,13 @@ public class TranslationRenderer extends AbstractNodeRenderer {
                 }
 
             });
+        }
+
+        @Override
+        public void renderHead(final IHeaderResponse response) {
+            super.renderHead(response);
+
+            response.render(CssHeaderItem.forReference(TRANSLATION_RENDERER_CSS));
         }
     }
 }

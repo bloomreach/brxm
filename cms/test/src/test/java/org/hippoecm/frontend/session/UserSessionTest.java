@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.session;
 
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class UserSessionTest extends PluginTest {
 
     @Test
     public void testSaveOnLogout() throws Exception {
-        tester.setupRequestAndResponse();
+//        tester.setupRequestAndResponse();
 
         PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
         userSession.login(credentials);
@@ -51,7 +51,7 @@ public class UserSessionTest extends PluginTest {
 
     @Test
     public void testDontSaveOnLogoutWhenSaveOnExitIsFalse() throws Exception {
-        tester.setupRequestAndResponse();
+//        tester.setupRequestAndResponse();
 
         session.getNode("/config/test-app").setProperty("frontend:saveonexit", false);
         session.save();

@@ -21,7 +21,8 @@ public class ListPagingLabelProvider implements IPagingLabelProvider {
 
     private static final long serialVersionUID = 1L;
 
-    public String getPageLabel(int page) {
+    @Override
+    public String getPageLabel(long page) {
         return String.valueOf(page + 1);
     }
 

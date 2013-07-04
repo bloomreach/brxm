@@ -158,7 +158,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
             }
 
             incorrectquery = "";
-            target.addComponent(incorrectqueryLabel);
+            target.add(incorrectqueryLabel);
 
         } catch (InvalidQueryException e) {
             logAndInform(target, e);
@@ -179,7 +179,7 @@ public class HippoQueryTemplatePlugin extends RenderPlugin {
     private void logAndInform(AjaxRequestTarget target, Exception e) {
         if (target != null) {
             incorrectquery = "Incorrect statement: changes won't be saved";
-            target.addComponent(incorrectqueryLabel);
+            target.add(incorrectqueryLabel);
             IDialogService dialogService = getDialogService();
             if (dialogService != null) {
                 dialogService.show(new ExceptionDialog(new IllegalArgumentException(incorrectquery)));

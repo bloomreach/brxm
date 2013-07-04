@@ -23,11 +23,13 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -46,11 +48,10 @@ public class ImageCropPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
 
+    private static final CssResourceReference CROP_SKIN = new CssResourceReference(ImageCropPlugin.class, "crop-plugin.css");
 
     public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "crop-plugin.css"));
 
         String mode = config.getString("mode", "edit");
         final IModel<Node> jcrImageNodeModel = getModel();
@@ -119,5 +120,11 @@ public class ImageCropPlugin extends RenderPlugin {
         }
 
         add(cropButton);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(CROP_SKIN));
     }
 }

@@ -24,10 +24,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.TextDialog;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -76,7 +77,7 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "workflow-accept-16.png");
+                return new PackageResourceReference(getClass(), "workflow-accept-16.png");
             }
 
             @Override
@@ -92,7 +93,7 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "workflow-requestunpublish-16.png");
+                return new PackageResourceReference(getClass(), "workflow-requestunpublish-16.png");
             }
             @Override
             protected Dialog createRequestDialog() {
@@ -118,7 +119,7 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "delete-16.png");
+                return new PackageResourceReference(getClass(), "delete-16.png");
             }
 
             @Override

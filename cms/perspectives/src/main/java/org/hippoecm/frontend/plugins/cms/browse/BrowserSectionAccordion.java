@@ -23,18 +23,23 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.render.ICardView;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +47,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An accordion for the browser.
  */
-public class BrowserSectionAccordion extends Panel {
+public class BrowserSectionAccordion extends Panel implements ICardView {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,19 +78,23 @@ public class BrowserSectionAccordion extends Panel {
                 }
             }
 
-            public Iterator<String> iterator(int first, int count) {
+            @Override
+            public Iterator<String> iterator(long first, long count) {
                 load();
-                return names.subList(first, first + count).iterator();
+                return names.subList((int) first, (int) (first + count)).iterator();
             }
 
+            @Override
             public IModel<String> model(String object) {
                 return new Model<String>(object);
             }
 
-            public int size() {
+            @Override
+            public long size() {
                 return sections.getSections().size();
             }
 
+            @Override
             public void detach() {
                 names = null;
             }
@@ -123,9 +132,10 @@ public class BrowserSectionAccordion extends Panel {
 
                 section.bind(parentService, "id");
 
-                Component c = section.getComponent();
-                c.add(accordionManager.newSection());
-                item.add(c);
+                final Component component = section.getComponent();
+                component.setOutputMarkupId(true);
+                component.setOutputMarkupPlaceholderTag(true);
+                item.add(component);
             }
 
             @Override
@@ -163,15 +173,29 @@ public class BrowserSectionAccordion extends Panel {
         super.onBeforeRender();
     }
 
+    @Override
+    public void renderHead(final HtmlHeaderContainer container) {
+        super.renderHead(container);
+
+        IHeaderResponse response = container.getHeaderResponse();
+        final String activeSection = sections.getActiveSection();
+        if (activeSection != null) {
+            final IBrowserSection section = sections.getSection(activeSection);
+            Component component = section.getComponent();
+            response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" + getMarkupId() + "', '"
+                            + component.getMarkupId() + "')"));
+        }
+    }
+
     public void onSelect(String extension) {
     }
 
     private void onFocusSection(IBrowserSection section) {
         if (section != focussed) {
             focussed = section;
-            AjaxRequestTarget target = AjaxRequestTarget.get();
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.addComponent(this);
+                target.add(this);
             }
         }
     }
@@ -182,4 +206,26 @@ public class BrowserSectionAccordion extends Panel {
         }
     }
 
+    private boolean isActive() {
+        ICardView cardView = findParent(ICardView.class);
+        return cardView == null || cardView.isActive(this);
+    }
+
+    @Override
+    public boolean isActive(Component component) {
+        if (isActive()) {
+            if (focussed != null) {
+                Component focussedComponent = focussed.getComponent();
+                while (component != this) {
+                    if (component == focussedComponent) {
+                        return true;
+                    }
+                    component = component.getParent();
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
 }

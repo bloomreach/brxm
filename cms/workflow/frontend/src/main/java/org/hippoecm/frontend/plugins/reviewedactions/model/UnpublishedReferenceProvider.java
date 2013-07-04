@@ -37,7 +37,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnpublishedReferenceProvider implements ISortableDataProvider<String> {
+public class UnpublishedReferenceProvider implements ISortableDataProvider<String, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,28 +54,32 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
     public String getDocumentPath() {
         return wrapped.getNodeModel().getItemModel().getPath();
     }
-    
-    public Iterator<String> iterator(int first, int count) {
+
+    @Override
+    public Iterator<String> iterator(long first, long count) {
         load();
         if (first < entries.size()) {
             if ((first + count) <= entries.size()) {
-                return entries.subList(first, first + count).iterator();
+                return entries.subList((int) first, (int) (first + count)).iterator();
             } else {
-                return entries.subList(first, entries.size()).iterator();
+                return entries.subList((int) first, entries.size()).iterator();
             }
         }
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.<String>emptyList().iterator();
     }
 
+    @Override
     public IModel<String> model(String object) {
         return new Model<String>(object);
     }
 
-    public int size() {
+    @Override
+    public long size() {
         load();
         return entries.size();
     }
 
+    @Override
     public void detach() {
         wrapped.detach();
     }

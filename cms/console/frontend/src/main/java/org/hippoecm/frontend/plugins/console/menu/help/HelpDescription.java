@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.help;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Help definition holder

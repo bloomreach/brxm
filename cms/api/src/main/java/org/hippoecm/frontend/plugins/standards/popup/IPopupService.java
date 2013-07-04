@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.popup;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.markup.html.link.PopupSettings;
 
 /**

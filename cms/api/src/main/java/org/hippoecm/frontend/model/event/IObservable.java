@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.model.event;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface implemented by observable objects.  When multiple different observables are

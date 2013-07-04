@@ -24,11 +24,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -111,7 +112,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "edit-16.png");
+                return new PackageResourceReference(getClass(), "edit-16.png");
             }
 
             @Override
@@ -138,7 +139,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
         add(publishAction = new StdWorkflow("requestPublication", new StringResourceModel("request-publication", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "workflow-requestpublish-16.png");
+                return new PackageResourceReference(getClass(), "workflow-requestpublish-16.png");
             }
 
             @Override
@@ -169,7 +170,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "workflow-requestunpublish-16.png");
+                return new PackageResourceReference(getClass(), "workflow-requestunpublish-16.png");
             }
 
             @Override
@@ -194,7 +195,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "workflow-requestdelete-16.png");
+                return new PackageResourceReference(getClass(), "workflow-requestdelete-16.png");
             }
 
             @Override
@@ -219,7 +220,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "publish-schedule-16.png");
+                return new PackageResourceReference(getClass(), "publish-schedule-16.png");
             }
 
             @Override
@@ -250,7 +251,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "unpublish-scheduled-16.png");
+                return new PackageResourceReference(getClass(), "unpublish-scheduled-16.png");
             }
 
             @Override
@@ -280,7 +281,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "where-used-16.png");
+                return new PackageResourceReference(getClass(), "where-used-16.png");
             }
 
             @Override
@@ -299,7 +300,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "revision-16.png");
+                return new PackageResourceReference(getClass(), "revision-16.png");
             }
 
             @Override

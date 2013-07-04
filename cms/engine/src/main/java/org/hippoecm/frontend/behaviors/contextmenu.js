@@ -17,7 +17,7 @@
 (function() {
 
 	if (typeof Hippo == 'undefined') {
-		Hippo = new Object();
+		Hippo = {};
 	}
 	
 	Hippo.Set = function() {

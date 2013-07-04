@@ -15,8 +15,9 @@
  */
 package org.onehippo.cms7.reports.layout.panel;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -33,7 +34,7 @@ public class BrokenLinksPanelPlugin extends PortalPanelPlugin {
     }
 
     public ResourceReference getImage() {
-        return new ResourceReference(BrokenLinksPanelPlugin.class, "broken-links-48.png");
+        return new PackageResourceReference(BrokenLinksPanelPlugin.class, "broken-links-48.png");
     }
 
     public IModel<String> getTitle() {

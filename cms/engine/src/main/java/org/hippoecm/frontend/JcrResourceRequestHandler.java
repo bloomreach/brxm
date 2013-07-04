@@ -23,20 +23,23 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.util.io.Streams;
 import org.apache.wicket.util.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JcrResourceRequestTarget implements IRequestTarget {
+public class JcrResourceRequestHandler implements IRequestHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(JcrResourceRequestTarget.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrResourceRequestHandler.class);
 
     private Node node;
 
-    public JcrResourceRequestTarget(Node node) {
+    public JcrResourceRequestHandler(Node node) {
         this.node = node;
     }
 
@@ -47,14 +50,15 @@ public class JcrResourceRequestTarget implements IRequestTarget {
     - jcr:data (binary) primary mandatory
     - jcr:lastModified (date) mandatory ignore
      */
+
     /**
-     * @see org.apache.wicket.IRequestTarget#respond(org.apache.wicket.RequestCycle)
+     * @see IRequestHandler#respond(IRequestCycle)
      */
-    public void respond(RequestCycle requestCycle) {
+    public void respond(IRequestCycle requestCycle) {
         InputStream stream = null;
         try {
             if (node == null) {
-                HttpServletResponse response = ((WebResponse) requestCycle.getResponse()).getHttpServletResponse();
+                HttpServletResponse response = (HttpServletResponse) requestCycle.getResponse().getContainerResponse();
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 // Make sure it is not cached by a client
                 response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
@@ -75,7 +79,6 @@ public class JcrResourceRequestTarget implements IRequestTarget {
             // Set content type based on markup type for page
             WebResponse response = (WebResponse) requestCycle.getResponse();
             if (encoding != null) {
-                response.setCharacterEncoding(encoding);
                 response.setContentType(mimeType + "; charset=" + encoding);
             } else {
                 response.setContentType(mimeType);
@@ -90,26 +93,22 @@ public class JcrResourceRequestTarget implements IRequestTarget {
             response.setHeader("Cache-Control", "no-cache, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             response.setLastModifiedTime(Time.valueOf(lastModified.getTime()));
-
-            response.write(stream);
-            stream = null;
+            try {
+                Streams.copy(stream, response.getOutputStream());
+            } catch (IOException ioe) {
+                throw new WicketRuntimeException(ioe);
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ex) {
-                    log.error(ex.getMessage());
-                }
-            }
+            IOUtils.closeQuietly(stream);
         }
     }
 
     /**
-     * @see org.apache.wicket.IRequestTarget#detach(org.apache.wicket.RequestCycle)
+     * @see IRequestHandler#detach(IRequestCycle)
      */
-    public void detach(RequestCycle requestCycle) {
+    public void detach(IRequestCycle requestCycle) {
         node = null;
     }
 

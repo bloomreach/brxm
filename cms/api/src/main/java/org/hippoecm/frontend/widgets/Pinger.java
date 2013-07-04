@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.widgets;
 
 import org.apache.wicket.ajax.AbstractAjaxTimerBehavior;
+import org.apache.wicket.ajax.AjaxChannel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.util.time.Duration;
 
@@ -67,12 +69,14 @@ public class Pinger extends Label {
 
         @Override
         protected void onTimer(AjaxRequestTarget target) {
-            target.addComponent(getComponent());
+            target.add(getComponent());
         }
 
         @Override
-        protected String getChannelName() {
-            return "pinger|d";
+        protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+            super.updateAjaxAttributes(attributes);
+            attributes.setChannel(new AjaxChannel("pinger", AjaxChannel.Type.DROP));
         }
+
     }
 }

@@ -58,7 +58,7 @@ class ButtonBar extends Panel {
         @Override
         public void onClick(AjaxRequestTarget target) {
             wizard.getWizardModel().previous();
-            target.addComponent(wizard);
+            target.add(wizard);
         }
 
         @Override

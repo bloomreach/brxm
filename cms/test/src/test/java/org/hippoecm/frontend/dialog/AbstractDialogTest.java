@@ -16,13 +16,9 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -74,6 +70,7 @@ public class AbstractDialogTest {
     public void setUp() {
         tester = new HippoTester();
         home = (PluginPage) tester.startPluginPage();
+
         JavaPluginConfig config = new JavaPluginConfig("dummy");
         config.put("plugin.class", DummyPlugin.class.getName());
         context = home.getPluginManager().start(config);
@@ -81,14 +78,15 @@ public class AbstractDialogTest {
 
     @Test
     public void okButtonIsHiddenAfterSubmit() {
-        WebRequestCycle cycle = tester.createRequestCycle();
-        AjaxRequestTarget target = tester.getApplication().newAjaxRequestTarget(home);
-        cycle.setRequestTarget(target);
+        tester.runInAjax(home, new Runnable() {
 
-        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-        dialogService.show(new Dialog());
-        
-        tester.processRequestCycle(cycle);
+            @Override
+            public void run() {
+                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                dialogService.show(new Dialog());
+            }
+
+        });
 
         tester.executeAjaxEvent(home.get("dialog:content:form:buttons:0:button"), "onclick");
         Component button = home.get("dialog:content:form:buttons:0:button");
@@ -97,14 +95,14 @@ public class AbstractDialogTest {
 
     @Test
     public void okButtonIsPresentAfterFailure() {
-        WebRequestCycle cycle = tester.createRequestCycle();
-        AjaxRequestTarget target = tester.getApplication().newAjaxRequestTarget(home);
-        cycle.setRequestTarget(target);
+        tester.runInAjax(home, new Runnable() {
 
-        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-        dialogService.show(new FailureDialog());
-
-        tester.processRequestCycle(cycle);
+            @Override
+            public void run() {
+                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                dialogService.show(new FailureDialog());
+            }
+        });
 
         tester.executeAjaxEvent(home.get("dialog:content:form:buttons:0:button"), "onclick");
         Component button = home.get("dialog:content:form:buttons:0:button");

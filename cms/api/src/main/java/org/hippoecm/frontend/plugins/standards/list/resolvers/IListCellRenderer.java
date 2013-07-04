@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.IObservable;
 

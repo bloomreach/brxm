@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.editor;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.IFormService;
@@ -37,8 +38,12 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
         if (formServiceId != null) {
             context.registerService(this, formServiceId);
         }
+    }
 
-        add(EditorResources.getCss());
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(EditorResources.getCss());
     }
 
     @Override

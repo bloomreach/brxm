@@ -18,8 +18,8 @@ package org.hippoecm.frontend.editor.workflow;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -61,7 +61,7 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
         }, context.getReference(editor).getServiceId());
 
         add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
-                new ResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png"), getModel()) {
+                new PackageResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png"), getModel()) {
 
             @Override
             public boolean isFormSubmitted() {
@@ -76,7 +76,7 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
         });
 
         add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
-                new ResourceReference(getClass(), "document-saveclose-16.png"), getModel()) {
+                new PackageResourceReference(getClass(), "document-saveclose-16.png"), getModel()) {
 
             @Override
             public boolean isFormSubmitted() {

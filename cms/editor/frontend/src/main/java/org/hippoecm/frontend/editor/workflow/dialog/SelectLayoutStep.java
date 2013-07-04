@@ -57,7 +57,7 @@ public class SelectLayoutStep extends WizardStep {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         SelectLayoutStep.this.layoutModel.setObject(layout);
-                        target.addComponent(SelectLayoutStep.this);
+                        target.add(SelectLayoutStep.this);
                     }
 
                 };

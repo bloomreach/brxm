@@ -21,16 +21,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.resource.CoreLibrariesContributor;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.onehippo.yui.YuiDependency;
 import org.onehippo.yui.YuiNamespace;
@@ -65,14 +66,14 @@ public class YuiHeaderCache implements IHeaderContributor {
     private final static Logger log = LoggerFactory.getLogger(YuiHeaderCache.class);
 
     private static boolean isCacheEnabled() {
-        return Application.get().getConfigurationType().equals(Application.DEPLOYMENT);
+        return Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEPLOYMENT);
     }
 
     private static boolean isDebugEnabled() {
-        return Application.get().getConfigurationType().equals(Application.DEVELOPMENT);
+        return Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT);
     }
 
-    final Map<String, CachedHeaderContributor> referencesCache = new HashMap<String, CachedHeaderContributor>();
+    final Map<ResourceReference.Key, CachedHeaderContributor> referencesCache = new HashMap<ResourceReference.Key, CachedHeaderContributor>();
     final Map<String, Module> moduleCache = new HashMap<String, Module>();
     final Map<String, ModuleSet> moduleSetsCache = new HashMap<String, ModuleSet>();
 
@@ -93,19 +94,10 @@ public class YuiHeaderCache implements IHeaderContributor {
 
     public void renderHead(IHeaderResponse response) {
         if (loadWicketAjax) {
-            //TODO: cache wicket sources?
-            new AbstractDefaultAjaxBehavior() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void respond(AjaxRequestTarget target) {
-                }
-            }.renderHead(response);
+            CoreLibrariesContributor.contributeAjax(Application.get(), response);
         }
-
-        final WebRequestCycle requestCycle = (WebRequestCycle) RequestCycle.get();
-        final WebRequest req = (WebRequest) requestCycle.getRequest();
-
+;
+        final WebRequest req = (WebRequest) RequestCycle.get().getRequest();
         if (!req.isAjax()) {
             for (CachedHeaderContributor contrib : referencesCache.values()) {
                 contrib.rendered = false;
@@ -132,21 +124,21 @@ public class YuiHeaderCache implements IHeaderContributor {
     }
 
     IHeaderContributor getCssReference(ResourceReference reference) {
-        if (referencesCache.containsKey(reference.getSharedResourceKey())) {
-            return referencesCache.get(reference.getSharedResourceKey());
+        if (referencesCache.containsKey(reference.getKey())) {
+            return referencesCache.get(reference.getKey());
         } else {
             CssHeaderContributor ref = new CssHeaderContributor(reference);
-            referencesCache.put(ref.getSharedResourceKey(), ref);
+            referencesCache.put(reference.getKey(), ref);
             return ref;
         }
     }
 
     IHeaderContributor getJavascriptReference(ResourceReference reference) {
-        if (referencesCache.containsKey(reference.getSharedResourceKey())) {
-            return referencesCache.get(reference.getSharedResourceKey());
+        if (referencesCache.containsKey(reference.getKey())) {
+            return referencesCache.get(reference.getKey());
         } else {
             JavascriptHeaderContributor ref = new JavascriptHeaderContributor(reference);
-            referencesCache.put(ref.getSharedResourceKey(), ref);
+            referencesCache.put(reference.getKey(), ref);
             return ref;
         }
     }
@@ -175,8 +167,8 @@ public class YuiHeaderCache implements IHeaderContributor {
             this.reference = reference;
         }
 
-        public String getSharedResourceKey() {
-            return reference.getSharedResourceKey();
+        public ResourceReference.Key getSharedResourceKey() {
+            return reference.getKey();
         }
 
         //TODO: only override hashcode?
@@ -209,7 +201,7 @@ public class YuiHeaderCache implements IHeaderContributor {
         }
 
         public void onRenderHead(IHeaderResponse response) {
-            response.renderCSSReference(reference, "screen"); //TODO: find out why screen
+            response.render(CssHeaderItem.forReference(reference, "screen")); //TODO: find out why screen
         }
     }
 
@@ -221,7 +213,7 @@ public class YuiHeaderCache implements IHeaderContributor {
         }
 
         public void onRenderHead(IHeaderResponse response) {
-            response.renderJavascriptReference(reference);
+            response.render(JavaScriptHeaderItem.forReference(reference));
         }
     }
 
@@ -244,17 +236,13 @@ public class YuiHeaderCache implements IHeaderContributor {
                 String path = dependency.getFilePath(debug, isCacheEnabled());
                 Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
 
-                if (debug) {
-                    file = getJavascriptReference(new ResourceReference(clazz, path));
-                } else {
-                    file = getJavascriptReference(new JavascriptResourceReference(clazz, path));
-                }
+                file = getJavascriptReference(new JavaScriptResourceReference(clazz, path));
 
                 if (dependency.getHasCss()) {
-                    css = getCssReference(new CompressedResourceReference(clazz, dependency.getCssPath()));
+                    css = getCssReference(new CssResourceReference(clazz, dependency.getCssPath()));
                 }
                 if (dependency.getHasCoreCss()) {
-                    coreCss = getCssReference(new CompressedResourceReference(clazz, dependency.getCoreCssPath()));
+                    coreCss = getCssReference(new CssResourceReference(clazz, dependency.getCoreCssPath()));
                 }
             }
         }

@@ -27,13 +27,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DomainDataProvider extends SortableDataProvider<Domain> {
+public class DomainDataProvider extends SortableDataProvider<Domain, String> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainDataProvider.class);
 
@@ -47,11 +48,11 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
     private static String sessionId = "none";
 
     public DomainDataProvider() {
-        setSort("name", true);
+        setSort("name", SortOrder.ASCENDING);
     }
 
     @Override
-    public Iterator<Domain> iterator(int first, int count) {
+    public Iterator<Domain> iterator(long first, long count) {
         List<Domain> domains = getDomainList();
         Collections.sort(domains, new Comparator<Domain>() {
             public int compare(Domain domain1, Domain domain2) {
@@ -60,8 +61,8 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
             }
         });
 
-        final int endIndex = Math.min(first + count, domains.size());
-        return domains.subList(first, endIndex).iterator();
+        final int endIndex = (int) Math.min(first + count, domains.size());
+        return domains.subList((int) first, endIndex).iterator();
     }
 
     @Override
@@ -70,7 +71,7 @@ public class DomainDataProvider extends SortableDataProvider<Domain> {
     }
 
     @Override
-    public int size() {
+    public long size() {
         return getDomainList().size();
     }
 

@@ -24,8 +24,9 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,6 +36,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
@@ -116,7 +119,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this, null), getModel()) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "edit-16.png");
+                return new PackageResourceReference(getClass(), "edit-16.png");
             }
 
             @Override
@@ -145,7 +148,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "rename-16.png");
+                return new PackageResourceReference(getClass(), "rename-16.png");
             }
 
             @Override
@@ -189,7 +192,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "copy-16.png");
+                return new PackageResourceReference(getClass(), "copy-16.png");
             }
 
             @Override
@@ -302,7 +305,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "move-16.png");
+                return new PackageResourceReference(getClass(), "move-16.png");
             }
 
             @Override
@@ -335,7 +338,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 new StringResourceModel("delete-label", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "delete-16.png");
+                return new PackageResourceReference(getClass(), "delete-16.png");
             }
 
             @Override
@@ -358,7 +361,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
         add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "where-used-16.png");
+                return new PackageResourceReference(getClass(), "where-used-16.png");
             }
 
             @Override
@@ -506,10 +509,16 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 protected void onUpdate(AjaxRequestTarget target) {
                     if (!uriModified) {
                         uriModel.setObject(getNodeNameCodec().encode(nameModel.getObject()));
-                        target.addComponent(uriComponent);
+                        target.add(uriComponent);
                     }
                 }
-            }.setThrottleDelay(Duration.milliseconds(500)));
+
+                @Override
+                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    attributes.setThrottlingSettings(new ThrottlingSettings("document-name", Duration.milliseconds(500)));
+                }
+            });
             nameComponent.setOutputMarkupId(true);
             setFocus(nameComponent);
             add(nameComponent);
@@ -539,7 +548,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     } else {
                         target.focusComponent(uriComponent);
                     }
-                    target.addComponent(RenameDocumentDialog.this);
+                    target.add(RenameDocumentDialog.this);
                 }
             };
             uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {

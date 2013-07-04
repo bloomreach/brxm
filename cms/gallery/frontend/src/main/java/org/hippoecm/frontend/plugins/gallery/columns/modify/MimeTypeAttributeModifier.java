@@ -23,9 +23,12 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -42,6 +45,8 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);
+
+    private static final CssResourceReference CSS_RESOURCE_REFERENCE = new CssResourceReference(MimeTypeAttributeModifier.class, "mimetypes.css");
 
     static class MimeTypeAttributeModel extends LoadableDetachableModel<String> implements IObservable {
         private static final long serialVersionUID = 1L;
@@ -126,7 +131,13 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
 
             @Override
             public void bind(Component hostComponent) {
-                hostComponent.add(CSSPackageResource.getHeaderContribution(MimeTypeAttributeModifier.class, "mimetypes.css"));
+                hostComponent.add(new Behavior() {
+
+                    @Override
+                    public void renderHead(Component component, final IHeaderResponse response) {
+                        response.render(CssHeaderItem.forReference(CSS_RESOURCE_REFERENCE));
+                    }
+                });
             }
         };
     }

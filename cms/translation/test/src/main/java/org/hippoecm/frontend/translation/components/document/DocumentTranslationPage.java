@@ -17,21 +17,25 @@ package org.hippoecm.frontend.translation.components.document;
 
 import java.util.List;
 
-import org.apache.wicket.ajax.WicketAjaxReference;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.ajax.WicketAjaxJQueryResourceReference;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.WicketEventReference;
 import org.hippoecm.frontend.translation.components.TestLocaleProvider;
 import org.hippoecm.frontend.translation.components.TestStringCodecModel;
 
 public abstract class DocumentTranslationPage extends WebPage {
 
     public DocumentTranslationPage() {
-        add(JavascriptPackageResource.getHeaderContribution(WicketEventReference.INSTANCE));
-        add(JavascriptPackageResource.getHeaderContribution(WicketAjaxReference.INSTANCE));
-
         add(new DocumentTranslationView("grid", getFolderTranslations(), "en", "fr", new TestStringCodecModel(),
                 new TestLocaleProvider()));
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(JavaScriptHeaderItem.forReference(WicketAjaxJQueryResourceReference.get()));
     }
 
     abstract protected List<FolderTranslation> getFolderTranslations();

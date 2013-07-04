@@ -55,9 +55,9 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         setOutputMarkupId(true);
 
         List<String> roles = Group.getAllRoles();
-        List<IColumn<Domain>> columns = new ArrayList<IColumn<Domain>>();
+        List<IColumn<Domain, String>> columns = new ArrayList<IColumn<Domain, String>>();
 
-        columns.add(new AbstractColumn<Domain>(new ResourceModel("permissions-column-header"), "name") {
+        columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-header"), "name") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<Domain>> item, final String componentId,
@@ -81,7 +81,7 @@ public class PermissionsPanel extends AdminBreadCrumbPanel {
         });
 
         for (final String role : roles) {
-            columns.add(new AbstractColumn<Domain>(new Model<String>("Role: " + role)) {
+            columns.add(new AbstractColumn<Domain, String>(new Model<String>("Role: " + role)) {
                 private static final long serialVersionUID = 1L;
 
                 public void populateItem(Item<ICellPopulator<Domain>> cellItem, String componentId, IModel<Domain> model) {

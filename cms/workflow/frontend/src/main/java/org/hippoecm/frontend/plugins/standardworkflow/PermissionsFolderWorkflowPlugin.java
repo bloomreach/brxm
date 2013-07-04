@@ -34,18 +34,17 @@ import javax.jcr.query.QueryResult;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -53,6 +52,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
@@ -74,7 +76,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsFolderWorkflowPlugin.class);
 
-    private static final ResourceReference CSS = new CompressedResourceReference(ConfirmBulkWorkflowDialog.class, "PermissionsFolderWorkflowPlugin.css");
+    private static final ResourceReference CSS = new CssResourceReference(ConfirmBulkWorkflowDialog.class, "PermissionsFolderWorkflowPlugin.css");
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
 
@@ -93,7 +95,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "queries-16.png");
+                return new PackageResourceReference(getClass(), "queries-16.png");
             }
 
             @Override
@@ -230,7 +232,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
                             folderTypesList.remove(valueModel);
                             modelList.add(valueModel.getObject());
                             Collections.sort(modelList);
-                            target.addComponent(PermissionsConfirmDialog.this);
+                            target.add(PermissionsConfirmDialog.this);
                         }
                     };
                     controls.add(remove);
@@ -242,7 +244,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
                         public void onClick(AjaxRequestTarget target) {
                             final int i = folderTypesList.indexOf(valueModel);
                             Collections.swap(folderTypesList, i, i - 1);
-                            target.addComponent(PermissionsConfirmDialog.this);
+                            target.add(PermissionsConfirmDialog.this);
                         }
                     };
                     boolean isFirst = (item.getIndex() == 0);
@@ -256,7 +258,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
                         public void onClick(AjaxRequestTarget target) {
                             final int i = folderTypesList.indexOf(valueModel);
                             Collections.swap(folderTypesList, i, i + 1);
-                            target.addComponent(PermissionsConfirmDialog.this);
+                            target.add(PermissionsConfirmDialog.this);
                         }
                     };
                     boolean isLast = (item.getIndex() == folderTypesList.size() - 1);
@@ -307,7 +309,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
                     if (StringUtils.isNotEmpty(querySelection.getInput())) {
                         folderTypesList.add(new DisplayModel(querySelection.getInput()));
                         modelList.remove(querySelection.getInput());
-                        target.addComponent(PermissionsConfirmDialog.this);
+                        target.add(PermissionsConfirmDialog.this);
                     }
                 }
             });
@@ -317,7 +319,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
         @Override
         public void renderHead(IHeaderResponse response) {
             super.renderHead(response);
-            response.renderCSSReference(CSS);
+            response.render(CssHeaderItem.forReference(CSS));
         }
 
         private boolean isEditable(DisplayModel valueModel) {

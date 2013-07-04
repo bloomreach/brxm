@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.service;
 
-import java.util.Map;
-
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Interface for services that can process request parameters.
  */
 public interface IController extends IClusterable {
 
-    void process(Map parameters);
+    void process(IRequestParameters parameters);
 }

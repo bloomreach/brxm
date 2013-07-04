@@ -16,17 +16,20 @@
 package org.hippoecm.frontend.js;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 
-public class GlobalJsResourceBehavior extends AbstractBehavior {
+public class GlobalJsResourceBehavior extends Behavior {
 
     public static final String GLOBAL = "global.js";
 
-    public void bind(Component component) {
+    private static final ResourceReference GLOBAL_REFERENCE = new JavaScriptResourceReference(GlobalJsResourceBehavior.class, GLOBAL);
 
-        component.add(JavascriptPackageResource.getHeaderContribution(GlobalJsResourceBehavior.class, GLOBAL));
-
+    @Override
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        response.render(JavaScriptReferenceHeaderItem.forReference(GLOBAL_REFERENCE));
     }
-
 }

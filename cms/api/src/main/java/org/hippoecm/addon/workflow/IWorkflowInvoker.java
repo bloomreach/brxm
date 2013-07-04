@@ -15,7 +15,7 @@
  */
 package org.hippoecm.addon.workflow;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IWorkflowInvoker extends IClusterable {
 

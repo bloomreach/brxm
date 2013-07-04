@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -86,7 +87,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(false);
-                AjaxRequestTarget.get().addComponent(feedback);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(feedback);
             }
 
             @Override
@@ -106,7 +107,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUndo();
-                AjaxRequestTarget.get().addComponent(feedback);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(feedback);
             }
 
             @Override
@@ -126,7 +127,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(true);
-                AjaxRequestTarget.get().addComponent(feedback);
+                RequestCycle.get().find(AjaxRequestTarget.class).add(feedback);
             }
 
             @Override
@@ -146,9 +147,9 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 saveUpdater();
-                AjaxRequestTarget.get().addComponent(executeButton);
-                AjaxRequestTarget.get().addComponent(dryRunButton);
-                AjaxRequestTarget.get().addComponent(feedback);
+                target.add(executeButton);
+                target.add(dryRunButton);
+                target.add(feedback);
             }
 
             @Override
@@ -167,7 +168,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 stopUpdater();
-                AjaxRequestTarget.get().addComponent(feedback);
+                target.add(feedback);
             }
 
             @Override

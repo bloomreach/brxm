@@ -27,7 +27,6 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -36,6 +35,8 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -74,9 +75,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private static final long serialVersionUID = 1L;
 
     private static final String CLUSTER_OPTIONS = "cluster.options";
-
     private static final String MAX_ITEMS = "maxitems";
+
     private static final int DEFAULT_MAX_ITEMS = 0;
+    private static final PackageResourceReference HINT_PNG = new PackageResourceReference(EditorResources.class, "images/icons/hint.png");
+
     private final int maxItems;
     private IPluginConfig parameters;
 
@@ -216,7 +219,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     boolean valid = isFieldValid(validationModel.getObject());
                     if (valid != filter.isValid()) {
                         filter.setValid(valid);
-                        target.appendJavascript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + filter.getObject() + "');");
+                        target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + filter.getObject() + "');");
                     }
                 }
             }
@@ -443,9 +446,9 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                         public void onValidation(IValidationResult result) {
                             boolean valid = itemRenderer.isValid();
                             if (valid != this.isValid()) {
-                                AjaxRequestTarget target = AjaxRequestTarget.get();
+                                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                                 if (target != null) {
-                                    target.addComponent(item);
+                                    target.add(item);
                                 }
                                 setValid(valid);
                             }
@@ -586,7 +589,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         } else {
             // display the hint
             hint.add(new Label("hint-text", subtitle));
-            hint.add(new Image("hint-image", new ResourceReference(EditorResources.class, "images/icons/hint.png")));
+            hint.add(new Image("hint-image", HINT_PNG));
         }
         return hint;
     }

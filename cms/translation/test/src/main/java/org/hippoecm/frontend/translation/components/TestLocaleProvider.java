@@ -21,7 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 
@@ -48,7 +49,7 @@ public final class TestLocaleProvider implements ILocaleProvider {
 
             @Override
             public ResourceReference getIcon(IconSize size, LocaleState type) {
-                return new ResourceReference(TestLocaleProvider.class, key + ".png");
+                return new PackageResourceReference(TestLocaleProvider.class, key + ".png");
             }
 
         };

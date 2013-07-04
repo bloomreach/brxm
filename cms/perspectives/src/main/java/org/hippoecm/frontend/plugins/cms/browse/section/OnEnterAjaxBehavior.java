@@ -17,13 +17,10 @@ package org.hippoecm.frontend.plugins.cms.browse.section;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Response;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
-import org.apache.wicket.util.string.JavascriptUtils;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
@@ -42,14 +39,13 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
      * TODO: webapp ajax is configurable, maybe check here and still load it.
      */
     @Override
-    public final void renderHead(IHeaderResponse response) {
+    public final void renderHead(Component component, IHeaderResponse response) {
         if (_helper == null) {
-            Component component = getComponent();
             Page page = component.getPage();
-            for (IBehavior behavior : page.getBehaviors()) {
+            for (Behavior behavior : page.getBehaviors()) {
                 if (behavior instanceof IYuiManager) {
                     _helper = ((IYuiManager) behavior).newContext();
-                    _helper.addJavascriptReference(new ResourceReference(OnEnterAjaxBehavior.class, "enter.js"));
+                    _helper.addJavascriptReference(new JavaScriptResourceReference(OnEnterAjaxBehavior.class, "enter.js"));
                     break;
                 }
             }

@@ -19,12 +19,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
 import org.onehippo.yui.YahooNamespace;
@@ -99,8 +101,13 @@ public class YuiContext implements IYuiContext {
         templates.add(new FinalTextTemplate(clazz, filename, parameters));
     }
 
-    public void addTemplate(DynamicTextTemplate template) {
-        templates.add(template);
+    public void addTemplate(final DynamicTextTemplate template) {
+        templates.add(new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(OnDomReadyHeaderItem.forScript(template.getString()));
+            }
+        });
     }
 
     public void addTemplate(IHeaderContributor template) {
@@ -168,10 +175,10 @@ public class YuiContext implements IYuiContext {
         for (Onload onload : _onloads) {
             switch (onload.type) {
             case WINDOW:
-                response.renderOnLoadJavascript(onload.getJsString());
+                response.render(OnLoadHeaderItem.forScript(onload.getJsString()));
                 break;
             case DOM:
-                response.renderOnDomReadyJavascript(onload.getJsString());
+                response.render(OnDomReadyHeaderItem.forScript(onload.getJsString()));
                 break;
             default:
                 break;

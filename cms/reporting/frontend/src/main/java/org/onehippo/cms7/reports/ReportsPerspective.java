@@ -20,17 +20,20 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.datetime.PatternDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPanel;
@@ -43,6 +46,8 @@ public class ReportsPerspective extends PanelPluginPerspective {
     private static final long serialVersionUID = 1L;
     
     public static final String REPORTING_SERVICE = "reporting.service";
+
+    private static final ResourceReference REPORTING_LAYOUT_CSS = new CssResourceReference(ReportsPerspective.class, "layout/reporting.css");
 
     private final WebMarkupContainer refreshGroup;
     private final DateLabel lastRefreshDateLabel;
@@ -68,19 +73,23 @@ public class ReportsPerspective extends PanelPluginPerspective {
                     session.save();
                     session.refresh(false);
                     lastRefreshDateLabel.setDefaultModel(new Model<Date>(new Date()));
-                    target.addComponent(lastRefreshDateLabel);
+                    target.add(lastRefreshDateLabel);
                 } catch (RepositoryException repositoryException) {
                     log.error("Error refreshing jcr session.", repositoryException);
                 }
 
-                target.appendJavascript("if (typeof Hippo.Reports.RefreshObservableInstance !== 'undefined') { Hippo.Reports.RefreshObservableInstance.fireEvent('refresh'); }");
+                target.appendJavaScript("if (typeof Hippo.Reports.RefreshObservableInstance !== 'undefined') { Hippo.Reports.RefreshObservableInstance.fireEvent('refresh'); }");
             }
         };
         refreshLink.add(new Label("refresh-link-label", new StringResourceModel("refresh-link-text", this, null)));
         refreshGroup.add(refreshLink);
         add(refreshGroup);
+    }
 
-        add(CSSPackageResource.getHeaderContribution(ReportsPerspective.class, "layout/reporting.css"));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(REPORTING_LAYOUT_CSS));
     }
 
     @Override
@@ -105,7 +114,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
 
     @Override
     public ResourceReference getIcon(IconSize type) {
-        return new ResourceReference(ReportsPerspective.class, "reports-" + type.getSize() + ".png");
+        return new PackageResourceReference(ReportsPerspective.class, "reports-" + type.getSize() + ".png");
     }
 
 }

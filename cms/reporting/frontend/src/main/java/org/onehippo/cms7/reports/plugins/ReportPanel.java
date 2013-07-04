@@ -19,8 +19,12 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.IStringResourceProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -30,16 +34,31 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtPanel;
+import org.wicketstuff.js.ext.util.ExtClass;
 
 /**
  * Base class of all reports on the reporting dashboard.
  */
+@ExtClass("Hippo.Reports.Portlet")
 public class ReportPanel extends ExtPanel implements IStringResourceProvider {
 
     private static final long serialVersionUID = 1L;
 
-    private enum TitleColor { normal, highlighted, alert };
-    private enum TitleSize { normal, large };
+    private static final PackageResourceReference REPORT_PANEL_BG_IMAGE = new PackageResourceReference(ReportPanel.class, "report-panel-bg.gif");
+    public static final JavaScriptResourceReference REPORTS_PORTLET_JS = new JavaScriptResourceReference(ReportPanel.class, "Hippo.Reports.Portlet.js");
+
+    protected static JavaScriptHeaderItem createReportHeaderItem(JavaScriptResourceReference resourceReference) {
+        return new JavaScriptReferenceHeaderItem(resourceReference, null, null, false, null, null) {
+
+            @Override
+            public Iterable<? extends HeaderItem> getDependencies() {
+                return Arrays.asList(JavaScriptHeaderItem.forReference(REPORTS_PORTLET_JS));
+            }
+        };
+    }
+
+    private enum TitleColor { normal, highlighted, alert }
+    private enum TitleSize { normal, large }
 
     private static final String CONFIG_BACKGROUND = "background";
     private static final String CONFIG_HEIGHT = "height";
@@ -90,7 +109,7 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
         if (config.getAsBoolean(CONFIG_BACKGROUND, DEFAULT_BACKGROUND)) {
             final RequestCycle rc = RequestCycle.get();
             style.append("background: url(");
-            style.append(rc.urlFor(new ResourceReference(ReportPanel.class, "report-panel-bg.gif")));
+            style.append(rc.urlFor(REPORT_PANEL_BG_IMAGE, null));
             style.append(") top repeat-x #ededed;");
         }
 

@@ -19,12 +19,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.wicket.Resource;
-import org.apache.wicket.markup.html.WebResource;
+import org.apache.wicket.core.util.resource.UrlResourceStream;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.resource.IResourceStream;
-import org.apache.wicket.util.resource.UrlResourceStream;
 
 public class JavaLayoutDescriptor implements ILayoutDescriptor {
 
@@ -53,8 +53,8 @@ public class JavaLayoutDescriptor implements ILayoutDescriptor {
         this.pads.put(pad.getName(), pad);
     }
     
-    public Resource getIcon() {
-        return new WebResource() {
+    public IResource getIcon() {
+        return new ResourceStreamResource() {
             private static final long serialVersionUID = 1L;
 
             @Override

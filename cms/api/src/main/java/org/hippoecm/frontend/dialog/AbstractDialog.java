@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -38,13 +37,15 @@ import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
 import org.apache.wicket.markup.IMarkupResourceStreamProvider;
+import org.apache.wicket.markup.Markup;
 import org.apache.wicket.markup.MarkupException;
+import org.apache.wicket.markup.MarkupFactory;
 import org.apache.wicket.markup.MarkupNotFoundException;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
+import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -55,6 +56,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -76,9 +79,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
-    @Deprecated protected final static IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
-    @Deprecated protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
-    @Deprecated protected final static IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
+    @Deprecated
+    protected final static IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
+    @Deprecated
+    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
+    @Deprecated
+    protected final static IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
 
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
@@ -129,8 +135,23 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         @Override
         public MarkupStream getAssociatedMarkupStream(final boolean throwException) {
             try {
-                return getApplication().getMarkupSettings().getMarkupCache().getMarkupStream(AbstractDialog.this,
-                        false, throwException);
+                Markup markup = MarkupFactory.get().getMarkup(AbstractDialog.this, false);
+                if (markup != null) {
+                    return new MarkupStream(markup);
+                }
+                if (throwException) {
+                    // throw exception since there is no associated markup
+                    throw new MarkupNotFoundException(
+                            "Markup of type '" +
+                                    getMarkupType().getExtension() +
+                                    "' for component '" +
+                                    getClass().getName() +
+                                    "' not found." +
+                                    " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried.: " +
+                                    toString());
+                } else {
+                    return null;
+                }
             } catch (MarkupException ex) {
                 // re-throw it. The exception contains already all the information
                 // required.
@@ -169,7 +190,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
                     @Override
                     public void onClick() {
-                        RequestCycle.get().setRequestTarget(new ErrorDownloadRequestTarget(ex));
+                        RequestCycle.get().scheduleRequestHandlerAfterCurrent(new ErrorDownloadRequestTarget(ex));
                     }
                 };
                 Label label = new Label("label", model);
@@ -315,8 +336,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                     }) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                    target.appendJavascript(getFullscreenScript());
-                    target.addComponent(this); //update button label
+                    target.appendJavaScript(getFullscreenScript());
+                    target.add(this); //update button label
                     fullscreen = !fullscreen;
                 }
             };
@@ -328,7 +349,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
             @Override
             protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(DialogConstants.AJAX_LOADER_GIF);
+                return RequestCycle.get().urlFor(new ResourceReferenceRequestHandler(DialogConstants.AJAX_LOADER_GIF));
             }
         });
 
@@ -400,8 +421,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     /**
-     * Implement {@link IAjaxIndicatorAware}, to let ajax components in the dialog trigger the ajax
-     * indicator when they trigger an ajax request.
+     * Implement {@link IAjaxIndicatorAware}, to let ajax components in the dialog trigger the ajax indicator when they
+     * trigger an ajax request.
      *
      * @return the markup id of the ajax indicator
      */
@@ -514,7 +535,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     @Override
-    protected void delegateSubmit(final IFormSubmittingComponent submittingComponent) {
+    protected void delegateSubmit(final IFormSubmitter submittingComponent) {
         super.delegateSubmit(submittingComponent);
 
         if (submittingComponent == null) {
@@ -544,8 +565,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     /**
-     * Callback method invoked when the user clicks the 'OK' button.
-     * When no errors are reported, this will cause the dialog to be closed.
+     * Callback method invoked when the user clicks the 'OK' button. When no errors are reported, this will cause the
+     * dialog to be closed.
      */
     protected void onOk() {
     }
@@ -570,10 +591,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     @Override
     public void render(PluginRequestTarget target) {
         if (target != null) {
-            target.addComponent(feedback);
+            target.add(feedback);
             for (ButtonWrapper bw : buttons) {
                 if (bw.hasChanges()) {
-                    target.addComponent(bw.getButton());
+                    target.add(bw.getButton());
                 }
             }
 
@@ -585,17 +606,17 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     }
 
     /**
-     * Implement onClose callback, invoked when the dialog is closed.  Make sure the keyboard shortcuts are
-     * cleaned up correctly.  Subclasses overriding this method should also invoke super#onClose();
+     * Implement onClose callback, invoked when the dialog is closed.  Make sure the keyboard shortcuts are cleaned up
+     * correctly.  Subclasses overriding this method should also invoke super#onClose();
      */
     @Override
     public void onClose() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             for (ButtonWrapper bw : buttons) {
                 if (bw.getKeyType() != null) {
                     // the input behavior does not support removal, so we need to do this manually
-                    target.prependJavascript("shortcut.remove('" + bw.getKeyType() + "');\n");
+                    target.prependJavaScript("shortcut.remove('" + bw.getKeyType() + "');\n");
                 }
             }
         }

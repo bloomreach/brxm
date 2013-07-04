@@ -74,8 +74,8 @@ public class SaveDialogLink extends DialogLink {
     // Since the click is executed on the link, redrawing it will confuse browsers.
     // Instead, use javascript to update the class attribute.
     public void update(final PluginRequestTarget target) {
-        target.addComponent(link.get("dialog-link-text-extended"));
-        target.appendJavascript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + getCssClass() + "');");
+        target.add(link.get("dialog-link-text-extended"));
+        target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + getCssClass() + "');");
     }
 
 }

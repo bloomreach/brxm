@@ -23,6 +23,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
@@ -67,7 +68,7 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
         String value = null;
         while (iter.hasNext()) {
             IStringResourceLoader loader = iter.next();
-            value = loader.loadStringResource(clazz, key, locale, style);
+            value = loader.loadStringResource(clazz, key, locale, style, null);
             if (value != null) {
                 break;
             }
@@ -80,7 +81,7 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
             return value;
         }
         
-        if (Application.DEVELOPMENT.equals(Application.get().getConfigurationType())) {
+        if (RuntimeConfigurationType.DEVELOPMENT.equals(Application.get().getConfigurationType())) {
             throw new RuntimeException("No translation found for " + this);
         } else {
             return key;

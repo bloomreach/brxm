@@ -53,7 +53,7 @@ public class ViewDomainActionLink extends AjaxLink<Domain> {
         );
         panelToReplace.replaceWith(setPermissionsPanel);
         // Reset the reference
-        target.addComponent(setPermissionsPanel);
+        target.add(setPermissionsPanel);
         panelToReplace.activate(setPermissionsPanel);
     }
 }

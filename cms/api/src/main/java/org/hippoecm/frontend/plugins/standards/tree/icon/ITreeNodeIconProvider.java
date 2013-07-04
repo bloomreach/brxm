@@ -17,9 +17,9 @@ package org.hippoecm.frontend.plugins.standards.tree.icon;
 
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Service that provides icons for nodes in the CMS folder tree.

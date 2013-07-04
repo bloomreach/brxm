@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -49,10 +49,9 @@ public class DialogLink extends Panel {
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                // don't let event propagate any further; the original page is invalid
-                // when the dialog is opened.
-                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
             }
         };
 

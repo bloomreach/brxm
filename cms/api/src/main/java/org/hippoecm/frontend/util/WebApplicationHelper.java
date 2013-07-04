@@ -17,9 +17,10 @@ package org.hippoecm.frontend.util;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
 import org.hippoecm.frontend.PluginApplication;
 
 
@@ -50,8 +51,8 @@ public class WebApplicationHelper {
         }
     }
 
-    public static WebRequest retrieveWebRequest() {
-        return (WebRequest) RequestCycle.get().getRequest();
+    public static ServletWebRequest retrieveWebRequest() {
+        return (ServletWebRequest) RequestCycle.get().getRequest();
     }
 
     public static WebResponse retrieveWebResponse() {

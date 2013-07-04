@@ -25,13 +25,14 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
@@ -53,6 +54,9 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(LOGGER_NAME);
     private JcrPropertyModel enabledModel;
+
+    private static final ResourceReference ON_IMG = new PackageResourceReference(AutoExportPlugin.class, "autoexport_on.png");
+    private static final ResourceReference OFF_IMG = new PackageResourceReference(AutoExportPlugin.class, "autoexport_off.png");
 
     public AutoExportPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -88,12 +92,11 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         // set up icon component
         final Image icon = new Image("icon") {
             private static final long serialVersionUID = 1L;
-            private final ResourceReference on = new ResourceReference(AutoExportPlugin.class, "autoexport_on.png");
-            private final ResourceReference off = new ResourceReference(AutoExportPlugin.class, "autoexport_off.png");
+
 
             @Override
             protected ResourceReference getImageResourceReference() {
-                return isExportEnabled() ? on : off;
+                return isExportEnabled() ? ON_IMG : OFF_IMG;
             }
         };
         icon.setOutputMarkupId(true);
@@ -106,8 +109,8 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 setExportEnabled(!isExportEnabled());
-                target.addComponent(label);
-                target.addComponent(icon);
+                target.add(label);
+                target.add(icon);
             }
 
         };

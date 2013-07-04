@@ -24,29 +24,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -77,14 +78,17 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
 
     private static final String[] defaultFormatBlock = { "h1", "h2", "h3", "h4", "h5", "h6", "p", "address", "pre" };
 
-    private static final ResourceReference XINHA_MODAL_JS = new JavascriptResourceReference(XinhaDialogBehavior.class,
+    private static final ResourceReference XINHA_MODAL_JS = new JavaScriptResourceReference(XinhaDialogBehavior.class,
             "xinha-modal.js");
-    private static final ResourceReference XINHA_TOOLS_JS = new JavascriptResourceReference(AbstractXinhaPlugin.class,
+    private static final ResourceReference XINHA_TOOLS_JS = new JavaScriptResourceReference(AbstractXinhaPlugin.class,
             "xinha-tools.js");
-    private static final ResourceReference XINHA_TOOLS_DEV_JS = new JavascriptResourceReference(AbstractXinhaPlugin.class,
+    private static final ResourceReference XINHA_TOOLS_DEV_JS = new JavaScriptResourceReference(AbstractXinhaPlugin.class,
             "xinha-tools-dev.js");
 
-    private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
+    private static final ResourceReference XINHA_SKIN = new CssResourceReference(AbstractXinhaPlugin.class, "xinha.css");
+    private static final CssResourceReference DIFF_SKIN = new CssResourceReference(HtmlDiffModel.class, "diff.css");
+
+    private final PackageTextTemplate XINHA_INIT_GLOBALS = new PackageTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
 
     public static final String DISABLE_OPEN_IN_A_NEW_WINDOW_CONFIG = "open.in.new.window.disabled";
@@ -94,12 +98,12 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
     protected final Configuration configuration;
 
     //preview behaviors
-    private IBehavior startEditorBehavior;
-    private IBehavior previewStyle;
-    private IBehavior tabIndex;
+    private Behavior startEditorBehavior;
+    private Behavior previewStyle;
+    private Behavior tabIndex;
 
     //editor behaviors
-    private Map<String, IBehavior> editorPluginBehaviors;
+    private Map<String, Behavior> editorPluginBehaviors;
 
     private JcrNodeModel nodeModel;
 
@@ -114,14 +118,6 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             configuration.addProperty("previewTooltipText", getString("preview.tooltip", null, "Click to edit"));
             add(new EditorManagerBehavior());
         }
-
-        // dialog functionality for plugins
-        add(JavascriptPackageResource.getHeaderContribution(XINHA_MODAL_JS));
-        add(JavascriptPackageResource.getHeaderContribution(XINHA_TOOLS_JS));
-        if (getApplication().getConfigurationType().equals(Application.DEVELOPMENT)) {
-            add(JavascriptPackageResource.getHeaderContribution(XINHA_TOOLS_DEV_JS));
-        }
-        add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "xinha.css"));
     }
 
     @Override
@@ -135,7 +131,7 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
     }
 
     private void load() {
-        editorPluginBehaviors = new HashMap<String, IBehavior>();
+        editorPluginBehaviors = new HashMap<String, Behavior>();
 
         addOrReplace(IEditor.Mode.EDIT == mode ? configuration.getEditorStarted() ? createEditor("fragment")
                 : createEditablePreview("fragment") : createPreview("fragment"));
@@ -180,24 +176,21 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
+            public void onComponentTagBody(final MarkupStream markupStream, final ComponentTag openTag) {
                 String text = (String) getDefaultModelObject();
                 if (text != null) {
                     replaceComponentTagBody(markupStream, openTag, text);
                 } else {
-                    renderComponentTagBody(markupStream, openTag);
+                    super.onComponentTagBody(markupStream, openTag);
                 }
             }
         });
-        if (IEditor.Mode.COMPARE == mode) {
-            fragment.add(CSSPackageResource.getHeaderContribution(HtmlDiffModel.class, "diff.css"));
-        }
         return fragment;
     }
 
     protected Fragment createEditablePreview(String fragmentId) {
         String event = "onfocus";
-        WebClientInfo info = (WebClientInfo) RequestCycle.get().getClientInfo();
+        WebClientInfo info = getWebSession().getClientInfo();
         if (info.getProperties().isBrowserInternetExplorer()) {
             event = "onactivate";
         }
@@ -208,7 +201,7 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             protected void onEvent(AjaxRequestTarget target) {
                 configuration.setEditorStarted(true);
                 configuration.setFocusAfterLoad(true);
-                target.addComponent(AbstractXinhaPlugin.this);
+                target.add(AbstractXinhaPlugin.this);
                 target.focusComponent(editor);
                 load();
             }
@@ -241,7 +234,7 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
 
         createEditorPluginBehaviors();
 
-        for (IBehavior behavior : editorPluginBehaviors.values()) {
+        for (Behavior behavior : editorPluginBehaviors.values()) {
             editor.add(behavior);
         }
 
@@ -260,8 +253,8 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
                     load();
                     String script = String.format("YAHOO.hippo.EditorManager.deactivateEditor('%s');",
                             configuration.getName());
-                    target.prependJavascript(script);
-                    target.addComponent(AbstractXinhaPlugin.this);
+                    target.prependJavaScript(script);
+                    target.add(AbstractXinhaPlugin.this);
                 }
             }
         });
@@ -276,7 +269,7 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             configuration.addProperty("callbackUrl", editor.getCallbackUrl());
 
             for (String plugin : editorPluginBehaviors.keySet()) {
-                IBehavior behavior = editorPluginBehaviors.get(plugin);
+                Behavior behavior = editorPluginBehaviors.get(plugin);
                 if (behavior instanceof AbstractAjaxBehavior) {
                     PluginConfiguration config = configuration.getPluginConfiguration(plugin);
                     if (config == null) {
@@ -289,6 +282,21 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             }
         }
         super.onBeforeRender();
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        // dialog functionality for plugins
+        response.render(JavaScriptHeaderItem.forReference(XINHA_MODAL_JS));
+        response.render(JavaScriptHeaderItem.forReference(XINHA_TOOLS_JS));
+        if (getApplication().getConfigurationType().equals(RuntimeConfigurationType.DEPLOYMENT)) {
+            response.render(JavaScriptHeaderItem.forReference(XINHA_TOOLS_DEV_JS));
+        }
+
+        response.render(CssHeaderItem.forReference(XINHA_SKIN));
+        response.render(CssHeaderItem.forReference(DIFF_SKIN));
     }
 
     @Override
@@ -312,7 +320,7 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
                 @Override
                 protected Map<String, Object> getVariables() {
                     final Page page = getPluginContext().getService(Home.class.getName(), Home.class);
-                    String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy().rewriteStaticRelativeUrl("xinha/");
+                    String url = RequestCycle.get().getUrlRenderer().renderContextRelativeUrl("xinha/");
                     String lang = page.getLocale().getLanguage();
                     String skin = configuration.getSkin();
 

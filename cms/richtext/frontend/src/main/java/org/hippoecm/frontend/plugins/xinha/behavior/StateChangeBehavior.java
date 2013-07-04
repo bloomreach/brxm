@@ -16,10 +16,12 @@
 
 package org.hippoecm.frontend.plugins.xinha.behavior;
 
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
+import java.util.Set;
+
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 
 /**
@@ -42,10 +44,11 @@ public abstract class StateChangeBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
-        Request request = RequestCycle.get().getRequest();
+        IRequestParameters requestParameters = RequestCycle.get().getRequest().getRequestParameters();
+        Set<String> paramNames = requestParameters.getParameterNames();
 
-        if (request.getParameter(FULL_SCREEN) != null) {
-            boolean fullScreen = Boolean.parseBoolean(request.getParameter(FULL_SCREEN));
+        if (paramNames.contains(FULL_SCREEN)) {
+            boolean fullScreen = requestParameters.getParameterValue(FULL_SCREEN).toBoolean();
             if (configuration.isRenderFullscreen() != fullScreen) {
                 configuration.setRenderFullscreen(fullScreen);
 
@@ -53,8 +56,8 @@ public abstract class StateChangeBehavior extends AbstractDefaultAjaxBehavior {
             }
         }
 
-        if (request.getParameter(ACTIVATED) != null) {
-            boolean activated = Boolean.parseBoolean(request.getParameter(ACTIVATED));
+        if (paramNames.contains(ACTIVATED)) {
+            boolean activated = requestParameters.getParameterValue(ACTIVATED).toBoolean();
             if (configuration.getEditorStarted() != activated) {
                 configuration.setEditorStarted(activated);
                 configuration.setFocusAfterLoad(activated);

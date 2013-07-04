@@ -26,11 +26,7 @@ import java.io.InputStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.widgets.download.DownloadLink;
 import org.hippoecm.repository.api.HippoSession;

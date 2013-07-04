@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.xinha.model;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IPersisted extends IClusterable {
     

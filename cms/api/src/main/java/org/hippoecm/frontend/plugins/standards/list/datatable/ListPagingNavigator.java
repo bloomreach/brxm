@@ -33,8 +33,8 @@ public class ListPagingNavigator extends AjaxPagingNavigator {
     }
 
     @Override
-    protected PagingNavigation newNavigation(final IPageable pageable, final IPagingLabelProvider labelProvider) {
-        return new ListPagingNavigation("navigation", pageable, labelProvider, pagingDefinition);
+    protected PagingNavigation newNavigation(String id, final IPageable pageable, final IPagingLabelProvider labelProvider) {
+        return new ListPagingNavigation(id, pageable, labelProvider, pagingDefinition);
     }
 
 }

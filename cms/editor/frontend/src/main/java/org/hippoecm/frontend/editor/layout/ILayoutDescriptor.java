@@ -17,9 +17,9 @@ package org.hippoecm.frontend.editor.layout;
 
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.Resource;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * Descriptor for layout plugins (i.e. html only).  The extension points
@@ -46,7 +46,7 @@ public interface ILayoutDescriptor extends IClusterable {
      */
     IModel<String> getName();
     
-    Resource getIcon();
+    IResource getIcon();
 
     Map<String, ILayoutPad> getLayoutPads();
 

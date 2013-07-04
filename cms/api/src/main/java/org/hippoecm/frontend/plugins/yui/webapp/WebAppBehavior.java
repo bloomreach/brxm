@@ -16,9 +16,13 @@
 package org.hippoecm.frontend.plugins.yui.webapp;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
+import org.apache.wicket.Page;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
+import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.flash.ProbeFlashBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
@@ -31,7 +35,7 @@ import org.onehippo.yui.YahooNamespace;
  * 
  * <p>
  * It's most important feature is implementing the {@link IYuiManager} interface, enabling the 
- * {@link AbstractYuiBehavior} and {@link AbstractYuiAjaxBehavior} to retrieve {@link IYuiContext} instances, and thus 
+ * {@link AbstractYuiBehavior} and {@link AbstractYuiAjaxBehavior} to retrieve {@link IYuiContext} instances, and thus
  * should be added to the {@link Page} instance of your application (this is required).
  * </p>
  * <p>
@@ -48,20 +52,20 @@ import org.onehippo.yui.YahooNamespace;
  * 
  * @see IYuiManager
  */
-public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
+public class WebAppBehavior extends Behavior implements IYuiManager {
 
     private static final long serialVersionUID = 1L;
 
-    private static final CompressedResourceReference RESET_CSS = new CompressedResourceReference(YahooNamespace.class,
+    private static final ResourceReference RESET_CSS = new PackageResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "reset/reset-min.css");
-    private static final CompressedResourceReference FONTS_CSS = new CompressedResourceReference(YahooNamespace.class,
+    private static final ResourceReference FONTS_CSS = new PackageResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "fonts/fonts-min.css");
-    private static final CompressedResourceReference GRIDS_CSS = new CompressedResourceReference(YahooNamespace.class,
+    private static final ResourceReference GRIDS_CSS = new PackageResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "grids/grids-min.css");
 
-    private static final CompressedResourceReference BASE_CSS = new CompressedResourceReference(YahooNamespace.class,
+    private static final ResourceReference BASE_CSS = new PackageResourceReference(YahooNamespace.class,
             YahooNamespace.NS.getPath() + "base/base-min.css");
-    private static final CompressedResourceReference RESET_FONTS_GRIDS_CSS = new CompressedResourceReference(
+    private static final ResourceReference RESET_FONTS_GRIDS_CSS = new PackageResourceReference(
             YahooNamespace.class, YahooNamespace.NS.getPath() + "reset-fonts-grids/reset-fonts-grids.css");
 
     YuiHeaderCache headerContributor;
@@ -105,7 +109,7 @@ public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
+    public void renderHead(Component component, IHeaderResponse response) {
         headerContributor.renderHead(response);
         helper.renderHead(response);
     }

@@ -15,10 +15,18 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -28,6 +36,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
@@ -55,14 +64,6 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAware {
 
@@ -128,8 +129,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                     }
 
                     @Override
-                    protected IAjaxCallDecorator getAjaxCallDecorator() {
-                        return new EventStoppingDecorator(super.getAjaxCallDecorator());
+                    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                        super.updateAjaxAttributes(attributes);
+                        attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
                     }
 
                 };
@@ -152,8 +154,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
             }
 
         }.setVisible(editable));
@@ -186,8 +189,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 }
 
                 @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator() {
-                    return new EventStoppingDecorator(super.getAjaxCallDecorator());
+                protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
                 }
 
             });
@@ -196,16 +200,16 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 private static final long serialVersionUID = 1L;
 
                 public void onBlur() {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.addComponent(container);
+                        target.add(container);
                     }
                 }
 
                 public void onFocus() {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.addComponent(container);
+                        target.add(container);
                     }
                 }
 

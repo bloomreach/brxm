@@ -15,21 +15,37 @@
  */
 package org.hippoecm.frontend.translation;
 
-import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 public final class TranslationResources {
+
+    private static final JavaScriptResourceReference TRANSLATIONS_JS = new JavaScriptResourceReference(TranslationResources.class, "translations.js");
+    private static final CssResourceReference COUNTRIES_CSS = new CssResourceReference(TranslationResources.class, "countries.css");
 
     private TranslationResources() {
     }
 
-    public static HeaderContributor getTranslationsHeaderContributor() {
-        return JavascriptPackageResource.getHeaderContribution(TranslationResources.class, "translations.js");
+    public static IHeaderContributor getTranslationsHeaderContributor() {
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(JavaScriptHeaderItem.forReference(TRANSLATIONS_JS));
+            }
+        };
     }
 
-    public static HeaderContributor getCountriesCss() {
-        return CSSPackageResource.getHeaderContribution(TranslationResources.class, "countries.css");
+    public static IHeaderContributor getCountriesCss() {
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(CssHeaderItem.forReference(COUNTRIES_CSS));
+            }
+        };
     }
 
 }

@@ -29,9 +29,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -40,6 +37,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.plugins.console.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
@@ -121,17 +119,18 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
                 info(message);
             }
             if (result) {
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                 try {
                     fis = new FileInputStream(tempFile);
                     textArea.setDefaultModelObject(new String(IOUtils.toCharArray(fis)));
-                    AjaxRequestTarget.get().addComponent(textArea);
+                    target.add(textArea);
                 } catch (IOException e) {
                     log.error(e.getClass().getName() + ": " + e.getMessage(), e);
                 } finally {
                     IOUtils.closeQuietly(fis);
                 }
                 fileUploadField.setEnabled(false);
-                AjaxRequestTarget.get().addComponent(fileUploadField);
+                target.add(fileUploadField);
             }
         }
 
@@ -170,7 +169,7 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
         } finally {
             IOUtils.closeQuietly(bais);
             textArea.setDefaultModel(new Model<String>(logMessage.toString()));
-            AjaxRequestTarget.get().addComponent(textArea);
+            RequestCycle.get().find(AjaxRequestTarget.class).add(textArea);
         }
         return false;
     }

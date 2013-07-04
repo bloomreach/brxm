@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 
 public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel implements IPanelPluginParticipant {
     private static final long serialVersionUID = 1L;
@@ -32,8 +34,8 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
         add(feedback);
     }
 
-    public String getTitle() {
-        return (String) getTitle(this).getObject();
+    public IModel<String> getTitle() {
+        return getTitle(this);
     }
 
     /**
@@ -42,6 +44,9 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
      */
     public FeedbackPanel getFeedbackPanel() {
         return feedback;
+    }
+
+    public void render(PluginRequestTarget target) {
     }
 
 }

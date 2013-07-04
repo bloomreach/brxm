@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.layout;
 
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * A layout pad is available as a service at the extension point where the

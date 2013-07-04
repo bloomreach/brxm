@@ -20,7 +20,7 @@ import java.util.Comparator;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NodeNameComparator;
 
 public class JcrTreeNodeComparator implements Comparator<IJcrTreeNode>, IClusterable {

@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.IModelReference;
@@ -109,9 +110,9 @@ public class CopyDialog extends LookupDialog {
                 log.error(e.getMessage());
             }
         }
-        AjaxRequestTarget requestTarget = AjaxRequestTarget.get();
+        AjaxRequestTarget requestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
         if (requestTarget != null) {
-            requestTarget.addComponent(targetLabel);
+            requestTarget.add(targetLabel);
         }
     }
 

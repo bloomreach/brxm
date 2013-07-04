@@ -27,17 +27,18 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
@@ -67,6 +68,8 @@ class ReorderDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
+
+    static final CssResourceReference REORDER_CSS = new CssResourceReference(ReorderDialog.class, "reorder.css");
 
     private ReorderPanel panel;
     private List<String> mapping;
@@ -144,18 +147,22 @@ class ReorderDialog extends AbstractWorkflowDialog {
             }
         }
 
-        public Iterator<ListItem> iterator(int first, int count) {
-            return listItems.subList(first, first + count).iterator();
+        @Override
+        public Iterator<ListItem> iterator(long first, long count) {
+            return listItems.subList((int) first, (int) (first + count)).iterator();
         }
 
+        @Override
         public IModel<ListItem> model(ListItem object) {
             return new Model<ListItem>(object);
         }
 
-        public int size() {
+        @Override
+        public long size() {
             return listItems.size();
         }
 
+        @Override
         public void detach() {
             for (ListItem item : listItems) {
                 item.detach();
@@ -265,7 +272,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
             dataProvider = new ReorderDataProvider(documents);
 
             pagingDefinition = new ListPagingDefinition();
-            pagingDefinition.setPageSize(dataProvider.size() > 0 ? dataProvider.size() : 1);
+            pagingDefinition.setPageSize(dataProvider.size() > 0 ? (int) dataProvider.size() : 1);
             dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
             add(dataTable);
 
@@ -355,7 +362,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
         public void selectionChanged(IModel<ListItem> model) {
             ListItem item = model.getObject();
             long position = -1;
-            int size = dataProvider.size();
+            long size = dataProvider.size();
             Iterator<ListItem> siblings = dataProvider.iterator(0, size);
             int i = 0;
             while (siblings.hasNext()) {
@@ -372,9 +379,9 @@ class ReorderDialog extends AbstractWorkflowDialog {
             }
 
             dataTable.setModel(model);
-            IRequestTarget target = RequestCycle.get().getRequestTarget();
-            if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-                ((AjaxRequestTarget) target).addComponent(this);
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                target.add(this);
             }
         }
 
@@ -399,8 +406,12 @@ class ReorderDialog extends AbstractWorkflowDialog {
             name = "";
         }
         add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
+    }
 
-        add(CSSPackageResource.getHeaderContribution(ReorderDialog.class, "reorder.css"));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(REORDER_CSS));
     }
 
     @Override

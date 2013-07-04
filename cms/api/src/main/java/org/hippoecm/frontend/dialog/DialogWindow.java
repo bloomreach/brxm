@@ -18,16 +18,19 @@ package org.hippoecm.frontend.dialog;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
@@ -35,6 +38,9 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 public class DialogWindow extends ModalWindow implements IDialogService {
 
     private static final long serialVersionUID = 1L;
+
+    private static final ResourceReference MODAL_JS = new JavaScriptResourceReference(DialogWindow.class, "res/hippo-modal.js");
+    private static final ResourceReference MODAL_STYLESHEET = new CssResourceReference(DialogWindow.class, "res/hippo-modal.css");
 
     private class Callback implements ModalWindow.WindowClosedCallback {
         private static final long serialVersionUID = 1L;
@@ -64,10 +70,15 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
         pending = new LinkedList<Dialog>();
 
-        add(JavascriptPackageResource.getHeaderContribution(
-                new JavascriptResourceReference(DialogWindow.class, "res/hippo-modal.js")));
-        add(CSSPackageResource.getHeaderContribution(DialogWindow.class, "res/hippo-modal.css"));
         add(new EventStoppingBehavior("onclick"));
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(MODAL_STYLESHEET));
+        response.render(JavaScriptHeaderItem.forReference(MODAL_JS));
     }
 
     public void show(Dialog dialog) {
@@ -79,8 +90,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     /**
-     * Hides the dialog, if it is currently shown, or removes it from the list of
-     * to-be-shown dialogs.  The onClose() method is not invoked on the dialog.
+     * Hides the dialog, if it is currently shown, or removes it from the list of to-be-shown dialogs.  The onClose()
+     * method is not invoked on the dialog.
+     *
      * @param dialog
      */
     public void hide(Dialog dialog) {
@@ -101,12 +113,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
     public void close() {
         if (isShown()) {
-            AjaxRequestTarget target = AjaxRequestTarget.get();
-            if (target != null) {
-                close(target);
-            } else {
-                respondOnWindowClosed(null);
-            }
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            close(target);
         }
     }
 
@@ -148,36 +156,31 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         String cssClassName = properties.getString("css-class-name", defaultCssClassName);
         setCssClassName(cssClassName);
 
-        IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
-            show((AjaxRequestTarget) target);
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            show(target);
         }
     }
 
     /**
      * Shows the modal window.
      *
-     * @param target
-     *            Request target associated with current ajax request.
+     * @param target Request target associated with current ajax request.
      */
-    public void show(final AjaxRequestTarget target)
-    {
-        if (!super.isShown())
-        {
+    public void show(final AjaxRequestTarget target) {
+        if (!super.isShown()) {
             getContent().setVisible(true);
-            target.addComponent(this);
+            target.add(this);
         }
     }
 
     /**
      * @see org.apache.wicket.markup.html.panel.Panel#renderHead(org.apache.wicket.markup.html.internal.HtmlHeaderContainer)
      */
-    public void renderHead(HtmlHeaderContainer container)
-    {
+    public void renderHead(HtmlHeaderContainer container) {
         super.renderHead(container);
-        if (super.isShown())
-        {
-            container.getHeaderResponse().renderOnDomReadyJavascript(getWindowOpenJavascript());
+        if (super.isShown()) {
+            container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(getWindowOpenJavaScript()));
         }
     }
 

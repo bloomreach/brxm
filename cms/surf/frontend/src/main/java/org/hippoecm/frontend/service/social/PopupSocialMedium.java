@@ -16,8 +16,9 @@
 package org.hippoecm.frontend.service.social;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.link.PopupSettings;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.popup.IPopupService;
 
 /**
@@ -48,7 +49,7 @@ public class PopupSocialMedium implements ISocialMedium {
     @Override
     public ResourceReference getIcon16() {
         final String iconName = StringUtils.lowerCase(displayName) + "-icon-16.png";
-        return new ResourceReference(getClass(), iconName);
+        return new PackageResourceReference(getClass(), iconName);
     }
 
     @Override

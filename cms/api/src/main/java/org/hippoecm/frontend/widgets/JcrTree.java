@@ -21,11 +21,14 @@ import javax.jcr.RepositoryException;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.LinkType;
 import org.apache.wicket.extensions.markup.html.tree.Tree;
-import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.ILabelTreeNode;
 import org.hippoecm.repository.api.HippoNode;
@@ -37,17 +40,17 @@ public abstract class JcrTree extends Tree {
     private static final long serialVersionUID = 1L;
 
     /** use own styling */
-    private static final ResourceReference TREE_STYLE = new ResourceReference(JcrTree.class, "res/tree.css");
+    private static final ResourceReference TREE_STYLE = new CssResourceReference(JcrTree.class, "res/tree.css");
 
     /** Reference to the icon of open tree folder */
-    private static final ResourceReference VIRTUAL_FOLDER_OPEN = new ResourceReference(JcrTree.class,
+    private static final ResourceReference VIRTUAL_FOLDER_OPEN = new PackageResourceReference(JcrTree.class,
             "icons/folder-open-virtual.gif");
 
-    private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new ResourceReference(JcrTree.class,
+    private static final ResourceReference VIRTUAL_FOLDER_CLOSED = new PackageResourceReference(JcrTree.class,
             "icons/folder-closed-virtual.gif");
 
     /** Reference to the icon of tree item (not a folder) */
-    private static final ResourceReference VIRTUAL_ITEM = new ResourceReference(JcrTree.class, "icons/item-virtual.gif");
+    private static final ResourceReference VIRTUAL_ITEM = new PackageResourceReference(JcrTree.class, "icons/item-virtual.gif");
 
     static final Logger log = LoggerFactory.getLogger(JcrTree.class);
 

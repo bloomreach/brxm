@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.validation;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 /**
  * The validation service validates models.  The results of the validation

@@ -19,48 +19,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
-import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
-public class ScrollBehavior extends AbstractBehavior {
+public class ScrollBehavior extends Behavior {
     private static final long serialVersionUID = 1L;
 
-    private static final ResourceReference SCRIPT = new JavascriptResourceReference(ScrollBehavior.class, "scroll.js");
-    private final PackagedTextTemplate INIT = new PackagedTextTemplate(ScrollBehavior.class, "init_scroll.js");
-    private final ParameterModel model = new ParameterModel();
-    private String componentMarkupId;
+    private static final ResourceReference SCRIPT = new JavaScriptResourceReference(ScrollBehavior.class, "scroll.js");
+    private final PackageTextTemplate INIT = new PackageTextTemplate(ScrollBehavior.class, "init_scroll.js");
+
+    final Map<String, Object> parameters = new HashMap<String, Object>();
 
     public ScrollBehavior() {
         super();
     }
 
     public void bind(Component component) {
-        this.componentMarkupId = component.getMarkupId();
+        parameters.put("id", component.getMarkupId());
+        parameters.put("filterName", WebApplication.get().getWicketFilter().getFilterConfig().getFilterName());
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        response.renderJavascriptReference(SCRIPT);
-        TextTemplateHeaderContributor.forJavaScript(INIT, model).renderHead(response);
+    public void renderHead(Component component, IHeaderResponse response) {
+        super.renderHead(component, response);
+        response.render(JavaScriptHeaderItem.forReference(SCRIPT));
+        response.render(OnDomReadyHeaderItem.forScript(INIT.interpolate(parameters).getString()));
     }
 
-    class ParameterModel extends AbstractReadOnlyModel {
-        private static final long serialVersionUID = 1L;
-
-        final Map<String, Object> parameters = new HashMap<String, Object>();
-
-        @Override
-        public Object getObject() {
-            parameters.put("id", componentMarkupId);
-            parameters.put("filterName", WebApplication.get().getWicketFilter().getFilterConfig().getFilterName());
-            return parameters;
-        }
-    }
 }

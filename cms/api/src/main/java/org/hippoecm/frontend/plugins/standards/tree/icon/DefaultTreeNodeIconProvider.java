@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.standards.tree.icon;
 
 import javax.swing.tree.TreeNode;
 
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.service.IconSize;

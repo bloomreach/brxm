@@ -61,7 +61,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             root            : null,
             wireframes      : new YAHOO.hippo.HashMap(),
             _w              : new YAHOO.hippo.HashMap(),
-            renderQueue     : new YAHOO.hippo.FunctionQueue('render'),
             throttler       : new Wicket.Throttler(true),
             throttleDelay   : 0,
             resizeEvent     : null,
@@ -95,7 +94,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             _resize : function() {
-                if (this.root !== null && this.root !== undefined) {
+                if (this.root !== null) {
                     try {
                         this.root.resize();
                         this.resizeEvent.fire();
@@ -108,24 +107,34 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             render : function() {
                 try {
                     this.cleanupWireframes();
-                } finally{
+                } finally {
                     this.renderWireframes();
                 }
             },
             
             renderWireframes : function() {
-                this.renderQueue.handleQueue();
-                this._w.forEach(this, function(k, v) {
-                    var o = new v.clazz(k, v.config, this);
-                    this.wireframes.put(k, o);
-                    o.render();
-                });
-                this._w.clear();
+                var todo = [], index, e, k, v, o;
+                if (this.root !== null) {
+                    this._w.forEach(this, function(k, v) {
+                        todo.push({k: k, v: v});
+                    });
+                    this._w.clear();
+
+                    for (index = 0; index < todo.length; index++) {
+                        e = todo[index];
+                        k = e.k;
+                        v = e.v;
+                        o = new v.clazz(k, v.config, this);
+                        this.wireframes.put(k, o);
+                        o.render();
+                    }
+                }
             },
             
             addRoot : function(id, Clazz, config) {
                 this.root = new Clazz(id, config, this);
-                this.addToRenderQueue(this.root);
+                this.root.render();
+                this.renderWireframes();
             },
             
             addWireframe : function(id, clazz, config) {
@@ -139,7 +148,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             handleExpandCollapse : function(element) {
-                var unit, layout, layoutId, wireframe, position, unitCfg, url;
+                var unit, layout, layoutId, wireframe, position, unitCfg;
                 while(true) {
                     unit = this.findLayoutUnit(element);
                     if(unit === null) {
@@ -158,10 +167,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     }
                     position = unit.get('position');
                     unitCfg = wireframe.getUnitConfigByPosition(position);
-                    if (unitCfg !== null && unitCfg !== undefined && unitCfg.expandCollapseEnabled) {
+                    if (unitCfg !== null && unitCfg.expandCollapseEnabled) {
                         //do callback
-                        url = wireframe.config.callbackUrl + '&position=' + position;
-                        wireframe.config.callbackFunction(url);
+                        wireframe.config.callbackFunction({position: position});
                         return;
                     }
                     element = Dom.get(wireframe.id);
@@ -180,14 +188,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
             },
 
-            addToRenderQueue : function(wireframe) {
-                this.renderQueue.registerFunction(function() {
-                    wireframe.render();
-                });
-            },
-            
             getWireframe : function(id) {
-               if(this.root !== null && this.root !== undefined && id === this.root.id) {
+               if (this.root !== null && id === this.root.id) {
                    return this.root;
                }
                return this.wireframes.get(id);
@@ -369,7 +371,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
              * Dom.getAncestorByClassName didn't work
              */
             _findUnitElement : function(el) {
-                while (el !== null && el !== undefined && el !== document.body && (this.root === null || el.id !== this.root.id)) {
+                while (el !== null && el !== document.body && (this.root === null || el.id !== this.root.id)) {
                     if (Dom.hasClass(el, 'yui-layout-unit')) {
                         return el;
                     }
@@ -547,7 +549,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 sizes = unit.get('parent').getSizes();
                 minWidth = unit.get('minWidth');
                 newWidth = unit.get('width');
-                offset = (minWidth !== null && minWidth !== undefined) ? minWidth : 20;
+                offset = minWidth !== null ? minWidth : 20;
 
                 if ((sizes.doc.w - offset) < newWidth) {
                     unit.set('width', sizes.doc.w - offset);
@@ -609,7 +611,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             expandUnit : function(position) {
                 var unit = this.layout.getUnitByPosition(position);
-                if (unit !== null && unit !== undefined) {
+                if (unit !== null) {
                     this.unitExpanded = position;
                     unit.set('width', this.layout.getSizes().doc.w);
                 }
@@ -619,9 +621,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 var unit, config;
 
                 unit = this.layout.getUnitByPosition(position);
-                if (unit !== null && unit !== undefined) {
+                if (unit !== null) {
                     config = this.getUnitConfigByPosition(position);
-                    if (config !== null && config !== undefined) {
+                    if(config !== null) {
                         this.unitExpanded = null;
                         unit.set('width', Number(config.width));
                         this.children.forEach(this, function(k, v) {
@@ -645,7 +647,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             getUnitConfigByPosition : function(position) {
                 var i, len;
-                for (i = 0, len = this.config.units.length; i < len; i++) {
+                for (i = 0, len = this.config.units.length; i < len; ++i) {
                     if (this.config.units[i].position === position) {
                         return this.config.units[i];
                     }
@@ -662,14 +664,14 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             units = [];
             body = { position: 'center', body: 'bd', grids: true, scroll: config.bodyScroll};
-            if (config.bodyGutter !== null && config.bodyGutter !== undefined) {
+            if (config.bodyGutter !== null) {
                 body.gutter = config.bodyGutter;
             }
             units.push(body);
 
             if (Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
                 header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: config.headerScroll, resize: config.headerResize, grids: true};
-                if (config.headerGutter !== null && config.headerGutter !== undefined) {
+                if (config.headerGutter !== null) {
                     header.gutter = config.headerGutter;
                 }
                 units.push(header);
@@ -677,7 +679,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             if (Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
                 left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll, resize: config.leftResize };
-                if (config.leftGutter !== null && config.leftGutter !== undefined) {
+                if (config.leftGutter !== null) {
                     left.gutter = config.leftGutter;
                 }
                 units.push(left);
@@ -690,7 +692,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             if(Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
                 footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: config.footerScroll, resize: config.footerResize, grids: true};
-                if (config.footerGutter !== null && config.footerGutter !== undefined) {
+                if (config.footerGutter !== null) {
                     footer.gutter = config.footerGutter;
                 }
                 units.push(footer);
@@ -741,14 +743,14 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             units = [];
             body = { position: 'center', body: 'bd', grids: true, scroll: config.bodyScroll};
-            if (config.bodyGutter !== null && config.bodyGutter !== undefined) {
+            if (config.bodyGutter !== null) {
                 body.gutter = config.bodyGutter;
             }
             units.push(body);
             
             if(Lang.isNumber(config.headerHeight) && config.headerHeight > 0) {
                 header = {position: 'top', body: 'hd', height: config.headerHeight, scroll: config.headerScroll, resize: config.headerResize, grids: true};
-                if (config.headerGutter !== null && config.headerGutter !== undefined) {
+                if (config.headerGutter !== null) {
                   header.gutter = config.headerGutter;
                 }
                 units.push(header);
@@ -756,7 +758,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             if(Lang.isNumber(config.leftWidth) && config.leftWidth > 0) {
                 left = {position: 'left', body: 'lt', width: config.leftWidth, scroll: config.leftScroll, resize: config.leftResize };
-                if (config.leftGutter !== null && config.leftGutter !== undefined) {
+                if(config.leftGutter !== null) {
                     left.gutter = config.leftGutter;
                 }
                 units.push(left);
@@ -769,7 +771,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             if(Lang.isNumber(config.footerHeight) && config.footerHeight > 0) {
                 footer = {position: 'bottom', body: 'ft', height: config.footerHeight, scroll: config.footerScroll, resize: config.footerResize, grids: true};
-                if (config.footerGutter !== null && config.footerGutter !== undefined) {
+                if (config.footerGutter !== null) {
                   footer.gutter = config.footerGutter;
                 }
                 units.push(footer);
@@ -864,40 +866,41 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             getDimensions : function() {
-                var dim, margin, parent, parentMargin, u;
+                var dim, margin, myParent, parentMargin, u;
+
                 dim = {};
-                if (this.config.linkedWithParent && this.parent !== null && this.parent !== undefined) {
+                if (this.config.linkedWithParent && this.parent !== null) {
 
                     margin = {w:0, h:0};
-                    parent = Dom.get(this.id).parentNode;
-                    while (parent !== null && parent !== undefined) {
-                        parentMargin = this.domHelper.getMargin(parent);
+                    myParent = Dom.get(this.id).parentNode;
+                    while (myParent !== null) {
+                        parentMargin = this.domHelper.getMargin(myParent);
                         margin.w += parentMargin.w;
                         margin.h += parentMargin.h;
                         
-                        if (Dom.hasClass(parent, 'yui-layout-unit')) {
+                        if (Dom.hasClass(myParent, 'yui-layout-unit')) {
                             //unit found, wrap it up
-                            dim.w = this.domHelper.getWidth(parent);
-                            dim.h = this.domHelper.getHeight(parent);
+                            dim.w = this.domHelper.getWidth(myParent);
+                            dim.h = this.domHelper.getHeight(myParent);
                             dim.w -= margin.w;
                             dim.h -= margin.h;
 
-                            if (this.parent !== null && this.parent !== undefined) {
-                                u = this.parent.layout.getUnitById(parent.id);
-                                if (u !== null && u !== undefined) {
+                            if (this.parent !== null) {
+                                u = this.parent.layout.getUnitById(myParent.id);
+                                if (u !== null) {
                                     dim.w -= (u._gutter.left + u._gutter.right);
                                     dim.h -= (u._gutter.top + u._gutter.bottom);
                                 }
                             }
                             return dim;
                         }
-                        parent = parent.parentNode;
+                        myParent = myParent.parentNode;
                     }
                 }
                 //fallback
-                parent = Dom.get(this.id).parentNode;
-                dim.w = this.domHelper.getWidth(parent);
-                dim.h = this.domHelper.getHeight(parent);
+                myParent = Dom.get(this.id).parentNode;
+                dim.w = this.domHelper.getWidth(myParent);
+                dim.h = this.domHelper.getHeight(myParent);
                 return dim;
             }
             
@@ -1115,7 +1118,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         delete YAHOO.widget.LayoutUnit._instances[this.get('id')];
         //Brutal Object Destroy
         for (i in this) {
-            if (this.hasOwnProperty(i)) {
+            if (Lang.hasOwnProperty(this, i)) {
                 this[i] = null;
                 delete this[i];
             }

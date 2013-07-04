@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -37,11 +37,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.session.UserSession;
@@ -210,15 +210,13 @@ enum Column {
     abstract String render(NodeInfo info);
 }
 
-public class ErrorDownloadRequestTarget implements IRequestTarget {
+public class ErrorDownloadRequestTarget implements IRequestHandler {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ErrorDownloadRequestTarget.class);
 
     static final String FILE_NAME = "hippo-cms-error.txt";
 
-    private transient File tempFile;
-    private transient FileInputStream fis;
     private Exception ex;
 
     ErrorDownloadRequestTarget(Exception ex) {
@@ -226,9 +224,9 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
     }
 
     /**
-     * @see org.apache.wicket.IRequestTarget#respond(org.apache.wicket.RequestCycle)
+     * @see org.apache.wicket.request.IRequestHandler#respond(org.apache.wicket.request.IRequestCycle)
      */
-    public void respond(RequestCycle requestCycle) {
+    public void respond(IRequestCycle requestCycle) {
         final Application app = Application.get();
 
         // Determine encoding
@@ -236,7 +234,6 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
 
         // Set content type based on markup type for page
         final WebResponse response = (WebResponse) requestCycle.getResponse();
-        response.setCharacterEncoding(encoding);
         response.setContentType("text/xml; charset=" + encoding);
 
         // Make sure it is not cached by a client
@@ -251,8 +248,8 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
         UserSession session = UserSession.get();
 
         try {
-            tempFile = File.createTempFile("error-" + Time.now().toString() + "-", ".xml");
-            FileOutputStream fos = new FileOutputStream(tempFile);
+
+            ByteArrayOutputStream fos = new ByteArrayOutputStream();
             try {
                 PrintStream ps = new PrintStream(fos);
 
@@ -274,7 +271,7 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
                     ps.println();
                 }
 
-                HttpServletRequest hsr = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
+                HttpServletRequest hsr = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
                 ps.print("server  : ");
                 ps.print(hsr.getServerName());
                 ps.println();
@@ -342,8 +339,7 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
             } finally {
                 fos.close();
             }
-            fis = new FileInputStream(tempFile);
-            response.write(fis);
+            response.write(fos.toByteArray());
         } catch (FileNotFoundException e) {
             log.error("Tempfile missing during export", e);
         } catch (IOException e) {
@@ -379,19 +375,9 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
     }
 
     /**
-     * @see org.apache.wicket.IRequestTarget#detach(org.apache.wicket.RequestCycle)
+     * @see org.apache.wicket.request.IRequestHandler#detach(org.apache.wicket.request.IRequestCycle)
      */
-    public void detach(RequestCycle requestCycle) {
-        if (fis != null) {
-            try {
-                fis.close();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-        if (tempFile != null) {
-            tempFile.delete();
-        }
+    public void detach(IRequestCycle requestCycle) {
     }
 
     private String getCMSVersion() {

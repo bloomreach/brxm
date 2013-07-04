@@ -113,8 +113,8 @@ public class SetMembershipsPanel extends Panel {
                     error(getString("user-membership-add-failed", new DetachableGroup(selectedGroup)));
                     log.error("Failed to add memberships", e);
                 }
-                target.addComponent(localMembershipContainer);
-                target.addComponent(externalMembershipsContainer);
+                target.add(localMembershipContainer);
+                target.add(externalMembershipsContainer);
             }
 
         };
@@ -235,7 +235,7 @@ public class SetMembershipsPanel extends Panel {
                         error(getString("user-membership-remove-failed", new Model<Group>(group)));
                         log.error("Failed to remove memberships", e);
                     }
-                    target.addComponent(updateTarget);
+                    target.add(updateTarget);
                 }
             });
         }

@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.list;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,10 +35,6 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-
-import javax.jcr.Node;
-import java.util.ArrayList;
-import java.util.List;
 
 public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<Node> {
     private static final long serialVersionUID = 1L;
@@ -74,7 +75,7 @@ public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<No
     }
 
     @Override
-    protected ISortableDataProvider<Node> newDataProvider() {
+    protected ISortableDataProvider<Node, String> newDataProvider() {
         return new DocumentsProvider(getModel(), new DocumentListFilter(getPluginConfig()),
                 getTableDefinition().getComparators());
     }

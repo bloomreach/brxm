@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.util.PluginConfigMapper;

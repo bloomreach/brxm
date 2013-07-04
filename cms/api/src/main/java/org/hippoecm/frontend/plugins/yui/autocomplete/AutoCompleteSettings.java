@@ -36,6 +36,7 @@ public final class AutoCompleteSettings extends AjaxSettings {
 
     private static final long serialVersionUID = 1L;
 
+    protected static final StringSetting CALLBACK_URL = new StringSetting("callbackUrl", "");
     private static final StringSetting CONTAINER_ID = new StringSetting("containerId");
     private static final StringSetting PRE_HIGHLIGHT_CLASSNAME = new StringSetting("prehighlightClassName");
     private static final BooleanSetting USE_SHADOW = new BooleanSetting("useShadow");
@@ -55,6 +56,10 @@ public final class AutoCompleteSettings extends AjaxSettings {
     
     public AutoCompleteSettings(IPluginConfig config) {
         super(TYPE, config);
+    }
+
+    public void setCallbackUrl(String url) {
+        CALLBACK_URL.set(url, this);
     }
 
     public AutoCompleteSettings setContainerId(String containerId) {

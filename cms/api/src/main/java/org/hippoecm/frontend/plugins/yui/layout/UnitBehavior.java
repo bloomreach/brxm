@@ -16,26 +16,25 @@
 
 package org.hippoecm.frontend.plugins.yui.layout;
 
+import java.util.Map;
+
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.AjaxRequestTarget.IJavascriptResponse;
 import org.apache.wicket.ajax.AjaxRequestTarget.IListener;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * This behavior stores the component id as it's markupId in the {@link UnitSettings} and if the request rendering this
  * behavior is an Ajax-request, it will force the whole wireframe to re-render (since this unit might be added to an
  * already existing wireframe).  
  */
-public class UnitBehavior extends AbstractBehavior {
+public class UnitBehavior extends Behavior {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,7 +51,7 @@ public class UnitBehavior extends AbstractBehavior {
         super.bind(component);
 
         // re-render complete wireframe during the render phase
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             target.addListener(new IListener() {
                 public void onBeforeRespond(Map map, AjaxRequestTarget target) {
@@ -62,9 +61,9 @@ public class UnitBehavior extends AbstractBehavior {
                     MarkupContainer parent = component.getParent();
                     boolean found = false;
                     while (parent != null) {
-                        for (IBehavior behavior : parent.getBehaviors()) {
+                        for (Behavior behavior : parent.getBehaviors()) {
                             if (behavior instanceof IWireframe) {
-                                target.addComponent(parent);
+                                target.add(parent);
                                 found = true;
                                 break;
                             }
@@ -79,7 +78,7 @@ public class UnitBehavior extends AbstractBehavior {
                     }
                 }
 
-                public void onAfterRespond(Map map, IJavascriptResponse response) {
+                public void onAfterRespond(Map map, AjaxRequestTarget.IJavaScriptResponse response) {
                 }
             });
         }
@@ -91,10 +90,7 @@ public class UnitBehavior extends AbstractBehavior {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof UnitBehavior) {
-            return true;
-        }
-        return false;
+        return obj instanceof UnitBehavior;
     }
 
     @Override

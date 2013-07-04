@@ -16,23 +16,25 @@
 package org.hippoecm.frontend.translation.components.folder;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.translation.ILocaleProvider;
+import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.LocaleImageService;
 import org.hippoecm.frontend.translation.PathRenderer;
 import org.hippoecm.frontend.translation.TranslationResources;
-import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
 import org.hippoecm.frontend.translation.components.folder.model.EditedT9Tree;
 import org.hippoecm.frontend.translation.components.folder.model.T9Node;
 import org.hippoecm.frontend.translation.components.folder.model.T9Tree;
@@ -46,6 +48,7 @@ import org.wicketstuff.js.ext.tree.ExtAsyncTreeNode;
 import org.wicketstuff.js.ext.tree.ExtTreeLoader;
 import org.wicketstuff.js.ext.tree.ExtTreeNode;
 import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.ExtPropertyConverter;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
@@ -54,12 +57,13 @@ public final class FolderTranslationView extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String POST_PARAM_T9ID = "t9id";
+
     private final ILocaleProvider provider;
     private final ExtTreeNode root;
     private final ExtTreeLoader loader;
     private final SiblingLocator locator;
     private final LocaleImageService imageService;
-    private final SelectionListener selectionListener;
     private final PathRenderer pathRenderer;
 
     private final IModel<T9Tree> treeModel;
@@ -70,18 +74,6 @@ public final class FolderTranslationView extends ExtPanel {
         super(id);
 
         this.provider = provider;
-
-        add(TranslationResources.getTranslationsHeaderContributor());
-        add(TranslationResources.getCountriesCss());
-        add(new ExtHippoThemeBehavior());
-
-        addHeaderContribution("treegrid/TreeGridSorter.js");
-        addHeaderContribution("treegrid/TreeGridColumnResizer.js");
-        addHeaderContribution("treegrid/TreeGridNodeUI.js");
-        addHeaderContribution("treegrid/TreeGridLoader.js");
-        addHeaderContribution("treegrid/TreeGridColumns.js");
-        addHeaderContribution("treegrid/TreeGrid.js");
-        addHeaderContribution("folder-translations.js");
 
         this.model = t9Model;
         this.treeModel = new LoadableDetachableModel<T9Tree>() {
@@ -102,6 +94,8 @@ public final class FolderTranslationView extends ExtPanel {
         };
         T9Node rootNode = treeModel.getObject().getRoot();
 
+        add(new ExtHippoThemeBehavior());
+
         root = new ExtAsyncTreeNode();
         root.setId(rootNode.getId());
         root.setText(rootNode.getName());
@@ -113,8 +107,7 @@ public final class FolderTranslationView extends ExtPanel {
         add(imageService = new LocaleImageService(provider));
         add(pathRenderer = new PathRenderer(provider));
 
-        selectionListener = new SelectionListener() {
-            private static final long serialVersionUID = 1L;
+        addEventListener("select-folder", new ExtEventListener() {
 
             private final IModel<String> t9IdModel = new PropertyModel<String>(model, "t9id");
             private final String unlinkedT9Id;
@@ -129,13 +122,6 @@ public final class FolderTranslationView extends ExtPanel {
                 }
             }
 
-            @Override
-            public void detach(Component component) {
-                t9IdModel.detach();
-                super.detach(component);
-            }
-
-            @Override
             public void onSelect(String t9id) {
                 if (t9id == null) {
                     t9IdModel.setObject(unlinkedT9Id);
@@ -143,12 +129,46 @@ public final class FolderTranslationView extends ExtPanel {
                     t9IdModel.setObject(t9id);
                 }
             }
-        };
-        add(selectionListener);
+
+            @Override
+            public void onEvent(final AjaxRequestTarget target, Map<String, JSONArray> parameters) {
+                if (parameters.containsKey(POST_PARAM_T9ID)) {
+                    JSONArray values = parameters.get(POST_PARAM_T9ID);
+                    if (values.length() > 0) {
+                        try {
+                            onSelect(values.getString(0));
+                        } catch (JSONException e) {
+                            throw new RuntimeException("Could not retrieve t9id from select-folder event", e);
+                        }
+                    } else {
+                        onSelect(null);
+                    }
+                } else {
+                    onSelect(null);
+                }
+            }
+        });
     }
 
-    private void addHeaderContribution(String js) {
-        add(JavascriptPackageResource.getHeaderContribution(FolderTranslationView.class, js));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+
+        TranslationResources.getTranslationsHeaderContributor().renderHead(response);
+        TranslationResources.getCountriesCss().renderHead(response);
+
+        renderJavaScriptReference(response, "treegrid/TreeGridSorter.js");
+        renderJavaScriptReference(response, "treegrid/TreeGridColumnResizer.js");
+        renderJavaScriptReference(response, "treegrid/TreeGridNodeUI.js");
+        renderJavaScriptReference(response, "treegrid/TreeGridLoader.js");
+        renderJavaScriptReference(response, "treegrid/TreeGridColumns.js");
+        renderJavaScriptReference(response, "treegrid/TreeGrid.js");
+        renderJavaScriptReference(response, "folder-translations.js");
+
+        super.renderHead(response);
+    }
+
+    private void renderJavaScriptReference(IHeaderResponse response, String js) {
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(FolderTranslationView.class, js)));
     }
 
     @Override
@@ -169,7 +189,7 @@ public final class FolderTranslationView extends ExtPanel {
         properties.put("root", new JSONIdentifier(root.getJsObjectId()));
         properties.put("loader", new JSONIdentifier(loader.getJsObjectId()));
         properties.put("locator", new JSONIdentifier(locator.getJsObjectId()));
-        properties.put("imageService", imageService.getCallbackUrl(false));
+        properties.put("imageService", imageService.getCallbackUrl());
         properties.put("pathRenderer", new JSONIdentifier(pathRenderer.getJsObjectId()));
 
         JSONObject locales = new JSONObject();
@@ -179,15 +199,6 @@ public final class FolderTranslationView extends ExtPanel {
             locales.put(locale.getName(), jsonLocale);
         }
         properties.put("locales", getEscapeModelStrings());
-
-        JSONObject listeners;
-        if (properties.has("listeners")) {
-            listeners = properties.getJSONObject("listeners");
-        } else {
-            listeners = new JSONObject();
-        }
-        listeners.put("select-folder", new JSONIdentifier(selectionListener.getJsListener()));
-        properties.put("listeners", listeners);
 
         T9Node folderNode = model.getObject();
         JSONObject folder = new JSONObject();
@@ -206,8 +217,9 @@ public final class FolderTranslationView extends ExtPanel {
         folder.put("path", jsonPath);
         properties.put("folder", folder);
 
-//        properties.put("breakLinkDisabled", rc.urlFor(new ResourceReference(getClass(), "broken-link-disabled.png")));
-        properties.put("breakLink", rc.urlFor(new ResourceReference(getClass(), "unlink-translations-16.png")));
+//        properties.put("breakLinkDisabled", rc.urlFor(new PackageResourceReference(getClass(), "broken-link-disabled.png")));
+        properties.put("breakLink", rc.urlFor(new ResourceReferenceRequestHandler(
+                new PackageResourceReference(getClass(), "unlink-translations-16.png"))));
     }
 
     @Override
@@ -215,35 +227,6 @@ public final class FolderTranslationView extends ExtPanel {
         model.detach();
         treeModel.detach();
         super.onDetach();
-    }
-
-    private abstract static class SelectionListener extends AbstractDefaultAjaxBehavior {
-        private static final long serialVersionUID = 1L;
-
-        private static final String POST_PARAM_T9ID = "t9id";
-
-        @Override
-        protected void respond(AjaxRequestTarget target) {
-            RequestCycle rc = RequestCycle.get();
-            String t9id = rc.getRequest().getParameter(POST_PARAM_T9ID);
-            if (t9id == null || "null".equals(t9id)) {
-                onSelect(null);
-            } else {
-                onSelect(t9id);
-            }
-        }
-
-        public abstract void onSelect(String t9id);
-
-        @Override
-        protected CharSequence getCallbackScript() {
-            String postBody = String.format("%s='+t9id+'", POST_PARAM_T9ID);
-            return generateCallbackScript("wicketAjaxGet('" + getCallbackUrl(true) + "&" + postBody + "'");
-        }
-
-        public CharSequence getJsListener() {
-            return "function(t9id) { " + getCallbackScript() + ";}";
-        }
     }
 
 }

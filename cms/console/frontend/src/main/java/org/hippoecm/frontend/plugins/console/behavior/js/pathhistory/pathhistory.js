@@ -42,9 +42,9 @@
                     return;
                 }
 
-                var handleUrlChange = function() {
+                var handleUrlChange = jQuery.proxy(function() {
                     this.onUrlChange();
-                }.bind(this);
+                }, this);
                 window.addEventListener('popstate', handleUrlChange);
 
                 this.url = url;

@@ -17,7 +17,7 @@ package org.hippoecm.frontend;
 
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IStringResourceProvider extends IClusterable {
 

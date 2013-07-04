@@ -17,7 +17,7 @@ package org.hippoecm.frontend.i18n;
 
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 
 public interface ITranslation<T extends IModel> extends IClusterable {

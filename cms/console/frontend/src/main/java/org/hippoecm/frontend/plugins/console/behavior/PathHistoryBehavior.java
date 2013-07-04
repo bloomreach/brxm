@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.util.string.*;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -45,9 +46,9 @@ public class PathHistoryBehavior extends AbstractYuiAjaxBehavior implements YuiN
 
     private void setPathFromRequest() {
         final RequestCycle requestCycle = RequestCycle.get();
-        String path = requestCycle.getRequest().getParameter("path");
-        if (path != null) {
-            reference.setModel(new JcrNodeModel(path));
+        StringValue path = requestCycle.getRequest().getQueryParameters().getParameterValue("path");
+        if (!path.isNull()) {
+            reference.setModel(new JcrNodeModel(path.toString()));
         }
     }
 
@@ -83,7 +84,7 @@ public class PathHistoryBehavior extends AbstractYuiAjaxBehavior implements YuiN
     public void onEvent(final Iterator events) {
         JcrNodeModel nodeModel = (JcrNodeModel) reference.getModel();
         String path = nodeModel.getItemModel().getPath();
-        AjaxRequestTarget ajax = AjaxRequestTarget.get();
-        ajax.addJavascript("YAHOO.hippo.PathHistory.setPath('" + path + "')");
+        AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+        ajax.appendJavaScript("YAHOO.hippo.PathHistory.setPath('" + path + "')");
     }
 }

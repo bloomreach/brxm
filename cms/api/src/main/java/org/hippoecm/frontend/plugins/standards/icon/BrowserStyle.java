@@ -18,11 +18,11 @@ package org.hippoecm.frontend.plugins.standards.icon;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
-import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.PackageResource;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.PackageResource;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.service.IconSize;
 
 public final class BrowserStyle {
@@ -32,16 +32,16 @@ public final class BrowserStyle {
     private BrowserStyle() {
     }
 
-    public static HeaderContributor getStyleSheet() {
-        return CSSPackageResource.getHeaderContribution(BrowserStyle.class, "res/style.css");
+    public static ResourceReference getStyleSheet() {
+        return new CssResourceReference(BrowserStyle.class, "res/style.css");
     }
 
     public static ResourceReference getIcon(String customName, String defaultName, IconSize size) {
         Session session = Session.get();
-        String customResourceKey = "res/" + customName + "-" + size.getSize() + ".png"+session.getLocale()+session.getStyle();
+        String customResourceKey = "res/" + customName + "-" + size.getSize() + ".png" + session.getLocale() + session.getStyle();
         if (!customPackageResourceExists.containsKey(customResourceKey)) {
             Boolean resourceExists = PackageResource.exists(BrowserStyle.class, "res/" + customName + "-" + size.getSize() + ".png", session
-                .getLocale(),session.getStyle());
+                    .getLocale(), session.getStyle(), null);
             customPackageResourceExists.put(customResourceKey, resourceExists);
         }
         if (customPackageResourceExists.get(customResourceKey)) {
@@ -53,8 +53,8 @@ public final class BrowserStyle {
 
     public static ResourceReference getIcon(String name, IconSize size) {
         Session session = Session.get();
-        return new ResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png", session
-                .getLocale(), session.getStyle());
+        return new PackageResourceReference(BrowserStyle.class, "res/" + name + "-" + size.getSize() + ".png", session
+                .getLocale(), session.getStyle(), null);
     }
 
 }

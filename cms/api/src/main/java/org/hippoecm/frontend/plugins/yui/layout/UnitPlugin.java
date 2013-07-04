@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.layout;
 
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Special purpose {@link Plugin} that allows us to add the behavior through configuration instead of adding it 
  * in code to our component.  
  * 
- * See {@link IBehaviorService} and {@link IPlugin} for more info.
+ * See {@link org.hippoecm.frontend.service.IBehaviorService} and {@link IPlugin} for more info.
  */
 public class UnitPlugin extends Plugin implements IBehaviorService {
 
@@ -45,7 +45,7 @@ public class UnitPlugin extends Plugin implements IBehaviorService {
         return getPluginConfig().getString(IBehaviorService.PATH);
     }
 
-    public IBehavior getBehavior() {
+    public Behavior getBehavior() {
         return new UnitBehavior(getPluginConfig().getString("position"));
     }
 }

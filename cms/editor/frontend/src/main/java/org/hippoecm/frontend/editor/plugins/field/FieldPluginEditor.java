@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -74,7 +74,7 @@ public class FieldPluginEditor extends Panel {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         cssProvider.remove(item.getIndex());
-                        target.addComponent(FieldPluginEditor.this);
+                        target.add(FieldPluginEditor.this);
                     }
                 }.setVisible(editable));
             }
@@ -85,7 +85,7 @@ public class FieldPluginEditor extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 cssProvider.addNew();
-                target.addComponent(FieldPluginEditor.this);
+                target.add(FieldPluginEditor.this);
             }
         }.setVisible(editable));
     }

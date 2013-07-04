@@ -52,7 +52,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
     private JcrNodeModel nodeModel;
     private JcrPropertyModel propertyModel;
-    private int nrValues;
+    private long nrValues;
     private IObserver propertyObserver;
 
     public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {

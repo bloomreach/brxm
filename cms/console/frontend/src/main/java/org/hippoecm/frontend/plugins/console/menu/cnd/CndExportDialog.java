@@ -100,7 +100,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
                     export = e.getMessage();
                 }
                 dump.setDefaultModel(new Model<String>(export));
-                target.addComponent(CndExportDialog.this);
+                target.add(CndExportDialog.this);
             }
         });
 

@@ -17,7 +17,7 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.IAjaxLink;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.AbstractLink;
@@ -43,8 +43,9 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
             }
 
             @Override
@@ -63,8 +64,9 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new EventStoppingDecorator());
             }
 
             @Override
@@ -88,10 +90,6 @@ public abstract class DualAjaxLink extends AbstractLink implements IAjaxLink {
             disableLink(tag);
         }
 
-    }
-
-    protected IAjaxCallDecorator getAjaxCallDecorator() {
-        return null;
     }
 
     public abstract void onClick(final AjaxRequestTarget target);

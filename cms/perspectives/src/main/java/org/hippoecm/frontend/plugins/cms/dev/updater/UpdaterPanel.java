@@ -28,25 +28,27 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
+import org.apache.wicket.extensions.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.tree.DefaultTreeState;
-import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IOUtils;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -56,8 +58,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.JcrTree;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +140,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 super.populateTreeItem(item, level);
                 final Component nodeLink = item.get("nodeLink");
                 if (nodeLink != null) {
-                    nodeLink.add(new SimpleAttributeModifier("class", "node-link"));
+                    nodeLink.add(new AttributeModifier("class", "node-link"));
                 }
             }
 
@@ -155,12 +155,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 treeModel.setTreeState(state);
                 state.expandAll();
                 return state;
-            }
-
-            @Override
-            public void onBeforeRender() {
-                super.onBeforeRender();
-                updateTree();
             }
 
             @Override
@@ -222,6 +216,12 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         setOutputMarkupId(true);
     }
 
+    @Override
+    public void render(final PluginRequestTarget target) {
+        super.render(target);
+        tree.updateTree();
+    }
+
     private String getUpdaterTitle() {
         if (isQueuedUpdater()) {
             return "Monitoring updater run " + getUpdaterName();
@@ -245,7 +245,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         expandAndSelectNodeInTree();
         updateEditor();
         path = null;
-        AjaxRequestTarget.get().addComponent(this);
+        RequestCycle.get().find(AjaxRequestTarget.class).add(this);
     }
 
     private void updateEditor() {

@@ -15,22 +15,14 @@
  */
 package org.hippoecm.frontend.resource;
 
-import org.apache.wicket.Resource;
-import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 
-public class JcrResource extends Resource {
+public class JcrResource extends ResourceStreamResource {
 
     private static final long serialVersionUID = 1L;
 
-    private JcrResourceStream resource;
-
     public JcrResource(JcrResourceStream stream) {
-        resource = stream;
-        setCacheable(false);
+        super(stream);
     }
 
-    @Override
-    public IResourceStream getResourceStream() {
-        return resource;
-    }
 }

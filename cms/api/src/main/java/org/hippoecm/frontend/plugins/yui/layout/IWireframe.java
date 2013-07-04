@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.yui.layout;
 import java.io.Serializable;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.HeaderItem;
 
 /**
  * Base wireframe interface, allows wireframes that are linked to their parent to register
@@ -37,4 +38,6 @@ public interface IWireframe extends Serializable {
      * @param target
      */
     void resize(AjaxRequestTarget target);
+
+    HeaderItem getHeaderItem();
 }

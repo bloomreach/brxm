@@ -175,7 +175,7 @@ public abstract class DevelopmentContentWizard extends AjaxWizard {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(container);
+                    target.add(container);
                 }
             };
 

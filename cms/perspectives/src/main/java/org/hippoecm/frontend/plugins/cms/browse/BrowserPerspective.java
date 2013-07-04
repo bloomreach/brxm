@@ -19,8 +19,9 @@ import java.util.Iterator;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -193,7 +194,7 @@ public class BrowserPerspective extends Perspective {
 
     @Override
     public ResourceReference getIcon(IconSize type) {
-        return new ResourceReference(BrowserPerspective.class, "browser-perspective-" + type.getSize() + ".png");
+        return new PackageResourceReference(BrowserPerspective.class, "browser-perspective-" + type.getSize() + ".png");
     }
 
     @Override

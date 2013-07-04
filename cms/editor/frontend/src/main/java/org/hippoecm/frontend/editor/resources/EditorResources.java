@@ -15,13 +15,14 @@
  */
 package org.hippoecm.frontend.editor.resources;
 
-import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.request.resource.CssResourceReference;
 
 public final class EditorResources {
 
-    public static HeaderContributor getCss() {
-        return CSSPackageResource.getHeaderContribution(EditorResources.class, "editor.css");
+    public static HeaderItem getCss() {
+        return CssHeaderItem.forReference(new CssResourceReference(EditorResources.class, "editor.css"));
     }
 
 }

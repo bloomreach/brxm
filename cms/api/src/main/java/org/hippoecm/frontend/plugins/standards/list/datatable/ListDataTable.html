@@ -15,9 +15,10 @@
   -->
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <wicket:panel>
+    <caption wicket:id="caption"></caption>
     <table>
-      <thead class="list-data-table-header">
-        <wicket:container wicket:id="topToolbars"></wicket:container>
+      <thead wicket:id="topToolbars" class="list-data-table-header">
+        <wicket:container wicket:id="toolbars"></wicket:container>
       </thead>
       <tbody wicket:id="body" class="list-data-table-body">
         <tr wicket:id="rows">
@@ -26,8 +27,8 @@
           </td>
         </tr>
       </tbody>
-      <tfoot class="list-data-table-footer">
-        <wicket:container wicket:id="bottomToolbars"></wicket:container>
+      <tfoot wicket:id="bottomToolbars" class="list-data-table-footer">
+        <wicket:container wicket:id="toolbars"></wicket:container>
       </tfoot>
     </table>
 </wicket:panel>

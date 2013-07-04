@@ -15,31 +15,39 @@
  */
 package org.hippoecm.frontend.plugins.yui.flash;
 
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.request.target.basic.EmptyAjaxRequestTarget;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.core.request.handler.EmptyAjaxRequestHandler;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
-import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
+import org.hippoecm.frontend.plugins.yui.javascript.AjaxSettings;
 
 public abstract class ProbeFlashBehavior extends AbstractYuiAjaxBehavior {
 
-    DynamicTextTemplate template;
+    private final PackageTextTemplate PROBE_FLASH_TEMPLATE = new PackageTextTemplate(ProbeFlashBehavior.class, "probe_flash.js");
+
+    private final DynamicTextTemplate template;
+
+    static class FlashSettings extends AjaxSettings {
+
+        public FlashSettings() {
+            super(AjaxSettings.TYPE);
+        }
+    }
 
     public ProbeFlashBehavior() {
-        this(new AjaxSettings());
+        this(new FlashSettings());
     }
 
     public ProbeFlashBehavior(final IAjaxSettings settings) {
         super(settings);
 
-        template = new DynamicTextTemplate(new PackagedTextTemplate(ProbeFlashBehavior.class, "probe_flash.js"),
-                settings) {
+        template = new DynamicTextTemplate(PROBE_FLASH_TEMPLATE, settings) {
 
             @Override
             public String getId() {
@@ -61,16 +69,16 @@ public abstract class ProbeFlashBehavior extends AbstractYuiAjaxBehavior {
 
         FlashVersion flash = new FlashVersion();
         try {
-            flash.setMajorVersion(Integer.parseInt(request.getParameter("major")));
-            flash.setMinorVersion(Integer.parseInt(request.getParameter("minor")));
-            flash.setRevisionVersion(Integer.parseInt(request.getParameter("rev")));
+            flash.setMajorVersion(request.getRequestParameters().getParameterValue("major").toInt());
+            flash.setMinorVersion(request.getRequestParameters().getParameterValue("minor").toInt());
+            flash.setRevisionVersion(request.getRequestParameters().getParameterValue("rev").toInt());
         } catch (NumberFormatException ignored) {
         }
         handleFlash(flash);
 
         //Responding with a regular AJAX-response can cause feedback info to disappear immediately
         //after page-load. This is resolved forcing an empty response for this behavior
-        RequestCycle.get().setRequestTarget(EmptyAjaxRequestTarget.getInstance());
+        RequestCycle.get().scheduleRequestHandlerAfterCurrent(EmptyAjaxRequestHandler.getInstance());
     }
 
     protected abstract void handleFlash(FlashVersion flash);

@@ -16,13 +16,24 @@
 package org.hippoecm.frontend.plugins.richtext;
 
 import java.util.Set;
-import org.junit.Test;
 
+import org.apache.wicket.mock.MockHomePage;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RichTextProcessorTest {
+
+    WicketTester tester;
+
+    @Before
+    public void createTester() {
+        tester = new WicketTester();
+        tester.startPage(MockHomePage.class);
+    }
 
     @Test
     public void testPrefixInternalImage() {

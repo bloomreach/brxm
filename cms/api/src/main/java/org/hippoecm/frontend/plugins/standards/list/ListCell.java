@@ -24,6 +24,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -66,9 +67,9 @@ class ListCell extends Panel {
             IObserver observer = new Observer(observable) {
 
                 public void onEvent(Iterator events) {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.addComponent(ListCell.this);
+                        target.add(ListCell.this);
                     }
                 }
 
@@ -98,9 +99,9 @@ class ListCell extends Panel {
                             }
 
                             public void onEvent(Iterator<? extends IEvent<IObservable>> events) {
-                                AjaxRequestTarget target = AjaxRequestTarget.get();
+                                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                                 if (target != null) {
-                                    target.addComponent(ListCell.this);
+                                    target.add(ListCell.this);
                                 }
                             }
 

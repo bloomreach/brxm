@@ -182,7 +182,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
         if (target != null) {
             saveDialogLink.update(target);
             if (sorter.isDirty()) {
-                target.addComponent(sorter);
+                target.add(sorter);
             }
         }
     }

@@ -15,38 +15,39 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.util.io.IClusterable;
 
-public class SortState implements ISortState, IClusterable {
+public class SortState implements ISortState<String>, IClusterable {
     private static final long serialVersionUID = 1L;
 
     private String property;
-    private int sortState = ISortState.NONE;
+    private SortOrder sortState = SortOrder.NONE;
 
-    public void setPropertySortOrder(String property, int sortState) {
+    public void setPropertySortOrder(String property, SortOrder sortState) {
         this.property = property;
         this.sortState = sortState;
     }
 
-    public int getPropertySortOrder(String param) {
+    public SortOrder getPropertySortOrder(String param) {
         if (param == null || property == null || !param.equals(this.property)) {
-            return NONE;
+            return SortOrder.NONE;
         } else {
             return sortState;
         }
     }
 
     public boolean isAscending() {
-        return sortState == ISortState.ASCENDING;
+        return sortState == SortOrder.ASCENDING;
     }
 
     public boolean isDescending() {
-        return sortState == ISortState.DESCENDING;
+        return sortState == SortOrder.DESCENDING;
     }
 
     public boolean isSorted() {
-        return sortState != ISortState.NONE;
+        return sortState != SortOrder.NONE;
     }
 
     public String getProperty() {

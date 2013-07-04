@@ -15,12 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
+import java.io.IOException;
 import java.net.URL;
 
-import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
-import net.sourceforge.htmlunit.corejs.javascript.Function;
-import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
-import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
+import com.gargoylesoftware.htmlunit.AjaxController;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequestSettings;
+import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.WebWindow;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.ContextParamWebApplicationFactory;
@@ -35,12 +40,10 @@ import org.mortbay.jetty.servlet.FilterHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.gargoylesoftware.htmlunit.AjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequestSettings;
-import com.gargoylesoftware.htmlunit.WebWindow;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.javascript.host.Window;
+import net.sourceforge.htmlunit.corejs.javascript.BaseFunction;
+import net.sourceforge.htmlunit.corejs.javascript.Function;
+import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
+import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 
 abstract public class YuiTest {
 
@@ -65,6 +68,7 @@ abstract public class YuiTest {
         FilterHolder filterHolder = new FilterHolder(WicketFilter.class);
         filterHolder.setInitParameter(ContextParamWebApplicationFactory.APP_CLASS_PARAM, WICKET_WEBAPP_CLASS_NAME);
         filterHolder.setInitParameter("test-page-class", clazz.getName());
+        filterHolder.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, "/*");
         root.addFilter(filterHolder, "/*", 1);
         server.start();
 
@@ -75,6 +79,14 @@ abstract public class YuiTest {
             @Override
             public boolean processSynchron(HtmlPage page, WebRequestSettings settings, boolean async) {
                 return true;
+            }
+        });
+        client.setWebConnection(new WebConnectionWrapper(client) {
+            @Override
+            public WebResponse getResponse(final WebRequestSettings settings) throws IOException {
+                WebResponse response = super.getResponse(settings);
+                System.out.println(response.getContentAsString());
+                return response;
             }
         });
 

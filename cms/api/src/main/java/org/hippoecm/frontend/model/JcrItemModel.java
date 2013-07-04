@@ -23,13 +23,13 @@ import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
@@ -325,7 +325,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (isAttached()) {
             log.warn("Undetached JcrItemModel " + getPath());
-            if (Application.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
+            if (RuntimeConfigurationType.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
                 detach();
             }
         }

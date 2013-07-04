@@ -17,23 +17,22 @@ package org.hippoecm.frontend.plugins.yui;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
 
 /**
  * Base class for behaviors that want to use YUI modules. It uses a {@link IYuiContext} to register all 
  * required components. The {@link IYuiContext} is created by a (global) {@link IYuiManager} which, in this case, lives
- * inside the {@link Page} (as an {@link IBehavior}) that is retrieved by <code>component.getPage()</code> 
+ * inside the {@link Page} (as an {@link Behavior}) that is retrieved by <code>component.getPage()</code>
  *  
  *  <p>
  *  Subclasses should override <code>addHeaderContribution(IYuiContext context)</code> to get access to the 
  *  {@link IYuiContext}.
  *  </p>
  */
-public class AbstractYuiBehavior extends AbstractBehavior {
+public class AbstractYuiBehavior extends Behavior {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,10 +62,10 @@ public class AbstractYuiBehavior extends AbstractBehavior {
      * TODO: webapp ajax is configurable, maybe check here and still load it.
      */
     @Override
-    public final void renderHead(IHeaderResponse response) {
+    public final void renderHead(Component component, IHeaderResponse response) {
         if (context == null) {
             Page page = component.getPage();
-            for (IBehavior behavior : page.getBehaviors()) {
+            for (Behavior behavior : page.getBehaviors()) {
                 if (behavior instanceof IYuiManager) {
                     context = ((IYuiManager) behavior).newContext();
                     addHeaderContribution(context);

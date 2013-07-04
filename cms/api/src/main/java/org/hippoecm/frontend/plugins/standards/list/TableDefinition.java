@@ -16,12 +16,13 @@
 package org.hippoecm.frontend.plugins.standards.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class TableDefinition<T> implements IClusterable {
@@ -62,8 +63,8 @@ public class TableDefinition<T> implements IClusterable {
     }
 
     @SuppressWarnings("unchecked")
-    public ListColumn<T>[] getColumns() {
-        return (columns.toArray(new ListColumn[columns.size()]));
+    public List<ListColumn<T>> getColumns() {
+        return Collections.unmodifiableList(columns);
     }
 
     public boolean showColumnHeaders() {

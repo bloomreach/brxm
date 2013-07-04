@@ -15,10 +15,6 @@
  */
 package org.hippoecm.frontend.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -34,7 +30,6 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.util.lang.Objects;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.map.HippoMap;
@@ -46,8 +41,11 @@ import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PluginConfigTest extends PluginTest {
 
@@ -352,7 +350,14 @@ public class PluginConfigTest extends PluginTest {
         assertEquals("b", original.getString("a"));
         Set entries = original.entrySet();
 
-        IPluginConfig copy = (IPluginConfig) Objects.cloneObject(original);
+        IPluginConfig copy;
+        {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream(256);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            oos.writeObject(original);
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(out.toByteArray()));
+            copy = (IPluginConfig) ois.readObject();
+        }
 
         assertEquals("b", copy.getString("a"));
 

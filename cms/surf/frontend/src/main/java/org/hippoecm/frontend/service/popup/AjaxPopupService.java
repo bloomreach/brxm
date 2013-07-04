@@ -15,10 +15,9 @@
  */
 package org.hippoecm.frontend.service.popup;
 
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.link.PopupSettings;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -44,10 +43,8 @@ public class AjaxPopupService extends Plugin implements IPopupService {
         if (url == null) {
             return;
         }
-        IRequestTarget target = RequestCycle.get().getRequestTarget();
-        if(target instanceof AjaxRequestTarget) {
-            AjaxRequestTarget ajax = (AjaxRequestTarget) target;
-
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
             popupSettings.setTarget("'" + url + "'");
 
             StringBuffer javascript = new StringBuffer();
@@ -56,7 +53,7 @@ public class AjaxPopupService extends Plugin implements IPopupService {
             javascript.append(popupSettings.getPopupJavaScript());
             javascript.append("})();");
 
-            ajax.appendJavascript(javascript.toString());
+            target.appendJavaScript(javascript.toString());
         }
     }
 

@@ -15,115 +15,54 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import org.apache.wicket.IClusterable;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.behavior.HeaderContributor;
-import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.apache.wicket.request.ClientInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowserSpecificStylesheetsBehavior extends HeaderContributor {
+public class BrowserSpecificStylesheetsBehavior extends Behavior {
     private static final long serialVersionUID = 1L;
-
 
     static final Logger log = LoggerFactory.getLogger(BrowserSpecificStylesheetsBehavior.class);
 
-    public BrowserSpecificStylesheetsBehavior(final StylesheetConfiguration... configurations) {
-        super(new IHeaderContributor() {
-            private static final long serialVersionUID = 1L;
+    private final StylesheetConfiguration[] configurations;
 
-            public void renderHead(IHeaderResponse response) {
-                Browser userBrowser = getBrowser();
-                if (userBrowser != null && userBrowser.userAgent != UserAgent.UNSUPPORTED) {
-                    for (StylesheetConfiguration ssc : configurations) {
-                        if (loadStylesheets(userBrowser, ssc)) {
-                            for (String location : ssc.styleSheets) {
-                                HeaderContributor.forCss(location).renderHead(response);
-                            }
-                        }
+    public BrowserSpecificStylesheetsBehavior(final StylesheetConfiguration... configurations) {
+        this.configurations = configurations;
+    }
+
+    public void renderHead(Component component, IHeaderResponse response) {
+        Browser userBrowser = getBrowser();
+        if (userBrowser != null && userBrowser.userAgent != UserAgent.UNSUPPORTED) {
+            for (StylesheetConfiguration ssc : configurations) {
+                if (loadStylesheets(userBrowser, ssc)) {
+                    for (String location : ssc.styleSheets) {
+                        response.render(CssHeaderItem.forUrl(location));
                     }
                 }
             }
-
-            private boolean loadStylesheets(Browser userBrowser, StylesheetConfiguration conf) {
-                if (userBrowser.userAgent != conf.browser.userAgent) {
-                    return false;
-                }
-                if (conf.browser.majorVersion > -1 && conf.browser.majorVersion != userBrowser.majorVersion) {
-                    return false;
-                }
-                if (conf.browser.minorVersion > -1 && conf.browser.minorVersion != userBrowser.minorVersion) {
-                    return false;
-                }
-                return true;
-            }
-
-            private Browser getBrowser() {
-                ClientInfo info = RequestCycle.get().getClientInfo();
-                if (info instanceof WebClientInfo) {
-                    return new Browser((WebClientInfo) info);
-                }
-                return null;
-            }
-        });
+        }
     }
 
-    public static class StylesheetConfiguration implements IClusterable {
-        private static final long serialVersionUID = 1L;
-        
-        Browser browser;
-        String[] styleSheets;
-
-        public StylesheetConfiguration(Browser browser, String... styleSheets) {
-            this.browser = browser;
-            this.styleSheets = styleSheets;
+    private boolean loadStylesheets(Browser userBrowser, StylesheetConfiguration conf) {
+        if (userBrowser.userAgent != conf.browser.userAgent) {
+            return false;
         }
-
+        if (conf.browser.majorVersion > -1 && conf.browser.majorVersion != userBrowser.majorVersion) {
+            return false;
+        }
+        if (conf.browser.minorVersion > -1 && conf.browser.minorVersion != userBrowser.minorVersion) {
+            return false;
+        }
+        return true;
     }
 
-    public static enum UserAgent {
-        IE, FIREFOX, SAFARI, OPERA, UNSUPPORTED
-    };
-
-    public static class Browser implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        UserAgent userAgent;
-        int majorVersion = -1;
-        int minorVersion = -1;
-
-        public Browser(WebClientInfo webInfo) {
-            majorVersion = webInfo.getProperties().getBrowserVersionMajor();
-            minorVersion = webInfo.getProperties().getBrowserVersionMinor();
-
-            if (webInfo.getProperties().isBrowserInternetExplorer()) {
-                userAgent = UserAgent.IE;
-            } else if (webInfo.getProperties().isBrowserMozillaFirefox()) {
-                userAgent = UserAgent.FIREFOX;
-            } else if (webInfo.getProperties().isBrowserSafari()) {
-                userAgent = UserAgent.SAFARI;
-            } else if (webInfo.getProperties().isBrowserOpera()) {
-                userAgent = UserAgent.OPERA;
-            } else {
-                userAgent = UserAgent.UNSUPPORTED;
-            }
-        }
-
-        public Browser(UserAgent ua) {
-            userAgent = ua;
-        }
-
-        public Browser(UserAgent ua, int major) {
-            this(ua);
-            majorVersion = major;
-        }
-
-        public Browser(UserAgent ua, int major, int minor) {
-            this(ua, major);
-            minorVersion = minor;
-        }
+    private Browser getBrowser() {
+        final WebClientInfo clientInfo = WebSession.get().getClientInfo();
+        return new Browser(clientInfo);
     }
 }

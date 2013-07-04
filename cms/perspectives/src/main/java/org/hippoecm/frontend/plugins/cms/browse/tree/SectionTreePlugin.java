@@ -23,6 +23,8 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -167,7 +169,6 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                 if (section.extPt.getChildren().size() > 0) {
                     Component c = ((IRenderService)section.extPt.getChildren().get(0)).getComponent();
                     item.add(c);
-                    c.add(accordionManager.newSection());
                 } else {
                     item.add(new EmptyPanel("id"));
                     link.setVisible(false);
@@ -197,6 +198,22 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             }
         }
         super.onBeforeRender();
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        for (Section section : sections) {
+            final List sectionChildren = section.extPt.getChildren();
+            if (sectionChildren.size() > 0) {
+                final Component component = ((IRenderService) sectionChildren.get(0)).getComponent();
+                if (component.isVisible()) {
+                    response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" + getMarkupId() + "', '"
+                            + component.getMarkupId() + "')"));
+                }
+            }
+        }
     }
 
     @Override

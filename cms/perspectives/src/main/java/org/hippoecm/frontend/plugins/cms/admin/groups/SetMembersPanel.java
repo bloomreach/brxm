@@ -75,12 +75,12 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         add(localList);
 
         // All local groups
-        List<IColumn<User>> allUserColumns = new ArrayList<IColumn<User>>();
-        allUserColumns.add(new PropertyColumn<User>(new ResourceModel("user-username"), "username"));
-        allUserColumns.add(new PropertyColumn<User>(new ResourceModel("user-firstname"), "firstName"));
-        allUserColumns.add(new PropertyColumn<User>(new ResourceModel("user-lastname"), "lastName"));
+        List<IColumn<User, String>> allUserColumns = new ArrayList<IColumn<User, String>>();
+        allUserColumns.add(new PropertyColumn<User, String>(new ResourceModel("user-username"), "username"));
+        allUserColumns.add(new PropertyColumn<User, String>(new ResourceModel("user-firstname"), "firstName"));
+        allUserColumns.add(new PropertyColumn<User, String>(new ResourceModel("user-lastname"), "lastName"));
 
-        allUserColumns.add(new AbstractColumn<User>(new ResourceModel("group-member-actions"), "add") {
+        allUserColumns.add(new AbstractColumn<User, String>(new ResourceModel("group-member-actions"), "add") {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(final Item<ICellPopulator<User>> item, final String componentId,
@@ -114,7 +114,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                             error(getString("group-member-add-failed", model));
                             log.error("Failed to add member", e);
                         }
-                        target.addComponent(SetMembersPanel.this);
+                        target.add(SetMembersPanel.this);
                     }
                 };
                 item.add(action);
@@ -143,7 +143,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
-                target.addComponent(table);
+                target.add(table);
             }
         });
     }
@@ -192,7 +192,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                         error(getString("group-member-remove-failed", null));
                         log.error("Failed to remove memberships", e);
                     }
-                    target.addComponent(SetMembersPanel.this);
+                    target.add(SetMembersPanel.this);
                 }
             });
         }

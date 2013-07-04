@@ -15,21 +15,28 @@
  */
 package org.hippoecm.frontend.widgets.download;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class DownloadLink<T> extends Link<T> {
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(DownloadLink.class);
 
     public DownloadLink(String id) {
         super(id);
@@ -42,7 +49,7 @@ public abstract class DownloadLink<T> extends Link<T> {
     @Override
     public void onClick() {
         DownloadRequestTarget requestTarget = createDownloadRequestTarget();
-        RequestCycle.get().setRequestTarget(requestTarget);
+        RequestCycle.get().scheduleRequestHandlerAfterCurrent(requestTarget);
     }
     
     protected DownloadRequestTarget createDownloadRequestTarget() {
@@ -50,16 +57,17 @@ public abstract class DownloadLink<T> extends Link<T> {
     }
 
     protected abstract String getFilename();
+
     protected abstract InputStream getContent();
 
     protected void onDownloadTargetDetach() {}
 
-    protected class DownloadRequestTarget implements IRequestTarget {
+    protected class DownloadRequestTarget implements IRequestHandler {
 
         /**
-         * @see org.apache.wicket.IRequestTarget#respond(org.apache.wicket.RequestCycle)
+         * @see IRequestHandler#respond(IRequestCycle)
          */
-        public void respond(RequestCycle requestCycle) {
+        public void respond(IRequestCycle requestCycle) {
 
             // Set content type based on markup type for page
             final WebResponse response = (WebResponse) requestCycle.getResponse();
@@ -81,7 +89,12 @@ public abstract class DownloadLink<T> extends Link<T> {
                 final InputStream content = getContent();
                 if (content != null) {
                     try {
-                        response.write(content);
+                        OutputStream output = response.getOutputStream();
+                        try {
+                            IOUtils.copy(content, output);
+                        } catch (IOException exception) {
+                            log.error("Error copying download stream to output");
+                        }
                     } finally {
                         IOUtils.closeQuietly(content);
                     }
@@ -89,7 +102,7 @@ public abstract class DownloadLink<T> extends Link<T> {
             }
         }
 
-        public void detach(RequestCycle requestCycle) {
+        public void detach(IRequestCycle requestCycle) {
             onDownloadTargetDetach();
         }
 

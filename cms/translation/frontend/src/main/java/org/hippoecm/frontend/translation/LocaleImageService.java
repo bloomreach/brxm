@@ -15,16 +15,16 @@
  */
 package org.hippoecm.frontend.translation;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.request.target.resource.ResourceStreamRequestTarget;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.resource.ResourceRequestHandler;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
-import org.wicketstuff.js.ext.data.AbstractExtBehavior;
 
-public final class LocaleImageService extends AbstractExtBehavior {
+public final class LocaleImageService extends AbstractAjaxBehavior {
 
     private static final long serialVersionUID = 1L;
     
@@ -34,15 +34,15 @@ public final class LocaleImageService extends AbstractExtBehavior {
         this.provider = provider;
     }
 
+    @Override
     public void onRequest() {
         if (provider == null) {
             throw new WicketRuntimeException("No locale provider available");
         }
         RequestCycle rc = RequestCycle.get();
-        String language = rc.getRequest().getParameter("lang");
-        ResourceReference resourceRef = provider.getLocale(language).getIcon(IconSize.TINY, LocaleState.EXISTS);
-        resourceRef.bind(Application.get());
-        rc.setRequestTarget(new ResourceStreamRequestTarget(resourceRef.getResource().getResourceStream()));
+        StringValue language = rc.getRequest().getRequestParameters().getParameterValue("lang");
+        ResourceReference resourceRef = provider.getLocale(language.toString()).getIcon(IconSize.TINY, LocaleState.EXISTS);
+        rc.scheduleRequestHandlerAfterCurrent(new ResourceRequestHandler(resourceRef.getResource(), null));
     }
 
 }

@@ -17,10 +17,10 @@
 package org.hippoecm.frontend.plugins.yui.widget.tree;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.tree.AbstractTree;
-import org.apache.wicket.markup.html.tree.ITreeStateListener;
+import org.apache.wicket.extensions.markup.html.tree.AbstractTree;
+import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
@@ -60,7 +60,7 @@ public class TreeWidgetBehavior extends WidgetBehavior {
     public void render(AjaxRequestTarget target) {
         if (update) {
             if (target != null) {
-                target.appendJavascript(getUpdateScript());
+                target.appendJavaScript(getUpdateScript());
             }
         }
         reset();

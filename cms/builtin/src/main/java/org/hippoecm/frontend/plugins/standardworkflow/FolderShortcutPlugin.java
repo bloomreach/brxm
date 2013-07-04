@@ -40,13 +40,13 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
@@ -440,16 +440,16 @@ public class FolderShortcutPlugin extends RenderPlugin {
             }
             setOkEnabled(prototype != null);
 
-            AjaxRequestTarget target = AjaxRequestTarget.get();
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
-                target.addComponent(prototypeContainer);
-                target.addComponent(templateContainer);
+                target.add(prototypeContainer);
+                target.add(templateContainer);
             }
 
             if (languageVisible != languageContainer.isVisible()) {
                 languageContainer.setVisible(languageVisible);
                 if (target != null) {
-                    target.addComponent(this);
+                    target.add(this);
                 }
             }
         }

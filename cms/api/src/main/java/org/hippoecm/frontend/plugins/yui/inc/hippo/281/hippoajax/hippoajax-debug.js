@@ -126,7 +126,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
         YAHOO.hippo.HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
 
         wicketProcessComponent = Wicket.Ajax.Call.prototype.processComponent;
-        Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
+        Wicket.Ajax.Call.prototype.processComponent = function(context, node) {
             var compId, el, els, i, len;
 
             compId = node.getAttribute("id");
@@ -146,19 +146,19 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 //console.timeEnd('HippoAjax.processComponent.purgeElement');
                 //console.timeEnd("HippoAjax.processComponent.cleanup");
             }
-            wicketProcessComponent.call(this, steps, node);
+            wicketProcessComponent.call(this, context, node);
         };
 
-        wicketLogError = WicketAjaxDebug.logError;
-        WicketAjaxDebug.logError = function(msg) {
+        wicketLogError = Wicket.Log.error;
+        Wicket.Log.error = function(msg) {
             if (Lang.isFunction(console.error)) {
                 console.error(msg);
             }
-            wicketLogError.apply(WicketAjaxDebug, [msg]);
+            wicketLogError.apply(this, [msg]);
         };
-
-        Wicket.Ajax.Call.prototype.processEvaluation = function(steps, node) {
-            steps.push(function(notify) {
+/*
+        Wicket.Ajax.Call.prototype.processEvaluation = function(context, node) {
+            context.steps.push(function(notify) {
                 // get the javascript body
                 var text = Wicket._readTextNode(node),
                     encoding = node.getAttribute("encoding"),
@@ -200,7 +200,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                     notify();
                 }
             });
-        };
+        }; */
     }());
 
     YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {

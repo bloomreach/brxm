@@ -96,7 +96,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
-                target.addComponent(SetPasswordPanel.this);
+                target.add(SetPasswordPanel.this);
             }
         });
 

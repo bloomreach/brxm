@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.plugins.xinha.model.IPersisted;
 
@@ -79,9 +81,9 @@ public abstract class AbstractXinhaDialog<T extends IPersisted> extends Abstract
     public final void onClose() {
         onCloseInternal();
 
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            target.getHeaderResponse().renderOnDomReadyJavascript(cancelled ? getCancelScript() : getCloseScript());
+            target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(cancelled ? getCancelScript() : getCloseScript()));
         }
         onCloseDialog();
 

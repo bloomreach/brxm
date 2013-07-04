@@ -31,11 +31,11 @@ import javax.security.auth.login.FailedLoginException;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.Request;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.Request;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
@@ -78,7 +78,6 @@ public class PluginUserSession extends UserSession {
     private Map<String, Integer> pluginComponentCounters = new HashMap<String, Integer>();
 
     @SuppressWarnings("unused")
-    private boolean bound = false;
     private String sessionId;
 
 
@@ -390,28 +389,22 @@ public class PluginUserSession extends UserSession {
     }
 
     @Override
-    protected void detach() {
+    public void detach() {
         JcrSessionReference.cleanup();
         super.detach();
     }
 
     public void flush() {
         JcrObservationManager.getInstance().cleanupListeners(this);
-        ((UnbindingHttpSessionStore) getSessionStore()).setClearPageMaps(sessionId);
+        clear();
     }
 
-    void onBind(String sessionId) {
-        this.bound = true;
-        this.sessionId = sessionId;
-    }
-
-    void unbind() {
+    @Override
+    public void onInvalidate() {
         releaseJcrSession();
 
         JcrObservationManager.getInstance().cleanupListeners(this);
         JcrSessionReference.cleanup();
-
-        bound = false;
     }
 
     /**

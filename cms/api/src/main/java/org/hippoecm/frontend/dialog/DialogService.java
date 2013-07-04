@@ -18,7 +18,7 @@ package org.hippoecm.frontend.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -30,12 +30,12 @@ public class DialogService extends DialogWindow {
     private String wicketId;
     private String serviceId;
     private IPluginContext context;
-    private IServiceTracker<IBehavior> tracker;
-    private List<IBehavior> dialogBehaviors;
+    private IServiceTracker<Behavior> tracker;
+    private List<Behavior> dialogBehaviors;
 
     public DialogService() {
         super("id");
-        dialogBehaviors = new ArrayList<IBehavior>();
+        dialogBehaviors = new ArrayList<Behavior>();
     }
 
     public void init(IPluginContext context, String serviceId, String wicketId) {
@@ -43,17 +43,17 @@ public class DialogService extends DialogWindow {
         this.serviceId = serviceId;
         this.wicketId = wicketId;
         context.registerService(this, serviceId);
-        context.registerTracker(tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
+        context.registerTracker(tracker = new ServiceTracker<Behavior>(Behavior.class) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected void onServiceAdded(IBehavior service, String name) {
+            protected void onServiceAdded(Behavior service, String name) {
                 dialogBehaviors.add(service);
             }
 
             @Override
-            protected void onRemoveService(IBehavior service, String name) {
-                dialogBehaviors.remove((IBehavior) service);
+            protected void onRemoveService(Behavior service, String name) {
+                dialogBehaviors.remove(service);
             }
         }, serviceId);
     }

@@ -19,7 +19,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.version.undo.Change;
 
 public abstract class PanelPluginBreadCrumbLink extends AjaxLink {
     private static final long serialVersionUID = 1L;
@@ -61,13 +60,7 @@ public abstract class PanelPluginBreadCrumbLink extends AjaxLink {
         final IBreadCrumbParticipant participant = getParticipant(active.getComponent().getId());
 
         // add back button support
-        addStateChange(new Change() {
-            private static final long serialVersionUID = 1L;
-
-            public void undo() {
-                breadCrumbModel.setActive(active);
-            }
-        });
+        addStateChange();
 
         // set the next participant as the active one
         breadCrumbModel.setActive(participant);

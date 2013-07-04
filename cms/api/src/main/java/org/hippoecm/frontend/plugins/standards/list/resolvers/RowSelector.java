@@ -70,7 +70,7 @@ public class RowSelector<T> implements IListCellRenderer<T> {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    target.addComponent(CheckBoxWrapper.this);
+                    target.add(CheckBoxWrapper.this);
                 }
             });
             setOutputMarkupId(true);

@@ -63,7 +63,8 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
 
     // IDataProvider
 
-    public Iterator iterator(int first, int count) {
+    @Override
+    public Iterator iterator(long first, long count) {
         load();
         if (resultSet != null) {
             try {
@@ -86,6 +87,7 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
         return new ArrayList(0).iterator();
     }
 
+    @Override
     public IModel model(Object object) {
         if (object instanceof JcrNodeModel) {
             return (JcrNodeModel) object;
@@ -94,7 +96,8 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
         }
     }
 
-    public int size() {
+    @Override
+    public long size() {
         return UNKNOWN_SIZE;
     }
 

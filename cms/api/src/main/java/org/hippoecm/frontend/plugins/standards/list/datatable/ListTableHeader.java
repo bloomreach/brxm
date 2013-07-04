@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
+import java.util.List;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.border.Border;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
@@ -38,41 +42,41 @@ public class ListTableHeader extends Border {
         this.property = property;
         this.stateLocator = stateLocator;
 
-        add(new CssModifier(this));
-        add(getBodyContainer());
+        getBodyContainer().add(new CssModifier(this));
 
         if (!triState) {
             //Initial sorting on the "Name" column (if any)
             SortState state = (SortState)stateLocator.getSortState();
-            ListColumn[] columns = (ListColumn[])dataTable.getColumns();
-            for (ListColumn column : columns) {
-                if (column.getRenderer() == null || column.getRenderer() instanceof NameRenderer) {
-                    state.setPropertySortOrder(column.getSortProperty(), ISortState.ASCENDING);
+            List<? extends IColumn> columns = dataTable.getColumns();
+            for (IColumn column : columns) {
+                ListColumn<?> listColumn = (ListColumn) column;
+                if (listColumn.getRenderer() == null || listColumn.getRenderer() instanceof NameRenderer) {
+                    state.setPropertySortOrder(listColumn.getSortProperty(), SortOrder.ASCENDING);
                     break;
                 }
             }
         }
 
-        add(new AjaxEventBehavior("onclick") {
+        getBodyContainer().add(new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onEvent(AjaxRequestTarget target) {
-                SortState state = (SortState)stateLocator.getSortState();
-                int dir = state.getPropertySortOrder(property);
-                if (dir == ISortState.NONE) {
-                    dir = ISortState.ASCENDING;
-                } else if (dir == ISortState.ASCENDING) {
-                    dir = ISortState.DESCENDING;
-                } else if (dir == ISortState.DESCENDING) {
-                    dir = ISortState.NONE;
-                } else if (triState){
-                    dir = ISortState.NONE;
+                SortState state = (SortState) stateLocator.getSortState();
+                SortOrder dir = state.getPropertySortOrder(property);
+                if (dir == SortOrder.NONE.NONE) {
+                    dir = SortOrder.ASCENDING.ASCENDING;
+                } else if (dir == SortOrder.ASCENDING.ASCENDING) {
+                    dir = SortOrder.DESCENDING.DESCENDING;
+                } else if (dir == SortOrder.DESCENDING) {
+                    dir = SortOrder.NONE.NONE;
+                } else if (triState) {
+                    dir = SortOrder.NONE.NONE;
                 } else {
-                    dir = ISortState.ASCENDING;
+                    dir = SortOrder.ASCENDING;
                 }
                 state.setPropertySortOrder(property, dir);
-                target.addComponent(dataTable);
+                target.add(dataTable);
             }
         });
     }
@@ -87,11 +91,11 @@ public class ListTableHeader extends Border {
                 @Override
                 public Object getObject() {
                     ISortState sortState = tableHeader.stateLocator.getSortState();
-                    int dir = sortState.getPropertySortOrder(tableHeader.property);
+                    SortOrder dir = sortState.getPropertySortOrder(tableHeader.property);
 
-                    if (dir == ISortState.ASCENDING) {
+                    if (dir == SortOrder.ASCENDING) {
                         return "hippo-list-order-ascending";
-                    } else if (dir == ISortState.DESCENDING) {
+                    } else if (dir == SortOrder.DESCENDING) {
                         return "hippo-list-order-descending";
                     } else {
                         return "hippo-list-order-none";

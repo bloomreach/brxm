@@ -22,11 +22,13 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
@@ -38,10 +40,11 @@ import org.slf4j.LoggerFactory;
 
 public class ImageRegeneratePlugin extends RenderPlugin {
 
-
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(ImageRegeneratePlugin.class);
+
+    private static final CssResourceReference SKIN = new CssResourceReference(ImageCropPlugin.class, "regenerate-plugin.css");
 
     private GalleryProcessor galleryProcessor;
     private boolean isOriginal;
@@ -50,8 +53,6 @@ public class ImageRegeneratePlugin extends RenderPlugin {
 
     public ImageRegeneratePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        add(CSSPackageResource.getHeaderContribution(ImageCropPlugin.class, "regenerate-plugin.css"));
 
         String mode = config.getString("mode", "edit");
         galleryProcessor = context.getService(getPluginConfig().getString("gallery.processor.id", "gallery.processor.service"), GalleryProcessor.class);
@@ -125,6 +126,12 @@ public class ImageRegeneratePlugin extends RenderPlugin {
         }
 
         add(regenerateButton);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(SKIN));
     }
 
     private void regenerateThumbnail() {

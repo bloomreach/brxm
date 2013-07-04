@@ -17,18 +17,20 @@ package org.hippoecm.frontend.translation.components.document;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.repository.api.StringCodec;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.data.AbstractExtBehavior;
 
-final class NodeNameCodecBehavior extends AbstractExtBehavior {
+final class NodeNameCodecBehavior extends AbstractAjaxBehavior {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,41 +41,45 @@ final class NodeNameCodecBehavior extends AbstractExtBehavior {
     NodeNameCodecBehavior(IModel<StringCodec> codec) {
         this.codec = codec;
     }
-    
+
+    @Override
     public void onRequest() {
         final RequestCycle requestCycle = RequestCycle.get();
-        String name = requestCycle.getRequest().getParameter("name");
+        StringValue name = requestCycle.getRequest().getRequestParameters().getParameterValue("name");
         final JSONObject response = new JSONObject();
         try {
-            response.put("data", codec.getObject().encode(name));
-            response.put("success", true);
+            if (name != null) {
+                response.put("data", codec.getObject().encode(name.toString()));
+                response.put("success", true);
+            } else {
+                response.put("success", false);
+            }
         } catch (JSONException e) {
             log.error(e.getMessage());
         }
-        IRequestTarget requestTarget = new IRequestTarget() {
+        IRequestHandler requestHandler = new IRequestHandler() {
 
-            public void respond(RequestCycle requestCycle) {
-                WebResponse r = (WebResponse) requestCycle.getResponse();
+            public void respond(IRequestCycle requestCycle) {
+                WebResponse webResponse = (WebResponse) requestCycle.getResponse();
 
                 // Determine encoding
                 final String encoding = Application.get().getRequestCycleSettings()
                         .getResponseRequestEncoding();
-                r.setCharacterEncoding(encoding);
-                r.setContentType("application/json;charset=" + encoding);
+                webResponse.setContentType("application/json;charset=" + encoding);
 
                 // Make sure it is not cached
-                r.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
-                r.setHeader("Cache-Control", "no-cache, must-revalidate");
-                r.setHeader("Pragma", "no-cache");
+                webResponse.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+                webResponse.setHeader("Cache-Control", "no-cache, must-revalidate");
+                webResponse.setHeader("Pragma", "no-cache");
 
-                r.write(response.toString());
+                webResponse.write(response.toString());
             }
 
-            public void detach(RequestCycle requestCycle) {
+            public void detach(IRequestCycle requestCycle) {
             }
 
         };
-        requestCycle.setRequestTarget(requestTarget);
+        requestCycle.scheduleRequestHandlerAfterCurrent(requestHandler);
     }
 
     @Override

@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
@@ -117,7 +114,8 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
             IDataProvider<Integer> provider = new IDataProvider<Integer>() {
                 private static final long serialVersionUID = 1L;
 
-                public Iterator<Integer> iterator(int first, int count) {
+                @Override
+                public Iterator<Integer> iterator(long first, long count) {
                     return new Iterator<Integer>() {
                         int current = 0;
 
@@ -144,7 +142,8 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                     };
                 }
 
-                public int size() {
+                @Override
+                public long size() {
                     try {
                         Node node = ((JcrNodeModel) FacetSelectTemplatePlugin.this.getDefaultModel()).getNode();
                         return node.getProperty("hippo:facets").getValues().length;
@@ -153,10 +152,12 @@ public class FacetSelectTemplatePlugin extends RenderPlugin<Node> {
                     }
                 }
 
+                @Override
                 public IModel<Integer> model(Integer object) {
                     return new Model<Integer>(object);
                 }
 
+                @Override
                 public void detach() {
                 }
             };

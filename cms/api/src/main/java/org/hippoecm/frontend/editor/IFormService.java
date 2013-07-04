@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.editor;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IFormService extends IClusterable {
 

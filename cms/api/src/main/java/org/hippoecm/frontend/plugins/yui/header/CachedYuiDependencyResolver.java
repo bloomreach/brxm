@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.onehippo.yui.YuiDependency;
 import org.onehippo.yui.YuiDependencyResolver;
 import org.onehippo.yui.YuiNamespace;
@@ -38,7 +39,7 @@ public class CachedYuiDependencyResolver {
         private YuiDependencyResolver dependencyResolver = null;
 
         CacheEntry(Application application) {
-            cacheEnabled = application.getConfigurationType().equals(Application.DEPLOYMENT);
+            cacheEnabled = application.getConfigurationType().equals(RuntimeConfigurationType.DEPLOYMENT);
             dependencyResolver = new YuiDependencyResolver(cacheEnabled);
         }
         

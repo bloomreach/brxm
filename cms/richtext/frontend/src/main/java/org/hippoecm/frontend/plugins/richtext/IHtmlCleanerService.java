@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public interface IHtmlCleanerService extends IClusterable {
 

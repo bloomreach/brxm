@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.standards.tabs;
 
 import java.util.Iterator;
 import java.util.List;
-import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
@@ -41,12 +40,12 @@ class ModifiedDocumentsProvider implements ISortableDataProvider {
     }
 
 
-    public Iterator iterator(int first, int count) {
-        return changedTabs.subList(first, first + count).iterator();
+    public Iterator iterator(long first, long count) {
+        return changedTabs.subList((int) first, (int) (first + count)).iterator();
     }
 
 
-    public int size() {
+    public long size() {
         return changedTabs.size();
     }
 

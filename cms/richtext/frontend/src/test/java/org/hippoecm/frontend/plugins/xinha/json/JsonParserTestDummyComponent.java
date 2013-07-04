@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.xinha.json;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.MarkupStream;
 
 /**
  *
@@ -28,8 +27,7 @@ class JsonParserTestDummyComponent extends Component {
     }
 
     @Override
-    protected void onRender(final MarkupStream markupStream) {
-        // do nothing
+    protected void onRender() {
     }
 
 }

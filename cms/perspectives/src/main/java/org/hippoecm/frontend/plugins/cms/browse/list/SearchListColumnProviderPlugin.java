@@ -22,9 +22,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
@@ -34,13 +36,20 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRender
 
 public class SearchListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
 
+    private static final CssResourceReference SEARCHLISTING_SKIN = new CssResourceReference(SearchListColumnProviderPlugin.class, "SearchListColumnProviderPlugin.css");
+
     public SearchListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(SearchListColumnProviderPlugin.class, "SearchListColumnProviderPlugin.css");
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(CssHeaderItem.forReference(SEARCHLISTING_SKIN));
+            }
+        };
     }
 
     @Override

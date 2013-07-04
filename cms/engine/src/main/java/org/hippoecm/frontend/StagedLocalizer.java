@@ -15,9 +15,10 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.Locale;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
-import org.apache.wicket.model.IModel;
 
 /**
  * A Localizer implementation that interprets keys as criteria of descending
@@ -40,7 +41,8 @@ public class StagedLocalizer extends Localizer {
      * @see {@link org.hippoecm.frontend.IStringResourceProvider#getResourceProviderKey()}
      */
     @Override
-    protected String getCacheKey(final String key, final Component component) {
+    protected String getCacheKey(final String key, final Component component, final Locale locale,
+        final String style, final String variation) {
         IStringResourceProvider provider = null;
         if (component instanceof IStringResourceProvider) {
             provider = (IStringResourceProvider) component;
@@ -52,22 +54,10 @@ public class StagedLocalizer extends Localizer {
             resourceProviderKey = provider.getResourceProviderKey();
         }
         if (resourceProviderKey != null) {
-            return resourceProviderKey + super.getCacheKey(key, component);
+            return resourceProviderKey + super.getCacheKey(key, component, locale, style, variation);
         } else {
-            return super.getCacheKey(key, component);
+            return super.getCacheKey(key, component, locale, style, variation);
         }
     }
 
-    @Override
-    public String getStringIgnoreSettings(String key, final Component component, final IModel<?> model,
-            final String defaultValue) {
-        while (key.contains(",")) {
-            String value = super.getStringIgnoreSettings(key, component, model, null);
-            if (value != null) {
-                return value;
-            }
-            key = key.substring(0, key.lastIndexOf(','));
-        }
-        return super.getStringIgnoreSettings(key, component, model, defaultValue);
-    }
 }

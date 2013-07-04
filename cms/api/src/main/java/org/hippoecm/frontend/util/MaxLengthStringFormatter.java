@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.util;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 
 public class MaxLengthStringFormatter implements IClusterable {
 

@@ -16,11 +16,9 @@
  */
 package org.hippoecm.frontend.plugins.gotolink;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.tester.TestPanelSource;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.IModelReference;
@@ -76,28 +74,19 @@ public class GotolinkDocumentsShortcutPluginTest {
 
         HippoTester tester = new HippoTester(new Main());
 
-        TestPanelSource testPanelSource = createTestPanelSource();
-        tester.startPanel(testPanelSource);
-        tester.clickLink("panel:link", true); // true = is an ajax link
+        IPluginConfig iPluginConfig = new JavaPluginConfig("plugin");
+        iPluginConfig.put("browser.id", "dummy.browserid");
+        iPluginConfig.put("wicket.model", WICKET_MODEL);
+        iPluginConfig.put("wicket.id", WICKET_ID);
+
+        GotolinkDocumentsShortcutPlugin documentsShortcutPlugin = new GotolinkDocumentsShortcutPlugin(mockPluginContext,
+                iPluginConfig);
+        // This is just used to change the id of the plugin
+        documentsShortcutPlugin.bind(documentsShortcutPlugin, "plugin");
+
+        tester.startComponentInPage(documentsShortcutPlugin);
+        tester.clickLink("plugin:link", true); // true = is an ajax link
         verify(mockBrowseService, mockRenderService, mockModelReference, mockModel, mockPluginContext);
-    }
-
-    private TestPanelSource createTestPanelSource() {
-        return new TestPanelSource() {
-            public Panel getTestPanel(String panelId) {
-                IPluginConfig iPluginConfig = new JavaPluginConfig(panelId);
-                iPluginConfig.put("browser.id", "dummy.browserid");
-                iPluginConfig.put("wicket.model", WICKET_MODEL);
-                iPluginConfig.put("wicket.id", WICKET_ID);
-
-                GotolinkDocumentsShortcutPlugin documentsShortcutPlugin = new GotolinkDocumentsShortcutPlugin(mockPluginContext,
-                                                                                                              iPluginConfig);
-                // This is just used to change the id of the plugin
-                documentsShortcutPlugin.bind(documentsShortcutPlugin, panelId);
-
-                return documentsShortcutPlugin;
-            }
-        };
     }
 
 }

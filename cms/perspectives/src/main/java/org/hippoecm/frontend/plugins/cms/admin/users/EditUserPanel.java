@@ -98,7 +98,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
-                target.addComponent(EditUserPanel.this);
+                target.add(EditUserPanel.this);
             }
         });
 

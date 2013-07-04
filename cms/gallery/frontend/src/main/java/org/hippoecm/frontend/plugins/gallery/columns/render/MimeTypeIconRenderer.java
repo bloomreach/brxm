@@ -15,21 +15,23 @@
  */
 package org.hippoecm.frontend.plugins.gallery.columns.render;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
-import org.hippoecm.frontend.model.JcrHelper;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Session;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MimeTypeIconRenderer extends IconRenderer {
 
@@ -140,10 +142,11 @@ public class MimeTypeIconRenderer extends IconRenderer {
                         String iconPath = mimetypeToPath(mimeType);
                         if (iconPath != null) {
                             Session session = Session.get();
-                            return new ResourceReference(MimeTypeIconRenderer.class,
+                            return new PackageResourceReference(MimeTypeIconRenderer.class,
                                     iconPath,
                                     session.getLocale(),
-                                    session.getStyle());
+                                    session.getStyle(),
+                                    null);
                         }
                     } else {
                         log.warn("primary item of image set must be of type "

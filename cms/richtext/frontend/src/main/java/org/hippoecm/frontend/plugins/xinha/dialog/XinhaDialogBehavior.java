@@ -18,9 +18,10 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -44,14 +45,14 @@ public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
 
     protected Map<String, String> getParameters() {
         Request request = RequestCycle.get().getRequest();
-        HashMap<String, String> p = new HashMap<String, String>();
-        Map<String, ?> requestParams = request.getRequestParameters().getParameters();
-        for (String key : requestParams.keySet()) {
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        final IRequestParameters requestParameters = request.getRequestParameters();
+        for (String key : requestParameters.getParameterNames()) {
             if (key.startsWith(AbstractXinhaPlugin.XINHA_PARAM_PREFIX)) {
-                p.put(key.substring(AbstractXinhaPlugin.XINHA_PARAM_PREFIX.length()), request.getParameter(key));
+                parameters.put(key.substring(AbstractXinhaPlugin.XINHA_PARAM_PREFIX.length()), requestParameters.getParameterValue(key).toString());
             }
         }
-        return p;
+        return parameters;
     }
 
     protected IPluginContext getPluginContext() {

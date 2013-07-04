@@ -16,9 +16,10 @@
 <html  xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
     <div class="list-data-table-header">
+      <caption wicket:id="caption"></caption>
       <table>
-        <thead>
-          <wicket:container wicket:id="topToolbars"></wicket:container>
+        <thead wicket:id="topToolbars" class="list-data-table-header">
+          <wicket:container wicket:id="toolbars"></wicket:container>
         </thead>
       </table>
     </div>
@@ -35,8 +36,8 @@
     </div>
     <div class="list-data-table-footer">
       <table>
-        <tfoot>
-          <wicket:container wicket:id="bottomToolbars"></wicket:container>
+        <tfoot wicket:id="bottomToolbars" class="list-data-table-footer">
+          <wicket:container wicket:id="toolbars"></wicket:container>
         </tfoot>
       </table>
     </div>

@@ -15,18 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.codemirror;
 
-import org.apache.wicket.behavior.AbstractBehavior;
-import org.apache.wicket.markup.html.CSSPackageResource;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 
 /**
  * Component that displays a CodeMirror panel which gives a nice syntax highlighting for Groovy.
  */
 public class CodeMirrorEditor extends TextArea<String> {
 
+    private static final JavaScriptResourceReference CODEMIRROR_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "lib/codemirror.js");
+    private static final JavaScriptResourceReference GROOVY_JS = new JavaScriptResourceReference(CodeMirrorEditor.class, "mode/groovy/groovy.js");
+    private static final CssResourceReference CODEMIRROR_SKIN = new CssResourceReference(CodeMirrorEditor.class, "lib/codemirror.css");
+    private static final CssResourceReference ECLIPSE_SKIN = new CssResourceReference(CodeMirrorEditor.class, "theme/eclipse.css");
     private String markupId;
     private String editorName;
 
@@ -35,17 +41,17 @@ public class CodeMirrorEditor extends TextArea<String> {
         this.editorName = editorName;
         setOutputMarkupId(true);
         markupId = getMarkupId();
-        add(JavascriptPackageResource.getHeaderContribution(CodeMirrorEditor.class, "lib/codemirror.js"));
-        add(CSSPackageResource.getHeaderContribution(CodeMirrorEditor.class, "lib/codemirror.css"));
-        add(CSSPackageResource.getHeaderContribution(CodeMirrorEditor.class, "theme/eclipse.css"));
-        add(JavascriptPackageResource.getHeaderContribution(CodeMirrorEditor.class, "mode/groovy/groovy.js"));
+    }
 
-        add(new AbstractBehavior() {
-            @Override
-            public void renderHead(IHeaderResponse response) {
-                response.renderOnLoadJavascript(getJavaScriptForEditor());
-            }
-        });
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(JavaScriptHeaderItem.forReference(CODEMIRROR_JS));
+        response.render(JavaScriptHeaderItem.forReference(GROOVY_JS));
+        response.render(CssHeaderItem.forReference(CODEMIRROR_SKIN));
+        response.render(CssHeaderItem.forReference(ECLIPSE_SKIN));
+        response.render(OnLoadHeaderItem.forScript(getJavaScriptForEditor()));
     }
 
     private String getJavaScriptForEditor() {

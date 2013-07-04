@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.editor;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.service.IEditorManager;
 
 /**

@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -38,7 +39,7 @@ public class DashboardPerspective extends Perspective {
 
     @Override
     public ResourceReference getIcon(IconSize type) {
-        return new ResourceReference(DashboardPerspective.class, "dashboard-perspective-" + type.getSize() + ".png");
+        return new PackageResourceReference(DashboardPerspective.class, "dashboard-perspective-" + type.getSize() + ".png");
     }
 
 }

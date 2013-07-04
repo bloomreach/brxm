@@ -16,7 +16,8 @@
 package org.hippoecm.frontend.plugins.yui.widget;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
@@ -68,7 +69,7 @@ public class WidgetBehavior extends AbstractYuiBehavior {
     @Override
     protected void onRenderHead(final IHeaderResponse response) {
         super.onRenderHead(response);
-        response.renderOnDomReadyJavascript("YAHOO.hippo.WidgetManager.render();");
+        response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.WidgetManager.render();"));
     }
 
     public String getMarkupId() {

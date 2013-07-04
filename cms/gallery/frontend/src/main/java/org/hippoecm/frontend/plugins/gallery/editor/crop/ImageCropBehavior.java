@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.plugins.gallery.editor.crop;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 import org.onehippo.yui.YahooNamespace;
@@ -24,6 +24,12 @@ import org.onehippo.yui.YuiNamespace;
 
 public class ImageCropBehavior extends WidgetBehavior implements YuiNamespace {
     private static final long serialVersionUID = 1L;
+
+    private static final CssResourceReference CROPPER_SKIN = new CssResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath() +
+            "imagecropper/assets/skins/sam/imagecropper-skin.css");
+    private static final CssResourceReference RESIZE_SKIN = new CssResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath() +
+            "resize/assets/skins/sam/resize-skin.css");
+    private static final CssResourceReference DIALOG_SKIN = new CssResourceReference(ImageCropBehavior.class, "crop-editor-dialog.css");
 
 
     public ImageCropBehavior(ImageCropSettings settings) {
@@ -34,11 +40,9 @@ public class ImageCropBehavior extends WidgetBehavior implements YuiNamespace {
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(this, "hippoimagecropper");
-        context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath() + 
-                "imagecropper/assets/skins/sam/imagecropper-skin.css"));
-        context.addCssReference(new ResourceReference(YahooNamespace.class, YahooNamespace.NS.getPath() + 
-                "resize/assets/skins/sam/resize-skin.css"));
-        context.addCssReference(new ResourceReference(ImageCropBehavior.class, "crop-editor-dialog.css"));
+        context.addCssReference(CROPPER_SKIN);
+        context.addCssReference(RESIZE_SKIN);
+        context.addCssReference(DIALOG_SKIN);
 
         super.addHeaderContribution(context);
     }

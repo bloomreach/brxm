@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.standards.list.datatable;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 
-public abstract class SortableDataProvider<T> implements ISortableDataProvider<T> {
+public abstract class SortableDataProvider<T> implements ISortableDataProvider<T, String> {
     private static final long serialVersionUID = 1L;
 
     private SortState state = new SortState();

@@ -17,11 +17,11 @@ package org.hippoecm.frontend;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -30,30 +30,52 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.IRequestTarget;
+import org.apache.wicket.Component;
+import org.apache.wicket.IPageRendererProvider;
 import org.apache.wicket.Page;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.core.request.handler.BookmarkablePageRequestHandler;
+import org.apache.wicket.core.request.handler.IPageRequestHandler;
+import org.apache.wicket.core.request.handler.PageProvider;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
+import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.request.WebClientInfo;
-import org.apache.wicket.request.IRequestCycleProcessor;
-import org.apache.wicket.request.RequestParameters;
-import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStrategy;
-import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
+import org.apache.wicket.page.IPageManagerContext;
+import org.apache.wicket.protocol.http.BufferedWebResponse;
+import org.apache.wicket.protocol.http.WebSession;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.component.IRequestablePage;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.handler.render.PageRenderer;
+import org.apache.wicket.request.handler.render.WebPageRenderer;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.request.mapper.mount.IMountedRequestMapper;
+import org.apache.wicket.request.mapper.mount.Mount;
+import org.apache.wicket.request.mapper.mount.MountMapper;
+import org.apache.wicket.request.mapper.mount.MountParameters;
+import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
+import org.apache.wicket.request.resource.caching.version.LastModifiedResourceVersion;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
-import org.apache.wicket.session.ISessionStore;
-import org.apache.wicket.session.pagemap.LeastRecentlyAccessedEvictionStrategy;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
+import org.apache.wicket.util.IContextProvider;
 import org.apache.wicket.util.lang.Bytes;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.StringValueConversionException;
+import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -62,7 +84,6 @@ import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -89,6 +110,17 @@ public class Main extends PluginApplication {
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
 
+    // class in the root package, to make it possible to use the caching resource stream locator
+    // for resources that are not associated with a class.
+    private static final Class<?> CACHING_RESOURCE_STREAM_LOCATOR_CLASS;
+    static {
+        try {
+            CACHING_RESOURCE_STREAM_LOCATOR_CLASS = Class.forName("CachingResourceStreamLocatorBaseKey");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private HippoRepository repository;
 
     @Override
@@ -96,9 +128,9 @@ public class Main extends PluginApplication {
         super.init();
 
         getPageSettings().setVersionPagesByDefault(false);
-        getPageSettings().setAutomaticMultiWindowSupport(false);
+//        getPageSettings().setAutomaticMultiWindowSupport(false);
 
-        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
+//        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
@@ -111,6 +143,8 @@ public class Main extends PluginApplication {
         }
         final IClassResolver originalResolver = getApplicationSettings().getClassResolver();
         getApplicationSettings().setClassResolver(new IClassResolver() {
+
+            @Override
             public Class resolveClass(String name) throws ClassNotFoundException {
                 if (Session.exists()) {
                     UserSession session = UserSession.get();
@@ -122,9 +156,10 @@ public class Main extends PluginApplication {
                 return originalResolver.resolveClass(name);
             }
 
+            @Override
             public Iterator<URL> getResources(String name) {
                 List<URL> resources = new LinkedList<URL>();
-                for (Iterator<URL> iter = originalResolver.getResources(name); iter.hasNext();) {
+                for (Iterator<URL> iter = originalResolver.getResources(name); iter.hasNext(); ) {
                     resources.add(iter.next());
                 }
                 if (Session.exists()) {
@@ -133,7 +168,7 @@ public class Main extends PluginApplication {
                     if (loader != null) {
                         try {
                             for (Enumeration<URL> resourceEnum = session.getClassLoader().getResources(name); resourceEnum
-                                    .hasMoreElements();) {
+                                    .hasMoreElements(); ) {
                                 resources.add(resourceEnum.nextElement());
                             }
                         } catch (IOException e) {
@@ -144,26 +179,43 @@ public class Main extends PluginApplication {
                 }
                 return resources.iterator();
             }
+
+            @Override
+            public ClassLoader getClassLoader() {
+                return Main.class.getClassLoader();
+            }
         });
 
-        IResourceSettings resourceSettings = getResourceSettings();
+        final IResourceSettings resourceSettings = getResourceSettings();
 
         // replace current loaders with own list, starting with component-specific
-        List<IStringResourceLoader> loaders = new ArrayList<IStringResourceLoader>(resourceSettings
-                .getStringResourceLoaders());
-        resourceSettings.addStringResourceLoader(new StringResourceProviderConsumer());
-        resourceSettings.addStringResourceLoader(new ClassFromKeyStringResourceLoader());
-        for (IStringResourceLoader loader : loaders) {
-            resourceSettings.addStringResourceLoader(loader);
-        }
+        List<IStringResourceLoader> loaders = resourceSettings.getStringResourceLoaders();
+        loaders.add(0, new StringResourceProviderConsumer());
+        loaders.add(1, new ClassFromKeyStringResourceLoader());
+        loaders.add(new IStringResourceLoader() {
 
-        resourceSettings.setAddLastModifiedTimeToResourceReferenceUrl(true);
+            @Override
+            public String loadStringResource(final Class<?> clazz, final String key, final Locale locale, final String style, final String variation) {
+                return null;
+            }
 
-        mount(new AbstractRequestTargetUrlCodingStrategy("binaries") {
+            @Override
+            public String loadStringResource(final Component component, String key, final Locale locale, final String style, final String variation) {
+                if (key.contains(",")) {
+                    key = key.substring(0, key.lastIndexOf(','));
+                    return resourceSettings.getLocalizer().getStringIgnoreSettings(key, component, null, locale, style, variation);
+                }
+                return null;
+            }
+        });
 
-            public IRequestTarget decode(RequestParameters requestParameters) {
-                String path = requestParameters.getPath().substring("binaries/".length());
-                path = urlDecodePathComponent(path);
+        resourceSettings.setCachingStrategy(new FilenameWithVersionResourceCachingStrategy(new LastModifiedResourceVersion()));
+
+        mount(new MountMapper("binaries", new IMountedRequestMapper() {
+
+            @Override
+            public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
+                String path = Strings.join("/", request.getUrl().getSegments());
                 try {
                     javax.jcr.Session subSession = UserSession.get().getJcrSession();
                     Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
@@ -175,7 +227,7 @@ public class Main extends PluginApplication {
                         if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                             node = (Node) JcrHelper.getPrimaryItem(node);
                         }
-                        return new JcrResourceRequestTarget(node);
+                        return new JcrResourceRequestHandler(node);
                     }
                 } catch (PathNotFoundException e) {
                     log.info("binary not found " + e.getMessage());
@@ -187,66 +239,58 @@ public class Main extends PluginApplication {
                 return null;
             }
 
-            public CharSequence encode(IRequestTarget requestTarget) {
-                return null;
+            @Override
+            public int getCompatibilityScore(final Request request) {
+                return 1;
             }
 
-            public boolean matches(IRequestTarget requestTarget) {
-                return false;
+            @Override
+            public Mount mapHandler(final IRequestHandler requestHandler) {
+                return null;
             }
-        });
+        }));
 
 
         /*
          * HST SAML kind of authentication handler needed for Template Composer integration
          *
          */
-        mount(new AbstractRequestTargetUrlCodingStrategy("auth") {
-            @Override
-            public CharSequence encode(IRequestTarget iRequestTarget) {
-                return null;
-            }
+        mount(new MountMapper("auth", new IMountedRequestMapper() {
 
             @Override
-            /**
-             * Checks the usercredentials, and requestParameters: hstSecret, destinationUrl,
-             * if any of these is null then redirects to homepage.
-             * Otherwise encodes the credentials and redirects to desinationUrl
-             */
-            public IRequestTarget decode(final RequestParameters requestParameters) {
-
+            public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
 
                 PluginUserSession userSession = (PluginUserSession) Session.get();
                 final UserCredentials userCredentials = userSession.getUserCredentials();
 
-                IRequestTarget requestTarget = new BookmarkablePageRequestTarget(getHomePage());
+                IRequestHandler requestTarget = new BookmarkablePageRequestHandler(new PageProvider(getHomePage(), null));
 
+                IRequestParameters requestParameters = request.getRequestParameters();
+                final List<StringValue> keyParams = requestParameters.getParameterValues("key");
+                final List<StringValue> destinationUrlParams = requestParameters.getParameterValues("destinationUrl");
 
-                final Object keyParams = requestParameters.getParameters().get("key");
-                final Object destinationUrlParams = requestParameters.getParameters().get("destinationUrl");
+                if (userCredentials != null && keyParams.size() > 0 && destinationUrlParams.size() > 0) {
 
-                if (userCredentials != null && (keyParams instanceof String[]) && (destinationUrlParams instanceof String[])) {
-
-                    requestTarget = new IRequestTarget() {
-
-                        @Override
-                        public void detach(RequestCycle requestCycle) {
-                            //Nothing to detach.
-                        }
+                    requestTarget = new IRequestHandler() {
 
                         @Override
-                        public void respond(RequestCycle requestCycle) {
-                            String key = ((String[]) keyParams)[0];
-                            String destinationUrl = ((String[]) destinationUrlParams)[0];
+                        public void respond(IRequestCycle requestCycle) {
+                            String key = keyParams.get(0).toString();
+                            String destinationUrl = destinationUrlParams.get(0).toString();
                             CredentialCipher cipher = CredentialCipher.getInstance();
                             String encryptedString = cipher.getEncryptedString(key, (SimpleCredentials) userCredentials.getJcrCredentials());
 
-                            Response response = RequestCycle.get().getResponse();
+                            WebResponse response = (WebResponse) RequestCycle.get().getResponse();
                             if (destinationUrl.contains("?")) {
-                                response.redirect(destinationUrl + "&cred=" + encryptedString);
+                                response.sendRedirect(destinationUrl + "&cred=" + encryptedString);
                             } else {
-                                response.redirect(destinationUrl + "?cred=" + encryptedString);
+                                response.sendRedirect(destinationUrl + "?cred=" + encryptedString);
                             }
+                        }
+
+                        @Override
+                        public void detach(IRequestCycle requestCycle) {
+                            //Nothing to detach.
                         }
                     };
                 }
@@ -254,15 +298,45 @@ public class Main extends PluginApplication {
             }
 
             @Override
-            public boolean matches(IRequestTarget iRequestTarget) {
-                return false;
+            public int getCompatibilityScore(final Request request) {
+                return 0;
             }
-        });
+
+            @Override
+            public Mount mapHandler(final IRequestHandler requestHandler) {
+                return null;
+            }
+        }));
 
 
         resourceSettings.setLocalizer(new StagedLocalizer());
 
-        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+        // caching resource stream locator implementation that allows the class argument to be null.
+        final IResourceStreamLocator resourceStreamLocator = resourceSettings.getResourceStreamLocator();
+        resourceSettings.setResourceStreamLocator(new IResourceStreamLocator() {
+            @Override
+            public IResourceStream locate(Class<?> clazz, final String path) {
+                if (clazz == null) {
+                    clazz = CACHING_RESOURCE_STREAM_LOCATOR_CLASS;
+                }
+                return resourceStreamLocator.locate(clazz, path);
+            }
+
+            @Override
+            public IResourceStream locate(Class<?> clazz, final String path, final String style, final String variation, final Locale locale, final String extension, final boolean strict) {
+                if (clazz == null) {
+                    clazz = CACHING_RESOURCE_STREAM_LOCATOR_CLASS;
+                }
+                return resourceStreamLocator.locate(clazz, path, style, variation, locale, extension, strict);
+            }
+
+            @Override
+            public IResourceNameIterator newResourceNameIterator(final String path, final Locale locale, final String style, final String variation, final String extension, final boolean strict) {
+                return resourceStreamLocator.newResourceNameIterator(path, locale, style, variation, extension, strict);
+            }
+        });
+
+        if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
             getRequestCycleSettings().setTimeout(Duration.minutes(10));
@@ -281,12 +355,12 @@ public class Main extends PluginApplication {
         if (outputWicketpaths != null && "true".equalsIgnoreCase(outputWicketpaths)) {
             getDebugSettings().setOutputComponentPath(true);
         }
-        
+
         setHeaderResponseDecorator(new IHeaderResponseDecorator() {
 
             @Override
             public IHeaderResponse decorate(IHeaderResponse response) {
-                boolean isIE = ((WebClientInfo) RequestCycle.get().getClientInfo()).getProperties().isBrowserInternetExplorer();
+                boolean isIE = WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
                 boolean isAjax = ((WebRequest) RequestCycle.get().getRequest()).isAjax();
                 if (isIE && !isAjax) {
                     return new CssImportingHeaderResponse(response);
@@ -294,6 +368,50 @@ public class Main extends PluginApplication {
                 return response;
             }
 
+        });
+
+        final IContextProvider<AjaxRequestTarget, Page> ajaxRequestTargetProvider = getAjaxRequestTargetProvider();
+        setAjaxRequestTargetProvider(new IContextProvider<AjaxRequestTarget, Page>() {
+
+            @Override
+            public AjaxRequestTarget get(final Page context) {
+                return new PluginRequestTarget(ajaxRequestTargetProvider.get(context));
+            }
+        });
+
+        getRequestCycleListeners().add(new AbstractRequestCycleListener() {
+
+            @Override
+            public void onRequestHandlerResolved(final RequestCycle cycle, final IRequestHandler handler) {
+                if (handler instanceof IPageRequestHandler) {
+                    Page page = (Page) ((IPageRequestHandler) handler).getPage();
+                    if (page instanceof Home) {
+                        ((Home) page).processEvents();
+                    }
+                }
+            }
+
+        });
+
+        setPageRendererProvider(new IPageRendererProvider() {
+
+            @Override
+            public PageRenderer get(final RenderPageRequestHandler context) {
+                return new WebPageRenderer(context) {
+
+                    @Override
+                    protected BufferedWebResponse renderPage(final Url targetUrl, final RequestCycle requestCycle) {
+                        IRequestHandler scheduled = requestCycle.getRequestHandlerScheduledAfterCurrent();
+                        if (scheduled == null) {
+                            IRequestablePage page = getPage();
+                            if (page instanceof Home) {
+                                ((Home) page).render(null);
+                            }
+                        }
+                        return super.renderPage(targetUrl, requestCycle);
+                    }
+                };
+            }
         });
 
         if (log.isInfoEnabled()) {
@@ -344,6 +462,12 @@ public class Main extends PluginApplication {
         return org.hippoecm.frontend.PluginPage.class;
     }
 
+    // ease testing by making page manager context available in the package
+    @Override
+    protected IPageManagerContext getPageManagerContext() {
+        return super.getPageManagerContext();
+    }
+
     @Override
     public UserSession newSession(Request request, Response response) {
         PluginUserSession userSession = new PluginUserSession(request);
@@ -351,30 +475,9 @@ public class Main extends PluginApplication {
         return userSession;
     }
 
-    @Override
-    public ISessionStore newSessionStore() {
-        // in development mode, use disk page store to serialize page at the end of a request.
-        // in production, skip serialization for better performance.
-        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
-            return super.newSessionStore();
-        } else {
-            return new UnbindingHttpSessionStore(this);
-        }
-    }
-
     public IApplicationFactory getApplicationFactory(final javax.jcr.Session jcrSession) {
         return new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/"
-                                                                  + HippoNodeType.FRONTEND_PATH));
-    }
-
-    @Override
-    public AjaxRequestTarget newAjaxRequestTarget(final Page page) {
-        return new PluginRequestTarget(page);
-    }
-
-    @Override
-    protected IRequestCycleProcessor newRequestCycleProcessor() {
-        return new PluginRequestCycleProcessor();
+                + HippoNodeType.FRONTEND_PATH));
     }
 
     public HippoRepository getRepository() throws RepositoryException {

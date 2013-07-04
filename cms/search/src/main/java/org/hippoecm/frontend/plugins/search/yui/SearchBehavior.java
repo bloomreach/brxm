@@ -32,7 +32,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.repeater.data.IDataProvider;

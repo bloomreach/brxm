@@ -17,11 +17,12 @@ package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.IAjaxCallDecorator;
-import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.ajax.CancelEventIfAjaxListener;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.extensions.breadcrumb.BreadCrumbLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
 
@@ -37,8 +38,9 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
             }
 
             @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new CancelEventIfNoAjaxDecorator(AjaxBreadCrumbLink.this.getAjaxCallDecorator());
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.getAjaxCallListeners().add(new CancelEventIfAjaxListener());
             }
 
             @Override
@@ -52,7 +54,7 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
     }
 
     public final void onClick() {
-        onClick(AjaxRequestTarget.get());
+        onClick(RequestCycle.get().find(AjaxRequestTarget.class));
     }
 
     /**
@@ -62,15 +64,6 @@ public abstract class AjaxBreadCrumbLink extends BreadCrumbLink {
      */
     public void onClick(final AjaxRequestTarget target) {
         super.onClick();
-    }
-
-    /**
-     * Returns ajax call decorator that will be used to decorate the ajax call.
-     *
-     * @return ajax call decorator
-     */
-    protected IAjaxCallDecorator getAjaxCallDecorator() {
-        return null;
     }
 
     @Override

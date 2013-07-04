@@ -15,10 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
@@ -41,7 +42,7 @@ public class ListUsersPlugin extends AdminPanelPlugin {
 
     @Override
     public ResourceReference getImage() {
-        return new ResourceReference(getClass(), "user-48.png");
+        return new PackageResourceReference(getClass(), "user-48.png");
     }
 
     @Override

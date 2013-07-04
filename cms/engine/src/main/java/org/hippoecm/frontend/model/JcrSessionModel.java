@@ -23,10 +23,10 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -61,7 +61,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
-        this.remoteAddress = ((WebRequestCycle) RequestCycle.get()).getWebRequest().getHttpServletRequest().getRemoteAddr();
+        this.remoteAddress = ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getRemoteAddr();
     }
 
     protected void flush() {
@@ -131,7 +131,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
         if (fatalError) {
             // there's no sense in continuing
-            throw new AbortWithHttpStatusException(503, false);
+            throw new AbortWithHttpErrorCodeException(503, "Unable to load session");
         }
         return session;
     }

@@ -21,10 +21,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.DecoratingHeaderResponse;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.lang.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +59,16 @@ public class CssImportingHeaderResponse extends DecoratingHeaderResponse {
     }
 
     @Override
-    public void renderCSSReference(ResourceReference reference) {
-        renderCSSReference(reference, null);
+    public void render(final HeaderItem item) {
+        if (item instanceof CssReferenceHeaderItem) {
+            CssReferenceHeaderItem cssHeaderItem = (CssReferenceHeaderItem) item;
+            renderCSSReference(cssHeaderItem.getReference(), cssHeaderItem.getMedia());
+        } else {
+            super.render(item);
+        }
     }
 
-    @Override
-    public void renderCSSReference(ResourceReference reference, String media) {
+    private void renderCSSReference(ResourceReference reference, String media) {
         addImport(new Import(reference, media), 0);
     }
 
@@ -92,19 +99,19 @@ public class CssImportingHeaderResponse extends DecoratingHeaderResponse {
     }
 
     private void renderStylesheet(Stylesheet stylesheet) {
-        getResponse().println("<style type=\"text/css\" id=\"wicketimportstyle" + stylesheet.getId() + "\" media=\"screen\">");
+        getResponse().write("<style type=\"text/css\" id=\"wicketimportstyle" + stylesheet.getId() + "\" media=\"screen\">");
         for (Import imp : stylesheet.getImports()) {
             renderImport(imp);
         }
-        getResponse().println("</style>");
+        getResponse().write("</style>");
     }
 
     private void renderImport(Import imp) {
-        CharSequence cssUrl = RequestCycle.get().urlFor(imp.getResourceReference());
+        CharSequence cssUrl = RequestCycle.get().urlFor(imp.getResourceReference(), null);
         getResponse().write("@import url('" + cssUrl + "');");
 
         String media = imp.getMedia();
-        if(media != null && !media.equals("screen") && Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+        if(media != null && !media.equals("screen") && Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
             log.warn("CssImportingHeaderResponse only accepts stylesheets of @media='screen', css file {} will be skipped.", cssUrl);
         }
     }

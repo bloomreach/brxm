@@ -16,13 +16,11 @@
 package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.IRequestTarget;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
@@ -30,9 +28,16 @@ import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
+import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequestImpl;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.upload.DiskFileItemFactory;
 import org.apache.wicket.util.upload.FileItem;
@@ -45,16 +50,17 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
 
     private static final Logger log = LoggerFactory.getLogger(AjaxMultiFileUploadComponent.class);
 
-    private final ResourceReference flashResource = new ResourceReference(AjaxMultiFileUploadComponent.class, "res/uploader.swf");
+    private final ResourceReference flashResource = new PackageResourceReference(AjaxMultiFileUploadComponent.class, "res/uploader.swf");
 
     private class UploadBehavior extends AbstractAjaxBehavior {
 
         public void onRequest() {
-            MultipartServletWebRequest multipartServletWebRequest;
             try {
-                HttpServletRequest httpServletRequest = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
-                multipartServletWebRequest = new MultipartServletWebRequest(httpServletRequest, Bytes.MAX,
-                        new DiskFileItemFactory() {
+                final ServletWebRequest request = (ServletWebRequest) RequestCycle.get().getRequest();
+                HttpServletRequest httpServletRequest = request.getContainerRequest();
+                MultipartServletWebRequest multipartServletWebRequest = new MultipartServletWebRequestImpl(httpServletRequest, request.getFilterPrefix(),
+                        Bytes.MAX, getPage().getId(),
+                        new DiskFileItemFactory(Application.get().getResourceSettings().getFileCleaner()) {
 
                             @Override
                             public FileItem createItem(String fieldName, String contentType, boolean isFormField, String fileName) {
@@ -62,8 +68,10 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
                                 return new MagicMimeTypeFileItem(item);
                             }
                         });
-                for (FileItem fi : multipartServletWebRequest.getFiles().values()) {
-                    onFileUpload(new FileUpload(fi));
+                for (List<FileItem> files : multipartServletWebRequest.getFiles().values()) {
+                    for (FileItem file : files) {
+                        onFileUpload(new FileUpload(file));
+                    }
                 }
                 setResponse("success");
             } catch (FileUploadException e) {
@@ -73,13 +81,13 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
         }
 
         private void setResponse(final String responseText) {
-            RequestCycle.get().setRequestTarget(new IRequestTarget() {
+            RequestCycle.get().scheduleRequestHandlerAfterCurrent(new IRequestHandler() {
 
-                public void respond(RequestCycle requestCycle) {
+                @Override
+                public void respond(IRequestCycle requestCycle) {
                     final WebResponse response = (WebResponse) requestCycle.getResponse();
                     final Application app = Application.get();
                     final String encoding = app.getRequestCycleSettings().getResponseRequestEncoding();
-                    response.setCharacterEncoding(encoding);
                     response.setContentType("text/xml; charset=" + encoding);
 
                     // Make sure it is not cached by a client
@@ -95,7 +103,8 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
                     response.write("</ajax-response>");
                 }
 
-                public void detach(RequestCycle requestCycle) {
+                @Override
+                public void detach(IRequestCycle requestCycle) {
                 }
             });
         }
@@ -108,7 +117,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
         super(id, new Model<LinkedList<FileUpload>>(new LinkedList<FileUpload>()));
 
         setOutputMarkupId(true);
-        settings.setFlashUrl(urlFor(flashResource).toString());
+        settings.setFlashUrl(urlFor(flashResource, null).toString());
 
         add(new AjaxMultiFileUploadBehavior(settings) {
 
@@ -126,7 +135,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
     @Override
     protected void onBeforeRender() {
         String sessionId = Session.get().getId();
-        String uploadUrl = ";jsessionid=" + sessionId + urlFor(uploadBehavior, IBehaviorListener.INTERFACE).toString();
+        String uploadUrl = ";jsessionid=" + sessionId + urlFor(uploadBehavior, IBehaviorListener.INTERFACE, new PageParameters()).toString();
         settings.setUploadUrl(uploadUrl);
         super.onBeforeRender();
     }

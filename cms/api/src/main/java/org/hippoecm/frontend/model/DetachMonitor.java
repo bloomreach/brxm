@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.model.IDetachable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class DetachMonitor implements IDetachable {
         if ((flags & ATTACHED) != 0) {
             // TODO: walk the stack to identify owner
             log.warn("Undetached DetachMonitor");
-            if (Application.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
+            if (RuntimeConfigurationType.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
                 detach();
             }
         }

@@ -30,31 +30,33 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
 import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.http.WebResponse;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.PageExpiredErrorPage;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginPage;
@@ -92,10 +94,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(RememberMeLoginPlugin.class);
 
-    /** Algorithm to use for creating the passkey secret.
-        Intentionally a relative weak algorithm, as this whole procedure isn't
-        too safe to begin with.
-    */
+    /**
+     * Algorithm to use for creating the passkey secret. Intentionally a relative weak algorithm, as this whole
+     * procedure isn't too safe to begin with.
+     */
     private static final String ALGORITHM = "MD5";
     private static final String EDITION_PROPERTY = "edition";
 
@@ -110,15 +112,21 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             add(new BrowserCheckBehavior(supported));
         }
 
-        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(RememberMeLoginPlugin.class, "login.css")));
+    }
 
-        if(config.containsKey(EDITION_PROPERTY)) {
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CssHeaderItem.forReference(new CssResourceReference(RememberMeLoginPlugin.class, "login.css")));
+
+        IPluginConfig config = getPluginConfig();
+        if (config.containsKey(EDITION_PROPERTY)) {
             String edition = config.getString(EDITION_PROPERTY);
             // In case of using a different edition, add extra CSS rules to show the required styling
-            add(CSSPackageResource.getHeaderContribution(
-                    new CompressedResourceReference(RememberMeLoginPlugin.class, "login_" + edition + ".css")));
+            final CssResourceReference editionResourceRef = new CssResourceReference(RememberMeLoginPlugin.class, "login_" + edition + ".css");
+            response.render(CssHeaderItem.forReference(editionResourceRef));
         }
-
     }
 
     // Determine whether to try to auto-login or not
@@ -126,18 +134,17 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     protected void onInitialize() {
         if (!PageExpiredErrorPage.class.isInstance(getPage())) {
             // Check for remember me cookie
-            if ((WebApplicationHelper.retrieveWebRequest().getCookie(REMEMBERME_COOKIE_NAME) != null)
-                    && (WebApplicationHelper.retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) != null)
-                    && (WebApplicationHelper.retrieveWebRequest().getHttpServletRequest()
-                            .getAttribute(HAL_REQUEST_ATTRIBUTE_NAME) == null)) {
+            final ServletWebRequest servletWebRequest = WebApplicationHelper.retrieveWebRequest();
+            final HttpServletRequest httpServletRequest = servletWebRequest.getContainerRequest();
+            if ((servletWebRequest.getCookie(REMEMBERME_COOKIE_NAME) != null)
+                    && (servletWebRequest.getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) != null)
+                    && (httpServletRequest.getAttribute(HAL_REQUEST_ATTRIBUTE_NAME) == null)) {
 
-                WebApplicationHelper.retrieveWebRequest().getHttpServletRequest()
-                        .setAttribute(HAL_REQUEST_ATTRIBUTE_NAME, true);
+                httpServletRequest.setAttribute(HAL_REQUEST_ATTRIBUTE_NAME, true);
                 try {
                     tryToAutoLoginWithRememberMe();
                 } finally {
-                    WebApplicationHelper.retrieveWebRequest().getHttpServletRequest()
-                            .removeAttribute(HAL_REQUEST_ATTRIBUTE_NAME);
+                    httpServletRequest.removeAttribute(HAL_REQUEST_ATTRIBUTE_NAME);
                 }
             }
         }
@@ -241,10 +248,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     if (!SignInForm.this.getRememberme()) {
                         final String passwordValue = SignInForm.this.passwordTextField.getModelObject();
 
-                        if (StringUtils.isNotBlank(passwordValue)&& passwordValue.equals("********")) {
+                        if (StringUtils.isNotBlank(passwordValue) && passwordValue.equals("********")) {
                             SignInForm.this.passwordTextField.setModelObject("");
                         }
-                        target.addComponent(passwordTextField);
+                        target.add(passwordTextField);
 
                         // Also remove the cookie which contains user information
                         WebApplicationHelper.clearCookie(REMEMBERME_COOKIE_NAME);
@@ -284,7 +291,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
                 @Override
                 protected void onError(AjaxRequestTarget target, Form<?> form) {
-                    target.addComponent(feedback);
+                    target.add(feedback);
                 }
 
                 @Override
@@ -301,7 +308,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             loginTrialsCounter++;
                         }
 
-                        target.addComponent(SignInForm.this);
+                        target.add(SignInForm.this);
                     }
                 }
 
@@ -359,13 +366,12 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             }
 
             if (success) {
-                ConcurrentLoginFilter.validateSession(((WebRequest) SignInForm.this.getRequest())
-                        .getHttpServletRequest().getSession(true), username, false);
+                final ServletWebRequest servletWebRequest = WebApplicationHelper.retrieveWebRequest();
+
+                ConcurrentLoginFilter.validateSession(servletWebRequest.getContainerRequest().getSession(true), username, false);
 
                 // If rememberme checkbox is checked and there is no cookie already, this happens in case of autologin
-                if (rememberme
-                        && WebApplicationHelper.retrieveWebRequest().getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) == null) {
-
+                if (rememberme&& servletWebRequest.getCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME) == null) {
                     Session jcrSession = userSession.getJcrSession();
                     if (jcrSession.getUserID().equals(username)) {
                         try {
@@ -500,7 +506,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     cookie.getValue(), cookie.getPath(), cookie.getDomain(), cookie.getComment(), cookie.getMaxAge(),
                     cookie.getSecure(), useHttpOnly);
 
-            response.getHttpServletResponse().addHeader("Set-Cookie", setCookieHeaderBuffer.toString());
+            response.addHeader("Set-Cookie", setCookieHeaderBuffer.toString());
         } else {
             response.addCookie(cookie);
         }

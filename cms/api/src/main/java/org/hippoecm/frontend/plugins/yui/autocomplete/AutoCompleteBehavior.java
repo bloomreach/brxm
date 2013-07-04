@@ -16,8 +16,7 @@
 
 package org.hippoecm.frontend.plugins.yui.autocomplete;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
@@ -29,7 +28,7 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
     //Provide a more generic approach by making the function call variable as well
-    private final PackagedTextTemplate INIT_AUTOCOMPLETE = new PackagedTextTemplate(AutoCompleteBehavior.class,
+    private final PackageTextTemplate INIT_AUTOCOMPLETE = new PackageTextTemplate(AutoCompleteBehavior.class,
             "init_autocomplete.js");
 
     protected final AutoCompleteSettings settings;
@@ -58,12 +57,6 @@ public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
         context.addModule(HippoNamespace.NS, "autocompletemanager");
         context.addTemplate(template);
         context.addOnDomLoad("YAHOO.hippo.AutoCompleteManager.onLoad()");
-    }
-
-    @Override
-    public void detach(Component component) {
-        super.detach(component);
-        template.detach();
     }
 
     /**

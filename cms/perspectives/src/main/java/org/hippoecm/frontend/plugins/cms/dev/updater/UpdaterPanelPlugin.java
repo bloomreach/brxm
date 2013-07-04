@@ -15,14 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dev.DevPanelPlugin;
-import org.hippoecm.frontend.plugins.cms.dev.updater.UpdaterPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
 public class UpdaterPanelPlugin extends DevPanelPlugin {
@@ -33,7 +33,7 @@ public class UpdaterPanelPlugin extends DevPanelPlugin {
 
     @Override
     public ResourceReference getImage() {
-        return new ResourceReference(getClass(), "updater-panel-32.png");
+        return new PackageResourceReference(getClass(), "updater-panel-32.png");
     }
 
     @Override

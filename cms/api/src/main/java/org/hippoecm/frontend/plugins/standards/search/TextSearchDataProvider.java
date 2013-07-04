@@ -28,7 +28,6 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
@@ -50,47 +49,46 @@ public class TextSearchDataProvider implements IDataProvider<TextSearchMatch> {
         this.resultModel = bsrModel;
     }
 
-    public Iterator<? extends TextSearchMatch> iterator(int first, int count) {
+    public Iterator<? extends TextSearchMatch> iterator(long first, long count) {
         BrowserSearchResult bsr = resultModel.getObject();
         QueryResult result = bsr.getQueryResult();
-        if (result == null) {
-            return Collections.EMPTY_LIST.iterator();
-        }
-        try {
-            javax.jcr.Session session = UserSession.get().getJcrSession();
+        if (result != null) {
+            try {
+                javax.jcr.Session session = UserSession.get().getJcrSession();
 
-            List<TextSearchMatch> resultList = new LinkedList<TextSearchMatch>();
-            boolean hasExcerpt = false;
-            for (String colName : result.getColumnNames()) {
-                if ("rep:excerpt()".equals(colName)) {
-                    hasExcerpt = true;
-                    break;
-                }
-            }
-            RowIterator rows = result.getRows();
-            rows.skip(first);
-            while (rows.hasNext() && (count == -1 || count-- > 0)) {
-                Row row = rows.nextRow();
-                try {
-                    String path = row.getValue("jcr:path").getString();
-                    Node node = (Node) session.getItem(path);
-                    if (hasExcerpt) {
-                        String excerpt = row.getValue("rep:excerpt()").getString();
-                        resultList.add(new TextSearchMatch(node, excerpt));
-                    } else {
-                        resultList.add(new TextSearchMatch(node));
+                List<TextSearchMatch> resultList = new LinkedList<TextSearchMatch>();
+                boolean hasExcerpt = false;
+                for (String colName : result.getColumnNames()) {
+                    if ("rep:excerpt()".equals(colName)) {
+                        hasExcerpt = true;
+                        break;
                     }
-                } catch (ItemNotFoundException infe) {
-                    log.warn("Item not found", infe);
-                } catch (ValueFormatException vfe) {
-                    log.error("Value is invalid", vfe);
                 }
-                return resultList.iterator();
+                RowIterator rows = result.getRows();
+                rows.skip(first);
+                while (rows.hasNext() && (count == -1 || count-- > 0)) {
+                    Row row = rows.nextRow();
+                    try {
+                        String path = row.getValue("jcr:path").getString();
+                        Node node = (Node) session.getItem(path);
+                        if (hasExcerpt) {
+                            String excerpt = row.getValue("rep:excerpt()").getString();
+                            resultList.add(new TextSearchMatch(node, excerpt));
+                        } else {
+                            resultList.add(new TextSearchMatch(node));
+                        }
+                    } catch (ItemNotFoundException infe) {
+                        log.warn("Item not found", infe);
+                    } catch (ValueFormatException vfe) {
+                        log.error("Value is invalid", vfe);
+                    }
+                    return resultList.iterator();
+                }
+            } catch (RepositoryException e) {
+                log.error("Error parsing query results[" + bsr.getQueryName() + "]", e);
             }
-        } catch (RepositoryException e) {
-            log.error("Error parsing query results[" + bsr.getQueryName() + "]", e);
         }
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.<TextSearchMatch>emptyList().iterator();
     }
 
     public IModel<TextSearchMatch> model(TextSearchMatch object) {
@@ -98,7 +96,7 @@ public class TextSearchDataProvider implements IDataProvider<TextSearchMatch> {
         return null;
     }
 
-    public int size() {
+    public long size() {
         QueryResult result = resultModel.getObject().getQueryResult();
         if (result != null) {
             try {

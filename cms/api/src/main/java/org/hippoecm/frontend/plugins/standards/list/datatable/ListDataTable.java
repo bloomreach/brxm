@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -36,6 +35,8 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -49,7 +50,7 @@ import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
  * with a {@link TableDefinition}.  This component can be used with any data type, i.e. it is
  * not bound to JcrNodeModels.
  */
-public class ListDataTable<T> extends DataTable<T> {
+public class ListDataTable<T> extends DataTable<T, String> {
 
     private static final long serialVersionUID = 1L;
 
@@ -67,7 +68,7 @@ public class ListDataTable<T> extends DataTable<T> {
         void selectionChanged(IModel<T> model);
     }
 
-    public ListDataTable(String id, TableDefinition<T> tableDefinition, ISortableDataProvider<T> dataProvider,
+    public ListDataTable(String id, TableDefinition<T> tableDefinition, ISortableDataProvider<T, String> dataProvider,
             TableSelectionListener<T> selectionListener, final boolean triState, IPagingDefinition pagingDefinition) {
         super(id, tableDefinition.getColumns(), dataProvider, pagingDefinition.getPageSize());
 
@@ -79,7 +80,7 @@ public class ListDataTable<T> extends DataTable<T> {
         this.selectionListener = selectionListener;
 
         if (tableDefinition.showColumnHeaders()) {
-            addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider) {
+            addTopToolbar(new AjaxFallbackHeadersToolbar<String>(this, dataProvider) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -159,8 +160,8 @@ public class ListDataTable<T> extends DataTable<T> {
 
     public void render(PluginRequestTarget target) {
         if (target != null && !dirty.isEmpty()) {
-            int count = getRowsPerPage();
-            int offset = getCurrentPage() * getRowsPerPage();
+            long count = getItemsPerPage();
+            long offset = getCurrentPage() * getItemsPerPage();
             if (offset + count > provider.size()) {
                 count = provider.size() - offset;
             }
@@ -173,10 +174,10 @@ public class ListDataTable<T> extends DataTable<T> {
             }
             for (Item item : dirty) {
                 if (!visibleModels.contains(item.getModel())) {
-                    target.addComponent(this);
+                    target.add(this);
                     break;
                 }
-                target.addComponent(item);
+                target.add(item);
             }
         }
         dirty.clear();
@@ -194,10 +195,10 @@ public class ListDataTable<T> extends DataTable<T> {
         }
     }
 
-    private boolean doesPageContainModel(int page) {
+    private boolean doesPageContainModel(long page) {
         IModel<T> selected = (IModel<T>) getDefaultModel();
-        int count = getRowsPerPage();
-        int offset = page * getRowsPerPage();
+        long count = getItemsPerPage();
+        long offset = page * getItemsPerPage();
         if (offset + count > provider.size()) {
             count = provider.size() - offset;
         }
@@ -224,9 +225,9 @@ public class ListDataTable<T> extends DataTable<T> {
                 IModel selected = ListDataTable.this.getDefaultModel();
                 if (selected != null && selected.equals(model)) {
                     if (scrollSelectedIntoView) {
-                        AjaxRequestTarget target = AjaxRequestTarget.get();
+                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                         if (target != null) {
-                            target.appendJavascript("document.getElementById('" + item.getMarkupId()
+                            target.appendJavaScript("document.getElementById('" + item.getMarkupId()
                                     + "').scrollIntoView(" + scrollSelectedTopAlign + ");");
                         }
                     }

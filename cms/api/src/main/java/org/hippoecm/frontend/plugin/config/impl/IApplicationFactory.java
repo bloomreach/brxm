@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 
 public interface IApplicationFactory extends IClusterable {

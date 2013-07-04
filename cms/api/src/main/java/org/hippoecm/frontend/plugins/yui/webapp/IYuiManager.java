@@ -16,7 +16,7 @@
 
 package org.hippoecm.frontend.plugins.yui.webapp;
 
-import org.apache.wicket.IClusterable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 
 /**

@@ -192,7 +192,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         closeEditor();
                     } catch (Exception ex) {
                         exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
-                        target.addComponent(exceptionLabel);
+                        target.add(exceptionLabel);
                     }
                 }
             };
@@ -215,7 +215,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         closeEditor();
                     } catch (Exception ex) {
                         exceptionLabel.setDefaultModel(new Model(ex.getMessage()));
-                        target.addComponent(exceptionLabel);
+                        target.add(exceptionLabel);
                     }
                 }
             };

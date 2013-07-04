@@ -27,13 +27,15 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
@@ -93,7 +95,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "publish-all-16.png");
+                return new PackageResourceReference(getClass(), "publish-all-16.png");
             }
 
             @Override
@@ -167,7 +169,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected ResourceReference getIcon() {
-                return new ResourceReference(getClass(), "depublish-all-16.png");
+                return new PackageResourceReference(getClass(), "depublish-all-16.png");
             }
 
             @Override
@@ -308,7 +310,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             onOk();
             affectedComponent.setDefaultModel(new Model<String>(Integer.toString(processed)));
             affectedComponent.setVisible(true);
-            AjaxRequestTarget.get().addComponent(this);
+            RequestCycle.get().find(AjaxRequestTarget.class).add(this);
        }
     }
 }

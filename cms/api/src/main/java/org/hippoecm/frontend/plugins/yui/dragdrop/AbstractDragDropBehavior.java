@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.yui.dragdrop;
 
-import org.apache.wicket.behavior.IBehavior;
-import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
@@ -57,23 +58,15 @@ public abstract class AbstractDragDropBehavior extends AbstractYuiAjaxBehavior {
     }
 
     @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-    }
-
-    @Override
-    protected CharSequence getCallbackScript(boolean onlyTargetActivePage) {
-        StringBuilder buf = new StringBuilder();
-        buf.append("function doCallBack").append(getComponent().getMarkupId(true)).append("(myCallbackUrl){ ");
-        buf.append(generateCallbackScript("wicketAjaxGet(myCallbackUrl")).append(" }");
-        return buf.toString();
+    public void renderHead(Component component, IHeaderResponse response) {
+        super.renderHead(component, response);
     }
 
     /**
      * Return a class from the same package as the javascript file you want to load
      * @return Class from the same package as the javascript file you want to load
      */
-    protected Class<? extends IBehavior> getHeaderContributorClass() {
+    protected Class<? extends Behavior> getHeaderContributorClass() {
         return AbstractDragDropBehavior.class;
     }
 

@@ -24,10 +24,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Page;
-import org.apache.wicket.ResourceReference;
-import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.Component;
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -49,6 +54,8 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(LocaleProviderPlugin.class);
+
+    private static final JavaScriptResourceReference TRANSLATE_DOCUMENT_JS = new JavaScriptResourceReference(DocumentTranslationView.class, "translate-document.js");
 
     static final HippoLocale UNKNOWN_LOCALE = new HippoLocale(Locale.ROOT, "unknown") {
 
@@ -73,7 +80,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
                     resourceName = "flags/flag-" + size.getSize() + country + ".png";
                     break;
             }
-            return new ResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, getLocale(), getName());
+            return new PackageResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, getLocale(), getName(), null);
         }
 
         @Override
@@ -90,26 +97,31 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         context.registerService(this, config.getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()));
 
         // debugging pleasure - enable setting breakpoints on the client
-        if (Application.get().getConfigurationType().equals(Application.DEVELOPMENT)) {
+        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
             Home page = context.getService(Home.class.getName(), Home.class);
             page.add(new ExtResourcesBehaviour());
+            page.add(new Behavior() {
 
-            page.add(TranslationResources.getTranslationsHeaderContributor());
-            page.add(JavascriptPackageResource
-                    .getHeaderContribution(DocumentTranslationView.class, "translate-document.js"));
+                @Override
+                public void renderHead(final Component component, final IHeaderResponse response) {
+                    TranslationResources.getTranslationsHeaderContributor().renderHead(response);
+                    response.render(JavaScriptHeaderItem.forReference(TRANSLATE_DOCUMENT_JS));
 
-            addFolderViewHeader(page, "treegrid/TreeGridSorter.js");
-            addFolderViewHeader(page, "treegrid/TreeGridColumnResizer.js");
-            addFolderViewHeader(page, "treegrid/TreeGridNodeUI.js");
-            addFolderViewHeader(page, "treegrid/TreeGridLoader.js");
-            addFolderViewHeader(page, "treegrid/TreeGridColumns.js");
-            addFolderViewHeader(page, "treegrid/TreeGrid.js");
-            addFolderViewHeader(page, "folder-translations.js");
+                    addFolderViewHeader(response, "treegrid/TreeGridSorter.js");
+                    addFolderViewHeader(response, "treegrid/TreeGridColumnResizer.js");
+                    addFolderViewHeader(response, "treegrid/TreeGridNodeUI.js");
+                    addFolderViewHeader(response, "treegrid/TreeGridLoader.js");
+                    addFolderViewHeader(response, "treegrid/TreeGridColumns.js");
+                    addFolderViewHeader(response, "treegrid/TreeGrid.js");
+                    addFolderViewHeader(response, "folder-translations.js");
+                }
+
+                private void addFolderViewHeader(IHeaderResponse response,  String js) {
+                    response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(FolderTranslationView.class, js)));
+                }
+            });
+
         }
-    }
-
-    private static void addFolderViewHeader(Page page,  String js) {
-        page.add(JavascriptPackageResource.getHeaderContribution(FolderTranslationView.class, js));
     }
 
     public List<HippoLocale> getLocales() {
@@ -202,7 +214,7 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
                         resourceName = "flags/flag-" + size.getSize() + country + ".png";
                         break;
                     }
-                    return new ResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, locale, getName());
+                    return new PackageResourceReference(LocaleProviderPlugin.class, "icons/" + resourceName, locale, getName(), null);
                 }
             });
         }

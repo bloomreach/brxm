@@ -16,8 +16,9 @@
 package org.hippoecm.frontend.plugins.standardworkflow.components;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.attributes.ThrottlingSettings;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -27,6 +28,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
@@ -65,7 +67,7 @@ public class NameUriField extends WebMarkupContainer {
 
     @Override
     protected void onBeforeRender() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             target.focusComponent(nameComponent);
         }
@@ -97,16 +99,20 @@ public class NameUriField extends WebMarkupContainer {
 
         });
         nameComponent.setRequired(true);
-        AjaxEventBehavior behavior;
-        nameComponent.add(behavior = new OnChangeAjaxBehavior() {
+        nameComponent.add(new OnChangeAjaxBehavior() {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 if (!urlModified) {
-                    target.addComponent(urlComponent);
+                    target.add(urlComponent);
                 }
             }
+
+            @Override
+            protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setThrottlingSettings(new ThrottlingSettings(NameUriField.this.getPath(), Duration.milliseconds(500)));
+            }
         });
-        behavior.setThrottleDelay(Duration.milliseconds(500));
         nameComponent.setOutputMarkupId(true);
         return nameComponent;
     }
@@ -140,7 +146,7 @@ public class NameUriField extends WebMarkupContainer {
                 } else {
                     target.focusComponent(urlComponent);
                 }
-                target.addComponent(urlComponent);
+                target.add(urlComponent);
             }
         };
         uriAction.add(new Label("uriActionLabel", new AbstractReadOnlyModel<String>() {

@@ -17,7 +17,9 @@ package org.hippoecm.frontend.plugins.gotolink;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -32,6 +34,9 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(GotolinkDocumentsShortcutPlugin.class);
 
     private static final long serialVersionUID = 1L;
+
+    private static final CssResourceReference GOTOLINK_CSS = new CssResourceReference(
+            GotolinkDocumentsShortcutPlugin.class, "gotolink.css");
 
     public GotolinkDocumentsShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -57,7 +62,11 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
             }
         };
         add(link);
+    }
 
-        add(CSSPackageResource.getHeaderContribution(GotolinkDocumentsShortcutPlugin.class, "gotolink.css"));
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(GOTOLINK_CSS));
     }
 }

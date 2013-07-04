@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.social;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.ResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;

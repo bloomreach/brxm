@@ -19,13 +19,11 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.util.template.PackagedTextTemplate;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
@@ -33,12 +31,12 @@ import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
-    IHeaderContributor template;
+    DynamicTextTemplate template;
 
     public AjaxMultiFileUploadBehavior(final AjaxMultiFileUploadSettings settings) {
         super(settings);
 
-        template = new DynamicTextTemplate(new PackagedTextTemplate(getClass(), "add_upload.tpl")) {
+        template = new DynamicTextTemplate(new PackageTextTemplate(getClass(), "add_upload.tpl")) {
 
             @Override
             public String getId() {
@@ -62,7 +60,7 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
-        context.addCssReference(new ResourceReference(AjaxMultiFileUploadBehavior.class, "res/skin.css"));
+        context.addCssReference(new CssResourceReference(AjaxMultiFileUploadBehavior.class, "res/skin.css"));
         context.addModule(HippoNamespace.NS, "upload");
         context.addTemplate(template);
         context.addOnDomLoad("YAHOO.hippo.Upload.render()");
@@ -70,10 +68,10 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
     @Override
     protected void respond(AjaxRequestTarget ajaxRequestTarget) {
-        HttpServletRequest r = ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest();
+        HttpServletRequest r = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
         if (r.getParameter("finished") != null && r.getParameter("finished").equals("true")) {
             if (r.getParameter("scrollPosY") != null) {
-                ajaxRequestTarget.appendJavascript("YAHOO.hippo.Upload.restoreScrollPosition(" + r.getParameter(
+                ajaxRequestTarget.appendJavaScript("YAHOO.hippo.Upload.restoreScrollPosition(" + r.getParameter(
                         "scrollPosY") + ");");
             }
             onFinish(ajaxRequestTarget);

@@ -21,7 +21,6 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -32,7 +31,8 @@ import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -153,16 +153,20 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
      *
      * @param formSubmittingComponent
      */
+    /*
+    TODO: is this code still relevant after the upgrade to wicket-6?
     @Override
     public void process(final IFormSubmittingComponent formSubmittingComponent) {
-        final WebRequest request = (WebRequest) RequestCycle.get().getRequest();
-        if (request.isAjax() && AjaxRequestTarget.get() == null) {
+        RequestCycle rc = RequestCycle.get();
+        final WebRequest request = (WebRequest) rc.getRequest();
+        if (request.isAjax() && rc.find(AjaxRequestTarget.class) == null) {
             WebApplication app = (WebApplication) getApplication();
             AjaxRequestTarget target = app.newAjaxRequestTarget(getPage());
-            RequestCycle.get().setRequestTarget(target);
+            RequestCycle.get().scheduleRequestHandlerAfterCurrent(target);
         }
         super.process(formSubmittingComponent);
     }
+    */
 
     public void destroy() {
         if (cluster != null) {

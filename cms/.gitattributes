@@ -343,7 +343,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/HippoNamespace.java -text sv
 api/src/main/java/org/hippoecm/frontend/plugins/yui/YuiPluginHelper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionManagerBehavior.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/AccordionSectionBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/accordion/init.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/AjaxIndicatorBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/ajax/ajax-loader.gif -text
@@ -1533,7 +1532,6 @@ engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_de.properties -text
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_fr.properties -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_it.properties -text
 engine/src/main/java/org/hippoecm/frontend/InvalidLoginPage_nl.properties -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/JcrResourceRequestTarget.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/NoRepositoryAvailablePage.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/NoRepositoryAvailablePage.properties svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/NoRepositoryAvailablePage_de.properties -text
@@ -1548,7 +1546,6 @@ engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_it.properties -t
 engine/src/main/java/org/hippoecm/frontend/PageExpiredErrorPage_nl.properties -text
 engine/src/main/java/org/hippoecm/frontend/PluginPage.html -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/PluginPage.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/frontend/PluginRequestCycleProcessor.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/StagedLocalizer.java -text
 engine/src/main/java/org/hippoecm/frontend/StringResourceProviderConsumer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/behaviors/ContextMenuBehavior.java -text
@@ -1601,7 +1598,6 @@ engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/restproxy/RestProxyServicePlugin.java -text
 engine/src/main/java/org/hippoecm/frontend/session/JcrSessionReference.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/frontend/session/UnbindingHttpSessionStore.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/frontend/session/WorkflowManagerDecorator.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/util/NodeStateUtil.java -text
 engine/src/main/resources/hippoecm-layouts.xml svneol=native#text/plain

@@ -22,9 +22,11 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
@@ -43,6 +45,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 
 public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
+    public static final CssResourceReference CSS_RESOURCE_REFERENCE = new CssResourceReference(ImageGalleryColumnProviderPlugin.class, "ImageGalleryStyle.css");
 
 
     private String primaryItemName;
@@ -55,7 +58,12 @@ public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProvider
 
     @Override
     public IHeaderContributor getHeaderContributor() {
-        return CSSPackageResource.getHeaderContribution(ImageGalleryColumnProviderPlugin.class, "ImageGalleryStyle.css");
+        return new IHeaderContributor() {
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                response.render(CssHeaderItem.forReference(CSS_RESOURCE_REFERENCE));
+            }
+        };
     }
 
     public List<ListColumn<Node>> getColumns() {

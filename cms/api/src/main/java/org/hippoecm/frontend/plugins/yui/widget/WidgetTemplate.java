@@ -15,27 +15,28 @@
  */
 package org.hippoecm.frontend.plugins.yui.widget;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
+import java.io.Serializable;
+import java.util.Map;
+
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.markup.html.IHeaderResponse;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.collections.MiniMap;
-import org.apache.wicket.util.template.PackagedTextTemplate;
-import org.apache.wicket.util.template.TextTemplateHeaderContributor;
+import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.util.template.TextTemplate;
 import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
 
-import java.io.Serializable;
-import java.util.Map;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 public class WidgetTemplate implements IHeaderContributor, IDetachable {
     private static final long serialVersionUID = 1L;
 
+    private final TextTemplate WIDGET_TEMPLATE = new PackageTextTemplate(WidgetTemplate.class, "widget_template.js");
 
-    private TextTemplateHeaderContributor headerContributor;
     private Map<String, Object> variables;
 
     private String namespace;
@@ -46,17 +47,6 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
     private String instance;
 
     public WidgetTemplate() {
-        PackagedTextTemplate template = new PackagedTextTemplate(WidgetTemplate.class, "widget_template.js");
-        headerContributor = TextTemplateHeaderContributor.forJavaScript(template,
-                new AbstractReadOnlyModel<Map<String, Object>>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public Map<String, Object> getObject() {
-                        return WidgetTemplate.this.getVariables();
-                    }
-                });
-
         namespace = "YAHOO.hippo";
         clazz = "WidgetManager";
         method = "register";
@@ -64,11 +54,10 @@ public class WidgetTemplate implements IHeaderContributor, IDetachable {
     }
 
     public void renderHead(IHeaderResponse response) {
-        headerContributor.renderHead(response);
+        response.render(OnDomReadyHeaderItem.forScript(WIDGET_TEMPLATE.asString(getVariables())));
     }
 
     public void detach() {
-        headerContributor.detach(null);
     }
 
     protected Map<String, Object> getVariables() {
