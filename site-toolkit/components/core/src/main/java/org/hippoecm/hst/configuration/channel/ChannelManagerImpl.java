@@ -558,7 +558,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
                 session.save();
-                hstManager.invalidate(pathsToBeChanged);
+                // TODO switch on below after REPO-684 is fixed
+                // hstManager.invalidate(pathsToBeChanged);
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }

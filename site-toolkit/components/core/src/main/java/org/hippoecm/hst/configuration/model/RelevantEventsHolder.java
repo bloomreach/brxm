@@ -40,6 +40,7 @@ public class RelevantEventsHolder {
 
     private static final Logger log = LoggerFactory.getLogger(RelevantEventsHolder.class);
 
+    final private String rootPath;
     final private String configPath;
     final private  String commonCatalogPath;
     final private String hostsPath;
@@ -59,6 +60,7 @@ public class RelevantEventsHolder {
     private Set<RelevantEvent> configurationEvents = new HashSet<RelevantEvent>();
 
     public RelevantEventsHolder(String rootPath) {
+        this.rootPath = rootPath;
         configPath = rootPath+"/hst:configurations";
         commonCatalogPath = configPath+"/hst:catalog";
         hostsPath = rootPath+"/hst:hosts";
@@ -71,6 +73,9 @@ public class RelevantEventsHolder {
     }
 
     public void addEvent(final Event jcrEvent) throws RepositoryException {
+        if (!eventForHstConfig(jcrEvent)) {
+            return;
+        }
         RelevantEvent event = new RelevantEvent(jcrEvent);
         boolean added = configurationEvents.add(event);
         if (added) {
@@ -79,11 +84,27 @@ public class RelevantEventsHolder {
     }
 
     public void addEvent(final String eventPath) {
+        if (!eventForHstConfig(eventPath)) {
+            return;
+        }
         RelevantEvent event = new RelevantEvent(eventPath);
         boolean added = configurationEvents.add(event);
         if (added) {
             log.debug("Added event '{}'", event.relevantPath);
         }
+    }
+
+
+    private boolean eventForHstConfig(final Event jcrEvent) throws RepositoryException {
+        return eventForHstConfig(jcrEvent.getPath());
+    }
+
+    private boolean eventForHstConfig(final String eventPath) {
+        if (eventPath.startsWith(rootPath)) {
+            return true;
+        }
+        log.debug("Found non hst config event path '{}'.", eventPath);
+        return false;
     }
 
     public boolean hasEvents() {
