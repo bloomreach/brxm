@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -38,7 +39,9 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.LazySession;
+import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.diagnosis.HDC;
@@ -140,9 +143,9 @@ public class BeanUtils {
 
             // we have free text search. Now, we have to fetch from the root every descendant one-by-one until we hit a FacetedNavigationNode.
 
-            // first, let's get a disposable session:
-            Session disposablePoolSession = getDisposablePoolSession(hstRequest, query);
-            ObjectBeanManager objectBeanMngr = new ObjectBeanManagerImpl(disposablePoolSession, objectConverter);
+           // first, let's get a disposable/query session:
+           Session querySession = getQuerySession(hstRequest, query);
+           ObjectBeanManager objectBeanMngr = new ObjectBeanManagerImpl(querySession, objectConverter);
 
             HippoFacetNavigationBean facetNavBean = null;
 
@@ -345,9 +348,9 @@ public class BeanUtils {
         
         // we have free text search. Now, we have to fetch from the root every descendant one-by-one until we hit a FacetedNavigationNode. 
         
-        // first, let's get a disposable session:
-        Session disposablePoolSession = getDisposablePoolSession(hstRequest, query);
-        ObjectBeanManager objectBeanMngr = new ObjectBeanManagerImpl(disposablePoolSession, objectConverter);
+        // first, let's get a disposable/query session:
+        Session querySession = getQuerySession(hstRequest, query);
+        ObjectBeanManager objectBeanMngr = new ObjectBeanManagerImpl(querySession, objectConverter);
         
         HippoFacetNavigationBean facetNavBean = null;
         
@@ -459,21 +462,23 @@ public class BeanUtils {
 
     /**
      * This method tries to get a {@link Session} from a disposable pool which is identified by
-     * <code>disposablePoolIdentifier</code>
+     * <code>disposablePoolIdentifier</code> or a {@link Session} from a security delegate
      * <p/>
-     * If <code>disposablePoolIdentifier</code> is empty or <code>null</code> an HstComponentException will be thrown.
-     * If it is not possible to return a {@link Session} for the <code>disposablePoolIdentifier</code>, for example
+     * If <code>sessionIdentifier</code> is empty or <code>null</code> an HstComponentException will be thrown.
+     * If it is not possible to return a {@link Session} for the <code>sessionIdentifier</code>, for example
      * because there is configured a MultipleRepositoryImpl instead of LazyMultipleRepositoryImpl, also a {@link
      * HstComponentException} will be thrown.
      *
      * @param requestContext           the hstRequest for this HstComponent
-     * @param disposablePoolIdentifier the identifier for this disposable pool. It is not allowed to be empty or
+     * @param sessionIdentifier the identifier for this disposable pool / session. It is not allowed to be empty or
      *                                 <code>null</code>
      * @return a jcr {@link Session} from a disposable pool
      * @throws HstComponentException
      */
-    public static Session getDisposablePoolSession(HstRequestContext requestContext, String disposablePoolIdentifier) throws HstComponentException {
-
+    public static Session getQuerySession(HstRequestContext requestContext, String sessionIdentifier) throws HstComponentException {
+        if (sessionIdentifier == null) {
+            throw new HstComponentException("sessionIdentifier not allowed to be null");
+        }
         try {
             String userID = null;
             Credentials cred = null;
@@ -482,7 +487,8 @@ public class BeanUtils {
 
             if (requestContext.isCmsRequest() && existingSession instanceof HippoSession) {
                 // this is an non-proxied jcr session : for this, we do not instantiate disposable session pools
-                return existingSession;
+                // we need to get a fresh session to avoid reusing already built up virtual states
+                return getPreviewCmsQuerySession(requestContext, sessionIdentifier);
             }
 
             if (existingSession instanceof LazySession) {
@@ -504,7 +510,7 @@ public class BeanUtils {
 
             char[] passwd = ((SimpleCredentials) cred).getPassword();
 
-            String disposablePoolSessionUserId = userID + ";" + disposablePoolIdentifier + ";disposable";
+            String disposablePoolSessionUserId = userID + ";" + sessionIdentifier + ";disposable";
 
             String disposableKey = DISPOSABLE_SESSION_KEY_PREFIX + ";" + disposablePoolSessionUserId;
             Session session = (Session) requestContext.getAttribute(disposableKey);
@@ -523,16 +529,58 @@ public class BeanUtils {
         }
     }
 
+
     /**
-     * 
+     * @deprecated use {@link #getQuerySession(org.hippoecm.hst.core.request.HstRequestContext, String)} instead
+     */
+    @Deprecated
+    public static Session getDisposablePoolSession(HstRequestContext requestContext, String sessionIdentifier) throws HstComponentException {
+        return getQuerySession(requestContext, sessionIdentifier);
+    }
+
+    public static Session getPreviewCmsQuerySession(HstRequestContext requestContext, String sessionIdentifier) throws HstComponentException {
+        try {
+            SessionSecurityDelegation sessionSecurityDelegation = HstServices.getComponentManager().getComponent(SessionSecurityDelegation.class.getName());
+            if (!sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
+                log.debug("Security Delegation was expected to be enabled for cms request with non proxied session but it was not enabled. " +
+                        "Return session from request context instead of new security delegated one");
+                return requestContext.getSession(true);
+
+            }
+            HttpSession httpSession = requestContext.getServletRequest().getSession(false);
+            if (httpSession == null) {
+                throw new IllegalStateException("HttpSession should not be null for cms requests");
+            }
+            Credentials cmsUserCred = (Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+            if (cmsUserCred == null) {
+                throw new IllegalStateException("HttpSession should contain cms user credentials attribute for cms requests");
+            }
+            // create a security delegated session that is automatically cleaned up at the end of the request
+            return sessionSecurityDelegation.getOrCreatePreviewSecurityDelegate(cmsUserCred, sessionIdentifier);
+        } catch (RepositoryException e) {
+            throw new HstComponentException(e);
+        }
+    }
+
+    /**
+     *
      * @param hstRequest the current {@link HstRequest}
-     * @param disposablePoolIdentifier the identifier for this disposable pool. It is not allowed to be empty or <code>null</code>  
+     * @param sessionIdentifier the identifier for this disposable pool session or for the session security delegate.
+     *                          It is not allowed to be empty or <code>null</code>
      * @return a jcr {@link Session} from a disposable pool
      * @throws HstComponentException
      * @see {@link #getDisposablePoolSession(org.hippoecm.hst.core.request.HstRequestContext, String)}
      */
-    public static Session getDisposablePoolSession(HstRequest hstRequest, String disposablePoolIdentifier) throws HstComponentException {
-        return getDisposablePoolSession(hstRequest.getRequestContext(), disposablePoolIdentifier);
+    public static Session getQuerySession(HstRequest hstRequest, String sessionIdentifier) throws HstComponentException {
+        return getQuerySession(hstRequest.getRequestContext(), sessionIdentifier);
+    }
+
+    /**
+     * @deprecated use {@link #getQuerySession(org.hippoecm.hst.core.component.HstRequest, String)} instead
+     */
+    @Deprecated
+    public static Session getDisposablePoolSession(HstRequest hstRequest, String sessionIdentifier) throws HstComponentException {
+        return getDisposablePoolSession(hstRequest.getRequestContext(), sessionIdentifier);
     }
 
     private static String getCredentialsDomainSeparator() {

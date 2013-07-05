@@ -17,9 +17,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-  
+
   <bean id="javax.jcr.Credentials.default" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="admin@default" />
+    <constructor-arg value="admin" />
+  </bean>
+
+  <bean id="javax.jcr.Credentials.default.delegating" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="admin" />
     <constructor-arg value="admin" />
   </bean>
   
@@ -28,7 +33,7 @@
     <constructor-arg value="admin" />
   </bean>
 
-  <bean id="javax.jcr.Credentials.cmspreview" class="javax.jcr.SimpleCredentials">
+  <bean id="javax.jcr.Credentials.preview.delegating" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="admin" />
     <constructor-arg value="admin" />
   </bean>
@@ -41,11 +46,6 @@
   <bean id="javax.jcr.Credentials.hstconfigreader" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}"/>
     <constructor-arg value="${hstconfigreader.repository.password}"/>
-  </bean>
-  
-  
-  <!-- SSO cms non-pooling delegating repository -->
-  <bean id="javax.jcr.Repository.cms" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
   </bean>
   
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">
@@ -157,6 +157,14 @@
   <!-- Subject based non-pooling delegating repository -->
   <bean id="javax.jcr.Repository.subjectBased" class="org.hippoecm.hst.core.jcr.SubjectBasedRepository">
     <constructor-arg ref="javax.jcr.Repository.delegating" />
+  </bean>
+
+
+  <bean id="org.hippoecm.hst.core.jcr.SessionSecurityDelegation" class="org.hippoecm.hst.core.jcr.SessionSecurityDelegationImpl">
+    <property name="securityDelegationEnabled" value="${cms.preview.security.delegation.enabled}"/>
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+    <property name="previewCredentials" ref="javax.jcr.Credentials.preview.delegating"/>
+    <property name="liveCredentials" ref="javax.jcr.Credentials.default.delegating"/>
   </bean>
   
 </beans>

@@ -22,13 +22,20 @@
     <constructor-arg value="${default.repository.user.name}${repository.pool.user.name.separator}${default.repository.pool.name}"/>
     <constructor-arg value="${default.repository.password}"/>
   </bean>
+
+ <!-- default cred that can be used in delegating repository -->
+  <bean id="javax.jcr.Credentials.default.delegating" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="${default.repository.user.name}"/>
+    <constructor-arg value="${default.repository.password}"/>
+  </bean>
   
   <bean id="javax.jcr.Credentials.preview" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${preview.repository.user.name}${repository.pool.user.name.separator}${preview.repository.pool.name}"/>
     <constructor-arg value="${preview.repository.password}"/>
   </bean>
 
-  <bean id="javax.jcr.Credentials.cmspreview" class="javax.jcr.SimpleCredentials">
+  <!-- preview cred that can be used in delegating repository -->
+  <bean id="javax.jcr.Credentials.preview.delegating" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="${preview.repository.user.name}"/>
     <constructor-arg value="${preview.repository.password}"/>
   </bean>
@@ -249,10 +256,13 @@
     <constructor-arg ref="javax.jcr.Repository.delegating" />
     <property name="logoutOnSessionUnbound" value="true" />
   </bean>
-  
-  <!-- SSO cms non-pooling delegating repository -->
-  <bean id="javax.jcr.Repository.cms" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
-    <constructor-arg value="${default.repository.address}" />
+
+
+  <bean id="org.hippoecm.hst.core.jcr.SessionSecurityDelegation" class="org.hippoecm.hst.core.jcr.SessionSecurityDelegationImpl">
+    <property name="securityDelegationEnabled" value="${cms.preview.security.delegation.enabled}"/>
+    <property name="repository" ref="javax.jcr.Repository.delegating"/>
+    <property name="previewCredentials" ref="javax.jcr.Credentials.preview.delegating"/>
+    <property name="liveCredentials" ref="javax.jcr.Credentials.default.delegating"/>
   </bean>
-  
+
 </beans>

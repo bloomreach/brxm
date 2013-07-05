@@ -173,6 +173,7 @@ api/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerListener.java
 api/src/main/java/org/hippoecm/hst/core/jcr/GenericEventListener.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/LazySession.java -text
 api/src/main/java/org/hippoecm/hst/core/jcr/RuntimeRepositoryException.java -text
+api/src/main/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegation.java -text
 api/src/main/java/org/hippoecm/hst/core/jcr/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/JcrRepositoryProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/jcr/pool/MultipleRepository.java svneol=native#text/plain
@@ -567,6 +568,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessio
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositorySessionsRefreshEventListener.java -text
+components/core/src/main/java/org/hippoecm/hst/core/jcr/SessionSecurityDelegationImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/SubjectBasedRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/linking/CompositeList.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/DefaultHstLinkCreator.java svneol=native#text/plain

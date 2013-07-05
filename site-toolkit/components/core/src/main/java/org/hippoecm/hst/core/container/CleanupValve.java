@@ -24,6 +24,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 
 /**
  * CleanupValve
@@ -31,12 +32,16 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 public class CleanupValve extends AbstractBaseOrderableValve {
 
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
+    protected SessionSecurityDelegation sessionSecurityDelegation;
 
     public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
         this.resourceLifecycleManagements = resourceLifecycleManagements;
     }
-    
-    
+
+    public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
+        this.sessionSecurityDelegation = sessionSecurityDelegation;
+    }
+
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
@@ -62,7 +67,11 @@ public class CleanupValve extends AbstractBaseOrderableValve {
         if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
             getRequestContextComponent().release(requestContext);
         }
-        
+
+        if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
+            sessionSecurityDelegation.cleanupSessionDelegates(requestContext);
+        }
+
         // continue
         context.invokeNext();
     }
