@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 /**
  * @description
  * <p>
@@ -119,7 +120,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     });
                     this._w.clear();
 
-                    for (index = todo.length - 1; index >= 0; index--) {
+                    for (index = 0; index < todo.length; index++) {
                         e = todo[index];
                         k = e.k;
                         v = e.v;
@@ -147,9 +148,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             handleExpandCollapse : function(element) {
+                var unit, layout, layoutId, wireframe, position, unitCfg;
                 while (true) {
-                    var unit, layout, layoutId, wireframe, position, unitCfg;
-
                     unit = this.findLayoutUnit(element);
                     if (unit === null) {
                         return;
@@ -196,16 +196,15 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             cleanupWireframes : function() {
-                var remove, bodyEl, i, len;
-
+                var remove, i;
                 remove = [];
                 this.wireframes.forEach(this, function(key, value){
-                    bodyEl = HippoDom.resolveElement(key);
+                    var bodyEl = HippoDom.resolveElement(key);
                     if (bodyEl === null) {
                         remove.push(key);
                     }
                 });
-                for (i = 0, len = remove.length; i < len; i++) {
+                for (i = 0; i < remove.length; i++) {
                     if (this.wireframes.containsKey(remove[i])) {
                         this.cleanup(remove[i]);
                     }
@@ -390,7 +389,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             onLayoutResize: function() {
-                var values, i, len;
+                var values, i;
                 if (this.layoutInitialized) {
                     try {
                         this.storeDimensions();
@@ -398,7 +397,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                     }
                 }
                 values = this.children.valueSet();
-                for (i = 0, len = values.length; i < len; i++) {
+                for (i = 0; i < values.length; i++) {
                     values[i].resize();
                 }
             },
@@ -465,6 +464,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             readDimension : function(pos) {
                 var val, ar;
+
                 val = YAHOO.util.Cookie.getSub(this.DIM_COOKIE, this.name + ':' + pos);
                 if(val === null) {
                     return false;

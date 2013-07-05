@@ -38,7 +38,6 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.core.request.handler.BookmarkablePageRequestHandler;
-import org.apache.wicket.core.request.handler.IPageRequestHandler;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
@@ -55,7 +54,6 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.component.IRequestablePage;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.render.PageRenderer;
 import org.apache.wicket.request.handler.render.WebPageRenderer;
@@ -379,20 +377,6 @@ public class Main extends PluginApplication {
             }
         });
 
-        getRequestCycleListeners().add(new AbstractRequestCycleListener() {
-
-            @Override
-            public void onRequestHandlerResolved(final RequestCycle cycle, final IRequestHandler handler) {
-                if (handler instanceof IPageRequestHandler) {
-                    Page page = (Page) ((IPageRequestHandler) handler).getPage();
-                    if (page instanceof Home) {
-                        ((Home) page).processEvents();
-                    }
-                }
-            }
-
-        });
-
         setPageRendererProvider(new IPageRendererProvider() {
 
             @Override
@@ -405,7 +389,9 @@ public class Main extends PluginApplication {
                         if (scheduled == null) {
                             IRequestablePage page = getPage();
                             if (page instanceof Home) {
-                                ((Home) page).render(null);
+                                Home home = (Home) page;
+                                home.processEvents();
+                                home.render(null);
                             }
                         }
                         return super.renderPage(targetUrl, requestCycle);

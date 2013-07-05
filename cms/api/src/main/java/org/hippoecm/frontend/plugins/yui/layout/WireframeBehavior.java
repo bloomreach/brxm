@@ -140,11 +140,20 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
     }
 
     @Override
+    public boolean isRendered() {
+        return rendered;
+    }
+
+    @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(new IHeaderContributor() {
             @Override
             public void renderHead(final IHeaderResponse response) {
+                if (rendered) {
+                    return;
+                }
+
                 final String markupId = getComponent().getMarkupId(true);
 
                 updateAjaxSettings();
@@ -227,7 +236,7 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
             @Override
             public Iterable<? extends HeaderItem> getDependencies() {
                 IWireframe wireframe = getParentWireframe();
-                if (wireframe != null) {
+                if (wireframe != null && !wireframe.isRendered()) {
                     return Arrays.asList(wireframe.getHeaderItem());
                 }
                 return super.getDependencies();

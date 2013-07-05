@@ -76,6 +76,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
                 
                 this.resizeEvent = new YAHOO.util.CustomEvent('rootResizeEvent');
+                Wicket.Event.subscribe('/ajax/call/success', Wicket.bind(this.render, this));
             },
             
             /** 
@@ -213,14 +214,14 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             
             cleanup : function(id) {
                 var wireframe = this.wireframes.remove(id);
-                if(wireframe.parent !== null && wireframe.parent !== undefined) {
+                if(wireframe.parent !== null) {
                     wireframe.parent.removeChild(wireframe);
                 }
                 wireframe.children.forEach(this, function(k, v) {
                     this.cleanup(k);
                 });
                 wireframe.children.clear();
-                if (wireframe.layout !== null && wireframe.layout !== undefined) {
+                if (wireframe.layout !== null) {
                     wireframe.layout.destroy();
                 }
             },
@@ -342,7 +343,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             unregisterRenderListener : function (el, obj) {
                 var layoutUnit = this.findLayoutUnit(el);
-                if (layoutUnit === null || layoutUnit === undefined) {
+                if (layoutUnit === null) {
                     YAHOO.log('Unable to find ancestor layoutUnit for element[@id=' + el.id + ', can not unregister render event', 'error', 'LayoutManager');
                     return false;
                 }
@@ -352,7 +353,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             unregisterEventListener : function (evt, target, obj) {
                 var oid = obj['SubcribeId' + evt],
                     set = target[evt + 'CustomEventSubscribers'];
-                if (set !== null && set !== undefined && set.containsKey(oid)) {
+                if (set !== null && set.containsKey(oid)) {
                     set.remove(oid);
                     return true;
                 }
@@ -361,7 +362,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             findLayoutUnit : function(el) {
                 el = this._findUnitElement(el);
-                if (el !== null && el !== undefined) {
+                if (el !== null) {
                     return YAHOO.widget.LayoutUnit.getLayoutUnitById(el.id);
                 }
                 return null;
@@ -441,7 +442,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             resize : function() {
-                if (this.layout !== null && this.layout !== undefined) {
+                if(this.layout !== null) {
                     this.layout.resize();
                 }
                 if(this.unitExpanded) {
@@ -473,13 +474,13 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             storeDimensions : function() {
                 var i, len;
 
-                if (this.unitExpanded !== null && this.unitExpanded !== undefined) {
+                if (this.unitExpanded !== null) {
                     //Don't store expanded dimensions
                     return;
                 }
                 YAHOO.log('Store dimensions for: ' + this.name, 'info', 'Wireframe');
 
-                for (i = 0, len = this.config.units.length; i < len; i++) {
+                for (i = 0, len = this.config.units.length; i < len; ++i) {
                     if (this.config.units[i].position !== 'center') {
                         this.storeDimension(this.config.units[i]);
                     }

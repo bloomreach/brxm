@@ -131,7 +131,9 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
     public void respond(final IRequestCycle requestCycle) {
         IRequestablePage page = upstream.getPage();
         if ((page instanceof Home)) {
-            ((Home) page).render(this);
+            final Home home = (Home) page;
+            home.processEvents();
+            home.render(this);
         }
         upstream.respond(requestCycle);
     }

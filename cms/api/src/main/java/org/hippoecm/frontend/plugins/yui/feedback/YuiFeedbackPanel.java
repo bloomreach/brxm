@@ -76,11 +76,11 @@ public class YuiFeedbackPanel extends Panel {
                     if (feedback.anyMessage()) {
                         return "YAHOO.hippo.FeedbackManager.delayedHide(\"" + feedback.getMarkupId() + "\", 4000);";
                     }
-                    return "";
+                    return ";";
                 }
             });
 
         }
-    };
+    }
 
 }

@@ -51,6 +51,7 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
 
     private PageLayoutSettings settings;
     private HippoTextTemplate template;
+    private boolean rendered = false;
 
     public PageLayoutBehavior(final PageLayoutSettings settings) {
         this.settings = settings;
@@ -77,16 +78,29 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
         };
     }
 
+    //Implement IWireframeService
+    public YuiId getYuiId() {
+        return settings.getRootId();
+    }
+
+    @Override
+    public boolean isRendered() {
+        return rendered;
+    }
+
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(new IHeaderContributor() {
             @Override
             public void renderHead(final IHeaderResponse response) {
+                if (rendered) {
+                    return;
+                }
                 response.render(getHeaderItem());
+                rendered = true;
             }
         });
-        context.addOnDomLoad("YAHOO.hippo.LayoutManager.render()");
     }
 
     @Override
@@ -128,11 +142,6 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
                 return Arrays.asList(getId());
             }
         };
-    }
-
-    //Implement IWireframeService
-    public YuiId getYuiId() {
-        return settings.getRootId();
     }
 
 }
