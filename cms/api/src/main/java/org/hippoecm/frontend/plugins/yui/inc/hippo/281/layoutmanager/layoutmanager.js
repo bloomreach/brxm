@@ -60,7 +60,6 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         YAHOO.hippo.LayoutManagerImpl.prototype = {
             root            : null,
             wireframes      : new YAHOO.hippo.HashMap(),
-            _w              : new YAHOO.hippo.HashMap(),
             throttler       : new Wicket.Throttler(true),
             throttleDelay   : 0,
             resizeEvent     : null,
@@ -76,6 +75,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 }
 
                 this.resizeEvent = new YAHOO.util.CustomEvent('rootResizeEvent');
+                Wicket.Event.subscribe('/ajax/call/success', Wicket.bind(this.render, this));
             },
 
             /**
@@ -105,46 +105,18 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
 
             render : function() {
-                try {
-                    this.cleanupWireframes();
-                } finally{
-                    this.renderWireframes();
-                }
-            },
-
-            renderWireframes : function() {
-                var todo = [], index, e, k, v, o;
-                if (this.root !== null) {
-                    this._w.forEach(this, function(k, v) {
-                        todo.push({k: k, v: v});
-                    });
-                    this._w.clear();
-
-                    for (index = 0; index < todo.length; index++) {
-                        e = todo[index];
-                        k = e.k;
-                        v = e.v;
-                        o = new v.clazz(k, v.config, this);
-                        this.wireframes.put(k, o);
-                        o.render();
-                    }
-                }
+                this.cleanupWireframes();
             },
 
             addRoot : function(id, Clazz, config) {
                 this.root = new Clazz(id, config, this);
                 this.root.render();
-                this.renderWireframes();
             },
 
             addWireframe : function(id, clazz, config) {
-                //TODO: cleanup wireframes will be replaced
-                var o = {
-                        id: id,
-                        clazz: clazz,
-                        config: config
-                };
-                this._w.put(id, o);
+                var object = new clazz(id, config, this);
+                this.wireframes.put(id, object);
+                object.render();
             },
 
             handleExpandCollapse : function(element) {

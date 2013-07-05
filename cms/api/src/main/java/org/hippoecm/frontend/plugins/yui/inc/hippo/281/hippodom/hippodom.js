@@ -50,6 +50,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
                         var value, childNodes, i, len;
                         try {
                             value = node.getAttribute("yui:id", 2);
+
                             if (value && value === yuiId) {
                                 children[children.length] = node;
                                 return;
@@ -89,8 +90,8 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.isValidChildNode = function(node) {
-            if (node.nodeType === 1 && (node.prefix === null || node.prefix === undefined || node.prefix === 'html')
-                    && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
+            if (node.nodeType === 1 && (node.prefix === null || node.prefix === 'html')
+                    && (!node.getAttribute("id") || node.getAttribute("yui:id") || node.localName.indexOf('wicket:') === 0)) {
                 return true;
             }
             return false;

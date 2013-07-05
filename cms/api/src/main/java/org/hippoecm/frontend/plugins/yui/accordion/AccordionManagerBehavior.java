@@ -15,7 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.yui.accordion;
 
+import java.util.Arrays;
+
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -57,9 +60,54 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
                 if (parent != null) {
                     response.render(parent.getHeaderItem());
                 }
-                response.render(OnDomReadyHeaderItem.forScript(template.getString()));
+                response.render(getHeaderItem());
             }
         });
+    }
+
+    public HeaderItem getHeaderItem() {
+        return new OnDomReadyHeaderItem("not-empty") {
+
+            private String getId() {
+                return getComponent().getMarkupId(true) + "-accordion-behavior";
+            }
+
+            @Override
+            public Iterable<?> getRenderTokens() {
+                return Arrays.asList(getId());
+            }
+
+            @Override
+            public Iterable<? extends HeaderItem> getDependencies() {
+                IWireframe wireframe = WireframeUtils.getParentWireframe(getComponent());
+                if (wireframe != null && !wireframe.isRendered()) {
+                    return Arrays.asList(wireframe.getHeaderItem());
+                }
+                return super.getDependencies();
+            }
+
+            @Override
+            public int hashCode() {
+                return getId().hashCode();
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (obj == this) {
+                    return true;
+                }
+                if (obj instanceof OnDomReadyHeaderItem) {
+                    return getRenderTokens().equals(((OnDomReadyHeaderItem) obj).getRenderTokens());
+                }
+                return false;
+            }
+
+            @Override
+            public CharSequence getJavaScript() {
+                return template.getString();
+            }
+
+        };
     }
 
 }
