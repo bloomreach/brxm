@@ -1189,6 +1189,17 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testDelegatedSessionConcatenatesUserIDs() throws RepositoryException {
+        final Session adminSession = userSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+        Session extendedSession = ((HippoSession) userSession).createSecurityDelegate(adminSession);
+
+        assertEquals("admin," + TEST_USER_ID, extendedSession.getUserID());
+
+        extendedSession.logout();
+        adminSession.logout();
+    }
+
+    @Test
     public void testDelegatedSessionWithoutDomainRuleExtensions() throws RepositoryException {
         final Session adminSession = userSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
         Session extendedSession = ((HippoSession) userSession).createSecurityDelegate(adminSession);

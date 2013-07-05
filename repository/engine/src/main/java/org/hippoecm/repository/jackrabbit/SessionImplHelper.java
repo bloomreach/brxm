@@ -24,8 +24,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,6 +50,7 @@ import javax.jcr.security.Privilege;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
@@ -327,21 +332,33 @@ abstract class SessionImplHelper {
      * the first principal it can find, which can lead to strange "usernames"
      */
     protected void setUserId() {
+        List<Principal> idPrincipals = new LinkedList<Principal>();
         if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(SystemPrincipal.class).iterator().next();
-            userId = principal.getName();
-        } else if (!subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).isEmpty()) {
+            idPrincipals.add(principal);
+        }
+        if (!subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).iterator().next();
-            userId = principal.getName();
-        } else if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
+            idPrincipals.add(principal);
+        }
+        if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(AdminPrincipal.class).iterator().next();
-            userId = principal.getName();
-        } else if (!subject.getPrincipals(UserPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(UserPrincipal.class).iterator().next();
-            userId = principal.getName();
-        } else if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
+            idPrincipals.add(principal);
+        }
+        if (!subject.getPrincipals(UserPrincipal.class).isEmpty()) {
+            final Set<UserPrincipal> userPrincipals = subject.getPrincipals(UserPrincipal.class);
+            idPrincipals.addAll(userPrincipals);
+        }
+        if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(AnonymousPrincipal.class).iterator().next();
-            userId = principal.getName();
+            idPrincipals.add(principal);
+        }
+        if (idPrincipals.size() > 0) {
+            SortedSet<String> names = new TreeSet<String>();
+            for (Principal principal : idPrincipals) {
+                names.add(principal.getName());
+            }
+            userId = StringUtils.join(names, ',');
         } else {
             userId = "Unknown";
         }
