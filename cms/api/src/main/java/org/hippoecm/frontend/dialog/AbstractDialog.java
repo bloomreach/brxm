@@ -41,7 +41,6 @@ import org.apache.wicket.markup.Markup;
 import org.apache.wicket.markup.MarkupException;
 import org.apache.wicket.markup.MarkupFactory;
 import org.apache.wicket.markup.MarkupNotFoundException;
-import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -133,38 +132,30 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
         // used for markup inheritance (<wicket:extend />)
         @Override
-        public MarkupStream getAssociatedMarkupStream(final boolean throwException) {
+        public Markup getAssociatedMarkup() {
             try {
                 Markup markup = MarkupFactory.get().getMarkup(AbstractDialog.this, false);
-                if (markup != null) {
-                    return new MarkupStream(markup);
+
+                // If we found markup for this container
+                if ((markup != null) && (markup != Markup.NO_MARKUP)) {
+                    return markup;
                 }
-                if (throwException) {
-                    // throw exception since there is no associated markup
-                    throw new MarkupNotFoundException(
-                            "Markup of type '" +
-                                    getMarkupType().getExtension() +
-                                    "' for component '" +
-                                    getClass().getName() +
-                                    "' not found." +
-                                    " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried.: " +
-                                    toString());
-                } else {
-                    return null;
-                }
+
+                return null;
             } catch (MarkupException ex) {
+                // re-throw it. The exception contains already all the information
+                // required.
+                throw ex;
+            } catch (MarkupNotFoundException ex) {
                 // re-throw it. The exception contains already all the information
                 // required.
                 throw ex;
             } catch (WicketRuntimeException ex) {
                 // throw exception since there is no associated markup
                 throw new MarkupNotFoundException(
-                        exceptionMessage("Markup of type '"
-                                + getMarkupType()
-                                + "' for component '"
-                                + AbstractDialog.this.getClass().getName()
-                                + "' not found."
-                                + " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
+                        exceptionMessage("Markup of type '" + getMarkupType().getExtension() +
+                                "' for component '" + getClass().getName() + "' not found." +
+                                " Enable debug messages for org.apache.wicket.util.resource to get a list of all filenames tried"),
                         ex);
             }
         }

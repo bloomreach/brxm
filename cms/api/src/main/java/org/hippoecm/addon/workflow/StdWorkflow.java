@@ -187,16 +187,19 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         if (dialog != null) {
             pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(dialog);
         } else {
+            Exception exception = null;
             try {
                 execute();
             } catch (WorkflowException ex) {
                 log.info("Workflow call failed", ex);
-                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(
-                        createResponseDialog(ex));
+                exception = ex;
             } catch (Exception ex) {
                 log.info("Workflow call failed", ex);
+                exception = ex;
+            }
+            if (exception != null && pluginContext != null) {
                 pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(
-                        createResponseDialog(ex));
+                        createResponseDialog(exception));
             }
         }
     }

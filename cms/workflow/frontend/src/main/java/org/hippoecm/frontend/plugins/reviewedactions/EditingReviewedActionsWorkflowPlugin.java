@@ -120,7 +120,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
         Feedback fb = new Feedback();
         feedbackContainer = (Fragment) fb.getFragment("text");
-        add(new Feedback());
+        add(fb);
     }
 
     public WorkflowDescriptorModel getModel() {

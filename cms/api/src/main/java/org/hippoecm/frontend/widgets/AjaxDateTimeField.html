@@ -17,7 +17,8 @@
 <wicket:panel>
   <span style="white-space: nowrap;">
     <input type="text" wicket:id="date" size="8" />
-    <input type="text" wicket:id="hours" size="2" class="time"/>&nbsp;:
+    <input type="text" wicket:id="hours" size="2" class="time"/>
+    <span wicket:id="hoursSeparator">&#160;:</span>
     <input type="text" wicket:id="minutes" size="2" class="time"/>
     <select wicket:id="amOrPmChoice"></select>
     <a wicket:id="today"><wicket:message key="set-to-current-date"></wicket:message></a>
