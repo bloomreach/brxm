@@ -18,9 +18,11 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.WicketTester;
@@ -94,29 +96,32 @@ public class TestSettings extends TestCase {
         public TestPage() {
             add(new WebAppBehavior(new WebAppSettings()));
 
-            IPluginConfig config = new JavaPluginConfig();
-            config.put("units", new String[] { "center", "top" });
-            config.put("top", "id=top,body=top-body");
-            config.put("center", "id=center-wrapper");
-            config.put("linked.with.parent", false);
-            wfSettings = new WireframeSettings(config);
-            add(new WireframeBehavior(wfSettings));
+            add(new WebMarkupContainer("container") {{
+                IPluginConfig config = new JavaPluginConfig();
+                config.put("units", new String[]{"center", "top"});
+                config.put("top", "id=top,body=top-body");
+                config.put("center", "id=center-wrapper");
+                config.put("linked.with.parent", false);
+                wfSettings = new WireframeSettings(config);
+                add(new WireframeBehavior(wfSettings));
 
-            Label panel;
-            add(panel = new TestLabel("label", "label1", new Model("test")));
-            panel.add(new UnitBehavior("center"));
+                Label panel;
+                add(panel = new TestLabel("label", "label1", Model.of("test")));
+                panel.add(new UnitBehavior("center"));
 
-            add(new Link("action") {
-                private static final long serialVersionUID = 1L;
+                add(new AjaxLink("action") {
+                    private static final long serialVersionUID = 1L;
 
-                @Override
-                public void onClick() {
-                    Label label = new TestLabel("label", "label2", new Model("testing 1 2 3"));
-                    label.add(new UnitBehavior("center"));
-                    TestPage.this.replace(label);
-                }
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        Label label = new TestLabel("label", "label2", Model.of("testing 1 2 3"));
+                        label.add(new UnitBehavior("center"));
+                        getParent().replace(label);
+                    }
 
-            });
+                });
+            }});
+
         }
 
         WireframeSettings getWireframeSettings() {
@@ -127,7 +132,7 @@ public class TestSettings extends TestCase {
     @Test
     public void testWireFrameSettings() {
         WicketTester tester = new WicketTester();
-        TestPage page = (TestPage) tester.startPage(TestPage.class);
+        TestPage page = tester.startPage(TestPage.class);
         WireframeSettings wfSettings = page.getWireframeSettings();
 
         JsonConfig jsonConfig = new JsonConfig();
@@ -144,21 +149,21 @@ public class TestSettings extends TestCase {
 
         JSONObject centerObject = unitMap.get("center");
         assertNotNull(centerObject);
-        assertTrue("center".equals(centerObject.get("position")));
-        assertTrue("id01:center-wrapper".equals(centerObject.get("id")));
-        assertTrue("label1".equals(centerObject.get("body")));
-        assertTrue(Boolean.FALSE.equals(centerObject.get("scroll")));
+        assertEquals("center", centerObject.get("position"));
+        assertEquals("container2:center-wrapper", centerObject.get("id"));
+        assertEquals("label1", centerObject.get("body"));
+        assertEquals(false, centerObject.get("scroll"));
 
         JSONObject topObject = unitMap.get("top");
-        assertTrue("id01:top".equals(topObject.get("id")));
-        assertTrue("id01:top-body".equals(topObject.get("body")));
+        assertEquals("container2:top", topObject.get("id"));
+        assertEquals("container2:top-body", topObject.get("body"));
     }
 
     @Test
     public void testUnitReplacement() {
         WicketTester tester = new WicketTester();
         tester.startPage(TestPage.class);
-        tester.clickLink("action");
+        tester.clickLink("container:action");
 
         TestPage page = (TestPage) tester.getLastRenderedPage();
         WireframeSettings wfSettings = page.getWireframeSettings();
@@ -178,7 +183,7 @@ public class TestSettings extends TestCase {
             }
         }
         assertNotNull(centerObject);
-        assertTrue("label2".equals(centerObject.get("body")));
+        assertEquals("label2", centerObject.get("body"));
     }
 
 }

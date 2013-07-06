@@ -145,6 +145,12 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
     }
 
     @Override
+    public void render(final AjaxRequestTarget target) {
+        rendered = false;
+        target.add(getComponent());
+    }
+
+    @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(new IHeaderContributor() {

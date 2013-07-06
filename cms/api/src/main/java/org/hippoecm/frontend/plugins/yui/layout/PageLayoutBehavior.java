@@ -89,6 +89,10 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
     }
 
     @Override
+    public void render(final AjaxRequestTarget target) {
+    }
+
+    @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
         context.addTemplate(new IHeaderContributor() {

@@ -42,4 +42,6 @@ public interface IWireframe extends Serializable {
     HeaderItem getHeaderItem();
 
     boolean isRendered();
+
+    void render(AjaxRequestTarget target);
 }

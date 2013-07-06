@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.AjaxRequestTarget.IListener;
@@ -58,22 +57,10 @@ public class UnitBehavior extends Behavior {
                     if (target.getPage() != component.findParent(Page.class)) {
                         return;
                     }
-                    MarkupContainer parent = component.getParent();
-                    boolean found = false;
-                    while (parent != null) {
-                        for (Behavior behavior : parent.getBehaviors()) {
-                            if (behavior instanceof IWireframe) {
-                                target.add(parent);
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found) {
-                            break;
-                        }
-                        parent = parent.getParent();
-                    }
-                    if (!found) {
+                    IWireframe wireframe = WireframeUtils.getParentWireframe(component);
+                    if (wireframe != null) {
+                        wireframe.render(target);
+                    } else {
                         log.warn("Unable to find parent wireframe-behavior");
                     }
                 }

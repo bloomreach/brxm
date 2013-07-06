@@ -113,8 +113,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
                 this.root.render();
             },
 
-            addWireframe : function(id, clazz, config) {
-                var object = new clazz(id, config, this);
+            addWireframe : function(id, Clazz, config) {
+                var object = new Clazz(id, config, this);
                 this.wireframes.put(id, object);
                 object.render();
             },
