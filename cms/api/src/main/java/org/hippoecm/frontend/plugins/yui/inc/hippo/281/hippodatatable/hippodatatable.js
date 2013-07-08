@@ -88,11 +88,13 @@ if (!YAHOO.hippo.DataTable) {
                 this._updateGecko(sizes, table, preserveScroll);
             },
 
+            /*
             update : function() {
                 var table = Dom.get(this.id),
                     un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
                 this.resize(un.getSizes(), true);
             },
+            */
 
             _updateGecko : function(sizes, table, preserveScroll) {
                 var thead, headers, tbody, bodyDiv, previousScrollTop, h, widthData, availableHeight;

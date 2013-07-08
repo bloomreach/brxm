@@ -147,7 +147,7 @@ CreateLink.prototype.prepareDialog = function()
     var config = this.editor.config;
     var callbackUrl = config.CreateLink.callbackUrl;
 
-    this.dialog = new ModalDialog(callbackUrl, CreateLink._pluginInfo.name, config.xinhaParamToken, this.editor);
+    this.dialog = new ModalDialog(callbackUrl, CreateLink._pluginInfo.name, this.editor);
     // Connect the OK button
     var self = this;
     this.dialog.onOk = function(values) {

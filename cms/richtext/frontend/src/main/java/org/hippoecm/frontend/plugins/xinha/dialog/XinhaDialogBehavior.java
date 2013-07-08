@@ -25,7 +25,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 
 public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
     private static final long serialVersionUID = 1L;
@@ -46,11 +45,9 @@ public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
     protected Map<String, String> getParameters() {
         Request request = RequestCycle.get().getRequest();
         HashMap<String, String> parameters = new HashMap<String, String>();
-        final IRequestParameters requestParameters = request.getRequestParameters();
+        final IRequestParameters requestParameters = request.getPostParameters();
         for (String key : requestParameters.getParameterNames()) {
-            if (key.startsWith(AbstractXinhaPlugin.XINHA_PARAM_PREFIX)) {
-                parameters.put(key.substring(AbstractXinhaPlugin.XINHA_PARAM_PREFIX.length()), requestParameters.getParameterValue(key).toString());
-            }
+            parameters.put(key, requestParameters.getParameterValue(key).toString());
         }
         return parameters;
     }

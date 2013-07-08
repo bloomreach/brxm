@@ -70,11 +70,11 @@ public abstract class AbstractXinhaDialog<T extends IPersisted> extends Abstract
     }
 
     protected String getCancelScript() {
-        return "if(openModalDialog != null){ openModalDialog.cancel(); }";
+        return "if(ModalDialog.current != null){ ModalDialog.current.cancel(); }";
     }
 
     protected String getCloseScript() {
-        return "if(openModalDialog != null){ openModalDialog.close(" + getModelObject().toJsString() + "); }";
+        return "if(ModalDialog.current != null){ ModalDialog.current.close(" + getModelObject().toJsString() + "); }";
     }
 
     @Override

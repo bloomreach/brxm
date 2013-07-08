@@ -74,8 +74,6 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
 
     static final Logger log = LoggerFactory.getLogger(AbstractXinhaPlugin.class);
 
-    public static final String XINHA_PARAM_PREFIX = "xinha-param-prefix-";
-
     private static final String[] defaultFormatBlock = { "h1", "h2", "h3", "h4", "h5", "h6", "p", "address", "pre" };
 
     private static final ResourceReference XINHA_MODAL_JS = new JavaScriptResourceReference(XinhaDialogBehavior.class,
@@ -459,8 +457,6 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
         private int height;
 
         public Configuration(IPluginConfig config) {
-            addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
-
             skin = config.getString(XINHA_SKIN);
             getHtmlMethod = config.getString(XINHA_GET_HTML_METHOD, "TransformInnerHTML");
             convertUrlsToLinks = config.getAsBoolean(XINHA_CONVERT_URLS_TO_LINKS, false);

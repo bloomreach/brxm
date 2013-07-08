@@ -15,7 +15,3 @@
  */
  
 YAHOO.hippo.DragDropManager.addDraggable('${id}', ${class}, ${config});
-
-//Below is an optimized dd-registration path but still slow on IE (factor 40-120)
-//FF&Webkit register about 500 dd-instances to elements in 900-1000 ms
-//YAHOO.hippo.DragDropManager.registerDraggable('${id}', ${class}, ${config});

@@ -67,39 +67,6 @@ if (!YAHOO.hippo.DragDropManager) {
                         + clazz, "info", "DragDropManager");
                 this._add(id, clazz, config, this.draggables);
             },
-            
-            /**
-             * Do smarter registration of draggables.
-             * Not in use for now because IE is slow
-             */
-            registerDraggable : function(id, ModelClass, config) {
-                var func, func2;
-
-                if (YAHOO.env.ua.ie > 0) {
-                    return; 
-                } 
-                
-                func = function() {
-                    var tbody, children, i, len, child, c;
-
-                    tbody = Dom.getElementBy(function(el) { return true; }, 'tbody', id);
-                    children = Dom.getChildren(tbody);
-                    for (i = 0, len = children.length; i < len; i++) {
-                        child = children[i];
-                        c = null;
-                        if (Lang.isArray(config.groups)) {
-                            c = new ModelClass(child.id, config.groups.shift(), config);
-                        } else {
-                            c = new ModelClass(child.id, null, config);
-                        }
-                        child.dd = c;
-                    }
-                };
-                func2 = function() {
-                    window.setTimeout(func, 10);
-                };
-                this.loader.registerFunction(func2);
-            },
 
             addDroppable : function(id, modelClass, config) {
                 var clazz = this.getClass(modelClass, YAHOO.util.DDTarget);

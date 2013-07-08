@@ -144,6 +144,7 @@ public class ButtonWrapper implements IClusterable {
                         for (Behavior behavior : button.getBehaviors()) {
                             ComponentTag tag = new ComponentTag("button", XmlTag.TagType.OPEN_CLOSE);
                             behavior.onComponentTag(button, tag);
+                            behavior.renderHead(button, target.getHeaderResponse());
 
                             for (Map.Entry<String, Object> entry : tag.getAttributes().entrySet()) {
                                 renderAttribute(target, entry.getKey(), entry.getValue());

@@ -131,7 +131,7 @@ CreateExternalLink.prototype.prepareDialog = function()
     var config = this.editor.config;
     var callbackUrl = config.CreateExternalLink.callbackUrl;
 
-    this.dialog = new ModalDialog(callbackUrl, CreateExternalLink._pluginInfo.name, config.xinhaParamToken, this.editor);
+    this.dialog = new ModalDialog(callbackUrl, CreateExternalLink._pluginInfo.name, this.editor);
     // Connect the OK button
     var self = this;
     this.dialog.onOk = function(values) {

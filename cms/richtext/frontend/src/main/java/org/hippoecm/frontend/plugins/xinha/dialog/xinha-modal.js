@@ -16,14 +16,13 @@
 
 /*global wicketAjaxGet, Xinha */
 (function () {
-    var openModalDialog = null, ModalDialog;
 
-    ModalDialog = function (url, plugin, token, editor) {
+    var ModalDialog;
+
+    ModalDialog = function (url, plugin, editor) {
+        this.plugin = plugin;
         this.editor = editor;
         this.callbackUrl = url;
-        this.callbackUrl += url.indexOf('?') > -1 ? "&" : "?";
-        this.callbackUrl += ('pluginName=' + encodeURIComponent(plugin));
-        this.token = token;
     };
 
     ModalDialog.prototype = {
@@ -32,27 +31,26 @@
 
         show: function (parameters) {
             this.saveState();
-            var url = this.callbackUrl, p;
-            for (p in parameters) {
-                if (parameters.hasOwnProperty(p)) {
-                    url += ('&' + this.token + p + '=' + encodeURIComponent(parameters[p]));
-                }
-            }
-            wicketAjaxGet(url, null, null, null);
-            openModalDialog = this;
+            var url = this.callbackUrl;
+            parameters.pluginName = this.plugin;
+            Wicket.Ajax.post({
+                u: url,
+                ep: parameters
+            });
+            ModalDialog.current = this;
         },
 
         close: function (values) {
             this.restoreState();
             this._values = values;
             this.onOk(values);
-            openModalDialog = null;
+            ModalDialog.current = this;
         },
 
         cancel: function () {
             this.restoreState();
             this.onCancel();
-            openModalDialog = null;
+            ModalDialog.current = null;
             this._values = null;
         },
 
