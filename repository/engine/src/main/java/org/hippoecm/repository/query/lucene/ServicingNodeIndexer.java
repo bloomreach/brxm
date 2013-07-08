@@ -165,9 +165,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
     protected void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) throws RepositoryException {
 
         switch (value.getType()) {
-        case PropertyType.BINARY:
-            // never facet;
-            break;
         case PropertyType.BOOLEAN:
             indexFacet(doc, fieldName, value.toString());
             break;
@@ -180,19 +177,12 @@ public class ServicingNodeIndexer extends NodeIndexer {
         case PropertyType.LONG:
             indexLongFacet(doc, fieldName, value.getLong());
             break;
-        case PropertyType.REFERENCE:
-            // never facet;
-            break;
-        case PropertyType.PATH:
-            // never facet;
-            break;
         case PropertyType.STRING:
             // never index uuid as facet
             if (!name.equals(NameConstants.JCR_UUID)) {
                 String str = value.toString();
                 if (str.length() > 255) {
-                    log
-                            .debug("truncating facet value because string length exceeds 255 chars. This is useless for facets");
+                    log.debug("truncating facet value because string length exceeds 255 chars. This is useless for facets");
                     str = str.substring(0, 255);
                 }
                 indexStringFacet(doc, fieldName, str);
@@ -213,7 +203,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
             }
             break;
         default:
-            throw new IllegalArgumentException("illegal internal value type");
+            // type cannot be a facet
+            log.debug("Can't create facet for type '{}'", PropertyType.nameFromValue(value.getType()));
+            break;
         }
     }
 
