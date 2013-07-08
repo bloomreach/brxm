@@ -277,7 +277,6 @@ client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringCompon
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/AbstractCmsRestTest.java -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/VirtualHost127001AugmentedTest.java -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.java -text
-client-modules/cms-rest/src/test/java/org/hippoecm/hst/container/RequestContextProviderSetter.java -text
 client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/AbstractCmsRestTest.xml -text
 client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/VirtualHost127001AugmentedTest.xml -text
 client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.xml -text

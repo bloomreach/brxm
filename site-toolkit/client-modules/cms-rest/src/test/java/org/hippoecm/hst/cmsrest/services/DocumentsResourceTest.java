@@ -20,8 +20,8 @@ import javax.jcr.Node;
 import org.hippoecm.hst.cmsrest.AbstractCmsRestTest;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.container.RequestContextProviderSetter;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -64,7 +64,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         String homePageDocument = "/unittestcontent/documents/unittestproject/common/homepage";
         Node homePageNode = session.getNode(homePageDocument);
         homePageNodeId = homePageNode.getIdentifier();
-        RequestContextProviderSetter.set(requestContext);
+        ModifiableRequestContextProvider.set(requestContext);
     }
     @Test
     public void testDocumentResourceGetURLIsFullyQualifiedSiteURLs() throws Exception {
