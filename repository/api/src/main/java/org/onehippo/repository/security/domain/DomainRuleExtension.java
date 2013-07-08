@@ -16,6 +16,8 @@
 package org.onehippo.repository.security.domain;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 public final class DomainRuleExtension {
 
@@ -26,7 +28,7 @@ public final class DomainRuleExtension {
     public DomainRuleExtension(final String domainName, final String domainRuleName, final Collection<FacetRule> facetRules) {
         this.domainName = domainName;
         this.domainRuleName = domainRuleName;
-        this.facetRules = facetRules;
+        this.facetRules = new HashSet<FacetRule>(facetRules);
     }
 
     public String getDomainName() {
@@ -38,7 +40,35 @@ public final class DomainRuleExtension {
     }
 
     public Collection<FacetRule> getFacetRules() {
-        return facetRules;
+        return Collections.unmodifiableCollection(facetRules);
     }
 
+    @Override
+    public int hashCode() {
+        return (domainName.hashCode() * 7) ^ (domainRuleName.hashCode() * 17) ^ facetRules.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof DomainRuleExtension)) {
+            return false;
+        }
+        DomainRuleExtension other = (DomainRuleExtension) obj;
+        return other.domainName.equals(domainName) && other.domainRuleName.equals(domainRuleName) && other.facetRules.equals(facetRules);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("DomainRuleExtension");
+        sb.append("(").append(domainName).append(':').append(domainRuleName).append(")");
+        sb.append(facetRules);
+        return sb.toString();
+    }
 }
