@@ -77,9 +77,6 @@ public final class FacetRule {
         return type;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("FacetRule");
@@ -95,9 +92,6 @@ public final class FacetRule {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -112,10 +106,13 @@ public final class FacetRule {
         return facet.equals(other.getFacet()) && value.equals(other.getValue()) && (equal == other.isEqual());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
-        return this.toString().hashCode();
+        int result = facet.hashCode();
+        result = 31 * result + value.hashCode();
+        result = 31 * result + (equal ? 1 : 0);
+        result = 31 * result + (optional ? 1 : 0);
+        result = 31 * result + type;
+        return result;
     }
 }

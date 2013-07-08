@@ -45,7 +45,10 @@ public final class DomainRuleExtension {
 
     @Override
     public int hashCode() {
-        return (domainName.hashCode() * 7) ^ (domainRuleName.hashCode() * 17) ^ facetRules.hashCode();
+        int result = domainName.hashCode();
+        result = 31 * result + domainRuleName.hashCode();
+        result = 31 * result + facetRules.hashCode();
+        return result;
     }
 
     @Override
