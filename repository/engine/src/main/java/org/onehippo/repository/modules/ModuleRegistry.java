@@ -28,12 +28,7 @@ import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 class ModuleRegistry {
-
-    private static final Logger log = LoggerFactory.getLogger(ModuleRegistry.class);
 
     private List<ModuleRegistration> registrations = new ArrayList<ModuleRegistration>();
 
@@ -54,6 +49,9 @@ class ModuleRegistry {
      * Implementation of the Kahn's topological sort algorithm as described at http://en.wikipedia.org/wiki/Topological_sorting
      */
     private List<ModuleRegistration> sortModules(final List<ModuleRegistration> regs) {
+        if (regs.size() <= 1) {
+            return regs;
+        }
         final List<ModuleRegistration> result = new ArrayList<ModuleRegistration>(regs.size());
         final Queue<ModuleRegistration> startNodes = new LinkedList<ModuleRegistration>();
         final List<Edge> edges = new LinkedList<Edge>();
@@ -98,16 +96,6 @@ class ModuleRegistry {
                     startNodes.add(dep);
                 }
             }
-        }
-        if (!edges.isEmpty()) {
-            StringBuilder buf = new StringBuilder();
-            for (Edge edge : edges) {
-                buf.append(edge.dependent.getModuleName() != null ? edge.dependent.getModuleName() : edge.dependent.getModuleClass());
-                buf.append(" requires ");
-                buf.append(edge.dependency.getModuleName() != null ? edge.dependency.getModuleName() : edge.dependency.getModuleClass());
-                buf.append('\n');
-            }
-            log.error("Circular dependency detected among modules: {}", buf);
         }
         return result;
     }
