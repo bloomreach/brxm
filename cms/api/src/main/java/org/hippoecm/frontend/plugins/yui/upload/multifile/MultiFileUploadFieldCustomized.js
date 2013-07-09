@@ -330,28 +330,20 @@ function MultiSelector(prefix, listId, listLabel, useMultipleAttr, deleteLabel, 
 
     };
 
-    this.getOnlyFileNames = function(inputElement)
-    {
-        if (inputElement.files && inputElement.files.length > 0)
-        {
-            var files = inputElement.files;
-            var retVal = "";
-            for (var i = 0; i < files.length; i++)
-            {
+    this.getOnlyFileNames = function(inputElement) {
+        if (inputElement.files && inputElement.files.length > 0) {
+            var files = inputElement.files, retVal = "", i;
+            for (i = 0; i < files.length; i++) {
                 retVal += this.getOnlyFileName(files[i].name) + '<br>';
             }
             return retVal.slice(0, retVal.length - 4);
         }
-        else
-        {
-            return this.getOnlyFileName(inputElement.value);
-        }
+        return this.getOnlyFileName(inputElement.value);
     };
 
-    this.getOnlyFileName = function(stringValue)
-    {
-        var separatorIndex1 = stringValue.lastIndexOf('\\');
-        var separatorIndex2 = stringValue.lastIndexOf('/');
+    this.getOnlyFileName = function(stringValue) {
+        var separatorIndex1 = stringValue.lastIndexOf('\\'),
+            separatorIndex2 = stringValue.lastIndexOf('/');
         separatorIndex1 = Math.max(separatorIndex1, separatorIndex2);
         return separatorIndex1 >= 0 ? stringValue.slice(separatorIndex1 + 1, stringValue.length) : stringValue;
     };
