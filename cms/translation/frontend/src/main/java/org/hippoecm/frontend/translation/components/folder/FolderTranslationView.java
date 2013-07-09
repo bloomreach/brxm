@@ -43,6 +43,7 @@ import org.hippoecm.frontend.translation.components.folder.service.SiblingLocato
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.tree.ExtAsyncTreeNode;
 import org.wicketstuff.js.ext.tree.ExtTreeLoader;
@@ -151,8 +152,15 @@ public final class FolderTranslationView extends ExtPanel {
     }
 
     @Override
-    public void renderHead(final IHeaderResponse response) {
+    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
+        if ("select-folder".equals(event)) {
+            return new ExtEventAjaxBehavior(POST_PARAM_T9ID);
+        }
+        return super.newExtEventBehavior(event);
+    }
 
+    @Override
+    public void renderHead(final IHeaderResponse response) {
         TranslationResources.getTranslationsHeaderContributor().renderHead(response);
         TranslationResources.getCountriesCss().renderHead(response);
 

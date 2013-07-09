@@ -219,7 +219,9 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     @Override
     public void render(final PluginRequestTarget target) {
         super.render(target);
-        tree.updateTree();
+        if (target != null) {
+            tree.updateTree();
+        }
     }
 
     private String getUpdaterTitle() {

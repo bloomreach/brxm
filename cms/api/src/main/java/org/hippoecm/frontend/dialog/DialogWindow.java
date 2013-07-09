@@ -24,7 +24,6 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -171,16 +170,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (!super.isShown()) {
             getContent().setVisible(true);
             target.add(this);
-        }
-    }
-
-    /**
-     * @see org.apache.wicket.markup.html.panel.Panel#renderHead(org.apache.wicket.markup.html.internal.HtmlHeaderContainer)
-     */
-    public void renderHead(HtmlHeaderContainer container) {
-        super.renderHead(container);
-        if (super.isShown()) {
-            container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(getWindowOpenJavaScript()));
+            target.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(getWindowOpenJavaScript()));
         }
     }
 
