@@ -91,7 +91,7 @@
             this.removeAll();
 
             var loadVariantTabs = function() {
-                var futures, activeTab;
+                var futures, activeTab, callback;
 
                 this._initTabs();
                 this.adjustBodyWidth(this.tabWidth);
@@ -108,11 +108,13 @@
                     futures.push(item.load());
                 }, this);
 
-                Hippo.Future.join(futures).when(function() {
+                callback = function() {
                     this.endUpdate();
-                }.createDelegate(this)).otherwise(function() {
-                    this.endUpdate();
-                }.createDelegate(this));
+                    var propertiesFormHeight = new Ext.Element(Ext.query('.templateComposerPropertiesForm')[0]).getHeight();
+                    Ext.getCmp('componentPropertiesWindow').setHeight(propertiesFormHeight+50);
+                }.createDelegate(this);
+
+                Hippo.Future.join(futures).when(callback).otherwise(callback);
             }.createDelegate(this);
 
             if (typeof(this.variantsUuid) === 'undefined' || this.variantsUuid === null) {
