@@ -60,7 +60,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private static String FORMDATA_QUERY = "SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC";
 
     private String cronExpression;
-    private long minutesToLive;
+    private long minutesToLive = -1l;
     private String excludePaths = "";
     private RepositoryJobInfo jobInfo;
     private String schedulerJobName = "FormDataCleanup";
@@ -86,7 +86,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
-        minutesToLive = JcrUtils.getLongProperty(moduleConfig, CONFIG_MINUTES_TO_LIVE_PROPERTY, 30l);
+        minutesToLive = JcrUtils.getLongProperty(moduleConfig, CONFIG_MINUTES_TO_LIVE_PROPERTY, -1l);
         if (moduleConfig.hasProperty(CONFIG_EXCLUDE_PATHS)) {
             StringBuilder buf = new StringBuilder();
             Value[] values = moduleConfig.getProperty(CONFIG_EXCLUDE_PATHS).getValues();
@@ -135,7 +135,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     }
 
     private void scheduleJob() throws RepositoryException {
-        if (cronExpression == null) {
+        if (cronExpression == null || minutesToLive == -1) {
             return;
         }
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
