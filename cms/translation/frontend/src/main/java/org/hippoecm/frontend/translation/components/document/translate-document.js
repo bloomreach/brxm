@@ -108,6 +108,7 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
             xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), async);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.setRequestHeader('Wicket-Ajax', "true");
+            xhr.setRequestHeader('Wicket-Ajax-BaseURL', Wicket.Ajax.baseUrl);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     handleResponse();
