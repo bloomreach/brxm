@@ -56,10 +56,6 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
 
             @Override
             public void renderHead(final IHeaderResponse response) {
-                IWireframe parent = WireframeUtils.getParentWireframe(getComponent());
-                if (parent != null) {
-                    response.render(parent.getHeaderItem());
-                }
                 response.render(getHeaderItem());
             }
         });
