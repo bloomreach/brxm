@@ -76,7 +76,7 @@ public class TestHeadElementUtils {
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
         assertEquals("<script language=\"javascript\"><![CDATA[ ]]></script>", sw.toString());
     }
-    
+
     @Test
     public void testScriptContributionInCDATASection() throws Exception {
         HeadElement headElem = new HeadElementImpl("script");
@@ -142,4 +142,17 @@ public class TestHeadElementUtils {
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, true);
         assertEquals("<style>\n/*<![CDATA[*/\nbody { background-color: red }\n/*]]>*/\n</style>", sw.toString());
     }
+
+
+    @Test
+    public void testAttributesAccordingInsertionOrder() throws Exception {
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
+        headElem.setAttribute("type", "text/javascript");
+        headElem.setAttribute("src", "test.js");
+        StringWriter sw = new StringWriter();
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
+        assertEquals("<script language=\"javascript\" type=\"text/javascript\" src=\"test.js\"></script>", sw.toString());
+    }
+
 }

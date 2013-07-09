@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.w3c.dom.Attr;
@@ -124,7 +125,7 @@ public class HeadElementImpl implements HeadElement
     public Map<String, String> getAttributeMap()
     {
         if (attributes == null) {
-            attributes = new HashMap<String, String>();
+            return Collections.emptyMap();
         }
         
         return Collections.unmodifiableMap(attributes);
@@ -132,7 +133,7 @@ public class HeadElementImpl implements HeadElement
     
     public void setAttribute(String name, String value) {
         if (attributes == null) {
-            attributes = new HashMap<String, String>();
+            attributes = new LinkedHashMap<String, String>();
         }
         
         attributes.put(name, value);
@@ -178,7 +179,7 @@ public class HeadElementImpl implements HeadElement
         HeadElementImpl cloned = (HeadElementImpl) super.clone();
         
         cloned.tagName = tagName;
-        cloned.attributes = new HashMap<String, String>(attributes);
+        cloned.attributes = new LinkedHashMap<String, String>(attributes);
         cloned.textContent = textContent;
         
         if (childHeadElements != null) {
