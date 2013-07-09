@@ -102,7 +102,7 @@ public class MultiFileUploadComponent extends Panel {
         private static final String DELETE = "org.apache.wicket.mfu.delete";
 
         public UploadField(final String id, final IModel<? extends Collection<FileUpload>> model) {
-            super(id, model, settings.getMaxNumberOfFiles());
+            super(id, model, settings.getMaxNumberOfFiles(), settings.isUseMultipleAttr());
 
             WebMarkupContainer container = (WebMarkupContainer) get("container");
             container.replace(new Label("caption", new AbstractReadOnlyModel<String>() {
@@ -123,12 +123,11 @@ public class MultiFileUploadComponent extends Panel {
 
         @Override
         public void renderHead(IHeaderResponse response) {
-            response.render(JavaScriptHeaderItem.forReference(JS));
+            response.render(JavaScriptHeaderItem.forReference(MultiFileUploadComponent.JS));
 
             PackageTextTemplate template = new PackageTextTemplate(MultiFileUploadComponent.class, "createMultiSelector.tpl");
             response.render(OnDomReadyHeaderItem.forScript(template.asString(getSettingsAsMap())));
         }
-
 
         private Map<String,Object> getSettingsAsMap() {
             Map<String, Object> settingsAsMap = new HashMap<String, Object>();
@@ -142,6 +141,7 @@ public class MultiFileUploadComponent extends Panel {
             settingsAsMap.put("deleteLabel", getString(DELETE));
             settingsAsMap.put("listLabel", settings.getMaxNumberOfFiles() == 1 ?
                     getString(SELECTED_FILE) : getString(SELECTED_FILES));
+            settingsAsMap.put("useMultipleAttr", settings.isUseMultipleAttr());
 
             return settingsAsMap;
         }

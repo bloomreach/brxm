@@ -24,8 +24,9 @@
  *   2. Create a DIV for the output to be written to
  *      eg. <div id="files_list"></div>
  *
- *   3. Instantiate a MultiSelector object, passing in the DIV and an (optional) maximum number of files
- *      eg. var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 3 );
+ *   3. Instantiate a MultiSelector object, passing in the DIV and (optionally) the maximum number of files and a boolean
+ *      that specifies if the multiple attribute should be used.
+ *      eg. var multi_selector = new MultiSelector( document.getElementById( 'files_list' ), 3, true );
  *
  *   4. Add the first element
  *      eg. multi_selector.addElement( document.getElementById( 'first_file_element' ) );
@@ -52,6 +53,8 @@
  *         Shawn Parker & John Pennypacker -- http://www.fuzzycoconut.com
  *      [for duplicate name bug]
  *         'neal'
+ *      [for multiple HTML5 attribute use]
+ *         'Andrei Costescu'
  */
 
 /**
@@ -65,7 +68,7 @@
 
 /*global wicketSubmitForm, YAHOO*/
 
-function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
+function MultiSelector(prefix, listId, listLabel, useMultipleAttr, deleteLabel, maxNumberOfFiles,
                        submitAfterSelect, clearAfterSubmit) {
     "use strict";
 
@@ -83,6 +86,7 @@ function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
     this.list_container = null;
     this.selected_items = [];
     this.form = null;
+    this.useMultipleAttr = useMultipleAttr;
 
     this.delete_label = deleteLabel;
     this.listLabel = listLabel;
@@ -110,6 +114,15 @@ function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
                         break;
                     }
                     p = p.parentNode;
+                }
+            }
+
+            if (this.useMultipleAttr) {
+                element.multiple = this.useMultipleAttr;
+                if (Wicket.Browser.isOpera()) {
+                    // in Opera 12.02, changing 'multiple' this way does not update the field
+                    element.type = 'button';
+                    element.type = 'file';
                 }
             }
 
@@ -144,7 +157,7 @@ function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
                 } else {
                     // Workaround for issue CMS7-6415: IE8: Extra empty files...
                     if (YAHOO.env.ua.ie === '8') {
-                        filename = multiSelector.parseFilename(this.value);
+                        filename = multiSelector.getOnlyFileNames(this);
                         if (filename === '' || YAHOO.lang.trim(filename) === '') {
                             return;
                         }
@@ -243,7 +256,7 @@ function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
 
         // Set row value
         label = document.createElement("span");
-        label.innerHTML = this.parseFilename(element.value);
+        label.innerHTML = this.getOnlyFileNames(element);
         label.className = 'wicket-mfu-row-label';
         new_row.appendChild(label);
 
@@ -317,18 +330,30 @@ function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
 
     };
 
-    this.parseFilename = function(filename) {
-        if (YAHOO.env.ua.ie) {
-            //IE passes in the whole filepath, strip it.
-            var s = filename.split('\\');
-            if (s.length > 0) {
-                filename = s[s.length - 1];
+    this.getOnlyFileNames = function(inputElement)
+    {
+        if (inputElement.files && inputElement.files.length > 0)
+        {
+            var files = inputElement.files;
+            var retVal = "";
+            for (var i = 0; i < files.length; i++)
+            {
+                retVal += this.getOnlyFileName(files[i].name) + '<br>';
             }
+            return retVal.slice(0, retVal.length - 4);
         }
-        if (filename.length > this.maxLengthFilename) {
-            filename = filename.substr(filename.length - this.maxLengthFilename, this.maxLengthFilename);
+        else
+        {
+            return this.getOnlyFileName(inputElement.value);
         }
-        return filename;
+    };
+
+    this.getOnlyFileName = function(stringValue)
+    {
+        var separatorIndex1 = stringValue.lastIndexOf('\\');
+        var separatorIndex2 = stringValue.lastIndexOf('/');
+        separatorIndex1 = Math.max(separatorIndex1, separatorIndex2);
+        return separatorIndex1 >= 0 ? stringValue.slice(separatorIndex1 + 1, stringValue.length) : stringValue;
     };
 
 }

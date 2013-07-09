@@ -19,6 +19,7 @@
         '${inputName}',
         '${containerId}',
         '${listLabel}',
+        '${useMultipleAttr}',
         '${deleteLabel}',
         ${maxNumberOfFiles},
         ${submitAfterSelect},

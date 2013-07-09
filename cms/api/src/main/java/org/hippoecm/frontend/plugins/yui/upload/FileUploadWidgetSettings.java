@@ -50,6 +50,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     public static final String FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD = "fileupload.hideBrowseDuringUpload";
     public static final String FILEUPLOAD_CONCURRENT_UPLOADS = "fileupload.concurrentUploads";
     public static final String FILEUPLOAD_ALWAYS_SHOW_LABEL = "fileupload.alwaysShowLabel";
+    public static final String FILEUPLOAD_USE_MULTIPLE_ATTR = "fileupload.useMultipleAttr";
 
     //backwards compatibility
     public static final String FILE_EXTENSIONS_SETTING = "file.extensions";
@@ -65,6 +66,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     private String buttonHeight;
     private boolean flashUploadEnabled = true;
     private boolean alwaysShowLabel;
+    private boolean useMultipleAttr = true;
 
     public FileUploadWidgetSettings() {
     }
@@ -171,6 +173,14 @@ public class FileUploadWidgetSettings implements IClusterable {
         this.alwaysShowLabel = alwaysShowLabel;
     }
 
+    public boolean isUseMultipleAttr() {
+        return useMultipleAttr;
+    }
+
+    public void setUseMultipleAttr(final boolean useMultipleAttr) {
+        this.useMultipleAttr = useMultipleAttr;
+    }
+
     private void parsePluginConfig(final IPluginConfig pluginConfig) {
 
         if (pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
@@ -220,6 +230,10 @@ public class FileUploadWidgetSettings implements IClusterable {
 
         if (pluginConfig.containsKey(FILEUPLOAD_ALWAYS_SHOW_LABEL)) {
             this.alwaysShowLabel = pluginConfig.getAsBoolean(FILEUPLOAD_ALWAYS_SHOW_LABEL);
+        }
+
+        if (pluginConfig.containsKey(FILEUPLOAD_USE_MULTIPLE_ATTR)) {
+            this.useMultipleAttr = pluginConfig.getAsBoolean(FILEUPLOAD_USE_MULTIPLE_ATTR);
         }
     }
 }
