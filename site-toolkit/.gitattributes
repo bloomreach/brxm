@@ -692,6 +692,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.jav
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValveImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
+components/core/src/test/java/org/hippoecm/hst/core/jcr/TestSessionSecurityDelegation.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewritingCrossScheme.java -text

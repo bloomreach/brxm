@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.core.jcr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -74,7 +76,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
     @Override
     public void cleanupSessionDelegates(HstRequestContext requestContext) {
-        List<Session> sessionList = (List<Session>)requestContext.getAttribute(SESSIONS_KEY_LIST_ATTR_NAME);
+        List<Session> sessionList = getSessionList(requestContext);
         if (sessionList != null) {
             for (Session session : sessionList) {
                 if (session.isLive()) {
@@ -83,7 +85,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             }
             sessionList.clear();
         }
-        Map<String, Session> sessionMap = (Map<String, Session>)requestContext.getAttribute(SESSIONS_KEY_MAP_ATTR_NAME);
+        Map<DelegateSessionKey, Session> sessionMap = getSessionMap(requestContext);
         if (sessionMap != null) {
             for (Session session : sessionMap.values()) {
                 if (session.isLive()) {
@@ -141,10 +143,10 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
 
 
     private Session createSecurityDelegate(final Credentials cred1,
-                                          final Credentials cred2,
-                                          final String key,
-                                          final boolean autoLogout,
-                                          final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
+                                           final Credentials cred2,
+                                           final String key,
+                                           final boolean autoLogout,
+                                           final DomainRuleExtension... domainExtensions) throws RepositoryException, IllegalStateException {
         if (!securityDelegationEnabled) {
             throw new IllegalStateException("Security delegation is not enabled");
         }
@@ -154,9 +156,10 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             if (requestContext == null) {
                 throw new IllegalStateException("Cannot automatically logout jcr session since there is no HstRequestContext");
             }
-            Map<String, Session> sessionMap = (Map<String, Session>)requestContext.getAttribute(SESSIONS_KEY_MAP_ATTR_NAME);
+            Map<DelegateSessionKey, Session> sessionMap = getSessionMap(requestContext);
             if (sessionMap != null) {
-                Session existing = sessionMap.get(key);
+                DelegateSessionKey dsk = new DelegateSessionKey(cred1, cred2, key, domainExtensions);
+                Session existing = sessionMap.get(dsk);
                 if (existing != null) {
                     return existing;
                 }
@@ -192,7 +195,8 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
             if (key == null) {
                 storeInList(jcrSession, requestContext);
             } else {
-                storeInMap(jcrSession, key, requestContext);
+                DelegateSessionKey dsk = new DelegateSessionKey(cred1, cred2, key, domainExtensions);
+                storeInMap(jcrSession, dsk, requestContext);
             }
         }
 
@@ -200,7 +204,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
     }
 
     private void storeInList(final Session jcrSession, final HstRequestContext requestContext) {
-        List<Session> sessionList = (List<Session>)requestContext.getAttribute(SESSIONS_KEY_LIST_ATTR_NAME);
+        List<Session> sessionList = getSessionList(requestContext);
         if (sessionList == null) {
             sessionList = new ArrayList<Session>();
             requestContext.setAttribute(SESSIONS_KEY_LIST_ATTR_NAME, sessionList);
@@ -208,12 +212,97 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
         sessionList.add(jcrSession);
     }
 
-    private void storeInMap(final Session jcrSession, final String key, final HstRequestContext requestContext) {
-        Map<String, Session> sessionMap = (Map<String, Session>)requestContext.getAttribute(SESSIONS_KEY_MAP_ATTR_NAME);
+    private void storeInMap(final Session jcrSession, final DelegateSessionKey key, final HstRequestContext requestContext) {
+        Map<DelegateSessionKey, Session> sessionMap = getSessionMap(requestContext);
         if (sessionMap == null) {
-            sessionMap = new HashMap<String, Session>();
+            sessionMap = new HashMap<DelegateSessionKey, Session>();
             requestContext.setAttribute(SESSIONS_KEY_MAP_ATTR_NAME, sessionMap);
         }
         sessionMap.put(key, jcrSession);
     }
+
+    private class DelegateSessionKey implements Serializable {
+        final Credentials cred1;
+        final Credentials cred2;
+        final String key;
+        final DomainRuleExtension[] domainExtensions;
+
+        DelegateSessionKey(final Credentials cred1,
+                           final Credentials cred2,
+                           final String key,
+                           final DomainRuleExtension... domainExtensions) {
+            this.cred1 = cred1;
+            this.cred2 = cred2;
+            this.key = key;
+            this.domainExtensions = domainExtensions;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof DelegateSessionKey)) {
+                return false;
+            }
+
+            final DelegateSessionKey that = (DelegateSessionKey) o;
+            if (!credentialsEqual(cred1, that.cred1)) {
+                return false;
+            }
+
+            if(!credentialsEqual(cred2, that.cred2)) {
+                return false;
+            }
+            // domainExtensions can be both null in which case they are equal
+            if (!Arrays.equals(domainExtensions, that.domainExtensions)) {
+                return false;
+            }
+            if (key != null ? !key.equals(that.key) : that.key != null) {
+                return false;
+            }
+            return true;
+        }
+
+        private boolean credentialsEqual(final Credentials cred, final Credentials compare) {
+            if (cred instanceof SimpleCredentials && compare instanceof SimpleCredentials) {
+                // SimpleCredentials does *not* override hashcode or equals!
+                SimpleCredentials sc = (SimpleCredentials)cred;
+                if (!sc.getUserID().equals(((SimpleCredentials)compare).getUserID())) {
+                    return false;
+                }
+                return Arrays.equals(sc.getPassword(), ((SimpleCredentials)compare).getPassword());
+            }
+            // we can only check on object equality now
+            return cred == compare;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (domainExtensions != null ? Arrays.hashCode(domainExtensions) : 0);
+            result = 31 * result + getCredentialsHashCode(cred1);
+            result = 31 * result + getCredentialsHashCode(cred2);
+            result = 31 * result + (key != null ? key.hashCode() : 0);
+            return result;
+        }
+
+        private int getCredentialsHashCode(Credentials cred) {
+            if (cred instanceof SimpleCredentials) {
+                SimpleCredentials sc = (SimpleCredentials)cred;
+                return sc.getUserID().hashCode()*31 + Arrays.hashCode(sc.getPassword());
+            }
+            // we can only return object hashcode since Credentials impls do not override hashCode..
+            return (cred != null ? cred.hashCode() : 0);
+        }
+    }
+
+
+    private Map<DelegateSessionKey, Session> getSessionMap(final HstRequestContext requestContext) {
+        return (Map<DelegateSessionKey, Session>)requestContext.getAttribute(SESSIONS_KEY_MAP_ATTR_NAME);
+    }
+
+    private List<Session> getSessionList(final HstRequestContext requestContext) {
+        return (List<Session>)requestContext.getAttribute(SESSIONS_KEY_LIST_ATTR_NAME);
+    }
+
 }
