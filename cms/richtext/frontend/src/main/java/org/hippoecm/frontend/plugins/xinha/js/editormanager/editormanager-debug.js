@@ -737,7 +737,7 @@ if (!YAHOO.hippo.EditorManager) {
                 if (this.isFullScreen()) {
                     fsp = this.getFullscreenPlugin();
                     if(fsp !== null) {
-                        fsp.instance.editor._fullscreen(true);
+                        fsp.editor._fullscreen(true);
                         this.sizeState.w = newWidth;
                         this.sizeState.h = newHeight;
                     }
@@ -769,14 +769,14 @@ if (!YAHOO.hippo.EditorManager) {
             */
             isFullScreen : function() {
                 var pl = this.getFullscreenPlugin();
-                return pl !== null && pl.instance.editor._isFullScreen;
+                return pl !== null && pl.editor._isFullScreen;
             },
 
             getFullscreenPlugin : function() {
                 var i, t, candidates = ['FullscreenCompatible', 'FullScreen'];
                 for(i = 0; i < candidates.length; i++) {
-                    t = this.xinha.plugins[candidates[i]];
-                    if(!Lang.isUndefined(t) && Lang.isObject(t.instance) && Lang.isObject(t.instance.editor)) {
+                    t = XinhaTools.getPlugin(this.xinha, candidates[i]);
+                    if(t !== null && Lang.isObject(t.editor)) {
                         return t;
                     }
                 }
@@ -805,16 +805,7 @@ if (!YAHOO.hippo.EditorManager) {
                     yy = (minHeight / 20) * p;
                 }
 
-                y = minHeight;
-                if (vHeight - vHeight > 0) {  //what should this do?
-                    if (y - yy > minHeight) {
-                        y -= yy;
-                    }
-                } else {
-                    y += yy;
-                }
-
-                y = Math.round(y);
+                y = Math.round(minHeight + yy);
 
                 containerMargin = HippoDom.getMargin(this.getContainer());
                 return y - containerMargin.h;
@@ -919,7 +910,8 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             save : function(throttled) {
-                if (this.xinha.plugins.AutoSave) {
+                var autoSave = XinhaTools.getPlugin(this.xinha, 'AutoSave');
+                if (autoSave !== null) {
                     try {
                         var data = this.xinha.getInnerHTML(), success, failure;
                         if (data !== this.lastData) {
@@ -931,7 +923,7 @@ if (!YAHOO.hippo.EditorManager) {
                                 error('failed to save');
                             }, this);
 
-                            this.xinha.plugins.AutoSave.instance.save(throttled, success, failure);
+                            autoSave.save(throttled, success, failure);
                         }
                     } catch(e) {
                         error('Error retrieving innerHTML from xinha, skipping save');
