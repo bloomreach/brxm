@@ -169,17 +169,19 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     private void addParentsToCache(final Map<String, NodeState> stateCache) {
         if (session != null) {
-            // prefetch fixed nodes into cache
-            for (String path : getParents()) {
-                if (!stateCache.containsKey(path)) {
-                    try {
-                        if (session.nodeExists(path)) {
-                            final Node node = session.getNode(path);
-                            NodeState state = new NodeState(node, true);
-                            stateCache.put(path, state);
+            synchronized (stateCache) {
+                // prefetch fixed nodes into cache
+                for (String path : getParents()) {
+                    if (!stateCache.containsKey(path)) {
+                        try {
+                            if (session.nodeExists(path)) {
+                                final Node node = session.getNode(path);
+                                NodeState state = new NodeState(node, true);
+                                stateCache.put(path, state);
+                            }
+                        } catch (RepositoryException ex) {
+                            log.warn("Failed to initialize node state", ex);
                         }
-                    } catch (RepositoryException ex) {
-                        log.warn("Failed to initialize node state", ex);
                     }
                 }
             }
@@ -471,7 +473,6 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             log.debug(ex.getMessage(), ex);
             return;
         }
-        
 
         List<Event> events = getEvents(dirty);
         final Iterator<Event> upstream = events.iterator();

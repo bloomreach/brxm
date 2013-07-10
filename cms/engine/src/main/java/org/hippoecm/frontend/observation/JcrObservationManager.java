@@ -213,11 +213,6 @@ public class JcrObservationManager implements ObservationManager {
                 }
             }
 
-            Map<String, NodeState> dirty = new HashMap<String, NodeState>();
-            for (JcrListener listener : set) {
-                listener.process(dirty);
-            }
-
             Session jcrSession = session.getJcrSession();
             Map<String, NodeState> states;
             synchronized (cache) {
@@ -225,24 +220,31 @@ public class JcrObservationManager implements ObservationManager {
                 if (states == null) {
                     states = new HashMap<String, NodeState>();
                     cache.put(jcrSession, states);
-                } else {
-                    states.clear();
                 }
             }
 
-            // update cache
-            states.putAll(dirty);
+            synchronized (states) {
+                Map<String, NodeState> dirty = new HashMap<String, NodeState>();
+                for (JcrListener listener : set) {
+                    listener.process(dirty);
+                }
 
-            // remove stale entries
-            Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
-            while (cacheIter.hasNext()) {
-                Map.Entry<String, NodeState> entry = cacheIter.next();
-                try {
-                    if (!jcrSession.itemExists(entry.getKey())) {
-                        cacheIter.remove();
+                states.clear();
+
+                // update cache
+                states.putAll(dirty);
+
+                // remove stale entries
+                Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
+                while (cacheIter.hasNext()) {
+                    Map.Entry<String, NodeState> entry = cacheIter.next();
+                    try {
+                        if (!jcrSession.itemExists(entry.getKey())) {
+                            cacheIter.remove();
+                        }
+                    } catch (RepositoryException ex) {
+                        log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
                     }
-                } catch (RepositoryException ex) {
-                    log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
                 }
             }
         } else {
