@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*global wicketAjaxGet, Xinha */
+/*global Xinha */
 (function () {
 
     var ModalDialog;

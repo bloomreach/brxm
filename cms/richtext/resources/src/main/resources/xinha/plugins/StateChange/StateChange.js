@@ -44,8 +44,8 @@ StateChange.prototype = {
     },
 
     _setState : function(name, state, success, failure) {
-        if (wicketAjaxGet) {
-            wicketAjaxGet(this._getCallbackUrl() + name + '=' + state, success, failure);
-        }
+        var params = {};
+        params[name] = state;
+        Wicket.Ajax.post({u: this._getCallbackUrl(), ep: params, sh: success, fh: failure});
     }
 };

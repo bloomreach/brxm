@@ -44,7 +44,7 @@ public abstract class StateChangeBehavior extends AbstractDefaultAjaxBehavior {
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
-        IRequestParameters requestParameters = RequestCycle.get().getRequest().getRequestParameters();
+        IRequestParameters requestParameters = RequestCycle.get().getRequest().getPostParameters();
         Set<String> paramNames = requestParameters.getParameterNames();
 
         if (paramNames.contains(FULL_SCREEN)) {
