@@ -155,7 +155,8 @@
             Wicket,
             wicketKeyCode,
             window,
-            YAHOO
+            YAHOO,
+            jQuery
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
         </configuration>

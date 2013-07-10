@@ -31,7 +31,7 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
     private IYuiContext _helper;
 
     public OnEnterAjaxBehavior() {
-        super("onchange");
+        super("enter");
     }
 
     /**
@@ -40,6 +40,8 @@ public abstract class OnEnterAjaxBehavior extends AjaxFormSubmitBehavior {
      */
     @Override
     public final void renderHead(Component component, IHeaderResponse response) {
+        super.renderHead(component, response);
+
         if (_helper == null) {
             Page page = component.getPage();
             for (Behavior behavior : page.getBehaviors()) {

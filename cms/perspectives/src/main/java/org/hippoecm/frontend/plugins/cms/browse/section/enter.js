@@ -15,30 +15,21 @@
  */
 
 Hippo.EnterHandler = function(elementId) {
-    var obj, objonchange;
+    var $obj;
 
-    obj = Wicket.$(elementId);
-    obj.setAttribute("autocomplete", "off");
+    $obj = jQuery('#' + elementId);
+    $obj.attr("autocomplete", "off");
+    $obj.parents("form").submit(function ($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+    });
 
-    objonchange = obj.onchange;
-    obj.onkeypress = function(event) {
-        Wicket.Event.stop(event);
-        var key = wicketKeyCode(Wicket.fixEvent(event));
+    $obj.keypress(function($event) {
+        var key = $event.which;
         if (key === 13) {
-            objonchange();
-            return false;
+            jQuery(this).trigger('enter');
+            $event.stopPropagation();
         }
-        return true;
-    };
-
-    obj.onkeyup = function(event) {
-        Wicket.Event.stop(event);
-        return true;
-    };
-
-    obj.onchange = function(event) {
-        Wicket.Event.stop(event);
-        return false;
-    };
+    });
 
 };
