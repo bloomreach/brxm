@@ -401,6 +401,9 @@
             if (toolbar.rendered) {
                 toolbar.doLayout();
             }
+            if(this.pageContainer.pageContext) {
+                this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
+            }
         },
 
         showOrHideButtons: function (button1, button2) {
@@ -661,11 +664,7 @@
                     this.propertiesWindow.hide();
                 }
 
-                if (!this.fullscreen && this.pageContainer.pageContext.hasPreviewHstConfig) {
-                    this.showChannelChangesNotification(pageContext);
-                } else {
-                    this.hideChannelChangesNotification();
-                }
+                this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
 
                 Ext.getCmp('icon-toolbar-window').hide();
             }
@@ -674,36 +673,31 @@
             Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
         },
 
+        showOrHideChannelChangesNotification: function(fullscreen, pageContext) {
+            if (fullscreen || !pageContext.hasPreviewHstConfig) {
+                this.hideChannelChangesNotification();
+                return;
+            }
+            this.showChannelChangesNotification(pageContext);
+        },
+
         showChannelChangesNotification: function(pageContext) {
-            var notification = Ext.getCmp('channelChangesNotification');
+            var notification, userIds;
+            notification = Ext.getCmp('channelChangesNotification');
             if (pageContext.fineGrainedLocking) {
-                this.updateAndShowChangesForUsersNotification(notification, pageContext.ids.mountId);
+                if (this.channel.changedBySet.length === 0) {
+                    notification.hide();
+                } else {
+                    // don't reorder the changedBySet, hence first clone it
+                    userIds = this.channel.changedBySet.slice(0);
+                    moveFirstIfExists(userIds, this.cmsUser);
+                    notification.setMessage(createChangesForUsersNotificationMessage(userIds, this.cmsUser, this.resources));
+                    notification.show();
+                }
             } else {
                 notification.setMessage(this.resources['previous-live-msg']);
                 notification.show();
             }
-        },
-
-        updateAndShowChangesForUsersNotification: function(notification, mountId) {
-            var self = this;
-            Ext.Ajax.request({
-                url: this.composerRestMountUrl + '/' + mountId + './userswithchanges/?FORCE_CLIENT_HOST=true',
-                success: function(response) {
-                    var userObjects = Ext.decode(response.responseText).data,
-                        userIds = Ext.pluck(userObjects, 'id').sort();
-                    if (Ext.isEmpty(userIds)) {
-                        notification.hide();
-                    } else {
-                        moveFirstIfExists(userIds, self.cmsUser);
-                        notification.setMessage(createChangesForUsersNotificationMessage(userIds, self.cmsUser, self.resources));
-                        notification.show();
-                    }
-                },
-                failure: function() {
-                    notification.setMessage(self.resources['notification-unpublished-changes-error']);
-                    notification.show();
-                }.createDelegate(this)
-            });
         },
 
         hideChannelChangesNotification: function() {

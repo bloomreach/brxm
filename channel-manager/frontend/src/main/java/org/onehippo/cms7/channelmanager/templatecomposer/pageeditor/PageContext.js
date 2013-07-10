@@ -68,7 +68,6 @@
             this.locked = false;
             this.lockedBy = "";
             this.lockedOn = 0;
-            this.changedBySet = config.changedBySet;
             this.internalLinkUrlPrefix = document.location.protocol + '//' + document.location.host;
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.templateComposerContextPath);
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.cmsPreviewPrefix);
@@ -198,12 +197,6 @@
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
-                    if (response.getResponseHeader('HST-Changed-By-Set')) {
-                        self.changedBySet = Ext.util.JSON.decode(response.getResponseHeader('HST-Changed-By-Set'));
-                    } else {
-                        self.changedBySet = [];
-                    }
-
                     self.fineGrainedLocking = self._getBoolean(response.getResponseHeader('HST-Mount-FineGrainedLocking'));
 
                     lockedBy = response.getResponseHeader('HST-Mount-LockedBy');
