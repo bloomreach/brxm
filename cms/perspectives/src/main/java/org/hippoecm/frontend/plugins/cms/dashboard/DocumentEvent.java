@@ -136,6 +136,8 @@ public class DocumentEvent {
             return new NodeTranslator(new JcrNodeModel(targetVariant)).getNodeName();
         } else if ("addTranslation".equals(method)) {
             return new NodeTranslator(new JcrNodeModel(sourceVariant)).getNodeName();
+        } else if ("rename".equals(getMethod()) && argument != null) {
+            return new Model<String>(argument);
         } else {
             String path = getDocumentPath();
             if (path != null) {
