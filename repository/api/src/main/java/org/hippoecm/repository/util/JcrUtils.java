@@ -25,6 +25,7 @@ import java.util.*;
 import javax.jcr.*;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.observation.Event;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
@@ -33,6 +34,9 @@ import org.hippoecm.repository.api.HippoNode;
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
  */
 public class JcrUtils {
+
+    public static final int ALL_EVENTS = Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED
+            | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
 
     /**
      * Get the node at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such node exists.
