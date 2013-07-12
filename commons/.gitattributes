@@ -6,6 +6,10 @@ src/main/java/org/onehippo/cms7/event/HippoEvent.java -text
 src/main/java/org/onehippo/cms7/event/HippoEventConstants.java -text
 src/main/java/org/onehippo/cms7/event/HippoSecurityEvent.java -text
 src/main/java/org/onehippo/cms7/event/HippoSecurityEventConstants.java -text
+src/main/java/org/onehippo/cms7/logging/log4j/AbstractPropertyFilter.java -text
+src/main/java/org/onehippo/cms7/logging/log4j/JndiPropertyFilter.java -text
+src/main/java/org/onehippo/cms7/logging/log4j/MdcOrJndiPropertyFilter.java -text
+src/main/java/org/onehippo/cms7/logging/log4j/MdcPropertyFilter.java -text
 src/main/java/org/onehippo/sso/UrlSafeBase64.java -text
 src/test/java/org/onehippo/cms7/event/HippoEventTest.java -text
 src/test/java/org/onehippo/sso/CredentialCipherTest.java -text
