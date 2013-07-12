@@ -910,10 +910,10 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             save : function(throttled) {
-                var autoSave = XinhaTools.getPlugin(this.xinha, 'AutoSave');
+                var data, autoSave = XinhaTools.getPlugin(this.xinha, 'AutoSave');
                 if (autoSave !== null) {
                     try {
-                        var data = this.xinha.getInnerHTML(), success, failure;
+                        data = this.xinha.getInnerHTML(), success, failure;
                         if (data !== this.lastData) {
                             success = jQuery.proxy(function() {
                                 info('Content saved.');
