@@ -71,6 +71,9 @@ public class TestPageCachingValve extends AbstractPipelineTestCase {
     @After
     public void tearDown() throws Exception {
         resetCachingFlagAndComponentClass();
+        if (session != null && session.isLive()) {
+            session.logout();
+        }
         super.tearDown();
     }
 
