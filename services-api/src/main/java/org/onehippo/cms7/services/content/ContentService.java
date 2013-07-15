@@ -21,9 +21,14 @@ import javax.jcr.Session;
 import org.onehippo.cms7.services.SingletonService;
 
 /**
+ * The ContentService is a stateless service through which a new JCR Session bound ContentManager can be instantiated.
  */
 @SingletonService
 public interface ContentService {
 
+    /**
+     * @param session The JCR Session to create a ContentManager instance for
+     * @return a new ContentManager instance which is bound to a specific JCR Session
+     */
     ContentManager getContentManager(Session session);
 }
