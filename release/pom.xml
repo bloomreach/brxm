@@ -39,18 +39,18 @@
   </scm>
 
   <properties>
-    <hippo.addon-hst-configuration-editor.version>1.12.01-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>2.25.01-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>1.01.01-SNAPSHOT</hippo.addon-search-service.version>
-    <hippo.commons.version>1.02.03-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>2.25.01-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>2.27.01-SNAPSHOT</hippo.hst.version>
-    <hippo.packages.version>2.25.00-SNAPSHOT</hippo.packages.version>
+    <hippo.addon-hst-configuration-editor.version>1.12.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>2.25.02-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>1.01.02-SNAPSHOT</hippo.addon-search-service.version>
+    <hippo.commons.version>1.02.04-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>2.25.02-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>2.27.02-SNAPSHOT</hippo.hst.version>
+    <hippo.packages.version>2.25.01-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
-    <hippo.repository.version>2.25.02-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>1.03.01-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>1.03.01-SNAPSHOT</hippo.services.eventbus.version>
-    <hippo.services.contenttype.version>1.03.00-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.repository.version>2.25.03-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>1.03.02-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>1.03.02-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.contenttype.version>1.03.01-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.utilities.version>1.01.04-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.09.02</forge.content-blocks.version>
