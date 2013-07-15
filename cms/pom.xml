@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>2.25.01-SNAPSHOT</version>
+  <version>2.25.01-alpha</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -93,9 +93,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>1.02.02</hippo.commons.version>
-    <hippo.services.version>1.02.02</hippo.services.version>
-    <hippo.repository.version>2.25.02-SNAPSHOT</hippo.repository.version>
+    <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
+    <hippo.services.version>1.03.01-alpha</hippo.services.version>
+    <hippo.repository.version>2.25.02-alpha</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -149,9 +149,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.01-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.01-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/cms/tags/hippo-cms-2.25.01-alpha</url>
   </scm>
 
   <build>
