@@ -108,7 +108,7 @@
                     futures.push(item.load());
                 }, this);
 
-                Hippo.Future.join(futures).when(this.endUpdate).otherwise(this.endUpdate);
+                Hippo.Future.join(futures).when(this.endUpdate.createDelegate(this)).otherwise(this.endUpdate.createDelegate(this));
             }.createDelegate(this);
 
             if (typeof(this.variantsUuid) === 'undefined' || this.variantsUuid === null) {
