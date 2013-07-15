@@ -60,7 +60,6 @@
       <scope>provided</scope>
       <includes>
         <include>javax.jcr:jcr</include>
-        <include>javax.jdo:jdo2-api</include>
         <include>org.apache.geronimo.specs:geronimo-jta_1.1_spec</include>
         <include>javax.mail:mail</include>
       </includes>
