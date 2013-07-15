@@ -176,7 +176,7 @@ public class CheckBrokenLinksWorkflowImpl extends WorkflowImpl implements CheckB
                         continue;
                     }
                     try {
-                        Workflow reportWorkflow = workflowContext.getWorkflow("brokenlinks", new Document(doc.getIdentifier()));
+                        Workflow reportWorkflow = workflowContext.getWorkflow("brokenlinks", new Document(doc));
                         if (reportWorkflow instanceof ReportBrokenLinksWorkflow) {
                             ((ReportBrokenLinksWorkflow) reportWorkflow).reportBrokenLinks(brokenLinks);
                         }

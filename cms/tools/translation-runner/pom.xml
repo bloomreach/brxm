@@ -60,11 +60,6 @@
         <artifactId>geronimo-jta_1.1_spec</artifactId>
         <scope>compile</scope>
       </dependency>
-      <dependency>
-        <groupId>javax.jdo</groupId>
-        <artifactId>jdo2-api</artifactId>
-        <scope>compile</scope>
-      </dependency>
 
     <dependency>
       <artifactId>jcrrunner</artifactId>
@@ -72,10 +67,6 @@
       <version>1.02.04</version>
       <type>jar</type>
       <exclusions>
-        <exclusion>
-          <groupId>javax.jdo</groupId>
-          <artifactId>jdo2-api</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>org.hippoecm</groupId>
           <artifactId>hippo-ecm-api</artifactId>
@@ -104,16 +95,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <version>${hippo.repository.version}</version>
       <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.jdo</groupId>
-          <artifactId>jdo2-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.datanucleus</groupId>
-          <artifactId>datanucleus-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -132,14 +113,6 @@
         <exclusion>
           <groupId>org.apache.jackrabbit</groupId>
           <artifactId>jackrabbit-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.jdo</groupId>
-          <artifactId>jdo2-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.datanucleus</groupId>
-          <artifactId>datanucleus-core</artifactId>
         </exclusion>
         <exclusion>
           <groupId>xerces</groupId>

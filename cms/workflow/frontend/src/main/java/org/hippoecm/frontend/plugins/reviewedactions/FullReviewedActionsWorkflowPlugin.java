@@ -389,7 +389,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 String nodeName = codec.encode(name);
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
 
-                workflow.copy(new Document(folderModel.getNode().getIdentifier()), nodeName);
+                workflow.copy(new Document(folderModel.getNode()), nodeName);
                 JcrNodeModel resultModel = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
                 Node result = resultModel.getNode();
 
@@ -445,7 +445,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 }
                 String nodeName = getModel().getNode().getName();
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
+                workflow.move(new Document(folderModel.getNode()), nodeName);
                 browseTo(new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName));
                 return null;
             }

@@ -285,7 +285,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 String nodeName = codec.encode(name);
 
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
+                workflow.copy(new Document(folderModel.getNode()), nodeName);
                 JcrNodeModel copyMode = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
                 HippoNode node = (HippoNode) copyMode.getNode().getNode(nodeName);
 
@@ -329,7 +329,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 }
                 String nodeName = getModel().getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
-                workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
+                workflow.move(new Document(folderModel.getNode()), nodeName);
                 return null;
             }
         });

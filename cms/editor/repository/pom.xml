@@ -39,10 +39,6 @@
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-commons</artifactId>
       <version>${jackrabbit.version}</version>
@@ -73,42 +69,6 @@
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <version>2.8</version>
-        <configuration>
-          <additionalBuildcommands>
-            <buildCommand>
-              <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
-            </buildCommand>
-          </additionalBuildcommands>
-          <additionalProjectnatures>
-            <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
-          </additionalProjectnatures>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.datanucleus</groupId>
-        <artifactId>maven-datanucleus-plugin</artifactId>
-        <dependencies>
-          <dependency>
-             <groupId>org.onehippo.cms7</groupId>
-             <artifactId>hippo-repository-api</artifactId>
-             <version>${hippo.repository.version}</version>
-           </dependency>
-           <dependency>
-             <groupId>org.onehippo.cms7</groupId>
-             <artifactId>hippo-cms-editor-common</artifactId>
-             <version>${project.version}</version>
-           </dependency>
-           <dependency>
-            <groupId>javax.jdo</groupId>
-            <artifactId>jdo2-api</artifactId>
-            <version>${jdo2.api.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

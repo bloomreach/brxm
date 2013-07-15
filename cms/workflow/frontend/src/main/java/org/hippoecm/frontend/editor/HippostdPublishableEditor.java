@@ -322,7 +322,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                                 docNode.getUUID());
                         Workflow workflow = manager.getWorkflow("internal", folder);
                         if (workflow instanceof FolderWorkflow) {
-                            ((FolderWorkflow) workflow).delete(new Document(docNode.getUUID()));
+                            ((FolderWorkflow) workflow).delete(new Document(docNode));
                         } else {
                             log.warn("cannot delete document which is not contained in a folder");
                         }
@@ -414,7 +414,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                                 docNode.getUUID());
                         Workflow workflow = manager.getWorkflow("internal", folder);
                         if (workflow instanceof FolderWorkflow) {
-                            ((FolderWorkflow) workflow).delete(new Document(docNode.getUUID()));
+                            ((FolderWorkflow) workflow).delete(new Document(docNode));
                         } else {
                             log.warn("cannot delete document which is not contained in a folder");
                         }
