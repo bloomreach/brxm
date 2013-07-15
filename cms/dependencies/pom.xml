@@ -127,13 +127,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- search -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-search</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- console -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
