@@ -26,7 +26,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>2.25.02-SNAPSHOT</version>
+  <version>2.25.02-alpha</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2007</inceptionYear>
@@ -71,9 +71,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Repository</notice.project.name>
 
-    <hippo.commons.version>1.02.01</hippo.commons.version>
-    <hippo.services.version>1.03.00-alpha</hippo.services.version>
-    <hippo.services.eventbus.version>1.03.00-alpha</hippo.services.eventbus.version>
+    <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
+    <hippo.services.version>1.03.01-alpha</hippo.services.version>
+    <hippo.services.eventbus.version>1.03.01-alpha</hippo.services.eventbus.version>
     <hippo.utilities.version>1.01.02</hippo.utilities.version>
 
     <!-- Test dependencies  -->
@@ -95,9 +95,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.25.02-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.25.02-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.25.02-alpha</url>
   </scm>
 
   <build>
