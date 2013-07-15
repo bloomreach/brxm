@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services</name>
   <artifactId>hippo-services</artifactId>
-  <version>1.03.01-SNAPSHOT</version>
+  <version>1.03.01-alpha</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -34,13 +34,13 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services</notice.project.name>
 
-    <hippo.commons.version>1.02.01</hippo.commons.version>
+    <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.01-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.01-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.01-alpha</url>
   </scm>
 
   <repositories>
