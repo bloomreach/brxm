@@ -65,7 +65,6 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private RepositoryJobInfo jobInfo;
     private String schedulerJobName = "FormDataCleanup";
     private String schedulerGroupName = "default";
-    private RepositoryClusterService repositoryClusterService;
 
     public FormDataCleanupModule() {
     }
@@ -104,7 +103,6 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
         if (repositoryScheduler.checkExists(schedulerJobName, schedulerGroupName)) {
             return;
         }
-        this.repositoryClusterService = HippoServiceRegistry.getService(RepositoryClusterService.class);
         scheduleJob();
     }
 
@@ -114,6 +112,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected boolean isReconfigureEvent(Event event) throws RepositoryException {
+        final RepositoryClusterService repositoryClusterService = HippoServiceRegistry.getService(RepositoryClusterService.class);
         if (repositoryClusterService.isExternalEvent(event)) {
             return false;
         }
@@ -149,7 +148,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private void unscheduleJob() throws RepositoryException {
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        repositoryScheduler.deleteJob(jobInfo.getName(), jobInfo.getGroup());
+        repositoryScheduler.deleteJob(schedulerJobName, schedulerGroupName);
         jobInfo = null;
     }
 
