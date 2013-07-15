@@ -17,23 +17,30 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 
-import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.util.JcrUtils;
 
-@PersistenceCapable
 public class ScheduledRequestWorkflowImpl extends WorkflowImpl implements BasicRequestWorkflow {
-    @Persistent(column=".")
-    protected ScheduledRequest request;
+    protected Document request;
 
     public ScheduledRequestWorkflowImpl() throws RemoteException {
     }
 
-    public void cancelRequest() throws WorkflowException, MappingException, RepositoryException {
+    public void setNode(Node node) throws RepositoryException {
+        request = new Document(node);
+    }
+
+    public void cancelRequest() throws WorkflowException, RepositoryException {
+        if (request != null) {
+            Node requestNode = request.getCheckedOutNode();
+            JcrUtils.ensureIsCheckedOut(requestNode.getParent(), true);
+            requestNode.remove();
+        }
         request = null;
     }
 }

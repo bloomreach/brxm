@@ -337,14 +337,14 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         Document result;
 
         Node handle = getHandle(subject);
-        result = new Document(subject.checkin().getUUID());
+        result = new Document(subject.checkin());
         if (handle != null) {
             // FIXME ought to be no check on handle being versionable
             if (handle.isNodeType("mix:versionable")) {
                 handle.checkin();
             }
         } else {
-            result = new Document(subject.checkin().getUUID());
+            result = new Document(subject.checkin());
         }
         return result;
     }
@@ -355,7 +355,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             throw new WorkflowException("No such historic version");
         try {
             subject.restore(version, true);
-            return new Document(subject.getUUID());
+            return new Document(subject);
         } catch (VersionException ex) {
             Node handle = subject.getParent();
             if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -388,7 +388,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                             }
                         }
                         if (result != null) {
-                            return new Document(result.getUUID());
+                            return new Document(result);
                         }
                     } catch (RepositoryException e) {
                     }
@@ -445,7 +445,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         Node restoredDocument = FolderWorkflowImpl.copy(version.getNode("jcr:frozenNode"), handle, replacements, ".");
         restoredDocument.getParent().save();
         restoredDocument.checkin();
-        return new Document(restoredDocument.getUUID());
+        return new Document(restoredDocument);
     }
 
     public SortedMap<Calendar, Set<String>> list() throws WorkflowException, RepositoryException {
@@ -508,6 +508,6 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
     public Document retrieve(Calendar historic) throws WorkflowException, RepositoryException {
         Version version = lookup(historic, false);
-        return (version == null ? null : new Document(version.getNode("jcr:frozenNode").getUUID()));
+        return (version == null ? null : new Document(version.getNode("jcr:frozenNode")));
     }
 }

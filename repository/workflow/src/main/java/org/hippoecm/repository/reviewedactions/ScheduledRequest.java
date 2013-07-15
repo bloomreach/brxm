@@ -15,10 +15,17 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.Document;
 
 public class ScheduledRequest extends Document {
 
     public ScheduledRequest() {
+    }
+
+    public ScheduledRequest(Node node) throws RepositoryException {
+        super(node);
     }
 }

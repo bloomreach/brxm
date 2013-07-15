@@ -17,6 +17,8 @@ package org.hippoecm.repository.test;
 
 import java.rmi.RemoteException;
 import java.util.Iterator;
+
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
@@ -26,8 +28,6 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 
 public class WorkflowEventWorkflowImpl extends WorkflowImpl implements WorkflowEventWorkflow {
-
-    private long counter;
 
     public WorkflowEventWorkflowImpl() throws RemoteException {
     }
@@ -46,8 +46,10 @@ public class WorkflowEventWorkflowImpl extends WorkflowImpl implements WorkflowE
             try {
                 Workflow documentWorkflow = getWorkflowContext().getWorkflow("postprocess", document);
                 PostProcessWorkflow postprocessWorkflow = (PostProcessWorkflow) documentWorkflow;
+                Property counterProperty = getCheckedOutNode().getProperty("hippo:counter");
+                long counter = counterProperty.getLong();
                 postprocessWorkflow.setIdentifier(counter);
-                ++counter;
+                counterProperty.setValue(++counter);
             } catch(RepositoryException ex) {
                 System.err.println(ex.getClass().getName()+": "+ex.getMessage());
                 ex.printStackTrace(System.err);

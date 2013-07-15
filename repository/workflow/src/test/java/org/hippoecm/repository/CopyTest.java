@@ -138,7 +138,7 @@ public class CopyTest extends RepositoryTestCase {
         Node folder = session.getRootNode().getNode("test/folder");
         document = (secondDocument ? folder.getNode("document/document[2]") : folder.getNode("document/document"));
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) workflowManager.getWorkflow("default", document);
-        workflow.copy(new Document(destination.getUUID()), "copy");
+        workflow.copy(new Document(destination), "copy");
     }
 
     @Test
@@ -150,7 +150,7 @@ public class CopyTest extends RepositoryTestCase {
 
         Node destination = session.getRootNode().getNode("test/folder");
         DefaultWorkflow workflow = (DefaultWorkflow) workflowManager.getWorkflow("default", document);
-        workflow.copy(new Document(destination.getUUID()), "copy");
+        workflow.copy(new Document(destination), "copy");
     }
 
     @Test
@@ -162,6 +162,6 @@ public class CopyTest extends RepositoryTestCase {
 
         Node destination = session.getRootNode().getNode("test/destination");
         DefaultWorkflow workflow = (DefaultWorkflow) workflowManager.getWorkflow("default", document);
-        workflow.copy(new Document(destination.getUUID()), "copy");
+        workflow.copy(new Document(destination), "copy");
     }
 }

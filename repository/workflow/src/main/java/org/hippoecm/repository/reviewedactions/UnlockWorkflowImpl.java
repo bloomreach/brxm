@@ -19,28 +19,34 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
-@PersistenceCapable
 public class UnlockWorkflowImpl extends WorkflowImpl implements UnlockWorkflow {
 
-    @Persistent(column=".")
     protected PublishableDocument document;
 
     public UnlockWorkflowImpl() throws RemoteException {
     }
 
+    public void setNode(Node node) throws RepositoryException {
+        super.setNode(node);
+        document = new PublishableDocument(node);
+    }
+
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
-        if (document == null || !"draft".equals(document.getState())) {
-            info.put("unlock", false);
+        try {
+            if (document == null || !"draft".equals(document.getState())) {
+                info.put("unlock", false);
+            }
+        }
+        catch (RepositoryException ex) {
+            // TODO DEJDO: ignore ?
         }
         return info;
     }

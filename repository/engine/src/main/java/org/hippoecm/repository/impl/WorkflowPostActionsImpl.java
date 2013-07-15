@@ -104,7 +104,7 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
     public void execute(Object returnObject) {
         if (isDocumentPathResult && returnObject instanceof String) {
             try {
-                returnObject = new Document(workflowManager.rootSession.getRootNode().getNode(((String)returnObject).substring(1)).getIdentifier());
+                returnObject = new Document(workflowManager.rootSession.getRootNode().getNode(((String)returnObject).substring(1)));
             } catch (ItemNotFoundException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 return;

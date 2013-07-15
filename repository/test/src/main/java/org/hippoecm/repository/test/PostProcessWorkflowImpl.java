@@ -16,16 +16,17 @@
 package org.hippoecm.repository.test;
 
 import java.rmi.RemoteException;
+
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class PostProcessWorkflowImpl extends WorkflowImpl implements PostProcessWorkflow {
 
-    private long identifier;
-
     public PostProcessWorkflowImpl() throws RemoteException {
     }
 
-    public void setIdentifier(long identifier) {
-        this.identifier = identifier;
+    public void setIdentifier(long identifier) throws RepositoryException {
+        getCheckedOutNode().setProperty("hippo:counter", identifier);
     }
 }

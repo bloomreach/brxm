@@ -16,12 +16,13 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.util.Date;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.util.JcrUtils;
 
-@PersistenceCapable
 public class PublicationRequest extends Document {
 
     public static final String REJECTED = "rejected"; // zombie
@@ -32,65 +33,64 @@ public class PublicationRequest extends Document {
     public static final String DELETE = "delete";
     public static final String COLLECTION = "collection";
 
-    @Persistent(column="hippostdpubwf:type")
-    public String type;
+    public PublicationRequest() {}
 
-    @Persistent(column="hippostdpubwf:reason")
-    public String reason;
+    public PublicationRequest(Node node) throws RepositoryException {
+        super(node);
+    }
 
-    @Persistent(column="hippostdpubwf:username")
-    public String username;
+    private static Node newRequestNode(Node parent) throws RepositoryException {
+        JcrUtils.ensureIsCheckedOut(parent, false);
+        Node requestNode = parent.addNode("hippo:request", "hippostdpubwf:request");
+        requestNode.addMixin("mix:referenceable");
+        return requestNode;
+    }
 
-    @Persistent(column="hippostdpubwf:document")
-    public Document reference;
-
-    @Persistent(column="hippostdpubwf:reqdate")
-    public long reqdate; // FIXME: use Date or Calendar object
-
-    public PublicationRequest(String type, PublishableDocument document, String username) {
-        this.username = username;
-        this.type = type;
-        reason = "";
+    public PublicationRequest(String type, Node sibling, PublishableDocument document, String username) throws RepositoryException {
+        super(newRequestNode(sibling.getParent()));
+        setNodeStringProperty("hippostdpubwf:type", type);
+        setNodeStringProperty("hippostdpubwf:username", username);
         if (document != null) {
-            reference = document;
+            getCheckedOutNode().setProperty("hippostdpubwf:document", document.getNode());
         }
     }
 
-    public PublicationRequest(String type, PublishableDocument document, String username, Date scheduledDate) {
-        this.username = username;
-        this.type = type;
-        reason = "";
-        if (document != null) {
-            reference = document;
+    public PublicationRequest(String type, Node sibling, PublishableDocument document, String username, Date scheduledDate) throws RepositoryException {
+        this(type, sibling, document, username);
+        setNodeDateProperty("hippostdpubwf:reqdate", scheduledDate);
+    }
+
+    String getType() throws RepositoryException {
+        return getNodeStringProperty("hippostdpubwf:type");
+    }
+
+    String getOwner() throws RepositoryException {
+        return getNodeStringProperty("hippostdpubwf:username");
+    }
+
+    Date getScheduledDate() throws RepositoryException  {
+        return getNodeDateProperty("hippostdpubwf:reqdate");
+    }
+
+    void setRejected(PublishableDocument stale, String reason) throws RepositoryException  {
+        setNodeStringProperty("hippostdpubwf:type", REJECTED);
+        if (stale != null) {
+            setNodeNodeProperty("hippostdpubwf:document", stale.getNode());
         }
-        reqdate = scheduledDate.getTime();
+        else {
+            setNodeNodeProperty("hippostdpubwf:document", null);
+        }
+        setNodeStringProperty("hippostdpubwf:reason", reason);
     }
 
-    String getType() {
-        return type;
+    void setRejected(String reason) throws RepositoryException  {
+        setRejected(null, reason);
     }
 
-    String getOwner() {
-        return username;
-    }
-
-    Date getScheduledDate() {
-        return new Date(reqdate);
-    }
-
-    void setRejected(PublishableDocument stale, String reason) {
-        type = REJECTED;
-        reference = stale;
-        this.reason = reason;
-    }
-
-    void setRejected(String reason) {
-        type = REJECTED;
-        reference = null;
-        this.reason = reason;
-    }
-    
-    Document getReference() {
-        return reference;
+    Document getReference() throws RepositoryException  {
+        if (hasNode() && getNode().hasProperty("hippostdpubwf:document")) {
+            return new Document(getNode().getProperty("hippostdpubwf:document").getNode());
+        }
+        return null;
     }
 }

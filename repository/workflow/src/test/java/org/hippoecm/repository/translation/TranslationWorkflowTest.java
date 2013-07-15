@@ -144,7 +144,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         Workflow workflowInterface = manager.getWorkflow("translation", session.getRootNode().getNode("test/folder"));
         assertTrue(workflowInterface instanceof TranslationWorkflow);
         TranslationWorkflow workflow = (TranslationWorkflow) workflowInterface;
-        workflow.addTranslation("de", new Document(deFolder.getUUID()));
+        workflow.addTranslation("de", new Document(deFolder));
 
         session.refresh(false);
         assertTrue(session.nodeExists("/test/folder/" + HippoTranslationNodeType.TRANSLATIONS + "/de"));

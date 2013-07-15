@@ -75,11 +75,11 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
         HippoTranslatedNode translatedFolder = new HippoTranslatedNode(lclContainingFolder);
         Node folderTranslation = translatedFolder.getTranslation(language);
-        Document targetFolder = new Document(folderTranslation.getIdentifier());
+        Document targetFolder = new Document(folderTranslation);
         Node copiedDoc = null;
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).
-                    getWorkflow("translation-copy", new Document(rootSubject.getIdentifier()));
+                    getWorkflow("translation-copy", new Document(rootSubject));
             if (defaultWorkflow instanceof CopyWorkflow) {
                 ((CopyWorkflow) defaultWorkflow).copy(targetFolder, name);
             } else {
@@ -152,7 +152,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
         rootSession.save();
         rootSession.refresh(false);
-        return new Document(copiedDoc.getIdentifier());
+        return new Document(copiedDoc);
     }
 
     public void addTranslation(String language, Document document) throws WorkflowException, MappingException,
@@ -234,7 +234,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
     private void copyFolderTypes(final Node copiedDoc, final Map<String, Set<String>> prototypes) throws RepositoryException {
         // check if we have all subject folder types;
-        Document rootDocument = new Document(rootSubject.getIdentifier());
+        Document rootDocument = new Document(rootSubject);
         Workflow internalWorkflow;
         try {
             internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", rootDocument);

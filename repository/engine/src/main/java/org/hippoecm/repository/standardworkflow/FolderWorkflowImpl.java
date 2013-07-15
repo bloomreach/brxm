@@ -832,11 +832,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
             renameChildDocument(handle);
             rootSession.save();
-            return new Document(document.getIdentifier());
+            return new Document(document);
         } else {
             renameChildDocument(((HippoSession)subject.getSession()).copy(source, subject.getPath() + "/" + targetName));
             subject.save();
-            return new Document(subject.getNode(targetName).getUUID());
+            return new Document(subject.getNode(targetName));
         }
     }
 
@@ -865,7 +865,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             throw new MappingException("copied destination is not a document");
         }
-        return copyFrom(new Document(source.getIdentifier()), new Document(target.getIdentifier()), absPath.substring(absPath.lastIndexOf("/")+1), arguments);
+        return copyFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/")+1), arguments);
     }
     public Document copy(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -890,7 +890,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             throw new MappingException("copied destination is not a document");
         }
-        return moveFrom(new Document(source.getUUID()), new Document(target.getUUID()), absPath.substring(absPath.lastIndexOf("/")+1), arguments);
+        return moveFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/")+1), arguments);
     }
     public Document move(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -911,7 +911,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             return duplicate(source, targetName);
         }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
-            return ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", new Document(destination.getUUID()))).copyTo(new Document(subject.getUUID()), offspring, targetName, arguments);
+            return ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", new Document(destination))).copyTo(new Document(subject), offspring, targetName, arguments);
         }
         return null;
     }
@@ -937,11 +937,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             renameChildDocument(handle);
 
             folder.save();
-            return new Document(document.getUUID());
+            return new Document(document);
         } else {
             renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
             folder.save();
-            return new Document(folder.getNode(targetName).getUUID());
+            return new Document(folder.getNode(targetName));
         }
     }
 
@@ -985,7 +985,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             folder.checkout();
         }
         if (source.getAncestor(folder.getDepth()).isSame(folder)) {
-            ((EmbedWorkflow)workflowContext.getWorkflow("internal", new Document(destination.getUUID()))).moveTo(new Document(subject.getUUID()), offspring, targetName, arguments);
+            ((EmbedWorkflow)workflowContext.getWorkflow("internal", new Document(destination))).moveTo(new Document(subject), offspring, targetName, arguments);
         }
         return null;
     }
@@ -1006,8 +1006,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         folder.getSession().move(source.getPath(), folder.getPath() + "/" + targetName);
         renameChildDocument(folder, targetName);
         rootSession.save();
-        ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).moveOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
-        return new Document(folder.getNode(targetName).getUUID());
+        ((EmbedWorkflow)workflowContext.getWorkflow("embedded", sourceFolder)).moveOver(folder, offspring, new Document(folder.getNode(targetName)), arguments);
+        return new Document(folder.getNode(targetName));
     }
 
     public Document moveOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {

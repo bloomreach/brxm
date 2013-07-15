@@ -165,17 +165,22 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
                             }
                             public Document next() {
                                 String id = postconditionSetIterator.next();
+                                Node node = null;
                                 try {
-                                    Node node = workflowManager.rootSession.getNodeByIdentifier(id);
+                                    node = workflowManager.rootSession.getNodeByIdentifier(id);
                                     if (node.isNodeType("hippo:handle")) {
                                         if (node.hasNode(node.getName())) {
-                                            id = node.getNode(node.getName()).getIdentifier();
+                                            node = node.getNode(node.getName());
+                                            id = node.getIdentifier();
                                         }
                                     }
+                                    return new Document(node);
                                 } catch (RepositoryException ex) {
                                     // deliberate ignore of error, possible because document has been deleted, denied, but id is still relevant
+                                    Document doc = new Document();
+                                    doc.setIdentity(id);
+                                    return doc;
                                 }
-                                return new Document(id);
                             }
                             public void remove() {
                                 throw new UnsupportedOperationException();

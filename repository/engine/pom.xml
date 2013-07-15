@@ -79,17 +79,6 @@
       <version>${lucene.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.datanucleus</groupId>
-      <artifactId>datanucleus-core</artifactId>
-      <version>${org.datanucleus.version}</version>
-      <classifier>sources</classifier>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
@@ -212,20 +201,6 @@
               <Hippo-Modules>org.hippoecm.repository.quartz.workflow.SchedulerWorkflowModule</Hippo-Modules>
             </manifestEntries>
           </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <configuration>
-          <additionalBuildcommands>
-            <buildCommand>
-              <name>org.datanucleus.ide.eclipse.enhancerbuilder</name>
-            </buildCommand>
-          </additionalBuildcommands>
-          <additionalProjectnatures>
-            <projectnature>org.datanucleus.ide.eclipse.projectnature</projectnature>
-          </additionalProjectnatures>
         </configuration>
       </plugin>
       <plugin>

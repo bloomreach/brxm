@@ -32,7 +32,6 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
-import javax.jdo.JDODataStoreException;
 
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.hippoecm.repository.HippoRepository;
@@ -306,9 +305,6 @@ abstract class AbstractRandomActionTest {
                 return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause() instanceof ItemStateException));
             }
             if (e instanceof ItemStateException) {
-                return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause() instanceof ItemStateException));
-            }
-            if (e instanceof JDODataStoreException) {
                 return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause() instanceof ItemStateException));
             }
             if (e instanceof WorkflowException) {

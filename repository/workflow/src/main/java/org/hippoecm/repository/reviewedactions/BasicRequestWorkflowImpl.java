@@ -19,36 +19,50 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.util.JcrUtils;
 
-@PersistenceCapable
 public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicRequestWorkflow {
 
-    @Persistent(column=".")
     protected PublicationRequest request;
 
     public BasicRequestWorkflowImpl() throws RemoteException {
     }
 
     @Override
+    public void setNode(Node node) throws RepositoryException {
+        super.setNode(node);
+        this.request = node != null ? new PublicationRequest(node) : null;
+    }
+
+    @Override
     public Map<String,Serializable> hints()  {
         Map<String,Serializable> info = super.hints();
-        if(request.getOwner() != null) {
-            if(request.getOwner().equals(getWorkflowContext().getUserIdentity())) {
-                info.put("cancelRequest", true);
-            } else {
-                info.put("cancelRequest", false);
+        try {
+            if(request.getOwner() != null) {
+                if(request.getOwner().equals(getWorkflowContext().getUserIdentity())) {
+                    info.put("cancelRequest", true);
+                } else {
+                    info.put("cancelRequest", false);
+                }
             }
+        }
+        catch (RepositoryException ex) {
+            // TODO DEJDO: ignore?
         }
         return info;
     }
 
     public void cancelRequest() throws WorkflowException, RepositoryException {
-        request = null;
+        if (request != null) {
+            Node requestNode = request.getCheckedOutNode();
+            JcrUtils.ensureIsCheckedOut(requestNode.getParent(), true);
+            requestNode.remove();
+            request = null;
+        }
     }
 }

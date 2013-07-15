@@ -53,7 +53,7 @@ public class MoveDocumentAction extends AbstractFullReviewedActionsWorkflowActio
             do {
                 newName += random.nextInt(10);
             } while (targetFolder.hasNode(newName));
-            getFullReviewedActionsWorkflow(node).move(new Document(targetFolder.getIdentifier()), newName);
+            getFullReviewedActionsWorkflow(node).move(new Document(targetFolder), newName);
             node.getSession().refresh(false);
         }
         return targetFolder;

@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.MappingException;
 
 public interface BasicRequestWorkflow extends Workflow {
 
@@ -29,5 +28,5 @@ public interface BasicRequestWorkflow extends Workflow {
      * Cancels and/or disposes (!) the request.
      */
     public void cancelRequest()
-        throws WorkflowException, MappingException, RepositoryException, RemoteException;
+        throws WorkflowException, RepositoryException, RemoteException;
 }

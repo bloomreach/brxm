@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.datanucleus.util.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
@@ -122,7 +121,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     }
 
     private Node getJobNode(String jobName, String groupName) throws RepositoryException {
-        if (StringUtils.isEmpty(groupName)) {
+        if (groupName == null || groupName.length() == 0) {
             groupName = "default";
         }
         final Node moduleConfig = session.getNode(CONFIG_NODE_PATH);

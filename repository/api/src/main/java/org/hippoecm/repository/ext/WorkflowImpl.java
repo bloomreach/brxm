@@ -22,17 +22,20 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.util.JcrUtils;
 
 /**
  * Implementors of a work-flow in the repository must extend from the WorkflowImpl base type.
  */
 public abstract class WorkflowImpl implements Remote, Workflow
 {
+    private Node node;
 
     /**
      * Work-flow context in use, which ought to be not public accessible.  Use getWorkflowContext instead.
@@ -52,6 +55,31 @@ public abstract class WorkflowImpl implements Remote, Workflow
      */
     final public void setWorkflowContext(WorkflowContext context) {
         this.context = context;
+    }
+
+    /**
+     * <b>This call is not part of the public API</b><p/>
+     * @param node the backing Node for this workflow
+     */
+    public void setNode(Node node) throws RepositoryException {
+        this.node = node;
+    }
+
+    /**
+     * @return the backing Node of this workflow
+     */
+    protected Node getNode() {
+        return node;
+    }
+
+    /**
+     * @return the ensured to be checked out backing Node of this Document
+     */
+    protected Node getCheckedOutNode() throws RepositoryException {
+        if (node != null) {
+            JcrUtils.ensureIsCheckedOut(node, true);
+        }
+        return node;
     }
 
     /**

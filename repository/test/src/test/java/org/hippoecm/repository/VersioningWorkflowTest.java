@@ -99,7 +99,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         session.save();
 
         versionwf = (VersionWorkflow) wflMgr.getWorkflow("versioning", initialVersion.getNode("jcr:frozenNode"));
-        versionwf.restoreTo(new Document(node.getIdentifier()));
+        versionwf.restoreTo(new Document(node));
         session.refresh(false);
 
         assertFalse(node.hasProperty("aap"));

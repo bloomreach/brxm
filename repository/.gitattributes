@@ -41,7 +41,6 @@ api/src/main/java/org/onehippo/repository/security/domain/DomainRuleExtension.ja
 api/src/main/java/org/onehippo/repository/security/domain/FacetRule.java -text
 api/src/main/java/org/onehippo/repository/update/BaseNodeUpdateVisitor.java -text
 api/src/main/java/org/onehippo/repository/update/NodeUpdateVisitor.java -text
-api/src/main/resources/org/hippoecm/repository/api/package.jdo -text
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflow.java -text
@@ -136,7 +135,6 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/NamespaceContext.jav
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEventGenerator.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PropInfo.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/Reference.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/ocm/ConnectionFactoryImpl.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/AbstractJobStore.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/JCRJobDetail.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobDetail.java -text
@@ -199,11 +197,9 @@ engine/src/main/resources/hippofacnav.cnd -text
 engine/src/main/resources/hipposched.cnd -text
 engine/src/main/resources/hipposys.cnd -text
 engine/src/main/resources/hipposysedit.cnd -text
-engine/src/main/resources/jdo.properties svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/BootstrapHippoRepository.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/configuration.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/impl/reference-workspace.xml -text
-engine/src/main/resources/plugin.xml svneol=native#text/plain
 engine/src/test/fixtures/dump.zip -text
 engine/src/test/java/org/hippoecm/repository/DereferencedExportImportTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/DocumentViewExportTest.java -text
@@ -300,8 +296,6 @@ test/config/mysql-repository-clusternode1.xml -text
 test/config/mysql-repository-clusternode2.xml -text
 test/config/mysql-repository.xml -text
 test/pom.xml svneol=native#text/plain
-test/src/main/resources/org/hippoecm/repository/test/package.jdo -text
-test/src/main/resources/package.jdo -text
 test/src/test/fixtures/dump.zip -text
 test/src/test/java/org/hippoecm/repository/CheckoutNodeTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/ConfigurationTest.java -text

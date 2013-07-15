@@ -354,7 +354,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         Node originalDocument = createDocument();
 
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
-        Document copy = workflow.copy(new Document(originalDocument.getIdentifier()), new Document(node.getIdentifier()), "dc");
+        Document copy = workflow.copy(new Document(originalDocument), new Document(node), "dc");
         Node copyNode = session.getNodeByUUID(copy.getIdentity());
         assertEquals("/test/f/dc/dc", copyNode.getPath());
         assertTrue(copyNode.isNodeType("hippostd:document"));
@@ -367,7 +367,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
         Node target = session.getNode("/test/aap");
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
-        Document copy = workflow.copy(new Document(originalDocument.getIdentifier()), new Document(target.getIdentifier()), "dc");
+        Document copy = workflow.copy(new Document(originalDocument), new Document(target), "dc");
         Node copyNode = session.getNodeByUUID(copy.getIdentity());
         assertEquals("/test/aap/dc/dc", copyNode.getPath());
         assertTrue(copyNode.isNodeType("hippostd:document"));

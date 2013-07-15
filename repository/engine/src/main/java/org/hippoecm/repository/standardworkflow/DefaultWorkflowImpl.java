@@ -48,7 +48,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     
     public DefaultWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject) throws RepositoryException {
         this.context = context;
-        document = new Document(subject.getUUID());
+        document = new Document(subject);
         this.session = rootSession; // FIXME SHOULD BE THE USERSESSION!
         this.rootSession = rootSession;
         this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());

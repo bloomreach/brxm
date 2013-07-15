@@ -16,6 +16,14 @@
 package org.hippoecm.repository.api;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
+import org.hippoecm.repository.util.JcrUtils;
 
 /**
  * A Plain Old Java Object (POJO) representing a document in a JCR repository.
@@ -30,8 +38,8 @@ import java.io.Serializable;
  */
 public class Document extends Object implements Serializable, Cloneable {
 
-    private transient Document isCloned = null;
     private String identity = null;
+    private transient Node node;
 
     /** 
      * Constructor that should be considered to have a protected signature rather than public and may be used for extending classes to
@@ -42,29 +50,39 @@ public class Document extends Object implements Serializable, Cloneable {
 
     /**
      * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
-     * @param identity the uuid of the backing {@link javax.jcr.Node} in the repository that this document instance represents.
+     * Extended classes <b>must</b> honor this constructor!
+     * @param node the backing {@link javax.jcr.Node} in the repository that this document instance represents.
      */
-    public Document(String identity) {
-        this.identity = identity;
+    public Document(Node node) throws RepositoryException {
+        initialize(node);
     }
 
     /**
-     * Clone a document object, which is useful to create a new copy of a repository-backed document including all its
-     * contents from the repository, rather than just the information currently mapped to the Document object.
-     * @return the cloned Document object
-     * @throws java.lang.CloneNotSupportedException if the sub-class of this document does not allow cloning
-     * @see java.lang.Object#clone()
+     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
+     * TODO DEJDO: this method should be 'protected' such as not to expose the internal backing Node as it is bound
+     *             to the WorkflowManager <em>root</em> Session
+     * @return the backing Node of this Document
      */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Document document = (Document) super.clone();
-        document.setCloned(this);
-        document.identity = null;
-        return document;
+    public Node getNode() {
+        return node;
     }
 
-    private void setCloned(Document document) {
-        isCloned = document;
+    /**
+     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
+     * TODO DEJDO: this method should be 'protected' such as not to expose the internal backing Node as it is bound
+     *             to the WorkflowManager <em>root</em> Session
+     * @return the ensured to be checked out backing Node of this Document
+     */
+    public Node getCheckedOutNode() throws RepositoryException {
+        JcrUtils.ensureIsCheckedOut(node, true);
+        return node;
+    }
+
+    /**
+     * @return true if this document has a backing Node
+     */
+    protected boolean hasNode() {
+        return node != null;
     }
 
     /**
@@ -88,17 +106,79 @@ public class Document extends Object implements Serializable, Cloneable {
      */
     public final void setIdentity(String uuid) {
         identity = uuid;
+        node = null;
     }
 
     /**
-     * <b>This call is not part of the API, this call is not useful for extension programmers, and should normally
-     * not be used.</b><p/>
-     * @return the document instance from which this document was cloned
-     * @see java.lang.Object@clone()
+     * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
+     * Extended classes which need custom/extra initialization based on the backing Node should
+     * use the {@link #initialized()} method to get wired into the initialization chain.
+     * @param node the backing {@link javax.jcr.Node} in the repository that this document instance represents.
      */
-    public Document isCloned() {
-        return isCloned;
+    public final void initialize(Node node) throws RepositoryException {
+        this.node = node;
+        this.identity = node.getIdentifier();
+        initialized();
     }
+
+    /**
+     * Extended classes which need custom/extra initialization based on the backing Node can
+     * use this method which will get called after {@link #initialize(javax.jcr.Node)} has been called.
+     */
+    protected void initialized() {}
+
+    protected String getNodeStringProperty(String relPath) throws RepositoryException {
+        return hasNode() ? JcrUtils.getStringProperty(getNode(), relPath, null) : null;
+    }
+
+    protected void setNodeStringProperty(String relPath, String value) throws RepositoryException {
+        if (hasNode()) {
+            getCheckedOutNode().setProperty(relPath, value);
+        }
+    }
+
+    protected void setNodeNodeProperty(String relPath, Node nodeValue) throws RepositoryException {
+        if (hasNode()) {
+            getCheckedOutNode().setProperty(relPath, nodeValue);
+        }
+    }
+
+    protected String[] getNodeStringsProperty(String relPath) throws RepositoryException {
+        String[] result = null;
+        if (hasNode() && getNode().hasProperty(relPath)) {
+            Value[] values = getNode().getProperty(relPath).getValues();
+            result = new String[values.length];
+            int i = 0;
+            for (Value v : values) {
+                result[i++] = v.getString();
+            }
+        }
+        return result;
+    }
+
+    protected void setNodeStringsProperty(String relPath, String[] values) throws RepositoryException {
+        if (hasNode()) {
+            getCheckedOutNode().setProperty(relPath, values);
+        }
+    }
+
+    protected Date getNodeDateProperty(String relPath) throws RepositoryException {
+        Calendar cal = null;
+        if (hasNode()) {
+            cal = JcrUtils.getDateProperty(getNode(), relPath, null);
+        }
+        return cal != null ? cal.getTime() : null;
+    }
+
+    protected void setNodeDateProperty(String relPath, Date date) throws RepositoryException {
+        if (hasNode()) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            getCheckedOutNode().setProperty(relPath, cal);
+        }
+    }
+
+    // TODO DEJDO: consider adding more common get|setNode<type>Property methods
 
     /**
      * {@inheritDoc}
@@ -111,9 +191,6 @@ public class Document extends Object implements Serializable, Cloneable {
         if (identity != null) {
             sb.append("uuid=");
             sb.append(identity);
-        } else if (isCloned != null) {
-            sb.append("cloned=");
-            sb.append(isCloned.identity);
         } else {
             sb.append("new");
         }

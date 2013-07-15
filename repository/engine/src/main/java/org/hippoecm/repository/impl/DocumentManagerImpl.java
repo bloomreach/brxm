@@ -15,15 +15,10 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -31,24 +26,12 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
-import javax.jdo.JDODataStoreException;
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-import javax.jdo.PersistenceManagerFactory;
-import javax.jdo.Transaction;
 
-import org.datanucleus.OMFContext;
-import org.datanucleus.jdo.JDOPersistenceManagerFactory;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.ocm.JcrOID;
-import org.hippoecm.repository.ocm.JcrPersistenceHandler;
-import org.hippoecm.repository.ocm.JcrStoreManager;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +41,6 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
 
     private Session session;
     private Node configuration;
-    private PersistenceManagerFactory pmf;
-    private PersistenceManager pm;
-    private JcrPersistenceHandler ph;
-    private JcrStoreManager storeManager;
 
     public DocumentManagerImpl(Session session) {
         this.session = session;
@@ -71,133 +50,19 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
         } catch(RepositoryException ex) {
             log.error("document manager configuration failed: "+ex.getMessage());
         }
-        try {
-            Properties properties = new Properties();
-            InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
-            properties.load(istream);
-            properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
-            pmf = JDOHelper.getPersistenceManagerFactory(properties, getClass().getClassLoader());
-            ((JcrStoreManager)((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager()).setSession(session);
-            ((JDOPersistenceManagerFactory)pmf).setPrimaryClassLoader(getClass().getClassLoader());
-            pm = null;
-            ph = (JcrPersistenceHandler) ((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager().getPersistenceHandler();
-        } catch(IOException ex) {
-            log.error("failed to initialize JDO layer: "+ex.getMessage(), ex);
-        }
         if (session instanceof HippoSession) {
             ((HippoSession)session).registerSessionCloseCallback(this);
         }
     }
 
     public void close() {
-        if (ph != null) {
-            ph.close();
-            ph = null;
-        }
-        if (pm != null) {
-            pm.evictAll();
-            pm.close();
-            pm = null;
-        }
-        if (pmf != null) {
-            pmf.getDataStoreCache().evictAll();
-            pmf.close();
-            pmf = null;
-        }
-    }
-
-    void reset() {
-        if (pm != null) {
-            pmf.getDataStoreCache().evictAll();
-            pm.evictAll();
-        }
     }
 
     public Session getSession() {
         return session;
     }
 
-    public Object getObject(String uuid, String classname, Node types) {
-        Object obj = null;
-        if(pm == null) {
-            pm = pmf.getPersistenceManager();
-            OMFContext omfContext = ((JDOPersistenceManagerFactory)pmf).getOMFContext();
-            storeManager = ((JcrStoreManager)omfContext.getStoreManager());
-            storeManager.setSession(session); // FIXME is storeManger really per session?
-        }
-        if(types != null) {
-            storeManager.setTypes(types);
-        }
-
-        try {
-            obj = pm.getObjectById(new JcrOID(uuid, classname));
-        } catch(Exception ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } finally {
-            storeManager.setTypes(null);
-        }
-        return obj;
-    }
-
-    public <T> T getDocument(String uuid, Class<T> clazz) {
-        return (T) getObject(uuid, clazz.getName(), null);
-    }
-    
-    public void putDocument(Document document) throws RepositoryException {
-        putObject(document.getIdentity(), null, document);
-    }
-    
-    public void putObject(String uuid, Node types, Object object) throws RepositoryException {
-        try {
-            if (pm == null) {
-                pm = pmf.getPersistenceManager();
-            }
-            if (types != null) {
-                storeManager.setTypes(types);
-            }
-
-            Transaction tx = pm.currentTransaction();
-            tx.setNontransactionalRead(true);
-            tx.setNontransactionalWrite(true);
-            boolean transactional = true;
-            if (transactional && !tx.isActive()) {
-                try {
-                    tx.begin();
-                    if (uuid != null) {
-                        Node node = session.getNodeByIdentifier(uuid);
-                        JcrUtils.ensureIsCheckedOut(node, false);
-                        try {
-                            Node parent = node.getParent();
-                            JcrUtils.ensureIsCheckedOut(parent, false);
-                        } catch (ItemNotFoundException ex) {
-                            // no parent as this is root node, ignore.
-                        }
-                    }
-                    pm.makePersistent(object);
-                    tx.commit();
-                } catch (JDODataStoreException ex) {
-                    Throwable e = ex.getCause();
-                    if (e instanceof RepositoryException) {
-                        RepositoryException exception = (RepositoryException)e;
-                        log.error(exception.getClass().getName() + ": " + exception.getMessage(), exception);
-                        throw exception;
-                    } else {
-                        throw ex;
-                    }
-                } finally {
-                    if (tx.isActive()) {
-                        tx.rollback();
-                    }
-                }
-            } else {
-                pm.makePersistent(object);
-            }
-        } finally {
-            storeManager.setTypes(null);
-        }
-}
-
-    public Document getDocument(String category, String identifier) throws MappingException, RepositoryException {
+    public Document getDocument(String category, String identifier) throws RepositoryException {
         try {
             Node queryNode = configuration.getNode(category);
             QueryResult result;
@@ -234,20 +99,24 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
                         }
                     }
                 }
-                String uuid = resultNode.getUUID();
                 if(queryNode.isNodeType(HippoNodeType.NT_OCMQUERY) || queryNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
-                    reset();
-                    return (Document) getObject(uuid, queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString(),
-                                                queryNode.getNode(HippoNodeType.NT_TYPES));
+                    try {
+                        String className = queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+                        Class clazz = Class.forName(className);
+                        Document document = (Document)clazz.newInstance();
+                        document.initialize(resultNode);
+                        return document;
+                    } catch (Exception e) {
+                        // TODO
+                        e.printStackTrace();
+                        return null;
+                    }
                 } else {
-                    return new Document(uuid);
+                    return new Document(resultNode);
                 }
             } else {
                 return null;
             }
-        } catch(javax.jdo.JDODataStoreException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new MappingException("Representing JCR data to Java object failed", ex);
         } catch(PathNotFoundException ex) {
             log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
             /* getDocument cannot and should not be used to create documents.

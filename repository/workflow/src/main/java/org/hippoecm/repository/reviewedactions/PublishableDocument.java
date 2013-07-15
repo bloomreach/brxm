@@ -16,22 +16,12 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.util.Date;
-import javax.jdo.annotations.DatastoreIdentity;
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.DiscriminatorStrategy;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Inheritance;
-import javax.jdo.annotations.InheritanceStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 
-@PersistenceCapable(identityType=IdentityType.DATASTORE,cacheable="false",detachable="false")
-@DatastoreIdentity(strategy=IdGeneratorStrategy.NATIVE)
-@Inheritance(strategy=InheritanceStrategy.SUBCLASS_TABLE)
-@Discriminator(strategy=DiscriminatorStrategy.CLASS_NAME)
 public class PublishableDocument extends Document {
 
     final public static String PUBLISHED = "published";
@@ -39,84 +29,47 @@ public class PublishableDocument extends Document {
     final public static String DRAFT = "draft";
     final public static String STALE = "stale";
 
-    @Persistent(column="hippostd:state")
-    private String state;
-
-    @Persistent(column="hippostd:holder")
-    private String username;
-
-    @Persistent(column="hippostdpubwf:publicationDate")
-    private Date publicationDate;
-
-    @Persistent(column="hippostdpubwf:lastModifiedBy")
-    private String lastModifiedBy;
-
-    @Persistent(column="hippostdpubwf:lastModificationDate")
-    private Date lastModificationDate;
-
-    @Persistent(column="hippostdpubwf:creationDate")
-    private Date creationDate;
-
-    @Persistent(column="hippostdpubwf:createdBy")
-    private String createdBy;
-
-    @Persistent(embedded="true", defaultFetchGroup="true", serialized="true",column="hippo:availability")
-    private String[] availability;
-
     public PublishableDocument() {
-        this.state = UNPUBLISHED;
-        this.availability = null;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        PublishableDocument clonedDocument = (PublishableDocument) super.clone();
-        clonedDocument.creationDate = creationDate;
-        clonedDocument.createdBy = createdBy;
-        clonedDocument.lastModificationDate = lastModificationDate;
-        clonedDocument.lastModifiedBy = lastModifiedBy;
-        clonedDocument.publicationDate = null;
-        clonedDocument.availability = new String[0];
-        return clonedDocument;
+    public PublishableDocument(Node node) throws RepositoryException {
+        super(node);
     }
 
-   public void setState(String state) {
-        if (!state.equals(this.state)) {
-           this.state = state;
-        }
+   public void setState(String state) throws RepositoryException {
+       setNodeStringProperty("hippostd:state", state);
     }
 
-    public String getState() {
-        return state;
+    public String getState() throws RepositoryException {
+        return getNodeStringProperty("hippostd:state");
     }
 
-    public void setPublicationDate(Date date) {
-        this.publicationDate = date;
+    public void setPublicationDate(Date date) throws RepositoryException {
+        setNodeDateProperty("hippostdpubwf:publicationDate", date);
     }
 
-    public Date getPublicationDate() {
-        return publicationDate;
+    public Date getPublicationDate() throws RepositoryException {
+        return getNodeDateProperty("hippostdpubwf:publicationDate");
     }
 
-    public void setOwner(String username) {
-        this.username = username;
+    public void setOwner(String username) throws RepositoryException {
+        setNodeStringProperty("hippostd:holder", username);
     }
 
-    public String getOwner() {
-        return username;
+    public String getOwner() throws RepositoryException {
+        return getNodeStringProperty("hippostd:holder");
     }
 
-    public void setAvailability(String[] availability) {
-        this.availability = availability;
+    public void setAvailability(String[] availability) throws RepositoryException {
+        setNodeStringsProperty("hippo:availability", availability);
     }
 
-    public String[] getAvailability() {
-        return availability;
+    public String[] getAvailability() throws RepositoryException {
+        return getNodeStringsProperty("hippo:availability");
     }
 
-    public void setModified(String username) {
-        lastModifiedBy = username;
-        lastModificationDate = new Date();
+    public void setModified(String username) throws RepositoryException{
+        setNodeStringProperty("hippostdpubwf:lastModifiedBy", username);
+        setNodeDateProperty("hippostdpubwf:lastModificationDate", new Date());
     }
-
 }

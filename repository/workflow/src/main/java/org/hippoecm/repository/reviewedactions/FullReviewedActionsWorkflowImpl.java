@@ -21,14 +21,6 @@ import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
-import javax.jdo.annotations.DatastoreIdentity;
-import javax.jdo.annotations.Discriminator;
-import javax.jdo.annotations.DiscriminatorStrategy;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Inheritance;
-import javax.jdo.annotations.InheritanceStrategy;
-import javax.jdo.annotations.PersistenceCapable;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
@@ -40,13 +32,10 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@PersistenceCapable(identityType=IdentityType.DATASTORE,cacheable="false",detachable="false",table="documents")
-@DatastoreIdentity(strategy=IdGeneratorStrategy.NATIVE)
-@Discriminator(strategy=DiscriminatorStrategy.CLASS_NAME)
-@Inheritance(strategy=InheritanceStrategy.SUPERCLASS_TABLE)
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
     private static final Logger log = LoggerFactory.getLogger(FullReviewedActionsWorkflowImpl.class);
@@ -63,8 +52,14 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             info.put("rename", info.get("delete"));
             info.put("move", info.get("delete"));
         }
-        info.put("copy", (unpublishedDocument != null && PublishableDocument.UNPUBLISHED.equals(state))
-                || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
+        try {
+            String state = JcrUtils.getStringProperty(getNode(), "hippostd:state", "");
+            info.put("copy", (unpublishedDocument != null && PublishableDocument.UNPUBLISHED.equals(state))
+                    || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
+        }
+        catch (RepositoryException ex) {
+            // TODO DEDJO: ignore?
+        }
         return info;
     }
 
@@ -99,21 +94,37 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
          *    unpublished = draft = null;
          * is removed and we will archive the document.
          */
+        boolean fallbackDelete = false;
         try {
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
             defaultWorkflow.archive();
         } catch(MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);
-            unpublishedDocument = draftDocument = null;
+            fallbackDelete = true;
         } catch(WorkflowException ex) {
             log.warn("no default workflow for published documents, falling back in behaviour", ex);
-            unpublishedDocument = draftDocument = null;
+            fallbackDelete = true;
         } catch(RepositoryException ex) {
             log.warn("exception trying to archive document, falling back in behaviour", ex);
-            unpublishedDocument = draftDocument = null;
+            fallbackDelete = true;
         } catch(RemoteException ex) {
             log.warn("exception trying to archive document, falling back in behaviour", ex);
-            unpublishedDocument = draftDocument = null;
+            fallbackDelete = true;
+        }
+        if (fallbackDelete) {
+            try {
+                if (draftDocument != null) {
+                    deleteDocument(draftDocument);
+                }
+                if (unpublishedDocument != null) {
+                    deleteDocument(unpublishedDocument);
+                }
+                unpublishedDocument = draftDocument = null;
+            }
+            catch (RepositoryException ex) {
+                log.error("exception trying to delete document", ex);
+                // TODO DEDJO: ignore?
+            }
         }
     }
 
@@ -205,12 +216,16 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void doPublish() throws WorkflowException, MappingException {
-        publishedDocument = null;
-        unpublishedDocument.setState(PublishableDocument.PUBLISHED);
-        unpublishedDocument.setPublicationDate(new Date());
-        unpublishedDocument.setAvailability(new String[] { "live", "preview" });
         try {
-            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
+            if (publishedDocument != null) {
+                deleteDocument(publishedDocument);
+            }
+            publishedDocument = unpublishedDocument;
+            unpublishedDocument = null;
+            publishedDocument.setState(PublishableDocument.PUBLISHED);
+            publishedDocument.setPublicationDate(new Date());
+            publishedDocument.setAvailability(new String[] { "live", "preview" });
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
             versionWorkflow.version();
         } catch(MappingException ex) {
             log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
@@ -234,13 +249,15 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         try {
             VersionWorkflow versionWorkflow;
             if(unpublishedDocument == null) {
-                publishedDocument.setState(PublishableDocument.UNPUBLISHED);
-                publishedDocument.setAvailability(new String[] { "preview" });
-                versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
-            } else {
-                publishedDocument = null;
-                versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
+                unpublishedDocument = publishedDocument;
+                unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
+                unpublishedDocument.setAvailability(new String[] { "preview" });
             }
+            else {
+                deleteDocument(publishedDocument);
+            }
+            publishedDocument = null;
+            versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             try {
                 versionWorkflow.version();
             } catch(MappingException ex) {

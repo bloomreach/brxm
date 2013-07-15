@@ -104,6 +104,6 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
             throw new ItemNotFoundException("No primary item definition found");
         }
         folder.save();
-        return new Document(document.getUUID());
+        return new Document(document);
     }
 }

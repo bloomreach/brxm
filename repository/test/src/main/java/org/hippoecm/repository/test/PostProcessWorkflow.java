@@ -15,9 +15,11 @@
  */
 package org.hippoecm.repository.test;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.Workflow;
 
 public interface PostProcessWorkflow extends Workflow {
 
-    public void setIdentifier(long identifier);
+    public void setIdentifier(long identifier) throws RepositoryException;
 }
