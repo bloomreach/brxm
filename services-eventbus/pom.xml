@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>21</version>
+    <version>23-SNAPSHOT</version>
   </parent>
 
   <name>Hippo CMS7 Services - eventbus</name>
@@ -34,7 +34,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - eventbus</notice.project.name>
     
-    <hippo.services.version>1.03.01-alpha</hippo.services.version>
+    <hippo.services.version>1.03.02-SNAPSHOT</hippo.services.version>
     <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
   </properties>
 
