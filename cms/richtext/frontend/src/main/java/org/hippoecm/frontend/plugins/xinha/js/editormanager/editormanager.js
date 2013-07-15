@@ -903,10 +903,11 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             save : function(throttled) {
-                var data, autoSave = XinhaTools.getPlugin(this.xinha, 'AutoSave');
+                var autoSave = XinhaTools.getPlugin(this.xinha, 'AutoSave'),
+                    data, success, failure;
                 if (autoSave !== null) {
                     try {
-                        data = this.xinha.getInnerHTML(), success, failure;
+                        data = this.xinha.getInnerHTML();
                         if (data !== this.lastData) {
                             success = jQuery.proxy(function() {
                                     this.lastData = data;
