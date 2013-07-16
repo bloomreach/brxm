@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 Hippo
+ * Copyright 2007-2013 Hippo (http://www.onehippo.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-<rep='internal'>
-<jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
@@ -23,8 +21,14 @@
 
 [hipposched:trigger] > nt:base, mix:referenceable
 - hipposched:nextFireTime (date)
-- hipposched:fireTime (date)
-- hipposched:data (binary)
+- hipposched:fireTime (date) // deprecated
+- hipposched:type (string) < 'simple', 'cron'
+- hipposched:startTime (date)
+- hipposched:endTime (date)
+- hipposched:repeatCount (long)
+- hipposched:repeatInterval (long)
+- hipposched:cronExpression (string)
+- hipposched:data (binary) // deprecated
 
 [hipposched:triggers] > nt:base
 + * (hipposched:trigger) = hipposched:trigger

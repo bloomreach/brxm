@@ -57,8 +57,6 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         assertTrue(jobNode.hasProperty("hipposched:data"));
         assertTrue(jobNode.hasNode("hipposched:triggers"));
         assertTrue(jobNode.hasNode("hipposched:triggers/trigger"));
-        assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:data"));
-        assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:fireTime"));
         assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));
     }
 
@@ -80,7 +78,6 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
         final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
         store.releaseAcquiredTrigger(context, trigger);
-        assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));
         assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
     }
 
@@ -117,6 +114,7 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         store.triggeredJobComplete(context, trigger, jobDetail, 0);
         // when the job was completed and the trigger has a next fire time, the job should not be deleted
         assertTrue(session.nodeExists(jobNodePath));
+        assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));
     }
 
     @Test

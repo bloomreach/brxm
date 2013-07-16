@@ -33,7 +33,7 @@ public class CronSchedulerInvocationModule extends AbstractSchedulerInvocationMo
     protected Trigger createTrigger(String triggerName) {
         try {
             final CronTrigger trigger = new CronTrigger(triggerName, null, cronExpression);
-            trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+            trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);
             return trigger;
         } catch (ParseException e) {
             throw new IllegalStateException("Failed to create cron trigger with cron expression '" + cronExpression + "'", e);

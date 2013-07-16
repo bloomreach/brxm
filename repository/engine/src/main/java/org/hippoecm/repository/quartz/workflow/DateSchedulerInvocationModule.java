@@ -31,7 +31,7 @@ public class DateSchedulerInvocationModule extends AbstractSchedulerInvocationMo
     @Override
     protected Trigger createTrigger(String triggerName) {
         final SimpleTrigger trigger = new SimpleTrigger(triggerName, timestamp);
-        trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+        trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);
         return trigger;
     }
 
