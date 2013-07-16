@@ -401,8 +401,10 @@
             if (toolbar.rendered) {
                 toolbar.doLayout();
             }
-            if(this.pageContainer.pageContext) {
-                this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
+            if (this.pageContainer.pageContext) {
+                Ext.getCmp('Iframe').on('show', function() {
+                    this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
+                }, this, {single: true});
             }
         },
 
