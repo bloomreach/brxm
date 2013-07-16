@@ -29,7 +29,7 @@ public class SiteMapItemRedirectHandler extends AbstractTestHstSiteMapHandler {
     public ResolvedSiteMapItem process(ResolvedSiteMapItem resolvedSiteMapItem, HttpServletRequest request,
             HttpServletResponse response) throws HstSiteMapItemHandlerException {
         
-       String redirect =  getSiteMapItemHandlerConfiguration().getProperty("unittestproject:redirecttopath", resolvedSiteMapItem, String.class);
+       String redirect =  handlerConfig.getProperty("unittestproject:redirecttopath", resolvedSiteMapItem, String.class);
        if(redirect == null) {
            throw new HstSiteMapItemHandlerException("Cannot redirect because the property 'unittestproject:redirectto' returns null");
        }

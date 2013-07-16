@@ -25,11 +25,12 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
 public class BrowserRedirectHandler extends AbstractTestHstSiteMapHandler {
 
+
   
     public ResolvedSiteMapItem process(ResolvedSiteMapItem resolvedSiteMapItem, HttpServletRequest request,
             HttpServletResponse response) throws HstSiteMapItemHandlerException {
         
-       String redirect =  getSiteMapItemHandlerConfiguration().getProperty("unittestproject:redirectto", resolvedSiteMapItem, String.class);
+       String redirect =  handlerConfig.getProperty("unittestproject:redirectto", resolvedSiteMapItem, String.class);
        try {
           response.sendRedirect(redirect);
        } catch (IOException e) {

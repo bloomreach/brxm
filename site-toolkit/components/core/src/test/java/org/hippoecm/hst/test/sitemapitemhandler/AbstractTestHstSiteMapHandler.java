@@ -27,9 +27,9 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
 public abstract class AbstractTestHstSiteMapHandler implements HstSiteMapItemHandler{
 
-    private ServletContext servletContext;
-    private SiteMapItemHandlerConfiguration handlerConfig;
-    
+    protected ServletContext servletContext;
+    protected SiteMapItemHandlerConfiguration handlerConfig;
+
     public void init(ServletContext servletContext, SiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException {
         this.handlerConfig = handlerConfig;
         this.servletContext = servletContext;
@@ -50,14 +50,7 @@ public abstract class AbstractTestHstSiteMapHandler implements HstSiteMapItemHan
      */
     public void destroy() throws HstSiteMapItemHandlerException {
     }
-    
-    public SiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration() {
-        return handlerConfig;
-    }
-    public ServletContext getServletContext() {
-        return servletContext;
-    }
-    
+
     
     public ResolvedSiteMapItem resolveToNewSiteMapItem(HttpServletRequest request,
             HttpServletResponse response, ResolvedSiteMapItem currentResolvedSiteMapItem, String pathInfo){

@@ -27,14 +27,10 @@ import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
  */
 public abstract class AbstractHstSiteMapItemHandler implements HstSiteMapItemHandler {
 
-    private ServletContext servletContext;
-    private SiteMapItemHandlerConfiguration handlerConfig;
-
     @Override
     public void init(ServletContext servletContext, SiteMapItemHandlerConfiguration handlerConfig)
             throws HstSiteMapItemHandlerException {
-        this.servletContext = servletContext;
-        this.handlerConfig = handlerConfig;
+
     }
 
     @Override
@@ -43,26 +39,6 @@ public abstract class AbstractHstSiteMapItemHandler implements HstSiteMapItemHan
 
     @Override
     public void destroy() throws HstSiteMapItemHandlerException {
-    }
-
-    protected SiteMapItemHandlerConfiguration getHandlerConfig() {
-        return handlerConfig;
-    }
-
-    protected ServletContext getHandlerServletContext() {
-        return servletContext;
-    }
-
-    @Deprecated
-    @Override
-    public SiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration() {
-        return getHandlerConfig();
-    }
-
-    @Deprecated
-    @Override
-    public ServletContext getServletContext() {
-        return getHandlerServletContext();
     }
 
 }
