@@ -15,9 +15,11 @@
  */
 package org.hippoecm.frontend.extjs;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -38,6 +40,10 @@ public class ExtWidgetRegistry extends ExtObservable {
     public static final String EXT_WIDGET_SERVICE_ID = ExtWidgetRegistry.class.getName();
 
     private static final JavaScriptResourceReference EXT_WIDGET_REGISTRY_JS = new JavaScriptResourceReference(ExtWidgetRegistry.class, "ExtWidgetRegistry.js");
+
+    public static List<? extends HeaderItem> getRegistryHeaderItems() {
+        return Arrays.asList(JavaScriptHeaderItem.forReference(EXT_WIDGET_REGISTRY_JS));
+    }
 
     private final IPluginContext context;
     private boolean loadedWidgets;
