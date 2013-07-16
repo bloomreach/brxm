@@ -63,9 +63,8 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
         add(new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("state-" + state, this, null,
-                                               new Object[]{(schedule != null ? dateFormatFull.format(
-                                                       schedule) : "??")}, "unknown");
+                final String parameter = schedule != null ? dateFormatFull.format(schedule) : "??";
+                return new StringResourceModel("state-" + state, this, null, "unknown", parameter);
             }
 
             @Override
@@ -166,8 +165,8 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
                 } else {
                     state = JcrUtils.getStringProperty(request, "hippostdpubwf:type", state);
                 }
-                if (request.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    schedule = request.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                if (request.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
+                    schedule = request.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
                 } else if (request.hasProperty("hippostdpubwf:reqdate")) {
                     schedule = new Date(request.getProperty("hippostdpubwf:reqdate").getLong());
                 }

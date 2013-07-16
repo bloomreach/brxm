@@ -58,8 +58,8 @@ public class CancelWorkflowPlugin extends RenderPlugin {
             @Override
             protected IModel getTitle() {
                 final String resourceKey = "state-"+state;
-                final String parameter = schedule!=null ? dateFormatFull.format(schedule) : "??";
-                return new StringResourceModel(resourceKey, this, null, new Object[] { parameter }, "state-unknown");
+                final String parameter = schedule != null ? dateFormatFull.format(schedule) : "??";
+                return new StringResourceModel(resourceKey, this, null, "state-unknown", parameter );
             }
 
             @Override
@@ -101,8 +101,8 @@ public class CancelWorkflowPlugin extends RenderPlugin {
                 if (state == null) {
                     state = "unknown";
                 }
-                if(jobNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    schedule = jobNode.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                if(jobNode.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
+                    schedule = jobNode.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
                 } else if (jobNode.hasProperty("hippostdpubwf:reqdate")) {
                     schedule = new Date(jobNode.getProperty("hippostdpubwf:reqdate").getLong());
                 }

@@ -64,8 +64,8 @@ public class BasicRequestWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("state-"+state, this, null,
-                    new Object[] {  (schedule!=null ? dateFormatFull.format(schedule) : "??") }, "unknown");
+                final String parameter = schedule!=null ? dateFormatFull.format(schedule) : "??";
+                return new StringResourceModel("state-"+state, this, null, "unknown", parameter);
             }
 
             @Override
@@ -133,12 +133,12 @@ public class BasicRequestWorkflowPlugin extends RenderPlugin {
         try {
             Node node = model.getNode();
             state = node.getProperty("hippostdpubwf:type").getString();
-            if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+            if (node.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
+                schedule = node.getProperty("hipposched:triggers/default/hipposched:nextFireTime").getDate().getTime();
             } else if (node.hasProperty("hippostdpubwf:reqdate")) {
                 schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
             }
-            Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
+            Map<String, Serializable> hints = (model.getObject()).hints();
             if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
                 cancelAction.setVisible(false);
             }
