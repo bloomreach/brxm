@@ -507,7 +507,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
 
         if (blueprintService == null) {
-            log.error("Could not get blueprint REST service!");
+            throw new ActionFailedException("Could not get blueprint REST service!");
         }
 
         newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();

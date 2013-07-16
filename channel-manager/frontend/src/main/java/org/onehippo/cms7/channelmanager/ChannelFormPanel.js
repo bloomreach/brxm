@@ -40,7 +40,7 @@
             me = this;
             config = {
                 padding: 5,
-                url: me.store.url,
+                url: me.store.proxy.url,
                 defaults: {
                     labelAlign: 'top',
                     width: 450,
