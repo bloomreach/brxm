@@ -38,11 +38,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfigurationService.class);
 
     /*
-     * rootComponentConfigurations are component configurations that are directly retrievable through getComponentConfiguration(String id),
-     * in other words, every HstComponent that has a non null id.
-     * 
+     * canonicalComponentConfigurations are component configurations that are retrievable through getComponentConfiguration(String id),
+     * They are the HstComponentConfiguration items that are not the result of enhancing but present without enhancing
      */
-    private Map<String, HstComponentConfiguration> rootComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
+    private Map<String, HstComponentConfiguration> canonicalComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
 
     /*
      * Components that are direct childs of the hst:components node. A child component only is a root component when it has a non null
@@ -89,7 +88,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
      
         for (HstComponentConfiguration child : childComponents) {
-            populateRootComponentConfigurations(child);
+            populateCanonicalComponentConfigurations(child);
         }
 
         /*
@@ -108,9 +107,9 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) throws ServiceException{
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
-        for (HstComponentConfiguration child : rootComponentConfigurations.values()) {
+        for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
             if (!populated.contains(child)) {
-                ((HstComponentConfigurationService) child).populateComponentReferences(rootComponentConfigurations,
+                ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations,
                         populated);
             }
         }
@@ -157,11 +156,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     }
 
     public HstComponentConfiguration getComponentConfiguration(String id) {
-        return this.rootComponentConfigurations.get(id);
+        return this.canonicalComponentConfigurations.get(id);
     }
 
     public Map<String, HstComponentConfiguration> getComponentConfigurations() {
-        return Collections.unmodifiableMap(this.rootComponentConfigurations);
+        return Collections.unmodifiableMap(this.canonicalComponentConfigurations);
     }
 
 
@@ -180,12 +179,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
 
-    private void populateRootComponentConfigurations(HstComponentConfiguration componentConfiguration) {
+    private void populateCanonicalComponentConfigurations(HstComponentConfiguration componentConfiguration) {
         if (componentConfiguration.getId() != null) {
-            rootComponentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
+            canonicalComponentConfigurations.put(componentConfiguration.getId(), componentConfiguration);
         }
         for (HstComponentConfiguration child : componentConfiguration.getChildren().values()) {
-            populateRootComponentConfigurations(child);
+            populateCanonicalComponentConfigurations(child);
         }
     }
     
