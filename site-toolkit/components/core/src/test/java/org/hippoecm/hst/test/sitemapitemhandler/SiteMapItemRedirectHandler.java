@@ -18,12 +18,10 @@ package org.hippoecm.hst.test.sitemapitemhandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
-public class SiteMapItemRedirectHandler extends AbstractTestHstSiteMapHandler {
+public class SiteMapItemRedirectHandler extends AbstractTestHstSiteItemMapHandler {
 
   
     public ResolvedSiteMapItem process(ResolvedSiteMapItem resolvedSiteMapItem, HttpServletRequest request,

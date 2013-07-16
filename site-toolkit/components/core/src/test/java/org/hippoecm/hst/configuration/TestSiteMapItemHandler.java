@@ -40,9 +40,8 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler;
+import org.hippoecm.hst.test.sitemapitemhandler.AbstractTestHstSiteItemMapHandler;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -94,23 +93,25 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                 
                 assertNotNull(siteMapItemHandlerFactory);
                
-                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.NoopHandler' but was '"+handlerConfigrations.get(0).getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.NoopHandler".equals(handlerConfigrations.get(0).getSiteMapItemHandlerClassName()));
+                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.NoopHandlerItem' but was '"+handlerConfigrations.get(0).getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.NoopHandlerItem".equals(handlerConfigrations.get(0).getSiteMapItemHandlerClassName()));
                                                                        
                 try {
-                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
-                    assertNotNull("There should be created a siteMapHandler", siteMapHandler);
-                    
+                    HstSiteMapItemHandler smih =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
+                    assertNotNull("There should be created a siteMapHandler", smih);
+
+                    assertTrue(smih instanceof AbstractTestHstSiteItemMapHandler);
+                    AbstractTestHstSiteItemMapHandler siteMapItemHandler = (AbstractTestHstSiteItemMapHandler)smih;
                     // the property 'unittestproject:somestring' is ${myparam} which is configured on the sitemap item and should be resolved to /home for getProperty
                     // for getRawProperty, we should find ${myparam} as value
-                    String myStringParam =  siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somestring", resolvedSiteMapItem, String.class);
-                    String myStringRawParam =  siteMapHandler.getSiteMapItemHandlerConfiguration().getRawProperty("unittestproject:somestring", String.class);
+                    String myStringParam =  siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somestring", resolvedSiteMapItem, String.class);
+                    String myStringRawParam =  siteMapItemHandler.getHandlerConfig().getRawProperty("unittestproject:somestring", String.class);
                     assertTrue("myparam must be '/home' and myRawParam must be '${myparam}'", "/home".equals(myStringParam) && "${myparam}".equals(myStringRawParam));
                     
                     
                     // the property 'unittestproject:somestrings' contains in configuration val1, val2 and ${1}. The current sitemap item did not involve a wildcard, so ${1} should be set to null for getProperty.
                     // for the getRawProperty, ${1} should be there
-                    String[] myStringParams = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somestrings", resolvedSiteMapItem, String[].class);
-                    String[] myStringRawParams = siteMapHandler.getSiteMapItemHandlerConfiguration().getRawProperty("unittestproject:somestrings", String[].class);
+                    String[] myStringParams = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somestrings", resolvedSiteMapItem, String[].class);
+                    String[] myStringRawParams = siteMapItemHandler.getHandlerConfig().getRawProperty("unittestproject:somestrings", String[].class);
 
                     assertTrue("We expect 3 params for unittestproject:somestrings for getProperty and 3 for getRawProperty",myStringParams.length == 3 && myStringRawParams.length == 3);
                     assertTrue(myStringParams[0].equals(myStringRawParams[0]));
@@ -119,29 +120,29 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                     assertFalse(myStringRawParams[2].equals(myStringParams[2]));
                     
                     // test dates
-                    Calendar myCal = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somedate", resolvedSiteMapItem, Calendar.class);
-                    Calendar[] myCals = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somedates", resolvedSiteMapItem, Calendar[].class);
+                    Calendar myCal = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somedate", resolvedSiteMapItem, Calendar.class);
+                    Calendar[] myCals = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somedates", resolvedSiteMapItem, Calendar[].class);
                     
                     assertNotNull(myCal);                    
                     assertTrue(myCals.length == 2);
                     
                     // test booleans
-                    Boolean bool = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:someboolean", resolvedSiteMapItem, Boolean.class);
-                    Boolean[] bools = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somebooleans", resolvedSiteMapItem, Boolean[].class);
+                    Boolean bool = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:someboolean", resolvedSiteMapItem, Boolean.class);
+                    Boolean[] bools = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somebooleans", resolvedSiteMapItem, Boolean[].class);
                     
                     assertTrue(Boolean.TRUE.equals(bool));
                     assertTrue(bools.length == 2 && Boolean.TRUE.equals(bools[0]) && Boolean.FALSE.equals(bools[1]));
                     
                     // test longs
-                    Long myLong = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somelong", resolvedSiteMapItem, Long.class);
-                    Long[] myLongs = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somelongs", resolvedSiteMapItem, Long[].class);
+                    Long myLong = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somelong", resolvedSiteMapItem, Long.class);
+                    Long[] myLongs = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somelongs", resolvedSiteMapItem, Long[].class);
                     
                     assertNotNull(myLong);                    
                     assertTrue(myLongs.length == 2);
                     
                     // test doubles
-                    Double myDouble = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somedouble", resolvedSiteMapItem, Double.class);
-                    Double[] myDoubles = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somedoubles", resolvedSiteMapItem, Double[].class);
+                    Double myDouble = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somedouble", resolvedSiteMapItem, Double.class);
+                    Double[] myDoubles = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somedoubles", resolvedSiteMapItem, Double[].class);
                     
                     assertNotNull(myDouble);                    
                     assertTrue(myDoubles.length == 2);
@@ -180,11 +181,14 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                 List<HstSiteMapItemHandlerConfiguration> handlerConfigrations = resolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
                                                                      
                 try {
-                    HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
+                    HstSiteMapItemHandler smih =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
                     // the property 'unittestproject:somestrings' contains in configuration val1, val2 and ${1}. The current sitemap item DID  involve a wildcard, so ${1} should
                     // now resolve to 'foo'
-                    String[] myStringParams = siteMapHandler.getSiteMapItemHandlerConfiguration().getProperty("unittestproject:somestrings", resolvedSiteMapItem, String[].class);
-                    String[] myStringRawParams = siteMapHandler.getSiteMapItemHandlerConfiguration().getRawProperty("unittestproject:somestrings", String[].class);
+
+                    assertTrue(smih instanceof AbstractTestHstSiteItemMapHandler);
+                    AbstractTestHstSiteItemMapHandler siteMapItemHandler = (AbstractTestHstSiteItemMapHandler)smih;
+                    String[] myStringParams = siteMapItemHandler.getHandlerConfig().getProperty("unittestproject:somestrings", resolvedSiteMapItem, String[].class);
+                    String[] myStringRawParams = siteMapItemHandler.getHandlerConfig().getRawProperty("unittestproject:somestrings", String[].class);
 
                     assertTrue(myStringParams[2].equals("foo"));
                     assertTrue(myStringRawParams[2].equals("${1}"));
@@ -234,7 +238,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                     }
                 }
                 
-                // because we have configured to sitemapHandlers that do not really do something (NoopExampleHandler1 and NoopExampleHandler2), we expect the same resolved sitemap item.
+                // because we have configured to sitemapHandlers that do not really do something (NoopExampleHandlerItem1 and NoopExampleHandlerItem2), we expect the same resolved sitemap item.
                 assertTrue("expectede the original resolved sitemap item back because the handlers are Noop",processedSiteMapItem == resolvedSiteMapItem);
             }catch (ContainerException e) {
                 e.printStackTrace();
@@ -243,7 +247,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
         
         /**
          * <p>
-         * This is a test that ensure that the {@link BrowserRedirectHandler} returns <code>null</code> for {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)} and
+         * This is a test that ensure that the {@link org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem} returns <code>null</code> for {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)} and
          * has set a redirect on the response. It terminates the request processing because the {@link ResolvedSiteMapItem} is set to <code>null</code>.
          * </p>
          * The redirect value is configured in the sitemapitemhandlers.xml as:
@@ -294,7 +298,7 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                 
                 assertNotNull(siteMapItemHandlerFactory);
                 
-                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler' but was '"+handlerConfigrations.get(0).getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler".equals(handlerConfigrations.get(0).getSiteMapItemHandlerClassName()));
+                assertTrue("The siteMapItemHandlerClassName should be 'org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem' but was '"+handlerConfigrations.get(0).getSiteMapItemHandlerClassName()+"'","org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem".equals(handlerConfigrations.get(0).getSiteMapItemHandlerClassName()));
                                                                        
                 try {
                     HstSiteMapItemHandler siteMapHandler =  siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfigrations.get(0));
@@ -306,13 +310,13 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                     
                     resolvedSiteMapItem = siteMapHandler2.process(resolvedSiteMapItem, request, response);
                     
-                    assertNull("the BrowserRedirectHandler should return null ", resolvedSiteMapItem);
+                    assertNull("the BrowserRedirectHandlerItem should return null ", resolvedSiteMapItem);
                     
                     // the redirect handler should have set a redirect to /home:
                     
                     String redirected = response.getRedirectedUrl();
                     
-                    assertTrue("We expect the BrowserRedirectHandler to redirect to '/home' but was '"+redirected+"'", "/home".equals(redirected));
+                    assertTrue("We expect the BrowserRedirectHandlerItem to redirect to '/home' but was '"+redirected+"'", "/home".equals(redirected));
                 } catch (HstSiteMapItemHandlerException e){
                     fail("Failed to create HstSiteMapItemHandler instance: " + e.getMessage());
                 }

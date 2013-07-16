@@ -717,12 +717,12 @@ components/core/src/test/java/org/hippoecm/hst/test/AbstractTestConfigurations.j
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockJspServlet.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockRequestDispatcher.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockServletContext.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/AbstractTestHstSiteMapHandler.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/BrowserRedirectHandler.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopExampleHandler1.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopExampleHandler2.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopHandler.java -text svneol=unset#text/plain
-components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/SiteMapItemRedirectHandler.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/AbstractTestHstSiteItemMapHandler.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/BrowserRedirectHandlerItem.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopExampleHandlerItem1.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopExampleHandlerItem2.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/NoopHandlerItem.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/sitemapitemhandler/SiteMapItemRedirectHandler.java -text
 components/core/src/test/resources/META-INF/assembly/simple-beans-1.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-2.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-3.xml svneol=native#text/plain

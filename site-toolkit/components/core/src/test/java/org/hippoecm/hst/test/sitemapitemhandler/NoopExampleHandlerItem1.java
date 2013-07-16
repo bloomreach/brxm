@@ -16,7 +16,7 @@
 package org.hippoecm.hst.test.sitemapitemhandler;
 
 
-public class NoopExampleHandler2 extends AbstractTestHstSiteMapHandler {
+public class NoopExampleHandlerItem1 extends AbstractTestHstSiteItemMapHandler {
 
  
 }

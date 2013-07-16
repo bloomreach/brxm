@@ -25,7 +25,7 @@
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopHandler</sv:value>
+            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopHandlerItem</sv:value>
         </sv:property>
         <sv:property sv:name="unittestproject:redirectto" sv:type="String">
             <!--  take the value from the resolved sitemap item -->
@@ -74,7 +74,7 @@
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandler1</sv:value>
+            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem1</sv:value>
         </sv:property>
         <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
             <!-- the first wildcard value from the resolved sitemap item -->
@@ -91,7 +91,7 @@
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandler2</sv:value>
+            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.NoopExampleHandlerItem2</sv:value>
         </sv:property>
         <sv:property sv:name="unittestproject:wildcard1" sv:type="String">
             <!-- the first wildcard value from the resolved sitemap item -->
@@ -121,7 +121,7 @@
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandler</sv:value>
+            <sv:value>org.hippoecm.hst.test.sitemapitemhandler.BrowserRedirectHandlerItem</sv:value>
         </sv:property>
         <sv:property sv:name="unittestproject:redirectto" sv:type="String">
             <!--  take the value from the resolved sitemap item -->

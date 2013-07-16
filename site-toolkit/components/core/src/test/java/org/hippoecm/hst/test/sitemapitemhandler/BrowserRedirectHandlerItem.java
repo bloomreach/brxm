@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
-public class BrowserRedirectHandler extends AbstractTestHstSiteMapHandler {
+public class BrowserRedirectHandlerItem extends AbstractTestHstSiteItemMapHandler {
 
 
   

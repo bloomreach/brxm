@@ -25,7 +25,7 @@ import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
-public abstract class AbstractTestHstSiteMapHandler implements HstSiteMapItemHandler{
+public abstract class AbstractTestHstSiteItemMapHandler implements HstSiteMapItemHandler {
 
     protected ServletContext servletContext;
     protected SiteMapItemHandlerConfiguration handlerConfig;
@@ -44,6 +44,10 @@ public abstract class AbstractTestHstSiteMapHandler implements HstSiteMapItemHan
         return resolvedSiteMapItem;
     }
 
+
+    public SiteMapItemHandlerConfiguration getHandlerConfig() {
+        return handlerConfig;
+    }
     
     /**
      * Override this method when the destroy of this HstSiteMapItemHandler should invoke some processing, for example clear a cache
