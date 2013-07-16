@@ -24,7 +24,7 @@ public final class EventStoppingDecorator extends AjaxCallListener {
 
     @Override
     public final CharSequence getBeforeHandler(Component component) {
-        return "Wicket.Event.stop(event); ";
+        return "if (attrs.event) { Wicket.Event.stop(attrs.event); }";
     }
 
 }
