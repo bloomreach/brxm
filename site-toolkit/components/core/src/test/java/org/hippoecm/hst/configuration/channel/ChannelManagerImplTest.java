@@ -17,11 +17,8 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -33,25 +30,17 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
-import org.easymock.IAnswer;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelException.Type;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.MutableMount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,12 +50,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertNull;
 
 public class ChannelManagerImplTest extends AbstractTestConfigurations {
