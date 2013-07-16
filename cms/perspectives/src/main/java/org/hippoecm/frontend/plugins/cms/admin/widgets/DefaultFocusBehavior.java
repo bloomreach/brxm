@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.cms.admin.widgets;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
 /**
  * Focuses the component bound to this behavior after a page load or Ajax response. This behavior should be used
@@ -35,6 +35,6 @@ public class DefaultFocusBehavior extends Behavior {
 
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
-        response.render(JavaScriptHeaderItem.forScript("document.getElementById('" + component.getMarkupId() + "').focus();", component.getPath() + "-focus"));
+        response.render(OnDomReadyHeaderItem.forScript("document.getElementById('" + component.getMarkupId() + "').focus();"));
     }
 }

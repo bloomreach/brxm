@@ -37,11 +37,6 @@ public class AdminDataTable<T> extends DataTable<T, String> {
     public AdminDataTable(String id, final List<IColumn<T, String>> columns,
                           ISortableDataProvider<T, String> dataProvider, long rowsPerPage) {
         super(id, columns, dataProvider, rowsPerPage);
-    }
-
-    public AdminDataTable(String id, final IColumn<T, String>[] columns, ISortableDataProvider<T, String> dataProvider,
-                          long rowsPerPage) {
-        this(id, Arrays.asList(columns), dataProvider, rowsPerPage);
 
         setOutputMarkupId(true);
         setVersioned(false);
@@ -49,6 +44,11 @@ public class AdminDataTable<T> extends DataTable<T, String> {
         addBottomToolbar(new AjaxNavigationToolbar(this));
         addTopToolbar(new AjaxFallbackHeadersToolbar(this, dataProvider));
         addBottomToolbar(new NoRecordsToolbar(this));
+    }
+
+    public AdminDataTable(String id, final IColumn<T, String>[] columns, ISortableDataProvider<T, String> dataProvider,
+                          long rowsPerPage) {
+        this(id, Arrays.asList(columns), dataProvider, rowsPerPage);
     }
 
     @Override
