@@ -68,12 +68,12 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
             QueryResult result;
             Query query = session.getWorkspace().getQueryManager().getQuery(queryNode);
             if (query instanceof HippoQuery) {
-                HippoQuery hippoQuery = (HippoQuery)session.getWorkspace().getQueryManager().getQuery(queryNode);
+                HippoQuery hippoQuery = (HippoQuery) query;
                 if (hippoQuery.getArgumentCount() > 0) {
                     Map<String, String> arguments = new TreeMap<String, String>();
                     String[] queryArguments = hippoQuery.getArguments();
-                    for (int i = 0; i < queryArguments.length; i++) {
-                        arguments.put(queryArguments[i], identifier);
+                    for (final String queryArgument : queryArguments) {
+                        arguments.put(queryArgument, identifier);
                     }
                     result = hippoQuery.execute(arguments);
                 } else {
