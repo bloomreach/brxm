@@ -152,8 +152,8 @@ public class TestSiteMapItemHandler extends AbstractTestConfigurations {
                 }
                 
                 
-            }catch (ContainerException e) {
-                e.printStackTrace();
+            } catch (ContainerException e) {
+                fail("ContainerException " + e);
             }
         }
         
