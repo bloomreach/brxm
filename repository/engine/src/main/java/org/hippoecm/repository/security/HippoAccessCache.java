@@ -26,17 +26,11 @@ import org.apache.jackrabbit.core.id.ItemId;
  * get a cache for the given userId. The cache is thread safe.
  */
 public class HippoAccessCache {
-    /** SVN id placeholder */
 
     /**
      * The read access cache map
      */
     private LRUCache<ItemId, Boolean> readAccessCache = null;
-
-    /**
-     * Read cache max size per user for new caches
-     */
-    private static int maxSize = 20000;
 
     /**
      * The max size of the current cache
@@ -58,20 +52,22 @@ public class HippoAccessCache {
 
 
     /**
+     *
      * @param userId  the userId. If <code>null</code> this method will return a
      *                new cache instance for each such call.
+     * @param cacheSize
      * @return the <code>HippoAccessCache</code> instance for the given
      *                <code>userId</code>.
      */
-    public static HippoAccessCache getInstance(String userId) {
+    public static HippoAccessCache getInstance(String userId, final int cacheSize) {
         // if no userId is provided return a new volatile cache
         if (userId == null) {
-            return new HippoAccessCache();
+            return new HippoAccessCache(cacheSize);
         }
         synchronized (caches) {
             HippoAccessCache cache = caches.get(userId);
             if (cache == null) {
-                cache = new HippoAccessCache();
+                cache = new HippoAccessCache(cacheSize);
                 caches.put(userId, cache);
             }
             return cache;
@@ -90,20 +86,12 @@ public class HippoAccessCache {
     }
 
     /**
-     * Set the maximum size for creating new caches. Set the cache size to zero
-     * or something negative to disable the cache.
-     * @param maxSize
-     */
-    public static void setMaxSize(int maxSize) {
-        HippoAccessCache.maxSize = maxSize;
-    }
-
-    /**
      * private constructor
+     * @param cacheSize
      */
-    HippoAccessCache() {
+    HippoAccessCache(final int cacheSize) {
         // set the current size;
-        currentMaxSize = maxSize;
+        currentMaxSize = cacheSize;
         if (currentMaxSize < 1) {
             return;
         }

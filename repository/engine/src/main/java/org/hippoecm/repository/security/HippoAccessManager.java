@@ -268,12 +268,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         final Set<AuthorizationFilterPrincipal> filterPrincipals = subject.getPrincipals(AuthorizationFilterPrincipal.class);
         if (filterPrincipals.isEmpty() && userIds.size() == 1) {
-            HippoAccessCache.setMaxSize(cacheSize);
-            readAccessCache = HippoAccessCache.getInstance(userIds.get(0));
+            readAccessCache = HippoAccessCache.getInstance(userIds.get(0), cacheSize);
         } else {
             initializeExtendedFacetRules(filterPrincipals);
-
-            readAccessCache = new HippoAccessCache();
+            readAccessCache = new HippoAccessCache(cacheSize);
         }
         readVirtualAccessCache = new WeakHashMap<HippoNodeId, Boolean>();
 
