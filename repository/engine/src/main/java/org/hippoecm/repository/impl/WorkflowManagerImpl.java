@@ -634,32 +634,40 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public static class WorkflowInvocationImpl implements WorkflowInvocation {
-        WorkflowManager workflowManager;
-        Node workflowNode;
-        Document workflowSubject;
-        Node workflowSubjectNode;
-        Method method;
-        Object[] arguments;
-        String category = null;
-        String workflowName = null;
-        String methodName = null;
-        Class[] parameterTypes = null;
-        String interactionId;
-        String interaction;
 
-        public WorkflowInvocationImpl() {
-            workflowNode = null;
-            workflowSubject = null;
-            workflowSubjectNode = null;
-            method = null;
-            arguments = null;
-            category = null;
-            workflowName = null;
-            methodName = null;
-            parameterTypes = null;
-            interactionId = null;
-            interaction = null;
+        private WorkflowManager workflowManager;
+        private Node workflowNode;
+        private Document workflowSubject;
+        private Node workflowSubjectNode;
+        private Method method;
+        private Object[] arguments;
+        private String category = null;
+        private String workflowName = null;
+        private String methodName = null;
+        private Class[] parameterTypes = null;
+        private String interactionId;
+        private String interaction;
+
+        public WorkflowInvocationImpl(final String category,
+                                      final String workflowName,
+                                      final String subjectId,
+                                      final String methodName,
+                                      final Class[] parameterTypes,
+                                      final Object[] arguments,
+                                      final String interactionId,
+                                      final String interaction) {
+            this.category = category;
+            this.workflowName = workflowName;
+            workflowSubject = new Document();
+            workflowSubject.setIdentity(subjectId);
+            this.methodName = methodName;
+            this.parameterTypes = parameterTypes;
+            this.arguments = arguments;
+            this.interactionId = interactionId;
+            this.interaction = interaction;
         }
+
+
 
         WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Document workflowSubject, Method method, Object[] args) throws RepositoryException {
             this.workflowManager = workflowManager;
@@ -698,42 +706,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.interaction = WorkflowManagerImpl.INTERACTION.get();
         }
 
-        public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
-            category = (String) input.readObject();
-            workflowName = (String) input.readObject();
-            workflowSubject = new Document();
-            workflowSubject.setIdentity((String) input.readObject());
-            methodName = (String) input.readObject();
-            int length = input.readInt();
-            parameterTypes = new Class[length];
-            for(int i=0; i<length; i++) {
-                parameterTypes[i] = (Class) input.readObject();
-            }
-            arguments = (Object[]) input.readObject();
-            interactionId = (String) input.readObject();
-            interaction = (String) input.readObject();
-        }
-
-        public void writeExternal(ObjectOutput output) throws IOException {
-            try {
-                output.writeObject(category);
-                output.writeObject(workflowName);
-                output.writeObject(workflowSubjectNode.getUUID());
-                output.writeObject(method.getName());
-                Class[] parameterTypes = method.getParameterTypes();
-                output.writeInt(parameterTypes.length);
-                for (final Class parameterType : parameterTypes) {
-                    output.writeObject(parameterType);
-                }
-                output.writeObject(arguments);
-                output.writeObject(interactionId);
-                output.writeObject(interaction);
-            } catch(RepositoryException ex) {
-                log.debug("not serializable", ex);
-                throw new IOException("not serializable");
-            }
-        }
-
         @Override
         public Node getSubject() {
             return workflowSubjectNode;
@@ -751,8 +723,38 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         @Override
+        public String getCategory() {
+            return category;
+        }
+
+        @Override
+        public String getWorkflowName() {
+            return workflowName;
+        }
+
+        @Override
         public String getMethodName() {
             return methodName;
+        }
+
+        @Override
+        public Class[] getParameterTypes() {
+            return parameterTypes;
+        }
+
+        @Override
+        public Object[] getArguments() {
+            return arguments;
+        }
+
+        @Override
+        public String getInteractionId() {
+            return interactionId;
+        }
+
+        @Override
+        public String getInteraction() {
+            return interaction;
         }
 
         @Override

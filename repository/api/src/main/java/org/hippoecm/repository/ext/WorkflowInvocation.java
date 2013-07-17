@@ -24,7 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.WorkflowException;
 
 
-public interface WorkflowInvocation extends Externalizable {
+public interface WorkflowInvocation {
 
     public Object invoke(Session session) throws RepositoryException, WorkflowException;
 
@@ -32,6 +32,18 @@ public interface WorkflowInvocation extends Externalizable {
 
     public void setSubject(Node node);
 
+    public String getCategory();
+
+    public String getWorkflowName();
+
     public String getMethodName();
+
+    public Class[] getParameterTypes();
+
+    public Object[] getArguments();
+
+    public String getInteractionId();
+
+    public String getInteraction();
 
 }

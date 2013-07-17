@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -48,7 +47,9 @@ import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.quartz.workflow.WorkflowJobDetail;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.quartz.CronTrigger;
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerConfigException;
@@ -61,22 +62,22 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRON_TRIGGER;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRONEXPRESSION;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_DATA;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ENDTIME;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_NEXTFIRETIME;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPEATCOUNT;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPEATINTERVAL;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SIMPLE_TRIGGER;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_STARTTIME;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
+
 public class JCRJobStore extends AbstractJobStore {
 
     private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
-
-    private static final String HIPPOSCHED_DATA = "hipposched:data";
-    private static final String HIPPOSCHED_NEXTFIRETIME = "hipposched:nextFireTime";
-    private static final String HIPPOSCHED_TYPE = "hipposched:type";
-    private static final String HIPPOSCHED_STARTTIME = "hipposched:startTime";
-    private static final String HIPPOSCHED_ENDTIME = "hipposched:endTime";
-    private static final String HIPPOSCHED_REPEATCOUNT = "hipposched:repeatCount";
-    private static final String HIPPOSCHED_REPEATINTERVAL = "hipposched:repeatInterval";
-    private static final String HIPPOSCHED_CRONEXPRESSION = "hipposched:cronExpression";
-    private static final String HIPPOSCHED_TRIGGERS = "hipposched:triggers";
-    private static final String HIPPOSCHED_TRIGGER = "hipposched:trigger";
-    private static final String TRIGGER_TYPE_SIMPLE = "simple";
-    private static final String TRIGGER_TYPE_CRON = "cron";
 
     private static final long TWO_MINUTES = 60 * 2;
 
@@ -125,15 +126,11 @@ public class JCRJobStore extends AbstractJobStore {
                     triggersNode = jobNode.addNode(HIPPOSCHED_TRIGGERS, HIPPOSCHED_TRIGGERS);
                 }
 
-                final Node triggerNode = triggersNode.addNode(newTrigger.getName(), HIPPOSCHED_TRIGGER);
-                triggerNode.addMixin("mix:lockable");
-
-                final Calendar fireTime = getCalendarInstance(newTrigger.getNextFireTime());
-                triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
+                final Node triggerNode;
 
                 if (newTrigger instanceof SimpleTrigger) {
                     final SimpleTrigger trigger = (SimpleTrigger) newTrigger;
-                    triggerNode.setProperty(HIPPOSCHED_TYPE, TRIGGER_TYPE_SIMPLE);
+                    triggerNode = triggersNode.addNode(newTrigger.getName(), HIPPOSCHED_SIMPLE_TRIGGER);
                     final Calendar startTime = Calendar.getInstance();
                     startTime.setTime(trigger.getStartTime());
                     triggerNode.setProperty(HIPPOSCHED_STARTTIME, startTime);
@@ -150,9 +147,13 @@ public class JCRJobStore extends AbstractJobStore {
                     }
                 } else {
                     final CronTrigger trigger = (CronTrigger) newTrigger;
-                    triggerNode.setProperty(HIPPOSCHED_TYPE, TRIGGER_TYPE_CRON);
+                    triggerNode = triggersNode.addNode(newTrigger.getName(), HIPPOSCHED_CRON_TRIGGER);
                     triggerNode.setProperty(HIPPOSCHED_CRONEXPRESSION, trigger.getCronExpression());
                 }
+
+                triggerNode.addMixin(JcrConstants.MIX_LOCKABLE);
+                final Calendar fireTime = getCalendarInstance(newTrigger.getNextFireTime());
+                triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
 
                 session.save();
             } catch (RepositoryException e) {
@@ -170,7 +171,7 @@ public class JCRJobStore extends AbstractJobStore {
             try {
                 final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
                 jobPath = jobNode.getPath();
-                return loadJob(jobNode);
+                return createJobDetailFromNode(jobNode);
             } catch (ItemNotFoundException e) {
                 throw new JobPersistenceException("No such job: " + jobIdentifier);
             } catch (RepositoryException e) {
@@ -184,12 +185,19 @@ public class JCRJobStore extends AbstractJobStore {
         }
     }
 
-    private JobDetail loadJob(Node jobNode) throws RepositoryException, ClassNotFoundException, IOException {
-        final Value jobDataValue = jobNode.getProperty(HIPPOSCHED_DATA).getValue();
-        JobDetail jobDetail = (JobDetail) createObjectFromBinaryValue(jobDataValue);
-        if (!(jobDetail instanceof JCRJobDetail)) {
-            // Pre 7.8 backwards compatibility
-            jobDetail = new WorkflowJobDetail(jobNode, jobDetail.getJobDataMap());
+    private JobDetail createJobDetailFromNode(Node jobNode) throws RepositoryException, ClassNotFoundException, IOException {
+        JobDetail jobDetail = null;
+        if (jobNode.hasProperty(HIPPOSCHED_DATA)) {
+            log.warn("Cannot deserialize obsolete job definition at " + jobNode.getPath());
+        } else {
+            final String jobType = jobNode.getPrimaryNodeType().getName();
+            if (HIPPOSCHED_REPOSITORY_JOB.equals(jobType)) {
+                jobDetail = new RepositoryJobDetail(jobNode);
+            } else if (HIPPOSCHED_WORKFLOW_JOB.equals(jobType)) {
+                jobDetail = new WorkflowJobDetail(jobNode);
+            } else {
+                jobDetail = new JCRJobDetail(jobNode, Job.class);
+            }
         }
         return jobDetail;
     }
@@ -206,7 +214,10 @@ public class JCRJobStore extends AbstractJobStore {
                     for (Node triggerNode : new NodeIterable(triggersNode.getNodes())) {
                         if (triggerNode != null) {
                             try {
-                                triggers.add(createTriggerFromNode(triggerNode));
+                                final Trigger trigger = createTriggerFromNode(triggerNode);
+                                if (trigger != null) {
+                                    triggers.add(trigger);
+                                }
                             } catch (RepositoryException e) {
                                 throw new JobPersistenceException("Failed to create trigger", e);
                             } catch (ClassNotFoundException e) {
@@ -237,7 +248,9 @@ public class JCRJobStore extends AbstractJobStore {
                         final Node jobNode = triggerNode.getParent().getParent();
                         try {
                             // make sure we can load the job
-                            loadJob(jobNode);
+                            if (createJobDetailFromNode(jobNode) == null) {
+                                continue;
+                            }
                         } catch (ClassNotFoundException e) {
                             log.warn("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
                             continue;
@@ -280,12 +293,10 @@ public class JCRJobStore extends AbstractJobStore {
     private Trigger createTriggerFromNode(final Node triggerNode) throws RepositoryException, ClassNotFoundException, IOException {
         Trigger trigger = null;
         if (triggerNode.hasProperty(HIPPOSCHED_DATA)) {
-            // pre 7.9 backwards compatibility
-            trigger = (Trigger) createObjectFromBinaryValue(triggerNode.getProperty(HIPPOSCHED_DATA).getValue());
-            trigger.setName(triggerNode.getIdentifier());
+            log.warn("Cannot deserialize obsolete trigger definition at " + triggerNode.getPath());
         } else {
-            final String triggerType = JcrUtils.getStringProperty(triggerNode, HIPPOSCHED_TYPE, null);
-            if (TRIGGER_TYPE_SIMPLE.equals(triggerType)) {
+            final String triggerType = triggerNode.getPrimaryNodeType().getName();
+            if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
                 final Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
                 final Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
                 final long repeatCount = JcrUtils.getLongProperty(triggerNode, HIPPOSCHED_REPEATCOUNT, 0);
@@ -308,7 +319,7 @@ public class JCRJobStore extends AbstractJobStore {
                     simpleTrigger.setNextFireTime(nextFireTime.getTime());
                     trigger = simpleTrigger;
                 }
-            } else if (TRIGGER_TYPE_CRON.equals(triggerType)) {
+            } else if (HIPPOSCHED_CRON_TRIGGER.equals(triggerType)) {
                 final String cronExpression = JcrUtils.getStringProperty(triggerNode, HIPPOSCHED_CRONEXPRESSION, null);
                 if (cronExpression == null) {
                     log.warn("Cannot create cron trigger from node {}: mandatory property {} is missing",
@@ -520,8 +531,8 @@ public class JCRJobStore extends AbstractJobStore {
 
     private static void ensureIsLockable(Session session, String nodePath) throws RepositoryException {
         final Node node = session.getNode(nodePath);
-        if (!node.isNodeType("mix:lockable")) {
-            node.addMixin("mix:lockable");
+        if (!node.isNodeType(JcrConstants.MIX_LOCKABLE)) {
+            node.addMixin(JcrConstants.MIX_LOCKABLE);
         }
         session.save();
     }

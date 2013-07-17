@@ -36,6 +36,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.*;
+
 
 /**
  * RepositoryScheduler service implementation.
@@ -43,8 +45,6 @@ import org.quartz.Trigger;
 public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig";
-    private static final String HIPPOSCHED_JOB = "hipposched:job";
-    private static final String HIPPOSCHED_JOBGROUP = "hipposched:jobgroup";
 
     private final Session session;
     private final Scheduler scheduler;
@@ -118,7 +118,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         if (jobGroup.hasNode(name)) {
             throw new RepositoryException("A job with name '" + name + "' already exists in job group '" + group + "'");
         }
-        return jobGroup.addNode(name, HIPPOSCHED_JOB);
+        return jobGroup.addNode(name, HIPPOSCHED_REPOSITORY_JOB);
     }
 
     private Node getJobNode(String jobName, String groupName) throws RepositoryException {

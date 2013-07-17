@@ -15,23 +15,86 @@
  */
 package org.hippoecm.repository.quartz;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_NAMES;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ATTRIBUTE_VALUES;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB_CLASS;
 
 class RepositoryJobDetail extends JCRJobDetail {
 
-    static final String REPOSITORY_JOB_CLASS_KEY = "hipposched:repositoryJobClass";
-    static final String HIPPOSCHED_CUSTOM_PREFIX = "hipposched:custom:";
+    private static final Logger log = LoggerFactory.getLogger(RepositoryJobDetail.class);
+
+    private final String repositoryJobClassName;
+    private final Map<String, String> attributes = new HashMap<String, String>();
 
     RepositoryJobDetail(final Node jobNode, final RepositoryJobInfo info) throws RepositoryException {
         super(jobNode, RepositoryJobJob.class);
-        getJobDataMap().put(REPOSITORY_JOB_CLASS_KEY, info.getJobClass().getName());
+        this.repositoryJobClassName = info.getJobClass().getName();
         for (String attributeName : info.getAttributeNames()) {
-            getJobDataMap().put(HIPPOSCHED_CUSTOM_PREFIX + attributeName, info.getAttribute(attributeName));
+            attributes.put(attributeName, info.getAttribute(attributeName));
         }
     }
 
+    RepositoryJobDetail(final Node jobNode) throws RepositoryException {
+        super(jobNode, RepositoryJobJob.class);
+        repositoryJobClassName = jobNode.getProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS).getString();
+        if (jobNode.hasProperty(HIPPOSCHED_ATTRIBUTE_NAMES)) {
+            final Value[] nameValues = jobNode.getProperty(HIPPOSCHED_ATTRIBUTE_NAMES).getValues();
+            if (nameValues.length > 0 && !jobNode.hasProperty(HIPPOSCHED_ATTRIBUTE_VALUES)) {
+                log.warn("Invalid state of job node at " + jobNode.getPath() + ": property '"
+                        + HIPPOSCHED_ATTRIBUTE_NAMES + "' has values but property '"
+                        + HIPPOSCHED_ATTRIBUTE_VALUES + "' is not present");
+                return;
+            }
+            final Value[] valueValues = jobNode.getProperty(HIPPOSCHED_ATTRIBUTE_VALUES).getValues();
+            if (nameValues.length != valueValues.length) {
+                log.warn("Invalid state of job node at " + jobNode.getPath() + ": property '"
+                        + HIPPOSCHED_ATTRIBUTE_NAMES + "' must have the same number of values as property '"
+                        + HIPPOSCHED_ATTRIBUTE_VALUES + "'");
+                return;
+            }
+            for (int i = 0; i < nameValues.length; i++) {
+                attributes.put(nameValues[i].getString(), valueValues[i].getString());
+            }
+
+        }
+    }
+
+    @Override
+    public void persist(final Node node) throws RepositoryException {
+        node.setProperty(HIPPOSCHED_REPOSITORY_JOB_CLASS, repositoryJobClassName);
+        node.setProperty(HIPPOSCHED_ATTRIBUTE_NAMES, attributeNames());
+        node.setProperty(HIPPOSCHED_ATTRIBUTE_VALUES, attributeValues());
+    }
+
+    public String getRepositoryJobClassName() {
+        return repositoryJobClassName;
+    }
+
+    public Map<String, String> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    private String[] attributeNames() {
+        Set<String> attributeNames = attributes.keySet();
+        return attributeNames.toArray(new String[attributeNames.size()]);
+    }
+
+    private String[] attributeValues() {
+        final Collection<String> attributeValues = attributes.values();
+        return attributeValues.toArray(new String[attributeValues.size()]);
+    }
 }

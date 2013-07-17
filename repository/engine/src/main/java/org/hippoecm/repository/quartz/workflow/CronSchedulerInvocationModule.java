@@ -18,7 +18,6 @@ package org.hippoecm.repository.quartz.workflow;
 import java.text.ParseException;
 
 import org.quartz.CronTrigger;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 public class CronSchedulerInvocationModule extends AbstractSchedulerInvocationModule {
@@ -33,7 +32,7 @@ public class CronSchedulerInvocationModule extends AbstractSchedulerInvocationMo
     protected Trigger createTrigger(String triggerName) {
         try {
             final CronTrigger trigger = new CronTrigger(triggerName, null, cronExpression);
-            trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_RESCHEDULE_NEXT_WITH_EXISTING_COUNT);
+            trigger.setMisfireInstruction(CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING);
             return trigger;
         } catch (ParseException e) {
             throw new IllegalStateException("Failed to create cron trigger with cron expression '" + cronExpression + "'", e);

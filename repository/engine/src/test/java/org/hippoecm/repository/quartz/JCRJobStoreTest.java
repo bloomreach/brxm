@@ -54,7 +54,6 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         final SchedulingContext context = new JCRSchedulingContext(session);
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
 
-        assertTrue(jobNode.hasProperty("hipposched:data"));
         assertTrue(jobNode.hasNode("hipposched:triggers"));
         assertTrue(jobNode.hasNode("hipposched:triggers/trigger"));
         assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));

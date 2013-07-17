@@ -16,44 +16,122 @@
 package org.hippoecm.repository.quartz.workflow;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.ext.WorkflowInvocation;
+import org.hippoecm.repository.impl.WorkflowManagerImpl;
 import org.hippoecm.repository.quartz.JCRJobDetail;
-import org.quartz.JobDataMap;
+import org.hippoecm.repository.util.JcrUtils;
+
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ARGUMENTS;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CATEGORY;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_INTERACTION;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_INTERACTION_ID;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_METHOD_NAME;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_PARAMETER_TYPES;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SUBJECT_ID;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_NAME;
 
 public class WorkflowJobDetail extends JCRJobDetail {
 
-    private static final String HIPPOSCHED_METHOD_NAME = "hipposched:methodName";
+    private WorkflowInvocation invocation;
+    private String subjectId;
 
-    private static final String DOCUMENT_KEY = "document";
-    private static final String INVOCATION_KEY = "invocation";
 
     public WorkflowJobDetail(Node jobNode, WorkflowInvocation invocation) throws RepositoryException {
         super(jobNode, WorkflowJob.class);
-        JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put(INVOCATION_KEY, invocation);
-        jobDataMap.put(DOCUMENT_KEY, invocation.getSubject().getIdentifier());
-        setJobDataMap(jobDataMap);
+        this.invocation = invocation;
     }
 
-    public WorkflowJobDetail(Node jobNode, JobDataMap jobDataMap) throws RepositoryException {
+    public WorkflowJobDetail(Node jobNode) throws RepositoryException {
         super(jobNode, WorkflowJob.class);
-        setJobDataMap(jobDataMap);
+        this.subjectId = JcrUtils.getStringProperty(jobNode, HIPPOSCHED_SUBJECT_ID, null);
+        final String category = JcrUtils.getStringProperty(jobNode, HIPPOSCHED_CATEGORY, null);
+        final String workflowName = JcrUtils.getStringProperty(jobNode, HIPPOSCHED_WORKFLOW_NAME, null);
+        final String methodName = JcrUtils.getStringProperty(jobNode, HIPPOSCHED_METHOD_NAME, null);
+        final String interactionId = JcrUtils.getStringProperty(jobNode, HIPPOSCHED_INTERACTION_ID, null);
+        final String interaction = JcrUtils.getStringProperty(jobNode, HIPPOSCHED_INTERACTION, null);
+        final Class[] parameterTypes;
+        final Property parameterTypesProperty = JcrUtils.getPropertyIfExists(jobNode, HIPPOSCHED_PARAMETER_TYPES);
+        if (parameterTypesProperty != null) {
+            try {
+                parameterTypes = valuesToClassArray(parameterTypesProperty.getValues());
+            } catch (ClassNotFoundException e) {
+                throw new RepositoryException("Cannot deserialize JobDetail from node " + jobNode.getPath() + ": " + e);
+            }
+        } else {
+            parameterTypes = new Class[] {};
+        }
+        final Object[] arguments;
+        final Property argumentsProperty = JcrUtils.getPropertyIfExists(jobNode, HIPPOSCHED_ARGUMENTS);
+        if (argumentsProperty != null) {
+            arguments = valuesToObjectArray(argumentsProperty.getValues(), jobNode.getSession());
+        } else {
+            arguments = new Object[] {};
+        }
+        this.invocation = new WorkflowManagerImpl.WorkflowInvocationImpl(category, workflowName, subjectId, methodName,
+                parameterTypes, arguments, interactionId, interaction);
     }
 
     @Override
     public void persist(final Node node) throws RepositoryException {
-        super.persist(node);
-        node.setProperty(HIPPOSCHED_METHOD_NAME, getInvocation().getMethodName());
+        node.setProperty(HIPPOSCHED_SUBJECT_ID, invocation.getSubject().getIdentifier());
+        node.setProperty(HIPPOSCHED_CATEGORY, invocation.getCategory());
+        node.setProperty(HIPPOSCHED_WORKFLOW_NAME, invocation.getWorkflowName());
+        node.setProperty(HIPPOSCHED_METHOD_NAME, invocation.getMethodName());
+        final Class[] parameterTypes = invocation.getParameterTypes();
+        if (parameterTypes != null && parameterTypes.length > 0) {
+            node.setProperty(HIPPOSCHED_PARAMETER_TYPES, classArrayToStringArray(parameterTypes));
+        }
+        final Object[] arguments = invocation.getArguments();
+        if (arguments != null && arguments.length > 0) {
+            node.setProperty(HIPPOSCHED_ARGUMENTS, objectArrayToBinaryValues(arguments, node.getSession()));
+        }
+        node.setProperty(HIPPOSCHED_INTERACTION_ID, invocation.getInteractionId());
+        node.setProperty(HIPPOSCHED_INTERACTION, invocation.getInteraction());
     }
 
-    public String getSubjectIdentifier() {
-        return (String) getJobDataMap().get(DOCUMENT_KEY);
+    public String getSubjectId() {
+        return subjectId;
     }
 
     public WorkflowInvocation getInvocation() {
-        return (WorkflowInvocation) getJobDataMap().get(INVOCATION_KEY);
+        return invocation;
+    }
+
+    private static String[] classArrayToStringArray(Class[] classes) {
+        final String[] result = new String[classes.length];
+        for (int i = 0; i < classes.length; i++) {
+            result[i] = classes[i].getName();
+        }
+        return result;
+    }
+
+    private static Value[] objectArrayToBinaryValues(Object[] objects, Session session) throws RepositoryException {
+        final Value[] values = new Value[objects.length];
+        for (int i = 0; i < objects.length; i++) {
+            values[i] = JcrUtils.createBinaryValueFromObject(session, objects[i]);
+        }
+        return values;
+    }
+
+    private static Class[] valuesToClassArray(Value[] values) throws RepositoryException, ClassNotFoundException {
+        final Class[] classes = new Class[values.length];
+        for (int i = 0; i < values.length; i++) {
+            classes[i] = Class.forName(values[i].getString());
+        }
+        return classes;
+    }
+
+    private static Object[] valuesToObjectArray(Value[] values, Session session) throws RepositoryException {
+        final Object[] objects = new Object[values.length];
+        for (int i = 0; i < values.length; i++) {
+            objects[i] = JcrUtils.createBinaryValueFromObject(session, values[i]);
+        }
+        return objects;
     }
 
 }

@@ -46,7 +46,7 @@ public class WorkflowJob implements Job {
 
             final WorkflowJobDetail jobDetail = (WorkflowJobDetail) context.getJobDetail();
             final WorkflowInvocation invocation = jobDetail.getInvocation();
-            final String subjectIdentifier = jobDetail.getSubjectIdentifier();
+            final String subjectIdentifier = jobDetail.getSubjectId();
 
             invocation.setSubject(workflowSession.getNodeByIdentifier(subjectIdentifier));
 

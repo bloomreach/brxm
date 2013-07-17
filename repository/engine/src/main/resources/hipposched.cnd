@@ -21,25 +21,40 @@
 
 [hipposched:trigger] > nt:base, mix:referenceable
 - hipposched:nextFireTime (date)
+- hipposched:data (binary) // deprecated
 - hipposched:fireTime (date) // deprecated
-- hipposched:type (string) < 'simple', 'cron'
+
+[hipposched:crontrigger] > hipposched:trigger
+- hipposched:cronExpression (string)
+
+[hipposched:simpletrigger] > hipposched:trigger
 - hipposched:startTime (date)
 - hipposched:endTime (date)
 - hipposched:repeatCount (long)
 - hipposched:repeatInterval (long)
-- hipposched:cronExpression (string)
-- hipposched:data (binary) // deprecated
 
 [hipposched:triggers] > nt:base
 + * (hipposched:trigger) = hipposched:trigger
 
 [hipposched:job] > hippo:request, mix:versionable
 + hipposched:triggers (hipposched:triggers) = hipposched:triggers
-- hipposched:data (binary) mandatory
+- hipposched:data (binary) // deprecated
 - hippo:document (string) // deprecated
 
 [hipposched:workflowjob] > hipposched:job
 - hipposched:methodName (string) mandatory
+- hipposched:category (string)
+- hipposched:workflowName (string)
+- hipposched:subjectId (string)
+- hipposched:parameterTypes (string) multiple
+- hipposched:arguments (binary) multiple
+- hipposched:interactionId (string)
+- hipposched:interaction (string)
+
+[hipposched:repositoryjob] > hipposched:job
+- hipposched:repositoryJobClass (string) mandatory
+- hipposched:attributeNames (string) multiple
+- hipposched:attributeValues (string) multiple
 
 [hipposched:jobgroup] > nt:base
 + * (hipposched:job) = hipposched:job

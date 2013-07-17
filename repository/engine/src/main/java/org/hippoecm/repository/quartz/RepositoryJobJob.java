@@ -15,17 +15,14 @@
  */
 package org.hippoecm.repository.quartz;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
 import org.onehippo.repository.scheduling.RepositoryJob;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -36,9 +33,10 @@ public class RepositoryJobJob implements Job {
 
     @Override
     public void execute(final JobExecutionContext context) throws JobExecutionException {
-        final JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-        final String repositoryJobClassName = jobDataMap.
-                getString(RepositoryJobDetail.REPOSITORY_JOB_CLASS_KEY);
+        final RepositoryJobDetail repositoryJobDetail = (RepositoryJobDetail) context.getJobDetail();
+
+        final String repositoryJobClassName = repositoryJobDetail.getRepositoryJobClassName();
+        final Map<String, String> attributes = repositoryJobDetail.getAttributes();
 
         try {
             final Class<? extends RepositoryJob> repositoryJobClass =
@@ -47,14 +45,6 @@ public class RepositoryJobJob implements Job {
 
             final JCRScheduler scheduler = (JCRScheduler) context.getScheduler();
             final Session session = scheduler.getJCRSchedulingContext().getSession();
-            Map<String, String> attributes = new HashMap<String, String>(jobDataMap.size());
-            for (String dataMapKey : jobDataMap.getKeys()) {
-                if (dataMapKey.startsWith(RepositoryJobDetail.HIPPOSCHED_CUSTOM_PREFIX)) {
-                    final String attributeName = StringUtils.substringAfter(dataMapKey,
-                            RepositoryJobDetail.HIPPOSCHED_CUSTOM_PREFIX);
-                    attributes.put(attributeName, jobDataMap.getString(dataMapKey));
-                }
-            }
             repositoryJob.execute(new RepositoryJobExecutionContext(session, attributes));
         } catch (ClassNotFoundException e) {
             throw new JobExecutionException(e);
