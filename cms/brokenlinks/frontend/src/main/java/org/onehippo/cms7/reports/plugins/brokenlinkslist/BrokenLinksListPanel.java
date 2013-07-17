@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -102,6 +103,7 @@ public class BrokenLinksListPanel extends ReportPanel {
                 }
             }
         } catch (RepositoryException ex) {
+            log.warn("Unable to load next fire time from the repository, the status message in the CMS UI will not contain the next fire time", ex);
         }
         if (updateText == null) {
             updateText = new StringResourceModel("update-unknown", this, null, "").getObject();
@@ -125,7 +127,7 @@ public class BrokenLinksListPanel extends ReportPanel {
         super.renderHead(response);
 
         response.render(CssHeaderItem.forReference(BROKENLINKS_CSS));
-        response.render(createReportHeaderItem(BROKENLINKS_JS));
+        response.render(JavaScriptHeaderItem.forReference(BROKENLINKS_JS));
     }
 
     private Node getNode(String path) {

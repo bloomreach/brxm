@@ -19,9 +19,8 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -46,16 +45,6 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
 
     private static final PackageResourceReference REPORT_PANEL_BG_IMAGE = new PackageResourceReference(ReportPanel.class, "report-panel-bg.gif");
     public static final JavaScriptResourceReference REPORTS_PORTLET_JS = new JavaScriptResourceReference(ReportPanel.class, "Hippo.Reports.Portlet.js");
-
-    protected static JavaScriptHeaderItem createReportHeaderItem(JavaScriptResourceReference resourceReference) {
-        return new JavaScriptReferenceHeaderItem(resourceReference, null, null, false, null, null) {
-
-            @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
-                return Arrays.asList(JavaScriptHeaderItem.forReference(REPORTS_PORTLET_JS));
-            }
-        };
-    }
 
     private enum TitleColor { normal, highlighted, alert }
     private enum TitleSize { normal, large }
@@ -87,6 +76,12 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
         super();
         this.context = context;
         this.config = config;
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(REPORTS_PORTLET_JS));
     }
 
     @Override
@@ -149,7 +144,7 @@ public class ReportPanel extends ExtPanel implements IStringResourceProvider {
         String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
         if (translators != null) {
             for (String translatorId : translators) {
-                ITranslateService translator = (ITranslateService) context.getService(translatorId, ITranslateService.class);
+                ITranslateService translator = context.getService(translatorId, ITranslateService.class);
                 if (translator != null) {
                     String translation = translator.translate(criteria);
                     if (translation != null) {
