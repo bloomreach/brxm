@@ -16,7 +16,6 @@
 package org.hippoecm.repository.quartz;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +33,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
@@ -42,7 +40,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.quartz.workflow.WorkflowJobDetail;
 import org.hippoecm.repository.util.JcrUtils;
@@ -62,8 +59,8 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRON_TRIGGER;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRONEXPRESSION;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_CRON_TRIGGER;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_DATA;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_ENDTIME;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_NEXTFIRETIME;
@@ -424,15 +421,6 @@ public class JCRJobStore extends AbstractJobStore {
             session.refresh(false);
         } catch (RepositoryException e) {
             log.error("Failed to refresh session", e);
-        }
-    }
-
-    private static Object createObjectFromBinaryValue(final Value value) throws RepositoryException, IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(value.getBinary().getStream());
-        try {
-            return ois.readObject();
-        } finally {
-            IOUtils.closeQuietly(ois);
         }
     }
 
