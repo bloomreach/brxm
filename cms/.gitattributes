@@ -24,6 +24,8 @@ api/src/main/java/org/hippoecm/frontend/PluginApplication.java -text
 api/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingDecorator.java -text
+api/src/main/java/org/hippoecm/frontend/behaviors/OnEnterAjaxBehavior.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/behaviors/enter.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/AbstractDialog.properties -text
@@ -1952,7 +1954,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/Docume
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/model/DocumentCollectionModel.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/BrowsingSectionPlugin.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/BrowsingSectionPlugin.java svneol=native#text/plain
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/OnEnterAjaxBehavior.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/SearchingSectionPlugin.properties svneol=native#text/plain
@@ -1963,7 +1964,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/Sear
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/active-back.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/active-right.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/cancel.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/enter.js svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/magnify.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/search-back.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/browse/section/search.css svneol=native#text/plain

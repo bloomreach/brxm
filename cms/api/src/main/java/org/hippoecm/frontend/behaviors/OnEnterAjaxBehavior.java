@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.browse.section;
+package org.hippoecm.frontend.behaviors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;

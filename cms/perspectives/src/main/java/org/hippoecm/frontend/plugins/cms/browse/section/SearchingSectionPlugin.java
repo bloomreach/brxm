@@ -41,6 +41,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.OnEnterAjaxBehavior;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.JcrNodeModel;
