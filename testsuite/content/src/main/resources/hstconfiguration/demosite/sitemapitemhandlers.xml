@@ -19,12 +19,12 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitemhandlers</sv:value>
     </sv:property>
-    <sv:node sv:name="pagecachehandler">
+    <sv:node sv:name="dummy">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:sitemapitemhandler</sv:value>
         </sv:property>
         <sv:property sv:name="hst:sitemapitemhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.sitemapitemhandler.PageCachingSiteMapHandler</sv:value>
+            <sv:value>org.hippoecm.hst.demo.sitemapitemhandler.DummySiteMapHandler</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

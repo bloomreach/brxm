@@ -580,7 +580,7 @@
   </sv:node>
 
   <!-- Example how to use sitemap item handlers -->
-  <sv:node sv:name="cached">
+  <sv:node sv:name="dummy">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
@@ -589,7 +589,7 @@
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
       <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
-        <sv:value>pagecachehandler</sv:value>
+        <sv:value>dummy</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

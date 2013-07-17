@@ -70,7 +70,7 @@ components/src/main/java/org/hippoecm/hst/demo/linking/DemositeResourceContainer
 components/src/main/java/org/hippoecm/hst/demo/linking/ExampleHstLinkProcessor.java svneol=native#text/plain
 components/src/main/java/org/hippoecm/hst/demo/servlet/DateTimeServlet.java -text
 components/src/main/java/org/hippoecm/hst/demo/servlet/ModifyingHstConfigurationServlet.java -text svneol=unset#text/plain
-components/src/main/java/org/hippoecm/hst/demo/sitemapitemhandler/PageCachingSiteMapHandler.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/sitemapitemhandler/DummySiteMapHandler.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/spring/ContactSpring.java -text
 components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactFormController.java -text
 components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactMessageBean.java -text
