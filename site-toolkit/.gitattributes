@@ -690,6 +690,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestPageCachingVal
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValveImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
+components/core/src/test/java/org/hippoecm/hst/core/hosting/TestCustomMountAndVirtualCmsHostAugmenter.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestSessionSecurityDelegation.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text

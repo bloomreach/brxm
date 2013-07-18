@@ -181,7 +181,7 @@
           <sv:value>hst:virtualhostgroup</sv:value>
       </sv:property>
       <sv:property sv:name="hst:cmslocation" sv:type="String">
-        <sv:value>http://localhost:8080/cms</sv:value>
+        <sv:value>http://testgroup.example.com:8080/cms</sv:value>
       </sv:property>
       <sv:node sv:name="test">
            <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -344,7 +344,7 @@
       <sv:value>hst:virtualhostgroup</sv:value>
     </sv:property>
     <sv:property sv:name="hst:cmslocation" sv:type="String">
-      <sv:value>http://localhost:8080/cms</sv:value>
+      <sv:value>http://globalandsubset.example.com:8080/cms</sv:value>
     </sv:property>
     <sv:node sv:name="partial">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

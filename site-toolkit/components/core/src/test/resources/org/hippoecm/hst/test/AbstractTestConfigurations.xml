@@ -40,6 +40,7 @@
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-resourcebundle.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-trace.xml" />
   <import resource="classpath:/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml" />
   
 </beans>
