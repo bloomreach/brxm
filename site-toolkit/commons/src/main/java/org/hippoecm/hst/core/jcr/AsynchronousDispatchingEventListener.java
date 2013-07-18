@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public abstract class AsynchronousDispatchingEventListener extends GenericEventListener {
-    
-    static Logger log = LoggerFactory.getLogger(AsynchronousDispatchingEventListener.class);
 
     /**
      * The service that will execute the {@link AsynchronousEventDispatcher}
@@ -60,6 +58,7 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
      * Creates a AsynchronousDispatchingEventListener where the ExecutorService is a single threaded executor
      */
     public AsynchronousDispatchingEventListener() {
+        final org.hippoecm.hst.logging.Logger log = HstServices.getLogger(AsynchronousDispatchingEventListener.class.getName());
         log.warn("{} extends from AsynchronousDispatchingEventListener which has been deprecated. Extend from GenericEventListener instead", getClass().getName());
         this.executor = Executors.newSingleThreadExecutor();
     }

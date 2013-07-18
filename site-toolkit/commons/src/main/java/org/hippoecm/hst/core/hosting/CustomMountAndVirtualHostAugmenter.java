@@ -51,8 +51,6 @@ import org.hippoecm.hst.util.HstRequestUtils;
 
 public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugmenter {
 
-    private static final Logger log = HstServices.getLogger(CustomMountAndVirtualHostAugmenter.class.getName());
-
     private final static String DEFAULT_CUSTOM_HOST_NAME = "127.0.0.1";
     private final static String DEFAULT_NOOP_NAMED_PIPELINE = "NoopPipeline";
 
@@ -85,6 +83,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
     @Override
     public void augment(final MutableVirtualHosts hosts) throws ContainerException {
+        Logger log = HstServices.getLogger(CustomMountAndVirtualHostAugmenter.class.getName());
         try {
             if (customMountName == null || customMountName.isEmpty()) {
                 log.error("{} can only work when the customMountName is not null or empty.", this.getClass().getName());
@@ -222,6 +221,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
         @Override
         public void addPortMount(MutablePortMount portMount) throws IllegalArgumentException {
+            Logger log = HstServices.getLogger(CustomMountAndVirtualHostAugmenter.class.getName());
             log.warn("Cannot add a portMount to a CustomVirtualHost");
         }
 

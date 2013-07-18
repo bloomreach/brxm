@@ -55,8 +55,6 @@ import org.hippoecm.hst.util.HstRequestUtils;
 
 public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAugmenter {
 
-    private static final Logger log = HstServices.getLogger(CustomMountAndVirtualCmsHostAugmenter.class.getName());
-
     private static final String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
 
     // as long as it is unique for the cms host
@@ -95,6 +93,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
      */
     @Override
     public void augment(final MutableVirtualHosts hosts) throws ContainerException {
+        Logger log = HstServices.getLogger(CustomMountAndVirtualCmsHostAugmenter.class.getName());
         if (!validateState()) {
             return;
         }
@@ -245,12 +244,13 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             } catch (ServiceException e) {
                 log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
             } catch (IllegalArgumentException e) {
-                log.warn("Unable to add custom cms host mount '" + mountName + "'. Illegal argument: " + e.getMessage());
+                log.error("Unable to add custom cms host mount '" + mountName+ "'.",  e);
             }
         }
     }
 
     private boolean validateState() throws ContainerException {
+        Logger log = HstServices.getLogger(CustomMountAndVirtualCmsHostAugmenter.class.getName());
         if (mountName == null || mountName.isEmpty()) {
             log.error("No mount name set for {}", this.getClass().getName());
             return false;
@@ -320,6 +320,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public void addPortMount(MutablePortMount portMount) throws IllegalArgumentException {
+            Logger log = HstServices.getLogger(CustomMountAndVirtualCmsHostAugmenter.class.getName());
             log.warn("Cannot add a portMount to a CmsRestVirtualHost");
             return;
         }
@@ -802,6 +803,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getCmsLocation() {
+            Logger log = HstServices.getLogger(CustomMountAndVirtualCmsHostAugmenter.class.getName());
             if(virtualHost instanceof MutableVirtualHost) {
                 return ((MutableVirtualHost)virtualHost).getCmsLocation();
             } else {
