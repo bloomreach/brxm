@@ -57,10 +57,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
     private static final String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
 
-    // as long as it is unique for the cms host
-    private static final String AUGMENTED_CMS_VIRTUAL_HOST_GROUP =
-            CustomMountAndVirtualCmsHostAugmenter.class.getName() + "-" + UUID.randomUUID();
-
     private String springConfiguredCmsLocation;
     private String mountName;
     private String mountType;
@@ -173,7 +169,9 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
                 if (host == null) {
                     // add the hostName + mount
-                    VirtualHost newHost = new CustomVirtualHost(hosts, hostSegments, cmsLocation, 0);
+                    // it must be added to a unique virtualhost group to avoud collision
+                    String hostGroupName = CustomMountAndVirtualCmsHostAugmenter.class.getName() + "-" + UUID.randomUUID();
+                    VirtualHost newHost = new CustomVirtualHost(hosts, hostSegments, cmsLocation, 0, hostGroupName);
                     // get the last one added
                     hosts.addVirtualHost((MutableVirtualHost) newHost);
                     host = newHost;
@@ -244,7 +242,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             } catch (ServiceException e) {
                 log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
             } catch (IllegalArgumentException e) {
-                log.error("Unable to add custom cms host mount '" + mountName+ "'.",  e);
+                log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
             }
         }
     }
@@ -278,9 +276,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         private String hostName;
         private MutablePortMount portMount;
         private String cmsLocation;
+        private final String hostGroupName;
 
-        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position) throws ServiceException {
+        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position, String hostGroupName) throws ServiceException {
             this.virtualHosts = virtualHosts;
+            this.hostGroupName = hostGroupName;
             name = hostSegments[position];
             this.cmsLocation = cmsLocation;
             int i = position;
@@ -296,7 +296,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             if(position == hostSegments.length) {
                 // done with adding hosts 
             } else {
-                 childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation,  position));
+                 childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation,  position, hostGroupName));
             }
         }
         
@@ -354,7 +354,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public String getHostGroupName() {
-            return AUGMENTED_CMS_VIRTUAL_HOST_GROUP;
+            return hostGroupName;
         }
 
 

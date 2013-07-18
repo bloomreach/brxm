@@ -22,7 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 /**
  * Tests {@link CustomMountAndVirtualHostAugmenter}.
  */
-public class CustomMountAndVirtualhostAugmenterTest {
+public class TestCustomMountAndVirtualhostAugmenter {
 
     @Test
     public void reverse() {
