@@ -1,12 +1,12 @@
 /*
  * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /* General / body */
-body { 
-    font-family: Verdana; 
+body {
+    font-family: Verdana;
     background-color: #F2F2F2;
 }
 
@@ -97,13 +97,13 @@ div#topnav {
 		float: right;
     	display: inline;
 	} div#topnav a {
-		font-size: 85%; 
+		font-size: 85%;
 }
 
 /* Main navigation */
 div#nav li, div#nav a {
     color: white;
-	} ul.menu { 
+	} ul.menu {
     	/*padding-left: 60px;*/
     	padding-left: 4.62em;
     	*padding-left: 4.50em;
@@ -112,7 +112,7 @@ div#nav li, div#nav a {
 	    	/*padding-right: 25px;*/
 	    	padding-right: 1.92em;
 	    	*padding-right: 1.88em;
-		} ul.menu li.active { 
+		} ul.menu li.active {
 	    	font-weight: bold;
 }
 
@@ -149,7 +149,7 @@ div#ft {
     color: #00A5E3;
     /*height: 162px;*/
     height: 12.46em;
-    *height: 12.15em; 
+    *height: 12.15em;
     /*padding: 56px 60px 60px;*/
     padding: 4.31em 4.62em 4.62em;
     *padding: 4.20 4.50em 4.50em;
@@ -217,8 +217,24 @@ ul#paging-nav li.active {
   font-weight:bold;
 }
 
+ul#paging-nav-nomargin {
+}
+
+ul#paging-nav-nomargin li {
+  display:inline;
+}
+
+ul#paging-nav-nomargin li.active {
+  font-weight:bold;
+}
+
 ul.list-overview {
   margin-left:11.5em;
+  margin-bottom:1em;
+  border-bottom:1px solid #e0e0e0;
+}
+
+ul.list-overview-nomargin {
   margin-bottom:1em;
   border-bottom:1px solid #e0e0e0;
 }

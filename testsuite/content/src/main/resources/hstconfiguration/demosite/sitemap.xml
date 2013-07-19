@@ -594,6 +594,32 @@
     </sv:node>
   </sv:node>
 
+  <!-- External Spring MVC Integration Example -->
+  <sv:node sv:name="springapp">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>WebApplicationInvokingPipeline</sv:value>
+    </sv:property>
+    <sv:node sv:name="news">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>news</sv:value>
+      </sv:property>
+      <sv:node sv:name="_any_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:sitemapitem</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+          <sv:value>news/${1}</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
   <!-- Example plain (non-content-mapped) RESTful sitemap item configuration -->
   <sv:node sv:name="topproducts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

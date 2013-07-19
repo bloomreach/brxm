@@ -55,6 +55,7 @@ components/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=n
 components/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchParams.java -text
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/integration/spring/NewsController.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/ProductRepresentation.java -text
@@ -228,6 +229,12 @@ resources/src/main/webapp/WEB-INF/jsp/spring/contactspringmvc-form.jsp -text
 resources/src/main/webapp/WEB-INF/jsp/spring/contactspringmvc-success.jsp -text
 resources/src/main/webapp/WEB-INF/jsp/templates/rss.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/templates/webpage.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/springapp-servlet.xml -text
+resources/src/main/webapp/WEB-INF/springapp/jsp/footer.jsp -text
+resources/src/main/webapp/WEB-INF/springapp/jsp/header.jsp -text
+resources/src/main/webapp/WEB-INF/springapp/jsp/left.jsp -text
+resources/src/main/webapp/WEB-INF/springapp/jsp/news/item.jsp -text
+resources/src/main/webapp/WEB-INF/springapp/jsp/news/list.jsp -text
 resources/src/main/webapp/WEB-INF/web.xml -text
 resources/src/main/webapp/css/ie6.css svneol=native#text/plain
 resources/src/main/webapp/css/inline-editing.css svneol=native#text/plain
