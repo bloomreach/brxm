@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,28 +15,18 @@
  */
 package org.hippoecm.hst.demo.sitemapitemhandler;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
+import org.hippoecm.hst.core.sitemapitemhandler.AbstractHstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 
 /**
  * Example of a (DUMMY) handler
  *
  */
-public class DummySiteMapHandler implements HstSiteMapItemHandler {
-
-    @Override
-    public void init(final ServletContext servletContext, final SiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException {
-    }
-
-    @Override
-    public void destroy() throws HstSiteMapItemHandlerException {}
-
+public class DummySiteMapHandler extends AbstractHstSiteMapItemHandler {
 
     @Override
     public ResolvedSiteMapItem process(ResolvedSiteMapItem resolvedSiteMapItem, HttpServletRequest request,
