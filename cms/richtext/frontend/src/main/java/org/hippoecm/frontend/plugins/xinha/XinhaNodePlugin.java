@@ -298,7 +298,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
     class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
         private static final long serialVersionUID = 1L;
 
-        private static final String JS_STOP_EVENT = "Wicket.Event.stop(event)";
+        private static final String JS_STOP_EVENT = "Wicket.Event.stop(event);";
 
         @Override
         protected void respond(AjaxRequestTarget target) {
@@ -336,7 +336,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
             final Charset charset = getRequestCycle().getRequest().getCharset();
             attributes.getExtraParameters().put("link", UrlEncoder.QUERY_INSTANCE.encode(link, charset));
             CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
-            return "href=\"#\" onclick=\"" + JS_STOP_EVENT + "Wicket.Ajax.ajax(" + asString + ");\"";
+            return "href=\"#\" onclick='" + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
         }
 
         public String externalLink(String link) {
