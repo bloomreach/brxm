@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.Manifest;
 
 import org.apache.commons.io.IOUtils;
@@ -27,6 +29,19 @@ import org.apache.commons.io.IOUtils;
  * Utility methods used by the repository
  */
 public class RepoUtils {
+
+    public final static Map<Class<?>, Class<?>> PRIMITIVE_TO_OBJECT_TYPES = new HashMap<Class<?>, Class<?>>();
+    static {
+        PRIMITIVE_TO_OBJECT_TYPES.put(boolean.class, Boolean.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(byte.class, Byte.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(short.class, Short.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(char.class, Character.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(int.class, Integer.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(long.class, Long.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(float.class, Float.class);
+        PRIMITIVE_TO_OBJECT_TYPES.put(double.class, Double.class);
+    }
+
 
     /**
      * If the path starts with a file: protocol prefix convert it to an absolute filesystem path

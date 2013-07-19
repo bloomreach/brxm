@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.quartz.workflow;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -34,6 +37,8 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_M
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_PARAMETER_TYPES;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SUBJECT_ID;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_NAME;
+
+import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
 
 public class WorkflowJobDetail extends JCRJobDetail {
 
@@ -68,7 +73,13 @@ public class WorkflowJobDetail extends JCRJobDetail {
         final Object[] arguments;
         final Property argumentsProperty = JcrUtils.getPropertyIfExists(jobNode, HIPPOSCHED_ARGUMENTS);
         if (argumentsProperty != null) {
-            arguments = valuesToObjectArray(argumentsProperty.getValues(), jobNode.getSession());
+            try {
+                arguments = valuesToObjectArray(argumentsProperty.getValues());
+            } catch (IOException e) {
+                throw new RepositoryException("Cannot deserialize JobDetail from node " + jobNode.getPath() + ": " + e);
+            } catch (ClassNotFoundException e) {
+                throw new RepositoryException("Cannot deserialize JobDetail from node " + jobNode.getPath() + ": " + e);
+            }
         } else {
             arguments = new Object[] {};
         }
@@ -105,7 +116,11 @@ public class WorkflowJobDetail extends JCRJobDetail {
     private static String[] classArrayToStringArray(Class[] classes) {
         final String[] result = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
-            result[i] = classes[i].getName();
+            if (classes[i].isPrimitive()) {
+                result[i] = PRIMITIVE_TO_OBJECT_TYPES.get(classes[i]).getName();
+            } else {
+                result[i] = classes[i].getName();
+            }
         }
         return result;
     }
@@ -126,10 +141,11 @@ public class WorkflowJobDetail extends JCRJobDetail {
         return classes;
     }
 
-    private static Object[] valuesToObjectArray(Value[] values, Session session) throws RepositoryException {
+    private static Object[] valuesToObjectArray(Value[] values) throws RepositoryException, IOException, ClassNotFoundException {
         final Object[] objects = new Object[values.length];
         for (int i = 0; i < values.length; i++) {
-            objects[i] = JcrUtils.createBinaryValueFromObject(session, values[i]);
+            ObjectInputStream ois = new ObjectInputStream(values[i].getBinary().getStream());
+            objects[i] = ois.readObject();
         }
         return objects;
     }

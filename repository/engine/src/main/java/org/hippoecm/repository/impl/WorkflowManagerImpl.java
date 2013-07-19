@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -75,6 +72,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
 
 /** This class is not part of a public accessible API or extensible interface */
 public class WorkflowManagerImpl implements WorkflowManager {
@@ -772,7 +771,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     continue;
                 method = methods[methodIndex];
                 for(int i=0; i<types.length; i++) {
-                    if(types[i] != parameterTypes[i]) {
+                    Class<?> type = types[i];
+                    if (type.isPrimitive()) {
+                        type = PRIMITIVE_TO_OBJECT_TYPES.get(type);
+                    }
+                    if(!type.equals(parameterTypes[i])) {
                         method = null;
                         break;
                     }
