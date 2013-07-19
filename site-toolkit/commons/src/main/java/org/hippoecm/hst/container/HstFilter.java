@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -104,7 +104,7 @@ public class HstFilter implements Filter {
     public static final String SUFFIX_EXCLUSIONS_INIT_PARAM = "suffixExclusions";
 
     private static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
-    
+
     protected String contextNamespace;
     protected boolean doClientRedirectAfterJaasLoginBehindProxy;
     protected String clientComponentManagerClassName;
@@ -122,14 +122,14 @@ public class HstFilter implements Filter {
     private String [] suffixExclusions;
 
     private String defaultLoginResourcePath;
-    
+
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
 
         /* HST and ClientComponentManager initialization */
 
         contextNamespace = getConfigOrContextInitParameter(CONTEXT_NAMESPACE_INIT_PARAM, contextNamespace);
- 
+
         doClientRedirectAfterJaasLoginBehindProxy = Boolean.parseBoolean(getConfigOrContextInitParameter(CLIENT_REDIRECT_AFTER_JAAS_LOGIN_BEHIND_PROXY, "true"));
 
         clientComponentManagerClassName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, clientComponentManagerClassName);
@@ -137,7 +137,7 @@ public class HstFilter implements Filter {
         clientComponentManagerConfigurations = splitParamValue(getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null), ",");
 
         clientComponentManagerContextAttributeName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, clientComponentManagerContextAttributeName);
-        
+
         defaultLoginResourcePath = getInitParameter(filterConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
 
         prefixExclusions = splitParamValue(getConfigOrContextInitParameter(PREFIX_EXCLUSIONS_INIT_PARAM, null), ",");
@@ -154,7 +154,7 @@ public class HstFilter implements Filter {
     }
 
     protected void doInit(FilterConfig config) {
-       
+
         if (clientComponentManager != null) {
             try {
                 clientComponentManager.stop();
@@ -200,7 +200,7 @@ public class HstFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
     ServletException {
-        
+
         if (request.getAttribute(ContainerConstants.HST_RESET_FILTER) != null) {
             request.removeAttribute(FILTER_DONE_KEY);
             request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
@@ -250,13 +250,13 @@ public class HstFilter implements Filter {
                 }
             }
     	    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstManager.getSiteMapItemHandlerFactory();
-          
+
     	    if(siteMapItemHandlerFactory == null || hstManager == null) {
                 res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 logger.error("The HstManager or siteMapItemHandlerFactory is not available");
                 return;
             }
-    	    
+
     		if (requestContainerConfig == null) {
         		synchronized (this) {
         			if (requestContainerConfig == null) {
@@ -296,17 +296,17 @@ public class HstFilter implements Filter {
                 logger.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
                 chain.doFilter(request, response);
                 return;
-            } 
- 
+            }
+
             /*
              * HSTTWO-1519
-             * Below is a workaround for JAAS authentication: The j_security_check URL is always handled by the 
-             * container, after which a REDIRECT takes place which always includes the contextpath. In case of a 
+             * Below is a workaround for JAAS authentication: The j_security_check URL is always handled by the
+             * container, after which a REDIRECT takes place which always includes the contextpath. In case of a
              * proxy like httpd in front that again adds the contextpath, the URL ends up with twice the contextpath.
              * This can only happen when the contextpath is not empty and when the !resolvedVirtualHost.getVirtualHost().isContextPathInUrl()
              * We check below whether the previous location was /login/resource, and if so, whether the contextpath is twice in the url
              * If so, we do a client redirect again to remove the duplicate contextpath
-             */ 
+             */
             if (doClientRedirectAfterJaasLoginBehindProxy && !resolvedVirtualHost.getVirtualHost().isContextPathInUrl() && !"".equals(req.getContextPath())) {
                 String referer = req.getHeader("Referer");
                 if (referer != null && referer.endsWith(defaultLoginResourcePath)) {
@@ -328,7 +328,7 @@ public class HstFilter implements Filter {
     		}
 
             HstMutableRequestContext requestContext = (HstMutableRequestContext)containerRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-            
+
     		if (requestContext == null) {
         		HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         		requestContext = rcc.create();
@@ -339,7 +339,7 @@ public class HstFilter implements Filter {
     		}
     		requestContext.setServletContext(filterConfig.getServletContext());
             requestContext.setPathSuffix(containerRequest.getPathSuffix());
-            
+
             if("true".equals(request.getParameter(ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS))) {
                 requestContext.setFullyQualifiedURLs(true);
             }
@@ -351,12 +351,12 @@ public class HstFilter implements Filter {
             if (containerRequest.getPathInfo().startsWith(PATH_PREFIX_UUID_REDIRECT)) {
                 /*
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
-                 * a URL for the uuid, and send a browser redirect to this URL. 
+                 * a URL for the uuid, and send a browser redirect to this URL.
                  */
                 sendRedirectToUuidUrl(req, res, requestContext, hstManager, resolvedVirtualHost, containerRequest, hostName, logger);
                 return;
             } else {
-                
+
                 ResolvedMount resolvedMount = requestContext.getResolvedMount();
 
                 if (resolvedMount == null) {
@@ -396,6 +396,9 @@ public class HstFilter implements Filter {
                         throw new MatchException("No matching Mount for '" + hostName + "' and '" + containerRequest.getRequestURI() + "'");
                     }
                 }
+
+                // sets filterChain for ValveContext to be able to retrieve...
+                req.setAttribute(ContainerConstants.HST_FILTER_CHAIN, chain);
 
                 HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstManager, requestContext, resolvedMount, res);
 
@@ -555,7 +558,7 @@ public class HstFilter implements Filter {
             return true;
         }
         return false;
-        
+
     }
 
     private String getJcrUuidParameter(ServletRequest request, Logger logger) throws IOException {
@@ -593,8 +596,8 @@ public class HstFilter implements Filter {
     /**
      * Finds a resolved mount of the correct type ('preview' or 'live') for a host in a host group in the given
      * virtual host. We take as Mount the mount that has the closest content path {@link Mount#getCanonicalContentPath()}
-     * to the <code>nodePath</code>. If multiple {@link Mount}'s have an equally well suited {@link Mount#getCanonicalContentPath()}, 
-     * we pick the mount  with the fewest types is picked. These mounts are in general the most generic ones. If multiple 
+     * to the <code>nodePath</code>. If multiple {@link Mount}'s have an equally well suited {@link Mount#getCanonicalContentPath()},
+     * we pick the mount  with the fewest types is picked. These mounts are in general the most generic ones. If multiple
      * {@link Mount}'s have equally well suited {@link Mount#getCanonicalContentPath()} and equal number of types, we pick one at random
      *
      * @param containerRequest current request
@@ -611,12 +614,12 @@ public class HstFilter implements Filter {
         if (mounts == null) {
             throw new MatchException("No mounts found for host '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
         }
-     
+
         List<Mount> candidateMounts = new ArrayList<Mount>();
         int bestPathLength = 0;
         for (Mount mount : mounts) {
             if(!mount.isMapped()) {
-                // not a sitemap 
+                // not a sitemap
                 continue;
             }
             if (mount.getType().equals(type) && (nodePath.startsWith(mount.getCanonicalContentPath() + "/") || nodePath.equals(mount.getCanonicalContentPath()))) {
@@ -633,11 +636,11 @@ public class HstFilter implements Filter {
                 }
             }
         }
-        
+
         if(candidateMounts.isEmpty()) {
             throw new MatchException("There is no mount of type '" + type + "' in the host group for '" + hostName + "' and '" + containerRequest.getRequestURL() + "' that can create a link for a document with path '"+nodePath+"'");
         }
-        
+
         Mount bestMount = candidateMounts.get(0);
         int typeCount = Integer.MAX_VALUE;
         for (Mount mount : candidateMounts) {
@@ -654,7 +657,7 @@ public class HstFilter implements Filter {
      * resolved HST mount.
      *
      * @param containerRequest request to the set HST servlet path for
-     * @param hstSitesManager 
+     * @param hstSitesManager
      * @param requestContext HST request context
      * @param mount the resolved HST mount
      * @param response servlet response for parsing the URL
@@ -679,26 +682,26 @@ public class HstFilter implements Filter {
      * @param req HTTP servlet request
      * @param res HTTP servlet response
      * @param requestContext the HST request context
-     * @param hstSitesManager 
+     * @param hstSitesManager
      * @param logger
      * @throws javax.jcr.RepositoryException
      * @throws java.io.IOException
      */
-    private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, 
+    private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext,
             HstManager hstSitesManager, ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName, Logger logger) throws RepositoryException, IOException {
-         
+
         final String jcrUuid = getJcrUuidParameter(req, logger);
         if (jcrUuid == null) {
             sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        
+
         Session session = null;
         try {
             Credentials configReaderCreds = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
             Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
             session = repository.login(configReaderCreds);
-           
+
             Node node = null;
             try {
                 node = session.getNodeByIdentifier(jcrUuid);
@@ -707,9 +710,9 @@ public class HstFilter implements Filter {
                 sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-    
+
             final String mountType = getTypeParameter(req, logger);
-    
+
             final String hostGroupName = resolvedVirtualHost.getVirtualHost().getHostGroupName();
             final ResolvedMount mount = getMountForType(containerRequest, mountType, hostName, hostGroupName, resolvedVirtualHost.getVirtualHost().getVirtualHosts(), node.getPath());
             if (mount != null) {
@@ -717,18 +720,18 @@ public class HstFilter implements Filter {
             } else {
                 throw new MatchException("No matching mount for '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
             }
-    
+
             ((GenericHttpServletRequestWrapper)containerRequest).setRequestURI(mount.getResolvedMountPath() + "/" + PATH_PREFIX_UUID_REDIRECT);
             setMountPathAsServletPath(containerRequest,hstSitesManager, requestContext, mount, res);
 
-            
+
             final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
             if (linkCreator == null) {
                 logger.error("Cannot create a 'uuid url' when there is no linkCreator available");
                 sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
             }
-    
+
             requestContext.setURLFactory(hstSitesManager.getUrlFactory());
             final HstLink link = linkCreator.create(node, requestContext);
             if (link == null) {
@@ -736,7 +739,7 @@ public class HstFilter implements Filter {
                 sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-    
+
             String url = link.toUrlForm(requestContext, false);
             if (requestContext.isFullyQualifiedURLs()) {
                 url += "?" + ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS + "=true";
@@ -766,7 +769,7 @@ public class HstFilter implements Filter {
     }
 
     /**
-     * Cleaning up resources when the entire hst request processing got skipped but there was already a jcr session taken 
+     * Cleaning up resources when the entire hst request processing got skipped but there was already a jcr session taken
      * from the session pool. This currently can happen when some {@link HstSiteMapItemHandler} impl calls {@link HstRequestContext#getSession}
      * and the returns <code>null</code> from its  {@link HstSiteMapItemHandler#process(org.hippoecm.hst.core.request.ResolvedSiteMapItem, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
      * method, short circuiting the hst request handling (thus, during request matching, not even invoking a single {@link org.hippoecm.hst.core.container.Valve})
@@ -791,7 +794,7 @@ public class HstFilter implements Filter {
         }
     }
 
-    protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager, 
+    protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager,
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
@@ -834,7 +837,7 @@ public class HstFilter implements Filter {
 		}
 
         if (resolvedSiteMapItem.getStatusCode() > 0) {
-            logger.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code" 
+            logger.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code"
                     ,String.valueOf(resolvedSiteMapItem.getStatusCode()), req.getRequestURL().toString() );
             res.setStatus(resolvedSiteMapItem.getStatusCode());
         }
@@ -868,7 +871,7 @@ public class HstFilter implements Filter {
      * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for
      * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
      * @param orginalResolvedSiteMapItem
-     * @param siteMapItemHandlerFactory 
+     * @param siteMapItemHandlerFactory
      * @param req
      * @param res
      * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
@@ -928,12 +931,12 @@ public class HstFilter implements Filter {
     private void log(String msg) {
         filterConfig.getServletContext().log(filterConfig.getFilterName() + ": " + msg);
     }
-    
+
     private String getConfigOrContextInitParameter(String paramName, String defaultValue) {
         String value = getInitParameter(filterConfig, filterConfig.getServletContext(), paramName, defaultValue);
         return (value != null ? value.trim() : null);
     }
-    
+
     /**
      * Retrieves the init parameter from the filterConfig or servletContext.
      * If the init parameter is not found in filterConfig, then it will look up the init parameter from the servletContext.
@@ -947,19 +950,19 @@ public class HstFilter implements Filter {
      */
     private static String getInitParameter(FilterConfig filterConfig, ServletContext servletContext, String paramName, String defaultValue) {
         String value = null;
-        
+
         if (value == null && filterConfig != null) {
             value = filterConfig.getInitParameter(paramName);
         }
-        
+
         if (value == null && servletContext != null) {
             value = servletContext.getInitParameter(paramName);
         }
-        
+
         if (value == null) {
             value = defaultValue;
         }
-        
+
         return value;
     }
 
