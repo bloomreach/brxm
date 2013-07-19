@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -28,6 +30,7 @@ import org.hippoecm.hst.rest.BlueprintService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;
@@ -50,6 +53,12 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     public BlueprintStore(IRestProxyService restProxyService) {
         super(Arrays.asList(new ExtDataField(FIELD_NAME), new ExtDataField(FIELD_DESCRIPTION), new ExtDataField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtDataField(FIELD_CONTENT_ROOT)));
         this.restProxyService = restProxyService;
+    }
+
+    @Override
+    public void renderHead(Component component, final IHeaderResponse response) {
+        super.renderHead(component, response);
+        response.render(ChannelManagerHeaderItem.get());
     }
 
     @Override

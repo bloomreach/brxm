@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
@@ -53,6 +54,7 @@ import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.model.AbsoluteRelativePathModel;
 import org.onehippo.cms7.channelmanager.model.UuidFromPathModel;
 import org.onehippo.cms7.channelmanager.widgets.DropDownListWidget;
@@ -273,6 +275,12 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         }
 
         channelStore.saveChannel(channel);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(ChannelManagerHeaderItem.get());
     }
 
     @Override

@@ -31,8 +31,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -53,6 +55,7 @@ import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
@@ -144,6 +147,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (this.restProxyService == null) {
             log.warn("No RESTful proxy service configured!");
         }
+    }
+
+    @Override
+    public void renderHead(Component component, final IHeaderResponse response) {
+        super.renderHead(component, response);
+        response.render(ChannelManagerHeaderItem.get());
     }
 
     @Override

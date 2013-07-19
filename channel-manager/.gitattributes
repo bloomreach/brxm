@@ -7,6 +7,7 @@ frontend/src/main/appended-resources/META-INF/LICENSE -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelFormPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerHeaderItem.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective.java eol=lf
@@ -15,7 +16,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspectiv
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerPerspective_nl.properties -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/ChannelManagerResourceBehaviour.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ExtStoreFuture.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/ExtStoreFuture.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/RootPanel.java -text
@@ -127,7 +127,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEdi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerGlobalBundle.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerHeaderItem.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-discard.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.png -text

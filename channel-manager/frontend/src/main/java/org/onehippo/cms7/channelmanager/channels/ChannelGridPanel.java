@@ -21,12 +21,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.Localizer;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +85,13 @@ public class ChannelGridPanel extends ExtPanel {
             columns.add(0, ChannelStore.ChannelField.name.name());
         }
         return columns;
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(ChannelManagerHeaderItem.get());
     }
 
     @Override

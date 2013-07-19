@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -27,6 +29,13 @@ public class PlainVariantAdder extends VariantAdder {
 
     public PlainVariantAdder(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        super.renderHead(component, response);
+
+        response.render(TemplateComposerApiHeaderItem.get());
     }
 
 }

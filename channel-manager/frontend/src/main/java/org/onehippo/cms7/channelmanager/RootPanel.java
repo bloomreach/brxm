@@ -15,12 +15,12 @@
  */
 package org.onehippo.cms7.channelmanager;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.js.HippoFutureResourceBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
@@ -86,9 +86,6 @@ public class RootPanel extends ExtPanel {
     public RootPanel(final IPluginContext context, final IPluginConfig config, String id) {
         super(id);
 
-        add(new HippoFutureResourceBehavior());
-        add(new ChannelManagerResourceBehaviour());
-
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
 
         // Retrieve the Channel Service
@@ -147,6 +144,13 @@ public class RootPanel extends ExtPanel {
             target.appendJavaScript("Ext.getCmp('rootPanel').update(" + update.toString() + ");");
             redraw = false;
         }
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(ChannelManagerHeaderItem.get());
     }
 
     @Override

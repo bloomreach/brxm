@@ -15,7 +15,9 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,13 @@ public class ChannelOverview extends ExtPanel {
         final ChannelGridPanel channelListCard = new ChannelGridPanel(channelListConfig, channelStoreFuture);
         channelListCard.setRegion(BorderLayout.Region.CENTER);
         add(channelListCard);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(ChannelManagerHeaderItem.get());
     }
 
 }

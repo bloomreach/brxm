@@ -16,7 +16,9 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 
 public abstract  class AbstractChannelPropertyEditor extends Panel {
 
@@ -30,6 +32,12 @@ public abstract  class AbstractChannelPropertyEditor extends Panel {
         //TODO
     }
 
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(ChannelManagerHeaderItem.get());
+    }
 
 }
 

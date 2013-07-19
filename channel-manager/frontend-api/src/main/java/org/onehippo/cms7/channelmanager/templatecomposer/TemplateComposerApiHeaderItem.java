@@ -15,15 +15,17 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
+import java.util.Arrays;
+
 import org.apache.wicket.Application;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.hippoecm.frontend.js.CmsHeaderItem;
+import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
-public class TemplateComposerApiResourceBehavior implements IHeaderContributor {
-
-    private static final long serialVersionUID = 1L;
+public class TemplateComposerApiHeaderItem extends HeaderItem {
 
     // All individual javascript files used in the template composer API. The array order determines the include order,
     // which matters. All files listed below should also be present in the aggregation section in frontend-api/pom.xml.
@@ -36,23 +38,42 @@ public class TemplateComposerApiResourceBehavior implements IHeaderContributor {
     private static final JavaScriptResourceReference[] JAVASCRIPT_REFERENCES;
 
     private static final JavaScriptResourceReference ALL_JAVASCRIPT =
-            new JavaScriptResourceReference(TemplateComposerApiResourceBehavior.class, "template-composer-api-all.js");
+            new JavaScriptResourceReference(TemplateComposerApiHeaderItem.class, "template-composer-api-all.js");
 
     static {
         JAVASCRIPT_REFERENCES = new JavaScriptResourceReference[JAVASCRIPT_FILES.length];
         for (int i = 0; i < JAVASCRIPT_FILES.length; i++) {
-            JAVASCRIPT_REFERENCES[i] = new JavaScriptResourceReference(TemplateComposerApiResourceBehavior.class, JAVASCRIPT_FILES[i]);
+            JAVASCRIPT_REFERENCES[i] = new JavaScriptResourceReference(TemplateComposerApiHeaderItem.class, JAVASCRIPT_FILES[i]);
         }
     }
 
+    private static final TemplateComposerApiHeaderItem INSTANCE = new TemplateComposerApiHeaderItem();
+
+    public static TemplateComposerApiHeaderItem get() {
+        return INSTANCE;
+    }
+
+    private TemplateComposerApiHeaderItem() {}
+
     @Override
-    public void renderHead(final IHeaderResponse response) {
+    public Iterable<? extends HeaderItem> getDependencies() {
+        return Arrays.asList(ExtResourcesHeaderItem.get(), CmsHeaderItem.get());
+    }
+
+    @Override
+    public Iterable<?> getRenderTokens() {
+        return Arrays.asList("template-composer-api-header-item");
+    }
+
+    @Override
+    public void render(final Response response) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
             for (JavaScriptResourceReference resourceReference : JAVASCRIPT_REFERENCES) {
-                response.render(JavaScriptHeaderItem.forReference(resourceReference));
+                JavaScriptHeaderItem.forReference(resourceReference).render(response);
             }
         } else {
-            response.render(JavaScriptHeaderItem.forReference(ALL_JAVASCRIPT));
+            JavaScriptHeaderItem.forReference(ALL_JAVASCRIPT).render(response);
         }
     }
+
 }

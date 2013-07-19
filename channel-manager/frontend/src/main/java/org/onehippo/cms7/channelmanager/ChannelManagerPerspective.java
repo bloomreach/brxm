@@ -30,7 +30,6 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,7 +42,7 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.hst.rest.SiteService;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiResourceBehavior;
+import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
@@ -65,10 +64,6 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
 
         // When site service is null most probably the site is down
         siteIsUp = (siteService != null);
-
-        // TODO use proper dependency management. This is a very fragile dependency management workaround.
-        // It depends on the channel manager being rendered before the widget.
-        context.registerService(new TemplateComposerApiResourceBehavior(), ExtWidgetRegistry.EXT_WIDGET_SERVICE_ID);
 
         if (siteIsUp) {
             IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
@@ -121,6 +116,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         super.renderHead(response);
 
         response.render(CssHeaderItem.forReference(CHANNEL_MANAGER_PERSPECTIVE_CSS));
+        response.render(TemplateComposerApiHeaderItem.get());
     }
 
     public void removeRenderService(final IRenderService service) {

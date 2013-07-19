@@ -17,25 +17,28 @@ package org.onehippo.cms7.channelmanager;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.hippoecm.frontend.js.CmsHeaderItem;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
 import org.onehippo.cms7.channelmanager.common.CommonBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
+import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
-public class ChannelManagerResourceBehaviour extends Behavior {
+public class ChannelManagerHeaderItem extends HeaderItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final JavaScriptResourceReference ALL = new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class,
+    private static final JavaScriptResourceReference ALL = new JavaScriptResourceReference(ChannelManagerHeaderItem.class,
             "channel-manager-all.js");
 
     private static final String ROOT_PANEL = "RootPanel.js";
@@ -49,10 +52,10 @@ public class ChannelManagerResourceBehaviour extends Behavior {
         List<JavaScriptResourceReference> references = new ArrayList<JavaScriptResourceReference>();
         references.add(new JavaScriptResourceReference(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
         references.add(new JavaScriptResourceReference(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
-        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, BREADCRUMB_TOOLBAR));
-        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, ROOT_PANEL));
-        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, BLUEPRINT_LIST_PANEL));
-        references.add(new JavaScriptResourceReference(ChannelManagerResourceBehaviour.class, CHANNEL_FORM_PANEL));
+        references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, BREADCRUMB_TOOLBAR));
+        references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, ROOT_PANEL));
+        references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, BLUEPRINT_LIST_PANEL));
+        references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, CHANNEL_FORM_PANEL));
         references.add(new JavaScriptResourceReference(ChannelOverview.class, ChannelOverview.CHANNEL_OVERVIEW_PANEL_JS));
         references.add(new JavaScriptResourceReference(ChannelPropertiesWindow.class, ChannelPropertiesWindow.CHANNEL_PROPERTIES_WINDOW_JS));
         references.add(new JavaScriptResourceReference(ChannelGridPanel.class, ChannelGridPanel.CHANNEL_GRID_PANEL_JS));
@@ -60,14 +63,32 @@ public class ChannelManagerResourceBehaviour extends Behavior {
         JAVASCRIPT_RESOURCE_REFERENCES = references.toArray(new JavaScriptResourceReference[references.size()]);
     }
 
+    private static final ChannelManagerHeaderItem INSTANCE = new ChannelManagerHeaderItem();
+
+    public static ChannelManagerHeaderItem get() {
+        return INSTANCE;
+    }
+
+    private ChannelManagerHeaderItem() {}
+
     @Override
-    public void renderHead(Component component, final IHeaderResponse response) {
+    public Iterable<? extends HeaderItem> getDependencies() {
+        return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get(), TemplateComposerApiHeaderItem.get());
+    }
+
+    @Override
+    public Iterable<?> getRenderTokens() {
+        return Arrays.asList("channel-manager-header-item");
+    }
+
+    @Override
+    public void render(final Response response) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
             for (JavaScriptResourceReference resourceReference : JAVASCRIPT_RESOURCE_REFERENCES) {
-                response.render(JavaScriptHeaderItem.forReference(resourceReference));
+                JavaScriptHeaderItem.forReference(resourceReference).render(response);
             }
         } else {
-            response.render(JavaScriptHeaderItem.forReference(ALL));
+            JavaScriptHeaderItem.forReference(ALL).render(response);
         }
     }
 

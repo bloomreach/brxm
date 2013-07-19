@@ -16,23 +16,20 @@
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.HeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
+import org.hippoecm.frontend.extjs.ExtWidgetRegistryHeaderItem;
 import org.onehippo.cms7.channelmanager.common.CommonBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 
-public class TemplateComposerResourceBehavior extends Behavior {
-
-    private static final long serialVersionUID = 1L;
+public class TemplateComposerHeaderItem extends HeaderItem {
 
     private static final JavaScriptResourceReference[] DEVELOPMENT_REFERENCES;
     private static final JavaScriptResourceReference[] DEPLOYMENT_REFERENCES;
@@ -51,12 +48,7 @@ public class TemplateComposerResourceBehavior extends Behavior {
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MANAGE_CHANGES_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.NOTIFICATION));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.REST_STORE));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL) {
-            @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
-                return ExtWidgetRegistry.getRegistryHeaderItems();
-            }
-        });
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.DRAG_DROP_ONE));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MSG));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_STORE));
@@ -65,27 +57,35 @@ public class TemplateComposerResourceBehavior extends Behavior {
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_MODEL_STORE));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_CONTEXT));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_CONTAINER));
-        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_EDITOR) {
-            @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
-                return ExtWidgetRegistry.getRegistryHeaderItems();
-            }
-        });
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PAGE_EDITOR));
         DEVELOPMENT_REFERENCES = developmentRefs.toArray(new JavaScriptResourceReference[developmentRefs.size()]);
 
         List<JavaScriptResourceReference> deploymentRefs = new ArrayList<JavaScriptResourceReference>();
         deploymentRefs.add(new JavaScriptResourceReference(PluginsBundle.class, PluginsBundle.ALL));
-        deploymentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ALL) {
-            @Override
-            public Iterable<? extends HeaderItem> getDependencies() {
-                return ExtWidgetRegistry.getRegistryHeaderItems();
-            }
-        });
+        deploymentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ALL));
         DEPLOYMENT_REFERENCES = deploymentRefs.toArray(new JavaScriptResourceReference[deploymentRefs.size()]);
     }
-    
+
+    private static final TemplateComposerHeaderItem INSTANCE = new TemplateComposerHeaderItem();
+
+    public static TemplateComposerHeaderItem get() {
+        return INSTANCE;
+    }
+
+    private TemplateComposerHeaderItem() {}
+
     @Override
-    public void renderHead(Component component, IHeaderResponse response) {
+    public Iterable<? extends HeaderItem> getDependencies() {
+        return Arrays.asList(ExtWidgetRegistryHeaderItem.get());
+    }
+
+    @Override
+    public Iterable<?> getRenderTokens() {
+        return Arrays.asList("template-composer-header-item");
+    }
+
+    @Override
+    public void render(final Response response) {
         JavaScriptResourceReference[] references;
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
             references = DEVELOPMENT_REFERENCES;
@@ -93,8 +93,7 @@ public class TemplateComposerResourceBehavior extends Behavior {
             references = DEPLOYMENT_REFERENCES;
         }
         for (JavaScriptResourceReference reference : references) {
-            response.render(JavaScriptHeaderItem.forReference(reference));
+            JavaScriptHeaderItem.forReference(reference).render(response);
         }
     }
-
 }

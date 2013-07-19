@@ -15,10 +15,12 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
@@ -42,6 +44,13 @@ public class ChannelIconPanel extends ExtPanel {
     public ChannelIconPanel(IPluginConfig channelListConfig, ExtStoreFuture storeFuture) {
         this.store = (ChannelStore) storeFuture.getStore();
         this.userId = UserSession.get().getJcrSession().getUserID();
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(ChannelManagerHeaderItem.get());
     }
 
     @Override

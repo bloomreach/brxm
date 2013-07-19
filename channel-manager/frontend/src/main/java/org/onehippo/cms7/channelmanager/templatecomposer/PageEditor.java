@@ -40,10 +40,9 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
@@ -100,7 +99,7 @@ public class PageEditor extends ExtPanel {
         developmentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN));
         developmentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI));
 
-        developmentRefs.add(new PackageResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL));
+        developmentRefs.add(new PackageResourceReference(Home.class, "js/global.js"));
         developmentRefs.add(new PackageResourceReference(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS));
         developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.UTIL));
         developmentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.DRAG_DROP));
@@ -113,7 +112,7 @@ public class PageEditor extends ExtPanel {
 
         List<PackageResourceReference> deploymentRefs = new ArrayList<PackageResourceReference>();
         deploymentRefs.add(new PackageResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN));
-        deploymentRefs.add(new PackageResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL));
+        deploymentRefs.add(new PackageResourceReference(Home.class, "js/global.js"));
         deploymentRefs.add(new PackageResourceReference(IFrameBundle.class, IFrameBundle.ALL));
         DEPLOYMENT_REFERENCES = deploymentRefs.toArray(new PackageResourceReference[deploymentRefs.size()]);
     }
@@ -203,8 +202,6 @@ public class PageEditor extends ExtPanel {
             this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
-
-        add(new TemplateComposerResourceBehavior());
 
         this.channelPropertiesWindow = new ChannelPropertiesWindow(context, (ChannelStore) channelStoreFuture.getStore());
         add(this.channelPropertiesWindow);
@@ -297,6 +294,7 @@ public class PageEditor extends ExtPanel {
 
         response.render(CssHeaderItem.forReference(new CssResourceReference(PageEditor.class, "plugins/colorfield/colorfield.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PageEditor.class, "plugins/vtabs/VerticalTabPanel.css")));
+        response.render(TemplateComposerHeaderItem.get());
     }
 
     private static boolean canUnlockChannels(final String user, final IPluginConfig config) {
