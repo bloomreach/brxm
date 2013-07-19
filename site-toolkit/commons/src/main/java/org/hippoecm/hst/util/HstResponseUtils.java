@@ -20,6 +20,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -39,19 +41,30 @@ public class HstResponseUtils {
     }
     
     /**
-     * Facility method for sending a redirect to a sitemap path. 
+     * Facility method for sending a temporary 302 redirect to a sitemap path.
      * 
      * @param request the HstRequest
      * @param response the HstResponse
      * @param path the sitemap path you want to redirect to 
      */
     public static void sendRedirect(HstRequest request, HstResponse response, String path) {
-        sendRedirect(request, response, path, null, null);
+        sendRedirect(request, response, path, null);
     }
-    
+
     /**
-     * Facility method for sending a redirect to a sitemap path.  
-     * 
+     * Facility method for sending a permanent 301 redirect to a sitemap path.
+     *
+     * @param request the HstRequest
+     * @param response the HstResponse
+     * @param path the sitemap path you want to redirect to
+     */
+    public static void sendPermanentRedirect(HstRequest request, HstResponse response, String path) {
+        sendPermanentRedirect(request, response, path, null);
+    }
+
+    /**
+     * Facility method for sending a temporary 302 redirect to a sitemap path.
+     *
      * @param request the HstRequest
      * @param response the HstResponse
      * @param path the sitemap path you want to redirect to 
@@ -60,10 +73,22 @@ public class HstResponseUtils {
     public static void sendRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams) {
         sendRedirect(request, response, path, queryParams, null);
     }
-    
+
     /**
-     * Facility method for sending a redirect to a sitemap path. 
-     * 
+     * Facility method for sending a permanent 301 redirect to a sitemap path.
+     *
+     * @param request the HstRequest
+     * @param response the HstResponse
+     * @param path the sitemap path you want to redirect to
+     * @param queryParams query parameters to append to the redirection url
+     */
+    public static void sendPermanentRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams) {
+        sendPermanentRedirect(request, response, path, queryParams, null);
+    }
+
+    /**
+     * Facility method for sending a temporary 302 redirect to a sitemap path.
+     *
      * @param request the HstRequest
      * @param response the HstResponse
      * @param path the sitemap path you want to redirect to 
@@ -71,6 +96,27 @@ public class HstResponseUtils {
      * @param characterEncoding character encoding for query parameters
      */
     public static void sendRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams, String characterEncoding) {
+        doRedirect(request, response, path, queryParams, characterEncoding, false);
+    }
+
+    /**
+     * Facility method for sending a permanent 301 redirect to a sitemap path.
+     *
+     * @param request the HstRequest
+     * @param response the HstResponse
+     * @param path the sitemap path you want to redirect to
+     * @param queryParams query parameters to append to the redirection url
+     * @param characterEncoding character encoding for query parameters
+     */
+    public static void sendPermanentRedirect(HstRequest request, HstResponse response, String path, Map<String, String []> queryParams, String characterEncoding) {
+        doRedirect(request, response, path, queryParams, characterEncoding, true);
+    }
+
+    private static void doRedirect(final HstRequest request,final HstResponse response, final String path,
+                                    final Map<String, String []> queryParams,
+                                    String characterEncoding,
+                                    final boolean permanent) {
+
         HstRequestContext requestContext = request.getRequestContext();
         HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
        
@@ -79,8 +125,12 @@ public class HstResponseUtils {
         if (link == null) {
             throw new HstComponentException("Can not redirect.");
         }
-        
-        String urlString = link.toUrlForm(request.getRequestContext(), false);
+        String urlString;
+        if (permanent) {
+            urlString =  link.toUrlForm(request.getRequestContext(), true);
+        } else {
+            urlString =  link.toUrlForm(request.getRequestContext(), false);
+        }
         
         if (urlString == null) {
             throw new HstComponentException("Can not redirect.");
@@ -115,7 +165,12 @@ public class HstResponseUtils {
         }
         
         try {
-            response.sendRedirect(urlString);
+            if (permanent) {
+                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                response.setHeader("Location", urlString);
+            } else {
+                response.sendRedirect(urlString);
+            }
         } catch (IOException e) {
             throw new HstComponentException("Could not redirect. ",e);
         }
