@@ -16,9 +16,7 @@
 (function() {
     "use strict";
 
-    if (Hippo === undefined) {
-        Hippo = {};
-    }
+    window.Hippo = window.Hippo || {};
 
     if (Hippo.Future !== undefined) {
         return;

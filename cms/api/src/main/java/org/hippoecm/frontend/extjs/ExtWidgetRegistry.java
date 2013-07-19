@@ -15,15 +15,11 @@
  */
 package org.hippoecm.frontend.extjs;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.wicketstuff.js.ext.ExtObservable;
 
@@ -38,12 +34,6 @@ import org.wicketstuff.js.ext.ExtObservable;
 public class ExtWidgetRegistry extends ExtObservable {
 
     public static final String EXT_WIDGET_SERVICE_ID = ExtWidgetRegistry.class.getName();
-
-    private static final JavaScriptResourceReference EXT_WIDGET_REGISTRY_JS = new JavaScriptResourceReference(ExtWidgetRegistry.class, "ExtWidgetRegistry.js");
-
-    public static List<? extends HeaderItem> getRegistryHeaderItems() {
-        return Arrays.asList(JavaScriptHeaderItem.forReference(EXT_WIDGET_REGISTRY_JS));
-    }
 
     private final IPluginContext context;
     private boolean loadedWidgets;
@@ -62,7 +52,7 @@ public class ExtWidgetRegistry extends ExtObservable {
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
         if (!loadedWidgets) {
-            response.render(JavaScriptHeaderItem.forReference(EXT_WIDGET_REGISTRY_JS));
+            response.render(ExtWidgetRegistryHeaderItem.get());
 
             List<IHeaderContributor> contributors = context.getServices(EXT_WIDGET_SERVICE_ID, IHeaderContributor.class);
             for (IHeaderContributor contributor : contributors) {

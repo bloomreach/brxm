@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
+import org.hippoecm.frontend.js.CmsHeaderItem;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -46,8 +47,6 @@ public class RootPlugin extends RenderPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        add(new GlobalJsResourceBehavior());
 
         if (config.containsKey("pinger.interval")) {
             add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
@@ -84,5 +83,11 @@ public class RootPlugin extends RenderPlugin {
         super.render(target);
     }
 
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(CmsHeaderItem.get());
+    }
 }
 

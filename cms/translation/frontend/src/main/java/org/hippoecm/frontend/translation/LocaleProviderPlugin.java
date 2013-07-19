@@ -23,26 +23,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.wicket.Application;
-import org.apache.wicket.Component;
-import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
-import org.hippoecm.frontend.translation.components.folder.FolderTranslationView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
 
 /**
  * Provider of {@link HippoLocale}s, based on plugin configuration.  Icons should
@@ -95,33 +86,6 @@ public final class LocaleProviderPlugin extends Plugin implements ILocaleProvide
         super(context, config);
 
         context.registerService(this, config.getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()));
-
-        // debugging pleasure - enable setting breakpoints on the client
-        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
-            Home page = context.getService(Home.class.getName(), Home.class);
-            page.add(new ExtResourcesBehaviour());
-            page.add(new Behavior() {
-
-                @Override
-                public void renderHead(final Component component, final IHeaderResponse response) {
-                    TranslationResources.getTranslationsHeaderContributor().renderHead(response);
-                    response.render(JavaScriptHeaderItem.forReference(TRANSLATE_DOCUMENT_JS));
-
-                    addFolderViewHeader(response, "treegrid/TreeGridSorter.js");
-                    addFolderViewHeader(response, "treegrid/TreeGridColumnResizer.js");
-                    addFolderViewHeader(response, "treegrid/TreeGridNodeUI.js");
-                    addFolderViewHeader(response, "treegrid/TreeGridLoader.js");
-                    addFolderViewHeader(response, "treegrid/TreeGridColumns.js");
-                    addFolderViewHeader(response, "treegrid/TreeGrid.js");
-                    addFolderViewHeader(response, "folder-translations.js");
-                }
-
-                private void addFolderViewHeader(IHeaderResponse response,  String js) {
-                    response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(FolderTranslationView.class, js)));
-                }
-            });
-
-        }
     }
 
     public List<HippoLocale> getLocales() {

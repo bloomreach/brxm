@@ -156,6 +156,18 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         context.addTemplate(new IHeaderContributor() {
             @Override
             public void renderHead(final IHeaderResponse response) {
+
+                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (target != null) {
+                    Component parent = getComponent();
+                    while (parent != null && !target.getComponents().contains(parent)) {
+                        parent = parent.getParent();
+                    }
+                    if (parent != null) {
+                        rendered = false;
+                    }
+                }
+
                 if (rendered) {
                     return;
                 }

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -29,8 +30,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
-import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
-import org.hippoecm.frontend.js.HippoFutureResourceBehavior;
+import org.hippoecm.frontend.js.CmsHeaderItem;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -52,14 +52,14 @@ import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
+import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class RootPlugin extends TabsPlugin {
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
-    
+
     private boolean rendered = false;
     private final ExtWidgetRegistry extWidgetRegistry;
 
@@ -93,8 +93,6 @@ public class RootPlugin extends TabsPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        add(new GlobalJsResourceBehavior());
 
         if (config.containsKey("pinger.interval")) {
             add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
@@ -186,10 +184,7 @@ public class RootPlugin extends TabsPlugin {
             }
         }
         add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
-        add(new ExtResourcesBehaviour());
         add(new ExtHippoThemeBehavior());
-
-        add(new HippoFutureResourceBehavior());
 
         extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());
         add(extWidgetRegistry);
@@ -220,6 +215,14 @@ public class RootPlugin extends TabsPlugin {
             rendered = true;
         }
         super.render(target);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+
+        response.render(ExtResourcesHeaderItem.get());
+        response.render(CmsHeaderItem.get());
     }
 
     protected String getItemId() {
