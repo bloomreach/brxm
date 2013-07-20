@@ -68,12 +68,6 @@ public class ManagerServiceImpl implements ManagerService {
 
     @Override
     public void close() {
-        if (workflowManager != null) {
-            workflowManager.close();
-        }
-        if (documentManager != null) {
-            documentManager.close();
-        }
         if (rootSession != null) {
             rootSession.logout();
         }

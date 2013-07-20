@@ -122,10 +122,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
     }
 
-    public void close() {
-        documentManager.close();
-    }
-
     public Session getSession() throws RepositoryException {
         return session;
     }

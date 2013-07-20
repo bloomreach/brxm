@@ -135,7 +135,6 @@ public interface HippoSession extends Session {
      *                       will be output.
      * @param binaryAsLink whether to include binaries
      * @param noRecurse whether to output just a single node or the whole subtree
-     * @throws IOException in case of an error writing to the output stream
      * @throws RepositoryException a generic error while accessing the repository
      * @throws PathNotFoundException in case the absPath parameter does not point to a valid node
      * @see javax.jcr.Session#exportSystemView(String,OutputStream,boolean,boolean)
@@ -205,7 +204,9 @@ public interface HippoSession extends Session {
      * guaranteed (though is guaranteed in case of a normal logout procedure.
      * @param callback an object implementing the CloseCallback interface
      * that will be informed when a session is closed.
+     * @deprecated
      */
+    @Deprecated
     public void registerSessionCloseCallback(CloseCallback callback);
 
     /**
@@ -220,11 +221,15 @@ public interface HippoSession extends Session {
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * The interface of the callback handler that is called when the session is
      * logged out.
+     * @deprecated
      */
+    @Deprecated
     interface CloseCallback {
         /** Called upon notification of the session is being logged out.
          * No runtime exception may be thrown.
+         * @deprecated
          */
+        @Deprecated
         public void close();
     }
 

@@ -31,11 +31,11 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseCallback {
+public class DocumentManagerImpl implements DocumentManager {
 
     private final Logger log = LoggerFactory.getLogger(DocumentManagerImpl.class);
 
@@ -45,17 +45,10 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
     public DocumentManagerImpl(Session session) {
         this.session = session;
         try {
-            configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH + "/" +
-                                                          HippoNodeType.DOCUMENTS_PATH);
-        } catch(RepositoryException ex) {
-            log.error("document manager configuration failed: "+ex.getMessage());
+            configuration = session.getNode("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.DOCUMENTS_PATH);
+        } catch(RepositoryException e) {
+            log.error("Document manager configuration failed: " + e);
         }
-        if (session instanceof HippoSession) {
-            ((HippoSession)session).registerSessionCloseCallback(this);
-        }
-    }
-
-    public void close() {
     }
 
     public Session getSession() {
@@ -63,68 +56,68 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
     }
 
     public Document getDocument(String category, String identifier) throws RepositoryException {
+        final Node queryNode;
         try {
-            Node queryNode = configuration.getNode(category);
-            QueryResult result;
-            Query query = session.getWorkspace().getQueryManager().getQuery(queryNode);
-            if (query instanceof HippoQuery) {
-                HippoQuery hippoQuery = (HippoQuery) query;
-                if (hippoQuery.getArgumentCount() > 0) {
-                    Map<String, String> arguments = new TreeMap<String, String>();
-                    String[] queryArguments = hippoQuery.getArguments();
-                    for (final String queryArgument : queryArguments) {
-                        arguments.put(queryArgument, identifier);
-                    }
-                    result = hippoQuery.execute(arguments);
-                } else {
-                    result = hippoQuery.execute();
+            queryNode = configuration.getNode(category);
+        } catch(PathNotFoundException ex) {
+            log.warn("No such documents category: " + category);
+            return null;
+        }
+
+        QueryResult result;
+        final Query query = session.getWorkspace().getQueryManager().getQuery(queryNode);
+        if (query instanceof HippoQuery) {
+            final HippoQuery hippoQuery = (HippoQuery) query;
+            if (hippoQuery.getArgumentCount() > 0) {
+                final Map<String, String> arguments = new TreeMap<String, String>();
+                for (final String argument : hippoQuery.getArguments()) {
+                    arguments.put(argument, identifier);
                 }
+                result = hippoQuery.execute(arguments);
             } else {
-                String[] bindVariableNames = query.getBindVariableNames();
-                for (int i = 0; bindVariableNames != null && i < bindVariableNames.length; i++) {
-                    query.bindValue(bindVariableNames[i], session.getValueFactory().createValue(identifier));
-                }
-                result = query.execute();
+                result = hippoQuery.execute();
             }
-            RowIterator iter = result.getRows();
-            String selectorName = (result.getSelectorNames().length > 1 ? result.getSelectorNames()[result.getSelectorNames().length - 1] : null);
-            if (iter.hasNext()) {
-                Node resultNode = null;
-                while (iter.hasNext()) {
-                    Row resultRow = iter.nextRow();
-                    Node node = (selectorName != null ? resultRow.getNode(selectorName) : resultRow.getNode());
-                    if (node != null) {
-                        if (resultNode == null || node.getPath().length() > resultNode.getPath().length()) {
-                            resultNode = node;
-                        }
+        } else {
+            String[] bindVariableNames = query.getBindVariableNames();
+            for (int i = 0; bindVariableNames != null && i < bindVariableNames.length; i++) {
+                query.bindValue(bindVariableNames[i], session.getValueFactory().createValue(identifier));
+            }
+            result = query.execute();
+        }
+        RowIterator iter = result.getRows();
+        String selectorName = (result.getSelectorNames().length > 1 ? result.getSelectorNames()[result.getSelectorNames().length - 1] : null);
+        if (iter.hasNext()) {
+            Node resultNode = null;
+            while (iter.hasNext()) {
+                Row resultRow = iter.nextRow();
+                Node node = (selectorName != null ? resultRow.getNode(selectorName) : resultRow.getNode());
+                if (node != null) {
+                    if (resultNode == null || node.getPath().length() > resultNode.getPath().length()) {
+                        resultNode = node;
                     }
                 }
+            }
+            if (resultNode != null) {
                 if(queryNode.isNodeType(HippoNodeType.NT_OCMQUERY) || queryNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
+                    final String className = JcrUtils.getStringProperty(queryNode, HippoNodeType.HIPPO_CLASSNAME, null);
                     try {
-                        String className = queryNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
-                        Class clazz = Class.forName(className);
-                        Document document = (Document)clazz.newInstance();
+                        final Class clazz = Class.forName(className);
+                        final Document document = (Document)clazz.newInstance();
                         document.initialize(resultNode);
                         return document;
-                    } catch (Exception e) {
-                        // TODO
-                        e.printStackTrace();
-                        return null;
+                    } catch (ClassNotFoundException e) {
+                        log.error("Cannot create document of type " + className + ": " + e);
+                    } catch (InstantiationException e) {
+                        log.error("Failed to create document of type " + className + ": " + e);
+                    } catch (IllegalAccessException e) {
+                        log.error("Failed to create document of type " + className + ": " + e);
                     }
                 } else {
                     return new Document(resultNode);
                 }
-            } else {
-                return null;
             }
-        } catch(PathNotFoundException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            /* getDocument cannot and should not be used to create documents.
-             * null is a valid way to check whether the document looked for exist,
-             * as this is the only way for e.g. Workflow plugins to lookup
-             * documents.
-             */
-            return null;
         }
+
+        return null;
     }
 }
