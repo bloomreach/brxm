@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
@@ -28,6 +27,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -253,8 +253,6 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
             return factory.createValue(false);
         case PropertyType.DOUBLE:
             return factory.createValue(0.0);
-        case PropertyType.DATE:
-            return factory.createValue(Calendar.getInstance());
         case PropertyType.LONG:
             return factory.createValue(0L);
         case PropertyType.NAME:
