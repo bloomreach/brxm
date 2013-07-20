@@ -28,6 +28,7 @@ import org.hippoecm.repository.api.HippoSession;
  * JCR session is a {@link HippoSession}, a plain Jackrabbit JCR session or a Jackrabbit
  * RMI based JCR session.
  */
+@Deprecated
 public class ManagerServiceFactory {
 
     static WeakHashMap<Session, ManagerService> services = new WeakHashMap<Session, ManagerService>();

@@ -328,12 +328,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         String root = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
         getLogger().info("Initializing content set/add property " + root);
         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
-        HierarchyResolver hierarchyResolver;
-        if (session.getWorkspace() instanceof HippoWorkspace) {
-            hierarchyResolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
-        } else {
-            hierarchyResolver = ManagerServiceFactory.getManagerService(session).getHierarchyResolver();
-        }
+        final HierarchyResolver hierarchyResolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
         Property property = hierarchyResolver.getProperty(session.getRootNode(), root.substring(1), last);
         if (property == null) {
             String propertyName = root.substring(root.lastIndexOf("/") + 1);

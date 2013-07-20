@@ -32,6 +32,7 @@ import org.hippoecm.repository.api.WorkflowManager;
  * specific implementation, while some of the additional services can
  * also be retrieved from a plain Jackrabbit JCR session.
  */
+@Deprecated
 public interface ManagerService {
     /**
      * Obtains the DocumentManager.

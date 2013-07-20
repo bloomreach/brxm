@@ -27,10 +27,9 @@ import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.impl.DocumentManagerImpl;
-import org.hippoecm.repository.impl.WorkflowManagerImpl;
 import org.onehippo.repository.ManagerService;
 
+@Deprecated
 public class ClientManagerService implements ManagerService {
     Session session;
     DocumentManager documentManager = null;

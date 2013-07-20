@@ -27,6 +27,7 @@ import org.hippoecm.repository.impl.DocumentManagerImpl;
 import org.hippoecm.repository.impl.WorkflowManagerImpl;
 import org.onehippo.repository.ManagerService;
 
+@Deprecated
 public class ManagerServiceImpl implements ManagerService {
     Session session, rootSession;
     DocumentManagerImpl documentManager = null;

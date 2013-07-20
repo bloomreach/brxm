@@ -23,7 +23,9 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.repository.ManagerService;
 
+@Deprecated
 public class HippoManagerServiceImpl implements ManagerService {
+
     HippoWorkspace workspace;
 
     public HippoManagerServiceImpl(HippoSession session) {

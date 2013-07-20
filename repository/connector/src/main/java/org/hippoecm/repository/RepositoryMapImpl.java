@@ -16,6 +16,7 @@
 package org.hippoecm.repository;
 
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -144,11 +145,7 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
             if (item == null) {
                 if (session != null) {
                     if (path.startsWith("/")) {
-                        HierarchyResolver resolver;
-                        if(session.getWorkspace() instanceof HippoWorkspace)
-                            resolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
-                        else
-                            resolver = ManagerServiceFactory.getManagerService(session).getHierarchyResolver();
+                        HierarchyResolver resolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
                         return resolver.getItem(session.getRootNode(), path.substring(1)) != null;
                     } else {
                         return false;
@@ -293,12 +290,7 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                         log.debug("get from query item " + item.getPath() + " with key " + key + " query not executed since " +
                                   args.length + " required");
                     }
-                    LinkedList newArguments = new LinkedList<String>();
-                    String[] keys = ((String)key).split("/");
-                    for (int i = 0; i < keys.length; i++) {
-                        newArguments.add(keys[i]);
-                    }
-                    return new RepositoryMapImpl(this, newArguments);
+                    return new RepositoryMapImpl(this, Arrays.asList(((String)key).split("/")));
                 }
             } else if (item != null && item.isNode()) {
                 if (log.isDebugEnabled()) {
@@ -309,11 +301,7 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                 Item found = null;
                 String relPath = (String)key;
                 while (found == null) {
-                    HierarchyResolver resolver;
-                    if(session.getWorkspace() instanceof HippoWorkspace)
-                        resolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
-                    else
-                        resolver = ManagerServiceFactory.getManagerService(session).getHierarchyResolver();
+                    final HierarchyResolver resolver = ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver();
                     found = resolver.getItem(node, relPath, false, last);
                     if (found == null) {
                         node = last.node;

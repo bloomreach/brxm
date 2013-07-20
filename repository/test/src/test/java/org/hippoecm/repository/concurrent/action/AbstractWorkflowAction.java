@@ -22,10 +22,10 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.repository.ManagerServiceFactory;
 
 /**
  * If your action operates on a workflow then extend this class
@@ -88,12 +88,12 @@ public abstract class AbstractWorkflowAction extends Action {
     protected abstract Class<? extends Workflow> getWorkflowClass();
     
     /**
-     * Determins whether the actions can apply on a documen of this type
+     * Determines whether the actions can apply on a document of this type
      */
     protected abstract boolean isApplicableDocumentType(Node node) throws RepositoryException;
     
     protected final WorkflowManager getWorkflowManager(Session session) throws RepositoryException {
-        return ManagerServiceFactory.getManagerService(session).getWorkflowManager();
+        return ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
     }
 
 }
