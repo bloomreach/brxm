@@ -95,12 +95,6 @@ public class ClientManagerService implements ManagerService {
 
     @Override
     public void close() {
-        if (workflowManager instanceof WorkflowManagerImpl) {
-            ((WorkflowManagerImpl)workflowManager).close();
-        }
-        if (documentManager instanceof DocumentManagerImpl) {
-            ((DocumentManagerImpl)documentManager).close();
-        }
         session = null;
         workflowManager = null;
         hierarchyResolver = null;
