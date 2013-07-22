@@ -99,7 +99,7 @@ public class DocumentManagerImpl implements DocumentManager {
             }
             if (resultNode != null) {
                 if(queryNode.isNodeType(HippoNodeType.NT_OCMQUERY) || queryNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
-                    final String className = JcrUtils.getStringProperty(queryNode, HippoNodeType.HIPPO_CLASSNAME, null);
+                    final String className = JcrUtils.getStringProperty(queryNode, HippoNodeType.HIPPO_CLASSNAME, Document.class.getName());
                     try {
                         final Class clazz = Class.forName(className);
                         final Document document = (Document)clazz.newInstance();
