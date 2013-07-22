@@ -657,8 +657,8 @@
                     try {
                         callback.apply(scope, arguments);
                     } catch (e) {
-                        console.error(this.resources['iframe-event-handle-error'] + ' Failed callback: ' + callback.name + '. ' + e);
-                        Hippo.Msg.alert(this.resources['iframe-event-handle-error-title'], this.resources['iframe-event-handle-error'], function() {
+                        console.error(self.resources['iframe-event-handle-error'] + ' Failed callback: ' + callback.name + '. ' + e);
+                        Hippo.Msg.alert(self.resources['iframe-event-handle-error-title'], self.resources['iframe-event-handle-error'], function() {
                             self.initComposer.call(self);
                         });
                         console.error(e);

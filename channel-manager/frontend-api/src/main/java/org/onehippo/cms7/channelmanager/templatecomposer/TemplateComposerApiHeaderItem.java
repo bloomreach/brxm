@@ -22,6 +22,7 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.hippoecm.frontend.extjs.ExtWidgetRegistryHeaderItem;
 import org.hippoecm.frontend.js.CmsHeaderItem;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
@@ -57,7 +58,7 @@ public class TemplateComposerApiHeaderItem extends HeaderItem {
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
-        return Arrays.asList(ExtResourcesHeaderItem.get(), CmsHeaderItem.get());
+        return Arrays.asList(ExtResourcesHeaderItem.get(), CmsHeaderItem.get(), ExtWidgetRegistryHeaderItem.get());
     }
 
     @Override
