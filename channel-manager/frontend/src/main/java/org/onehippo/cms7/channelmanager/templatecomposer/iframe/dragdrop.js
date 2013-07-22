@@ -28,10 +28,26 @@
         ExtEventObject = null;
     });
 
+    function pageXOffset() {
+        var result = window.pageXOffset;
+        if (result === undefined) {
+            result = document.body.scrollLeft;
+        }
+        return result;
+    }
+
+    function pageYOffset() {
+        var result = window.pageYOffset;
+        if (result === undefined) {
+            result = document.body.scrollTop;
+        }
+        return result;
+    }
+
     function createExtEvent(jQueryEvent) {
         var extEvent = new ExtEventObject(jQueryEvent);
-        extEvent.xy[0] += iframePosition[0] - window.pageXOffset;
-        extEvent.xy[1] += iframePosition[1] - window.pageYOffset + iframeToolbarHeight;
+        extEvent.xy[0] += iframePosition[0] - pageXOffset();
+        extEvent.xy[1] += iframePosition[1] - pageYOffset() + iframeToolbarHeight;
         return extEvent;
     }
 
