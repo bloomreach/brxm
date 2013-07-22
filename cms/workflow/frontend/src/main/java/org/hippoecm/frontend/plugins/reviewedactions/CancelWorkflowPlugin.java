@@ -96,9 +96,6 @@ public class CancelWorkflowPlugin extends RenderPlugin {
                 }
                 state = JcrUtils.getStringProperty(jobNode, "hipposched:methodName", null);
                 if (state == null) {
-                    state = deprecatedStateLookupMethod(jobNode);
-                }
-                if (state == null) {
                     state = "unknown";
                 }
                 if(jobNode.hasProperty("hipposched:triggers/default/hipposched:nextFireTime")) {
@@ -120,16 +117,4 @@ public class CancelWorkflowPlugin extends RenderPlugin {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
 
-    @Deprecated
-    private String deprecatedStateLookupMethod(Node jobNode) throws RepositoryException {
-        // Pre 7.8 backwards compatibility
-        String data = jobNode.getProperty("hipposched:data").getString();
-        if(data.contains("depublish")) {
-            return "depublish";
-        } else if(data.contains("publish")) {
-            return "publish";
-        } else {
-            return null;
-        }
-    }
 }
