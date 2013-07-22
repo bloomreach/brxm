@@ -15,10 +15,9 @@
  */
 package org.hippoecm.repository.query.lucene;
 
-import java.util.Set;
-
 import org.apache.jackrabbit.core.query.lucene.IndexingConfiguration;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 
 public interface ServicingIndexingConfiguration extends IndexingConfiguration {
 
@@ -69,16 +68,14 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
     boolean isHippoPath(Name propertyName);
 
     /**
-     * Returns the set of all nodescope exluded property names
-     *
+     * Returns whether field is excluded from indexing on node scope
      */
-    Set<String> getExcludedFromNodeScope();
+    boolean isExcludedFromNodeScope(String fieldName, NamePathResolver resolver);
 
     /**
-     * Returns the set of all properties which should not be indexed as a single term
-     *
+     * Returns whether field should be be indexed as a single term
      */
-    Set<String> getExcludedSingleIndexTerms();
+    boolean isExcludedSingleIndexTerm(String fieldName, NamePathResolver resolver);
 
     /**
      * Evaluate if the name argument type is of a nodetype which should be aggregates as a child aggregate.

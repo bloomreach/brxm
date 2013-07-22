@@ -16,15 +16,20 @@
 package org.hippoecm.repository.query.lucene;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.jcr.NamespaceException;
 
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
@@ -83,20 +88,31 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     Set<Name> childAggregates = new HashSet<Name>();
 
     /**
-     * set of property names that should not be nodescoped indexed and not tokenized (for example hippo:path)
+     * Set of property names that should not be node scoped indexed and not tokenized (for example hippo:path)
      */
-    private Set<String> excludedFromNodeScope = new HashSet<String>();
+    private Set<Name> excludedFromNodeScope = new HashSet<Name>();
 
     /**
-     * set of property names that are not allowed to be indexed as a single term (for example hippostd:content)
+     * Cache of property names that are excluded from indexing on node scope
      */
-    private Set<String> excludedSingleIndexTerms = new HashSet<String>();
+    private Map<String, Boolean> isExcludedFromNodeScope = new HashMap<String, Boolean>();
+
+    /**
+     * Set of property names that are not allowed to be indexed as a single term (for example hippostd:content)
+     */
+    private Set<Name> excludedSingleIndexTerms = new HashSet<Name>();
+
+    /**
+     * Cache of property names that are excluded from being indexed as a single term
+     */
+    private Map<String, Boolean> isExcludedSingleIndexTerm = new HashMap<String, Boolean>();
+
 
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
         super.init(config, context, nsMappings);
         NamespaceResolver nsResolver = new OverlayNamespaceResolver(context.getNamespaceRegistry(), getNamespaces(config));
-        NameResolver resolver = new ParsingNameResolver(NameFactoryImpl.getInstance(), nsResolver);
+        NameResolver nameResolver = new ParsingNameResolver(NameFactoryImpl.getInstance(), nsResolver);
         NodeList indexingConfigs = config.getChildNodes();
 
         List<Name> idxHippoAggregates = new ArrayList<Name>();
@@ -109,9 +125,10 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     Node propertyNode = propertyChildNodes.item(k);
                     if (propertyNode.getNodeName().equals("excludeproperty")) {
                         // get property name
-                        Name propName = resolver.getQName(getTextContent(propertyNode));
+                        Name propName = nameResolver.getQName(getTextContent(propertyNode));
                         excludePropertiesForFacet.add(propName);
-                        log.debug("Added property '" + propName.getNamespaceURI() + ":" + propName.getLocalName() + "' to be indexed as facet.");
+                        log.debug("Added property '{}:{}' to be indexed as facet.",
+                                propName.getNamespaceURI(), propName.getLocalName());
                     }
                 }
             }
@@ -121,14 +138,16 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     Node nodeTypeNode = nameChildNodes.item(k);
                     if (nodeTypeNode.getNodeName().equals("nodetype")) {
                         // get property name
-                        Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
+                        Name nodeTypeName = nameResolver.getQName(getTextContent(nodeTypeNode));
                         idxHippoAggregates.add(nodeTypeName);
-                        log.debug("Added nodetype '" + nodeTypeName.getNamespaceURI() + ":" + nodeTypeName.getLocalName() + "' to be indexed as a hippo aggregate.");
+                        log.debug("Added nodetype '{}:{}' to be indexed as a hippo aggregate.",
+                                nodeTypeName.getNamespaceURI(), nodeTypeName.getLocalName());
                     } else if (nodeTypeNode.getNodeName().equals("childtype")) {
                         // get property name
-                        Name nodeTypeName = resolver.getQName(getTextContent(nodeTypeNode));
+                        Name nodeTypeName = nameResolver.getQName(getTextContent(nodeTypeNode));
                         childAggregates.add(nodeTypeName);
-                        log.debug("Added childtype '" + nodeTypeName.getNamespaceURI() + ":" + nodeTypeName.getLocalName() + "' to be indexed as a hippo aggregate.");
+                        log.debug("Added childtype '{}:{}' to be indexed as a hippo aggregate.",
+                                nodeTypeName.getNamespaceURI(), nodeTypeName.getLocalName());
                     }
                 }
             }
@@ -138,9 +157,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                 for (int k = 0; k < nameChildNodes.getLength(); k++) {
                     Node nodeTypeNode = nameChildNodes.item(k);
                     if (nodeTypeNode.getNodeName().equals("nodetype")) {
-                        String nodeTypeName = getTextContent(nodeTypeNode);
+                        Name nodeTypeName = nameResolver.getQName(getTextContent(nodeTypeNode));
                         excludedFromNodeScope.add(nodeTypeName);
-                        log.debug("nodetype '" + nodeTypeName + "' will not be indexed in the nodescope.");
+                        log.debug("nodetype '{}' will not be indexed in the nodescope.", nodeTypeName);
                     }
                 }
             }
@@ -150,9 +169,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                     Node nodeTypeProperty = nameChildNodes.item(k);
                     if (nodeTypeProperty.getNodeName().equals("property")) {
                         // get property name
-                        String nodeTypePropertyName = getTextContent(nodeTypeProperty);
+                        Name nodeTypePropertyName = nameResolver.getQName(getTextContent(nodeTypeProperty));
                         excludedSingleIndexTerms.add(nodeTypePropertyName);
-                        log.debug("property '" + nodeTypePropertyName + "' will not be indexed as a single term.");
+                        log.debug("property '{}' will not be indexed as a single term.", nodeTypePropertyName);
                     }
                 }
             }
@@ -163,10 +182,10 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
             }
 
         }
-        hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
-        hippoText = resolver.getQName(HippoNodeType.HIPPO_TEXT);
-        hippoHandle = resolver.getQName(HippoNodeType.NT_HANDLE);
-        hippoDocument = resolver.getQName(HippoNodeType.NT_DOCUMENT);
+        hippoPath = nameResolver.getQName(HippoNodeType.HIPPO_PATHS);
+        hippoText = nameResolver.getQName(HippoNodeType.HIPPO_TEXT);
+        hippoHandle = nameResolver.getQName(HippoNodeType.NT_HANDLE);
+        hippoDocument = nameResolver.getQName(HippoNodeType.NT_DOCUMENT);
         
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
     }
@@ -221,12 +240,43 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return hippoAggregates;
     }
 
-    public Set<String> getExcludedFromNodeScope() {
-        return this.excludedFromNodeScope;
+    @Override
+    public boolean isExcludedFromNodeScope(final String fieldName, final NamePathResolver resolver) {
+        Boolean result = isExcludedFromNodeScope.get(fieldName);
+        if (result == null) {
+            result = false;
+            for (Name name : excludedFromNodeScope) {
+                try {
+                    if (resolver.getJCRName(name).equals(fieldName)) {
+                        result = true;
+                    }
+                } catch (NamespaceException e) {
+                    log.error("Failed to resolve jcr name " + name);
+                }
+            }
+            isExcludedFromNodeScope.put(fieldName, result);
+        }
+        return result;
     }
 
-    public Set<String> getExcludedSingleIndexTerms() {
-        return this.excludedSingleIndexTerms;
+    @Override
+    public boolean isExcludedSingleIndexTerm(final String fieldName, final NamePathResolver resolver) {
+        Boolean result = isExcludedSingleIndexTerm.get(fieldName);
+        if (result == null) {
+            result = false;
+            for (Name name : excludedSingleIndexTerms) {
+                try {
+                    if (resolver.getJCRName(name).equals(fieldName)) {
+                        result = true;
+                        break;
+                    }
+                } catch (NamespaceException e) {
+                    log.error("Failed to resolve jcr name " + name);
+                }
+            }
+            isExcludedSingleIndexTerm.put(fieldName, result);
+        }
+        return result;
     }
 
     public Name getHippoHandleName() {

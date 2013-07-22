@@ -265,11 +265,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private boolean isExcludedFromNodeScope(String fieldName) {
-        return servicingIndexingConfig != null && servicingIndexingConfig.getExcludedFromNodeScope().contains(fieldName);
+        return servicingIndexingConfig != null && servicingIndexingConfig.isExcludedFromNodeScope(fieldName, resolver);
     }
 
     private boolean isExcludedSingleIndexTerm(String fieldName) {
-        return servicingIndexingConfig != null && servicingIndexingConfig.getExcludedSingleIndexTerms().contains(fieldName);
+        return servicingIndexingConfig != null && servicingIndexingConfig.isExcludedSingleIndexTerm(fieldName, resolver);
     }
 
     private void indexNodeName(Document doc) throws RepositoryException {

@@ -20,6 +20,7 @@
   <excludefromnodescope>
     <nodetype>hippo:paths</nodetype>
     <nodetype>hippo:docbase</nodetype>
+    <nodetype>hipposys:password</nodetype>
   </excludefromnodescope>
 
 </configuration>
