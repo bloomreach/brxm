@@ -148,6 +148,7 @@
 
         // height of the toolbar (in pixels)
         TOOLBAR_HEIGHT: 28,
+        PROPERTIES_PANEL_BUTTONS_HEIGHT: 70,
         variantsUuid: null,
         locale: null,
         fullscreen: false,
@@ -646,6 +647,13 @@
                     this.propertiesWindow.destroy();
                 }
                 this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
+                this.propertiesWindow.on('propertiesLoaded', function(propertiesPanel) {
+                    propertiesPanel.on('afterlayout', function () {
+                        this.propertiesWindow.setHeight(propertiesPanel.getHeight() + this.PROPERTIES_PANEL_BUTTONS_HEIGHT);
+                    }, this, {single: true});
+                    propertiesPanel.doLayout(false, true);
+                }, this);
+
                 this.propertiesWindow.hide();
 
                 toolkitGrid = Ext.getCmp('ToolkitGrid');
@@ -914,6 +922,8 @@
             window.on('enddrag', function() {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
             });
+            window.relayEvents(propertiesPanel, ['propertiesLoaded']);
+
             return window;
         },
 

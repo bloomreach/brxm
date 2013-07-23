@@ -618,13 +618,7 @@
                 this.saveButton.show();
             }
 
-            this.on('afterlayout', function() {
-                try {
-                    var propertiesFormHeight = new Ext.Element(Ext.query('.templateComposerPropertiesForm')[0]).getHeight();
-                    Ext.getCmp('componentPropertiesWindow').setHeight(propertiesFormHeight+70);
-                } catch (e) { }
-            }, this, {single: true});
-            this.doLayout(false, true);
+            this.fireEvent('propertiesLoaded', this);
         },
 
         addDocumentComboBox: function(record, defaultValue, value) {
