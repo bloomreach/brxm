@@ -189,7 +189,7 @@ public class LoginPlugin extends RenderPlugin {
 
                     if (ConcurrentLoginFilter.isConcurrentSession(session, username)) {
                         userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null,
-                                new Object[] { username }));
+                                null, username));
 
                     } else {
                         userLabel.setDefaultModel(new Model<String>(""));

@@ -101,7 +101,7 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
         add(infoEditAction = new StdWorkflow("infoEdit", "infoEdit") {
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("in-use-by", this, null, new Object[] { new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "inUseBy") });
+                return new StringResourceModel("in-use-by", this, null, new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "inUseBy"));
             }
             @Override
             protected void invoke() {
@@ -176,10 +176,8 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                IModel<String> title = new StringResourceModel("depublish-title", BasicReviewedActionsWorkflowPlugin.this, null,
-                        new Object[] { docName });
-                IModel<String> message = new StringResourceModel("depublish-message", BasicReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { docName });
+                IModel<String> title = new StringResourceModel("depublish-title", BasicReviewedActionsWorkflowPlugin.this, null, docName);
+                IModel<String> message = new StringResourceModel("depublish-message", BasicReviewedActionsWorkflowPlugin.this, null, docName);
                 return new DepublishDialog(title, message, getModel(), this, getEditorManager());
             }
 
@@ -201,9 +199,9 @@ public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 IModel<String> message = new StringResourceModel("delete-message",
-                        BasicReviewedActionsWorkflowPlugin.this, null, new Object[] { getDocumentName() });
+                        BasicReviewedActionsWorkflowPlugin.this, null, getDocumentName());
                 IModel<String> title = new StringResourceModel("delete-title", BasicReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { getDocumentName() });
+                        null, getDocumentName());
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 

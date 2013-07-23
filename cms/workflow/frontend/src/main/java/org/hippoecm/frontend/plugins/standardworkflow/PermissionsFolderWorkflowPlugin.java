@@ -280,7 +280,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
             add(view);
 
-            Label addTitle = new Label("title-query-add", new StringResourceModel("title-query-add", PermissionsConfirmDialog.this, null, new Object[]{folderName.getObject()}));
+            Label addTitle = new Label("title-query-add", new StringResourceModel("title-query-add", PermissionsConfirmDialog.this, null, folderName.getObject()));
             add(addTitle);
 
             IChoiceRenderer<String> folderTypeRenderer = new IChoiceRenderer<String>() {
@@ -288,7 +288,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
                 public String getDisplayValue(final String object) {
                     String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
-                            new Object[]{new StringResourceModel(object, PermissionsFolderWorkflowPlugin.this, null)}).getString();
+                            new StringResourceModel(object, PermissionsFolderWorkflowPlugin.this, null)).getString();
                     return String.format("%s (%s)", categoryLabel, object);//categoryLabel;
                 }
 
@@ -328,7 +328,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
         @Override
         public IModel getTitle() {
-            return new StringResourceModel("title", this, null, new Object[]{folderName.getObject()});
+            return new StringResourceModel("title", this, null, folderName.getObject());
         }
 
         @Override
@@ -348,7 +348,7 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
         public String getDisplayObject() {
             String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this, null,
-                    new Object[]{new StringResourceModel(this.getObject(), PermissionsFolderWorkflowPlugin.this, null)}).getString();
+                    new StringResourceModel(this.getObject(), PermissionsFolderWorkflowPlugin.this, null)).getString();
             return String.format("%s (%s)", categoryLabel, this.getObject()); //categoryLabel;//
         }
 

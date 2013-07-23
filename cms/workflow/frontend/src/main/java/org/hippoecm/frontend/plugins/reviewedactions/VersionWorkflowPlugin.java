@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -26,6 +27,7 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.version.Version;
 
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -62,9 +64,9 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         add(new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("created", this, null, new Object[] { new IModel() {
+                return new StringResourceModel("created", this, null, new LoadableDetachableModel<Date>() {
 
-                    public Object getObject() {
+                    protected Date load() {
                         try {
                             Node frozenNode = ((WorkflowDescriptorModel) VersionWorkflowPlugin.this.getDefaultModel()).getNode();
                             Node versionNode = frozenNode.getParent();
@@ -80,14 +82,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                         return null;
                     }
 
-                    public void setObject(Object object) {
-
-                    }
-
-                    public void detach() {
-                    }
-
-                } }, "unknown");
+                });
             }
 
             @Override

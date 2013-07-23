@@ -116,7 +116,7 @@ public class ResourceUploadPlugin extends RenderPlugin {
             String extensions = StringUtils.join(types.keySet().toArray(), ", ");
             getDialogService().show(
                     new ExceptionDialog(new StringResourceModel("unrecognized", ResourceUploadPlugin.this,
-                            null, new Object[]{extension, extensions}).getString()) {
+                            null, null, extension, extensions).getString()) {
                         public IValueMap getProperties() {
                             return DialogConstants.SMALL;
                         }

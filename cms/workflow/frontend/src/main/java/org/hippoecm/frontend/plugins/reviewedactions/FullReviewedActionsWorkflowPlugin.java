@@ -129,7 +129,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("in-use-by", this, null,
-                        new Object[] { new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "inUseBy") });
+                        new PropertyModel(FullReviewedActionsWorkflowPlugin.this, "inUseBy"));
             }
 
             @Override
@@ -207,10 +207,8 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null,
-                        new Object[] { docName });
-                IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { docName });
+                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null, docName);
+                IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this, null, docName);
                 return new DepublishDialog(title, message, getModel(), this, getEditorManager());
             }
 
@@ -475,9 +473,9 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 IModel<String> message = new StringResourceModel("delete-message",
-                        FullReviewedActionsWorkflowPlugin.this, null, new Object[] { getDocumentName() });
+                        FullReviewedActionsWorkflowPlugin.this, null, getDocumentName());
                 IModel<String> title = new StringResourceModel("delete-title", FullReviewedActionsWorkflowPlugin.this,
-                        null, new Object[] { getDocumentName() });
+                        null, getDocumentName());
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 

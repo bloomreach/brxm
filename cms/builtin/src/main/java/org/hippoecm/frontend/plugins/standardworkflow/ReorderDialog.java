@@ -405,7 +405,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
             log.error(e.getMessage(), e);
             name = "";
         }
-        add(new Label("message", new StringResourceModel("reorder-message", this, null, new Object[] { name })));
+        add(new Label("message", new StringResourceModel("reorder-message", this, null, null, name)));
     }
 
     @Override

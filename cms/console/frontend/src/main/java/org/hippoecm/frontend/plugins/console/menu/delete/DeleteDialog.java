@@ -58,7 +58,7 @@ public class DeleteDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        add(new Label("message", new StringResourceModel("delete.message", this, null, new Object[] {path})));
+        add(new Label("message", new StringResourceModel("delete.message", this, null, null, path)));
 
         add(new CheckBox("immediateSave", new PropertyModel<Boolean>(this, "immediateSave")));
 

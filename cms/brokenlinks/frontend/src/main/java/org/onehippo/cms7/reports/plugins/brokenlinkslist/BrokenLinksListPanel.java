@@ -98,7 +98,7 @@ public class BrokenLinksListPanel extends ReportPanel {
                         } else {
                             updateText += "\n";
                         }
-                        updateText += new StringResourceModel("update-known", this, null, new Object[] {schedule.getTime()}).getObject();
+                        updateText += new StringResourceModel("update-known", this, null, null, schedule.getTime()).getObject();
                     }
                 }
             }

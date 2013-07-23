@@ -736,9 +736,9 @@ public class TabsPlugin extends RenderPlugin {
             addButton(button);
         }
 
-        public IModel getTitle() {
-            return new StringResourceModel("close-document", this, null, new Object[]{new PropertyModel(getModel(),
-                    "name")}, "Close {0}");
+        public IModel<String> getTitle() {
+            return new StringResourceModel("close-document", this, null, "Close {0}",
+                        new PropertyModel(getModel(), "name"));
         }
 
         @Override

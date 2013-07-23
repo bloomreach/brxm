@@ -32,7 +32,6 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -132,7 +131,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
         try {
             String path = this.nodeModel.getNode().getPath();
-            add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));
+            add(new Label("message", new StringResourceModel("dialog.message", this, null, null, path)));
 
             //info("Import content from a file to node: " + nodeModel.getNode().getPath());
         } catch (RepositoryException e) {

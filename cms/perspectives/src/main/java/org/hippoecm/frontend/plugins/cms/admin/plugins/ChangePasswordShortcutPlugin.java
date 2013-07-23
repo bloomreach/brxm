@@ -132,7 +132,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                             "password-about-to-expire",
                             ChangePasswordShortcutPlugin.this,
                             null,
-                            new Object[]{ expiration });
+                            null,
+                            expiration);
                     return model.getObject();
                 }
                 return "";

@@ -69,7 +69,7 @@ public class FieldEditor extends Panel {
             public void setObject(String path) {
                 if (StringUtils.isBlank(path)) {
                     final StringResourceModel errorModel = new StringResourceModel("error-path-cannot-be-blank",
-                            FieldEditor.this, null, new Object[]{getDescriptor().getName()});
+                            FieldEditor.this, null, null, getDescriptor().getName());
                     showError(errorModel.getString());
                 } else {
                     try {

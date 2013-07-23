@@ -81,7 +81,7 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
                 new FeedbackLogger().info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this,
-                        null, new Object[]{df.format(new Date())}).getString());
+                        null, null, df.format(new Date())).getString());
                 showFeedback();
 
                 UserSession session = UserSession.get();

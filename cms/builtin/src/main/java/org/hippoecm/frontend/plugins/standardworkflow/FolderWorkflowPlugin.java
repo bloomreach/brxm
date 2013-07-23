@@ -203,7 +203,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                             break;
                         }
                         StringResourceModel messageModel = new StringResourceModel(deleteAllowed ? "delete-message-extended" : "delete-message-denied",
-                                FolderWorkflowPlugin.this, null, new Object[]{folderName});
+                                FolderWorkflowPlugin.this, null, folderName);
                         return new DeleteDialog(messageModel, this, deleteAllowed);
 
                     } catch (RepositoryException e) {
@@ -271,7 +271,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     IModel<String> categoryLabel = new StringResourceModel("add-category", this, null,
-                            new Object[]{new StringResourceModel(category, this, null)});
+                            new StringResourceModel(category, this, null));
                     ResourceReference iconResource = new PackageResourceReference(getClass(), category + "-16.png");
                     if (iconResource.getResource() == null ||
                             (iconResource.getResource() instanceof PackageResource && ((PackageResource) iconResource.getResource()).getResourceStream() == null)) {

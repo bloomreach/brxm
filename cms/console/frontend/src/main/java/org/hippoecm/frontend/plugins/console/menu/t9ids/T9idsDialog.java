@@ -41,7 +41,7 @@ public class T9idsDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             log.error("Failed to get path from model node", e);
         }
-        add(new Label("message", new StringResourceModel("t9ids.message", this, null, new Object[] {path})));
+        add(new Label("message", new StringResourceModel("t9ids.message", this, null, null, path)));
         setFocusOnOk();
     }
 

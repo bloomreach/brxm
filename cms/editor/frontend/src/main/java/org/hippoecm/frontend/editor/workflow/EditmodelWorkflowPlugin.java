@@ -22,12 +22,11 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.IErrorMessageSource;
 import org.apache.wicket.validation.IValidatable;
@@ -202,7 +201,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         @Override
         public IModel getTitle() {
-            return new StringResourceModel("copy-model", this, null, new Object[]{new PropertyModel(this, "name")});
+            return new StringResourceModel("copy-model", this, null, new PropertyModel(this, "name"));
         }
 
         @Override

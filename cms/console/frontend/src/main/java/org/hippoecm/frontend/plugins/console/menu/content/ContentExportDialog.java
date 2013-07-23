@@ -56,7 +56,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
 
         try {
             String path = nodeModel.getNode().getPath();
-            add(new Label("message", new StringResourceModel("dialog.message", this, null, new Object[] {path})));
+            add(new Label("message", new StringResourceModel("dialog.message", this, null, null, path)));
             //info("Export content from : " + );
         } catch (RepositoryException e) {
             log.error("Error getting node from model for contant import",e);

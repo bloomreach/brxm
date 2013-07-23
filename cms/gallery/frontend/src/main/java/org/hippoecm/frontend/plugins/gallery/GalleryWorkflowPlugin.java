@@ -156,7 +156,9 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 newItems.add(node.getPath());
             } catch (Exception ex) {
                 remove(manager, node);
-                throw new GalleryException(new StringResourceModel("upload-failed-named-label", GalleryWorkflowPlugin.this, null, new Object[] {filename}).getString(), ex);
+                final StringResourceModel messageModel = new StringResourceModel("upload-failed-named-label",
+                        GalleryWorkflowPlugin.this, null, null, filename);
+                throw new GalleryException(messageModel.getString(), ex);
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
