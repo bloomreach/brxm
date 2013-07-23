@@ -15,10 +15,36 @@
  */
 package org.hippoecm.repository.sample;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
+
 import org.hippoecm.repository.api.Document;
 
 public class ArticleDocument extends Document {
 
     int articleId;
     int authorId;
+
+    public ArticleDocument(final Node node) throws RepositoryException {
+        super(node);
+    }
+
+    @Override
+    protected void initialized() {
+        try {
+            articleId = (int) getNode().getProperty("sample:id").getLong();
+            authorId = (int) getNode().getProperty("sample:authorId").getLong();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void setAuthorId(int authorId) throws RepositoryException {
+        this.authorId = authorId;
+        getNode().setProperty("sample:authorId", (long) authorId);
+    }
 }

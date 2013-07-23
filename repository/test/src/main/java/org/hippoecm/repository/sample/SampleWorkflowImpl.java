@@ -19,25 +19,29 @@ import java.rmi.RemoteException;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow {
 
-    ArticleDocument article;
-    String dummy;
+    private ArticleDocument article;
 
     public SampleWorkflowImpl() throws RemoteException {
     }
 
     public void renameAuthor(String newName) throws WorkflowException, RepositoryException {
         AuthorDocument author = (AuthorDocument) context.getDocument("authors", newName);
-        if (author == null)
+        if (author == null) {
             throw new WorkflowException("author does not exist");
-        article.authorId = author.authorId;
+        }
+        getArticle().setAuthorId(author.authorId);
     }
-    public Document getArticle() throws WorkflowException, RepositoryException {
+
+    public ArticleDocument getArticle() throws WorkflowException, RepositoryException {
+        if (article == null) {
+            article = new ArticleDocument(getNode());
+        }
         return article;
     }
+
 }

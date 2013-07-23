@@ -15,9 +15,20 @@
  */
 package org.hippoecm.repository.sample;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.Document;
 
 public class AuthorDocument extends Document {
 
     int authorId;
+
+    @Override
+    protected void initialized() {
+        try {
+            authorId = (int) getNode().getProperty("sample:id").getLong();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -36,9 +36,16 @@ public class ChainingImpl extends WorkflowImpl implements Chaining {
     public ChainingImpl() throws RemoteException {
     }
 
+    private Document getSelf() throws RepositoryException {
+        if (self == null) {
+            self = new Document(getNode());
+        }
+        return self;
+    }
+
     public void test() throws WorkflowException, MappingException {
         try {
-            Chaining workflow = (Chaining) getWorkflowContext().getWorkflow("test", self);
+            Chaining workflow = (Chaining) getWorkflowContext().getWorkflow("test", getSelf());
             workflow.test1();
             workflow.test3();
         } catch(RemoteException ex) {
