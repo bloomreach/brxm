@@ -46,10 +46,8 @@ import org.w3c.dom.NodeList;
 
 public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImpl implements ServicingIndexingConfiguration {
 
-    /**
-     * The logger instance for this class
-     */
-    private static final Logger log = LoggerFactory.getLogger(IndexingConfigurationImpl.class);
+
+    private static final Logger log = LoggerFactory.getLogger(ServicingIndexingConfigurationImpl.class);
 
     /**
      * Set of properties that are configured to be facets
@@ -85,27 +83,27 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * but which will not be actual part of the document (i.e they still get their relative path
      * embedded in their name)
      */
-    Set<Name> childAggregates = new HashSet<Name>();
+    private final Set<Name> childAggregates = new HashSet<Name>();
 
     /**
      * Set of property names that should not be node scoped indexed and not tokenized (for example hippo:path)
      */
-    private Set<Name> excludedFromNodeScope = new HashSet<Name>();
+    private final Set<Name> excludedFromNodeScope = new HashSet<Name>();
 
     /**
      * Cache of property names that are excluded from indexing on node scope
      */
-    private Map<String, Boolean> isExcludedFromNodeScope = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> isExcludedFromNodeScope = new HashMap<String, Boolean>();
 
     /**
      * Set of property names that are not allowed to be indexed as a single term (for example hippostd:content)
      */
-    private Set<Name> excludedSingleIndexTerms = new HashSet<Name>();
+    private final Set<Name> excludedSingleIndexTerms = new HashSet<Name>();
 
     /**
      * Cache of property names that are excluded from being indexed as a single term
      */
-    private Map<String, Boolean> isExcludedSingleIndexTerm = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> isExcludedSingleIndexTerm = new HashMap<String, Boolean>();
 
 
     @Override
@@ -127,7 +125,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         // get property name
                         Name propName = nameResolver.getQName(getTextContent(propertyNode));
                         excludePropertiesForFacet.add(propName);
-                        log.debug("Added property '{}:{}' to be indexed as facet.",
+                        log.debug("Added property '{}:{}' to be excluded from facet index.",
                                 propName.getNamespaceURI(), propName.getLocalName());
                     }
                 }
@@ -168,7 +166,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                 for (int k = 0; k < nameChildNodes.getLength(); k++) {
                     Node nodeTypeProperty = nameChildNodes.item(k);
                     if (nodeTypeProperty.getNodeName().equals("property")) {
-                        // get property name
                         Name nodeTypePropertyName = nameResolver.getQName(getTextContent(nodeTypeProperty));
                         excludedSingleIndexTerms.add(nodeTypePropertyName);
                         log.debug("property '{}' will not be indexed as a single term.", nodeTypePropertyName);
@@ -251,7 +248,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         result = true;
                     }
                 } catch (NamespaceException e) {
-                    log.error("Failed to resolve jcr name " + name);
+                    log.debug("Failed to resolve jcr name {}", name);
                 }
             }
             isExcludedFromNodeScope.put(fieldName, result);
@@ -271,7 +268,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
                         break;
                     }
                 } catch (NamespaceException e) {
-                    log.error("Failed to resolve jcr name " + name);
+                    log.debug("Failed to resolve jcr name {}", name);
                 }
             }
             isExcludedSingleIndexTerm.put(fieldName, result);

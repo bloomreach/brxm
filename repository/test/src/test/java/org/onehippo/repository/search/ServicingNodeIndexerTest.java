@@ -19,15 +19,16 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 public class ServicingNodeIndexerTest extends RepositoryTestCase {
-
 
     @Test
     public void testExcludeFromNodeScope() throws RepositoryException {
@@ -37,8 +38,39 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
         session.save();
 
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final Query query = queryManager.createQuery("//*[jcr:contains(. ,'password')]", Query.XPATH);
+        Query query = queryManager.createQuery("//*[jcr:contains(. ,'password')]", Query.XPATH);
         assertFalse(query.execute().getNodes().hasNext());
+
+        query = queryManager.createQuery("//*[@hipposys:password = 'password']", Query.XPATH);
+        assertTrue(query.execute().getNodes().hasNext());
+    }
+
+    @Test
+    public void testExcludeSingleIndexTerm() throws RepositoryException {
+        final Node testNode = session.getRootNode().addNode("test");
+        testNode.setProperty("sample:nosingleindexterm", "foo bar");
+        final Node subnode = testNode.addNode("subnode");
+        subnode.setProperty("sample:nosingleindexterm", "bar foo");
+        session.save();
+
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("//*[jcr:contains(., 'foo')]", Query.XPATH);
+        assertTrue(query.execute().getNodes().hasNext());
+
+        query = queryManager.createQuery("//*[jcr:contains(@sample:nosingleindexterm, 'foo')]", Query.XPATH);
+        assertTrue(query.execute().getNodes().hasNext());
+
+        query = queryManager.createQuery("//*[@sample:nosingleindexterm = 'foo bar']", Query.XPATH);
+        assertTrue(query.execute().getNodes().hasNext());
+
+        query = queryManager.createQuery("//*[@sample:nosingleindexterm NOT ISNULL] order by @sample:nosingleindexterm desc", Query.XPATH);
+        final QueryResult descendingResult = query.execute();
+
+        query = queryManager.createQuery("//*[@sample:nosingleindexterm NOT ISNULL] order by @sample:nosingleindexterm asc", Query.XPATH);
+        final QueryResult ascendingResult = query.execute();
+
+        // assert that sorting has no effect
+        assertTrue(descendingResult.getNodes().nextNode().getPath().equals(ascendingResult.getNodes().nextNode().getPath()));
     }
 
 }

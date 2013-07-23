@@ -15,12 +15,17 @@
     limitations under the License.
 -->
 <!DOCTYPE configuration SYSTEM "http://jackrabbit.apache.org/dtd/indexing-configuration-1.0.dtd">
-<configuration>
+<configuration
+  xmlns:sample="http://www.hippoecm.org/sample/nt/1.1">
 
   <excludefromnodescope>
     <nodetype>hippo:paths</nodetype>
     <nodetype>hippo:docbase</nodetype>
     <nodetype>hipposys:password</nodetype>
   </excludefromnodescope>
+
+  <nosingleindexterm>
+    <property>sample:nosingleindexterm</property>
+  </nosingleindexterm>
 
 </configuration>
