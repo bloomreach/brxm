@@ -57,12 +57,11 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
     }
 
 
-    @Ignore
     @Test
     public void testNotSpecialProperty() throws RepositoryException {
         final Node testNode = session.getRootNode().addNode("test");
         Node sub1 = testNode.addNode("sub1");
-        sub1.setProperty("sample:normal", "Quick brown fox jumps over the lazy dog");
+        sub1.setProperty("sample:normal", "the quick brown fox jumps over the lazy dog");
         Node sub2 = testNode.addNode("sub2");
         sub2.setProperty("sample:normal", "aaa bbbb");
         Node sub3 = testNode.addNode("sub3");
@@ -76,10 +75,10 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
         query = queryManager.createQuery("//*[jcr:contains(@sample:normal, 'brown fox jumps')]", Query.XPATH);
         assertTrue(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[@sample:normal = 'Quick brown']", Query.XPATH);
+        query = queryManager.createQuery("//*[@sample:normal = 'quick brown']", Query.XPATH);
         assertFalse(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[@sample:normal = 'Quick brown fox jumps over the lazy dog']", Query.XPATH);
+        query = queryManager.createQuery("//*[@sample:normal = 'the quick brown fox jumps over the lazy dog']", Query.XPATH);
         assertTrue(query.execute().getNodes().hasNext());
 
         query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal descending", Query.XPATH);
