@@ -22,6 +22,7 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
@@ -85,6 +86,10 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
 
     @Override
     public boolean isRendered() {
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target == null) {
+            return false;
+        }
         return rendered;
     }
 
@@ -98,7 +103,7 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
         context.addTemplate(new IHeaderContributor() {
             @Override
             public void renderHead(final IHeaderResponse response) {
-                if (rendered) {
+                if (isRendered()) {
                     return;
                 }
                 response.render(getHeaderItem());

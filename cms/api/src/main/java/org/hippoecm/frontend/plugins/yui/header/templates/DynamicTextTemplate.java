@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.wicket.util.collections.MiniMap;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.template.PackageTextTemplate;
-import org.apache.wicket.util.template.TextTemplate;
 import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 import org.hippoecm.frontend.plugins.yui.JsFunctionProcessor;
@@ -36,7 +35,6 @@ public class DynamicTextTemplate implements IClusterable {
     private static final long serialVersionUID = 1L;
 
     private PackageTextTemplate template;
-    private Map<String, Object> variables;
 
     private Serializable configuration;
     private String id;
@@ -56,9 +54,7 @@ public class DynamicTextTemplate implements IClusterable {
     }
 
     protected Map<String, Object> getVariables() {
-        if (variables == null) {
-            variables = new MiniMap(5);
-        }
+        Map<String, Object> variables = new MiniMap(5);
         if (getSettings() != null) {
             variables.put("config", getConfigurationAsJSON());
         }
@@ -72,8 +68,7 @@ public class DynamicTextTemplate implements IClusterable {
     }
 
     public CharSequence getString() {
-        final TextTemplate textTemplate = template.interpolate(getVariables());
-        return textTemplate.getString();
+        return template.asString(getVariables());
     }
 
     public final String getConfigurationAsJSON() {
