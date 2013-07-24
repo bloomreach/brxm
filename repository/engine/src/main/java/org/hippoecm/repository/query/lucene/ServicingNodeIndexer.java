@@ -144,12 +144,57 @@ public class ServicingNodeIndexer extends NodeIndexer {
     @Override
     protected void addStringValue(Document doc, String fieldName, String internalValue, boolean tokenized,
                                   boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
+        boolean includeSingleIndexTerm = true;
         if (isExcludedFromNodeScope(fieldName)) {
-            super.addStringValue(doc, fieldName, internalValue, false, false, boost, false);
+            includeInNodeIndex = false;
         } else if (isExcludedSingleIndexTerm(fieldName)) {
-            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, false);
-        } else {
-            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, useInExcerpt);
+            includeSingleIndexTerm = false;
+        }
+        addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, useInExcerpt, includeSingleIndexTerm);
+    }
+
+    /**
+     * The method below is same as  NodeIndexer#addStringValue only one extra check <code>includeSingleIndexTerm</code> to
+     * include or exclude the property as a single term in the index. For example, for our html fields, we do not need to support
+     * in queries \@hippostd:content = 'some long text', and obviously, we do not need to support sorting on these fields either.
+     * @see {@link NodeIndexer#addStringValue(org.apache.lucene.document.Document, String, String, boolean, boolean, float, boolean)}
+     */
+    private void addStringValue(Document doc, String fieldName,
+                                  String internalValue, boolean tokenized,
+                                  boolean includeInNodeIndex, float boost,
+                                  boolean useInExcerpt,
+                                  boolean includeSingleIndexTerm) {
+        if (includeSingleIndexTerm) {
+            // simple String
+            doc.add(createFieldWithoutNorms(fieldName, internalValue,
+                    PropertyType.STRING));
+        }
+        if (tokenized) {
+            if (internalValue.length() == 0) {
+                return;
+            }
+            // create fulltext index on property
+            int idx = fieldName.indexOf(':');
+            fieldName = fieldName.substring(0, idx + 1)
+                    + FieldNames.FULLTEXT_PREFIX + fieldName.substring(idx + 1);
+            boolean hasNorms = boost != DEFAULT_BOOST;
+            Field.Index indexType = hasNorms ? Field.Index.ANALYZED
+                    : Field.Index.ANALYZED_NO_NORMS;
+            Field f = new Field(fieldName, true, internalValue, Field.Store.NO,
+                    indexType, Field.TermVector.NO);
+            f.setBoost(boost);
+            doc.add(f);
+
+            if (includeInNodeIndex) {
+                // also create fulltext index of this value
+                boolean store = supportHighlighting && useInExcerpt;
+                f = createFulltextField(internalValue, store, supportHighlighting, hasNorms);
+                if (useInExcerpt) {
+                    doc.add(f);
+                } else {
+                    doNotUseInExcerpt.add(f);
+                }
+            }
         }
     }
 

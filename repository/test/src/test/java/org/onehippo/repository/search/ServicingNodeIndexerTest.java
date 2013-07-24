@@ -22,6 +22,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -35,9 +36,10 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
     @Test
     public void testExcludeFromNodeScope() throws RepositoryException {
 
+        String testUserNodeName = ServicingNodeIndexerTest.class.getSimpleName() + "-user";
         final Node users = session.getNode("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH);
         try {
-            final Node user = users.addNode("tmp-user-xyz", HippoNodeType.NT_USER);
+            final Node user = users.addNode(testUserNodeName, HippoNodeType.NT_USER);
             user.setProperty("hipposys:password", "password");
             session.save();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -48,8 +50,8 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
             query = queryManager.createQuery("//*[@hipposys:password = 'password']", Query.XPATH);
             assertTrue(query.execute().getNodes().hasNext());
         } finally {
-            if (users.hasNode("tmp-user-xyz")) {
-                users.getNode("tmp-user-xyz").remove();
+            if (users.hasNode(testUserNodeName)) {
+                users.getNode(testUserNodeName).remove();
                 session.save();
             }
         }
@@ -58,63 +60,144 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
 
     @Test
     public void testNotSpecialProperty() throws RepositoryException {
-        final Node testNode = session.getRootNode().addNode("test");
-        Node sub1 = testNode.addNode("sub1");
-        sub1.setProperty("sample:normal", "the quick brown fox jumps over the lazy dog");
-        Node sub2 = testNode.addNode("sub2");
-        sub2.setProperty("sample:normal", "aaa bbbb");
-        Node sub3 = testNode.addNode("sub3");
-        sub3.setProperty("sample:normal", "zzz cccc");
-        session.save();
+        String testNodeName = ServicingNodeIndexerTest.class.getSimpleName() + "-test";
+        try {
+            final Node testNode = session.getRootNode().addNode(testNodeName);
+            Node sub1 = testNode.addNode("sub1");
+            sub1.setProperty("sample:normal", "the quick brown fox jumps over the lazy dog");
+            Node sub2 = testNode.addNode("sub2");
+            sub2.setProperty("sample:normal", "aaa bbbb");
+            Node sub3 = testNode.addNode("sub3");
+            sub3.setProperty("sample:normal", "zzz cccc");
+            session.save();
 
-        final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("//*[jcr:contains(., 'brown fox jumps')]", Query.XPATH);
-        assertTrue(query.execute().getNodes().hasNext());
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery("//*[jcr:contains(., 'brown fox jumps')]", Query.XPATH);
+            assertTrue(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[jcr:contains(@sample:normal, 'brown fox jumps')]", Query.XPATH);
-        assertTrue(query.execute().getNodes().hasNext());
+            query = queryManager.createQuery("//*[jcr:contains(@sample:normal, 'brown fox jumps')]", Query.XPATH);
+            assertTrue(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[@sample:normal = 'quick brown']", Query.XPATH);
-        assertFalse(query.execute().getNodes().hasNext());
+            query = queryManager.createQuery("//*[@sample:normal = 'quick brown']", Query.XPATH);
+            assertFalse(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[@sample:normal = 'the quick brown fox jumps over the lazy dog']", Query.XPATH);
-        assertTrue(query.execute().getNodes().hasNext());
+            query = queryManager.createQuery("//*[@sample:normal = 'the quick brown fox jumps over the lazy dog']", Query.XPATH);
+            assertTrue(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal descending", Query.XPATH);
-        final QueryResult descendingResult = query.execute();
+            query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal descending", Query.XPATH);
+            final QueryResult descendingResult = query.execute();
 
-        query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal ascending", Query.XPATH);
-        final QueryResult ascendingResult = query.execute();
+            query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal ascending", Query.XPATH);
+            final QueryResult ascendingResult = query.execute();
 
-        assertTrue(descendingResult.getNodes().getSize() == 3);
-        assertTrue(ascendingResult.getNodes().getSize() == 3);
+            assertTrue(descendingResult.getNodes().getSize() == 3);
+            assertTrue(ascendingResult.getNodes().getSize() == 3);
 
 
-        // sub2 starts with aaa
-        assertTrue(ascendingResult.getNodes().nextNode().getName().equals("sub2"));
+            // sub2 starts with aaa
+            assertTrue(ascendingResult.getNodes().nextNode().getName().equals("sub2"));
 
-        // sub3 starts with zzz
-        assertTrue(descendingResult.getNodes().nextNode().getName().equals("sub3"));
+            // sub3 starts with zzz
+            assertTrue(descendingResult.getNodes().nextNode().getName().equals("sub3"));
+
+        } finally {
+            if (session.getRootNode().hasNode(testNodeName)) {
+                session.getRootNode().getNode(testNodeName).remove();
+                session.save();
+            }
+        }
 
     }
 
     @Test
-    public void testExcludeSingleIndexTerm() throws RepositoryException {
-        final Node testNode = session.getRootNode().addNode("test");
-        testNode.setProperty("sample:nosingleindexterm", "foo bar");
-        session.save();
+    public void testExcludeSingleIndexTermCanQueryContains() throws RepositoryException {
+        String testNodeName = ServicingNodeIndexerTest.class.getSimpleName() + "-test";
+        try {
+            final Node testNode = session.getRootNode().addNode(testNodeName);
+            testNode.setProperty("sample:nosingleindexterm", "foo bar");
+            session.save();
 
-        final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("//*[jcr:contains(., 'foo')]", Query.XPATH);
-        assertTrue(query.execute().getNodes().hasNext());
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery("//*[jcr:contains(., 'foo')]", Query.XPATH);
+            assertTrue(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[jcr:contains(@sample:nosingleindexterm, 'foo')]", Query.XPATH);
-        assertTrue(query.execute().getNodes().hasNext());
+            query = queryManager.createQuery("//*[jcr:contains(@sample:nosingleindexterm, 'foo')]", Query.XPATH);
+            assertTrue(query.execute().getNodes().hasNext());
 
-        query = queryManager.createQuery("//*[@sample:nosingleindexterm = 'foo bar']", Query.XPATH);
-        assertFalse(query.execute().getNodes().hasNext());
+        } finally {
+            if (session.getRootNode().hasNode(testNodeName)) {
+                session.getRootNode().getNode(testNodeName).remove();
+                session.save();
+            }
+        }
+    }
+
+    @Test
+    public void testExcludeSingleIndexTermCannotQueryPropEquals() throws RepositoryException {
+        String testNodeName = ServicingNodeIndexerTest.class.getSimpleName() + "-test";
+        try {
+            final Node testNode = session.getRootNode().addNode(testNodeName);
+            testNode.setProperty("sample:nosingleindexterm", "foo bar");
+            session.save();
+
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+
+            Query query = queryManager.createQuery("//*[@sample:nosingleindexterm = 'foo bar']", Query.XPATH);
+            assertFalse(query.execute().getNodes().hasNext());
+        } finally {
+            if (session.getRootNode().hasNode(testNodeName)) {
+                session.getRootNode().getNode(testNodeName).remove();
+                session.save();
+            }
+        }
+    }
+
+    @Test
+    public void testExcludeSingleIndexTermCannotOrderOnProp() throws RepositoryException {
+        String testNodeName = ServicingNodeIndexerTest.class.getSimpleName() + "-test";
+        try {
+            final Node testNode = session.getRootNode().addNode(testNodeName);
+            Node sub1 = testNode.addNode("sub1");
+            sub1.setProperty("sample:nosingleindexterm", "the quick brown fox jumps over the lazy dog");
+            sub1.setProperty("sample:normal", "the quick brown fox jumps over the lazy dog");
+            Node sub2 = testNode.addNode("sub2");
+            sub2.setProperty("sample:nosingleindexterm", "aaa bbbb");
+            sub2.setProperty("sample:normal", "aaa bbbb");
+            Node sub3 = testNode.addNode("sub3");
+            sub3.setProperty("sample:nosingleindexterm", "zzz cccc");
+            sub2.setProperty("sample:normal", "zzz cccc");
+            session.save();
+
+            final QueryManager queryManager = session.getWorkspace().getQueryManager();
+
+            Query query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal descending", Query.XPATH);
+            final QueryResult descendingResultCanOrderOn = query.execute();
 
 
+            query = queryManager.createQuery("//*[@sample:nosingleindexterm NOT ISNULL] order by @sample:nosingleindexterm descending", Query.XPATH);
+            final QueryResult descendingResultCannotOrderOn = query.execute();
+
+            query = queryManager.createQuery("//*[@sample:normal NOT ISNULL] order by @sample:normal ascending", Query.XPATH);
+            final QueryResult ascendingResultCanOrderOn = query.execute();
+
+            query = queryManager.createQuery("//*[@sample:nosingleindexterm NOT ISNULL] order by @sample:nosingleindexterm ascending", Query.XPATH);
+            final QueryResult ascendingResultCannotOrderOn = query.execute();
+
+            // on @sample:normal we *CAN* order. On '@sample:nosingleindexterm' the ordering cannot take place as there is term
+            // indexed to do the sorting on
+
+            // correct ordering
+            assertFalse(descendingResultCanOrderOn.getNodes().nextNode().getPath().equals(ascendingResultCanOrderOn.getNodes().nextNode().getPath()));
+
+            // no ordering
+            assertTrue(descendingResultCannotOrderOn.getNodes().nextNode().getPath().equals(ascendingResultCannotOrderOn.getNodes().nextNode().getPath()));
+
+        } finally {
+            if (session.getRootNode().hasNode(testNodeName)) {
+                session.getRootNode().getNode(testNodeName).remove();
+                session.save();
+            }
+        }
     }
 
 }
