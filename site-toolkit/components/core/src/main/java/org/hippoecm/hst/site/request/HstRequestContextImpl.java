@@ -608,9 +608,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
         try {
             if ("".equals(relPath)) {
-                return (HippoBean) contentBeansTool.getObjectBeanManager().getObject("/" + base);
+                return (HippoBean) getContentBeansTool().getObjectBeanManager().getObject("/" + base);
             } else {
-                return (HippoBean) contentBeansTool.getObjectBeanManager().getObject("/" + base+ "/" + relPath);
+                return (HippoBean) getContentBeansTool().getObjectBeanManager().getObject("/" + base+ "/" + relPath);
             }
         } catch (ObjectBeanManagerException e) {
             log.error("ObjectBeanManagerException. Return null : {}", e);
