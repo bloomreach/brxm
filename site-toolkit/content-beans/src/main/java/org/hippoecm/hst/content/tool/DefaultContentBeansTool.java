@@ -46,18 +46,29 @@ public class DefaultContentBeansTool implements ContentBeansTool {
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
-    private final ObjectConverter objectConverter;
-
     private final HstQueryManagerFactory queryManagerFactory;
+
+    private volatile ObjectConverter objectConverter;
 
     public DefaultContentBeansTool(HstQueryManagerFactory queryManagerFactory) {
         this.queryManagerFactory = queryManagerFactory;
-        ClasspathResourceScanner classpathResourceScanner = HstServices.getComponentManager().getComponent(ClasspathResourceScanner.class.getName());
-        List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(classpathResourceScanner);
-        objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
     }
 
     public ObjectConverter getObjectConverter() {
+        if (objectConverter == null) {
+            synchronized (this) {
+                if (objectConverter == null) {
+                    if (!HstServices.isAvailable()) {
+                        throw new IllegalStateException("HST Services are not available.");
+                    }
+
+                    ClasspathResourceScanner classpathResourceScanner = HstServices.getComponentManager().getComponent(ClasspathResourceScanner.class.getName());
+                    List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(classpathResourceScanner);
+                    objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
+                }
+            }
+        }
+
         return objectConverter;
     }
 

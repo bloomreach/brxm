@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -41,18 +42,18 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 /**
  * This is an INTERNAL USAGE ONLY API. Clients should not cast to these interfaces as they should never be used from client code
- * 
+ *
  * @version $Id$
  *
  */
 public interface HstMutableRequestContext extends HstRequestContext {
-    
+
 	public void setServletContext(ServletContext servletContext);
-	
+
     public void setServletRequest(HttpServletRequest servletRequest);
 
     public void setServletResponse(HttpServletResponse servletResponse);
-    
+
 	public void setContextNamespace(String contextNamespace);
 
 	public void setSession(Session session);
@@ -60,7 +61,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setResolvedMount(ResolvedMount resolvedMount);
 
 	public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem);
-	
+
 	public void setTargetComponentPath(String targetComponentPath);
 
 	public void setBaseURL(HstContainerURL baseURL);
@@ -70,7 +71,7 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher);
 
 	public void setLinkCreator(HstLinkCreator linkCreator);
-	
+
 	public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory);
 
 	public void setHstSiteMenus(HstSiteMenus siteMenus);
@@ -78,21 +79,21 @@ public interface HstMutableRequestContext extends HstRequestContext {
 	public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory);
 
 	public void setContainerConfiguration(ContainerConfiguration containerConfiguration);
-	
+
     public void setSubject(Subject subject);
-    
+
     /**
      * Sets the preferred locale associated with this request.
      * @param locale The preferred locale associated with this request.
      */
     public void setPreferredLocale(Locale locale);
-    
+
     /**
      * Sets the locales assocaited with this request.
      * @param locales
      */
     public void setLocales(List<Locale> locales);
-    
+
     /**
      * Sets the path suffix
      * @param pathSuffix
@@ -105,21 +106,21 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * @param conditions the {@link Set} of {@link String} conditions
      */
     void setComponentFilterTags(Set<String> conditions);
-    
+
     /**
-     * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}  
+     * Adds the {@link HstComponentWindowFilter} to the {@link HstRequestContext}
      * @param filter the {@link HstComponentWindowFilter} to be added to the {@link HstRequestContext#getComponentWindowFilters()}
      */
     void addComponentWindowFilter(HstComponentWindowFilter filter);
-    
+
     /**
      * @param fullyQualifiedURLs sets whether created URLs will be fully qualified
      */
     public void setFullyQualifiedURLs(boolean fullyQualifiedURLs);
-    
+
     /**
-     * Sets a specific render host. This can be used to render the request as if host <code>renderHost</code> was the actual 
-     * used host in the request. 
+     * Sets a specific render host. This can be used to render the request as if host <code>renderHost</code> was the actual
+     * used host in the request.
      * @param renderHost the host to be used for rendering
      */
     public void setRenderHost(String renderHost);
@@ -129,4 +130,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * @see {@link #isCmsRequest()}
      */
     public void setCmsRequest(boolean cmsRequest);
+
+    /**
+     * Sets ContentBeansTool instance for this request context
+     * @param contentBeansTool
+     */
+    public void setContentBeansTool(ContentBeansTool contentBeansTool);
 }

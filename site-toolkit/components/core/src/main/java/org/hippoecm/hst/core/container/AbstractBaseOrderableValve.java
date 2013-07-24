@@ -1,12 +1,12 @@
 /*
  * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.ForwardPlaceHolderHstPageInfo;
 import org.hippoecm.hst.cache.HstPageInfo;
@@ -32,6 +34,7 @@ import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
+import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -50,13 +53,11 @@ import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.ehcache.constructs.web.GenericResponseWrapper;
-
 /**
  * AbstractBaseOrderableValve
  */
 public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve implements Valve {
-    
+
     protected final static Logger log = LoggerFactory.getLogger(AbstractBaseOrderableValve.class);
 
     private final static String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
@@ -74,7 +75,8 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected PageErrorHandler defaultPageErrorHandler;
     protected ResourceBundleRegistry resourceBundleRegistry;
-    
+    protected ContentBeansTool contentBeansTool;
+
     protected boolean alwaysRedirectLocationToAbsoluteUrl = true;
 
     protected String defaultAsynchronousComponentWindowRenderingMode = "ajax";
@@ -82,11 +84,11 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     public ContainerConfiguration getContainerConfiguration() {
         return this.containerConfiguration;
     }
-    
+
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
         this.containerConfiguration = containerConfiguration;
     }
- 
+
     public HstManager getHstManager() {
         return hstManager;
     }
@@ -102,23 +104,23 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
         this.siteMapMatcher = siteMapMatcher;
     }
-    
+
     public HstRequestContextComponent getRequestContextComponent() {
         return this.requestContextComponent;
     }
-    
+
     public void setRequestContextComponent(HstRequestContextComponent requestContextComponent) {
         this.requestContextComponent = requestContextComponent;
     }
-    
+
     public HstComponentFactory getComponentFactory() {
         return this.componentFactory;
     }
-    
+
     public void setComponentFactory(HstComponentFactory componentFactory) {
         this.componentFactory = componentFactory;
     }
-    
+
     public HstComponentWindowFactory getComponentWindowFactory() {
         return this.componentWindowFactory;
     }
@@ -126,51 +128,51 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     public void setComponentWindowFactory(HstComponentWindowFactory componentWindowFactory) {
         this.componentWindowFactory = componentWindowFactory;
     }
-    
+
     public HstComponentInvoker getComponentInvoker() {
         return this.componentInvoker;
     }
-    
+
     public void setComponentInvoker(HstComponentInvoker componentInvoker) {
         this.componentInvoker = componentInvoker;
     }
-    
+
     public HstURLFactory getUrlFactory() {
         return this.urlFactory;
     }
-    
+
     public void setUrlFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
     }
-    
+
     public HstLinkCreator getLinkCreator(){
         return this.linkCreator;
     }
-    
+
     public void setLinkCreator(HstLinkCreator linkCreator) {
         this.linkCreator = linkCreator;
     }
-    
+
     public void setSiteMenusManager(HstSiteMenusManager siteMenusManager) {
         this.siteMenusManager = siteMenusManager;
     }
-    
+
     public HstSiteMenusManager getHstSiteMenusManager(){
         return this.siteMenusManager;
     }
-    
+
     public HstQueryManagerFactory getHstQueryManagerFactory(){
         return this.hstQueryManagerFactory;
     }
-    
+
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory){
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
-    
+
     public PageErrorHandler getDefaultPageErrorHandler() {
         return defaultPageErrorHandler;
     }
-    
+
     public void setDefaultPageErrorHandler(PageErrorHandler defaultPageErrorHandler) {
         this.defaultPageErrorHandler = defaultPageErrorHandler;
     }
@@ -183,18 +185,26 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         this.resourceBundleRegistry = resourceBundleRegistry;
     }
 
+    public ContentBeansTool getContentBeansTool() {
+        return contentBeansTool;
+    }
+
+    public void setContentBeansTool(ContentBeansTool contentBeansTool) {
+        this.contentBeansTool = contentBeansTool;
+    }
+
     public abstract void invoke(ValveContext context) throws ContainerException;
 
     public void initialize() throws ContainerException {
     }
-    
+
     public void destroy() {
     }
-    
+
     public boolean isAlwaysRedirectLocationToAbsoluteUrl() {
         return alwaysRedirectLocationToAbsoluteUrl;
     }
-    
+
     public void setAlwaysRedirectLocationToAbsoluteUrl(boolean alwaysRedirectLocationToAbsoluteUrl) {
         this.alwaysRedirectLocationToAbsoluteUrl = alwaysRedirectLocationToAbsoluteUrl;
     }
@@ -205,9 +215,9 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     protected HstComponentWindow findComponentWindow(HstComponentWindow rootWindow, String windowReferenceNamespace) {
         HstComponentWindow componentWindow = null;
-        
+
         String rootReferenceNamespace = rootWindow.getReferenceNamespace();
-        
+
         if (rootReferenceNamespace.equals(windowReferenceNamespace)) {
             componentWindow = rootWindow;
         } else {
@@ -217,7 +227,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
             while (index < rootReferenceNamespaces.length && index < referenceNamespaces.length && rootReferenceNamespaces[index].equals(referenceNamespaces[index])) {
                 index++;
             }
-            
+
             if (index < referenceNamespaces.length) {
                 HstComponentWindow tempWindow = rootWindow;
                 for ( ; index < referenceNamespaces.length; index++) {
@@ -227,53 +237,53 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
                         break;
                     }
                 }
-                
+
                 if (index == referenceNamespaces.length) {
                     componentWindow = tempWindow;
                 }
             }
         }
-        
+
         return componentWindow;
     }
-    
+
     protected HstComponentWindow findErrorCodeSendingWindow(HstComponentWindow [] sortedComponentWindows) {
         for (HstComponentWindow window : sortedComponentWindows) {
             if (((HstComponentWindowImpl) window).getResponseState().getErrorCode() > 0) {
                 return window;
             }
         }
-        
+
         return null;
     }
-    
+
     protected PageErrors getPageErrors(HstComponentWindow [] sortedComponentWindows, boolean clearExceptions) {
         List<KeyValue<HstComponentInfo, Collection<HstComponentException>>> componentExceptions = null;
-        
+
         for (HstComponentWindow window : sortedComponentWindows) {
             if (window.hasComponentExceptions()) {
                 if (componentExceptions == null) {
                     componentExceptions = new ArrayList<KeyValue<HstComponentInfo, Collection<HstComponentException>>>();
                 }
-                
+
                 HstComponentInfo componentInfo = new DelegatingHstComponentInfo(window.getComponentInfo(), window.getComponentName());
-                KeyValue<HstComponentInfo, Collection<HstComponentException>> pair = 
+                KeyValue<HstComponentInfo, Collection<HstComponentException>> pair =
                     new DefaultKeyValue<HstComponentInfo, Collection<HstComponentException>>(componentInfo, new ArrayList<HstComponentException>(window.getComponentExceptions()));
                 componentExceptions.add(pair);
-                
+
                 if (clearExceptions) {
                     window.clearComponentExceptions();
                 }
             }
         }
-        
+
         if (componentExceptions != null && !componentExceptions.isEmpty()) {
             return new DefaultPageErrors(componentExceptions);
         } else {
             return null;
         }
     }
-    
+
     protected PageErrorHandler.Status handleComponentExceptions(PageErrors pageErrors, HstContainerConfig requestContainerConfig, HstComponentWindow window, HstRequest hstRequest, HstResponse hstResponse) {
         if (!pageErrors.isEmpty()) {
             final HttpServletRequest request = hstRequest.getRequestContext().getServletRequest();
@@ -285,11 +295,11 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         }
 
         PageErrorHandler pageErrorHandler = (PageErrorHandler) hstRequest.getAttribute(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
-        
+
         if (pageErrorHandler == null) {
             String pageErrorHandlerClassName = window.getPageErrorHandlerClassName();
             if(pageErrorHandlerClassName == null) {
-                /* fallback to the original implementation through parametername/value. This is due to historical reasons and backwards 
+                /* fallback to the original implementation through parametername/value. This is due to historical reasons and backwards
                  * compatibility
                  */
                 pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
@@ -298,13 +308,13 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
                 window = window.getParentWindow();
                 pageErrorHandlerClassName = window.getPageErrorHandlerClassName();
                 if(pageErrorHandlerClassName == null) {
-                    /* fallback to the original implementation through parametername/value. This is due to historical reasons and backwards 
+                    /* fallback to the original implementation through parametername/value. This is due to historical reasons and backwards
                      * compatibility
                      */
                     pageErrorHandlerClassName = (String) window.getParameter(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
                 }
             }
-            
+
             if (pageErrorHandlerClassName != null) {
                 try {
                     pageErrorHandler = getComponentFactory().getObjectInstance(requestContainerConfig, pageErrorHandlerClassName);
@@ -317,15 +327,15 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
                 }
             }
         }
-        
+
         if (pageErrorHandler == null) {
             pageErrorHandler = defaultPageErrorHandler;
         }
-        
+
         if (pageErrorHandler == null) {
             return PageErrorHandler.Status.NOT_HANDLED;
         }
-        
+
         try {
             return pageErrorHandler.handleComponentExceptions(pageErrors, hstRequest, hstResponse);
         } catch (Exception e) {
@@ -334,7 +344,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
             } else if (log.isWarnEnabled()) {
                 log.warn("Exception during custom error handling. {}", e.toString());
             }
-            
+
             return PageErrorHandler.Status.HANDLED_BUT_CONTINUE;
         }
     }

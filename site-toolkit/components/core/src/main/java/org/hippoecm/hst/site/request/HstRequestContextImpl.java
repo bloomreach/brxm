@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,6 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
-import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -64,17 +63,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * HstRequestContextImpl
- * 
+ *
  * @version $Id$
  */
 public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
-    
-    private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
 
-    // a shared object between all threads
-    private static volatile ContentBeansTool contentBeansTool;
+    private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
 
 	protected ServletContext servletContext;
 	protected HttpServletRequest servletRequest;
@@ -93,6 +89,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
+    protected ContentBeansTool contentBeansTool;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected Subject subject;
@@ -113,28 +110,28 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected boolean siteContentBaseBeanPopulated = false;
 
     private Map<String, Object> unmodifiableAttributes;
-    
+
     public HstRequestContextImpl(Repository repository) {
         this(repository, null);
     }
-    
+
     public HstRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
-    
+
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
-    }    
-    
+    }
+
     public ServletContext getServletContext() {
     	return servletContext;
     }
-    
+
     public void setServletContext(ServletContext servletContext) {
     	this.servletContext = servletContext;
     }
-    
+
     public HttpServletRequest getServletRequest() {
         return servletRequest;
     }
@@ -154,15 +151,15 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setContextNamespace(String contextNamespace) {
         this.contextNamespace = contextNamespace;
     }
-    
+
     public String getContextNamespace() {
         return this.contextNamespace;
     }
-    
+
     public Session getSession() throws LoginException, RepositoryException {
         return getSession(true);
     }
-    
+
     public Session getSession(boolean create) throws LoginException, RepositoryException {
         if (this.session == null) {
             if (create) {
@@ -177,11 +174,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         return this.session;
     }
-    
+
     public void setSession(Session session) {
         this.session = session;
     }
- 
+
     public void setResolvedMount(ResolvedMount resolvedMount) {
         this.resolvedMount = resolvedMount;
     }
@@ -189,7 +186,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public ResolvedMount getResolvedMount() {
         return this.resolvedMount;
     }
-    
+
     public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
         this.resolvedSiteMapItem = resolvedSiteMapItem;
     }
@@ -197,31 +194,31 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public ResolvedSiteMapItem getResolvedSiteMapItem() {
         return this.resolvedSiteMapItem;
     }
-    
+
     public void setTargetComponentPath(String targetComponentPath) {
     	this.targetComponentPath = targetComponentPath;
     }
-    
+
     public String getTargetComponentPath() {
     	return this.targetComponentPath;
     }
-    
+
     public void setBaseURL(HstContainerURL baseURL) {
         this.baseURL = baseURL;
     }
-    
+
     public HstContainerURL getBaseURL() {
         return this.baseURL;
     }
-    
+
     public void setURLFactory(HstURLFactory urlFactory) {
         this.urlFactory = urlFactory;
     }
-    
+
     public HstURLFactory getURLFactory() {
         return this.urlFactory;
     }
-    
+
     public HstContainerURLProvider getContainerURLProvider() {
         return urlFactory != null ? urlFactory.getContainerURLProvider() : null;
     }
@@ -229,24 +226,24 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setSiteMapMatcher(HstSiteMapMatcher siteMapMatcher) {
         this.siteMapMatcher = siteMapMatcher;
     }
-    
+
     public HstSiteMapMatcher getSiteMapMatcher(){
         return this.siteMapMatcher;
     }
-    
+
     public void setLinkCreator(HstLinkCreator linkCreator) {
         this.linkCreator = linkCreator;
     }
-    
+
     public HstLinkCreator getHstLinkCreator() {
         return this.linkCreator;
     }
-    
+
     @Override
     public void setParameterInfoProxyFactory(HstParameterInfoProxyFactory parameterInfoProxyFactory) {
         this.parameterInfoProxyFactory = parameterInfoProxyFactory;
     }
-    
+
     @Override
     public HstParameterInfoProxyFactory getParameterInfoProxyFactory() {
         if(parameterInfoProxyFactory == null) {
@@ -254,15 +251,15 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         return parameterInfoProxyFactory;
     }
-    
+
     public void setHstSiteMenus(HstSiteMenus siteMenus) {
         this.siteMenus = siteMenus;
     }
-    
+
     public HstSiteMenus getHstSiteMenus(){
         return this.siteMenus;
     }
-    
+
     public HstQueryManagerFactory getHstQueryManagerFactory() {
         return hstQueryManagerFactory;
     }
@@ -270,23 +267,23 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
         this.hstQueryManagerFactory = hstQueryManagerFactory;
     }
-   
+
     public Object getAttribute(String name) {
         if (name == null) {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
-        
+
         Object value = null;
-        
+
         if (this.attributes != null) {
             value = this.attributes.get(name);
         }
-        
+
         return value;
     }
 
     public Enumeration<String> getAttributeNames() {
-        
+
         if (this.attributes != null) {
             return Collections.enumeration(attributes.keySet());
         } else {
@@ -299,7 +296,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         if (name == null) {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
-        
+
         if (this.attributes != null) {
             this.attributes.remove(name);
         }
@@ -309,11 +306,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         if (name == null) {
             throw new IllegalArgumentException("attribute name cannot be null.");
         }
-        
+
         if (object == null) {
             removeAttribute(name);
         }
-        
+
         if (this.attributes == null) {
             synchronized (this) {
                 if (this.attributes == null) {
@@ -321,26 +318,26 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
                 }
             }
         }
-        
+
         this.attributes.put(name, object);
     }
-    
+
     public Map<String, Object> getAttributes() {
         if (unmodifiableAttributes == null && attributes != null) {
             unmodifiableAttributes = Collections.unmodifiableMap(attributes);
         }
-        
+
         if (unmodifiableAttributes == null) {
             return Collections.emptyMap();
         }
-        
+
         return unmodifiableAttributes;
     }
-    
+
     public ContainerConfiguration getContainerConfiguration() {
         return this.containerConfiguration;
     }
-    
+
     public void setContainerConfiguration(ContainerConfiguration containerConfiguration) {
         this.containerConfiguration = containerConfiguration;
     }
@@ -348,7 +345,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public VirtualHost getVirtualHost() {
        return resolvedMount.getMount().getVirtualHost();
     }
-    
+
     public ContextCredentialsProvider getContextCredentialsProvider() {
         return contextCredentialsProvider;
     }
@@ -360,27 +357,27 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public Subject getSubject() {
         return subject;
     }
-    
+
     public void setPreferredLocale(Locale preferredLocale) {
         this.preferredLocale = preferredLocale;
     }
-    
+
     public Locale getPreferredLocale() {
         return preferredLocale;
     }
-    
+
     public void setLocales(List<Locale> locales) {
         this.locales = locales;
     }
-    
+
     public Enumeration<Locale> getLocales() {
         if (locales != null) {
             return Collections.enumeration(locales);
         }
-        
+
         return null;
     }
-    
+
     public void setPathSuffix(String pathSuffix) {
         this.pathSuffix = pathSuffix;
     }
@@ -401,7 +398,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         return Collections.unmodifiableSet(componentFilterTags);
     }
-    
+
     public Mount getMount(String alias) {
         if(alias == null) {
             throw new IllegalArgumentException("Alias is not allowed to be null");
@@ -419,7 +416,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         return lookupMount(alias.toLowerCase());
     }
-    
+
     public Mount getMount(String alias, String type) {
         if(alias == null || type == null) {
             throw new IllegalArgumentException("Alias and type are not allowed to be null");
@@ -435,7 +432,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         } else {
             log.debug("Did not find a mappedAlias for alias '{}'. Try alias directly", alias);
         }
-        
+
         Mount mount =  getVirtualHost().getVirtualHosts().getMountByGroupAliasAndType(getVirtualHost().getHostGroupName(), alias.toLowerCase(), type);
         if(mount == null) {
             log.debug("We did not find a direct mount for alias '{}'. Return null.", alias);
@@ -448,33 +445,33 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         String hostGroupName = currentMount.getVirtualHost().getHostGroupName();
         VirtualHosts hosts = currentMount.getVirtualHost().getVirtualHosts();
         List<Mount> possibleMounts = new ArrayList<Mount>();
-        
+
         for(String type : currentMount.getTypes()) {
            Mount possibleMount =  hosts.getMountByGroupAliasAndType(hostGroupName, alias, type);
            if(possibleMount != null) {
                possibleMounts.add(possibleMount);
            }
         }
-        
+
         if(possibleMounts.size() == 0) {
             log.debug("Did not find a mount for alias '{}'. Return null", alias);
             return null;
         }
-        
+
         if(possibleMounts.size() == 1) {
             return possibleMounts.get(0);
         }
-        
-        // there are multiple possible. Let's return the best. 
+
+        // there are multiple possible. Let's return the best.
         for(Mount possibleMount : possibleMounts) {
             if(possibleMount.getType().equals(currentMount.getType())) {
                 // found a primary match
                 return possibleMount;
             }
         }
-        
-        // we did not find a primary match for best match. We return the mount with the most types in common. 
-        
+
+        // we did not find a primary match for best match. We return the mount with the most types in common.
+
         List<Mount> narrowedPossibleMounts = new ArrayList<Mount>();
         if(possibleMounts.size() > 1) {
             // find the Mount's with the most types in common
@@ -492,18 +489,18 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
                 }
             }
         }
-        
+
         // we won't continue searching for a better possible match as this most likely is never need:
         if(narrowedPossibleMounts.size() > 0) {
             return narrowedPossibleMounts.get(0);
         }
-        
+
         // should not get here
         return possibleMounts.get(0);
     }
 
-    
-    
+
+
     private int countCommon(List<String> types, List<String> types2) {
         int counter = 0;
         for(String type : types) {
@@ -523,12 +520,12 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public boolean isFullyQualifiedURLs() {
         return fullyQualifiedURLs;
     }
-    
+
     @Override
     public void setRenderHost(String renderHost) {
         this.renderHost = renderHost;
     }
-    
+
     @Override
     public String getRenderHost() {
         return renderHost;
@@ -562,12 +559,12 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public ContentBeansTool getContentBeansTool() {
-        if (contentBeansTool == null) {
-            synchronized (HstRequestContextImpl.class) {
-                contentBeansTool = new DefaultContentBeansTool(hstQueryManagerFactory);
-            }
-        }
         return contentBeansTool;
+    }
+
+    @Override
+    public void setContentBeansTool(ContentBeansTool contentBeansTool) {
+        this.contentBeansTool = contentBeansTool;
     }
 
     @Override
