@@ -43,13 +43,6 @@ public class NewsController {
 
     private static Logger log = LoggerFactory.getLogger(NewsController.class);
 
-    private ContentBeansTool contentBeansTool;
-
-    @Autowired
-    public NewsController(ContentBeansTool contentBeansTool) {
-        this.contentBeansTool = contentBeansTool;
-    }
-
     @RequestMapping(value={"", "/"})
     public ModelAndView listHandler(
             @RequestParam(value = "pi", defaultValue="1") String pageIndexParam,
@@ -65,10 +58,10 @@ public class NewsController {
         int totalSize = 0;
 
         try {
-            HippoBean scope = contentBeansTool.getResolvedContentBean();
+            HippoBean scope = requestContext.getContentBean();
             mav.addObject("scope", scope);
 
-            HstQuery query = requestContext.getHstQueryManagerFactory().createQueryManager(requestContext.getSession(), contentBeansTool.getObjectConverter()).createQuery(scope, NewsBean.class);
+            HstQuery query = requestContext.getHstQueryManagerFactory().createQueryManager(requestContext.getSession(), requestContext.getContentBeansTool().getObjectConverter()).createQuery(scope, NewsBean.class);
             query.setOffset((pageIndex - 1) * pageSize);
             query.setLimit(pageSize);
             HstQueryResult result = query.execute();
@@ -104,8 +97,10 @@ public class NewsController {
     }
 
     @RequestMapping("/**")
-    public String itemHandler() {
-        return "news/item";
+    public ModelAndView itemHandler() {
+        ModelAndView mav = new ModelAndView("news/item");
+        mav.addObject("document", RequestContextProvider.get().getContentBean());
+        return mav;
     }
 
 }

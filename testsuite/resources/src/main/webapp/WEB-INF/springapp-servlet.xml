@@ -30,6 +30,4 @@
   <bean id="handlerMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
   </bean>
 
-  <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool" />
-
 </beans>
