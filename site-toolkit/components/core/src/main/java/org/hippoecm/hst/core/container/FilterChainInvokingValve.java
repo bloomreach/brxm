@@ -40,9 +40,9 @@ public class FilterChainInvokingValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        HttpServletRequest request = context.getServletRequest();
-        HttpServletResponse response = context.getServletResponse();
-        FilterChain filterChain = (FilterChain) request.getAttribute(ContainerConstants.HST_FILTER_CHAIN);
+        final HttpServletRequest request = context.getServletRequest();
+        final HttpServletResponse response = context.getServletResponse();
+        final FilterChain filterChain = (FilterChain) request.getAttribute(ContainerConstants.HST_FILTER_CHAIN);
 
         try {
             // NOTE: It doesn't work properly if the wrapped request (HstContainerRequestImpl) is passed.
@@ -54,12 +54,12 @@ public class FilterChainInvokingValve extends AbstractBaseOrderableValve {
             ServletRequest unwrappedRequest = request;
 
             while (unwrappedRequest instanceof HttpServletRequestWrapper) {
-                unwrappedRequest = ((HttpServletRequestWrapper) request).getRequest();
-
-                // Let's stop when the HST specific request wrapper has been unwrapped.
-                if (request instanceof HstContainerRequest) {
+                if (unwrappedRequest instanceof HstContainerRequest) {
+                    // Let's stop when the HST specific request wrapper has been unwrapped.
+                    unwrappedRequest = ((HttpServletRequestWrapper) unwrappedRequest).getRequest();
                     break;
                 }
+                unwrappedRequest = ((HttpServletRequestWrapper) unwrappedRequest).getRequest();
             }
 
             filterChain.doFilter(unwrappedRequest, response);
