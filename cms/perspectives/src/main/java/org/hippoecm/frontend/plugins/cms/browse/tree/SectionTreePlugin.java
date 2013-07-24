@@ -24,7 +24,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -209,8 +208,8 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
             if (sectionChildren.size() > 0) {
                 final Component component = ((IRenderService) sectionChildren.get(0)).getComponent();
                 if (component.isVisible()) {
-                    response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" + getMarkupId() + "', '"
-                            + component.getMarkupId() + "')"));
+                    accordionManager.activate(component);
+                    break;
                 }
             }
         }

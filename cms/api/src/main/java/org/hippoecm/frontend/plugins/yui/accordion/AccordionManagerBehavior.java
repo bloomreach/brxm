@@ -34,9 +34,10 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
 
     //Provide a more generic approach by making the function call variable as well
-    private final PackageTextTemplate INIT = new PackageTextTemplate(AccordionManagerBehavior.class, "init.js");
+    private static final PackageTextTemplate INIT = new PackageTextTemplate(AccordionManagerBehavior.class, "init.js");
 
     private DynamicTextTemplate template;
+    private Component active;
 
     public AccordionManagerBehavior(AccordionConfiguration accordionSettings) {
         this.template = new DynamicTextTemplate(INIT);
@@ -49,6 +50,10 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
         template.setId(component.getMarkupId());
     }
 
+    public void activate(Component component) {
+        this.active = component;
+    }
+
     @Override
     public void addHeaderContribution(IYuiContext helper) {
         helper.addModule(HippoNamespace.NS, "accordionmanager");
@@ -57,6 +62,10 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
             @Override
             public void renderHead(final IHeaderResponse response) {
                 response.render(getHeaderItem());
+                if (active != null) {
+                    response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" +
+                            getComponent().getMarkupId() + "', '" + active.getMarkupId() + "')"));
+                }
             }
         });
     }
