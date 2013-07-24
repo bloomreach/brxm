@@ -36,9 +36,10 @@ import org.hippoecm.repository.util.JcrUtils;
  * are only useful in subseqent calls to the workflowmanager to return a new workflow, or from a document the
  * getIdentity() method may be used to obtain the UUID of the javax.jcr.Node representing the document.
  */
-public class Document extends Object implements Serializable, Cloneable {
+public class Document implements Serializable {
 
     private String identity = null;
+
     private transient Node node;
 
     /** 
@@ -127,23 +128,17 @@ public class Document extends Object implements Serializable, Cloneable {
      */
     protected void initialized() {}
 
-    protected String getNodeStringProperty(String relPath) throws RepositoryException {
+    protected String getStringProperty(String relPath) throws RepositoryException {
         return hasNode() ? JcrUtils.getStringProperty(getNode(), relPath, null) : null;
     }
 
-    protected void setNodeStringProperty(String relPath, String value) throws RepositoryException {
+    protected void setStringProperty(String relPath, String value) throws RepositoryException {
         if (hasNode()) {
             getCheckedOutNode().setProperty(relPath, value);
         }
     }
 
-    protected void setNodeNodeProperty(String relPath, Node nodeValue) throws RepositoryException {
-        if (hasNode()) {
-            getCheckedOutNode().setProperty(relPath, nodeValue);
-        }
-    }
-
-    protected String[] getNodeStringsProperty(String relPath) throws RepositoryException {
+    protected String[] getStringsProperty(String relPath) throws RepositoryException {
         String[] result = null;
         if (hasNode() && getNode().hasProperty(relPath)) {
             Value[] values = getNode().getProperty(relPath).getValues();
@@ -156,13 +151,23 @@ public class Document extends Object implements Serializable, Cloneable {
         return result;
     }
 
-    protected void setNodeStringsProperty(String relPath, String[] values) throws RepositoryException {
+    protected void setStringsProperty(String relPath, String[] values) throws RepositoryException {
         if (hasNode()) {
             getCheckedOutNode().setProperty(relPath, values);
         }
     }
 
-    protected Date getNodeDateProperty(String relPath) throws RepositoryException {
+    protected Node getNodeProperty(String relPath) throws RepositoryException {
+        return hasNode() ? JcrUtils.getNodeProperty(getNode(), relPath, null) : null;
+    }
+
+    protected void setNodeProperty(String relPath, Node nodeValue) throws RepositoryException {
+        if (hasNode()) {
+            getCheckedOutNode().setProperty(relPath, nodeValue);
+        }
+    }
+
+    protected Date getDateProperty(String relPath) throws RepositoryException {
         Calendar cal = null;
         if (hasNode()) {
             cal = JcrUtils.getDateProperty(getNode(), relPath, null);
@@ -170,7 +175,7 @@ public class Document extends Object implements Serializable, Cloneable {
         return cal != null ? cal.getTime() : null;
     }
 
-    protected void setNodeDateProperty(String relPath, Date date) throws RepositoryException {
+    protected void setDateProperty(String relPath, Date date) throws RepositoryException {
         if (hasNode()) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
@@ -178,7 +183,25 @@ public class Document extends Object implements Serializable, Cloneable {
         }
     }
 
-    // TODO DEJDO: consider adding more common get|setNode<type>Property methods
+    protected Long getLongProperty(String relPath) throws RepositoryException {
+        return hasNode() ? JcrUtils.getLongProperty(getNode(), relPath, null) : null;
+    }
+
+    protected void setLongProperty(String relPath, Long newValue) throws RepositoryException {
+        if (hasNode()) {
+            getCheckedOutNode().setProperty(relPath, newValue);
+        }
+    }
+
+    protected Boolean getBooleanProperty(String relPath) throws RepositoryException {
+        return hasNode() ? JcrUtils.getBooleanProperty(getNode(), relPath, null) : null;
+    }
+
+    protected void setBooleanProperty(String relPath, Boolean newValue) throws RepositoryException {
+        if (hasNode()) {
+            getCheckedOutNode().setProperty(relPath, newValue);
+        }
+    }
 
     /**
      * {@inheritDoc}
