@@ -28,7 +28,7 @@
             wireFrame = this;
             extCmp = Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance');
 
-            if (extCmp !== null) {
+            if (extCmp !== undefined) {
                 if (!this.bodyResizeListenerRegistered) {
                     this.bodyResizeListenerRegistered = true;
                     extCmp.on('bodyresize', function() {
