@@ -32,8 +32,14 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
  */
 public interface ContentBeansTool {
 
+    /**
+     * @return <code>ObjectConverter</code> which is shareed across all threads
+     */
     public ObjectConverter getObjectConverter();
 
+    /**
+     * @return <code>ObjectBeanManager</code> instance for the current request (unique per request)
+     */
     public ObjectBeanManager getObjectBeanManager();
 
     /**

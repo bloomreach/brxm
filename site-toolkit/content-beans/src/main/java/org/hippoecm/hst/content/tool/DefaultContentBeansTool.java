@@ -23,21 +23,17 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,58 +46,20 @@ public class DefaultContentBeansTool implements ContentBeansTool {
 
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
-    private ClasspathResourceScanner classpathResourceScanner;
+    private final ObjectConverter objectConverter;
 
-    private ObjectConverter objectConverter;
-
-    private HstQueryManagerFactory queryManagerFactory;
+    private final HstQueryManagerFactory queryManagerFactory;
 
     public DefaultContentBeansTool(HstQueryManagerFactory queryManagerFactory) {
-    }
-
-    public ClasspathResourceScanner getClasspathResourceScanner() {
-        if (classpathResourceScanner == null) {
-            ComponentManager compMgr = HstServices.getComponentManager();
-
-            if (compMgr != null) {
-                classpathResourceScanner = compMgr.getComponent(ClasspathResourceScanner.class.getName());
-            }
-        }
-        return classpathResourceScanner;
-    }
-
-    public void setClasspathResourceScanner(ClasspathResourceScanner classpathResourceScanner) {
-        this.classpathResourceScanner = classpathResourceScanner;
+        this.queryManagerFactory = queryManagerFactory;
+        ClasspathResourceScanner classpathResourceScanner = HstServices.getComponentManager().getComponent(ClasspathResourceScanner.class.getName());
+        List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(classpathResourceScanner);
+        objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
     }
 
     public ObjectConverter getObjectConverter() {
-        if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        }
-
         return objectConverter;
     }
-
-    public void setObjectConverter(ObjectConverter objectConverter) {
-        this.objectConverter = objectConverter;
-    }
-
-    public HstQueryManagerFactory getQueryManagerFactory() {
-        if (queryManagerFactory == null) {
-            ComponentManager compMgr = HstServices.getComponentManager();
-
-            if (compMgr != null) {
-                queryManagerFactory = (HstQueryManagerFactory) compMgr.getComponent(HstQueryManagerFactory.class.getName());
-            }
-        }
-        return queryManagerFactory;
-    }
-
-    public void setQueryManagerFactory(HstQueryManagerFactory queryManagerFactory) {
-        this.queryManagerFactory = queryManagerFactory;
-    }
-
 
     public ObjectBeanManager getObjectBeanManager() {
         try {
@@ -131,11 +89,11 @@ public class DefaultContentBeansTool implements ContentBeansTool {
 
     public HstQueryManager getQueryManager(Session session) throws RepositoryException {
         HstQueryManager queryManager = null;
-        queryManager = getQueryManagerFactory().createQueryManager(session, getObjectConverter());
+        queryManager = queryManagerFactory.createQueryManager(session, getObjectConverter());
         return queryManager;
     }
 
-    private List<Class<? extends HippoBean>> getAnnotatedClasses() {
+    private List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner classpathResourceScanner) {
         HstRequestContext requestContext = RequestContextProvider.get();
 
         if (requestContext == null) {
@@ -147,8 +105,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         String ocmAnnotatedClassesResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
 
         try {
-            ClasspathResourceScanner scanner = getClasspathResourceScanner();
-            annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
+            annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
         } catch (Exception e) {
             throw new HstSiteMapItemHandlerException(e);
         }

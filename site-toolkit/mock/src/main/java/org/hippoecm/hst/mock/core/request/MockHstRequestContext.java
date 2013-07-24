@@ -91,6 +91,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private boolean cmsRequest;
     private ContentBeansTool contentBeansTool;
     private HippoBean contentBean;
+    private HippoBean siteContentBean;
     private String siteContentBasePath;
 
     public boolean isPreview() {
@@ -426,6 +427,14 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     public void setContentBean(final HippoBean contentBean) {
         this.contentBean = contentBean;
+    }
+
+    public HippoBean getSiteContentBaseBean() {
+        return siteContentBean;
+    }
+
+    public void setSiteContentBaseBean(final HippoBean siteContentBean) {
+        this.siteContentBean = siteContentBean;
     }
 
     @Override

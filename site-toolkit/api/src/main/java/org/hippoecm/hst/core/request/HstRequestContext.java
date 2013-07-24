@@ -368,6 +368,11 @@ public interface HstRequestContext {
     String getSiteContentBasePath();
 
     /**
+     * @return the {@link HippoBean} belonging to for {@link #getSiteContentBasePath()}
+     */
+    HippoBean getSiteContentBaseBean();
+
+    /**
      * @return <code>HippoBean</code> belonging to the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem} or
      * <code>null</code> when bean cannot be found of when the backing
      * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()} is <code>null</code>

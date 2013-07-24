@@ -107,11 +107,6 @@
     <property name="valveName" value="contextResolvingValve" />
   </bean>
 
-  <bean id="contentBeansResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContentBeansResolvingValve">
-    <property name="valveName" value="contentBeansResolvingValve" />
-    <property name="resolvedContentBeanAttributeName" value="${resolved.content.bean.request.attribute.name}" />
-  </bean>
-
   <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.LocalizationValve">
     <property name="valveName" value="localizationValve" />
   </bean>
@@ -215,7 +210,6 @@
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
                 <ref bean="siteMenusResolvingValve" />
-                <ref bean="contentBeansResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
                 <ref bean="pageInfoRenderingValve" />
@@ -249,7 +243,6 @@
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve" />
                 <ref bean="siteMenusResolvingValve" />
-                <ref bean="contentBeansResolvingValve" />
                 <ref bean="filterChainInvokingValve" />
               </list>
             </property>

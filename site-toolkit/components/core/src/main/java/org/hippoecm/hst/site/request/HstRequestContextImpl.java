@@ -46,7 +46,6 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstContainerURLProvider;
@@ -110,6 +109,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     protected HippoBean contentBean;
     protected boolean contentBeanPopulated = false;
+    protected HippoBean siteContentBaseBean;
+    protected boolean siteContentBaseBeanPopulated = false;
 
     private Map<String, Object> unmodifiableAttributes;
     
@@ -594,6 +595,21 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
 
         return PathUtils.normalizePath(requestContext.getResolvedMount().getMount().getContentPath());
+    }
+
+    @Override
+    public HippoBean getSiteContentBaseBean() {
+        if (siteContentBaseBeanPopulated) {
+            return siteContentBaseBean;
+        }
+        String base = getSiteContentBasePath();
+        try {
+            siteContentBaseBean = (HippoBean) getContentBeansTool().getObjectBeanManager().getObject("/" + base);
+        } catch (ObjectBeanManagerException e) {
+            log.error("ObjectBeanManagerException. Return null : {}", e);
+        }
+        siteContentBaseBeanPopulated = true;
+        return siteContentBaseBean;
     }
 
 
