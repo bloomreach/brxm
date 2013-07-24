@@ -20,9 +20,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Calendar;
 
-import javax.jcr.*;
+import javax.jcr.Binary;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.observation.Event;
@@ -716,7 +726,7 @@ public class JcrUtils {
      */
     public static String getNodePathQuietly(final Node node) {
         try {
-            return ((node == null) ? null : node.getPath());
+            return node == null ? null : node.getPath();
         } catch (RepositoryException ignored) {
             return null;
         }

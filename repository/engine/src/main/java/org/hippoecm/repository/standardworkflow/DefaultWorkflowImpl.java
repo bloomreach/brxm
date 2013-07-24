@@ -37,6 +37,8 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 
+import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
+
 public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, InternalWorkflow {
 
     private static final long serialVersionUID = 1L;
@@ -214,10 +216,4 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             throw new WorkflowException("cannot move document which is not contained in a folder");
     }
 
-    private Node getContainingFolder(final Node node) throws RepositoryException {
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return node.getParent();
-        }
-        return getContainingFolder(node.getParent());
-    }
 }

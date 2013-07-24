@@ -41,7 +41,6 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
-import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -83,7 +83,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.RepoUtils;
-import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;

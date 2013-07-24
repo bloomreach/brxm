@@ -54,6 +54,7 @@ builtin/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflow.java
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/RepositoryWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventsWorkflow.java -text
+builtin/src/main/java/org/hippoecm/repository/util/WorkflowUtils.java -text
 config/pom.xml svneol=native#text/plain
 config/src/main/resources/domain-defaultread.xml -text svneol=unset#text/plain
 config/src/main/resources/domain-defaultwrite.xml -text svneol=unset#text/plain

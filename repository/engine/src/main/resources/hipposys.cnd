@@ -91,7 +91,7 @@
 - hipposys:classname (string) mandatory
 + hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
 
-[hipposys:ocmqueryfolder] > nt:base
+[hipposys:ocmqueryfolder] > nt:base // deprecated
 + * (nt:query) = hipposys:ocmquery
 
 [hipposys:queryfolder] > nt:base

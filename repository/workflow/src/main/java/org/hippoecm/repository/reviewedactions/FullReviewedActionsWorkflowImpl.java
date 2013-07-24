@@ -20,11 +20,9 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
@@ -37,6 +35,9 @@ import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
+
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {
 
@@ -294,21 +295,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         wfCtx = wfCtx.getWorkflowContext(depublicationDate);
         FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
         wf.depublish();
-    }
-
-    private Document getContainingFolder(Document document) throws RepositoryException {
-        final Node node = document.getNode();
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return new Document(node.getParent());
-        }
-        return getContainingFolder(node);
-    }
-
-    private Document getContainingFolder(Node node) throws RepositoryException {
-        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return new Document(node.getParent());
-        }
-        return getContainingFolder(node.getParent());
     }
 
 }
