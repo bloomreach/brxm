@@ -36,6 +36,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -53,6 +56,7 @@ import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 
 public class MockHstRequestContext implements HstMutableRequestContext {
+
 
     private Hashtable<String, Object> attributes = new Hashtable<String, Object>();
     private ServletContext servletContext;
@@ -85,6 +89,9 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private boolean fullyQualifiedURLs;
     private String renderHost;
     private boolean cmsRequest;
+    private ContentBeansTool contentBeansTool;
+    private HippoBean contentBean;
+    private String siteContentBasePath;
 
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
@@ -411,5 +418,33 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public void setCmsRequest(boolean cmsRequest) {
         this.cmsRequest = cmsRequest;
     }
+
+    @Override
+    public HippoBean getContentBean() {
+        return contentBean;
+    }
+
+    public void setContentBean(final HippoBean contentBean) {
+        this.contentBean = contentBean;
+    }
+
+    @Override
+    public ContentBeansTool getContentBeansTool() {
+        return contentBeansTool;
+    }
+
+    public void setContentBeansTool(final ContentBeansTool contentBeansTool) {
+        this.contentBeansTool = contentBeansTool;
+    }
+
+    @Override
+    public String getSiteContentBasePath() {
+        return siteContentBasePath;
+    }
+
+    public void setSiteContentBasePath(final String siteContentBasePath) {
+        this.siteContentBasePath = siteContentBasePath;
+    }
+
 
 }

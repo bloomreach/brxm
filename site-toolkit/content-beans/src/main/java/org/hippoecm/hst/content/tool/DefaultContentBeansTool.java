@@ -56,7 +56,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
 
     private HstQueryManagerFactory queryManagerFactory;
 
-    public DefaultContentBeansTool() {
+    public DefaultContentBeansTool(HstQueryManagerFactory queryManagerFactory) {
     }
 
     public ClasspathResourceScanner getClasspathResourceScanner() {
@@ -67,7 +67,6 @@ public class DefaultContentBeansTool implements ContentBeansTool {
                 classpathResourceScanner = compMgr.getComponent(ClasspathResourceScanner.class.getName());
             }
         }
-
         return classpathResourceScanner;
     }
 
@@ -96,7 +95,6 @@ public class DefaultContentBeansTool implements ContentBeansTool {
                 queryManagerFactory = (HstQueryManagerFactory) compMgr.getComponent(HstQueryManagerFactory.class.getName());
             }
         }
-
         return queryManagerFactory;
     }
 
@@ -104,15 +102,6 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         this.queryManagerFactory = queryManagerFactory;
     }
 
-    public HippoBean getResolvedContentBean() {
-        HstRequestContext requestContext = RequestContextProvider.get();
-
-        if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
-            return null;
-        }
-
-        return getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
-    }
 
     public ObjectBeanManager getObjectBeanManager() {
         try {
@@ -128,16 +117,6 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         } catch (RepositoryException e) {
             throw new HstSiteMapItemHandlerException(e);
         }
-    }
-
-    public String getSiteContentBasePath() {
-        HstRequestContext requestContext = RequestContextProvider.get();
-
-        if (requestContext == null) {
-            throw new IllegalStateException("HstRequestContext is not set in handler.");
-        }
-
-        return PathUtils.normalizePath(requestContext.getResolvedMount().getMount().getContentPath());
     }
 
     public HstQueryManager getQueryManager() throws RepositoryException {
@@ -177,26 +156,6 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         return annotatedClasses;
     }
 
-    private HippoBean getBeanForResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
-        String base = getSiteContentBasePath();
-        String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
 
-        if (relPath == null) {
-            log.debug("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
-            return null;
-        }
-
-        try {
-            if ("".equals(relPath)) {
-                return (HippoBean) getObjectBeanManager().getObject("/" + base);
-            } else {
-                return (HippoBean) getObjectBeanManager().getObject("/" + base+ "/" + relPath);
-            }
-        } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
-        }
-
-        return null;
-    }
 
 }

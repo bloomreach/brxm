@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -352,5 +354,23 @@ public interface HstRequestContext {
      *
      */
     String getRenderHost();
-    
+
+    /**
+     * @return A {@link ContentBeansTool} instance, never <code>null</code>. Note that the {@link ContentBeansTool} is a object shared by
+     * multiple threads
+     */
+    ContentBeansTool getContentBeansTool();
+
+    /**
+     * @return the root content path for the {@link org.hippoecm.hst.core.request.ResolvedMount} belonging to the current
+     * {@link javax.servlet.http.HttpServletRequest}
+     */
+    String getSiteContentBasePath();
+
+    /**
+     * @return <code>HippoBean</code> belonging to the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem} or
+     * <code>null</code> when bean cannot be found of when the backing
+     * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()} is <code>null</code>
+     */
+    HippoBean getContentBean();
 }

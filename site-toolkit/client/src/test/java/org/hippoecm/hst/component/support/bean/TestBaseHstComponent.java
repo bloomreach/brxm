@@ -103,21 +103,7 @@ public class TestBaseHstComponent {
         BaseHstComponent comp2 = new BaseHstComponent();
         comp2.init(servletContext, componentConfig);
         assertTrue("The ObjectConverter should be shared between components which don't have locally annotated beans.", comp1.objectConverter == comp2.objectConverter);
-        
-        BaseHstComponent comp3 = new BaseHstComponent() {
-            @Override
-            protected List<Class<? extends HippoBean>> getLocalAnnotatedClasses() {
-                List<Class<? extends HippoBean>> list = new ArrayList<Class<? extends HippoBean>>();
-                list.add(BookmarkBean.class);
-                return list;
-            }
-        };
-        
-        comp3.init(servletContext, componentConfig);
-        assertFalse("The ObjectConverter should be different from the globally shared one.", comp1.objectConverter == comp3.objectConverter);
-        
-        assertEquals(BookmarkBean.class, comp3.objectConverter.getAnnotatedClassFor("test:bookmark"));
-        assertEquals("test:bookmark", comp3.objectConverter.getPrimaryNodeTypeNameFor(BookmarkBean.class));
+
     }
     
     @Test

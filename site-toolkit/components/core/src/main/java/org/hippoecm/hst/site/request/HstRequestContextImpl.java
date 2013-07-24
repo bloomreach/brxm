@@ -36,6 +36,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.tool.ContentBeansTool;
+import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
@@ -48,11 +53,13 @@ import org.hippoecm.hst.core.container.HstContainerURLProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.ContextCredentialsProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +73,10 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
     
     private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
-    
+
+    // a shared object between all threads
+    private static volatile ContentBeansTool contentBeansTool;
+
 	protected ServletContext servletContext;
 	protected HttpServletRequest servletRequest;
 	protected HttpServletResponse servletResponse;
@@ -97,6 +107,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     // default a request is considered to be not from a cms. If cmsRequest is true, this means the
     // request is done from a cms context. This can influence for example how a link is created
     protected boolean cmsRequest;
+
+    protected HippoBean contentBean;
+    protected boolean contentBeanPopulated = false;
 
     private Map<String, Object> unmodifiableAttributes;
     
@@ -545,5 +558,66 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setCmsRequest(final boolean cmsRequest) {
         this.cmsRequest = cmsRequest;
     }
+
+    @Override
+    public ContentBeansTool getContentBeansTool() {
+        if (contentBeansTool == null) {
+            synchronized (HstRequestContextImpl.class) {
+                contentBeansTool = new DefaultContentBeansTool(hstQueryManagerFactory);
+            }
+        }
+        return contentBeansTool;
+    }
+
+    @Override
+    public HippoBean getContentBean() {
+        if (contentBeanPopulated) {
+            return contentBean;
+        }
+        HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
+            return null;
+        }
+        // cache for next getter
+        contentBean = getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
+        contentBeanPopulated = true;
+        return contentBean;
+    }
+
+    @Override
+    public String getSiteContentBasePath() {
+        HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null) {
+            throw new IllegalStateException("HstRequestContext is not set in handler.");
+        }
+
+        return PathUtils.normalizePath(requestContext.getResolvedMount().getMount().getContentPath());
+    }
+
+
+    private HippoBean getBeanForResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem) {
+        String base = getSiteContentBasePath();
+        String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
+
+        if (relPath == null) {
+            log.debug("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
+            return null;
+        }
+
+        try {
+            if ("".equals(relPath)) {
+                return (HippoBean) contentBeansTool.getObjectBeanManager().getObject("/" + base);
+            } else {
+                return (HippoBean) contentBeansTool.getObjectBeanManager().getObject("/" + base+ "/" + relPath);
+            }
+        } catch (ObjectBeanManagerException e) {
+            log.error("ObjectBeanManagerException. Return null : {}", e);
+        }
+
+        return null;
+    }
+
 
 }
