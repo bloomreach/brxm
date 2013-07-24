@@ -107,7 +107,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
     public HippoBean getResolvedContentBean() {
         HstRequestContext requestContext = RequestContextProvider.get();
 
-        if (requestContext == null) {
+        if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
             return null;
         }
 
