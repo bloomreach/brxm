@@ -499,60 +499,17 @@ public class BaseHstComponent extends GenericHstComponent {
     public ObjectConverter getObjectConverter() throws HstComponentException {
         // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
         if (objectConverter == null) {
-            
-            List<Class<? extends HippoBean>> localAnnotatedClasses = getLocalAnnotatedClasses();
-            
-            // 
-            // When local annotated classes are not empty, it means the specific component
-            // wants its own object converter with some additional annotated bean classes
-            // which were manullay added by its overriding method, #getLocalAnnotatedClasses().
-            //
-            // On the other hand, if local annotated classes are empty, it means each component
-            // can share one globally shared object converter with the same annotated classes.
-            // In this case, the object converter is stored into servlet context attribute.
-            // 
-            
-            boolean objectConverterSharable = (localAnnotatedClasses == null || localAnnotatedClasses.isEmpty());
-            
-            if (objectConverterSharable) {
-                
                 objectConverter = (ObjectConverter) servletContext.getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
-                
                 if (objectConverter == null) {
                     List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
                     objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
                     servletContext.setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
                 }
-                
-            } else {
-                
-                List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
-                
-                for (Class<? extends HippoBean> localClass : localAnnotatedClasses) {
-                    if (annotatedClasses.contains(localClass)) {
-                        log.debug("local added class '{}' already present. Skipping", localClass.getName());
-                    } else {
-                        annotatedClasses.add(localClass); 
-                    }
-                }
-                
-                objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-                
-            }
         }
         
         return objectConverter;
     }
 
-    /**
-     * when you want to inject specific component only custom annotated classes override this method
-     * 
-     * This method is only called during the init() phase of a component     
-	 * @return List of annotated classes, and if there are none, return an empty list
-     */
-    protected List<Class<? extends HippoBean>> getLocalAnnotatedClasses() {
-        return null;
-    }
     
     private List<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = null;
