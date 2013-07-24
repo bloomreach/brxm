@@ -132,39 +132,22 @@ AutoSave.prototype = {
             this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
         }
 
-        var xmlHttpReq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
-            url = this.editor.config.callbackUrl,
-            serializedInput = Wicket.Form.serializeInput(Wicket.$(this.getId())),
-            body = serializedInput[0].name + '=' + serializedInput[0].value,
-            afterCallbackHandler = jQuery.proxy(function() {
-                if (throttled) {
-                    this.saving = false;
-                }
-                if (xmlHttpReq.status === 200) {
-                    if (success) {
-                        success();
+        jQuery.ajax(this.editor.config.callbackUrl, {
+                async: throttled || false,
+                type: 'POST',
+                data: Wicket.Form.serializeInput(Wicket.$(this.getId())),
+                headers: {
+                    'Wicket-Ajax': true,
+                    'Wicket-Ajax-BaseURL': Wicket.Ajax.baseUrl
+                },
+                compete: jQuery.proxy(function() {
+                    if (throttled) {
+                        this.saving = false;
                     }
-                } else if (failure) {
-                    failure();
-                }
-            }, this);
-
-        xmlHttpReq.open('POST', url, throttled || false);
-        xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xmlHttpReq.setRequestHeader('Wicket-Ajax', "true");
-        xmlHttpReq.setRequestHeader('Wicket-Ajax-BaseURL', Wicket.Ajax.baseUrl);
-        if (throttled) {
-            xmlHttpReq.onreadystatechange = function() {
-                if (xmlHttpReq.readyState === 4) {
-                    afterCallbackHandler();
-                }
-            };
-        }
-        xmlHttpReq.send(body);
-
-        if (!throttled) {
-            afterCallbackHandler();
-        }
+                }, this),
+                success: success,
+                error: failure
+            });
     },
 
     onUpdateToolbar : function() {
