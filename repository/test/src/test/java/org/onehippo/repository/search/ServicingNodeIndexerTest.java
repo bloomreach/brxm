@@ -42,7 +42,6 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
             session.save();
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             Query query = queryManager.createQuery("//*[jcr:contains(. ,'password')]", Query.XPATH);
-            System.out.println(query.execute().getNodes().nextNode().getPath());
 
             assertFalse(query.execute().getNodes().hasNext());
 
@@ -99,7 +98,6 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
 
     }
 
-    @Ignore
     @Test
     public void testExcludeSingleIndexTerm() throws RepositoryException {
         final Node testNode = session.getRootNode().addNode("test");
@@ -116,7 +114,6 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
         query = queryManager.createQuery("//*[@sample:nosingleindexterm = 'foo bar']", Query.XPATH);
         assertFalse(query.execute().getNodes().hasNext());
 
-        // sorting is not really predictable for fields that do not get indexed as a single term.
 
     }
 
