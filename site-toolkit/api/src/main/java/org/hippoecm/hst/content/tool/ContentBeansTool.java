@@ -32,16 +32,35 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
  */
 public interface ContentBeansTool {
 
+    /**
+     * @return <code>HippoBean</code> belonging to the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem} or
+     * <code>null</code> when bean cannot be found of when the backing
+     * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()} is <code>null</code>
+     */
     public HippoBean getResolvedContentBean();
 
     public ObjectConverter getObjectConverter();
 
     public ObjectBeanManager getObjectBeanManager();
 
+    /**
+     * @return the root content path for the {@link org.hippoecm.hst.core.request.ResolvedMount} belonging to the current
+     * {@link javax.servlet.http.HttpServletRequest}
+     */
     public String getSiteContentBasePath();
 
+    /**
+     * @return the {@link HstQueryManager} for the {@link Session} retrieved through
+     * {@link org.hippoecm.hst.core.request.HstRequestContext#getSession(boolean)}
+     * @throws RepositoryException
+     */
     public HstQueryManager getQueryManager() throws RepositoryException;
 
+    /**
+     * @param session
+     * @return the {@link HstQueryManager} for <code>session</code>
+     * @throws RepositoryException
+     */
     public HstQueryManager getQueryManager(Session session) throws RepositoryException;
 
 }
