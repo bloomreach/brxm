@@ -15,29 +15,22 @@
  */
 package org.hippoecm.hst.tag;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,32 +115,18 @@ public class HstTagSupport extends TagSupport {
      * preview or live context. 
      */
     protected HippoBean getSiteContentBaseBean(HstRequest request) {
-        String base = getSiteContentBasePath(request);
-        try {
-            return (HippoBean) getObjectBeanManager(request).getObject("/"+base);
-        } catch (ObjectBeanManagerException e) {
-            logger.error("ObjectBeanManagerException. Return null : {}", e);
-        }
-        return null;
+        return request.getRequestContext().getSiteContentBaseBean();
     }
     
     protected String getSiteContentBasePath(HstRequest request){
-        return PathUtils.normalizePath(request.getRequestContext().getResolvedMount().getMount().getContentPath());
+        return request.getRequestContext().getSiteContentBasePath();
     }
     
     protected ObjectBeanManager getObjectBeanManager(HstRequest request) {
-        try {
-            HstRequestContext requestContext = request.getRequestContext();
-            return new ObjectBeanManagerImpl(requestContext.getSession(), getObjectConverter());
-        } catch (UnsupportedRepositoryOperationException e) {
-            throw new HstComponentException(e);
-        } catch (RepositoryException e) {
-            throw new HstComponentException(e);
-        }
+        return request.getRequestContext().getContentBeansTool().getObjectBeanManager();
     }
     
     protected ObjectConverter getObjectConverter()  {
-        // get the objectconverter that was put in servlet context by HstComponent 
-        return (ObjectConverter) pageContext.getServletContext().getAttribute(BaseHstComponent.OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
+        return RequestContextProvider.get().getContentBeansTool().getObjectConverter();
     }
 }

@@ -15,20 +15,15 @@
  */
 package org.hippoecm.hst.component.support.bean;
 
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathResourceScanner;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
@@ -36,7 +31,6 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -52,12 +46,8 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.HstResponseUtils;
-import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.utils.ParameterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,31 +73,13 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseHstComponent extends GenericHstComponent {
 
-    
-
     private static Logger log = LoggerFactory.getLogger(BaseHstComponent.class);
 
-    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
-    public static final String DEFAULT_BEANS_ANNOTATED_CLASSES_CONF = "/WEB-INF/beans-annotated-classes.xml";
-    public static final String OBJECT_CONVERTER_CONTEXT_ATTRIBUTE = BaseHstComponent.class.getName() + ".objectConverter";
-    
-    private static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG = 
-        "Please check HST-2 Content Beans Annotation configuration as servlet context parameter.\n" +
-        "You can set a servlet context parameter named '" + BEANS_ANNOTATED_CLASSES_CONF_PARAM + "' with xml or classes location filter.\n" +
-        "For example, '" + DEFAULT_BEANS_ANNOTATED_CLASSES_CONF + "' or 'classpath*:org/examples/beans/**/*.class'";
-
-    protected boolean beansInitialized;
-    protected ObjectConverter objectConverter;
-    protected HstQueryManagerFactory hstQueryManagerFactory;
-    
     private ServletContext servletContext;
 
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         super.init(servletContext, componentConfig);
         this.servletContext = servletContext;
-        if (!this.beansInitialized) {
-            initBeansObjects() ;
-        }
     }
 
     /**
@@ -259,9 +231,11 @@ public class BaseHstComponent extends GenericHstComponent {
     /**
      * @param request
      * @return the jcr path relative to the root (not starting with / thus)
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getSiteContentBasePath()} instead
      */
+    @Deprecated
     public String getSiteContentBasePath(HstRequest request){
-        return PathUtils.normalizePath(request.getRequestContext().getResolvedMount().getMount().getContentPath());
+        return request.getRequestContext().getSiteContentBasePath();
     }
     
     /**
@@ -279,10 +253,11 @@ public class BaseHstComponent extends GenericHstComponent {
      * <code>null</code> is returned
      * @param request
      * @return A <code>HippoBean</code> or <code>null</code> when there cannot be created a content bean for the resolvedSiteMapItem belonging to the current request
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBean()} instead
      */
+    @Deprecated
     public HippoBean getContentBean(HstRequest request) {
-        ResolvedSiteMapItem resolvedSiteMapItem = request.getRequestContext().getResolvedSiteMapItem();
-        return this.getBeanForResolvedSiteMapItem(request, resolvedSiteMapItem);
+        return request.getRequestContext().getContentBean();
     }
     
     /**
@@ -293,8 +268,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return A HippoBean of {@code beanMappingClass} or <code>null</code> if bean cannot be found or is of a different class
      */
     public <T extends HippoBean> T getContentBean(HstRequest request, Class<T> beanMappingClass) {
-        ResolvedSiteMapItem resolvedSiteMapItem = request.getRequestContext().getResolvedSiteMapItem();
-        HippoBean bean = this.getBeanForResolvedSiteMapItem(request, resolvedSiteMapItem);
+        HippoBean bean = request.getRequestContext().getContentBean();
         if(bean == null) {
             return null;
         }
@@ -304,16 +278,13 @@ public class BaseHstComponent extends GenericHstComponent {
         }
         return (T)bean;
     }
-    
-  
+
+    /**
+     * @deprecated  since 7.9.0. Use {@link org.hippoecm.hst.core.request.HstRequestContext#getSiteContentBaseBean()} instead
+     */
+    @Deprecated
     public HippoBean getSiteContentBaseBean(HstRequest request) {
-        String base = getSiteContentBasePath(request);
-        try {
-            return (HippoBean) getObjectBeanManager(request).getObject("/"+base);
-        } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
-        }
-        return null;
+        return request.getRequestContext().getSiteContentBaseBean();
     }
     
     /**
@@ -322,7 +293,7 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public HippoFolderBean getGalleryBaseBean(HstRequest request){
         try {
-            HippoBean gallery = (HippoBean)this.getObjectBeanManager(request).getObject("/content/gallery");
+            HippoBean gallery = (HippoBean)request.getRequestContext().getContentBeansTool().getObjectBeanManager().getObject("/content/gallery");
             if(gallery instanceof HippoFolderBean) {
                 return (HippoFolderBean)gallery;
             } else {
@@ -340,7 +311,7 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public HippoFolderBean getAssetBaseBean(HstRequest request){
         try {
-            HippoBean assets = (HippoBean)this.getObjectBeanManager(request).getObject("/content/assets");
+            HippoBean assets = (HippoBean)request.getRequestContext().getContentBeansTool().getObjectBeanManager().getObject("/content/assets");
             if(assets instanceof HippoFolderBean) {
                 return (HippoFolderBean)assets;
             } else {
@@ -359,32 +330,20 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param request
      * @param resolvedSiteMapItem
      * @return A <code>HippoBean</code> or <code>null</code> when there cannot be created a content bean for this resolvedSiteMapItem
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBean()} instead
      */
+    @Deprecated
     public HippoBean getBeanForResolvedSiteMapItem(HstRequest request, ResolvedSiteMapItem resolvedSiteMapItem) {
-        String base = getSiteContentBasePath(request);
-        String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
-        if(relPath == null) {
-            log.debug("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
-            return null;
-        }
-        try {
-            if("".equals(relPath)) {
-                return (HippoBean) getObjectBeanManager(request).getObject("/"+base);
-            } else {
-                return (HippoBean) getObjectBeanManager(request).getObject("/"+base+ "/" + relPath);
-            }
-        } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
-        }
-        return null;
-        
+        return request.getRequestContext().getContentBean();
     }
 
     /**
      * @param request the {@link HstRequest}
      * @return the {@link HstQueryManager}
      * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(Session)}
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager()} instead
      */
+    @Deprecated
     public HstQueryManager getQueryManager(HstRequest request){
         return getQueryManager(request.getRequestContext());
     }
@@ -394,36 +353,40 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param  ctx the {@link HstRequestContext}
      * @return the {@link HstQueryManager}
      * @see  {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)}
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager()} instead
      */
+    @Deprecated
     public HstQueryManager getQueryManager(HstRequestContext ctx) {
-       try {
-            return getQueryManager(ctx.getSession());
+        try {
+            return ctx.getContentBeansTool().getQueryManager();
         } catch (RepositoryException e) {
             log.error("Unable to get a queryManager", e);
+            return null;
         }
-        return null;
     }
-    
+
     /**
-     * @param  session the {@link Session}
+     * @param session the {@link Session}
      * @return the {@link HstQueryManager}
      * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)}
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager(session)} instead
      */
+    @Deprecated
     public HstQueryManager getQueryManager(Session session) {
-        HstQueryManager queryManager = null;
-        queryManager = hstQueryManagerFactory.createQueryManager(session, this.objectConverter);
-        return queryManager;
-    }
-    
-    public ObjectBeanManager getObjectBeanManager(HstRequest request) {
         try {
-            HstRequestContext requestContext = request.getRequestContext();
-            return new ObjectBeanManagerImpl(requestContext.getSession(), getObjectConverter());
-        } catch (UnsupportedRepositoryOperationException e) {
-            throw new HstComponentException(e);
+            return RequestContextProvider.get().getContentBeansTool().getQueryManager(session);
         } catch (RepositoryException e) {
-            throw new HstComponentException(e);
+            log.error("Unable to get a queryManager", e);
+            return null;
         }
+    }
+
+    /**
+     * @deprecated since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#getObjectBeanManager()} instead
+     */
+    @Deprecated
+    public ObjectBeanManager getObjectBeanManager(HstRequest request) {
+       return request.getRequestContext().getContentBeansTool().getObjectBeanManager();
     }
     
     /**
@@ -482,59 +445,11 @@ public class BaseHstComponent extends GenericHstComponent {
     public void sendRedirect(String path, HstRequest request, HstResponse response, Map<String, String []> queryParams, String characterEncoding) {
         HstResponseUtils.sendRedirect(request, response, path, queryParams, characterEncoding);
     }
-    
-    private synchronized void initBeansObjects() throws HstComponentException{
-        if (!this.beansInitialized) {
-            this.objectConverter = getObjectConverter();
-            
-            ComponentManager compMngr = HstServices.getComponentManager();
-            if (compMngr != null) {
-                hstQueryManagerFactory = (HstQueryManagerFactory)compMngr.getComponent(HstQueryManagerFactory.class.getName());
-            }
-            
-            this.beansInitialized = true;
-        }
-    }
-    
+
     public ObjectConverter getObjectConverter() throws HstComponentException {
-        // builds ordered mapping from jcrPrimaryNodeType to class or interface(s).
-        if (objectConverter == null) {
-                objectConverter = (ObjectConverter) servletContext.getAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE);
-                if (objectConverter == null) {
-                    List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses();
-                    objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-                    servletContext.setAttribute(OBJECT_CONVERTER_CONTEXT_ATTRIBUTE, objectConverter);
-                }
-        }
-        
-        return objectConverter;
+        return RequestContextProvider.get().getContentBeansTool().getObjectConverter();
     }
 
-    
-    private List<Class<? extends HippoBean>> getAnnotatedClasses() {
-        List<Class<? extends HippoBean>> annotatedClasses = null;
-        
-        String param = servletContext.getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
-        String ocmAnnotatedClassesResourcePath = (param != null ? param : DEFAULT_BEANS_ANNOTATED_CLASSES_CONF);
-        
-        try {
-            if (ocmAnnotatedClassesResourcePath.startsWith("classpath*:")) {
-                ClasspathResourceScanner scanner = MetadataReaderClasspathResourceScanner.newInstance(servletContext);
-                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
-            } else {
-                URL xmlConfURL = servletContext.getResource(ocmAnnotatedClassesResourcePath);
-                if (xmlConfURL == null) {
-                    throw new IllegalStateException(BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG);
-                }
-                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(xmlConfURL);
-            }
-        } catch (Exception e) {
-            throw new HstComponentException(e);
-        }
-        
-        return annotatedClasses;
-    }
-    
     /**
      * Creates a persistable JCR session with the default credentials
      * <P>
@@ -586,7 +501,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return
      */
     protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
-        WorkflowPersistenceManagerImpl wpm = new WorkflowPersistenceManagerImpl(session, this.objectConverter, contentNodeBinders);
+        WorkflowPersistenceManagerImpl wpm = new WorkflowPersistenceManagerImpl(session, getObjectConverter(), contentNodeBinders);
         return wpm;
     }
     
