@@ -39,10 +39,8 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionManager;
 
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.xml.sax.ContentHandler;
 
 public class UpdaterWorkspace implements Workspace {

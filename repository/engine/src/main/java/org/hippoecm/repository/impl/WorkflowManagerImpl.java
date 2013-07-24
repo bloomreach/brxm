@@ -90,7 +90,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
     String configuration;
     List<WorkflowInvocation> invocationChain;
     ListIterator<WorkflowInvocation> invocationIndex;
-    DocumentManagerImpl documentManager;
     WorkflowEventLoggerWorkflow eventLoggerWorkflow;
     private static final ThreadLocal<String> INTERACTION_ID = new ThreadLocal<String>();
     private static final ThreadLocal<String> INTERACTION = new ThreadLocal<String>();
@@ -98,13 +97,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public WorkflowManagerImpl(Session session, Session rootSession) {
         this.session = session;
         this.rootSession = rootSession;
-        documentManager = new DocumentManagerImpl(rootSession);
         try {
             configuration = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH+"/"+
                     HippoNodeType.WORKFLOWS_PATH).getIdentifier();
             if (session.nodeExists("/hippo:log")) {
                 final Node logFolder = session.getNode("/hippo:log");
-                final Node worlflowNode = getWorkflowNode("internal", logFolder, session);
+                final Node worlflowNode = getWorkflowNode("internal", logFolder);
                 Workflow workflow = getRealWorkflow(logFolder, worlflowNode);
                 if (workflow instanceof WorkflowEventLoggerWorkflow) {
                     eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) workflow;
@@ -126,7 +124,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return session;
     }
 
-    Node getWorkflowNode(String category, Node item, Session session) {
+    Node getWorkflowNode(String category, Node item) {
         if (configuration == null) {
             return null;
         }
@@ -142,13 +140,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 return null;
             }
 
-            Node node = JcrUtils.getNodeIfExists(session.getNodeByIdentifier(configuration), category);
+            Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
             if (node != null) {
                 for (Node workflowNode : new NodeIterable(node.getNodes())) {
-
-                    if (workflowNode == null) {
-                        continue;
-                    }
 
                     if (!workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                         continue;
@@ -175,7 +169,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         return null;
     }
 
-    Node getWorkflowNode(String category, Document document, Session session) {
+    Node getWorkflowNode(String category, Document document) {
         if (configuration == null) {
             return null;
         }
@@ -186,13 +180,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for document {}", category, document.getIdentity());
 
-            Node node = JcrUtils.getNodeIfExists(session.getNodeByIdentifier(configuration), category);
+            Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
             if (node != null) {
                 for (Node workflowNode : new NodeIterable(node.getNodes())) {
-
-                    if (workflowNode == null) {
-                        continue;
-                    }
 
                     if (!workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                         continue;
@@ -205,7 +195,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                     try {
                         Class documentClass = Class.forName(className);
-                        Node documentNode = session.getNodeByIdentifier(document.getIdentity());
+                        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
                         if (documentNode.isNodeType(nodeTypeName) || documentClass.isAssignableFrom(document.getClass())) {
                             if(checkWorkflowPermission(documentNode, workflowNode)) {
                                 log.debug("Found workflow in category {} for document {}", category, documentNode.getPath());
@@ -253,7 +243,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public WorkflowDescriptor getWorkflowDescriptor(String category, Node item) throws RepositoryException {
-        Node workflowNode = getWorkflowNode(category, item, session);
+        Node workflowNode = getWorkflowNode(category, item);
         if (workflowNode!=null) {
             return new WorkflowDescriptorImpl(this, category, workflowNode, item);
         }
@@ -262,7 +252,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public WorkflowDescriptor getWorkflowDescriptor(String category, Document document) throws RepositoryException {
-        Node workflowNode = getWorkflowNode(category, document, session);
+        Node workflowNode = getWorkflowNode(category, document);
         if (workflowNode!=null) {
             return new WorkflowDescriptorImpl(this, category, workflowNode, document);
         }
@@ -356,7 +346,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     public Workflow getWorkflow(String category, Node item) throws RepositoryException {
-        Node workflowNode = getWorkflowNode(category, item, session);
+        Node workflowNode = getWorkflowNode(category, item);
         if (workflowNode != null) {
             Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
             String workflowName = workflowNode.getName();
@@ -1044,12 +1034,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
             }
         }
 
-        public Document getDocument(String category, String identifier) throws RepositoryException {
-            return documentManager.getDocument(category, identifier);
-        }
-
         public Workflow getWorkflow(String category, final Document document) throws MappingException, WorkflowException, RepositoryException {
-            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, document, documentManager.getSession());
+            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, document);
             if (workflowNode != null) {
                 return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {
@@ -1109,7 +1095,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException {
-            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject, documentManager.getSession());
+            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject);
             if (workflowNode != null) {
                 return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {
@@ -1142,7 +1128,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         public Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException {
-            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject, documentManager.getSession());
+            Node workflowNode = WorkflowManagerImpl.this.getWorkflowNode(category, subject);
             if (workflowNode != null) {
                 return WorkflowManagerImpl.this.getWorkflow(workflowNode,
                        new WorkflowChainHandler(workflowNode, module) {

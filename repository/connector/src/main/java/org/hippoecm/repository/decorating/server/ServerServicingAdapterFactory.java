@@ -34,14 +34,12 @@ import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 import org.hippoecm.repository.RepositoryUrl;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
@@ -82,10 +80,6 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
             return new ServerServicingNode((HippoNode) node, this);
         else
             return super.getRemoteNode(node);
-    }
-
-    public RemoteDocumentManager getRemoteDocumentManager(DocumentManager documentManager) throws RemoteException {
-        return new ServerDocumentManager(documentManager, this);
     }
 
     public RemoteWorkflowManager getRemoteWorkflowManager(WorkflowManager workflowManager) throws RemoteException {

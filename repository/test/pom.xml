@@ -192,8 +192,6 @@
                 <exclude>**/integration/*.java</exclude>
                 <exclude>**/UpdaterExecutorTest.java</exclude>
                 <!-- TODO DEJDO: following tests rely on JDO like inheritance behavior: either have to be rewritten or removed -->
-                <exclude>**/PersistenceInheritanceTest.java</exclude>
-                <exclude>**/SamplePersistencyTest.java</exclude>
                 <exclude>**/SampleWorkflowTest.java</exclude>
                 <!-- end TODO DEJDO -->
               </excludes>

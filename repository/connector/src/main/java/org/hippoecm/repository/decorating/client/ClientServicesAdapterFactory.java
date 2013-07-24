@@ -26,10 +26,8 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 import org.apache.jackrabbit.rmi.remote.RemoteXASession;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
@@ -71,10 +69,6 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
             return new ClientServicingNode(session, (RemoteServicingNode) remote, this);
         else
             return super.getNode(session, remote);
-    }
-
-    public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote) {
-        return new ClientDocumentManager(session, remote, this);
     }
 
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote) {

@@ -16,7 +16,7 @@
 package org.onehippo.repository;
 
 import javax.jcr.RepositoryException;
-import org.hippoecm.repository.api.DocumentManager;
+
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.WorkflowManager;
 
@@ -34,12 +34,6 @@ import org.hippoecm.repository.api.WorkflowManager;
  */
 @Deprecated
 public interface ManagerService {
-    /**
-     * Obtains the DocumentManager.
-     * @return the DocumentManager for the JCR session
-     * @throws RepositoryException in case of generic issues accessing the repository
-     */
-    public DocumentManager getDocumentManager() throws RepositoryException;
 
     /**
      * Obtains the WorkflowManager.

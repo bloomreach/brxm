@@ -89,11 +89,6 @@ public abstract class AbstractFolderWorkflowAction extends AbstractWorkflowActio
         }
 
         @Override
-        public Document getDocument(final String category, final String identifier) throws RepositoryException {
-            return null;
-        }
-
-        @Override
         public Workflow getWorkflow(final String category) throws MappingException, WorkflowException, RepositoryException {
             return null;
         }

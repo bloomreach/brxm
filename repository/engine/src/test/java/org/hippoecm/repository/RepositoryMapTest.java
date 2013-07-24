@@ -61,10 +61,9 @@ public class RepositoryMapTest extends RepositoryTestCase {
 
     @Test
     public void testMap() throws Exception {
-        Map map = server.getRepositoryMap(session.getRootNode().getNode("hippo:configuration/hippo:documents"));
-        map = (Map) map.get("embedded");
+        Map map = (Map) server.getRepositoryMap(root.getNode("articles/myarticle1"));
+        map = (Map) map.get("myarticle1");
         assertNotNull(map);
-        map = (Map) map.get(root.getNode("articles/myarticle1/myarticle1").getIdentifier());
     }
 
     @Test

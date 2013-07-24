@@ -37,39 +37,39 @@ public class PublishableDocument extends Document {
     }
 
    public void setState(String state) throws RepositoryException {
-       setNodeStringProperty("hippostd:state", state);
+       setStringProperty("hippostd:state", state);
     }
 
     public String getState() throws RepositoryException {
-        return getNodeStringProperty("hippostd:state");
+        return getStringProperty("hippostd:state");
     }
 
     public void setPublicationDate(Date date) throws RepositoryException {
-        setNodeDateProperty("hippostdpubwf:publicationDate", date);
+        setDateProperty("hippostdpubwf:publicationDate", date);
     }
 
     public Date getPublicationDate() throws RepositoryException {
-        return getNodeDateProperty("hippostdpubwf:publicationDate");
+        return getDateProperty("hippostdpubwf:publicationDate");
     }
 
     public void setOwner(String username) throws RepositoryException {
-        setNodeStringProperty("hippostd:holder", username);
+        setStringProperty("hippostd:holder", username);
     }
 
     public String getOwner() throws RepositoryException {
-        return getNodeStringProperty("hippostd:holder");
+        return getStringProperty("hippostd:holder");
     }
 
     public void setAvailability(String[] availability) throws RepositoryException {
-        setNodeStringsProperty("hippo:availability", availability);
+        setStringsProperty("hippo:availability", availability);
     }
 
     public String[] getAvailability() throws RepositoryException {
-        return getNodeStringsProperty("hippo:availability");
+        return getStringsProperty("hippo:availability");
     }
 
     public void setModified(String username) throws RepositoryException{
-        setNodeStringProperty("hippostdpubwf:lastModifiedBy", username);
-        setNodeDateProperty("hippostdpubwf:lastModificationDate", new Date());
+        setStringProperty("hippostdpubwf:lastModifiedBy", username);
+        setDateProperty("hippostdpubwf:lastModificationDate", new Date());
     }
 }

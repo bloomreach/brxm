@@ -20,9 +20,11 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
@@ -143,7 +145,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
         if (unpublishedDocument == null) {
-            Document folder = getWorkflowContext().getDocument("embedded", publishedDocument.getIdentity());
+            Document folder = getContainingFolder(publishedDocument);
             Workflow workflow = getWorkflowContext(null).getWorkflow(folderWorkflowCategory, destination);
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow)workflow).copyTo(folder, publishedDocument, newName, null);
@@ -152,7 +154,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             } else
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
         } else {
-            Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
+            Document folder = getContainingFolder(unpublishedDocument);
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
             if(workflow instanceof EmbedWorkflow) {
                 ((EmbedWorkflow)workflow).copyTo(folder, unpublishedDocument, newName, null);
@@ -172,7 +174,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if(draftDocument != null)
             throw new WorkflowException("cannot move document being edited");
 
-        Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
+        Document folder = getContainingFolder(unpublishedDocument);
         String folderWorkflowCategory = "internal";
         RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
@@ -293,4 +295,20 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
         wf.depublish();
     }
+
+    private Document getContainingFolder(Document document) throws RepositoryException {
+        final Node node = document.getNode();
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return new Document(node.getParent());
+        }
+        return getContainingFolder(node);
+    }
+
+    private Document getContainingFolder(Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return new Document(node.getParent());
+        }
+        return getContainingFolder(node.getParent());
+    }
+
 }

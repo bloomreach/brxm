@@ -125,21 +125,6 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testQuery() throws Exception {
-        Node document = session.getRootNode().getNode("test/aap/noot/mies/vuur/jot/gijs");
-        QueryManager manager = session.getWorkspace().getQueryManager();
-        HippoQuery query = (HippoQuery) manager.getQuery(session.getRootNode().getNode("hippo:configuration/hippo:documents/embedded"));
-        Map<String,String> arguments = new TreeMap<String,String>();
-        arguments.put("id", document.getIdentifier());
-        query.bindValue("id", session.getValueFactory().createValue(document.getIdentifier()));
-        QueryResult resultset = query.execute();
-        NodeIterator iter = resultset.getNodes();
-        assertTrue(iter.getSize() > 0);
-        assertTrue(iter.hasNext());
-        assertEquals("/test/aap/noot/mies", iter.nextNode().getPath());
-    }
-
-    @Test
     public void testDeleteFolderWithHandlesFails() throws Exception {
         final Node g = node.addNode("g", "hippostd:folder");
         g.addMixin("hippo:harddocument");

@@ -48,8 +48,8 @@ public class PublicationRequest extends Document {
 
     public PublicationRequest(String type, Node sibling, PublishableDocument document, String username) throws RepositoryException {
         super(newRequestNode(sibling.getParent()));
-        setNodeStringProperty("hippostdpubwf:type", type);
-        setNodeStringProperty("hippostdpubwf:username", username);
+        setStringProperty("hippostdpubwf:type", type);
+        setStringProperty("hippostdpubwf:username", username);
         if (document != null) {
             getCheckedOutNode().setProperty("hippostdpubwf:document", document.getNode());
         }
@@ -57,30 +57,30 @@ public class PublicationRequest extends Document {
 
     public PublicationRequest(String type, Node sibling, PublishableDocument document, String username, Date scheduledDate) throws RepositoryException {
         this(type, sibling, document, username);
-        setNodeDateProperty("hippostdpubwf:reqdate", scheduledDate);
+        setDateProperty("hippostdpubwf:reqdate", scheduledDate);
     }
 
     String getType() throws RepositoryException {
-        return getNodeStringProperty("hippostdpubwf:type");
+        return getStringProperty("hippostdpubwf:type");
     }
 
     String getOwner() throws RepositoryException {
-        return getNodeStringProperty("hippostdpubwf:username");
+        return getStringProperty("hippostdpubwf:username");
     }
 
     Date getScheduledDate() throws RepositoryException  {
-        return getNodeDateProperty("hippostdpubwf:reqdate");
+        return getDateProperty("hippostdpubwf:reqdate");
     }
 
     void setRejected(PublishableDocument stale, String reason) throws RepositoryException  {
-        setNodeStringProperty("hippostdpubwf:type", REJECTED);
+        setStringProperty("hippostdpubwf:type", REJECTED);
         if (stale != null) {
-            setNodeNodeProperty("hippostdpubwf:document", stale.getNode());
+            setNodeProperty("hippostdpubwf:document", stale.getNode());
         }
         else {
-            setNodeNodeProperty("hippostdpubwf:document", null);
+            setNodeProperty("hippostdpubwf:document", null);
         }
-        setNodeStringProperty("hippostdpubwf:reason", reason);
+        setStringProperty("hippostdpubwf:reason", reason);
     }
 
     void setRejected(String reason) throws RepositoryException  {

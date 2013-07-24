@@ -290,7 +290,7 @@
 
 [hipposys:configuration] > nt:base
 + hippo:workflows (hipposys:workflowfolder) = hipposys:workflowfolder mandatory
-+ hippo:documents (hipposys:ocmqueryfolder) = hipposys:ocmqueryfolder mandatory
++ hippo:documents (hipposys:ocmqueryfolder) = hipposys:ocmqueryfolder // deprecated
 + hippo:initialize (hippo:initializefolder) = hippo:initializefolder
 + hippo:temporary (hipposys:temporaryfolder) = hipposys:temporaryfolder autocreated
 + hippo:users (hipposys:userfolder) = hipposys:userfolder

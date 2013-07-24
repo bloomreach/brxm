@@ -28,13 +28,6 @@ import org.onehippo.repository.security.SecurityService;
 public interface HippoWorkspace extends Workspace {
 
     /**
-     * The document manager service allows the representation of a document stored as a subtree of a {link javax.jcr.Node} as a Java object.
-     * @return the document manager
-     * @throws javax.jcr.RepositoryException indicates an unspecified error from the repository
-     */
-    public DocumentManager getDocumentManager() throws RepositoryException;
-
-    /**
      * The {@link WorkflowManager} service allows access to workflows operations that are available on documents stored in the repository.
      * @return the workflow manager
      * @throws javax.jcr.RepositoryException indicates an unspecified error from the repository

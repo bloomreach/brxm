@@ -73,47 +73,6 @@
       <sv:value>hipposys:queryfolder</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="hippo:documents">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:ocmqueryfolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="embedded">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:query</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hipposys:implementation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:classname" sv:type="String">
-        <sv:value>org.hippoecm.repository.impl.query.EnclosingDocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:language" sv:type="String">
-        <sv:value>xpath</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>//element(*,hippo:document)[@jcr:uuid='MAGICidCIGAM']/ancestor::element(*,hippo:document) order by @jcr:path desc</sv:value>
-        <!-- sv:value>//element(*,hippo:document)[@jcr:uuid='9495acfe-f074-4639-b851-06ac6905e8cc']/ancestor::element(*,hippo:document) order by jcr:path desc</sv:value -->
-        <!-- sv:value>//element(*,hippo:document)[@jcr:uuid='9495acfe-f074-4639-b851-06ac6905e8cc']/ancestor::element(*,hippo:document) order by jcr:path desc</sv:value -->
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="root">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:query</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hipposys:implementation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:classname" sv:type="String">
-        <sv:value>org.hippoecm.repository.impl.query.DirectPath</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:language" sv:type="String">
-        <sv:value>xpath</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>/jcr:root</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
   <sv:node sv:name="hippo:workflows">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:workflowfolder</sv:value>

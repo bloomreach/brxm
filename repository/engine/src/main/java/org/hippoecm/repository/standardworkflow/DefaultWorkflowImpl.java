@@ -35,23 +35,20 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.impl.NodeDecorator;
+import org.hippoecm.repository.util.JcrUtils;
 
 public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, InternalWorkflow {
 
     private static final long serialVersionUID = 1L;
 
-    WorkflowContext context;
-    Document document;
-    Session session;
-    Session rootSession; // FIXME; having the need for a rootSession is PLAIN WRONG, however because the document manager cannot read its own confiugration because of authorization rules, editors and authors cannot access documents
-    Node subject;
+    private WorkflowContext context;
+    private Document document;
+    private Node subject;
     
     public DefaultWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject) throws RepositoryException {
         this.context = context;
-        document = new Document(subject);
-        this.session = rootSession; // FIXME SHOULD BE THE USERSESSION!
-        this.rootSession = rootSession;
-        this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());
+        this.document = new Document(subject);
+        this.subject = userSession.getNodeByIdentifier(subject.getIdentifier());
     }
 
     private WorkflowContext getWorkflowContext() {
@@ -78,12 +75,12 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     public void delete() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
-        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
-        if(workflow instanceof FolderWorkflow)
-            ((FolderWorkflow)workflow).delete(document);
-        else
-            throw new WorkflowException("cannot delete document which is not contained in a folder");
+        Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), new Document(subject.getParent()));
+        if(workflow instanceof FolderWorkflow) {
+            ((FolderWorkflow) workflow).delete(document);
+        } else {
+            throw new WorkflowException("Cannot delete document that is not contained in a folder");
+        }
     }
 
     private String getFolderWorkflowCategory() {
@@ -96,7 +93,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     public void archive() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).archive(document);
@@ -105,7 +102,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     public void rename(String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).rename(document, newName);
@@ -185,34 +182,22 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
                 }
             }
         } else {
-            checkout(node);
+            JcrUtils.ensureIsCheckedOut(node, true);
             node.addMixin(HippoNodeType.NT_TRANSLATED);
         }
         if (translationNode == null) {
-            checkout(node);
+            JcrUtils.ensureIsCheckedOut(node, true);
             translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
             localized.setTranslation(translationNode);
         } else {
-            checkout(translationNode);
+            JcrUtils.ensureIsCheckedOut(node, true);
         }
         translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, newName);
         node.save();
     }
 
-    private static void checkout(Node node) throws RepositoryException {
-        while (node.getDepth() > 0) {
-            if (node.isNodeType("mix:versionable")) {
-                if (!node.isCheckedOut()) {
-                    node.checkout();
-                }
-                return;
-            }
-            node = node.getParent();
-        }
-    }
-
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
-        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), destination);
         if(workflow instanceof EmbedWorkflow)
             ((EmbedWorkflow)workflow).copyTo(folder, document, newName, null);
@@ -221,11 +206,18 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
-        Document folder = getWorkflowContext().getDocument("embedded", document.getIdentity());
+        Document folder = new Document(getContainingFolder(subject));
         Workflow workflow = getWorkflowContext().getWorkflow(getFolderWorkflowCategory(), folder);
         if(workflow instanceof FolderWorkflow)
             ((FolderWorkflow)workflow).move(document, destination, newName);
         else
             throw new WorkflowException("cannot move document which is not contained in a folder");
+    }
+
+    private Node getContainingFolder(final Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return node.getParent();
+        }
+        return getContainingFolder(node.getParent());
     }
 }

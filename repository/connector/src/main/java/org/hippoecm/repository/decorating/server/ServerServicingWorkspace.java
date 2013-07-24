@@ -22,11 +22,9 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.rmi.remote.RemoteQueryManager;
 import org.apache.jackrabbit.rmi.server.ServerWorkspace;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
@@ -39,15 +37,6 @@ public class ServerServicingWorkspace extends ServerWorkspace implements RemoteS
             throws RemoteException {
         super(workspace, factory);
         this.workspace = workspace;
-    }
-
-    public RemoteDocumentManager getDocumentManager() throws RemoteException, RepositoryException {
-        try {
-            DocumentManager documentManager = workspace.getDocumentManager();
-            return ((RemoteServicingAdapterFactory) getFactory()).getRemoteDocumentManager(documentManager);
-        } catch (RepositoryException ex) {
-            throw getRepositoryException(ex);
-        }
     }
 
     public RemoteWorkflowManager getWorkflowManager() throws RemoteException, RepositoryException {

@@ -19,12 +19,12 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+
 import org.hippoecm.repository.HierarchyResolverImpl;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.repository.ManagerService;
@@ -32,7 +32,6 @@ import org.onehippo.repository.ManagerService;
 @Deprecated
 public class ClientManagerService implements ManagerService {
     Session session;
-    DocumentManager documentManager = null;
     WorkflowManager workflowManager = null;
     HierarchyResolver hierarchyResolver = null;
     RemoteManagerService remote = null;
@@ -53,18 +52,6 @@ public class ClientManagerService implements ManagerService {
         } catch (ClassCastException e) {
             throw new RemoteException("Unknown target: " + url, e);
         }
-    }
-
-    public DocumentManager getDocumentManager() throws RepositoryException {
-        if (documentManager == null) {
-            try {
-                UnicastRemoteObject.exportObject(remote);
-                documentManager = new ClientDocumentManager(session, remote.getDocumentManager((String)session.getAttribute("sessionName")));
-            } catch (RemoteException ex) {
-                throw new RepositoryException("connection failure", ex);
-            }
-        }
-        return documentManager;
     }
 
     public WorkflowManager getWorkflowManager() throws RepositoryException {

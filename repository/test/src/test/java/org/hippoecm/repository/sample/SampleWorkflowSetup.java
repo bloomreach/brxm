@@ -57,24 +57,6 @@ abstract class SampleWorkflowSetup
         node.setProperty("hipposys:display","ArticleDocument");
         node.setProperty("hipposys:classname","org.hippoecm.repository.sample.ArticleDocument");
 
-        // set up the queryable document specification as a node "/configuration/hippo:documents/authors"
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("files//*[@jcr:primaryType='sample:author' and @sample:name='$name']", Query.XPATH);
-        node = query.storeAsNode("/hippo:configuration/hippo:documents/authors");
-        String statement = node.getProperty("jcr:statement").getString();
-        String language = node.getProperty("jcr:language").getString();
-        node.remove();
-        node = root.getNode("hippo:configuration/hippo:documents");
-        node = node.addNode("authors","hipposys:ocmquery");
-        node.setProperty("jcr:statement",statement);
-        node.setProperty("jcr:language",language);
-        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.AuthorDocument");
-        node = node.getNode("hipposys:types");
-        node = node.addNode("org.hippoecm.repository.sample.AuthorDocument","hipposys:type");
-        node.setProperty("hipposys:nodetype","sample:author");
-        node.setProperty("hipposys:display","AuthorDocument");
-        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.AuthorDocument");
-
         root.addNode("files");
 
         node = root.getNode("files");
@@ -103,10 +85,6 @@ abstract class SampleWorkflowSetup
             workflows.getNode("mycategory").remove();
         }
 
-        final Node documents = root.getNode("hippo:configuration/hippo:documents");
-        if (documents.hasNode("authors")) {
-            documents.getNode("authors").remove();
-        }
         session.save();
         session.logout();
     }

@@ -50,7 +50,6 @@ import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.hippoecm.repository.HierarchyResolverImpl;
-import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -77,7 +76,6 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     /** The underlying workspace instance. */
     protected final Workspace workspace;
     protected Session session;
-    protected DocumentManager documentManager;
     protected WorkflowManager workflowManager;
     private SessionDecorator rootSession;
 
@@ -92,7 +90,6 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         super(factory, session, workspace);
         this.session = session;
         this.workspace = workspace;
-        documentManager = null;
         workflowManager = null;
         rootSession = null;
     }
@@ -121,14 +118,6 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         } finally {
             postMountEnabled(true);
         }
-    }
-
-    @Override
-    public DocumentManager getDocumentManager() throws RepositoryException {
-        if (documentManager == null) {
-            documentManager = new DocumentManagerImpl(session);
-        }
-        return documentManager;
     }
 
     @Override

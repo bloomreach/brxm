@@ -17,7 +17,9 @@ package org.hippoecm.repository.sample;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
@@ -30,10 +32,10 @@ public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow {
     }
 
     public void renameAuthor(String newName) throws WorkflowException, RepositoryException {
-        AuthorDocument author = (AuthorDocument) context.getDocument("authors", newName);
-        if (author == null) {
-            throw new WorkflowException("author does not exist");
-        }
+        final Session session = getWorkflowContext().getUserSession();
+        final Node node = session.getNode("/files/myauthor");
+        AuthorDocument author = new AuthorDocument();
+        author.initialize(node);
         getArticle().setAuthorId(author.authorId);
     }
 

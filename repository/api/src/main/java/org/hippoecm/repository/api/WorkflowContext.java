@@ -38,17 +38,6 @@ public interface WorkflowContext {
     public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException;
 
     /**
-     * Obtains a Document implementation --a class which extends Document-- representing the document stored as JCR nodes as
-     * indicated by the identifier (implementation dependent on category, mostly a UUID or path) as specified by a configuration
-     * indicated by the category
-     * @param category defines the category to use as search query to find document definitions
-     * @param identifier an indicator which document stored as JCR nodes to map to a Java object
-     * @return an instance of a specific Document type
-     * @throws javax.jcr.RepositoryException a generic repostory error occurs
-     */
-    public Document getDocument(String category, String identifier) throws RepositoryException;
-
-    /**
      * Obtains a workflow instance for the same document this workflow context 
      * @param category 
      * @return 
