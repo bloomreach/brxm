@@ -280,6 +280,12 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                         clone.addMixin(mixinName);
                     }
                 }
+                for (NodeType mixin : draft.getMixinNodeTypes()) {
+                    String mixinName = mixin.getName();
+                    if (!clone.isNodeType(mixinName)) {
+                        clone.addMixin(mixinName);
+                    }
+                }
                 for (PropertyIterator props = draft.getProperties(); props.hasNext();) {
                     Property prop = props.nextProperty();
                     PropertyDefinition definition = prop.getDefinition();

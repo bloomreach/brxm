@@ -44,6 +44,8 @@
 
 [test:superMixinTest] > test:mixinTest, test:mixin
 
+[test:extramixin] mixin
+
 [test:legacy]
 - test:a (string)
 - test:b (string)

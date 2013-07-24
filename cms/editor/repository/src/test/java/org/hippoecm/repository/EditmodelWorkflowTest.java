@@ -153,6 +153,36 @@ public class EditmodelWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void mixinsAreCopiedFromDraft() throws RepositoryException, WorkflowException, RemoteException {
+        Node root = session.getRootNode();
+        Node typeNode = root.getNode("hippo:namespaces/test/mixinTest");
+
+        WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        EditmodelWorkflow workflow = (EditmodelWorkflow) workflowManager.getWorkflow("test", typeNode);
+        workflow.edit();
+        session.refresh(false);
+
+        NodeIterator nodes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
+        Node draft = null;
+        while (nodes.hasNext()) {
+            Node node = nodes.nextNode();
+            if (node.isNodeType("nt:unstructured")) {
+                draft = node;
+            }
+        }
+        assertNotNull(draft);
+        draft.addMixin("test:extramixin");
+
+        session.save();
+        workflow = (EditmodelWorkflow) workflowManager.getWorkflow("test", typeNode);
+        workflow.commit();
+
+        session.refresh(false);
+        Node prototype = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype").nextNode();
+        assertTrue(prototype.isNodeType("test:extramixin"));
+    }
+
+    @Test
     public void commitType() throws RepositoryException, WorkflowException, RemoteException {
         Node root = session.getRootNode();
         Node typeNode = root.getNode("hippo:namespaces/editmodel/existing");
