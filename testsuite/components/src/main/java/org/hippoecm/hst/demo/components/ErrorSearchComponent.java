@@ -47,7 +47,7 @@ public class ErrorSearchComponent extends AbstractSearchComponent {
             }
         }
         
-        doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
+        doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, request.getRequestContext().getSiteContentBaseBean());
         request.setAttribute("isError", Boolean.TRUE);
 
     }

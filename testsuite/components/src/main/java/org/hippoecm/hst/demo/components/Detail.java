@@ -66,14 +66,15 @@ public class Detail extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        HippoBean crBean = this.getContentBean(request);
+        final HstRequestContext requestContext = request.getRequestContext();
+        HippoBean crBean = requestContext.getContentBean();
 
         request.setAttribute("isPreview", isPreview(request) ? Boolean.TRUE : Boolean.FALSE);
 
         request.setAttribute("cmsApplicationUrl", cmsApplicationUrl);
 
         // we only have a goBackLink for sitemap items that have configured one.
-        String goBackLink = request.getRequestContext().getResolvedSiteMapItem().getParameter("go-back-link");
+        String goBackLink = requestContext.getResolvedSiteMapItem().getParameter("go-back-link");
         request.setAttribute("goBackLink", goBackLink);
 
 
@@ -89,7 +90,7 @@ public class Detail extends BaseHstComponent {
         request.setAttribute("document", crBean);
 
         try {
-            HstQuery commentQuery = ContentBeanUtils.createIncomingBeansQuery((BaseBean) crBean, this.getSiteContentBaseBean(request), "demosite:commentlink/@hippo:docbase", this.getObjectConverter(), CommentBean.class, false);
+            HstQuery commentQuery = ContentBeanUtils.createIncomingBeansQuery((BaseBean) crBean, requestContext.getSiteContentBaseBean(), "demosite:commentlink/@hippo:docbase", this.getObjectConverter(), CommentBean.class, false);
             commentQuery.addOrderByDescending("demosite:date");
             commentQuery.setLimit(15);
 
@@ -119,7 +120,7 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
     if ("add".equals(type)) {
         String title = request.getParameter("title");
         String comment = request.getParameter("comment");
-        HippoBean commentTo = this.getContentBean(request);
+        HippoBean commentTo = request.getRequestContext().getContentBean();
         if (!(commentTo instanceof HippoDocumentBean)) {
             log.warn("Cannot comment on non documents");
             return;
@@ -201,7 +202,7 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
         final boolean saveDocument = ("save".equals(workflowAction) || requestPublication);
 
         if (saveDocument || requestPublication) {
-            String documentPath = this.getContentBean(request).getPath();
+            String documentPath = requestContext.getContentBean().getPath();
             WorkflowPersistenceManager cpm = null;
 
             try {

@@ -681,7 +681,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
         try {
             Session writableSession = this.getPersistableSession(request);
-            Node wikipedia = writableSession.getNode("/" + getSiteContentBasePath(request) + "/wikipedia");
+            Node wikipedia = writableSession.getNode("/" + request.getRequestContext().getSiteContentBasePath() + "/wikipedia");
             @SuppressWarnings("deprecation")
             Query q = writableSession
                     .getWorkspace()

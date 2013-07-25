@@ -21,6 +21,7 @@ import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
@@ -32,7 +33,8 @@ public class LeftMenu extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        HstSiteMenu menu = request.getRequestContext().getHstSiteMenus().getSiteMenu("main");
+        final HstRequestContext requestContext = request.getRequestContext();
+        HstSiteMenu menu = requestContext.getHstSiteMenus().getSiteMenu("main");
 
         if (menu != null) {
             EditableMenu editable = menu.getEditableMenu();
@@ -43,8 +45,7 @@ public class LeftMenu extends BaseHstComponent {
 
                 if (deepestMenuBean != null && deepestMenuBean.isHippoFolderBean()) {
                     for (HippoFolderBean repoItem : ((HippoFolderBean) deepestMenuBean).getFolders()) {
-                        EditableMenuItem repoMenuItem = new DemoRepoBasedMenuItem(repoItem, item, request, this
-                                .getContentBean(request));
+                        EditableMenuItem repoMenuItem = new DemoRepoBasedMenuItem(repoItem, item, request, requestContext.getContentBean());
                         item.addChildMenuItem(repoMenuItem);
                     }
                 }

@@ -78,7 +78,7 @@ public class Search extends AbstractSearchComponent {
             dateRangeQueryConstraints = new DateRangeQueryConstraints("hippostdpubwf:creationDate", fromDateResolution, toDateResolution, resolution);
         }
 
-        doSearch(request, response, query, null, null, pageSize, getSiteContentBaseBean(request), dateRangeQueryConstraints);
+        doSearch(request, response, query, null, null, pageSize, request.getRequestContext().getSiteContentBaseBean(), dateRangeQueryConstraints);
     }
 
     private Calendar getDateFor(final HstRequest request, final String param) {

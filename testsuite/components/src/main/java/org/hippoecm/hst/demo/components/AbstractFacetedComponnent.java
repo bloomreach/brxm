@@ -15,11 +15,14 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +32,7 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
     public static final Logger log = LoggerFactory.getLogger(AbstractFacetedComponnent.class);
   
     public HstQuery getHstQuery(HstRequest request) {
+
         String query = this.getPublicRequestParameter(request, "query");
         if(query != null ) {
             query = SearchInputParsingUtils.parse(query, false);
@@ -42,7 +46,8 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
             // account for the free text string
             
             try {
-                hstQuery = getQueryManager(request).createQuery(this.getSiteContentBaseBean(request));
+                HstRequestContext ctx = request.getRequestContext();
+                hstQuery = ctx.getContentBeansTool().getQueryManager().createQuery(ctx.getSiteContentBaseBean());
                 if(query != null && !"".equals(query)) {
                     Filter f = hstQuery.createFilter();
                     Filter f1 = hstQuery.createFilter();
@@ -65,7 +70,6 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
             } catch (QueryException e) {
                log.error("QueryException:" , e);
             }
-            
         }
         return hstQuery;
     }

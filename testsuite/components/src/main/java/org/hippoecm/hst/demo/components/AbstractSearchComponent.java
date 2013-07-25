@@ -29,6 +29,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.util.DateRangeQueryConstraints;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
@@ -79,7 +80,9 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
         int page = getIntValue(pageParam, 1);
 
         request.setAttribute("page", page);
-        HstQueryManager manager = getQueryManager(request);
+
+        HstRequestContext ctx = request.getRequestContext();
+        HstQueryManager manager = ctx.getContentBeansTool().getQueryManager();
         try {
             
             final HstQuery hstQuery;

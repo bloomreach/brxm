@@ -29,6 +29,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +42,14 @@ public class RSS extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        HippoBean contentBean = this.getContentBean(request);
+        final HstRequestContext requestContext = request.getRequestContext();
+        HippoBean contentBean = requestContext.getContentBean();
         if (contentBean == null) {
             log.error("Content path defined for RSS feed is invalid.");
             return;
         }
 
-        HstQueryManager manager = getQueryManager(request);
+        HstQueryManager manager = requestContext.getContentBeansTool().getQueryManager();
         try {
 
             final HstQuery query = manager.createQuery(contentBean);

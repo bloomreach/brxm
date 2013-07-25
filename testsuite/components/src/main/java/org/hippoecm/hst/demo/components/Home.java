@@ -22,6 +22,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.channel.DemoChannelInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +36,14 @@ public class Home extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        final Mount mount = request.getRequestContext().getResolvedMount().getMount();
+        final HstRequestContext requestContext = request.getRequestContext();
+        final Mount mount = requestContext.getResolvedMount().getMount();
         final DemoChannelInfo info = mount.getChannelInfo();
         if (info != null) {
             request.setAttribute("channelInfoExample", info.getExampleValue());
         }
         try {
-            HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/images/screenshot_cms_small.jpg");
+            HippoBean image = (HippoBean) requestContext.getContentBeansTool().getObjectBeanManager().getObject("/content/gallery/images/screenshot_cms_small.jpg");
             request.setAttribute("image",image);
         } catch (ObjectBeanManagerException e) {
             throw new HstComponentException(e);

@@ -28,6 +28,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.solr.HippoSolrClient;
 
@@ -39,9 +40,10 @@ public class SolrIndexer extends BaseHstComponent{
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         String uuid = request.getParameter("indexed");
+        final HstRequestContext requestContext = request.getRequestContext();
         if (uuid != null) {
             try {
-                String path = request.getRequestContext().getSession().getNodeByIdentifier(uuid).getPath();
+                String path = requestContext.getSession().getNodeByIdentifier(uuid).getPath();
                 request.setAttribute("message", "indexed succesfully : " +  path);
             } catch (RepositoryException e) {
                 throw new HstComponentException(e);
@@ -49,7 +51,7 @@ public class SolrIndexer extends BaseHstComponent{
         }
 
         try {
-            final HstQuery query = getQueryManager(request).createQuery(getSiteContentBaseBean(request));
+            final HstQuery query = requestContext.getContentBeansTool().getQueryManager().createQuery(requestContext.getSiteContentBaseBean());
             query.setLimit(1000);
             request.setAttribute("result", query.execute());
         } catch (QueryException e) {

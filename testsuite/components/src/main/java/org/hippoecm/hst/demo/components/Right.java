@@ -31,9 +31,7 @@ public class Right extends BaseHstComponent{
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeRender(request, response);
-        HippoBean crBean = this.getContentBean(request);
-        
-        request.setAttribute("crBean", crBean);
+        request.setAttribute("crBean", request.getRequestContext().getContentBean());
         
     }
 

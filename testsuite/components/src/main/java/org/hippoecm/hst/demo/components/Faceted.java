@@ -54,7 +54,7 @@ public class Faceted extends AbstractFacetedComponnent {
             request.setAttribute("subnavigation", true);
         }
         
-        HippoResultSetBean resultSetBean = ((HippoFacetNavigationBean)facetNav).getResultSet();
+        HippoResultSetBean resultSetBean = (facetNav).getResultSet();
         if(resultSetBean == null) {
             return;
         }
