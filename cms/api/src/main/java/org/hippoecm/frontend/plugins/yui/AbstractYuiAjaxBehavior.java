@@ -73,9 +73,7 @@ public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavio
     private String getCallback() {
         CharSequence ajaxAttributes = renderAjaxAttributes(getComponent().getPage());
         return "function(params) {\n" +
-                "  var call = new Wicket.Ajax.Call(),\n" +
-                "      attributes = jQuery.extend({}, " + ajaxAttributes + ");\n" +
-                "  return call.ajax(attributes);\n" +
+                "  return Wicket.Ajax.ajax(" + ajaxAttributes + ");\n" +
                 "}";
     }
 

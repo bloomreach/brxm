@@ -25,9 +25,13 @@ public class JsFunctionProcessor implements JsonValueProcessor {
     }
 
     public Object processObjectValue(String s, Object o, JsonConfig jsonConfig) {
-        if(o == null) {
+        if (o == null) {
             return "null";
         }
-        return ((JsFunction) o).getFunction();
+
+        // function should match the pattern "^function[ ]?\\(.*?\\)[ \n\t]*\\{.*?\\}$"
+        // to be interpreted as a function by jsonlib.  (See JSONUtils#FUNCTION_PATTERN)
+        return ((JsFunction) o).getFunction().replace('\n', ' ');
     }
+
 }
