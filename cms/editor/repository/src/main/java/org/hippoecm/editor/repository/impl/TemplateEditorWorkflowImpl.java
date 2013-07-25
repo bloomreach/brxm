@@ -40,7 +40,7 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
     public String createNamespace(String prefix, String uri) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
 
-        Document root = getWorkflowContext().getDocument("root", "root");
+        Document root = new Document(getWorkflowContext().getUserSession().getRootNode());
         RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getNonChainingWorkflowContext().getWorkflow("internal", root);
         repositoryWorkflow.createNamespace(prefix, uri);
 

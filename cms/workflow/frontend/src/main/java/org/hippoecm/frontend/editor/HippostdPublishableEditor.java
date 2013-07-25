@@ -28,7 +28,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -42,7 +41,6 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -317,9 +315,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 Node sibling = docs.nextNode();
                 if (sibling.isSame(docNode)) {
                     if (!docs.hasNext()) {
-                        Document folder = ((HippoWorkspace) session.getJcrSession()
-                                .getWorkspace()).getDocumentManager().getDocument("embedded",
-                                docNode.getUUID());
+                        Document folder = new Document(handleNode.getParent());
                         Workflow workflow = manager.getWorkflow("internal", folder);
                         if (workflow instanceof FolderWorkflow) {
                             ((FolderWorkflow) workflow).delete(new Document(docNode));
@@ -409,9 +405,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 Node sibling = docs.nextNode();
                 if (sibling.isSame(docNode)) {
                     if (!docs.hasNext()) {
-                        Document folder = ((HippoWorkspace) session.getJcrSession()
-                                .getWorkspace()).getDocumentManager().getDocument("embedded",
-                                docNode.getUUID());
+                        Document folder = new Document(handleNode.getParent());
                         Workflow workflow = manager.getWorkflow("internal", folder);
                         if (workflow instanceof FolderWorkflow) {
                             ((FolderWorkflow) workflow).delete(new Document(docNode));
