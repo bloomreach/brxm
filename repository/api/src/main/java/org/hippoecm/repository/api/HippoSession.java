@@ -218,9 +218,9 @@ public interface HippoSession extends Session {
     Session createSecurityDelegate(Session session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 
     /**
-     * This method discards all pending changes currently recorded in this <code>Session</code>
-     * and, including the built-up virtual node states. The difference with {@link Session#refresh(boolean)} is
-     * that after the method returns, the state of the items is not guaranteed to reflect the current
+     * This method discards all pending changes currently recorded in this <code>Session</code>,
+     * including the built-up virtual node states. The difference with {@link Session#refresh(boolean false)} is
+     * that after this method returns, the state of the items is not guaranteed to reflect the current
      * persistent storage because in a clustered environment, the cluster node is not synced as a result of this call.
      */
     void localRefresh();
