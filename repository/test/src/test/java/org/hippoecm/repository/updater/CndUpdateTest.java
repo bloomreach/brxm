@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.Collections;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -29,6 +30,7 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -41,9 +43,15 @@ public class CndUpdateTest extends RepositoryTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp(true);
         session.getRootNode().addNode("test");
         session.save();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown(true);
     }
 
     @Test
@@ -58,6 +66,23 @@ public class CndUpdateTest extends RepositoryTestCase {
         updateModel("testUpdateModel", "cnd3");
         logoutLogin();
         assertEquals("testUpdateModel:folder", session.getNode("/test/testUpdateModel:folder/testUpdateModel:folder/testUpdateModel:folder[2]").getDefinition().getDeclaringNodeType().getName());
+    }
+
+    @Test
+    public void testStrictToRelaxedPreservesMultivaluedPropertyType() throws Exception {
+        createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
+        logoutLogin();
+        updateModel("testUpdateModel", "cnd-not-relaxed");
+        logoutLogin();
+
+        final Node document = session.getNode("/test").addNode("document", "testUpdateModel:document");
+        document.setProperty("testUpdateModel:multiValuedProp", new String[0]);
+        session.save();
+
+        updateModel("testUpdateModel", "cnd-relaxed");
+        logoutLogin();
+
+        assertEquals(PropertyType.STRING, session.getProperty("/test/document/testUpdateModel:multiValuedProp").getType());
     }
 
     @Test
@@ -137,8 +162,8 @@ public class CndUpdateTest extends RepositoryTestCase {
         UpdaterModule updateModelUpdaterModule = new UpdaterModule() {
             public void register(final UpdaterContext context) {
                 context.registerName(getClass().getName());
-                context.registerStartTag(null);
-                context.registerEndTag(null);
+                context.registerStartTag(cnd);
+                context.registerEndTag(cnd + "+1");
                 context.registerVisitor(new UpdaterItemVisitor.NamespaceVisitor(context, prefix, is));
             }
         };

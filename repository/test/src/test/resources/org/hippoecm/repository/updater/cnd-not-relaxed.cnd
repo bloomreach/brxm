@@ -1,0 +1,7 @@
+<testUpdateModel='http://localhost/testUpdateModel/nt/1.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+
+[testUpdateModel:document] > hippo:document
+- testUpdateModel:multiValuedProp (string) multiple
+

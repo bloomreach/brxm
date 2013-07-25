@@ -371,6 +371,8 @@ test/src/test/java/org/onehippo/repository/update/UpdaterExecutorTest.java -text
 test/src/test/resources/log4j-filters.txt -text
 test/src/test/resources/org/hippoecm/repository/HREPTWO4837Test.xml svneol=native#text/plain
 test/src/test/resources/org/hippoecm/repository/concurrent/action/Hippo.pdf -text
+test/src/test/resources/org/hippoecm/repository/updater/cnd-not-relaxed.cnd -text
+test/src/test/resources/org/hippoecm/repository/updater/cnd-relaxed.cnd -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd1.cnd -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd2.cnd -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd3.cnd -text
