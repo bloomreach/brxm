@@ -24,7 +24,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
@@ -165,55 +164,54 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
-        context.addTemplate(new IHeaderContributor() {
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                if (isRendered()) {
-                    return;
-                }
+    }
 
-                final String markupId = getComponent().getMarkupId(true);
+    @Override
+    protected void onRenderHead(final IHeaderResponse response) {
+        if (isRendered()) {
+            return;
+        }
 
-                updateAjaxSettings();
+        final String markupId = getComponent().getMarkupId(true);
 
-                settings.setMarkupId(markupId);
+        updateAjaxSettings();
 
-                IWireframe parentWireframe = getParentWireframe();
-                if (parentWireframe != null) {
-                    settings.setParentId(parentWireframe.getYuiId());
-                }
+        settings.setMarkupId(markupId);
 
-                //Visit child components in order to find components that contain a {@link UnitBehavior}. If another wireframe
-                //or unit is encountered, stop going deeper.
-                MarkupContainer cont = (MarkupContainer) getComponent();
-                cont.visitChildren(new IVisitor<Component, Void>() {
-                    public void component(Component component, IVisit<Void> visit) {
-                        for (Object behavior : component.getBehaviors()) {
-                            if (behavior instanceof IWireframe) {
-                                visit.dontGoDeeper();
-                            } else if (behavior instanceof UnitBehavior) {
-                                String position = ((UnitBehavior) behavior).getPosition();
-                                UnitSettings unit = settings.getUnit(position);
-                                if (unit != null) {
-                                    YuiId body = unit.getBody();
-                                    if (body != null) {
-                                        body.setParentId(null);
-                                        body.setId(component.getMarkupId());
-                                    }
-                                } else {
-                                    throw new RuntimeException("Invalid UnitBehavior position " + position);
-                                }
-                                visit.dontGoDeeper();
+        IWireframe parentWireframe = getParentWireframe();
+        if (parentWireframe != null) {
+            settings.setParentId(parentWireframe.getYuiId());
+        }
+
+        //Visit child components in order to find components that contain a {@link UnitBehavior}. If another wireframe
+        //or unit is encountered, stop going deeper.
+        MarkupContainer cont = (MarkupContainer) getComponent();
+        cont.visitChildren(new IVisitor<Component, Void>() {
+            public void component(Component component, IVisit<Void> visit) {
+                for (Object behavior : component.getBehaviors()) {
+                    if (behavior instanceof IWireframe) {
+                        visit.dontGoDeeper();
+                    } else if (behavior instanceof UnitBehavior) {
+                        String position = ((UnitBehavior) behavior).getPosition();
+                        UnitSettings unit = settings.getUnit(position);
+                        if (unit != null) {
+                            YuiId body = unit.getBody();
+                            if (body != null) {
+                                body.setParentId(null);
+                                body.setId(component.getMarkupId());
                             }
+                        } else {
+                            throw new RuntimeException("Invalid UnitBehavior position " + position);
                         }
+                        visit.dontGoDeeper();
                     }
-                });
-
-                rendered = true;
-
-                response.render(getHeaderItem());
+                }
             }
         });
+
+        rendered = true;
+
+        response.render(getHeaderItem());
     }
 
     @Override

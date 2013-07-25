@@ -16,22 +16,28 @@
 
 package org.hippoecm.frontend.plugins.yui.header;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.resource.CoreLibrariesContributor;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.onehippo.yui.YuiDependency;
 import org.onehippo.yui.YuiNamespace;
@@ -73,7 +79,7 @@ public class YuiHeaderCache implements IHeaderContributor {
         return Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT);
     }
 
-    final Map<ResourceReference.Key, CachedHeaderContributor> referencesCache = new HashMap<ResourceReference.Key, CachedHeaderContributor>();
+    final Map<ResourceReference.Key, CachedHeaderItem> referencesCache = new HashMap<ResourceReference.Key, CachedHeaderItem>();
     final Map<String, Module> moduleCache = new HashMap<String, Module>();
     final Map<String, ModuleSet> moduleSetsCache = new HashMap<String, ModuleSet>();
 
@@ -99,7 +105,7 @@ public class YuiHeaderCache implements IHeaderContributor {
 ;
         final WebRequest req = (WebRequest) RequestCycle.get().getRequest();
         if (!req.isAjax()) {
-            for (CachedHeaderContributor contrib : referencesCache.values()) {
+            for (CachedHeaderItem contrib : referencesCache.values()) {
                 contrib.rendered = false;
             }
             for (ModuleSet set : moduleSetsCache.values()) {
@@ -112,7 +118,7 @@ public class YuiHeaderCache implements IHeaderContributor {
         localContext.renderHead(response);
     }
 
-    IHeaderContributor getDependenciesSet(YuiNamespace ns, String module) {
+    HeaderItem getDependenciesSet(YuiNamespace ns, String module) {
         if (moduleSetsCache.containsKey(module)) {
             return moduleSetsCache.get(module);
         } else {
@@ -123,7 +129,7 @@ public class YuiHeaderCache implements IHeaderContributor {
         }
     }
 
-    IHeaderContributor getCssReference(ResourceReference reference) {
+    HeaderItem getCssReference(ResourceReference reference) {
         if (referencesCache.containsKey(reference.getKey())) {
             return referencesCache.get(reference.getKey());
         } else {
@@ -133,32 +139,32 @@ public class YuiHeaderCache implements IHeaderContributor {
         }
     }
 
-    IHeaderContributor getJavascriptReference(ResourceReference reference) {
+    HeaderItem getJavaScriptReference(ResourceReference reference) {
         if (referencesCache.containsKey(reference.getKey())) {
             return referencesCache.get(reference.getKey());
         } else {
-            JavascriptHeaderContributor ref = new JavascriptHeaderContributor(reference);
+            JavaScriptHeaderContributor ref = new JavaScriptHeaderContributor(reference);
             referencesCache.put(reference.getKey(), ref);
             return ref;
         }
     }
 
-    static abstract class CachedHeaderContributor implements IHeaderContributor {
+    static abstract class CachedHeaderItem extends HeaderItem implements IClusterable {
         private static final long serialVersionUID = 1L;
 
         boolean rendered = false;
 
-        public final void renderHead(IHeaderResponse response) {
-            if (!rendered || !YuiHeaderCache.isCacheEnabled()) {
-                onRenderHead(response);
-                rendered = true;
-            }
+        @Override
+        public Iterable<?> getRenderTokens() {
+            return Collections.emptyList();
         }
 
-        abstract public void onRenderHead(IHeaderResponse response);
+        boolean shouldRender() {
+            return (!rendered || !YuiHeaderCache.isCacheEnabled());
+        }
     }
 
-    static abstract class ResourceHeaderContributor extends CachedHeaderContributor {
+    static abstract class ResourceHeaderContributor extends CachedHeaderItem {
         private static final long serialVersionUID = 1L;
 
         ResourceReference reference;
@@ -167,30 +173,15 @@ public class YuiHeaderCache implements IHeaderContributor {
             this.reference = reference;
         }
 
-        public ResourceReference.Key getSharedResourceKey() {
-            return reference.getKey();
-        }
-
-        //TODO: only override hashcode?
-        /*
-        @Override
-        public String toString() {
-            return reference.toString();
-        }
+        abstract HeaderItem getHeaderItem();
 
         @Override
-        public int hashCode() {
-            return reference.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
+        public void render(final Response response) {
+            if (shouldRender()) {
+                getHeaderItem().render(response);
+                rendered = true;
             }
-            return obj.hashCode() == hashCode();
         }
-        */
     }
 
     static class CssHeaderContributor extends ResourceHeaderContributor {
@@ -200,31 +191,35 @@ public class YuiHeaderCache implements IHeaderContributor {
             super(reference);
         }
 
-        public void onRenderHead(IHeaderResponse response) {
-            response.render(CssHeaderItem.forReference(reference, "screen")); //TODO: find out why screen
+        @Override
+        HeaderItem getHeaderItem() {
+            return CssHeaderItem.forReference(reference, "screen"); //TODO: find out why screen
         }
     }
 
-    static class JavascriptHeaderContributor extends ResourceHeaderContributor {
+    static class JavaScriptHeaderContributor extends ResourceHeaderContributor {
         private static final long serialVersionUID = 1L;
 
-        JavascriptHeaderContributor(ResourceReference reference) {
+        JavaScriptHeaderContributor(ResourceReference reference) {
             super(reference);
         }
 
-        public void onRenderHead(IHeaderResponse response) {
-            response.render(JavaScriptHeaderItem.forReference(reference));
+        @Override
+        HeaderItem getHeaderItem() {
+            return JavaScriptHeaderItem.forReference(reference);
         }
     }
 
-    class Module extends CachedHeaderContributor {
+    class Module extends CachedHeaderItem {
         private static final long serialVersionUID = 1L;
 
-        IHeaderContributor file;
-        IHeaderContributor css;
-        IHeaderContributor coreCss;
+        HeaderItem file;
+        HeaderItem css;
+        HeaderItem coreCss;
+        private final String modulePath;
 
         public Module(YuiDependency dependency) {
+            modulePath = dependency.getModulePath();
             if (dependency.isSourceNotFound() || dependency.getNamespace() == null) {
                 String errorMsg = "Unable to find source file for module " + dependency.getModule() + " in namespace "
                         + dependency.getNamespace();
@@ -236,7 +231,7 @@ public class YuiHeaderCache implements IHeaderContributor {
                 String path = dependency.getFilePath(debug, isCacheEnabled());
                 Class<? extends YuiNamespace> clazz = dependency.getNamespace().getClass();
 
-                file = getJavascriptReference(new JavaScriptResourceReference(clazz, path));
+                file = getJavaScriptReference(new JavaScriptResourceReference(clazz, path));
 
                 if (dependency.getHasCss()) {
                     css = getCssReference(new CssResourceReference(clazz, dependency.getCssPath()));
@@ -247,21 +242,32 @@ public class YuiHeaderCache implements IHeaderContributor {
             }
         }
 
-        public void onRenderHead(IHeaderResponse response) {
+        @Override
+        public Iterable<?> getRenderTokens() {
+            return Collections.singletonList(modulePath);
+        }
+
+        @Override
+        public Iterable<? extends HeaderItem> getDependencies() {
+            List<HeaderItem> items = new ArrayList<HeaderItem>();
             if (file != null) {
-                file.renderHead(response);
+                items.add(file);
             }
             if (css != null) {
-                css.renderHead(response);
+                items.add(css);
             }
             if (coreCss != null) {
-                coreCss.renderHead(response);
+                items.add(coreCss);
             }
+            return items;
+        }
+
+        public void render(Response response) {
         }
 
     }
 
-    class ModuleSet extends CachedHeaderContributor {
+    class ModuleSet extends CachedHeaderItem {
         private static final long serialVersionUID = 1L;
 
         Module[] modules;
@@ -284,10 +290,15 @@ public class YuiHeaderCache implements IHeaderContributor {
             modules[count++] = m;
         }
 
-        public void onRenderHead(IHeaderResponse response) {
-            for (Module mod : modules) {
-                mod.renderHead(response);
-            }
+        @Override
+        public void render(final Response response) {
+        }
+
+        @Override
+        public Iterable<? extends HeaderItem> getDependencies() {
+            List<HeaderItem> items = new ArrayList<HeaderItem>();
+            Collections.addAll(items, modules);
+            return items;
         }
     }
 

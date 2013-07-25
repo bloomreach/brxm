@@ -15,16 +15,21 @@
  */
 package org.hippoecm.frontend.plugins.yui.header;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
@@ -48,9 +53,9 @@ public class YuiContext implements IYuiContext {
     private static final long serialVersionUID = 1L;
 
     Set<IHeaderContributor> templates;
-    Set<IHeaderContributor> refs;
+    Set<HeaderItem> refs;
     Set<Onload> onloads;
-    Set<IHeaderContributor> modules;
+    Set<HeaderItem> modules;
     YuiHeaderCache cache;
 
     static class Onload implements IClusterable {
@@ -60,27 +65,23 @@ public class YuiContext implements IYuiContext {
             DOM, WINDOW
         }
 
-        IModel jsModel;
+        IModel<String> jsModel;
         Type type;
 
-        public Onload(IModel jsModel) {
-            this(jsModel, Type.WINDOW);
-        }
-
-        public Onload(IModel jsModel, Type type) {
+        public Onload(IModel<String> jsModel, Type type) {
             this.jsModel = jsModel;
             this.type = type;
         }
 
         public String getJsString() {
-            return (String) jsModel.getObject();
+            return jsModel.getObject();
         }
     }
 
     public YuiContext(YuiHeaderCache cache) {
         this.cache = cache;
-        modules = new LinkedHashSet<IHeaderContributor>();
-        refs = new LinkedHashSet<IHeaderContributor>();
+        modules = new LinkedHashSet<HeaderItem>();
+        refs = new LinkedHashSet<HeaderItem>();
         templates = new LinkedHashSet<IHeaderContributor>();
         onloads = new LinkedHashSet<Onload>();
     }
@@ -119,49 +120,60 @@ public class YuiContext implements IYuiContext {
     }
 
     public void addJavascriptReference(ResourceReference reference) {
-        refs.add(cache.getJavascriptReference(reference));
+        refs.add(cache.getJavaScriptReference(reference));
     }
 
     public void addOnDomLoad(String string) {
-        addOnDomLoad(new Model(string));
+        addOnDomLoad(Model.of(string));
     }
 
-    public void addOnDomLoad(IModel model) {
+    public void addOnDomLoad(IModel<String> model) {
         onloads.add(new Onload(model, Onload.Type.DOM));
     }
 
     public void addOnWinLoad(String string) {
-        addOnWinLoad(new Model(string));
+        addOnWinLoad(Model.of(string));
     }
 
-    public void addOnWinLoad(IModel model) {
+    public void addOnWinLoad(IModel<String> model) {
         onloads.add(new Onload(model, Onload.Type.WINDOW));
     }
 
+    public HeaderItem getHeaderItem() {
+        return new HeaderItem() {
+
+            @Override
+            public Iterable<?> getRenderTokens() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void render(final Response response) {
+            }
+
+            @Override
+            public Iterable<? extends HeaderItem> getDependencies() {
+                List<HeaderItem> items = new ArrayList<HeaderItem>();
+                if (modules != null) {
+                    items.addAll(modules);
+                }
+                if (refs != null) {
+                    items.addAll(refs);
+                }
+                return items;
+            }
+        };
+
+    }
+
     public void renderHead(IHeaderResponse response) {
-        if (modules != null) {
-            renderModules(modules, response);
-        }
-        if (refs != null) {
-            renderReferences(refs, response);
-        }
+        response.render(getHeaderItem());
+
         if (templates != null) {
             renderTemplates(templates, response);
         }
         if (onloads != null) {
             renderOnloads(onloads, response);
-        }
-    }
-
-    private void renderModules(Set<IHeaderContributor> modules, IHeaderResponse response) {
-        for (IHeaderContributor ms : modules) {
-            ms.renderHead(response);
-        }
-    }
-
-    private void renderReferences(Set<IHeaderContributor> _references, IHeaderResponse response) {
-        for (IHeaderContributor contrib : _references) {
-            contrib.renderHead(response);
         }
     }
 

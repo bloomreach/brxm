@@ -21,7 +21,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
@@ -57,17 +56,15 @@ public class AccordionManagerBehavior extends AbstractYuiBehavior {
     @Override
     public void addHeaderContribution(IYuiContext helper) {
         helper.addModule(HippoNamespace.NS, "accordionmanager");
-        helper.addTemplate(new IHeaderContributor() {
+    }
 
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                response.render(getHeaderItem());
-                if (active != null) {
-                    response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" +
-                            getComponent().getMarkupId() + "', '" + active.getMarkupId() + "')"));
-                }
-            }
-        });
+    @Override
+    protected void onRenderHead(final IHeaderResponse response) {
+        response.render(getHeaderItem());
+        if (active != null) {
+            response.render(OnDomReadyHeaderItem.forScript("YAHOO.hippo.AccordionManager.render('" +
+                    getComponent().getMarkupId() + "', '" + active.getMarkupId() + "')"));
+        }
     }
 
     public HeaderItem getHeaderItem() {

@@ -21,7 +21,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
@@ -100,16 +99,15 @@ public class PageLayoutBehavior extends AbstractYuiBehavior implements IWirefram
     @Override
     public void addHeaderContribution(IYuiContext context) {
         context.addModule(HippoNamespace.NS, "layoutmanager");
-        context.addTemplate(new IHeaderContributor() {
-            @Override
-            public void renderHead(final IHeaderResponse response) {
-                if (isRendered()) {
-                    return;
-                }
-                response.render(getHeaderItem());
-                rendered = true;
-            }
-        });
+    }
+
+    @Override
+    protected void onRenderHead(final IHeaderResponse response) {
+        if (isRendered()) {
+            return;
+        }
+        response.render(getHeaderItem());
+        rendered = true;
     }
 
     @Override

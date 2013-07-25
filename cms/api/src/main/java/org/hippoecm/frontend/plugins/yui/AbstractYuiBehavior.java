@@ -77,8 +77,8 @@ public class AbstractYuiBehavior extends Behavior {
                         "Page has no yui manager behavior, unable to register module dependencies.");
             }
         }
-        onRenderHead(response);
         context.renderHead(response);
+        onRenderHead(response);
     }
     
     /**

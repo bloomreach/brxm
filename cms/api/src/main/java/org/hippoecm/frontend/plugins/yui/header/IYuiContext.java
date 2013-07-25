@@ -17,12 +17,12 @@ package org.hippoecm.frontend.plugins.yui.header;
 
 import java.util.Map;
 
-import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 import org.hippoecm.frontend.plugins.yui.header.templates.FinalTextTemplate;
-import org.hippoecm.frontend.plugins.yui.widget.WidgetTemplate;
 import org.onehippo.yui.YuiNamespace;
 
 /**
@@ -102,7 +102,7 @@ public interface IYuiContext extends IHeaderContributor {
      * @param model 
      *            {@link IModel} which returns javascript code that will be executed on the client.
      */
-    void addOnWinLoad(IModel model);
+    void addOnWinLoad(IModel<String> model);
 
     /**
      * Add static javascript <code>String</code> that will be executed on the browsers' dom-ready event
@@ -118,7 +118,7 @@ public interface IYuiContext extends IHeaderContributor {
      * @param model 
      *            {@link IModel} which returns javascript code that will be executed on the client.
      */
-    void addOnDomLoad(IModel model);
+    void addOnDomLoad(IModel<String> model);
     
     /**
      * Helper method for adding a javascript reference
@@ -135,5 +135,10 @@ public interface IYuiContext extends IHeaderContributor {
      *            {@link ResourceReference} that should be added to the head
      */
     void addCssReference(ResourceReference reference);
+
+    /**
+     * Return a header item for the modules and references
+     */
+    HeaderItem getHeaderItem();
 
 }
