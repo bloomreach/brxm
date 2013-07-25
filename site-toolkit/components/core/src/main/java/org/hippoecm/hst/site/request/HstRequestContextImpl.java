@@ -105,9 +105,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected boolean cmsRequest;
 
     protected HippoBean contentBean;
-    protected boolean contentBeanPopulated = false;
+    protected String contentBeanPopulatedBy;
     protected HippoBean siteContentBaseBean;
-    protected boolean siteContentBaseBeanPopulated = false;
+    protected String siteContentBaseBeanPopulatedBy;
 
     private Map<String, Object> unmodifiableAttributes;
 
@@ -569,18 +569,22 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public HippoBean getContentBean() {
-        if (contentBeanPopulated) {
-            return contentBean;
-        }
-        HstRequestContext requestContext = RequestContextProvider.get();
+        try {
+            if (contentBeanPopulatedBy != null && contentBeanPopulatedBy.equals(RequestContextProvider.get().getSession().getUserID())) {
+                return contentBean;
+            }
+            HstRequestContext requestContext = RequestContextProvider.get();
 
-        if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
-            return null;
+            if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
+                return null;
+            }
+            // cache for next getter
+            contentBean = getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
+            contentBeanPopulatedBy = requestContext.getSession().getUserID();
+            return contentBean;
+        } catch (RepositoryException e) {
+            throw new IllegalStateException(e);
         }
-        // cache for next getter
-        contentBean = getBeanForResolvedSiteMapItem(requestContext.getResolvedSiteMapItem());
-        contentBeanPopulated = true;
-        return contentBean;
     }
 
     @Override
@@ -596,17 +600,22 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public HippoBean getSiteContentBaseBean() {
-        if (siteContentBaseBeanPopulated) {
-            return siteContentBaseBean;
-        }
-        String base = getSiteContentBasePath();
         try {
-            siteContentBaseBean = (HippoBean) getContentBeansTool().getObjectBeanManager().getObject("/" + base);
-        } catch (ObjectBeanManagerException e) {
-            log.error("ObjectBeanManagerException. Return null : {}", e);
+            if (siteContentBaseBeanPopulatedBy != null && siteContentBaseBeanPopulatedBy.equals(RequestContextProvider.get().getSession().getUserID())) {
+                return contentBean;
+            }
+
+            String base = getSiteContentBasePath();
+            try {
+                siteContentBaseBean = (HippoBean) getContentBeansTool().getObjectBeanManager().getObject("/" + base);
+            } catch (ObjectBeanManagerException e) {
+                log.error("ObjectBeanManagerException. Return null : {}", e);
+            }
+            siteContentBaseBeanPopulatedBy = RequestContextProvider.get().getSession().getUserID();
+            return siteContentBaseBean;
+        } catch (RepositoryException e) {
+            throw new IllegalStateException(e);
         }
-        siteContentBaseBeanPopulated = true;
-        return siteContentBaseBean;
     }
 
 
