@@ -48,7 +48,14 @@ public class DefaultContentBeansTool implements ContentBeansTool {
 
     private final HstQueryManagerFactory queryManagerFactory;
 
-    private volatile ObjectConverter objectConverter;
+    /*
+     * On purpose, the objectConverter below is not <code>volatile</code>. This means that the getObjectConverter()
+     * is not a correct double-checked locking singleton pattern. However, objectConverter is used by every thread
+     * throughout the entire life time of the application. Making access to it volatile is way more expensive than
+     * the very small chance that it gets created 2 or 3 times in the very beginning after start up of the application.
+     * Thus, on purpose not a correct double checked locking in favor of less expensive access later
+     */
+    private ObjectConverter objectConverter;
 
     public DefaultContentBeansTool(HstQueryManagerFactory queryManagerFactory) {
         this.queryManagerFactory = queryManagerFactory;
