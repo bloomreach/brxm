@@ -15,13 +15,11 @@
  */
 package org.hippoecm.hst.content.tool;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 /**
  * ContentBeansTool
@@ -45,15 +43,15 @@ public interface ContentBeansTool {
     /**
      * @return the {@link HstQueryManager} for the {@link Session} retrieved through
      * {@link org.hippoecm.hst.core.request.HstRequestContext#getSession(boolean)}
-     * @throws RepositoryException
+     * @throws IllegalStateException if the application is unable to provide a HstQueryManager
      */
-    public HstQueryManager getQueryManager() throws RepositoryException;
+    public HstQueryManager getQueryManager() throws IllegalStateException;
 
     /**
      * @param session
      * @return the {@link HstQueryManager} for <code>session</code>
-     * @throws RepositoryException
+     * @throws IllegalStateException if the application is unable to provide a HstQueryManager
      */
-    public HstQueryManager getQueryManager(Session session) throws RepositoryException;
+    public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
 
 }

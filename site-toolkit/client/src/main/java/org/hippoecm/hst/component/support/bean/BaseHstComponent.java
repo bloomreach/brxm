@@ -357,12 +357,7 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     @Deprecated
     public HstQueryManager getQueryManager(HstRequestContext ctx) {
-        try {
-            return ctx.getContentBeansTool().getQueryManager();
-        } catch (RepositoryException e) {
-            log.error("Unable to get a queryManager", e);
-            return null;
-        }
+       return ctx.getContentBeansTool().getQueryManager();
     }
 
     /**
@@ -373,12 +368,7 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     @Deprecated
     public HstQueryManager getQueryManager(Session session) {
-        try {
-            return RequestContextProvider.get().getContentBeansTool().getQueryManager(session);
-        } catch (RepositoryException e) {
-            log.error("Unable to get a queryManager", e);
-            return null;
-        }
+        return RequestContextProvider.get().getContentBeansTool().getQueryManager(session);
     }
 
     /**

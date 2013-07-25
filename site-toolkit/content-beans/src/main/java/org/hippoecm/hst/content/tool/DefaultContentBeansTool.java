@@ -95,20 +95,21 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         }
     }
 
-    public HstQueryManager getQueryManager() throws RepositoryException {
+    public HstQueryManager getQueryManager() throws IllegalStateException {
         HstRequestContext requestContext = RequestContextProvider.get();
 
         if (requestContext == null) {
             throw new IllegalStateException("HstRequestContext is not set in handler.");
         }
-
-        return getQueryManager(requestContext.getSession());
+        try {
+            return getQueryManager(requestContext.getSession());
+        } catch (RepositoryException e) {
+           throw new IllegalStateException(e);
+        }
     }
 
-    public HstQueryManager getQueryManager(Session session) throws RepositoryException {
-        HstQueryManager queryManager = null;
-        queryManager = queryManagerFactory.createQueryManager(session, getObjectConverter());
-        return queryManager;
+    public HstQueryManager getQueryManager(Session session) throws IllegalStateException {
+        return queryManagerFactory.createQueryManager(session, getObjectConverter());
     }
 
     private List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner classpathResourceScanner) {
@@ -117,15 +118,12 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         if (requestContext == null) {
             throw new IllegalStateException("HstRequestContext is not set in handler.");
         }
-
         List<Class<? extends HippoBean>> annotatedClasses = null;
-
         String ocmAnnotatedClassesResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
-
         try {
             annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner, StringUtils.split(ocmAnnotatedClassesResourcePath, ", \t\r\n"));
         } catch (Exception e) {
-            throw new HstSiteMapItemHandlerException(e);
+            throw new IllegalStateException(e);
         }
 
         return annotatedClasses;
