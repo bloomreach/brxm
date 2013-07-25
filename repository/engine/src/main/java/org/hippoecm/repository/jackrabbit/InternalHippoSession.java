@@ -65,4 +65,6 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     Session createDelegatedSession(InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 
+    void localRefresh();
+
 }

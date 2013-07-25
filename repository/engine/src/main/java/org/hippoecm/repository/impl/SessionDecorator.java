@@ -481,6 +481,11 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         return DecoratorFactoryImpl.getSessionDecorator(delegatedSession, credentials);
     }
 
+    @Override
+    public void localRefresh() {
+        getInternalHippoSession().localRefresh();
+    }
+
     private InternalHippoSession getInternalHippoSession() {
         return ((InternalHippoSession) session);
     }

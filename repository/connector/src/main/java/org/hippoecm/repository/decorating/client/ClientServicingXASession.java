@@ -259,4 +259,9 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void localRefresh() {
+        throw new UnsupportedOperationException();
+    }
 }

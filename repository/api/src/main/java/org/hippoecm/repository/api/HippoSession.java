@@ -218,6 +218,14 @@ public interface HippoSession extends Session {
     Session createSecurityDelegate(Session session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 
     /**
+     * This method discards all pending changes currently recorded in this <code>Session</code>
+     * and, including the built-up virtual node states. The difference with {@link Session#refresh(boolean)} is
+     * that after the method returns, the state of the items is not guaranteed to reflect the current
+     * persistent storage because in a clustered environment, the cluster node is not synced as a result of this call.
+     */
+    void localRefresh();
+
+    /**
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * The interface of the callback handler that is called when the session is
      * logged out.

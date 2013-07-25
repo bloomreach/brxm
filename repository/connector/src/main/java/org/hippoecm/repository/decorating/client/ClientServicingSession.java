@@ -180,4 +180,9 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void localRefresh() {
+        throw new UnsupportedOperationException();
+    }
 }
