@@ -48,6 +48,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstResponseUtils;
+import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.hst.utils.ParameterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -330,11 +331,26 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param request
      * @param resolvedSiteMapItem
      * @return A <code>HippoBean</code> or <code>null</code> when there cannot be created a content bean for this resolvedSiteMapItem
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBean()} instead
      */
-    @Deprecated
     public HippoBean getBeanForResolvedSiteMapItem(HstRequest request, ResolvedSiteMapItem resolvedSiteMapItem) {
-        return request.getRequestContext().getContentBean();
+        final HstRequestContext requestContext = request.getRequestContext();
+        String base = requestContext.getSiteContentBasePath();
+        String relPath = PathUtils.normalizePath(resolvedSiteMapItem.getRelativeContentPath());
+        if(relPath == null) {
+            log.debug("Cannot return a content bean for relative path null for resolvedSitemapItem belonging to '{}'. Return null", resolvedSiteMapItem.getHstSiteMapItem().getId());
+            return null;
+        }
+        try {
+            if("".equals(relPath)) {
+                return (HippoBean) requestContext.getContentBeansTool().getObjectBeanManager().getObject("/"+base);
+            } else {
+                return (HippoBean) requestContext.getContentBeansTool().getObjectBeanManager().getObject("/"+base+ "/" + relPath);
+            }
+        } catch (ObjectBeanManagerException e) {
+            log.error("ObjectBeanManagerException. Return null : {}", e);
+        }
+        return null;
+
     }
 
     /**
@@ -364,7 +380,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param session the {@link Session}
      * @return the {@link HstQueryManager}
      * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager(session)} instead
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager(Session)} instead
      */
     @Deprecated
     public HstQueryManager getQueryManager(Session session) {
