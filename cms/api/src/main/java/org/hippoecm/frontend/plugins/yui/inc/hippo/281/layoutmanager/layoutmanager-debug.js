@@ -114,6 +114,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             },
             
             addWireframe : function(id, Clazz, config) {
+                if (this.wireframes.containsKey(id)) {
+                    this.cleanup(id);
+                }
                 var object = new Clazz(id, config, this);
                 this.wireframes.put(id, object);
                 object.render();
