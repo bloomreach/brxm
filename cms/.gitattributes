@@ -79,6 +79,10 @@ api/src/main/java/org/hippoecm/frontend/editor/compare/ObjectComparer.java svneo
 api/src/main/java/org/hippoecm/frontend/editor/compare/StreamComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/TypedComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHintPlugin.css -text
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHintPlugin.html -text
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHintPlugin.java -text
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/hint.png -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/PdfParser.java -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
@@ -1345,7 +1349,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icon
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-up-16.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/hint.png -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/HtmlValidator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLogger.java svneol=native#text/plain
