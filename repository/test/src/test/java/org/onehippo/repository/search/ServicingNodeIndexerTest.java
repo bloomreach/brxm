@@ -165,7 +165,7 @@ public class ServicingNodeIndexerTest extends RepositoryTestCase {
             sub2.setProperty("sample:normal", "aaa bbbb");
             Node sub3 = testNode.addNode("sub3");
             sub3.setProperty("sample:nosingleindexterm", "zzz cccc");
-            sub2.setProperty("sample:normal", "zzz cccc");
+            sub3.setProperty("sample:normal", "zzz cccc");
             session.save();
 
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
