@@ -104,7 +104,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * @return the authorization bitset and <code>null</code> when every bit is allowed to be read
      * @throws IOException
      */
-    private AuthorizationFilter getAuthorizationFilter(final Session session) throws IOException {
+    protected AuthorizationFilter getAuthorizationFilter(final Session session) throws IOException {
         if (!(session instanceof InternalHippoSession)) {
             return null;
         }

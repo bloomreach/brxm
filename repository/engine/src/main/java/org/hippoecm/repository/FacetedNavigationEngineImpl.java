@@ -235,6 +235,10 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         BooleanQuery getAuthorizationQuery() {
             return authorizationQuery != null ? authorizationQuery.getQuery() : null;
         }
+
+        DocIdSet getAuthorisationIdSet(IndexReader reader) throws IOException {
+            return getAuthorizationFilter(session).getDocIdSet(reader);
+        }
     }
 
     private static class DocIdSetFilter extends Filter {
@@ -330,10 +334,23 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
-            List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
-            Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
+                       List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
+                       Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
             throws UnsupportedOperationException, IllegalArgumentException {
 
+        long start = System.currentTimeMillis();
+        try {
+            return doView(queryName, initialQuery, contextImpl, facetsQueryList, rangeQuery, openQuery, resultset,
+                    inheritedFilter, hitsRequested);
+        } finally {
+            log.debug("Faceted Navigation Engine view took {} ms to complete.", (System.currentTimeMillis() - start));
+        }
+    }
+
+    public Result doView(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
+                         List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
+                         Map<String, Map<String, Count>> resultset, Map<String, String> inheritedFilter, HitsRequested hitsRequested)
+            throws UnsupportedOperationException, IllegalArgumentException {
         NamespaceMappings nsMappings = getNamespaceMappings();
 
         IndexReader indexReader = null;
@@ -374,7 +391,8 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
             final BooleanQuery authorizationQuery = contextImpl.getAuthorizationQuery();
             if (authorizationQuery != null) {
-                matchingDocs = filterDocIdSet(authorizationQuery, matchingDocs, cache, indexReader);
+                final DocIdSet authorisationIdSet = contextImpl.getAuthorisationIdSet(indexReader);
+                matchingDocs = matchingDocs.and(authorisationIdSet);
             }
 
             if (resultset != null) {
