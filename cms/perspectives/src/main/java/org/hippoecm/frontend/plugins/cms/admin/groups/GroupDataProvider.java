@@ -32,11 +32,23 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class GroupDataProvider extends SearchableDataProvider<Group> {
 
     private static final long serialVersionUID = 1L;
-    private static final String QUERY_GROUP_LIST = "SELECT * FROM " + HippoNodeType.NT_GROUP
-            + " where (hipposys:system <> 'true' or hipposys:system IS NULL)";
+
+    private static final String QUERY_ALL_GROUP_LIST = "SELECT * " +
+                " FROM " + HippoNodeType.NT_GROUP +
+                " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
+
+    private static final String QUERY_GROUP_LIST_TEMPLATE = "SELECT * " +
+                    " FROM " + HippoNodeType.NT_GROUP +
+                    " WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL) AND " +
+                          " (  " +
+                              "fn:name() = '{}' OR " +
+                              "contains(hipposys:description, '{}') OR " +
+                              "contains(hipposys:members, '{}') OR " +
+                              "contains(hipposys:groups, '{}') " +
+                            ") ";
 
     public GroupDataProvider() {
-        super(QUERY_GROUP_LIST, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
+        super(QUERY_ALL_GROUP_LIST, QUERY_GROUP_LIST_TEMPLATE, "/hippo:configuration/hippo:groups", HippoNodeType.NT_GROUP, HippoNodeType.NT_GROUPFOLDER);
         setSort("groupname", SortOrder.ASCENDING);
     }
 

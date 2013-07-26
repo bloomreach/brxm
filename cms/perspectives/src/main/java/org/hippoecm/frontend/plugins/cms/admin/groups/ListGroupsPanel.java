@@ -113,7 +113,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
         this.groupDataProvider = groupDataProvider;
         TextField<String> search = new TextField<String>("search-query",
-                                                         new PropertyModel<String>(this.groupDataProvider, "query"));
+                                                         new PropertyModel<String>(this.groupDataProvider, "searchTerm"));
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());

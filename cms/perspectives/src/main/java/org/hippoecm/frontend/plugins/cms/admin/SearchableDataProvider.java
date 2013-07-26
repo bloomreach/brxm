@@ -80,10 +80,13 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
             {" or ", " OR "}
     };
 
-    private final String queryAll;
+    private final String searchAllSqlStatement;
+
+    private final String searchTermSqlStatementTemplate;
+
     private final String observePath;
     private final String[] observeNodeTypes;
-    private String query;
+    private String searchTerm;
     private List<T> list = new ArrayList<T>();
     private volatile boolean dirty = true;
     private IObservationContext<JcrNodeModel> context;
@@ -92,12 +95,14 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     /**
      * Creates a searchable provider.
      *
-     * @param queryAll         the JCR SQL query to search for all beans
+     * @param searchAllSqlStatement             the JCR SQL searchTerm to search for all beans
+     * @param searchTermSqlStatementTemplate    the JCR SQL template to search with a specific search term
      * @param observePath      the JCR path to observe for changes
      * @param observeNodeTypes the node types to observe for changes
      */
-    public SearchableDataProvider(String queryAll, String observePath, String... observeNodeTypes) {
-        this.queryAll = queryAll;
+    public SearchableDataProvider(String searchAllSqlStatement, String searchTermSqlStatementTemplate, String observePath, String... observeNodeTypes) {
+        this.searchAllSqlStatement = searchAllSqlStatement;
+        this.searchTermSqlStatementTemplate = searchTermSqlStatementTemplate;
         this.observePath = observePath;
         this.observeNodeTypes = observeNodeTypes;
     }
@@ -113,7 +118,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
 
     @Override
     public Iterator<T> iterator(long first, long count) {
-        populateList(query);
+        populateList(searchTerm);
         List<T> result = new ArrayList<T>();
         for (long i = first; i < (count + first); i++) {
             result.add(list.get((int) i));
@@ -123,7 +128,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
 
     @Override
     public long size() {
-        populateList(query);
+        populateList(searchTerm);
         return list.size();
     }
 
@@ -134,20 +139,20 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     /**
      * Populate list, refresh when a new session id is found or when dirty
      *
-     * @param query the query used for free text search to limit the list
+     * @param searchTerm the searchTerm used for free text search to limit the list
      */
-    private void populateList(String query) {
+    private void populateList(final String searchTerm) {
         // synchronize on the runtime class, as there can be multiple implementations of this abstract class
         if (!dirty) {
             return;
         }
         list.clear();
 
-        StringBuilder sqlQuery = new StringBuilder(queryAll);
-        if (StringUtils.isNotEmpty(query)) {
-            sqlQuery.append(" and CONTAINS(., '");
-            sqlQuery.append(query);
-            sqlQuery.append("')");
+        final StringBuilder sqlQuery;
+        if (StringUtils.isNotEmpty(searchTerm)) {
+            sqlQuery = new StringBuilder(searchTermSqlStatementTemplate.replace("{}", searchTerm));
+        } else {
+            sqlQuery = new StringBuilder(searchAllSqlStatement);
         }
         log.debug("Executing query: {}", sqlQuery);
         try {
@@ -173,30 +178,30 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     }
 
     /**
-     * Set the search query. Only beans that match the query will be included. A '*' in the query acts as a wildcard.
-     * When the query is null or empty, all beans will be included.
+     * Set the search searchTerm. Only beans that match the searchTerm will be included. A '*' in the searchTerm acts as a wildcard.
+     * When the searchTerm is null or empty, all beans will be included.
      * <p/>
-     * N.B. this method is needed to let Wicket use setQuery/getQuery in a PropertyModel instead of reflection.
+     * N.B. this method is needed to let Wicket use setSearchTerm/getSearchTerm in a PropertyModel instead of reflection.
      *
-     * @param newQuery the query to search for users with
+     * @param searchTerm the searchTerm to search for users with
      */
     @SuppressWarnings("unused")
-    public void setQuery(final String newQuery) {
-        this.query = escapeJcrContainsQuery(newQuery);
+    public void setSearchTerm(final String searchTerm) {
+        this.searchTerm = escapeJcrContainsQuery(searchTerm);
         dirty = true;
     }
 
     /**
-     * Returns the query used by this provider to limit the provided beans. The query can be null or empty, in which
+     * Returns the searchTerm used by this provider to limit the provided beans. The searchTerm can be null or empty, in which
      * case there are no limitations and all beans will be included.
      * <p/>
-     * N.B. this method is needed to let Wicket use setQuery/getQuery in a PropertyModel instead of reflection.
+     * N.B. this method is needed to let Wicket use setSearchTerm/getSearchTerm in a PropertyModel instead of reflection.
      *
-     * @return the search query to use
+     * @return the search searchTerm to use
      */
     @SuppressWarnings("unused")
-    public String getQuery() {
-        return this.query;
+    public String getSearchTerm() {
+        return this.searchTerm;
     }
 
     /**
@@ -336,20 +341,20 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         SearchableDataProvider other = (SearchableDataProvider) object;
 
         return new EqualsBuilder()
-                .append(queryAll, other.queryAll)
+                .append(searchAllSqlStatement, other.searchAllSqlStatement)
                 .append(observePath, other.observePath)
                 .append(observeNodeTypes, other.observeNodeTypes)
-                .append(query, other.query)
+                .append(searchTerm, other.searchTerm)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(57, 433)
-                .append(queryAll)
+                .append(searchAllSqlStatement)
                 .append(observePath)
                 .append(observeNodeTypes)
-                .append(query)
+                .append(searchTerm)
                 .toHashCode();
     }
 

@@ -347,6 +347,11 @@ public class HippoTester extends WicketTester {
         public Session createSecurityDelegate(final Session session, final DomainRuleExtension... domainExtensions) throws RepositoryException {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public void localRefresh() {
+            // TODO Auto-generated method stub
+        }
     }
 
     public HippoTester() {

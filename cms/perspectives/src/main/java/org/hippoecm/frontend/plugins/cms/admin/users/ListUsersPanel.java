@@ -168,7 +168,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         add(form);
 
         final TextField<String> search = new TextField<String>("search-query",
-                                                               new PropertyModel<String>(userDataProvider, "query"));
+                                                               new PropertyModel<String>(userDataProvider, "searchTerm"));
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());
