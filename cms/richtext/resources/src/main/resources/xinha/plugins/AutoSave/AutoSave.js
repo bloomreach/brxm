@@ -140,7 +140,7 @@ AutoSave.prototype = {
                     'Wicket-Ajax': true,
                     'Wicket-Ajax-BaseURL': Wicket.Ajax.baseUrl
                 },
-                compete: jQuery.proxy(function() {
+                complete: jQuery.proxy(function() {
                     if (throttled) {
                         this.saving = false;
                     }
