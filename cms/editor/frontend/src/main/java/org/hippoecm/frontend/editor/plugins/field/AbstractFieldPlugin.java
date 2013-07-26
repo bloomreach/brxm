@@ -26,10 +26,10 @@ import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
@@ -581,16 +581,18 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     protected Component createHint() {
-        MarkupContainer hint = new MarkupContainer("hint") {};
-        String subtitle = getPluginConfig().getString("hint");
-        if (StringUtils.isBlank(subtitle)) {
+        WebMarkupContainer hintContainer = new WebMarkupContainer("hint");
+        String hint = getPluginConfig().getString("hint");
+        if (StringUtils.isBlank(hint)) {
             // no hint available, display nothing
-            hint.setVisible(false);
+            hintContainer.setVisible(false);
         } else {
+            // Check if there's a translation of the hint, use the untranslated hint as default
+            IModel<String> translatedHintModel = new StringResourceModel(hint, this, null, hint);
             // display the hint
-            hint.add(new Label("hint-text", subtitle));
-            hint.add(new Image("hint-image", HINT_PNG));
+            hintContainer.add(new Label("hint-text", translatedHintModel));
+            hintContainer.add(new Image("hint-image", HINT_PNG));
         }
-        return hint;
+        return hintContainer;
     }
 }
