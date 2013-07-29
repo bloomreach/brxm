@@ -93,7 +93,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
             final int repeatCount = ((RepositoryJobSimpleTrigger) trigger).getRepeatCount();
             final long repeatInterval = ((RepositoryJobSimpleTrigger) trigger).getRepeatInterval();
             if (repeatCount != 0) {
-                return new SimpleTrigger(trigger.getName(), startTime, new Date(Long.MAX_VALUE), repeatCount, repeatInterval);
+                return new SimpleTrigger(trigger.getName(), startTime, null, repeatCount, repeatInterval);
             } else {
                 return new SimpleTrigger(trigger.getName(), startTime);
             }
