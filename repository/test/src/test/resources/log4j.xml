@@ -108,7 +108,11 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
- 
+  <category additivity="false" name="org.hippoecm.repository.translation.impl.TranslationVirtualProvider">
+    <level value="error"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
