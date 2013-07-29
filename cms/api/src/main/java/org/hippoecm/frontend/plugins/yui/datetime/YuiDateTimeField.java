@@ -37,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.joda.time.DateTimeFieldType;
@@ -66,6 +67,7 @@ public class YuiDateTimeField extends DateTimeField {
     private boolean todayLinkVisible = true;
 
     private YuiDatePickerSettings settings;
+    private transient boolean shouldUpdate = false;
 
     public YuiDateTimeField(String id, IModel<Date> model) {
         this(id, model, null);
@@ -153,7 +155,7 @@ public class YuiDateTimeField extends DateTimeField {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    YuiDateTimeField.this.onUpdate(target);
+                    shouldUpdate = true;
                 }
             });
         }
@@ -162,6 +164,18 @@ public class YuiDateTimeField extends DateTimeField {
     @Override
     public void renderHead(final IHeaderResponse response) {
         response.render(CssHeaderItem.forReference(YUIDATETIME_STYLESHEET));
+    }
+
+    @Override
+    protected void onAfterRenderChildren() {
+        super.onAfterRenderChildren();
+        if (shouldUpdate) {
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                this.onUpdate(target);
+            }
+            shouldUpdate = false;
+        }
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
@@ -174,7 +188,7 @@ public class YuiDateTimeField extends DateTimeField {
     }
 
     private void updateDateTime(Date date, Integer hours, Integer minutes) {
-        if(date!=null) {
+        if (date != null) {
             MutableDateTime datetime = new MutableDateTime(date);
             try {
                 TimeZone zone = getClientTimeZone();
