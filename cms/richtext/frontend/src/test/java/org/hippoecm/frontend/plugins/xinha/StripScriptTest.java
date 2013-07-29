@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.xinha;
 
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

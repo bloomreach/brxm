@@ -48,6 +48,7 @@ import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;

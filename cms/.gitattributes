@@ -2102,6 +2102,38 @@ reporting/repository/src/main/resources/hippoecm-extension.xml -text
 reporting/repository/src/main/resources/hipporeport.cnd -text
 reporting/repository/src/main/resources/reporting-dashboard.xml -text
 reporting/repository/src/main/resources/reports-cluster-loader.xml -text
+richtext/ckeditor/src/main/resources/ckeditor/CHANGES.md -text
+richtext/ckeditor/src/main/resources/ckeditor/LICENSE.md -text
+richtext/ckeditor/src/main/resources/ckeditor/README.md -text
+richtext/ckeditor/src/main/resources/ckeditor/plugins/codemirror/icons/AutoComplete.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/codemirror/icons/AutoFormat.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/codemirror/icons/CommentSelectedRange.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/codemirror/icons/SearchCode.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/codemirror/icons/UncommentSelectedRange.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/fakeobjects/images/spacer.gif -text
+richtext/ckeditor/src/main/resources/ckeditor/plugins/icons.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/icons_hidpi.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/link/images/anchor.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/link/images/hidpi/anchor.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/magicline/images/hidpi/icon.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/magicline/images/icon.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/plugins/youtube/images/icon.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/samples/assets/inlineall/logo.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/samples/assets/posteddata.php -text
+richtext/ckeditor/src/main/resources/ckeditor/samples/assets/sample.jpg -text svneol=unset#image/jpeg
+richtext/ckeditor/src/main/resources/ckeditor/samples/sample_posteddata.php -text
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/icons.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/icons_hidpi.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/arrow.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/close.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/hidpi/close.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/hidpi/lock-open.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/hidpi/lock.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/hidpi/refresh.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/lock-open.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/lock.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/images/refresh.png -text svneol=unset#image/png
+richtext/ckeditor/src/main/resources/ckeditor/skins/moono/readme.md -text
 richtext/frontend/pom.xml -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IHtmlCleanerService.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IImageURLProvider.java svneol=native#text/plain

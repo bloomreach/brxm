@@ -89,7 +89,11 @@
       <artifactId>hippo-cms-richtext-resources</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-frontend</artifactId>

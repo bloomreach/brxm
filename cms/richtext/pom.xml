@@ -26,10 +26,10 @@
   <name>CMS Rich Text Editor</name>
   <description>Hippo CMS Rich Text editor</description>
   <artifactId>hippo-cms-richtext</artifactId>
-  <groupId>org.onehippo.cms7</groupId>
   <packaging>pom</packaging>
 
   <modules>
+    <module>ckeditor</module>
     <module>frontend</module>
     <module>repository</module>
     <module>resources</module>

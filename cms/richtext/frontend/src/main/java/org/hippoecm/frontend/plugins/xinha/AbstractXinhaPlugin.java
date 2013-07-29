@@ -55,6 +55,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextArea;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.plugins.xinha.behavior.StateChangeBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;

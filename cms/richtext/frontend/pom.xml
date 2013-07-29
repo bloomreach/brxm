@@ -25,7 +25,6 @@
 
   <name>CMS Rich Text Frontend</name>
   <description>Hippo CMS Rich Text Frontend</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-richtext-frontend</artifactId>
   <packaging>jar</packaging>
 
@@ -53,6 +52,12 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-gallery-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor</artifactId>
       <version>${project.version}</version>
     </dependency>
 
