@@ -113,7 +113,7 @@ public class RootPlugin extends RenderPlugin {
     private String getServerName() {
         final Object request = getRequest().getContainerRequest();
         if(request instanceof HttpServletRequest) {
-            return ((HttpServletRequest) request).getRequestURL().toString();
+            return ((HttpServletRequest) request).getServerName();
         }
         return StringUtils.EMPTY;
     }
