@@ -94,6 +94,7 @@
     <notice.project.name>Hippo CMS</notice.project.name>
 
     <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
+    <hippo.utilities.version>1.01.04-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>1.03.02-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>2.25.03-SNAPSHOT</hippo.repository.version>
 
@@ -275,6 +276,11 @@
         <artifactId>hippo-services</artifactId>
         <version>${hippo.services.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-utilities</artifactId>
+        <version>${hippo.utilities.version}</version>
       </dependency>
 
       <dependency>

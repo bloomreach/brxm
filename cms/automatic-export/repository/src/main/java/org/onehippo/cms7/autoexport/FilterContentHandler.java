@@ -16,56 +16,30 @@
 package org.onehippo.cms7.autoexport;
 
 import java.util.List;
-import java.util.Stack;
 
-import org.xml.sax.Attributes;
+import org.onehippo.cms7.utilities.xml.SystemViewFilter;
+import org.onehippo.repository.util.JcrConstants;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import static org.onehippo.cms7.autoexport.Constants.NAME;
-import static org.onehippo.cms7.autoexport.Constants.NODE;
-import static org.onehippo.cms7.autoexport.Constants.PROPERTY;
-import static org.onehippo.cms7.autoexport.Constants.SV_URI;
 
 /**
  * Filters out all namespace declarations except {http://www.jcp.org/jcr/sv/1.0};
  * excludes all declared subcontexts from export, filters out uuid properties on declared paths,
  * and filters global exclusions
  */
-final class FilterContentHandler implements ContentHandler {
+final class FilterContentHandler extends SystemViewFilter {
 
 
-    private final ContentHandler handler;
-    private final Path path;
     private final List<String> subContextPaths;
     private final List<String> filterUuidPaths;
     private final ExclusionContext exclusionContext;
     private String svprefix;
-    private boolean skip = false;
-    private String context = null;
 
     FilterContentHandler(ContentHandler handler, String rootPath, List<String> subContextPaths, List<String> filterUuidPaths, ExclusionContext exclusionContext) {
-        this.handler = handler;
-        this.path = new Path(rootPath);
+        super(handler, rootPath);
         this.subContextPaths = subContextPaths;
         this.filterUuidPaths = filterUuidPaths;
         this.exclusionContext = exclusionContext;
-    }
-
-    @Override
-    public void setDocumentLocator(Locator locator) {
-        handler.setDocumentLocator(locator);
-    }
-
-    @Override
-    public void startDocument() throws SAXException {
-        handler.startDocument();
-    }
-
-    @Override
-    public void endDocument() throws SAXException {
-        handler.endDocument();
     }
 
     @Override
@@ -85,69 +59,12 @@ final class FilterContentHandler implements ContentHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-        if ((localName.equals(NODE) || localName.equals(PROPERTY)) && uri.equals(SV_URI)) {
-            String name = atts.getValue(SV_URI, NAME);
-            path.push(name);
-            if (!skip) {
-                boolean isExcludedNode = localName.equals(NODE) && shouldFilterElement(path.toString());
-                boolean isExcludedUuidProperty = localName.equals(PROPERTY) && name.equals("jcr:uuid") && isFilteredUuidPath(path.toString());
-                if (isExcludedNode || isExcludedUuidProperty) {
-                    skip = true;
-                    context = path.toString();
-                }
-            }
-        }
-        if (skip) {
-            return;
-        }
-        handler.startElement(uri, localName, qName, atts);
+    protected boolean shouldFilterProperty(final String path, final String name) {
+        return name.equals(JcrConstants.JCR_UUID) && isFilteredUuidPath(path);
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        if ((localName.equals(NODE) || localName.equals(PROPERTY)) && uri.equals(SV_URI)) {
-            if (skip && context.equals(path.toString())) {
-                context = null;
-                skip = false;
-                path.pop();
-                return;
-            }
-            path.pop();
-        }
-        if (skip) {
-            return;
-        }
-        handler.endElement(uri, localName, qName);
-    }
-
-    @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        if (skip) {
-            return;
-        }
-        handler.characters(ch, start, length);
-    }
-
-    @Override
-    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-        if (skip) {
-            return;
-        }
-        handler.ignorableWhitespace(ch, start, length);
-    }
-
-    @Override
-    public void processingInstruction(String target, String data) throws SAXException {
-        handler.processingInstruction(target, data);
-    }
-
-    @Override
-    public void skippedEntity(String name) throws SAXException {
-        handler.skippedEntity(name);
-    }
-    
-    private boolean shouldFilterElement(String path) {
+    protected boolean shouldFilterNode(final String path, final String name) {
         for (String subContextPath : subContextPaths) {
             if (path.equals(subContextPath)) {
                 return true;
@@ -155,7 +72,7 @@ final class FilterContentHandler implements ContentHandler {
         }
         return exclusionContext.isExcluded(path);
     }
-    
+
     private boolean isFilteredUuidPath(String path) {
         for (String filterPath : filterUuidPaths) {
             if (path.startsWith(filterPath)) {
@@ -165,36 +82,4 @@ final class FilterContentHandler implements ContentHandler {
         return false;
     }
 
-    private static final class Path {
-        private final Stack<String> stack = new Stack<String>();
-        private final String prefixPath;
-
-        private String stringValue;
-        
-        private Path(String rootPath) {
-            this.prefixPath = rootPath.equals("/") ? "" : rootPath;
-        }
-
-        void push(String element) {
-            stack.push(element);
-            stringValue = null;
-        }
-
-        void pop() {
-            stack.pop();
-            stringValue = null;
-        }
-
-        @Override
-        public String toString() {
-            if (stringValue == null) {
-                StringBuilder sb = new StringBuilder();
-                for (String element : stack) {
-                    sb.append("/").append(element);
-                }
-                stringValue = prefixPath + sb.toString();
-            }
-            return stringValue;
-        }
-    }
 }
