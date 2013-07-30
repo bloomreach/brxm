@@ -7,6 +7,7 @@ src/main/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStream.java -te
 src/main/java/org/onehippo/cms7/utilities/logging/PrintStreamLogger.java -text
 src/main/java/org/onehippo/cms7/utilities/servlet/ResourceServlet.java -text
 src/main/java/org/onehippo/cms7/utilities/xml/ProxyContentHandler.java -text
+src/main/java/org/onehippo/cms7/utilities/xml/SystemViewFilter.java -text
 src/test/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStreamTest.java -text
 src/test/java/org/onehippo/cms7/utilities/servlet/ResourceServletTest.java -text
 src/test/resources/META-INF/test/internal.properties -text
