@@ -153,13 +153,17 @@ public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
 
             Session session = context.getSession(new SimpleCredentials("system", new char[] {}));
 
-            log.info("Running event log cleanup job");
+            try {
+                log.info("Running event log cleanup job");
 
-            long maxitems =  Long.valueOf(context.getAttribute(CONFIG_MAXITEMS_PROPERTY));
-            long itemtimeout = Long.valueOf(context.getAttribute(CONFIG_KEEP_ITEMS_FOR));
+                long maxitems =  Long.valueOf(context.getAttribute(CONFIG_MAXITEMS_PROPERTY));
+                long itemtimeout = Long.valueOf(context.getAttribute(CONFIG_KEEP_ITEMS_FOR));
 
-            removeTooManyItems(maxitems, session);
-            removeTimedOutItems(itemtimeout, session);
+                removeTooManyItems(maxitems, session);
+                removeTimedOutItems(itemtimeout, session);
+            } finally {
+                session.logout();
+            }
 
         }
 
