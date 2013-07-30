@@ -23,4 +23,6 @@ public final class JcrConstants {
     public static final String MIX_LOCKABLE = "mix:lockable";
     public static final String MIX_REFERENCEABLE = "mix:referenceable";
 
+    public static final String JCR_UUID = "jcr:uuid";
+
 }
