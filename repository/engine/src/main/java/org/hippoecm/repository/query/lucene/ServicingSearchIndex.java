@@ -98,6 +98,40 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     private boolean servicingConsistencyCheckEnabled;
 
+
+    private boolean supportSimilarityOnStrings;
+    private boolean supportSimilarityOnBinaries;
+
+    /**
+     * Whether similarity searches on String properties are supported.Supporting similarity on
+     * Strings increases the Lucene index. If no similarity searches are needed, it is better
+     * to not support similarity.
+     */
+    public void setSupportSimilarityOnStrings(boolean supportSimilarityOnStrings) {
+        this.supportSimilarityOnStrings = supportSimilarityOnStrings;
+    }
+
+    // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
+    // of org.apache.commons.collections.BeanMap#keyIterator
+    public boolean getSupportSimilarityOnStrings() {
+        return supportSimilarityOnStrings;
+    }
+
+    /**
+     * Whether similarity searches on Binary properties are supported. Supporting similarity on
+     * binaries increases the Lucene index. If no similarity searches are needed, it is better
+     * to not support similarity.
+     */
+    public void setSupportSimilarityOnBinaries(boolean supportSimilarityOnBinaries) {
+        this.supportSimilarityOnBinaries = supportSimilarityOnBinaries;
+    }
+
+    // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
+    // of org.apache.commons.collections.BeanMap#keyIterator
+    public boolean getSupportSimilarityOnBinaries() {
+        return supportSimilarityOnBinaries;
+    }
+
     private final Cache<String, AuthorizationFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 
     /**
@@ -392,6 +426,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node, getContext(), nsMappings, getParser());
 
         indexer.setSupportHighlighting(getSupportHighlighting());
+        indexer.setSupportSimilarityOnStrings(getSupportSimilarityOnStrings());
+        indexer.setSupportSimilarityOnBinaries(getSupportSimilarityOnBinaries());
         indexer.setServicingIndexingConfiguration(getIndexingConfig());
         indexer.setIndexFormatVersion(indexFormatVersion);
         Document doc = indexer.createDoc();
