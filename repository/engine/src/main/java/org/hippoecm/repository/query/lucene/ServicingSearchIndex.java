@@ -99,8 +99,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     private boolean servicingConsistencyCheckEnabled;
 
 
-    private boolean supportSimilarityOnStrings;
-    private boolean supportSimilarityOnBinaries;
+    private boolean supportSimilarityOnStrings = true;
+    private boolean supportSimilarityOnBinaries = false;
 
     /**
      * Whether similarity searches on String properties are supported.Supporting similarity on
