@@ -235,10 +235,12 @@
 
             mask: function() {
                 this.el.mask();
+                this.on('locationchanged', this.el.mask, this.el);
             },
 
             unmask: function() {
                 this.el.unmask();
+                this.un('locationchanged', this.el.mask, this.el);
             },
 
             getScrollPosition: function() {

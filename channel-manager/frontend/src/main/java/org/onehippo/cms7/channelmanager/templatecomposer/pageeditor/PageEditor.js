@@ -970,20 +970,13 @@
         },
 
         mask: function() {
-            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
-            if (iframe.isVisible()) {
-                iframe.mask();
-            } else {
-                this.body.addClass(['channel-manager-mask', 'ext-el-mask']);
-            }
+            this.body.addClass(['channel-manager-mask', 'ext-el-mask']);
+            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.mask();
         },
 
         unmask: function() {
-            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
-            if (iframe.isVisible()) {
-                iframe.unmask();
-            }
             this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
+            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.unmask();
         },
 
         selectVariant: function(id, variant) {
