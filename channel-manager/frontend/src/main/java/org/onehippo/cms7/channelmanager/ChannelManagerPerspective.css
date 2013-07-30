@@ -257,7 +257,7 @@
     margin: 0 0 5px;
 }
 
-.channel-manager-mask {
+.channel-manager-mask.ext-el-mask {
     background: url(loading.gif) no-repeat center;
     -moz-opacity: 1;
     opacity: 1;
