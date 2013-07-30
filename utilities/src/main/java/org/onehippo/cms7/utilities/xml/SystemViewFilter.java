@@ -68,7 +68,7 @@ public class SystemViewFilter extends ProxyContentHandler {
      * @param name  the name of the property
      * @return  whether to exclude the property from the system view xml
      */
-    protected boolean shouldFilterProperty(final String path, final String name) {
+    protected boolean shouldFilterProperty(final String path, final String name) throws SAXException {
         return false;
     }
 
@@ -79,7 +79,7 @@ public class SystemViewFilter extends ProxyContentHandler {
      * @param name  the name of the node
      * @return  whether to exclude the node from system view xml
      */
-    protected boolean shouldFilterNode(final String path, final String name) {
+    protected boolean shouldFilterNode(final String path, final String name) throws SAXException {
         return false;
     }
 
