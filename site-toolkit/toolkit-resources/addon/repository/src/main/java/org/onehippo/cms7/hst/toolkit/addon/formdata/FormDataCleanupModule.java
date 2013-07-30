@@ -158,9 +158,13 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
         public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
             log.info("Running form data cleanup job");
             final Session session = context.getSession(new SimpleCredentials("system", new char[] {}));
-            long minutesToLive = Long.parseLong(context.getAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY));
-            String[] excludePaths = context.getAttribute(CONFIG_EXCLUDE_PATHS).split("\\|");
-            removeOldFormData(minutesToLive, excludePaths, session);
+            try {
+                long minutesToLive = Long.parseLong(context.getAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY));
+                String[] excludePaths = context.getAttribute(CONFIG_EXCLUDE_PATHS).split("\\|");
+                removeOldFormData(minutesToLive, excludePaths, session);
+            } finally {
+                session.logout();
+            }
         }
 
         private void removeOldFormData(long minutesToLive, final String[] excludePaths, final Session session) throws RepositoryException {
