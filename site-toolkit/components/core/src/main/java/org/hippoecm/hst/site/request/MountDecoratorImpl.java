@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -134,7 +134,7 @@ public class MountDecoratorImpl implements MountDecorator {
             childAsPreview.put(name, child);
             return child;
         }
-        
+
         @Override
         public List<Mount> getChildMounts() {
             List<Mount> childMounts = delegatee.getChildMounts();
@@ -144,7 +144,7 @@ public class MountDecoratorImpl implements MountDecorator {
             }
             return Collections.unmodifiableList(previewChilds);
         }
-        
+
         @Override
         public String getPreviewCanonicalContentPath() {
             return getCanonicalContentPath();
@@ -171,8 +171,8 @@ public class MountDecoratorImpl implements MountDecorator {
 
         /*
          * NOTE For getType and getTypes the 'preview' version still returns the value the original mount had. So, for a live mount, it will still
-         * be live. This is because otherwise cross mount links will fail (you cannot link from preview to live and vice versa). 
-         * 
+         * be live. This is because otherwise cross mount links will fail (you cannot link from preview to live and vice versa).
+         *
          * This means, implementation should always check isPreview() to check whether the mount is preview, and not isOfType("preview")
          */
         @Override
@@ -222,6 +222,11 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public String getDefaultResourceBundleId() {
             return delegatee.getDefaultResourceBundleId();
+        }
+
+        @Override
+        public String [] getDefaultResourceBundleIds() {
+            return delegatee.getDefaultResourceBundleIds();
         }
 
         @Override

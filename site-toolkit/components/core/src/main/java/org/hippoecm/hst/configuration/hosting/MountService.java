@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,11 +27,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.internal.CollectionOptimizer;
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
@@ -41,6 +40,8 @@ import org.hippoecm.hst.configuration.model.HstSiteRootNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class MountService implements ContextualizableMount, MutableMount {
 
     private static final Logger log = LoggerFactory.getLogger(MountService.class);
-    
+
     private static final String DEFAULT_TYPE = Mount.LIVE_NAME;
     /**
      * The name of this {@link Mount}. If it is the root, it is called hst:root
@@ -57,12 +58,12 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String name;
 
     private String jcrLocation;
-    
+
     /**
      * the identifier of this {@link Mount}
      */
     private String uuid;
-    
+
     /**
      * The virtual host of where this {@link Mount} belongs to
      */
@@ -87,13 +88,13 @@ public class MountService implements ContextualizableMount, MutableMount {
      * the HstSite this {@link Mount} points to. It can be <code>null</code>
      */
     private HstSite hstSite;
-    
+
     /**
      * the previewHstSite equivalent of this {@link Mount}. If this {@link Mount} is a preview,
      * then previewHstSite == hstSite.  It can be <code>null</code>
      */
     private HstSite previewHstSite;
-    
+
     /**
      * The child {@link Mount} below this {@link Mount}
      */
@@ -103,37 +104,37 @@ public class MountService implements ContextualizableMount, MutableMount {
      * the alias of this {@link Mount}. <code>null</code> if there is no alias property
      */
     private String alias;
-    
+
     private Map<String, Object> allProperties;
 
     /**
      * The primary type of this {@link Mount}. If not specified, we use {@link #DEFAULT_TYPE} as a value
      */
     private String type = DEFAULT_TYPE;
-    
+
     /**
      * The list of types excluding the primary <code>type</code> this {@link Mount} also belongs to
      */
     private List<String> types;
-    
-    
+
+
     /**
-     * When the {@link Mount} is preview, and this isVersionInPreviewHeader is true, the used HST version is set as a response header. 
+     * When the {@link Mount} is preview, and this isVersionInPreviewHeader is true, the used HST version is set as a response header.
      * Default this variable is true when it is not configured explicitly
      */
     private boolean versionInPreviewHeader;
-    
+
     /**
      * If this {@link Mount} must use some custom other than the default pipeline, the name of the pipeline is contained by <code>namedPipeline</code>
      */
     private String namedPipeline;
-    
+
 
     /**
      * The mountpath of this {@link Mount}. Note that it can contain wildcards
      */
     private String mountPath;
-    
+
     /**
      * The absolute path of the content (which might be the location of some mirror node)
      */
@@ -144,17 +145,17 @@ public class MountService implements ContextualizableMount, MutableMount {
      * there is no preview, or this Mount is already a preview, then previewContentPath equals contentPath
      */
     private String previewContentPath;
-    
+
     /**
      * The absolute canonical path of the content : In case <code>contentPath</code> points to a mirror,
      * this <code>canonicalContentPath</code> points to the location the mirror points to
      */
     private String canonicalContentPath;
-    
+
     /**
      * The absolute canonical path of the content of the preview version of this {@link Mount}: In case <code>previewContentPath</code> points to a mirror,
      * this <code>canonicalContentPath</code> points to the location the mirror points to.
-     * 
+     *
      * Note that although <code>contentPath</code> and <code>previewContentPath</code> may point to a differrent mirror,
      * <code>canonicalContentPath</code> and <code>previewCanonicalContentPath</code> are most of the time equal
      */
@@ -164,27 +165,27 @@ public class MountService implements ContextualizableMount, MutableMount {
      * The path where the {@link Mount} is pointing to
      */
     private String mountPoint;
-    
+
     /**
-     * The path where the preview equivalent of this {@link Mount} is pointing to. If this {@link Mount} is 
+     * The path where the preview equivalent of this {@link Mount} is pointing to. If this {@link Mount} is
      * a preview. the previewMountPoint is the same as mountPoint
      */
     private String previewMountPoint;
-    
+
     /**
      * <code>true</code> (default) when this {@link Mount} is used as a site. False when used only as content mount point and possibly a namedPipeline
      */
     private boolean isMapped = true;
-    
+
     /**
-     * The homepage for this {@link Mount}. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is 
+     * The homepage for this {@link Mount}. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHost} is
      * taken (which still might be <code>null</code> though)
      */
     private String homepage;
-    
+
 
     /**
-     * The pagenotfound for this {@link Mount}. When the backing configuration does not contain a pagenotfound, then, the pagenotfound from the backing {@link VirtualHost} is 
+     * The pagenotfound for this {@link Mount}. When the backing configuration does not contain a pagenotfound, then, the pagenotfound from the backing {@link VirtualHost} is
      * taken (which still might be <code>null</code> though)
      */
     private String pageNotFound;
@@ -193,20 +194,20 @@ public class MountService implements ContextualizableMount, MutableMount {
      * whether the context path should be in the url.
      */
     private boolean contextPathInUrl;
-    
+
     // by default, isSite = true
     private boolean isSite = true;
-    
+
     /**
      * whether the port number should be in the url.
      */
     private boolean showPort;
-    
+
     /**
      * default port is 0, which means, the {@link Mount} is port agnostic
      */
     private int port;
-    
+
     /**
      *  when this {@link Mount} is only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
      */
@@ -216,32 +217,32 @@ public class MountService implements ContextualizableMount, MutableMount {
     private boolean schemeAgnostic;
     private boolean containsMultipleSchemes = false;
     private int schemeNotMatchingResponseCode = -1;
-    
+
     /**
      * The locale for this {@link Mount}. When the backing configuration does not contain a locale, the value from a parent {@link Mount} is used. If there is
      * no parent, the value will be {@link VirtualHosts#getLocale()}. The locale can be <code>null</code>
      */
     private String locale;
-    
+
     private boolean authenticated;
-    
+
     private Set<String> roles;
-    
+
     private Set<String> users;
 
     private boolean subjectBasedSession;
-    
+
     private boolean sessionStateful;
 
     private final boolean cacheable;
 
-    private String defaultResourceBundleId;
+    private String [] defaultResourceBundleIds;
 
     private String formLoginPage;
     private ChannelInfo channelInfo;
-    
+
     private String[] defaultSiteMapItemHandlerIds;
-    
+
     private String cmsLocation;
     private String lockedBy;
     private Calendar lockedOn;
@@ -256,7 +257,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.jcrLocation = mount.getValueProvider().getPath();
         this.uuid = mount.getValueProvider().getIdentifier();
         // default for when there is no alias property
-        
+
         this.allProperties = mount.getValueProvider().getProperties();
 
         this.parameters = new HashMap<String, String>();
@@ -285,13 +286,13 @@ public class MountService implements ContextualizableMount, MutableMount {
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
             this.alias = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase());
         }
-        
+
         if(parent == null) {
             mountPath = "";
         } else {
             mountPath = StringPool.get((parent.getMountPath() + "/" + name));
         }
-       
+
         // is the context path visible in the url
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWCONTEXTPATH)) {
             this.contextPathInUrl = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SHOWCONTEXTPATH);
@@ -302,7 +303,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.contextPathInUrl = virtualHost.isContextPathInUrl();
             }
         }
-     
+
         // is the port number visible in the url
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT)) {
             this.showPort = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SHOWPORT);
@@ -313,7 +314,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.showPort = virtualHost.isPortInUrl();
             }
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH)) {
             this.onlyForContextPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ONLYFORCONTEXTPATH);
         } else {
@@ -323,7 +324,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.onlyForContextPath = virtualHost.onlyForContextPath();
             }
         }
-        
+
         if(onlyForContextPath != null && !"".equals(onlyForContextPath)) {
             if(onlyForContextPath.startsWith("/")) {
                 // onlyForContextPath starts with a slash. If it contains another /, it is configured incorrectly
@@ -336,7 +337,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 onlyForContextPath = null;
             }
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SCHEME)) {
             scheme = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_SCHEME));
         }
@@ -362,7 +363,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             schemeNotMatchingResponseCode = parent != null ?
                     parent.getSchemeNotMatchingResponseCode() : virtualHost.getSchemeNotMatchingResponseCode();
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
             homepage = StringPool.get(homepage);
@@ -374,7 +375,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.homepage = virtualHost.getHomePage();
             }
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
             locale = StringPool.get(locale);
@@ -386,7 +387,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.locale = virtualHost.getLocale();
             }
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
             pageNotFound = StringPool.get(pageNotFound);
@@ -398,8 +399,8 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.pageNotFound = virtualHost.getPageNotFound();
             }
         }
-        
-        
+
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         } else {
@@ -410,14 +411,14 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.versionInPreviewHeader = virtualHost.isVersionInPreviewHeader();
             }
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPE)) {
             this.type = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_TYPE);
             type = StringPool.get(type);
         } else if(parent != null) {
             this.type = parent.getType();
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_TYPES)) {
             String[] typesProperty = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_TYPES);
             for(int i = 0; i< typesProperty.length ; i++) {
@@ -428,26 +429,26 @@ public class MountService implements ContextualizableMount, MutableMount {
             // because the parent.getTypes also includes the primary type, below we CANNOT use parent.getTypes() !!
             this.types = ((MountService)parent).types;
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED)) {
             this.isMapped = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_ISMAPPED);
         } else if(parent != null) {
             this.isMapped = parent.isMapped();
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_IS_SITE)) {
             this.isSite = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_IS_SITE);
         } else if(parent != null) {
             this.isSite = parent.isSite();
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE);
             namedPipeline  = StringPool.get(namedPipeline);
         } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
         }
-        
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
             this.mountPoint = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT);
             mountPoint = StringPool.get(mountPoint);
@@ -461,20 +462,20 @@ public class MountService implements ContextualizableMount, MutableMount {
                 log.info("mountPoint for Mount '{}' is inherited from its parent Mount and is '{}'", getName() , mountPoint);
             }
         }
-        
+
         if(Mount.PREVIEW_NAME.equals(type)) {
             previewMountPoint = mountPoint;
         } else {
             previewMountPoint = mountPoint + "-" + Mount.PREVIEW_NAME;
         }
-        
-        
+
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
             this.authenticated = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED);
         } else if (parent != null){
             this.authenticated = parent.isAuthenticated();
-        } 
-        
+        }
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ROLES)) {
             String [] rolesProp = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_ROLES);
             this.roles = new HashSet<String>();
@@ -484,7 +485,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         } else {
             this.roles = new HashSet<String>();
         }
-        
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_USERS)) {
             String [] usersProp = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_USERS);
             this.users = new HashSet<String>();
@@ -494,19 +495,19 @@ public class MountService implements ContextualizableMount, MutableMount {
         } else {
             this.users = new HashSet<String>();
         }
-        
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SUBJECTBASEDSESSION)) {
             this.subjectBasedSession = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SUBJECTBASEDSESSION);
         } else if (parent != null){
             this.subjectBasedSession = parent.isSubjectBasedSession();
         }
-        
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SESSIONSTATEFUL)) {
             this.sessionStateful = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_SESSIONSTATEFUL);
         } else if (parent != null){
             this.sessionStateful = parent.isSessionStateful();
         }
-        
+
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE)) {
             this.formLoginPage = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_FORMLOGINPAGE));
         } else if (parent != null){
@@ -522,11 +523,11 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
-            this.defaultResourceBundleId = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
+            this.defaultResourceBundleIds = StringUtils.split(mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
         } else if(parent != null) {
-            this.defaultResourceBundleId = parent.getDefaultResourceBundleId();
+            this.defaultResourceBundleIds = parent.getDefaultResourceBundleIds();
         } else {
-            this.defaultResourceBundleId =  virtualHost.getDefaultResourceBundleId();
+            this.defaultResourceBundleIds =  virtualHost.getDefaultResourceBundleIds();
         }
 
         this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
@@ -549,7 +550,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             throw new ServiceException("Mount at '"+mount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
         } else if(!isMapped()){
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured to not use a HstSiteMap because isMapped() is false", getName(), mount.getValueProvider().getPath());
-            
+
             // check if the mountpoint points to a hst:site node:
             HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
             if(hstSiteNodeForMount == null) {
@@ -564,22 +565,22 @@ public class MountService implements ContextualizableMount, MutableMount {
                 contentPath = hstSiteNodeForMount.getContentPath();
             }
         } else {
-             
+
             HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
             if(hstSiteNodeForMount == null) {
                 throw new ServiceException("mountPoint '" + mountPoint
                         + "' does not point to a hst:site node for Mount '" + mount.getValueProvider().getPath()
                         + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
             }
-            
+
             hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
             canonicalContentPath = hstSiteNodeForMount.getContentPath();
             contentPath = hstSiteNodeForMount.getContentPath();
             containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
-            
-            // now also try to get hold of the previewHstSite. If we cannot load it, we log an info: 
+
+            // now also try to get hold of the previewHstSite. If we cannot load it, we log an info:
             HstSiteRootNode previewHstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(previewMountPoint);
             if(previewHstSiteNodeForMount == null || isPreview()) {
                 if (!isPreview()) {
@@ -651,12 +652,12 @@ public class MountService implements ContextualizableMount, MutableMount {
         childMountServices.put(mount.getName(), mount);
         ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(mount);
     }
-    
+
     @Override
     public List<Mount> getChildMounts() {
         return Collections.unmodifiableList(new ArrayList<Mount>(childMountServices.values()));
     }
-    
+
     public Mount getChildMount(String name) {
         return childMountServices.get(name);
     }
@@ -670,11 +671,11 @@ public class MountService implements ContextualizableMount, MutableMount {
         return previewHstSite;
     }
 
-    
+
     public String getName() {
         return name;
     }
-    
+
     public String getIdentifier() {
         return uuid;
     }
@@ -682,11 +683,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     public String getAlias() {
         return alias;
     }
-    
+
     public String getMountPath() {
         return mountPath;
     }
-    
+
     public String getContentPath() {
         return contentPath;
     }
@@ -694,15 +695,15 @@ public class MountService implements ContextualizableMount, MutableMount {
     public String getCanonicalContentPath() {
         return canonicalContentPath;
     }
-    
+
     /*
-     * internal only : not api 
+     * internal only : not api
      */
     public String getPreviewContentPath() {
         return previewContentPath;
     }
     /*
-     * internal only: not api 
+     * internal only: not api
      */
     public String getPreviewCanonicalContentPath() {
         return previewCanonicalContentPath;
@@ -711,19 +712,19 @@ public class MountService implements ContextualizableMount, MutableMount {
     public String getMountPoint() {
         return mountPoint;
     }
-    
+
     /*
-     * internal only: not api 
+     * internal only: not api
      */
     public String getPreviewMountPoint() {
         return previewMountPoint;
     }
-    
+
     public boolean isMapped() {
         return isMapped;
     }
 
-    
+
     public Mount getParent() {
         return parent;
     }
@@ -752,7 +753,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     public String getHomePage() {
         return homepage;
     }
-    
+
     public String getPageNotFound() {
         return pageNotFound;
     }
@@ -772,11 +773,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     public boolean isPortInUrl() {
         return showPort;
     }
-    
+
     public boolean isSite() {
         return isSite;
-    } 
-    
+    }
+
     public String onlyForContextPath() {
         return onlyForContextPath;
     }
@@ -788,12 +789,12 @@ public class MountService implements ContextualizableMount, MutableMount {
     public String getType() {
         return type;
     }
-    
+
     public List<String> getTypes(){
         List<String> combined = new ArrayList<String>();
         // add the primary type  first
         combined.add(getType());
-        
+
         if(types != null) {
             if(types.contains(getType())) {
                 for(String extraType : types) {
@@ -801,7 +802,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                        if(extraType.equals(getType())) {
                            // already got it
                            continue;
-                       } 
+                       }
                        combined.add(extraType);
                     }
                 }
@@ -811,16 +812,16 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
         return Collections.unmodifiableList(combined);
     }
-    
+
     public boolean isOfType(String type) {
         return getTypes().contains(type);
     }
 
-    
+
     public boolean isVersionInPreviewHeader() {
         return versionInPreviewHeader;
     }
-    
+
    public String getCmsLocation() {
         return cmsLocation;
     }
@@ -860,27 +861,27 @@ public class MountService implements ContextualizableMount, MutableMount {
     public boolean isAuthenticated() {
         return authenticated;
     }
-    
+
     public Set<String> getRoles() {
         return Collections.unmodifiableSet(this.roles);
     }
-    
+
     public Set<String> getUsers() {
         return Collections.unmodifiableSet(this.users);
     }
-    
+
     public boolean isSubjectBasedSession() {
         return subjectBasedSession;
     }
-    
+
     public boolean isSessionStateful() {
         return sessionStateful;
     }
-    
+
     public String getFormLoginPage() {
         return formLoginPage;
     }
-    
+
     public String getProperty(String name) {
         Object o = allProperties.get(name);
         if(o != null) {
@@ -902,7 +903,20 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     @Override
     public String getDefaultResourceBundleId() {
-        return defaultResourceBundleId;
+        if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {
+            return null;
+        }
+
+        return defaultResourceBundleIds[0];
+    }
+
+    @Override
+    public String [] getDefaultResourceBundleIds() {
+        if (defaultResourceBundleIds == null) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+
+        return (String[]) ArrayUtils.clone(defaultResourceBundleIds);
     }
 
     public Map<String, String> getMountProperties() {

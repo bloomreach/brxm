@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,64 +22,65 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VirtualHostService implements MutableVirtualHost {
-    
+
     private static final Logger log = LoggerFactory.getLogger(VirtualHostService.class);
-    
+
     private Map<String, MutableVirtualHost> childVirtualHosts = VirtualHostsService.virtualHostHashMap();
-   
+
     private String name;
     private String hostName;
     /**
-     * The homepage for this VirtualHost. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHosts} is 
+     * The homepage for this VirtualHost. When the backing configuration does not contain a homepage, then, the homepage from the backing {@link VirtualHosts} is
      * taken (which still might be <code>null</code> though)
      */
     private String homepage;
     /**
-     * The pageNotFound for this VirtualHost. When the backing configuration does not contain a pageNotFound, then, the pageNotFound from the backing {@link VirtualHosts} is 
+     * The pageNotFound for this VirtualHost. When the backing configuration does not contain a pageNotFound, then, the pageNotFound from the backing {@link VirtualHosts} is
      * taken (which still might be <code>null</code> though)
      */
     private String pageNotFound;
-    
+
     /**
      * The locale configured on this Virtual host. When the backing configuration does not contain a locale, it is taken from the parent {@link VirtualHost}. When there is no parent {@link VirtualHost},
      * the value is taken from {@link VirtualHosts#getLocale()}. The locale can be <code>null</code>
      */
     private String locale;
-    
+
     /**
      * Whether the {@link Mount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview {@link Mount}
      */
     private boolean versionInPreviewHeader;
 
     private VirtualHosts virtualHosts;
-    
+
     /**
      * The name of the host group this virtualhost belongs to, for example, dev, acct or prod
      */
     private String hostGroupName;
     private VirtualHostService parentHost;
-    
+
     private Map<Integer, MutablePortMount> portMounts = new HashMap<Integer, MutablePortMount>();
-    
+
     private boolean contextPathInUrl;
 
     /**
      *  when {@link Mount}s for this {@link VirtualHost} are only applicable for certain contextpath, this property for the contextpath tells which value it must have. It must start with a slash.
      */
     private String onlyForContextPath;
-    
+
     private boolean showPort;
     private String scheme;
     private boolean schemeAgnostic;
@@ -87,10 +88,10 @@ public class VirtualHostService implements MutableVirtualHost {
     private String cmsLocation;
     private Integer defaultPort;
     private final boolean cacheable;
-    private String defaultResourceBundleId;
+    private String [] defaultResourceBundleIds;
 
     public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, int defaultPort, HstManagerImpl hstManager) throws ServiceException {
-       
+
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
         this.hostGroupName = StringPool.get(hostGroupName);
@@ -107,7 +108,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 this.contextPathInUrl = virtualHosts.isContextPathInUrl();
             }
         }
-        
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH)) {
             this.onlyForContextPath = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_ONLYFORCONTEXTPATH);
         } else {
@@ -118,7 +119,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 this.onlyForContextPath = virtualHosts.getDefaultContextPath();
             }
         }
-        
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT)) {
             this.showPort = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOST_PROPERTY_SHOWPORT);
         } else {
@@ -129,7 +130,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 this.showPort = virtualHosts.isPortInUrl();
             }
         }
-        
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME)) {
             scheme = StringPool.get(virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME));
         }
@@ -166,7 +167,7 @@ public class VirtualHostService implements MutableVirtualHost {
             }
         }
         locale = StringPool.get(locale);
-        
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
             this.homepage = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
         } else {
@@ -179,7 +180,7 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         homepage = StringPool.get(homepage);
-        
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND)) {
             this.pageNotFound = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
         } else {
@@ -192,7 +193,7 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         pageNotFound = StringPool.get(pageNotFound);
-     
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             this.versionInPreviewHeader = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         } else {
@@ -213,18 +214,18 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
-            this.defaultResourceBundleId = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
+            this.defaultResourceBundleIds = StringUtils.split(virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
         } else if(parentHost != null) {
-            this.defaultResourceBundleId = parentHost.getDefaultResourceBundleId();
+            this.defaultResourceBundleIds = parentHost.getDefaultResourceBundleIds();
         } else {
-            this.defaultResourceBundleId =  virtualHosts.getDefaultResourceBundleId();
+            this.defaultResourceBundleIds =  virtualHosts.getDefaultResourceBundleIds();
         }
 
         String fullName = virtualHostNode.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
-        
+
         VirtualHostService attachPortMountToHost = this;
-        
+
         if(nameSegments.length > 1) {
             // check whether the hostname is an ip adres as only ip adresses are allowed to contain a "." in their name. For example www.onehippo.org should be configured
             // hierarchically
@@ -236,7 +237,7 @@ public class VirtualHostService implements MutableVirtualHost {
                    throw new ServiceException("Node hst:virtualhost is not allowed to be '"+fullName+"'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
                }
             }
-            
+
             // if the fullName is for example 127.0.0.1, then this items name is '1', its child is 0 which has a child 0, which has
             // the last child is '127'
             this.name = StringPool.get(nameSegments[nameSegments.length - 1]);
@@ -257,13 +258,13 @@ public class VirtualHostService implements MutableVirtualHost {
         } else {
             this.name = virtualHostNode.getValueProvider().getName().toLowerCase();
         }
-        
+
         hostName = StringPool.get(buildHostName());
-        
+
         HstNode mountRoot = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(mountRoot != null) {
             log.info("Host '{}' does have a root Mount configured without PortMount. This Mount is port agnostic ", this.getHostName());
-            // we have a configured root Mount node without portmount. Let's populate this Mount. This Mount will be added to 
+            // we have a configured root Mount node without portmount. Let's populate this Mount. This Mount will be added to
             // a portmount service with portnumber 0, which means any port
             HstNode mountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
@@ -283,7 +284,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 log.error("Expected a node of type '{}' at '{}' but was of type '"+mountNode.getNodeTypeName()+"'", HstNodeTypes.NODETYPE_HST_MOUNT, mountNode.getValueProvider().getPath());
             }
         }
-        
+
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
                 try {
@@ -292,7 +293,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
                 }
-                
+
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
                 try {
                 MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
@@ -300,9 +301,9 @@ public class VirtualHostService implements MutableVirtualHost {
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
                 }
-            } 
+            }
         }
-       
+
     }
 
     public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroupName, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) {
@@ -322,7 +323,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.onlyForContextPath = parent.onlyForContextPath;
         this.showPort = parent.showPort;
         this.cacheable = parent.cacheable;
-        this.defaultResourceBundleId = parent.defaultResourceBundleId;
+        this.defaultResourceBundleIds = parent.defaultResourceBundleIds;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
@@ -331,14 +332,14 @@ public class VirtualHostService implements MutableVirtualHost {
         }
         hostName = StringPool.get(buildHostName());
     }
-    
+
     @Override
     public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
         // when the virtualhost already exists, the childVirtualHosts.put will throw an IllegalArgumentException, so we do not
         // need a separate check
         childVirtualHosts.put(virtualHost.getName(), virtualHost);
     }
-    
+
 
     @Override
     public void addPortMount(MutablePortMount portMount) throws IllegalArgumentException {
@@ -349,15 +350,15 @@ public class VirtualHostService implements MutableVirtualHost {
     }
 
 
-    
+
     public String getName(){
         return name;
     }
-    
+
     public String getHostName(){
         return hostName;
     }
-    
+
     public String getHostGroupName() {
         return hostGroupName;
     }
@@ -365,16 +366,16 @@ public class VirtualHostService implements MutableVirtualHost {
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
     }
-    
+
     @Override
     public String onlyForContextPath() {
         return onlyForContextPath;
     }
-    
+
     public boolean isPortInUrl() {
         return showPort;
     }
-    
+
     public String getScheme(){
         return this.scheme;
     }
@@ -391,7 +392,7 @@ public class VirtualHostService implements MutableVirtualHost {
         return locale;
     }
 
-    
+
     public String getHomePage() {
         return homepage;
     }
@@ -415,7 +416,7 @@ public class VirtualHostService implements MutableVirtualHost {
     public VirtualHosts getVirtualHosts() {
         return this.virtualHosts;
     }
-    
+
     public PortMount getPortMount(int portNumber) {
         return portMounts.get(portNumber);
     }
@@ -446,10 +447,21 @@ public class VirtualHostService implements MutableVirtualHost {
         return cacheable;
     }
 
+    @Override
     public String getDefaultResourceBundleId() {
-        return defaultResourceBundleId;
+        if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {
+            return null;
+        }
+        return defaultResourceBundleIds[0];
     }
 
+    public String [] getDefaultResourceBundleIds() {
+        if (defaultResourceBundleIds == null) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+
+        return (String[]) ArrayUtils.clone(defaultResourceBundleIds);
+    }
 
     private String buildHostName() {
         StringBuilder builder = new StringBuilder(name);
@@ -465,6 +477,6 @@ public class VirtualHostService implements MutableVirtualHost {
     public String toString() {
         return "VirtualHostService [name=" + name + ", hostName =" + hostName + ", hostGroupName=" + hostGroupName + "]";
     }
-    
+
 
 }

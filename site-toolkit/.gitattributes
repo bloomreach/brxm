@@ -421,6 +421,7 @@ commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuItemImpl.java s
 commons/src/main/java/org/hippoecm/hst/diagnosis/DefaultTaskImpl.java -text
 commons/src/main/java/org/hippoecm/hst/diagnosis/HDC.java -text
 commons/src/main/java/org/hippoecm/hst/diagnosis/NOOPTaskImpl.java -text
+commons/src/main/java/org/hippoecm/hst/resourcebundle/CompositeResourceBundle.java -text
 commons/src/main/java/org/hippoecm/hst/resourcebundle/ResourceBundleUtils.java -text
 commons/src/main/java/org/hippoecm/hst/security/HstSubject.java -text
 commons/src/main/java/org/hippoecm/hst/security/PolicyContextWrapper.java -text
@@ -456,6 +457,7 @@ commons/src/test/java/org/hippoecm/hst/core/hosting/TestCustomMountAndVirtualhos
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/diagnosis/TestHDC.java -text
+commons/src/test/java/org/hippoecm/hst/resourcebundle/TestCompositeResourceBundle.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestAnnotationsScanner.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstRequestUtils.java -text

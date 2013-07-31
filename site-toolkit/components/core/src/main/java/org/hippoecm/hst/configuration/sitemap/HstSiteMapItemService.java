@@ -133,7 +133,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String scheme;
     private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
-    private final String resourceBundleId;
+    private final String [] resourceBundleIds;
 
     HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
@@ -409,9 +409,9 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
-            this.resourceBundleId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID));
+            this.resourceBundleIds = StringUtils.split(StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)), " ,\t\f\r\n");
         } else {
-            this.resourceBundleId = parentItem != null ? parentItem.getResourceBundleId() : mount.getDefaultResourceBundleId();
+            this.resourceBundleIds = parentItem != null ? parentItem.getResourceBundleIds() : mount.getDefaultResourceBundleIds();
         }
 
         for(HstNode child : node.getNodes()) {
@@ -551,7 +551,20 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
     @Override
     public String getResourceBundleId() {
-        return resourceBundleId;
+        if (resourceBundleIds == null || resourceBundleIds.length == 0) {
+            return null;
+        }
+
+        return resourceBundleIds[0];
+    }
+
+    @Override
+    public String [] getResourceBundleIds() {
+        if (resourceBundleIds == null) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+
+        return (String[]) ArrayUtils.clone(resourceBundleIds);
     }
 
     public HstSiteMapItem getParentItem() {

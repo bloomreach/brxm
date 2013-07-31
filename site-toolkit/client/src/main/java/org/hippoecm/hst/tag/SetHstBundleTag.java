@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.tag;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -26,7 +28,9 @@ import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.resourcebundle.CompositeResourceBundle;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -42,6 +46,7 @@ public class SetHstBundleTag extends TagSupport {
     private static Logger log = LoggerFactory.getLogger(SetHstBundleTag.class);
 
     protected String basename;
+    protected boolean fallbackToDefaultLocalizationContext = true;
     protected boolean fallbackToJavaResourceBundle = true;
 
     private int scope;
@@ -73,13 +78,17 @@ public class SetHstBundleTag extends TagSupport {
         this.basename = basename;
     }
 
-    public void setFallbackToJavaResourceBundle(boolean fallbackToJavaResourceBundle) throws JspTagException {
+    public void setFallbackToDefaultLocalizationContext(boolean fallbackToDefaultLocalizationContext) {
+        this.fallbackToDefaultLocalizationContext = fallbackToDefaultLocalizationContext;
+    }
+
+    public void setFallbackToJavaResourceBundle(boolean fallbackToJavaResourceBundle) {
         this.fallbackToJavaResourceBundle = fallbackToJavaResourceBundle;
     }
 
     public int doEndTag() throws JspException {
         try {
-            LocalizationContext locCtxt = getLocalizationContext(pageContext, basename, fallbackToJavaResourceBundle);
+            LocalizationContext locCtxt = getLocalizationContext(pageContext, basename, fallbackToJavaResourceBundle, fallbackToDefaultLocalizationContext);
 
             if (var != null) {
                 pageContext.setAttribute(var, locCtxt, scope);
@@ -100,22 +109,55 @@ public class SetHstBundleTag extends TagSupport {
         init();
     }
 
+    /**
+     * @deprecated Use {@link #getLocalizationContext(PageContext, String, boolean, boolean)} instead.
+     * @param pc
+     * @param basename
+     * @param fallbackToJavaResourceBundle
+     * @return
+     */
+    @Deprecated
     public static LocalizationContext getLocalizationContext(PageContext pc, String basename, boolean fallbackToJavaResourceBundle) {
+        return getLocalizationContext(pc, basename, fallbackToJavaResourceBundle, true);
+    }
+
+    private static LocalizationContext getLocalizationContext(PageContext pc, String basename, boolean fallbackToJavaResourceBundle, boolean fallbackToDefaultLocaleContext) {
         HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pc.getRequest());
         HttpServletRequest request =  hstRequest == null ? (HttpServletRequest) pc.getRequest() : hstRequest;
         Locale locale = request.getLocale();
-        ResourceBundle bundle = null;
+        List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
+        String [] bundleIds = StringUtils.split(basename, " ,\t\f\r\n");
 
-        try {
-            bundle = ResourceBundleUtils.getBundle(request, basename, locale, fallbackToJavaResourceBundle);
-        } catch (Exception e) {
-            log.warn("Failed to get bundle for basename: {}. {}", basename, e);
+        if (bundleIds != null) {
+            ResourceBundle bundle = null;
+
+            for (String bundleId : bundleIds) {
+                try {
+                    bundle = ResourceBundleUtils.getBundle(request, bundleId, locale, fallbackToJavaResourceBundle);
+
+                    if (bundle != null) {
+                        bundles.add(bundle);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to get bundle for basename: {}. {}", basename, e);
+                }
+            }
+
+            if (fallbackToDefaultLocaleContext) {
+                ResourceBundle defaultResoureBundle = getResourceBundleOfDefaultLocalizationContext(pc);
+
+                if (defaultResoureBundle != null) {
+                    bundles.add(defaultResoureBundle);
+                }
+            }
         }
 
-        if (bundle == null) {
+        if (bundles.isEmpty()) {
             return new LocalizationContext();
+        } else if (bundles.size() == 1) {
+            return new LocalizationContext(bundles.get(0));
         } else {
-            return new LocalizationContext(bundle);
+            return new LocalizationContext(new CompositeResourceBundle(bundles.toArray(new ResourceBundle[bundles.size()])));
         }
     }
 
@@ -131,4 +173,13 @@ public class SetHstBundleTag extends TagSupport {
         return PageContext.PAGE_SCOPE;
     }
 
+    private static ResourceBundle getResourceBundleOfDefaultLocalizationContext(PageContext pc) {
+        LocalizationContext defaultLocalizationContext = (LocalizationContext) Config.get(pc.getRequest(), Config.FMT_LOCALIZATION_CONTEXT);
+
+        if (defaultLocalizationContext != null) {
+            return defaultLocalizationContext.getResourceBundle();
+        }
+
+        return null;
+    }
 }

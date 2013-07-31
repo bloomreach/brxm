@@ -43,7 +43,6 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -56,6 +55,8 @@ import org.hippoecm.hst.util.HstRequestUtils;
 public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAugmenter {
 
     private static final String DEFAULT_NOOP_NAMED_PIPELINE =  "NoopPipeline";
+
+    private static final String [] EMPTY_ARRAY = {};
 
     private String springConfiguredCmsLocation;
     private String mountName;
@@ -294,12 +295,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             }
             position++;
             if(position == hostSegments.length) {
-                // done with adding hosts 
+                // done with adding hosts
             } else {
                  childs.put(hostSegments[position], new CustomVirtualHost(virtualHosts, hostSegments, cmsLocation,  position, hostGroupName));
             }
         }
-        
+
         @Override
         public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
             if(childs.containsKey(virtualHost.getName())) {
@@ -307,13 +308,13 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             }
             childs.put(virtualHost.getName(), virtualHost);
         }
-        
+
         @Override
         public PortMount getPortMount(int portNumber) {
             // the portMount for the cms rest host is port agnostic
             return portMount;
         }
-        
+
         public void setPortMount(MutablePortMount portMount) {
             this.portMount = portMount;
         }
@@ -324,12 +325,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             log.warn("Cannot add a portMount to a CmsRestVirtualHost");
             return;
         }
-        
+
         @Override
         public String onlyForContextPath() {
             return virtualHosts.getDefaultContextPath();
         }
-        
+
         @Override
         public boolean isPortInUrl() {
             // do not set to true : for _cmsrest, the port and contextpath must not be taken from the mount
@@ -341,7 +342,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             // do not set to true : for _cmsrest, the port and contextpath must not be taken from the mount
             return false;
         }
-        
+
         @Override
         public String getName() {
             return name;
@@ -392,7 +393,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         public String getPageNotFound() {
             return null;
         }
-        
+
         @Override
         public String getLocale() {
             return null;
@@ -426,10 +427,15 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        public String [] getDefaultResourceBundleIds() {
+            return EMPTY_ARRAY;
+        }
+
+        @Override
         public String getCmsLocation() {
             return cmsLocation;
         }
-        
+
 
         @Override
         public String toString() {
@@ -437,16 +443,16 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
     }
-    
+
     private class CustomPortMount implements MutablePortMount {
 
         private int port;
         private Mount rootMount;
-        
+
         private CustomPortMount(int port) throws ServiceException {
             this.port = port;
         }
-        
+
         @Override
         public int getPortNumber() {
             return port;
@@ -466,11 +472,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         public String toString() {
             return "CustomPortMount [port=" + port + "]";
         }
-        
+
     }
 
     private final static String fakeNonExistingPath = "/fakePath/"+UUID.randomUUID().toString();
-    
+
     private class CustomMount implements MutableMount {
 
         private VirtualHost virtualHost;
@@ -484,11 +490,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         private String mountPath;
         private String type;
         private List<String> types;
-        
+
         /**
          * Creates a hst:root Mount + the child custom mount
          * @param virtualHost
-         * @param namedPipeline 
+         * @param namedPipeline
          * @throws org.hippoecm.hst.service.ServiceException
          */
         private CustomMount(VirtualHost virtualHost, String type, String namedPipeline) throws ServiceException {
@@ -530,12 +536,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
            childs.put(mount.getName(), mount);
            ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(this);
         }
-        
+
         @Override
         public String getNamedPipeline() {
             return namedPipeline;
         }
-        
+
         @Override
         public String getName() {
             return name;
@@ -572,7 +578,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return virtualHost;
         }
 
-        
+
         @Override
         public HstSite getHstSite() {
             // no hst site
@@ -650,13 +656,13 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         public String getMountPath() {
             return mountPath;
         }
-        
+
         @Override
         public String getHomePage() {
             return null;
         }
-        
-        
+
+
         @Override
         public String getPageNotFound() {
             return null;
@@ -693,7 +699,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public String getType() { 
+        public String getType() {
             // this has to be LIVE : the links that are created through the CMS REST MOUNT
             // need to be 'live' links. The CMS will decorate these live links to preview
            return type;
@@ -780,6 +786,10 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return null;
         }
 
+        @Override
+        public String [] getDefaultResourceBundleIds() {
+            return EMPTY_ARRAY;
+        }
 
         @Override
         public void setChannelInfo(ChannelInfo info) {

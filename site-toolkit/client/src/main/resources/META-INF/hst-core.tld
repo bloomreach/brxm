@@ -783,7 +783,7 @@
       <description>
         Resource bundle base name. This is the bundle's fully-qualified resource name,
         which has the same form as a fully-qualified class name, that is, it uses "."
-        as the package component separator and does not have any file type 
+        as the package component separator and does not have any file type
         (such as ".class" or ".properties") suffix.
       </description>
       <name>basename</name>
@@ -797,6 +797,15 @@
         The default value is true.
       </description>
       <name>fallbackToJavaResourceBundle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Flag whether or not to fall back to the default localization context, which might
+        have been set in the virtual hosts, vitual host, mount or sitemap item level.
+      </description>
+      <name>fallbackToDefaultLocalizationContext</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
@@ -847,9 +856,9 @@
 
   <function>
     <description>
-      Determines if the class or interface represented by this content bean object is either the same as, or is a 
+      Determines if the class or interface represented by this content bean object is either the same as, or is a
       subclass of, the class or interface represented by the specified fully qualified class name parameter.
-      It returns true if so; otherwise it returns false. 
+      It returns true if so; otherwise it returns false.
     </description>
     <name>isBeanType</name>
     <function-class>org.hippoecm.hst.util.ContentBeanUtils</function-class>

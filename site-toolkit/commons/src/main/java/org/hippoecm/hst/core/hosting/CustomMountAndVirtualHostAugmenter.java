@@ -40,7 +40,6 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
@@ -53,6 +52,8 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
     private final static String DEFAULT_CUSTOM_HOST_NAME = "127.0.0.1";
     private final static String DEFAULT_NOOP_NAMED_PIPELINE = "NoopPipeline";
+
+    private static final String [] EMPTY_ARRAY = {};
 
     private String customMountName = null;
     private String customMountNamedPipeline = null;
@@ -330,6 +331,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String getDefaultResourceBundleId() {
             return null;
+        }
+
+        @Override
+        public String [] getDefaultResourceBundleIds() {
+            return EMPTY_ARRAY;
         }
 
         @Override
@@ -666,6 +672,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String getDefaultResourceBundleId() {
             return null;
+        }
+
+        @Override
+        public String [] getDefaultResourceBundleIds() {
+            return EMPTY_ARRAY;
         }
 
         @Override

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -49,20 +50,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VirtualHostsService implements MutableVirtualHosts {
-    
+
     private static final Logger log = LoggerFactory.getLogger(VirtualHostsService.class);
 
     private final static String WILDCARD = "_default_";
-    
+
     private HstManagerImpl hstManager;
     private Map<String, Map<String, MutableVirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<String, Map<String, MutableVirtualHost>>();
 
     private Map<String, List<Mount>> mountByHostGroup = new HashMap<String, List<Mount>>();
     private Map<String, Mount> mountsByIdentifier = new HashMap<String, Mount>();
     private Map<String, Map<String, Mount>> mountByGroupAliasAndType = new HashMap<String, Map<String, Mount>>();
-    
+
     private List<Mount> registeredMounts = new ArrayList<Mount>();
-  
+
     private String defaultHostName;
     /**
      * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is
@@ -75,20 +76,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * value is <code>null</code>
      */
     private String pageNotFound;
-    
+
 
     /**
      * The general locale configured on VirtualHosts. When the backing configuration does not contain a locale, the
      * value is <code>null</code>
      */
     private String locale;
-    
+
     /**
      * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header
      * when they are a preview {@link Mount}
      */
     private boolean versionInPreviewHeader = true;
-    
+
     private boolean virtualHostsConfigured;
     private String scheme;
     /**
@@ -104,35 +105,35 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private boolean showPort = true;
     private String[] prefixExclusions;
     private String[] suffixExclusions;
-    
+
     /**
-     * the cms preview prefix : The prefix all URLs when accessed through the CMS 
+     * the cms preview prefix : The prefix all URLs when accessed through the CMS
      */
     private String cmsPreviewPrefix;
 
     private boolean diagnosticsEnabled;
-    
+
     private boolean cacheable = false;
 
-    private String defaultResourceBundleId;
+    private String [] defaultResourceBundleIds;
 
     private boolean channelMngrSiteAuthenticationSkipped;
-    
+
     private Set<String> diagnosticsForIps = new HashSet<String>(0);
-    
+
     /**
-     * The 'active' virtual host group for the current environment. This should not be <code>null</code> and 
+     * The 'active' virtual host group for the current environment. This should not be <code>null</code> and
      * not contains slashes but just the name of the hst:virtualhostgroup node below the hst:hosts node
      */
     private String channelMngrVirtualHostGroupNodeName;
-   
+
     private final static String DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME = "hst:sites";
-    
+
     /**
      * The name of the hst:sites that is managed by the {@link ChannelManager}
      */
     private String channelMngrSitesNodeName = DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME;
-    
+
     /*
      * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be
      * computed twice and overriden.
@@ -165,7 +166,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         } else {
             cmsPreviewPrefix =  PathUtils.normalizePath(cmsPreviewPrefix);
         }
-        
+
         channelMngrVirtualHostGroupNodeName =
                 vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
         if(StringUtils.isEmpty(channelMngrVirtualHostGroupNodeName)) {
@@ -193,12 +194,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             versionInPreviewHeader = vHostConfValueProvider.getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
-        
+
         if(vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
             cacheable = vHostConfValueProvider.getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
             log.info("Page caching for HST is set to : {} ", cacheable);
         }
-        
+
         defaultHostName  = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if (defaultHostName != null) {
             defaultHostName = defaultHostName.toLowerCase();
@@ -216,8 +217,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
         }
 
-        defaultResourceBundleId = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
-        
+        defaultResourceBundleIds = StringUtils.split(vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
+
         // now we loop through the hst:hostgroup nodes first:
         for(HstNode hostGroupNode : virtualHostsConfigurationNode.getNodes()) {
             // assert node is of type virtualhostgroup
@@ -230,7 +231,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             } catch (IllegalArgumentException e) {
                 throw new ServiceException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
             }
-            
+
             String cmsLocation = hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION);
             if(cmsLocation == null) {
                 log.warn("VirtualHostGroup '{}' does not have a property hst:cmslocation configured.", hostGroupNode.getValueProvider().getName());
@@ -252,16 +253,16 @@ public class VirtualHostsService implements MutableVirtualHosts {
             } else {
                 defaultPort = longDefaultPort.intValue();
             }
-            
+
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
-                
+
                 try {
                     VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), cmsLocation , defaultPort, hstManager);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ServiceException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
                     // continue to next virtualHost
-                } catch (IllegalArgumentException e) {    
+                } catch (IllegalArgumentException e) {
                     log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
                             + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
                             + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
@@ -269,7 +270,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                }
             }
         }
-        
+
     }
 
     public HstManager getHstManager() {
@@ -296,7 +297,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         return hstManager.isExcludedByHstFilterInitParameter(pathInfo);
     }
-    
+
     @Override
     public void addVirtualHost(MutableVirtualHost virtualHost) throws IllegalArgumentException {
        Map<String, MutableVirtualHost> rootVirtualHosts =  rootVirtualHostsByGroup.get(virtualHost.getHostGroupName());
@@ -311,7 +312,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public Map<String, Map<String, MutableVirtualHost>> getRootVirtualHostsByGroup() {
         return rootVirtualHostsByGroup;
     }
-    
+
     /**
      * Add this mount for lookup through {@link #getMountByGroupAliasAndType(String, String, String)}
      * @param mount
@@ -321,7 +322,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             log.debug(" Mount '{}' already added. Return", mount);
             return;
         }
-         
+
         registeredMounts.add(mount);
         String hostGroup = mount.getVirtualHost().getHostGroupName();
 
@@ -357,13 +358,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         "conflicts with "+aliasTypeMap.get(aliasTypeKey) , mount.getName(), mount.getName());
             }
         }
-        
+
         mountsByIdentifier.put(mount.getIdentifier(), mount);
 
     }
-    
+
     public ResolvedSiteMapItem matchSiteMapItem(HstContainerURL hstContainerURL)  throws MatchException {
-            
+
         ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hstContainerURL.getHostName());
         if(resolvedVirtualHost == null) {
             throw new MatchException("Unknown host '"+hstContainerURL.getHostName()+"'");
@@ -375,7 +376,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         return resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
     }
 
-    
+
     public ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException {
         Task matchingTask = null;
         try {
@@ -394,7 +395,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
         }
     }
-    
+
     public ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException {
         if(!virtualHostsConfigured) {
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
@@ -447,8 +448,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         return host;
     }
-    
-    
+
+
     /**
      * Override this method if you want a different algorithm to resolve hostName
      * @param hostName
@@ -458,8 +459,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
     protected ResolvedVirtualHost findMatchingVirtualHost(String hostName, int portNumber) {
         String[] requestServerNameSegments = hostName.split("\\.");
         int depth = requestServerNameSegments.length - 1;
-        VirtualHost host = null; 
-        PortMount portMount = null; 
+        VirtualHost host = null;
+        PortMount portMount = null;
         for(Map<String, MutableVirtualHost> rootVirtualHosts : rootVirtualHostsByGroup.values()) {
             VirtualHost tryHost = rootVirtualHosts.get(requestServerNameSegments[depth]);
             if(tryHost == null) {
@@ -468,7 +469,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             tryHost = traverseInToHost(tryHost, requestServerNameSegments, depth);
             if(tryHost != null) {
                 // check whether this is a valid host: In other words, whether it has
-                // a Mount associated with its portMount 
+                // a Mount associated with its portMount
                 PortMount tryPortMount = tryHost.getPortMount(portNumber);
                 if(tryPortMount != null && tryPortMount.getRootMount() != null) {
                     // we found a match for the host && port. We are done
@@ -480,7 +481,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                     log.debug("Could not match the request to port '{}'. If there is a default port '0', we'll try this one", String.valueOf(portNumber));
                     tryPortMount = tryHost.getPortMount(0);
                     if(tryPortMount != null && tryPortMount.getRootMount() != null) {
-                        // we found a Mount for the default port '0'. This is the host and mount we need to use when we 
+                        // we found a Mount for the default port '0'. This is the host and mount we need to use when we
                         // do not find a portMount for another host which also matches the correct portNumber!
                         // we'll continue the loop.
                         if(host != null) {
@@ -495,12 +496,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(host == null) {
             return null;
         }
-        
+
         return new ResolvedVirtualHostImpl(host, hostName, portMount);
-      
+
     }
-    
-    
+
+
     /**
      * Override this method if you want a different algorithm to resolve requestServerName
      * @param matchedHost
@@ -512,9 +513,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(depth == 0) {
            return matchedHost;
         }
-        
+
         --depth;
-        
+
         VirtualHost vhost = matchedHost.getChildHost(hostNameSegments[depth]);
         if(vhost == null) {
             if( (vhost = matchedHost.getChildHost(WILDCARD)) != null) {
@@ -529,11 +530,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public boolean isContextPathInUrl() {
         return contextPathInUrl;
     }
-    
+
     public String getDefaultContextPath() {
         return defaultContextPath;
     }
-    
+
     public boolean isPortInUrl() {
         return showPort;
     }
@@ -560,11 +561,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public String getPageNotFound() {
         return pageNotFound;
     }
-    
+
     public boolean isVersionInPreviewHeader(){
         return versionInPreviewHeader;
     }
-    
+
     public Mount getMountByGroupAliasAndType(String hostGroupName, String alias, String type) {
         Map<String, Mount> aliasTypeMap = mountByGroupAliasAndType.get(hostGroupName);
         if(aliasTypeMap == null) {
@@ -584,19 +585,19 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         return Collections.unmodifiableList(l);
     }
-    
+
     @Override
     public List<String> getHostGroupNames() {
         return new ArrayList<String>(mountByHostGroup.keySet());
     }
-    
+
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
     public static HashMap<String, MutableVirtualHost> virtualHostHashMap(){
         return new DuplicateKeyNotAllowedHashMap<String, MutableVirtualHost>();
     }
-    
+
 
     private String getAliasTypeKey(String alias, String type) {
         return alias.toLowerCase() + '\uFFFF' + type;
@@ -632,8 +633,21 @@ public class VirtualHostsService implements MutableVirtualHosts {
         return cacheable;
     }
 
+    @Override
     public String getDefaultResourceBundleId() {
-        return defaultResourceBundleId;
+        if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {
+            return null;
+        }
+
+        return defaultResourceBundleIds[0];
+    }
+
+    public String [] getDefaultResourceBundleIds() {
+        if (defaultResourceBundleIds == null) {
+            return ArrayUtils.EMPTY_STRING_ARRAY;
+        }
+
+        return (String[]) ArrayUtils.clone(defaultResourceBundleIds);
     }
 
     public boolean isChannelMngrSiteAuthenticationSkipped() {
