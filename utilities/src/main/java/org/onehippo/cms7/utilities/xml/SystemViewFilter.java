@@ -51,6 +51,7 @@ public class SystemViewFilter extends ProxyContentHandler {
                 skip = (localName.equals(NODE) && shouldFilterNode(absPath, name))
                         || (localName.equals(PROPERTY) && shouldFilterProperty(absPath, name));
                 if (skip) {
+                    startSkipping(uri, localName, qName, atts);
                     context = absPath;
                 }
             }
@@ -59,6 +60,38 @@ public class SystemViewFilter extends ProxyContentHandler {
             return;
         }
         handler.startElement(uri, localName, qName, atts);
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if ((localName.equals(NODE) || localName.equals(PROPERTY)) && uri.equals(SV_URI)) {
+            if (skip && context.equals(path.toString())) {
+                context = null;
+                skip = false;
+                path.pop();
+                endSkipping(uri, localName, qName);
+                return;
+            }
+            path.pop();
+        }
+        if (skip) {
+            return;
+        }
+        handler.endElement(uri, localName, qName);
+    }
+
+    /**
+     * Called from {@link #startElement(String, String, String, org.xml.sax.Attributes)} when it starts
+     * skipping.
+     */
+    protected void startSkipping(final String uri, final String localName, final String qName, final Attributes atts)
+            throws SAXException {
+    }
+
+    /**
+     * Called from {@link #endElement(String, String, String)} when skipping ends.
+     */
+    protected void endSkipping(final String uri, final String localName, final String qName) throws SAXException {
     }
 
     /**
@@ -81,23 +114,6 @@ public class SystemViewFilter extends ProxyContentHandler {
      */
     protected boolean shouldFilterNode(final String path, final String name) throws SAXException {
         return false;
-    }
-
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        if ((localName.equals(NODE) || localName.equals(PROPERTY)) && uri.equals(SV_URI)) {
-            if (skip && context.equals(path.toString())) {
-                context = null;
-                skip = false;
-                path.pop();
-                return;
-            }
-            path.pop();
-        }
-        if (skip) {
-            return;
-        }
-        handler.endElement(uri, localName, qName);
     }
 
     @Override
