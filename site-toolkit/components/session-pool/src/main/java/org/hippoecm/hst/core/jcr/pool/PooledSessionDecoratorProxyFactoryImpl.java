@@ -22,6 +22,7 @@ import org.apache.commons.proxy.Interceptor;
 import org.apache.commons.proxy.Invocation;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.jcr.pool.util.ProxyFactory;
+import org.hippoecm.repository.api.HippoSession;
 
 public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator, PoolingRepositoryAware {
     
@@ -127,6 +128,14 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                         }
                     } else if ("refresh".equals(methodName)) {
                         ret = invocation.proceed();
+                        lastRefreshed = System.currentTimeMillis();
+                    } else if ("localRefresh".equals(methodName)) {
+                        Session session = (Session) invocation.getProxy();
+                        if (session instanceof HippoSession) {
+                            ((HippoSession)session).localRefresh();
+                        } else {
+                            session.refresh(false);
+                        }
                         lastRefreshed = System.currentTimeMillis();
                     } else if ("getRepository".equals(methodName)) {
                         // when getRepository(), it actually returns the session pooling repository

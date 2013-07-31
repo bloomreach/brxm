@@ -66,5 +66,10 @@ public interface PooledSession extends Session {
      * @return the user id from the credentials used to acquire this session.
      */
     String getUserID();
+
+    /**
+     * Does a localRefresh that does not get propagated in clustered environments to the database
+     */
+    void localRefresh();
     
 }

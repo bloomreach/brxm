@@ -47,5 +47,10 @@ public interface LazySession extends Session {
      * @return
      */
     long getRefreshPendingAfter();
+
+    /**
+     * Does a localRefresh that does not get propagated in clustered environments to the database
+     */
+    void localRefresh();
     
 }

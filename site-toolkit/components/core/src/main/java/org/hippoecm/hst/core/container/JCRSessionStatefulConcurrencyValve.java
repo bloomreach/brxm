@@ -99,18 +99,15 @@ public class JCRSessionStatefulConcurrencyValve extends AbstractBaseOrderableVal
     }
     
     /**
-     * refreshes a jcr session without keeping changes
+     * refreshes a jcr session without keeping changes : use localRefresh as automatic LazySession refreshinh should not
+     * propagate to database in clustered setups
      * @param session
      * @throws ContainerException
      */
-    private void refreshSession(Session session) throws ContainerException {
+    private void refreshSession(LazySession session) {
         // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
-        try {
-            if (session.isLive()) {
-                session.refresh(false);
-            }
-        }  catch (RepositoryException e) {
-            throw new ContainerException("Failed to refresh session.", e);
+        if (session.isLive()) {
+            session.localRefresh();
         }
     }
 }

@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSessionBindingListener;
 
 import org.apache.commons.proxy.Invoker;
 import org.hippoecm.hst.proxy.ProxyFactory;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         ProxyFactory factory = new ProxyFactory();
         LazySessionInvoker invoker = new LazySessionInvoker(getDelegatee(), credentials, workspaceName, logoutOnSessionUnbound);
         invoker.setSessionsRefreshCounter(sessionsRefreshCounter);
-        
+
         ClassLoader sessionClassloader = getDelegatee().getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
         
@@ -142,6 +143,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             this.credentials = credentials;
             this.workspaceName = workspaceName;
             this.logoutOnSessionUnbound = logoutOnSessionUnbound;
+            // last refresh time is just when this lazy session has been created as then you have a 'fresh' session
+            this.lastRefreshed = System.currentTimeMillis();
         }
         
         public void setSessionsRefreshCounter(SessionsRefreshCounter sessionsRefreshCounter) {
@@ -177,12 +180,15 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     if ("logout".equals(methodName)) {
                         return null;
                     }
-                    
+
                     if ("refresh".equals(methodName)) {
-                        lastRefreshed = System.currentTimeMillis();
                         return null;
                     }
-                    
+
+                    if ("localRefresh".equals(methodName)) {
+                        return null;
+                    }
+
                     // Because this session is lazy, it should mimic a live session
                     // even though the session is not initialized yet.
                     if ("isLive".equals(methodName)) {
@@ -200,14 +206,24 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     }
                     
                     lastLoggedIn = System.currentTimeMillis();
-                    lastRefreshed = 0L;
                     sessionWeakRef = new WeakReference<Session>(session);
                 }
                 
                 Object ret = null;
                 
                 try {
-                   ret = method.invoke(session, args);
+                    if ("localRefresh".equals(methodName)) {
+                        lastRefreshed = System.currentTimeMillis();
+                        if ((session instanceof HippoSession)) {
+                            // localRefresh only available on HippoSession
+                            ret = method.invoke(session, args);
+                        } else {
+                            // fall back to normal refresh
+                            session.refresh(false);
+                        }
+                    } else {
+                        ret = method.invoke(session, args);
+                    }
                 } catch (Exception e) {
                     if (e.getCause() != null) {
                         throw e.getCause();
@@ -279,9 +295,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         
         @Override
         protected void finalize() {
-            //System.out.println("LazySession object is being finalized.");
             log.debug("LazySession object is being finalized.");
-
             clearSession();
         }
     }

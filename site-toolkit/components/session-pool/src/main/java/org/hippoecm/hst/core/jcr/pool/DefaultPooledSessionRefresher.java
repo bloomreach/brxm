@@ -34,10 +34,18 @@ public class DefaultPooledSessionRefresher implements PooledSessionRefresher {
         // HSTTWO-1337: Hippo Repository requires to check isLive() before logout(), refresh(), etc.
         if (checkLivenessBeforeRefresh) {
             if (pooledSession.isLive()) {
-                pooledSession.refresh(keepChanges);
+                if (keepChanges) {
+                    pooledSession.refresh(true);
+                } else {
+                    pooledSession.localRefresh();
+                }
             }
         } else {
-            pooledSession.refresh(keepChanges);
+            if (keepChanges) {
+                pooledSession.refresh(true);
+            } else {
+                pooledSession.localRefresh();
+            }
         }
     }
 
