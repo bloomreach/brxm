@@ -89,6 +89,7 @@
           <include>**/*.css</include>
           <include>**/*.png</include>
           <include>**/*.gif</include>
+          <include>**/*.ico</include>
           <include>**/*.properties</include>
           <include>**/*.xml</include>
         </includes>

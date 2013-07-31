@@ -401,6 +401,11 @@ public class PluginUserSession extends UserSession {
 
     @Override
     public void onInvalidate() {
+        if (fallbackSession != null) {
+            fallbackSession.logout();
+            fallbackSession = null;
+        }
+
         releaseJcrSession();
 
         JcrObservationManager.getInstance().cleanupListeners(this);

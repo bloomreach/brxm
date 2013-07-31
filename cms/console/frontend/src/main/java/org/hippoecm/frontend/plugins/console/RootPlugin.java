@@ -15,7 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.js.CmsHeaderItem;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -71,6 +77,11 @@ public class RootPlugin extends RenderPlugin {
             throw new RuntimeException(e);
         }
         add(new PageLayoutBehavior(plSettings));
+
+        add(new Label("pageTitle", getPageTitle(config)));
+
+        final String faviconPath = config.getString("favicon.path", "console-red.ico");
+        add(new ResourceLink("faviconLink", new PackageResourceReference(RootPlugin.class, faviconPath)));
     }
 
     @Override
@@ -88,6 +99,23 @@ public class RootPlugin extends RenderPlugin {
         super.renderHead(response);
 
         response.render(CmsHeaderItem.get());
+    }
+
+    private String getPageTitle(IPluginConfig config) {
+        StringBuilder pageTitle = new StringBuilder(config.getString("page.title", "Hippo CMS Console"));
+        if(config.getAsBoolean("page.title.showservername", false)) {
+            pageTitle.append(config.getString("page.title.separator", "@"));
+            pageTitle.append(getServerName());
+        }
+        return pageTitle.toString();
+    }
+
+    private String getServerName() {
+        final Object request = getRequest().getContainerRequest();
+        if(request instanceof HttpServletRequest) {
+            return ((HttpServletRequest) request).getServerName();
+        }
+        return StringUtils.EMPTY;
     }
 }
 
