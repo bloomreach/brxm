@@ -804,6 +804,7 @@
       <description>
         Flag whether or not to fall back to the default localization context, which might
         have been set in the virtual hosts, vitual host, mount or sitemap item level.
+        The default value is true.
       </description>
       <name>fallbackToDefaultLocalizationContext</name>
       <required>false</required>
