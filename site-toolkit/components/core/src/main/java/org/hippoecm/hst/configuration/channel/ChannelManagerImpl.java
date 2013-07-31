@@ -691,6 +691,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (blueprint.getHasContentPrototype()) {
             final Node contentRootNode = createContent(blueprint, session, channelId, channel);
             channelContentRootPath = contentRootNode.getPath();
+            channel.setContentRoot(channelContentRootPath);
         } else {
             channelContentRootPath = channel.getContentRoot();
         }
