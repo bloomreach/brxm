@@ -22,7 +22,9 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -169,7 +171,7 @@ public class CKEditorPlugin extends RenderPlugin {
                 // no additional header items to render
                 break;
             case EDIT:
-                response.render(CKEditorConstants.CKEDITOR_JS);
+                response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEditorConstants.CKEDITOR_JS));
                 response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForEditor()));
                 break;
             case COMPARE:
