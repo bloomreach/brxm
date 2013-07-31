@@ -155,7 +155,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
         addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, useInExcerpt, includeSingleIndexTerm);
     }
 
-
     /**
      * The method below is same as  NodeIndexer#addStringValue only one extra check <code>includeSingleIndexTerm</code> to
      * include or exclude the property as a single term in the index. For example, for our html fields, we do not need to support
@@ -189,10 +188,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
             doc.add(f);
 
             if (includeInNodeIndex) {
-                // never store as this makes Lucene indexes very large while at the same time excerpts do not
-                // work well
-                boolean store = false;
-                f = createFulltextField(internalValue, store, supportSimilarityOnStrings, false);
+                f = createFulltextField(internalValue, false, supportSimilarityOnStrings, false);
                 if (useInExcerpt) {
                     doc.add(f);
                 } else {
@@ -203,7 +199,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     /**
-     * Creates a fulltext field for the string <code>value</code>.
+     * Creates a fulltext field for the string <code>value</code>. Overridden in order to reduce size of the index.
+     * The {@code store} field is ignored, fields are never stored. The {@code withNorms} is also ignored. We always
+     * analyse the field as it hardly takes any space or memory.
      *
      * @param value the string value.
      * @param store We ignore <code>store</code> as this increases lucene size while at the same time
