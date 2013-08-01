@@ -91,7 +91,7 @@
           <sv:value>restapi</sv:value>
         </sv:property>
         <sv:property sv:name="hst:cacheable" sv:type="Boolean">
-          <sv:value>true</sv:value>
+          <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hst:parameternames" sv:type="String">
           <sv:value>exampleMountParam</sv:value>
