@@ -36,9 +36,15 @@ public interface ContentBeansTool {
     public ObjectConverter getObjectConverter();
 
     /**
-     * @return <code>ObjectBeanManager</code> instance for the current request (unique per request)
+     * @return <code>ObjectBeanManager</code> instance for the current request (unique per request), backed by the
+     * {@link Session} from {@link org.hippoecm.hst.core.request.HstRequestContext#getSession()}
      */
     public ObjectBeanManager getObjectBeanManager();
+
+    /**
+     * @return <code>ObjectBeanManager</code> instance for the current request (unique per request), backed by <code>session</code>
+     */
+    public ObjectBeanManager getObjectBeanManager(Session session);
 
     /**
      * @return the {@link HstQueryManager} for the {@link Session} retrieved through

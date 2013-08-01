@@ -88,12 +88,19 @@ public class DefaultContentBeansTool implements ContentBeansTool {
             }
 
             return new ObjectBeanManagerImpl(requestContext.getSession(), getObjectConverter());
-        } catch (UnsupportedRepositoryOperationException e) {
-            throw new HstSiteMapItemHandlerException(e);
         } catch (RepositoryException e) {
             throw new HstSiteMapItemHandlerException(e);
         }
     }
+
+    public ObjectBeanManager getObjectBeanManager(Session session) {
+        HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext == null) {
+            throw new IllegalStateException("HstRequestContext is not set in handler.");
+        }
+        return new ObjectBeanManagerImpl(session, getObjectConverter());
+    }
+
 
     public HstQueryManager getQueryManager() throws IllegalStateException {
         HstRequestContext requestContext = RequestContextProvider.get();
