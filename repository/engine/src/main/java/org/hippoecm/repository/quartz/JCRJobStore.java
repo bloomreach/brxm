@@ -437,7 +437,7 @@ public class JCRJobStore extends AbstractJobStore {
             final Calendar cal = dateToCalendar(new Date(noLaterThan));
             final QueryManager qMgr = session.getWorkspace().getQueryManager();
             final Query query = qMgr.createQuery(
-                    "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime < TIMESTAMP '"
+                    "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
                             + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
             final QueryResult result = query.execute();
             return new NodeIterable(result.getNodes());
