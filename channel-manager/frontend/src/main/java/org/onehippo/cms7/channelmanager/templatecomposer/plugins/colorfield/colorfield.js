@@ -162,14 +162,14 @@ Ext.ux.ColorMenu = Ext.extend(Ext.menu.Menu, {
 Ext.ux.ColorMenu.prototype.wheelImage = (function() {
     var wheelImage = new Image();
     wheelImage.onload = Ext.emptyFn;
-    wheelImage.src = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/wheel.png';
+    wheelImage.src = 'wicket/resource/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/wheel.png';
     return wheelImage;
 }());
 
 Ext.ux.ColorMenu.prototype.gradientImage = (function() {
     var gradientImage = new Image();
     gradientImage.onload = Ext.emptyFn;
-    gradientImage.src = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/gradient.png';
+    gradientImage.src = 'wicket/resource/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/gradient.png';
     return gradientImage;
 }());
 
