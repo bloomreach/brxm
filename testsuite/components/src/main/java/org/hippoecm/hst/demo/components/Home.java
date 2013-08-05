@@ -43,7 +43,7 @@ public class Home extends BaseHstComponent {
             request.setAttribute("channelInfoExample", info.getExampleValue());
         }
         try {
-            HippoBean image = (HippoBean) requestContext.getContentBeansTool().getObjectBeanManager().getObject("/content/gallery/images/screenshot_cms_small.jpg");
+            HippoBean image = (HippoBean) requestContext.getObjectBeanManager().getObject("/content/gallery/images/screenshot_cms_small.jpg");
             request.setAttribute("image",image);
         } catch (ObjectBeanManagerException e) {
             throw new HstComponentException(e);

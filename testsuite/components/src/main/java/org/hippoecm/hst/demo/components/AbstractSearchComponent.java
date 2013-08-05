@@ -82,7 +82,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
         request.setAttribute("page", page);
 
         HstRequestContext ctx = request.getRequestContext();
-        HstQueryManager manager = ctx.getContentBeansTool().getQueryManager();
+        HstQueryManager manager = ctx.getQueryManager();
         try {
             
             final HstQuery hstQuery;

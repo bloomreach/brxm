@@ -26,12 +26,10 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
-import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.NewsBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,7 +59,7 @@ public class NewsController {
             HippoBean scope = requestContext.getContentBean();
             mav.addObject("scope", scope);
 
-            HstQuery query = requestContext.getHstQueryManagerFactory().createQueryManager(requestContext.getSession(), requestContext.getContentBeansTool().getObjectConverter()).createQuery(scope, NewsBean.class);
+            HstQuery query = requestContext.getQueryManager(requestContext.getSession()).createQuery(scope, NewsBean.class);
             query.setOffset((pageIndex - 1) * pageSize);
             query.setLimit(pageSize);
             HstQueryResult result = query.execute();

@@ -49,7 +49,7 @@ public class RSS extends BaseHstComponent {
             return;
         }
 
-        HstQueryManager manager = requestContext.getContentBeansTool().getQueryManager();
+        HstQueryManager manager = requestContext.getQueryManager();
         try {
 
             final HstQuery query = manager.createQuery(contentBean);

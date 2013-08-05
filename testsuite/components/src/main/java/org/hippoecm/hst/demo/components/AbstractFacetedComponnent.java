@@ -47,7 +47,7 @@ public class AbstractFacetedComponnent extends BaseHstComponent {
             
             try {
                 HstRequestContext ctx = request.getRequestContext();
-                hstQuery = ctx.getContentBeansTool().getQueryManager().createQuery(ctx.getSiteContentBaseBean());
+                hstQuery = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean());
                 if(query != null && !"".equals(query)) {
                     Filter f = hstQuery.createFilter();
                     Filter f1 = hstQuery.createFilter();

@@ -51,7 +51,7 @@ public class SolrIndexer extends BaseHstComponent{
         }
 
         try {
-            final HstQuery query = requestContext.getContentBeansTool().getQueryManager().createQuery(requestContext.getSiteContentBaseBean());
+            final HstQuery query = requestContext.getQueryManager().createQuery(requestContext.getSiteContentBaseBean());
             query.setLimit(1000);
             request.setAttribute("result", query.execute());
         } catch (QueryException e) {
