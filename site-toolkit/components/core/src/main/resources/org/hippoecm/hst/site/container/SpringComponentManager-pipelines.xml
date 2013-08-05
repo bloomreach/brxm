@@ -31,9 +31,7 @@
   <bean id="org.hippoecm.hst.core.container.PageErrorHandler" class="org.hippoecm.hst.core.container.DefaultPageErrorHandler">
   </bean>
 
-  <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool">
-    <constructor-arg ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
-  </bean>
+  <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool"/>
 
   <!-- Valves -->
 
