@@ -602,7 +602,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public HippoBean getSiteContentBaseBean() {
         try {
             if (siteContentBaseBeanPopulatedBy != null && siteContentBaseBeanPopulatedBy.equals(RequestContextProvider.get().getSession().getUserID())) {
-                return contentBean;
+                return siteContentBaseBean;
             }
 
             String base = getSiteContentBasePath();
