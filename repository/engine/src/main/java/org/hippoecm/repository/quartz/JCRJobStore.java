@@ -265,11 +265,7 @@ public class JCRJobStore extends AbstractJobStore {
                                 JcrUtils.ensureIsCheckedOut(triggerNode, false);
                                 final Trigger trigger = createTriggerFromNode(triggerNode);
                                 final Date nextFireTime = trigger.getNextFireTime();
-                                Date fireTimeAfter = trigger.getFireTimeAfter(nextFireTime);
-                                while (fireTimeAfter != null && fireTimeAfter.getTime() <= noLaterThan) {
-                                    // make sure this trigger does not fire again this round
-                                    fireTimeAfter = trigger.getFireTimeAfter(fireTimeAfter);
-                                }
+                                final Date fireTimeAfter = trigger.getFireTimeAfter(nextFireTime);
                                 if (fireTimeAfter != null) {
                                     triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, dateToCalendar(fireTimeAfter));
                                 } else {
