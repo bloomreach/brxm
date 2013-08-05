@@ -370,14 +370,20 @@ public interface HstRequestContext {
     String getSiteContentBasePath();
 
     /**
+     * Returns the siteContentBaseBean {@link HippoBean} for this request. After first retrieval, the bean is cached and
+     * the same instance will be returned when calling {@link #getSiteContentBaseBean()} multiple times. The backing jcr
+     * {@link javax.jcr.Node} is fetched through jcr Session {@link #getSession()}
      * @return the {@link HippoBean} belonging to for {@link #getSiteContentBasePath()}
      */
     HippoBean getSiteContentBaseBean();
 
     /**
+     * Returns the content {@link HippoBean} for this request. After first retrieval, the content bean is cached and
+     * the same instance will be returned when calling {@link #getContentBean()} multiple times. The backing jcr
+     * {@link javax.jcr.Node} is fetched through jcr Session {@link #getSession()}
      * @return <code>HippoBean</code> belonging to the {@link org.hippoecm.hst.core.request.ResolvedSiteMapItem} or
-     * <code>null</code> when bean cannot be found of when the backing
-     * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()} is <code>null</code>
+     * <code>null</code> {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()} is <code>null</code>
+     * or when there is no content (jcr node) to be found at {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()}.
      */
     HippoBean getContentBean();
 

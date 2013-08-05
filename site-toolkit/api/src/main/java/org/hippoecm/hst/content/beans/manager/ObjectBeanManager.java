@@ -45,8 +45,7 @@ public interface ObjectBeanManager {
     /**
      * Get an object from the JCR repository
      *
-     * @param the
-     *            object uuid
+     * @param uuid the object uuid
      * @return the object found or null
      *
      * @throws ObjectBeanManagerException
