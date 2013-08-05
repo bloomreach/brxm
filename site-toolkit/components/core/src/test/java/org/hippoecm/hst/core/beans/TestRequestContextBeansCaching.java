@@ -148,7 +148,7 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
 
 
     @Test
-    public void testContentBeansCached() throws Exception {
+    public void testContentBeansRequestScopeCached() throws Exception {
 
         HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         ModifiableRequestContextProvider.set(ctx);
@@ -156,6 +156,12 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
 
         assertTrue(ctx.getContentBean() == ctx.getContentBean());
         assertTrue(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
+
+        // TODO below is not yet cached
+//        assertTrue(ctx.getContentBean().getParentBean() == ctx.getContentBean().getParentBean());
+//        assertTrue(ctx.getContentBean().getParentBean().getBean("news") == ctx.getContentBean().getParentBean().getBean("news"));
+//        assertTrue(ctx.getContentBean().getParentBean().getBean("news/2009") == ctx.getContentBean().getParentBean().getBean("news/2009"));
+
     }
 
 }
