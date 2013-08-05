@@ -31,10 +31,6 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
-    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean() {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
-
     @Override
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations() {
         throw new UnsupportedOperationException("Not supported yet");
@@ -70,14 +66,6 @@ public class MockHippoBean implements HippoBean {
 
     @Override
     public <T extends HippoBean> T getCanonicalBean() {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
-    
-    public HippoBean getContextualBean() {
-        throw new UnsupportedOperationException("Not supported yet");
-    }
-
-    public HippoBean getContextualParentBean() {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
