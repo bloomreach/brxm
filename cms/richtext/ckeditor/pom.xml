@@ -24,22 +24,13 @@
   </parent>
 
   <name>CMS Rich Text CKEditor</name>
-  <description>CMS Rich Text CKEditor Sources</description>
+  <description>CMS Rich Text CKEditor</description>
   <artifactId>hippo-cms-richtext-ckeditor</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
-  <dependencies>
-
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-
-  </dependencies>
+  <modules>
+    <module>resources</module>
+    <module>plugins</module>
+  </modules>
 
 </project>

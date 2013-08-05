@@ -21,10 +21,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.richtext.AbstractAjaxDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
-public class ExternalLinkBehavior extends XinhaDialogBehavior {
+public class ExternalLinkBehavior extends AbstractAjaxDialogBehavior {
     private static final long serialVersionUID = 1L;
 
 

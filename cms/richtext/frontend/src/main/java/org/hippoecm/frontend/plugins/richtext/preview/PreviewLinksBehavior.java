@@ -1,0 +1,84 @@
+package org.hippoecm.frontend.plugins.richtext.preview;
+
+import java.nio.charset.Charset;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.encoding.UrlDecoder;
+import org.apache.wicket.util.encoding.UrlEncoder;
+import org.apache.wicket.util.string.*;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
+import org.hippoecm.frontend.plugins.xinha.XinhaNodePlugin;
+import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkDecorator {
+
+    private static final long serialVersionUID = 1L;
+
+    private static final String JS_STOP_EVENT = "Wicket.Event.stop(event);";
+    private static final Logger log = LoggerFactory.getLogger(PreviewLinksBehavior.class);
+
+    private final JcrNodeModel model;
+    private final IBrowseService browser;
+
+    PreviewLinksBehavior(final JcrNodeModel model, final IBrowseService browser) {
+        this.model = model;
+        this.browser = browser;
+    }
+
+    @Override
+    protected void respond(AjaxRequestTarget target) {
+        Request request = RequestCycle.get().getRequest();
+        final StringValue linkValue = request.getRequestParameters().getParameterValue("link");
+        if (linkValue != null) {
+            String link = linkValue.toString();
+            link = UrlDecoder.PATH_INSTANCE.decode(link, request.getCharset());
+            if (browser != null) {
+                Node node = model.getNode();
+                try {
+                    if (node.hasNode(link)) {
+                        node = node.getNode(link);
+                        if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                            final String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                            final Session jcrSession = UserSession.get().getJcrSession();
+                            node = jcrSession.getNodeByIdentifier(uuid);
+                            browser.browse(new JcrNodeModel(node));
+                        }
+                    }
+                } catch (ItemNotFoundException ex) {
+                    log.info("Could not resolve link", ex);
+                } catch (RepositoryException e) {
+                    log.error("Error while browing to link", e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public String internalLink(String link) {
+        final AjaxRequestAttributes attributes = getAttributes();
+        final Charset charset = RequestCycle.get().getRequest().getCharset();
+        attributes.getExtraParameters().put("link", UrlEncoder.QUERY_INSTANCE.encode(link, charset));
+        CharSequence asString = renderAjaxAttributes(getComponent(), attributes);
+        return "href=\"#\" onclick='" + JS_STOP_EVENT + "Wicket.Ajax.get(" + asString + ");'";
+    }
+
+    @Override
+    public String externalLink(String link) {
+        return "href=\"" + link + "\" onclick=\"" + JS_STOP_EVENT + "\"";
+    }
+}

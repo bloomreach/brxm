@@ -91,7 +91,12 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-richtext-ckeditor</artifactId>
+      <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

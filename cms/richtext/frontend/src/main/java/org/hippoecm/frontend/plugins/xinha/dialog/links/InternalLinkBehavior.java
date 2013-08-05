@@ -20,12 +20,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.AbstractAjaxDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
-import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
 import org.hippoecm.frontend.plugins.xinha.services.links.InternalXinhaLink;
 import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 
-public class InternalLinkBehavior extends XinhaDialogBehavior {
+public class InternalLinkBehavior extends AbstractAjaxDialogBehavior {
     private static final long serialVersionUID = 1L;
 
 

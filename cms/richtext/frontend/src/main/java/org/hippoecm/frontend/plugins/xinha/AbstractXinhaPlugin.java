@@ -53,12 +53,13 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.richtext.AbstractAjaxDialogBehavior;
 import org.hippoecm.frontend.plugins.richtext.RichTextArea;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.plugins.xinha.behavior.StateChangeBehavior;
-import org.hippoecm.frontend.plugins.xinha.dialog.XinhaDialogBehavior;
+import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
 import org.hippoecm.frontend.plugins.xinha.dialog.links.ExternalLinkBehavior;
 import org.hippoecm.frontend.plugins.xinha.json.JsonParser;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
@@ -77,7 +78,7 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
 
     private static final String[] defaultFormatBlock = { "h1", "h2", "h3", "h4", "h5", "h6", "p", "address", "pre" };
 
-    private static final ResourceReference XINHA_MODAL_JS = new JavaScriptResourceReference(XinhaDialogBehavior.class,
+    private static final ResourceReference XINHA_MODAL_JS = new JavaScriptResourceReference(AbstractXinhaDialog.class,
             "xinha-modal.js");
     private static final ResourceReference XINHA_TOOLS_JS = new JavaScriptResourceReference(AbstractXinhaPlugin.class,
             "xinha-tools.js");
