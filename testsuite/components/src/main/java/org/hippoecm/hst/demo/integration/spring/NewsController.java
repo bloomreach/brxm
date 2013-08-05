@@ -59,7 +59,7 @@ public class NewsController {
             HippoBean scope = requestContext.getContentBean();
             mav.addObject("scope", scope);
 
-            HstQuery query = requestContext.getQueryManager(requestContext.getSession()).createQuery(scope, NewsBean.class);
+            HstQuery query = requestContext.getQueryManager().createQuery(scope, NewsBean.class);
             query.setOffset((pageIndex - 1) * pageSize);
             query.setLimit(pageSize);
             HstQueryResult result = query.execute();
