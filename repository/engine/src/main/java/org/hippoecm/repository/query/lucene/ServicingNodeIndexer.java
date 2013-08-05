@@ -313,7 +313,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     private void addHippoTextValue(final Document doc, final BinaryValue hippoTextBinaryValue) throws RepositoryException {
         log.debug("The '{}' property is present and thus will be used to index this binary", HippoNodeType.HIPPO_TEXT);
         try {
-            final String hippoText = IOUtils.toString(hippoTextBinaryValue.internalValue.getStream());
+            final String hippoText = IOUtils.toString(hippoTextBinaryValue.internalValue.getStream(), "UTF-8");
             // never store for binaries!
             doc.add(createFulltextField(hippoText, false, supportSimilarityOnBinaries, true));
         } catch (IOException e) {
