@@ -123,7 +123,7 @@ public class HstTagSupport extends TagSupport {
     }
     
     protected ObjectBeanManager getObjectBeanManager(HstRequest request) {
-        return request.getRequestContext().getContentBeansTool().getObjectBeanManager();
+        return request.getRequestContext().getObjectBeanManager();
     }
     
     protected ObjectConverter getObjectConverter()  {

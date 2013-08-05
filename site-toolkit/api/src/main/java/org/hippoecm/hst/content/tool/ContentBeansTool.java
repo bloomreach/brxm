@@ -36,28 +36,20 @@ public interface ContentBeansTool {
     public ObjectConverter getObjectConverter();
 
     /**
-     * @return <code>ObjectBeanManager</code> instance for the current request (unique per request), backed by the
-     * {@link Session} from {@link org.hippoecm.hst.core.request.HstRequestContext#getSession()}
+     * @return a new <code>ObjectBeanManager</code> instance for the {@link Session} <code>session</code>
+     * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager
+     * @see org.hippoecm.hst.core.request.HstRequestContext#getObjectBeanManager(Session) to re-use a cached one for
+     * the current request
      */
-    public ObjectBeanManager getObjectBeanManager();
-
-    /**
-     * @return <code>ObjectBeanManager</code> instance for the current request (unique per request), backed by <code>session</code>
-     */
-    public ObjectBeanManager getObjectBeanManager(Session session);
-
-    /**
-     * @return the {@link HstQueryManager} for the {@link Session} retrieved through
-     * {@link org.hippoecm.hst.core.request.HstRequestContext#getSession(boolean)}
-     * @throws IllegalStateException if the application is unable to provide a HstQueryManager
-     */
-    public HstQueryManager getQueryManager() throws IllegalStateException;
+    public ObjectBeanManager createObjectBeanManager(Session session) throws IllegalStateException;
 
     /**
      * @param session
      * @return the {@link HstQueryManager} for <code>session</code>
      * @throws IllegalStateException if the application is unable to provide a HstQueryManager
+     * @see org.hippoecm.hst.core.request.HstRequestContext#getQueryManager(Session) to re-use a cached one for
+     * the current request
      */
-    public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
+    public HstQueryManager createQueryManager(Session session) throws IllegalStateException;
 
 }

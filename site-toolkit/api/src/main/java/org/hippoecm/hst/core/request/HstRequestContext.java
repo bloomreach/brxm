@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -378,4 +380,34 @@ public interface HstRequestContext {
      * {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem#getRelativeContentPath()} is <code>null</code>
      */
     HippoBean getContentBean();
+
+    /**
+     * @return a <code>ObjectBeanManager</code> instance for the current {@link HstRequestContext} backed by the
+     * {@link #getSession()}
+     * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager
+     */
+    public ObjectBeanManager getObjectBeanManager() throws IllegalStateException;
+
+    /**
+     * @param session the {@link Session} to create this {@link ObjectBeanManager} with
+     * @return a <code>ObjectBeanManager</code> instance for the current {@link HstRequestContext} backed by the
+     * <code>session</code>
+     * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager
+     */
+    public ObjectBeanManager getObjectBeanManager(Session session) throws IllegalStateException;
+
+    /**
+     * @return the {@link org.hippoecm.hst.content.beans.query.HstQueryManager} backed by the
+     * {@link #getSession()}
+     * @throws IllegalStateException if the application is unable to provide a HstQueryManager
+     */
+    public HstQueryManager getQueryManager() throws IllegalStateException;
+
+    /**
+     * @param session the {@link Session} to create this {@link ObjectBeanManager} with
+     * @return the {@link org.hippoecm.hst.content.beans.query.HstQueryManager} backed by the
+     * <code>session</code>
+     * @throws IllegalStateException if the application is unable to provide a HstQueryManager
+     */
+    public HstQueryManager getQueryManager(Session session) throws IllegalStateException;
 }

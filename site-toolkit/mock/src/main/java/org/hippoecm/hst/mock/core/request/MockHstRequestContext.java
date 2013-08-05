@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
@@ -93,6 +95,12 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private HippoBean contentBean;
     private HippoBean siteContentBean;
     private String siteContentBasePath;
+
+    private ObjectBeanManager defaultObjectBeanManager;
+    private Map<Session, ObjectBeanManager> nonDefaultObjectBeanManagers;
+    private HstQueryManager defaultHstQueryManager;
+    private Map<Session, HstQueryManager>  nonDefaultHstQueryManagers;
+
 
     public boolean isPreview() {
     	return this.resolvedMount.getMount().isPreview();
@@ -456,4 +464,39 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
 
+    public void setDefaultObjectBeanManager(final ObjectBeanManager defaultObjectBeanManager) {
+        this.defaultObjectBeanManager = defaultObjectBeanManager;
+    }
+
+    public void setNonDefaultObjectBeanManagers(final Map<Session, ObjectBeanManager> nonDefaultObjectBeanManagers) {
+        this.nonDefaultObjectBeanManagers = nonDefaultObjectBeanManagers;
+    }
+
+    public void setDefaultHstQueryManager(final HstQueryManager defaultHstQueryManager) {
+        this.defaultHstQueryManager = defaultHstQueryManager;
+    }
+
+    public void setNonDefaultHstQueryManagers(final Map<Session, HstQueryManager> nonDefaultHstQueryManagers) {
+        this.nonDefaultHstQueryManagers = nonDefaultHstQueryManagers;
+    }
+
+    @Override
+    public ObjectBeanManager getObjectBeanManager() throws IllegalStateException {
+        return defaultObjectBeanManager;
+    }
+
+    @Override
+    public ObjectBeanManager getObjectBeanManager(final Session session) throws IllegalStateException {
+        return nonDefaultObjectBeanManagers.get(session);
+    }
+
+    @Override
+    public HstQueryManager getQueryManager() throws IllegalStateException {
+        return defaultHstQueryManager;
+    }
+
+    @Override
+    public HstQueryManager getQueryManager(final Session session) throws IllegalStateException {
+        return nonDefaultHstQueryManagers.get(session);
+    }
 }

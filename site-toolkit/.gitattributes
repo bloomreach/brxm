@@ -675,6 +675,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtil
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/TestHstSiteMapItemIntegerPlaceHolders.java -text
 components/core/src/test/java/org/hippoecm/hst/core/beans/AbstractBeanTestCase.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/beans/NewsBean.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/beans/TestRequestContextBeansCaching.java -text
 components/core/src/test/java/org/hippoecm/hst/core/beans/TextBean.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstComponentMetadataReader.java -text
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain

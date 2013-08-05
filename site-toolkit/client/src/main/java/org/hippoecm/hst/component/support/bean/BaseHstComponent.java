@@ -294,7 +294,7 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public HippoFolderBean getGalleryBaseBean(HstRequest request){
         try {
-            HippoBean gallery = (HippoBean)request.getRequestContext().getContentBeansTool().getObjectBeanManager().getObject("/content/gallery");
+            HippoBean gallery = (HippoBean)request.getRequestContext().getObjectBeanManager().getObject("/content/gallery");
             if(gallery instanceof HippoFolderBean) {
                 return (HippoFolderBean)gallery;
             } else {
@@ -312,7 +312,7 @@ public class BaseHstComponent extends GenericHstComponent {
      */
     public HippoFolderBean getAssetBaseBean(HstRequest request){
         try {
-            HippoBean assets = (HippoBean)request.getRequestContext().getContentBeansTool().getObjectBeanManager().getObject("/content/assets");
+            HippoBean assets = (HippoBean)request.getRequestContext().getObjectBeanManager().getObject("/content/assets");
             if(assets instanceof HippoFolderBean) {
                 return (HippoFolderBean)assets;
             } else {
@@ -342,9 +342,9 @@ public class BaseHstComponent extends GenericHstComponent {
         }
         try {
             if("".equals(relPath)) {
-                return (HippoBean) requestContext.getContentBeansTool().getObjectBeanManager().getObject("/"+base);
+                return (HippoBean) requestContext.getObjectBeanManager().getObject("/"+base);
             } else {
-                return (HippoBean) requestContext.getContentBeansTool().getObjectBeanManager().getObject("/"+base+ "/" + relPath);
+                return (HippoBean) requestContext.getObjectBeanManager().getObject("/"+base+ "/" + relPath);
             }
         } catch (ObjectBeanManagerException e) {
             log.error("ObjectBeanManagerException. Return null : {}", e);
@@ -357,7 +357,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param request the {@link HstRequest}
      * @return the {@link HstQueryManager}
      * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(Session)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager()} instead
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getQueryManager()} instead
      */
     @Deprecated
     public HstQueryManager getQueryManager(HstRequest request){
@@ -369,30 +369,30 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param  ctx the {@link HstRequestContext}
      * @return the {@link HstQueryManager}
      * @see  {@link #getQueryManager(HstRequest)} and {@link #getQueryManager(Session)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager()} instead
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getQueryManager()} instead
      */
     @Deprecated
     public HstQueryManager getQueryManager(HstRequestContext ctx) {
-       return ctx.getContentBeansTool().getQueryManager();
+       return ctx.getQueryManager();
     }
 
     /**
      * @param session the {@link Session}
      * @return the {@link HstQueryManager}
      * @see {@link #getQueryManager(HstRequestContext)} and {@link #getQueryManager(HstRequest)}
-     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#.getQueryManager(Session)} instead
+     * @deprecated  since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getQueryManager(Session)} instead
      */
     @Deprecated
     public HstQueryManager getQueryManager(Session session) {
-        return RequestContextProvider.get().getContentBeansTool().getQueryManager(session);
+        return RequestContextProvider.get().getQueryManager(session);
     }
 
     /**
-     * @deprecated since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()#getObjectBeanManager()} instead
+     * @deprecated since 7.9.0 : use {@link org.hippoecm.hst.core.request.HstRequestContext#getObjectBeanManager()} instead
      */
     @Deprecated
     public ObjectBeanManager getObjectBeanManager(HstRequest request) {
-       return request.getRequestContext().getContentBeansTool().getObjectBeanManager();
+       return request.getRequestContext().getObjectBeanManager();
     }
     
     /**
@@ -452,6 +452,14 @@ public class BaseHstComponent extends GenericHstComponent {
         HstResponseUtils.sendRedirect(request, response, path, queryParams, characterEncoding);
     }
 
+    /**
+     * @return
+     * @throws HstComponentException
+     * @deprecated  since 7.9.0, use {@link org.hippoecm.hst.content.tool.ContentBeansTool#getObjectConverter()} instead.
+     * ContentBeansTool can be accessed through {@link org.hippoecm.hst.core.request.HstRequestContext#getContentBeansTool()} and
+     * the HstReqeustContext can be fetched from the HstRequest or through RequestContextProvider.get().
+     */
+    @Deprecated
     public ObjectConverter getObjectConverter() throws HstComponentException {
         return RequestContextProvider.get().getContentBeansTool().getObjectConverter();
     }

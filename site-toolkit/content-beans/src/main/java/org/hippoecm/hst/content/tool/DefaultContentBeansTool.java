@@ -17,9 +17,7 @@ package org.hippoecm.hst.content.tool;
 
 import java.util.List;
 
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -30,7 +28,6 @@ import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
-import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
@@ -79,21 +76,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         return objectConverter;
     }
 
-    public ObjectBeanManager getObjectBeanManager() {
-        try {
-            HstRequestContext requestContext = RequestContextProvider.get();
-
-            if (requestContext == null) {
-                throw new IllegalStateException("HstRequestContext is not set in handler.");
-            }
-
-            return new ObjectBeanManagerImpl(requestContext.getSession(), getObjectConverter());
-        } catch (RepositoryException e) {
-            throw new HstSiteMapItemHandlerException(e);
-        }
-    }
-
-    public ObjectBeanManager getObjectBeanManager(Session session) {
+    public ObjectBeanManager createObjectBeanManager(Session session) {
         HstRequestContext requestContext = RequestContextProvider.get();
         if (requestContext == null) {
             throw new IllegalStateException("HstRequestContext is not set in handler.");
@@ -101,21 +84,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         return new ObjectBeanManagerImpl(session, getObjectConverter());
     }
 
-
-    public HstQueryManager getQueryManager() throws IllegalStateException {
-        HstRequestContext requestContext = RequestContextProvider.get();
-
-        if (requestContext == null) {
-            throw new IllegalStateException("HstRequestContext is not set in handler.");
-        }
-        try {
-            return getQueryManager(requestContext.getSession());
-        } catch (RepositoryException e) {
-           throw new IllegalStateException(e);
-        }
-    }
-
-    public HstQueryManager getQueryManager(Session session) throws IllegalStateException {
+    public HstQueryManager createQueryManager(Session session) throws IllegalStateException {
         return queryManagerFactory.createQueryManager(session, getObjectConverter());
     }
 
