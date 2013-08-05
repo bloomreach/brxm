@@ -52,13 +52,6 @@ public interface HippoDocumentBean extends HippoBean, HippoTranslated {
      */
     String getCanonicalHandlePath();
 
-
-    /**
-     * @deprecated since 2.26.01 : Use {@link #getAvailableTranslations(Class)} instead
-     */
-    @Deprecated
-    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass);
-
     /**
      * @param beanMappingClass only return translations of type <code>beanMappingClass</code>
      * @return a {@link HippoAvailableTranslationsBean} where the translations must be of type <code>beanMappingClass</code>. This method never returns <code>null</code>

@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Node(jcrType="hippo:document")
-public class HippoDocument extends HippoItem implements HippoDocumentBean{
+public class HippoDocument extends HippoItem implements HippoDocumentBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
 
@@ -37,13 +37,6 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     private BeansWrapper<HippoCompoundBean> compounds;
     
     private javax.jcr.Node canonicalHandleNode;
-
-    @Deprecated
-    private boolean availableTranslationsBeanMappingClassInitialized;
-
-    @Deprecated
-    @SuppressWarnings("rawtypes")
-    private HippoAvailableTranslationsBean availableTranslationsBeanMappingClass;
 
     private boolean availableTranslationsMappingClassInitialized;
 
@@ -138,25 +131,6 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
             log.warn("Invalid locale '{}' for document '{}' : {}", new Object[] { localeString, getPath(), e.toString() });
             return null;
         }
-    }
-    
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass) {
-        if(!availableTranslationsBeanMappingClassInitialized) {
-            availableTranslationsBeanMappingClassInitialized = true;
-            try {
-                availableTranslationsBeanMappingClass = getBean("hippotranslation:translations");
-            } catch (ClassCastException e) {
-                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
-            }
-            if(availableTranslationsBeanMappingClass== null) {
-                availableTranslationsBeanMappingClass = new NoopTranslationsBean<T>();
-                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
-            } else {
-                ((HippoAvailableTranslations)availableTranslationsBeanMappingClass).setBeanMappingClass(beanMappingClass);
-            }
-        }
-        return (HippoAvailableTranslationsBean<T>)availableTranslationsBeanMappingClass;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

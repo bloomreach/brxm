@@ -247,40 +247,6 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     <T extends HippoBean> T getCanonicalBean();
     
     /**
-     * <p>
-     * Expert: Returns the 'real' contextual (preview / live context) bean version of this bean. Most of the time, this is just the current bean. However, 
-     * when the current bean is below some parent bean because it was mirrored by this parent, then, this method returns
-     * the 'real' contextual version, where the {@link #getParentBean()} also returns the contextualized version of the physical parent
-     * </p>
-     * <p>
-     * If the bean for which this this method is invoked is purely virtual (as in, the backing jcr node provider does not have a canonical equivalent, for 
-     * example in case of a faceted navigation node), just the current instance is returned
-     * </p>
-     * <b>note: this is quite an expensive check </b>
-     * @return the contextual bean for this bean, or <code>null</code> if it fails to contextualize this bean
-     * @deprecated  since 2.25.02 : use {@link #getCanonicalBean()} instead. The only different is, that {@link #getContextualBean()} returns
-     * the current {@link HippoBean} instance when there exists no canonical version of the backing jcr Node, whereas  {@link #getCanonicalBean()} in that
-     * case returns <code>null</code>
-     */
-    @Deprecated
-    HippoBean getContextualBean();
-    
-    /**
-     * Expert: Returns the parent bean in the context of live/preview.
-     * @see {@link #getParentBean()}, only this method returns the 'real' contextual parent bean. Suppose I have some HippoBean (= myBean), that 
-     * I got through a mirror, in other, words, the HippoBean is below the document (=docA) that had the mirror (link). {@link #getParentBean()} will
-     * return <code>docA</code>, but this is not the 'real' contextual parent bean of <code>myBean</code>. The 'real' contextual parent can be 
-     * fetched through this method. Note, that when <code>myBean</code> was not the result of a mirror, that {@link #getParentBean()} will then return the 
-     * same bean
-     * 
-     * <b>note: this is quite an expensive check </b>
-     * @return the 'unmirrored' parent bean in wrt this bean, but still in context, or if this bean backing jcr node is null or if the object converter cannot create a bean for the parent, return <code>null</code>
-     * @deprecated  since 2.25.02 : Use #getParentBean instead. Returns the same as #getParentBean
-     */
-    @Deprecated
-    HippoBean getContextualParentBean();
-    
-    /**
      * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoDocumentBean}</code>
      */
     boolean isHippoDocumentBean();
@@ -322,16 +288,10 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @return Returns <code>true</code> when this <code>HippoBean</code> has the same underlying jcr node path as the <code>compare</code> HippoBean. 
      */
     boolean isSelf(HippoBean compare);
-    
-    /**
-     * @deprecated since 2.26.01 : Use {@link #getAvailableTranslations()} instead
-     */
-    @Deprecated
-    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean();
 
     /**
      * In general, only a {@link HippoDocumentBean} and {@link HippoFolderBean} can have a {@link HippoAvailableTranslationsBean}. However, to make sure that on
-     * any {@link HippoBean} you can call {@link #getAvailableTranslationsBean()}, we add it to the base {@link HippoBean} as well.
+     * any {@link HippoBean} you can call {@link #getAvailableTranslations()}, we add it to the base {@link HippoBean} as well.
      * @return A {@link HippoAvailableTranslationsBean}.
      */
     <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations();
