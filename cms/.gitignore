@@ -289,7 +289,9 @@ richtext/*.iml
 richtext/.project
 richtext/.settings
 richtext/ckeditor/plugins/*.iml
+richtext/ckeditor/plugins/target
 richtext/ckeditor/resources/*.iml
+richtext/ckeditor/resources/target
 richtext/ckeditor/target
 richtext/frontend/*.iml
 richtext/frontend/.classpath
