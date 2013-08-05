@@ -73,6 +73,9 @@ public abstract class RepositoryTestCase {
     @BeforeClass
     public static void setUpClass() throws Exception {
         if (background == null && external == null) {
+            if (System.getProperty("repo.path") == null) {
+                System.setProperty("repo.path", System.getProperty("java.io.tmpdir"));
+            }
             background = HippoRepositoryFactory.getHippoRepository();
         }
     }
@@ -89,7 +92,7 @@ public abstract class RepositoryTestCase {
             background.close();
             background = null;
         }
-        final File storage = new File(System.getProperty("repo.path", ""));
+        final File storage = new File(System.getProperty("repo.path", System.getProperty("java.io.tmpdir")));
         String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
         for (final String path : paths) {
             FileUtils.deleteQuietly(new File(storage, path));
