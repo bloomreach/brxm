@@ -54,13 +54,6 @@ public class HippoItem implements HippoBean {
 
     private String canonicalUUID;
 
-
-    @Deprecated
-    private boolean availableTranslationsBeanInitialized;
-    @Deprecated
-    @SuppressWarnings("rawtypes")
-    private HippoAvailableTranslationsBean availableTranslationsBean;
-
     private boolean availableTranslationsInitialized;
     @SuppressWarnings("rawtypes")
     private HippoAvailableTranslationsBean availableTranslations;
@@ -524,45 +517,6 @@ public class HippoItem implements HippoBean {
         return null;
     }
 
-    public HippoBean getContextualBean() {
-        if(this.getNode() == null) {
-            log.warn("Cannot get contextual bean for detached bean. Return just the current bean instance");
-            return this;
-        }
-        try {
-            Node canonical = ((HippoNode)this.getNode()).getCanonicalNode();
-            if(canonical == null) {
-                log.debug("Cannot get canonical for a node that is virtual only: '{}'. It's contextual bean is just the current bean", this.getPath());
-                return this;
-            }
-            Object o = this.objectConverter.getObject(canonical);
-            if (o instanceof HippoBean) {
-                if(this.equals(o)) {
-                    // the contextual bean is just the same as the current bean
-                    return this;
-                }
-                log.debug("Contextualisation succeeded: translated from '{}' --> '{}'", this.getPath(), ((HippoBean) o).getPath());
-                return (HippoBean) o;
-            } else {
-                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
-            }
-        } catch (ObjectBeanManagerException e) {
-            log.warn("HstContextualizeException while trying to fetch contextual bean. Return null : {}", e.toString());
-        } catch (RepositoryException e) {
-            log.warn("HstContextualizeException while trying to fetch contextual bean. Return null :  {}", e.toString());;
-        }
-        return null;
-    }
-
-    public HippoBean getContextualParentBean() {
-        HippoBean contextualBean = getContextualBean();
-        if(contextualBean == null) {
-            log.warn("Cannot return contextual parent bean. Return null");
-            return null;
-        }
-        return contextualBean.getParentBean();
-    }
-
     public boolean isAncestor(HippoBean compare) {
         if (this.getPath() == null || compare.getPath() == null) {
             log.warn("Cannot compare the HippoBeans as one as a path that is null. Return false.");
@@ -614,24 +568,6 @@ public class HippoItem implements HippoBean {
 
     public boolean isHippoFolderBean() {
         return this instanceof HippoFolderBean;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean() {
-        if(!availableTranslationsBeanInitialized) {
-            availableTranslationsBeanInitialized = true;
-            try {
-                availableTranslationsBean = getBean("hippotranslation:translations");
-            } catch (ClassCastException e) {
-                log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
-            }
-            if(availableTranslationsBean== null) {
-                availableTranslationsBean = new NoopTranslationsBean<T>();
-                log.debug("Did not find a translations bean for '{}'. Return a no-operation instance of it", getValueProvider().getPath());
-            }
-        }
-        return availableTranslationsBean;
     }
 
     @SuppressWarnings("unchecked")
