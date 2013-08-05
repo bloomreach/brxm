@@ -46,9 +46,7 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        HstQueryManagerFactory qmf = getComponent(HstQueryManagerFactory.class.getName());
-
-        contentBeansTool = new DefaultContentBeansTool(qmf) {
+        contentBeansTool = new DefaultContentBeansTool() {
             @Override
             public ObjectConverter getObjectConverter() {
                 return TestRequestContextBeansCaching.this.getObjectConverter();
@@ -69,10 +67,6 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
         ModifiableRequestContextProvider.set(ctx);
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
 
-        final ObjectBeanManager objectBeanManager1 = ctx.getContentBeansTool().createObjectBeanManager(ctx.getSession());
-        final ObjectBeanManager objectBeanManager2 = ctx.getContentBeansTool().createObjectBeanManager(ctx.getSession());
-
-        assertFalse(objectBeanManager1 == objectBeanManager2 );
         assertTrue(ctx.getObjectBeanManager() == ctx.getObjectBeanManager());
 
         final ObjectBeanManager ctxOBM1 = ctx.getObjectBeanManager(ctx.getSession());
@@ -109,12 +103,9 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
        ModifiableRequestContextProvider.set(ctx);
        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+       ((HstMutableRequestContext)ctx).setHstQueryManagerFactory((HstQueryManagerFactory)getComponent(HstQueryManagerFactory.class.getName()));
 
-       final HstQueryManager queryManager1 = ctx.getContentBeansTool().createQueryManager(ctx.getSession());
-       final HstQueryManager queryManager2 = ctx.getContentBeansTool().createQueryManager(ctx.getSession());
-
-       assertFalse(queryManager1 == queryManager2 );
-
+       assertTrue(ctx.getQueryManager(ctx.getSession()) == ctx.getQueryManager(ctx.getSession()) );
        assertTrue(ctx.getQueryManager() == ctx.getQueryManager());
 
 

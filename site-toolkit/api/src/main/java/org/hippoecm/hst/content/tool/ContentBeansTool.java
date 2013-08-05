@@ -15,11 +15,7 @@
  */
 package org.hippoecm.hst.content.tool;
 
-import javax.jcr.Session;
-
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
 
 /**
  * ContentBeansTool
@@ -34,22 +30,5 @@ public interface ContentBeansTool {
      * @return <code>ObjectConverter</code> which is shareed across all threads
      */
     public ObjectConverter getObjectConverter();
-
-    /**
-     * @return a new <code>ObjectBeanManager</code> instance for the {@link Session} <code>session</code>
-     * @throws IllegalStateException if the application is unable to provide a ObjectBeanManager
-     * @see org.hippoecm.hst.core.request.HstRequestContext#getObjectBeanManager(Session) to re-use a cached one for
-     * the current request
-     */
-    public ObjectBeanManager createObjectBeanManager(Session session) throws IllegalStateException;
-
-    /**
-     * @param session
-     * @return the {@link HstQueryManager} for <code>session</code>
-     * @throws IllegalStateException if the application is unable to provide a HstQueryManager
-     * @see org.hippoecm.hst.core.request.HstRequestContext#getQueryManager(Session) to re-use a cached one for
-     * the current request
-     */
-    public HstQueryManager createQueryManager(Session session) throws IllegalStateException;
 
 }

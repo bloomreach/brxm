@@ -17,33 +17,21 @@ package org.hippoecm.hst.content.tool;
 
 import java.util.List;
 
-import javax.jcr.Session;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ClasspathResourceScanner;
 import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DefaultContentBeansTool
  */
 public class DefaultContentBeansTool implements ContentBeansTool {
 
-    private static Logger log = LoggerFactory.getLogger(DefaultContentBeansTool.class);
-
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
-
-    private final HstQueryManagerFactory queryManagerFactory;
 
     /*
      * On purpose, the objectConverter below is not <code>volatile</code>. This means that the getObjectConverter()
@@ -54,8 +42,7 @@ public class DefaultContentBeansTool implements ContentBeansTool {
      */
     private ObjectConverter objectConverter;
 
-    public DefaultContentBeansTool(HstQueryManagerFactory queryManagerFactory) {
-        this.queryManagerFactory = queryManagerFactory;
+    public DefaultContentBeansTool() {
     }
 
     public ObjectConverter getObjectConverter() {
@@ -74,18 +61,6 @@ public class DefaultContentBeansTool implements ContentBeansTool {
         }
 
         return objectConverter;
-    }
-
-    public ObjectBeanManager createObjectBeanManager(Session session) {
-        HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext == null) {
-            throw new IllegalStateException("HstRequestContext is not set in handler.");
-        }
-        return new ObjectBeanManagerImpl(session, getObjectConverter());
-    }
-
-    public HstQueryManager createQueryManager(Session session) throws IllegalStateException {
-        return queryManagerFactory.createQueryManager(session, getObjectConverter());
     }
 
     private List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner classpathResourceScanner) {

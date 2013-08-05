@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
@@ -629,7 +630,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             return defaultObjectBeanManager;
         }
         try {
-            defaultObjectBeanManager = getContentBeansTool().createObjectBeanManager(getSession());
+            defaultObjectBeanManager = createObjectBeanManager(getSession());
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot get ObjectBeanManager", e);
         }
@@ -643,7 +644,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         ObjectBeanManager nonDefaultObjectBeanManager = nonDefaultObjectBeanManagers.get(session);
         if (nonDefaultObjectBeanManager == null) {
-            nonDefaultObjectBeanManager = getContentBeansTool().createObjectBeanManager(session);
+            nonDefaultObjectBeanManager = createObjectBeanManager(session);
             nonDefaultObjectBeanManagers.put(session, nonDefaultObjectBeanManager);
         }
         return nonDefaultObjectBeanManager;
@@ -655,7 +656,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             return defaultHstQueryManager;
         }
         try {
-            defaultHstQueryManager = getContentBeansTool().createQueryManager(getSession());
+            defaultHstQueryManager = createQueryManager(getSession());
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot get HstQueryManager", e);
         }
@@ -669,9 +670,27 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
         HstQueryManager nonDefaultHstQueryManager = nonDefaultHstQueryManagers.get(session);
         if (nonDefaultHstQueryManager == null) {
-            nonDefaultHstQueryManager = getContentBeansTool().createQueryManager(session);
+            nonDefaultHstQueryManager = createQueryManager(session);
             nonDefaultHstQueryManagers.put(session, nonDefaultHstQueryManager);
         }
         return nonDefaultHstQueryManager;
     }
+
+
+
+    private ObjectBeanManager createObjectBeanManager(Session session) {
+        HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext == null) {
+            throw new IllegalStateException("HstRequestContext is not set in handler.");
+        }
+        return new ObjectBeanManagerImpl(session, getContentBeansTool().getObjectConverter());
+    }
+
+    private HstQueryManager createQueryManager(Session session) throws IllegalStateException {
+        return hstQueryManagerFactory.createQueryManager(session, getContentBeansTool().getObjectConverter());
+    }
+
+
+
+
 }
