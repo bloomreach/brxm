@@ -439,39 +439,46 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
 
     /**
      * This test assures the following linkrewriting capabilities:
-     * <p/>
-     * If you have a configuration like this: global (mount) sub1 (mount) subsub1(mount) sub2 (mount)
-     * <p/>
-     * documents content global sub1 subsub1 sub2
-     * <p/>
-     * and you have:
-     * <p/>
-     * mount 'global' --> /documents/content/unittestcontent mount 'global/sub1' -->
-     * /documents/content/global/unittestcontent/common mount 'global/sub1/subsub1' -->
-     * /documents/content/global/unittestcontent/common/aboutfolder mount 'global/sub2' -->
-     * /documents/content/global/unittestcontent/News
-     * <p/>
-     * The the HST MUST do the following linkrewriting:
-     * <p/>
-     * 1) If my current context is the global site, and I have some document bean of a node below
-     * /documents/content/global, then
-     * <p/>
-     * a) If the global sitemap can create a link for it, the HST needs to return a link for the global site b) If the
-     * global sitemap cannot create a link for it, the HST needs to try to create a link with another mount: For example
-     * sub1, subsub1 or sub2. If sub1 and subsub1 are both capable of creating a link, then the following algorithm is
-     * applied 1) Firstly order the candidate mounts to have the same primary type as the current Mount of this
-     * HstLinkResolver 2) Secondly order the candidate mounts that have the most 'types' in common with the current
-     * Mount of this HstLinkResolver 3) Thirdly order the Mounts to have the fewest types first: The fewer types it has,
-     * and the number of matching types is equal to the current Mount, indicates that it can be considered more precise
-     * 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper
-     * the more specific.
-     * <p/>
-     * <p/>
-     * 2) If my current context is for example /global/sub1 and sub1 cannot create a link for the bean, then a fallback
-     * to global, or global/sub1/subsub1 or global/sub2 should be tried
-     * <p/>
-     * Available since https://issues.onehippo.com/browse/HSTTWO-1670
      *
+     * If you have a configuration like this:
+     *   global (mount)
+     *      sub1 (mount)
+     *          subsub1(mount)
+     *      sub2 (mount)
+     *
+     *   documents
+     *      content
+     *        global
+     *           sub1
+     *             subsub1
+     *           sub2
+     *
+     *   and you have:
+     *
+     *   mount 'global' --> /documents/content/unittestcontent
+     *   mount 'global/sub1' --> /documents/content/global/unittestcontent/common
+     *   mount 'global/sub1/subsub1' --> /documents/content/global/unittestcontent/common/aboutfolder
+     *   mount 'global/sub2' --> /documents/content/global/unittestcontent/News
+     *
+     *   The the HST MUST do the following linkrewriting:
+     *
+     *   1) If my current context is the global site, and I have some document bean of a node below
+     *   /documents/content/global, then
+     *
+     *      a) If the global sitemap can create a link for it, the HST needs to return a link for the global site
+     *      b) If the global sitemap cannot create a link for it, the HST needs to try to create a link with another mount: For
+     *      example sub1, subsub1 or sub2. If sub1 and subsub1 are both capable of creating a link, then the following algorithm is applied
+     *                1) Firstly order the candidate mounts to have the same primary type as the current Mount of this HstLinkResolver
+     *                 2) Secondly order the candidate mounts that have the most 'types' in common with the current Mount of this HstLinkResolver
+     *                 3) Thirdly order the Mounts to have the fewest types first: The fewer types it has, and the number of matching types is equal to the current Mount, indicates
+     *                 that it can be considered more precise
+     *                 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper the more specific.
+     *
+     *
+     *   2) If my current context is for example /global/sub1 and sub1 cannot create a link for the bean, then a fallback to
+     *   global, or global/sub1/subsub1 or global/sub2 should be tried
+     *
+     * Available since https://issues.onehippo.com/browse/HSTTWO-1670
      * @throws Exception
      */
     @Test
