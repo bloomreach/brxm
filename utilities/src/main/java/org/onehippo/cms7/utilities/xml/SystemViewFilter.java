@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.utilities.xml;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -134,7 +136,7 @@ public class SystemViewFilter extends ProxyContentHandler {
 
 
     private static final class Path {
-        private final Stack<String> stack = new Stack<String>();
+        private final Stack<Node> stack = new Stack<Node>();
         private final String prefixPath;
 
         private String stringValue;
@@ -144,7 +146,14 @@ public class SystemViewFilter extends ProxyContentHandler {
         }
 
         void push(String element) {
-            stack.push(element);
+            Node node = new Node(element);
+            if (!stack.isEmpty()) {
+                final Node parent = stack.peek();
+                if (parent != null) {
+                    parent.addChild(node);
+                }
+            }
+            stack.push(node);
             stringValue = null;
         }
 
@@ -157,12 +166,44 @@ public class SystemViewFilter extends ProxyContentHandler {
         public String toString() {
             if (stringValue == null) {
                 StringBuilder sb = new StringBuilder();
-                for (String element : stack) {
-                    sb.append("/").append(element);
+                Node parent = null;
+                for (Node node : stack) {
+                    sb.append("/").append(node.name);
+                    if (parent != null) {
+                        int index = 1;
+                        for (Node child : parent.children) {
+                            if (child == node) {
+                                break;
+                            } else if (node.name.equals(child.name)) {
+                                index++;
+                            }
+                        }
+                        if (index != 1) {
+                            sb.append('[').append(index).append(']');
+                        }
+                    }
+                    parent = node;
                 }
                 stringValue = prefixPath + sb.toString();
             }
             return stringValue;
+        }
+
+    }
+
+    private static final class Node {
+        private final String name;
+        private List<Node> children;
+
+        private Node(String name) {
+            this.name = name;
+        }
+
+        private void addChild(final Node child) {
+            if (children == null) {
+                children = new ArrayList<Node>();
+            }
+            children.add(child);
         }
     }
 
