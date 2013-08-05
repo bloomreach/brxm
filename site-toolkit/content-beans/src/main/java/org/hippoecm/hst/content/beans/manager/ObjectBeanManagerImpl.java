@@ -15,12 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.manager;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.jcr.Session;
-
-import com.google.common.base.Optional;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 
@@ -28,7 +23,6 @@ public class ObjectBeanManagerImpl implements ObjectBeanManager {
 
     protected Session session;
     protected ObjectConverter objectConverter;
-    protected Map<String, Optional<Object>> requestCache = new HashMap<String, Optional<Object>>();
 
     public ObjectBeanManagerImpl(Session session, ObjectConverter objectConverter) {
         this.session = session;
@@ -36,33 +30,14 @@ public class ObjectBeanManagerImpl implements ObjectBeanManager {
     }
 
     public Object getObject(String path) throws ObjectBeanManagerException {
-        Optional<Object> cached = requestCache.get(path);
-        if (cached != null) {
-            return cached.get();
-        }
         Object o = this.objectConverter.getObject(this.session, path);
-        if (o == null) {
-            requestCache.put(path, Optional.absent());
-        } else {
-            requestCache.put(path, Optional.of(o));
-        }
-        return o; 
-    }
-    
-    public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException {
-        Optional<Object> cached = requestCache.get(uuid);
-        if (cached != null) {
-            return cached.get();
-        }
-        Object o = objectConverter.getObject(uuid, session);
-        if (o == null) {
-            requestCache.put(uuid, Optional.absent());
-        } else {
-            requestCache.put(uuid, Optional.of(o));
-        }
         return o;
     }
-    
+
+    public Object getObjectByUuid(String uuid) throws ObjectBeanManagerException {
+        return objectConverter.getObject(uuid, session);
+    }
+
     public Session getSession() {
         return this.session;
     }
