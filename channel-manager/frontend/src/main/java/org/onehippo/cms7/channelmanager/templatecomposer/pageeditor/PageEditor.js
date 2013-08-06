@@ -685,7 +685,7 @@
         updateChannelChangesNotification: function() {
             var iframe;
 
-            if (this.pageContainer.pageContext != null) {
+            if (this.pageContainer.pageContext !== null) {
                 iframe = Ext.getCmp('Iframe');
                 if (iframe.isVisible()) {
                     this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
