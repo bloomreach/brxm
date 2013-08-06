@@ -74,7 +74,7 @@ public abstract class RepositoryTestCase {
     public static void setUpClass() throws Exception {
         if (background == null && external == null) {
             if (System.getProperty("repo.path") == null) {
-                System.setProperty("repo.path", System.getProperty("java.io.tmpdir"));
+                System.setProperty("repo.path", getDefaultRepoPath());
             }
             background = HippoRepositoryFactory.getHippoRepository();
         }
@@ -92,7 +92,11 @@ public abstract class RepositoryTestCase {
             background.close();
             background = null;
         }
-        final File storage = new File(System.getProperty("repo.path", System.getProperty("java.io.tmpdir")));
+        String repoPath = System.getProperty("repo.path");
+        if (repoPath == null) {
+            repoPath = getDefaultRepoPath();
+        }
+        final File storage = new File(repoPath);
         String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
         for (final String path : paths) {
             FileUtils.deleteQuietly(new File(storage, path));
@@ -231,4 +235,12 @@ public abstract class RepositoryTestCase {
         return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
 
+    private static String getDefaultRepoPath() {
+        final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        final File storage = new File(tmpdir, "repository");
+        if (!storage.exists()) {
+            storage.mkdir();
+        }
+        return storage.getAbsolutePath();
+    }
 }
