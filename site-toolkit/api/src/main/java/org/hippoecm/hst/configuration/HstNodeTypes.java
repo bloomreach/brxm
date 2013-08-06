@@ -27,6 +27,7 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_SITEMAP = "hst:sitemap";
     static final String NODETYPE_HST_SITEMAPITEM = "hst:sitemapitem";
     static final String NODETYPE_HST_COMPONENT = "hst:component";
+    static final String NODETYPE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     static final String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
     static final String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
     static final String NODETYPE_HST_CATALOG = "hst:catalog";
@@ -48,6 +49,7 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_CHANNELS = "hst:channels";
     static final String NODETYPE_HST_BLUEPRINT = "hst:blueprint";
     static final String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
+    static final String NODETYPE_HST_CONTAINERCOMPONENTSHOLDER = "hst:containercomponentholder";
 
     static final String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     static final String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
@@ -195,4 +197,8 @@ public interface HstNodeTypes {
     static final String NODENAME_HST_MOUNT = "hst:mount";
     static final String NODENAME_HST_HOSTS = "hst:hosts";
     static final String NODENAME_HST_CHANNELS = "hst:channels";
+    static final String NODENAME_HST_MODIFIABLE = "hst:modifiable";
+    static final String NODENAME_HST_CONTAINERS = "hst:containers";
+
+    static final String RELPATH_HST_MODIFIABLE_CONTAINERS = "hst:modifiable/hst:containers";
 }

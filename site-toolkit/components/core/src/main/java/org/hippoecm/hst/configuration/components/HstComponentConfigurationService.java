@@ -174,31 +174,50 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
         this.id = StringPool.get(id);
-    } 
-
-    
-
-    public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
-            String rootNodeName) throws ServiceException {
-        this(node, parent, rootNodeName, true);
     }
 
-    /*
+    /**
      * rootNodeName is either hst:components or hst:pages.
+     * @param referenceableContainers : can be null
      */
-    public HstComponentConfigurationService(HstNode node, HstComponentConfiguration parent,
-            String rootNodeName, boolean traverseDescendants) throws ServiceException {
-    
+    public HstComponentConfigurationService(final HstNode node,
+                                            final HstComponentConfiguration parent,
+                                            final String rootNodeName,
+                                            final HstNode referenceableContainers) throws ServiceException {
+        this(node, parent, rootNodeName, true, referenceableContainers, null);
+    }
+
+    /**
+     * rootNodeName is either hst:components or hst:pages.
+     * @param referenceableContainers : can be null
+     */
+    public HstComponentConfigurationService(final HstNode node,
+                                            final HstComponentConfiguration parent,
+                                            final String rootNodeName,
+                                            final boolean traverseDescendants,
+                                            final HstNode referenceableContainers,
+                                            final String explicitName) throws ServiceException {
+
+
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
         this.inherited = node.isInherited();
 
         this.parent = parent;
 
-        if(parent == null) {
-            this.id = StringPool.get(rootNodeName + "/" + node.getValueProvider().getName());   
+
+        if (explicitName == null) {
+            this.name = StringPool.get(node.getValueProvider().getName());
         } else {
-            this.id = StringPool.get(parent.getId() + "/" + node.getValueProvider().getName());   
+            // in case of a hst:componentcontainerreference, we only need to keep the name of the 'hst:componentcontainerreference' node
+            // and for the rest everything is inherited from the referenced HstNode
+            this.name = explicitName;
+        }
+
+        if(parent == null) {
+            this.id = StringPool.get(rootNodeName + "/" + name);
+        } else {
+            this.id = StringPool.get(parent.getId() + "/" + name);
         }
         
         this.componentClassName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME));
@@ -216,18 +235,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
         } else {
-            throw new ServiceException("Unknown componentType '"+node.getNodeTypeName()+"' for '"+canonicalStoredLocation+"'. Cannot build configuration.");
+            throw new ServiceException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
-
-        this.name = StringPool.get(node.getValueProvider().getName());
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
         
         this.referenceComponent = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT));
         
         if(referenceComponent != null) {
-            if(type == Type.CONTAINER_COMPONENT) {
+            if (type == Type.CONTAINER_COMPONENT) {
                 throw new ServiceException("ContainerComponents are not allowed to have a reference. Pls fix the" +
                         "configuration for '"+canonicalStoredLocation+"'");
+            } else if (type == Type.CONTAINER_ITEM_COMPONENT) {
+                log.error("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
+                        "components of type '{}'. Setting reference to null.", new String[]{canonicalStoredLocation, HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT,
+                        HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT});
+                this.referenceComponent = null;
             }
         }
         
@@ -311,36 +333,100 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             // do not load children 
             return;
         }
-        for(HstNode child : node.getNodes()) {
-            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
-                    || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
-                    || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
-                  )  {
-                if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                    usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
-                }
-                try {
-                    HstComponentConfigurationService componentConfiguration = new HstComponentConfigurationService(
-                            child, this, rootNodeName, true);
-                    componentConfigurations.put(StringPool.get(componentConfiguration.getId()), componentConfiguration);
-
-                    // we also need an ordered list
-                    orderedListConfigs.add(componentConfiguration);
-                    childConfByName.put(StringPool.get(child.getValueProvider().getName()), componentConfiguration);
-                    log.debug("Added component service with key '{}'", id);
-                } catch (ServiceException e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Skipping component '{}'", child.getValueProvider().getPath(), e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Skipping component '{}'", child.getValueProvider().getPath());
-                    }
-                }
-            } else {
-                log.warn("Skipping node '{}' because is not of type '{}'", child.getValueProvider().getPath(),
-                        (HstNodeTypes.NODETYPE_HST_COMPONENT));
+        for (HstNode child : node.getNodes()) {
+            HstComponentConfigurationService childComponent = loadChildComponent(child, rootNodeName, referenceableContainers);
+            if (childComponent == null) {
+                continue;
             }
+            componentConfigurations.put(StringPool.get(childComponent.getId()), childComponent);
+            orderedListConfigs.add(childComponent);
+            childConfByName.put(StringPool.get(childComponent.getName()), childComponent);
+            log.debug("Added component service with key '{}'", id);
         }
     }
+
+    private HstComponentConfigurationService loadChildComponent(final HstNode child,
+                                                                final String rootNodeName,
+                                                                final HstNode referenceableContainers) {
+        if (isHstComponentOrReferenceType(child)) {
+            if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
+                usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
+            }
+            try {
+                if (HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(child.getNodeTypeName())) {
+                    HstNode referencedContainerNode = getReferencedContainer(child, referenceableContainers);
+                    if (referencedContainerNode == null) {
+                        return null;
+                    }
+                    // use the referencedContainerNode to build the hst component but use current child nodename as
+                    // the name of the component node
+                    String explicitName = child.getValueProvider().getName();
+                    return new HstComponentConfigurationService(referencedContainerNode,
+                            this, rootNodeName, true, referenceableContainers, explicitName);
+                } else {
+                    return new HstComponentConfigurationService(child, this, rootNodeName, true, referenceableContainers, null);
+                }
+            } catch (ServiceException e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Skipping component '{}'", child.getValueProvider().getPath(), e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Skipping component '{}'", child.getValueProvider().getPath());
+                }
+                return null;
+            }
+        } else {
+            log.warn("Skipping node '{}' because is not of type '{}'", child.getValueProvider().getPath(),
+                    (HstNodeTypes.NODETYPE_HST_COMPONENT));
+            return null;
+        }
+    }
+
+    private boolean isHstComponentOrReferenceType(final HstNode node) {
+        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
+    }
+
+    private HstNode getReferencedContainer(final HstNode child, final HstNode referenceableContainers) {
+        if (referenceableContainers == null) {
+            log.warn("Component '{}' is of type '{}' but there are no referenceable containers at '{}'. Component '{}' will be ignored.",
+                    new String[]{child.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE,
+                            HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS, child.getValueProvider().getPath()});
+            return null;
+        }
+        // reference is mandatory so can't be null
+        String reference = child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
+        if (reference.startsWith("/")) {
+            log.warn("Component '{}' has reference '{}' that starts with a '/'. Reference should not start with a slash and " +
+                    "must be relative to '{}'. Removing trailing slash");
+            reference = reference.substring(1);
+        }
+        try {
+            final HstNode refNode = referenceableContainers.getNode(reference);
+            if (refNode == null) {
+                log.warn("Component '{}' contains an unresolvable reference '{}'. It should be a location relative to '{}'. " +
+                        "Component '{}' will be ignored.",
+                        new String[]{child.getValueProvider().getPath(), reference,
+                                HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS, child.getValueProvider().getPath()});
+                return null;
+            }
+            if (!HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
+                log.warn("Component '{}' contains an reference '{}' that does not point to a node of type '{}'. That is not allowed. " +
+                        "Component '{}' will be ignored.",
+                        new String[]{child.getValueProvider().getPath(), reference,
+                                HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS, child.getValueProvider().getPath()});
+                return null;
+            }
+            log.debug("Succesfully found referenced containercomponent node '{}' for '{}'.", refNode.getValueProvider().getPath(),
+                    child.getValueProvider().getPath());
+            return refNode;
+        } catch (IllegalArgumentException e) {
+            log.warn("Reference '{}' for '{}' is invalid : {}", new String[]{reference, child.getValueProvider().getPath(), e.toString()});
+            return null;
+        }
+    }
+
     public HstComponentConfiguration getParent() {
         return parent;
     }
@@ -467,14 +553,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public HstComponentConfiguration getChildByName(String name) {
-        if (derivedChildrenByName == null) {
-            HashMap<String, HstComponentConfiguration> children = new HashMap<String, HstComponentConfiguration>();
-            for (HstComponentConfiguration config : orderedListConfigs) {
-                children.put(StringPool.get(config.getName()), config);
-            }
-            derivedChildrenByName = children;
-        }
-        return derivedChildrenByName.get(name);
+        return childConfByName.get(name);
     }
     
     public String getCanonicalStoredLocation() {

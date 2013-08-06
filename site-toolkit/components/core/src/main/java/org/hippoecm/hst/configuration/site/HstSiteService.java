@@ -83,7 +83,7 @@ public class HstSiteService implements HstSite {
     }
 
     private HstNode getConfigurationNode(final String configurationPath, final HstManagerImpl hstManager) throws ServiceException {
-        HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
+        HstNode configurationNode = hstManager.getInheritanceResolvedConfigurationRootNodes().get(configurationPath);
         if (configurationNode == null) {
             throw new ModelLoadingException(
                     "There is no configuration found at '"+configurationPath+"'. Cannot load a configuration for it. This can only" +
@@ -225,6 +225,7 @@ public class HstSiteService implements HstSite {
         augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES));
         augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_CATALOG));
         augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES));
+        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_MODIFIABLE));
         return key;
     }
 

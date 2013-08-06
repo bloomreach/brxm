@@ -73,6 +73,7 @@ public class HstSiteConfigurationRootNodeImpl extends HstNodeImpl implements Hst
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_PAGES);
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_COMPONENTS);
         merge(inheritedConfig, HstNodeTypes.NODENAME_HST_TEMPLATES);
+        merge(inheritedConfig, HstNodeTypes.NODENAME_HST_MODIFIABLE);
     }
 
     /*

@@ -57,11 +57,16 @@
 - hst:cacheable (boolean)
 
 
+[hst:containercomponentreference] > nt:base orderable
+- hst:referencecomponent (string) mandatory
+
 [hst:component] > hst:abstractcomponent orderable
-- hst:referencecomponent(string)
+- hst:referencecomponent (string)
++ * (hst:containercomponentreference)
 + * (hst:abstractcomponent)
 
 [hst:containeritemcomponent] > hst:abstractcomponent orderable
+// deprecate 'hst:referencecomponent' : not allowed for containeritemcomponent
 - hst:referencecomponent(string)
 - hst:xtype (string) mandatory
 // deprecated and unused : do not use
@@ -83,6 +88,10 @@
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
 + * (hst:containeritemcomponent)
+
+[hst:containercomponentholder] > nt:base orderable
++ * (hst:containercomponentholder)
++ * (hst:containercomponent)
 
 [hst:catalog] > nt:base, mix:referenceable orderable
 - hst:lockedby (string)
@@ -176,6 +185,8 @@
 - hst:lastmodifiedby (string)
 + * (hst:sitemenu)
 
+[hst:modifiable] > nt:base orderable
++ hst:containers (hst:containercomponentholder) = hst:containercomponentholder
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
@@ -189,6 +200,7 @@
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
 + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
 + hst:catalog (hst:catalog) = hst:catalog
++ hst:modifiable (hst:modifiable) = hst:modifiable
 
 [hst:configurations] > nt:base, mix:referenceable, mix:versionable
 + * (hst:configuration) = hst:configuration version

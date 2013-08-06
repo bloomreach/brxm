@@ -51,7 +51,6 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +145,7 @@ public class HstManagerImpl implements MutableHstManager {
      * that the original HstNode's in configurationRootNodes are not changed. Thus, all HstNode's in configurationRootNodes are 
      * first copied to new instances. The backing provider is allowed to be the same instance still.
      */
-    private Map<String, HstNode> enhancedConfigurationRootNodes = new HashMap<String, HstNode>();
+    private Map<String, HstNode> inheritanceResolvedConfigurationRootNodes = new HashMap<String, HstNode>();
 
     /**
      * The map of all site nodes where the key is the path
@@ -545,7 +544,7 @@ public class HstManagerImpl implements MutableHstManager {
             try {
 
                 siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-                enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
+                inheritanceResolvedConfigurationRootNodes = resolveInheritanceHstConfigurationNodes(configurationRootNodes);
 
                 virtualHosts = new VirtualHostsService(virtualHostsNode, this);
                 for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
@@ -573,7 +572,7 @@ public class HstManagerImpl implements MutableHstManager {
         } finally {
             // clear the StringPool as it is not needed any more
             StringPool.clear();
-            enhancedConfigurationRootNodes.clear();
+            inheritanceResolvedConfigurationRootNodes.clear();
             relevantEventsHolder.clear();
             hstLinkCreator.clear();
             clearAll = false;
@@ -664,13 +663,13 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
-    private Map<String, HstNode> enhanceHstConfigurationNodes(Map<String, HstNode> nodes) {
-        Map<String, HstNode> enhanced = new HashMap<String, HstNode>();
-        for(HstNode node : nodes.values()) {
-            HstNode enhancedNode = new HstSiteConfigurationRootNodeImpl((HstNodeImpl)node, nodes, rootPath);
-            enhanced.put(enhancedNode.getValueProvider().getPath(), enhancedNode);
+    private Map<String, HstNode> resolveInheritanceHstConfigurationNodes(Map<String, HstNode> configurationRootNodes) {
+        Map<String, HstNode> inheritanceResolvedMap = new HashMap<String, HstNode>();
+        for(HstNode configurationRootNode : configurationRootNodes.values()) {
+            HstNode enhancedNode = new HstSiteConfigurationRootNodeImpl((HstNodeImpl)configurationRootNode, configurationRootNodes, rootPath);
+            inheritanceResolvedMap.put(enhancedNode.getValueProvider().getPath(), enhancedNode);
         }
-        return enhanced;
+        return inheritanceResolvedMap;
     }
 
     private void loadAllConfigurationNodes(Session session) throws RepositoryException {
@@ -789,8 +788,8 @@ public class HstManagerImpl implements MutableHstManager {
         return siteRootNodes;
     }
 
-    public Map<String, HstNode> getEnhancedConfigurationRootNodes() {
-        return enhancedConfigurationRootNodes;
+    public Map<String, HstNode> getInheritanceResolvedConfigurationRootNodes() {
+        return inheritanceResolvedConfigurationRootNodes;
     }
     
     public HstNode getCommonCatalog(){

@@ -58,18 +58,19 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private int autocreatedCounter = 0;
 
     public HstComponentsConfigurationService(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
- 
+
+        HstNode modifiableContainers = configurationNode.getNode(HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS);
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
         
         if (components != null) {
             log.debug("Initializing the components");
-            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS);
+            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, modifiableContainers);
         }
 
         HstNode pages =  configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES);
         if (pages != null) {
             log.debug("Initializing the pages");
-            init(pages, HstNodeTypes.NODENAME_HST_PAGES);
+            init(pages, HstNodeTypes.NODENAME_HST_PAGES, modifiableContainers);
         }
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
@@ -191,20 +192,16 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     /*
      * rootNodeName is either hst:components or hst:pages.
      */
-    private void init(HstNode node, String rootNodeName) {
-        for(HstNode child : node.getNodes()) {
-            if(HstNodeTypes.NODETYPE_HST_COMPONENT.equals(child.getNodeTypeName())
-              || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(child.getNodeTypeName())
-              || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(child.getNodeTypeName())
-            )
-            {
-                if(child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
-                 // add to the used referencenames set 
+    private void init(final HstNode node,final  String rootNodeName, final HstNode modifiableContainers) {
+        for (HstNode child : node.getNodes()) {
+            if (isHstComponentType(child)) {
+                if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
+                    // add to the used referencenames set
                     usedReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
                 }
                 try {
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
-                            null, rootNodeName);
+                            null, rootNodeName, modifiableContainers);
                     childComponents.add(componentConfiguration);
                     log.debug("Added component service with key '{}'", componentConfiguration.getId());
                 } catch (ServiceException e) {
@@ -214,12 +211,17 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                         log.warn("Skipping component '{}' : '{}'", child.getValueProvider().getPath(), e.toString());
                     }
                 }
-            }
-            else {
+            } else {
                 log.warn("Skipping node '{}' because is not of type '{}'", child.getValueProvider().getPath(),
                         (HstNodeTypes.NODETYPE_HST_COMPONENT));
             }
         }
+    }
+
+    private boolean isHstComponentType(final HstNode node) {
+        return HstNodeTypes.NODETYPE_HST_COMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(node.getNodeTypeName())
+                || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName());
     }
     
     private void initCatalog(HstNode catalog) {
@@ -231,7 +233,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                     {
                         try {
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
-                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,null, HstNodeTypes.NODENAME_HST_COMPONENTS , false);
+                            HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , false, null, null);
                             availableContainerItems.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
                         } catch (ServiceException e) {
