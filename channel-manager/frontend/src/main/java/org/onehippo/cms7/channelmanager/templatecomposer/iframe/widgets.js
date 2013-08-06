@@ -354,7 +354,6 @@
                 return;
             }
             $(this.sel.sortable).sortable({
-                //revert: 100,
                 items: this.sel.sort.itemsRel,
                 connectWith: '.' + this.cls.overlay.base,
                 start   : $.proxy(this.ddOnStart, this),
@@ -402,6 +401,15 @@
 
         ddOnUpdate : function(event, ui) {
             this.state.syncItemsWithOverlayOrder = true;
+
+            // workaround for CMS7-7271, adapted from http://bit.ly/vJh0xY
+            if ($.browser.mozilla === true && $.browser.version >= 15) {
+                ui.item.unbind("click");
+                ui.item.one("click", function(event) {
+                    event.stopImmediatePropagation();
+                    self.onClick();
+                });
+            }
         },
 
         ddOnOver : function(event, ui) {
