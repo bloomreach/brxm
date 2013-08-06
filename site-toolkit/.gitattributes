@@ -410,7 +410,6 @@ commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -t
 commons/src/main/java/org/hippoecm/hst/core/container/DelegatingOrderableValve.java -text
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualHostAugmenter.java -text svneol=unset#text/plain
-commons/src/main/java/org/hippoecm/hst/core/jcr/AsynchronousDispatchingEventListener.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenerItemImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/linking/AbstractResourceContainer.java svneol=native#text/plain
