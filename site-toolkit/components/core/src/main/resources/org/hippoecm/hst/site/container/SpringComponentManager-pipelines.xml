@@ -31,7 +31,9 @@
   <bean id="org.hippoecm.hst.core.container.PageErrorHandler" class="org.hippoecm.hst.core.container.DefaultPageErrorHandler">
   </bean>
 
-  <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool"/>
+  <bean id="org.hippoecm.hst.content.tool.ContentBeansTool" class="org.hippoecm.hst.content.tool.DefaultContentBeansTool">
+    <constructor-arg ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
+  </bean>
 
   <!-- Valves -->
 
@@ -52,6 +54,7 @@
     <property name="resourceBundleRegistry" ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
     <property name="defaultAsynchronousComponentWindowRenderingMode" value="${default.asynchronous.component.window.rendering.mode}" />
     <property name="contentBeansTool" ref="org.hippoecm.hst.content.tool.ContentBeansTool" />
+    <property name="cachingObjectConverter" value="${object.converter.caching}" />
   </bean>
 
   <!-- Pre-processing valves -->

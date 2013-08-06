@@ -76,6 +76,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     protected PageErrorHandler defaultPageErrorHandler;
     protected ResourceBundleRegistry resourceBundleRegistry;
     protected ContentBeansTool contentBeansTool;
+    protected boolean cachingObjectConverter = true;
 
     protected boolean alwaysRedirectLocationToAbsoluteUrl = true;
 
@@ -191,6 +192,14 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     public void setContentBeansTool(ContentBeansTool contentBeansTool) {
         this.contentBeansTool = contentBeansTool;
+    }
+
+    public boolean isCachingObjectConverter() {
+        return cachingObjectConverter;
+    }
+
+    public void setCachingObjectConverter(final boolean cachingObjectConverter) {
+        this.cachingObjectConverter = cachingObjectConverter;
     }
 
     public abstract void invoke(ValveContext context) throws ContainerException;

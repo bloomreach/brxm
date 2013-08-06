@@ -40,6 +40,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
@@ -93,6 +94,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstSiteMenus siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected ContentBeansTool contentBeansTool;
+    protected boolean cachingObjectConverterEnabled;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected Subject subject;
@@ -571,6 +573,11 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
+    public void setCachingObjectConverter(final boolean enabled) {
+        this.cachingObjectConverterEnabled = enabled;
+    }
+
+    @Override
     public HippoBean getContentBean() {
         HstRequestContext requestContext = RequestContextProvider.get();
         if (requestContext == null || requestContext.getResolvedSiteMapItem() == null) {
@@ -677,20 +684,21 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
 
-
     private ObjectBeanManager createObjectBeanManager(Session session) {
-        HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext == null) {
-            throw new IllegalStateException("HstRequestContext is not set in handler.");
-        }
-        return new ObjectBeanManagerImpl(session, getContentBeansTool().getObjectConverter());
+        return new ObjectBeanManagerImpl(session, getObjectConverter());
     }
 
     private HstQueryManager createQueryManager(Session session) throws IllegalStateException {
-        return hstQueryManagerFactory.createQueryManager(session, getContentBeansTool().getObjectConverter());
+        return hstQueryManagerFactory.createQueryManager(session, getObjectConverter());
     }
 
-
+    private ObjectConverter getObjectConverter() {
+        final ObjectConverter converter = getContentBeansTool().getObjectConverter();
+        if (cachingObjectConverterEnabled) {
+            return new CachingObjectConverter(converter);
+        }
+        return converter;
+    }
 
 
 }

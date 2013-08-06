@@ -56,6 +56,8 @@ public class InitializationValve extends AbstractBaseOrderableValve {
             requestContext.setContentBeansTool(getContentBeansTool());
         }
 
+        requestContext.setCachingObjectConverter(isCachingObjectConverter());
+
         if (this.resourceLifecycleManagements != null) {
             for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
                 resourceLifecycleManagement.disposeAllResources();

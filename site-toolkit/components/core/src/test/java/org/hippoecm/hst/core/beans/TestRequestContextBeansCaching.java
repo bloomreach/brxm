@@ -26,6 +26,8 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -37,6 +39,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
@@ -46,7 +49,8 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        contentBeansTool = new DefaultContentBeansTool() {
+        HstQueryManagerFactory qmf = getComponent(HstQueryManagerFactory.class.getName());
+        contentBeansTool = new DefaultContentBeansTool(qmf) {
             @Override
             public ObjectConverter getObjectConverter() {
                 return TestRequestContextBeansCaching.this.getObjectConverter();
@@ -139,20 +143,149 @@ public class TestRequestContextBeansCaching extends AbstractBeanTestCase {
 
 
     @Test
-    public void testContentBeansRequestScopeCached() throws Exception {
+    public void testContentBeansNotRequestScopeCached() throws Exception {
 
         HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         ModifiableRequestContextProvider.set(ctx);
         ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
 
+        assertFalse(ctx.getContentBean() == ctx.getContentBean());
+        assertFalse(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
+
+    }
+
+    @Test
+    public void testContentBeansRequestScopeCached() throws Exception {
+
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
+
         assertTrue(ctx.getContentBean() == ctx.getContentBean());
         assertTrue(ctx.getSiteContentBaseBean() == ctx.getSiteContentBaseBean());
 
-        // TODO below is not yet cached
-//        assertTrue(ctx.getContentBean().getParentBean() == ctx.getContentBean().getParentBean());
-//        assertTrue(ctx.getContentBean().getParentBean().getBean("news") == ctx.getContentBean().getParentBean().getBean("news"));
-//        assertTrue(ctx.getContentBean().getParentBean().getBean("news/2009") == ctx.getContentBean().getParentBean().getBean("news/2009"));
+    }
 
+    @Test
+    public void testChildContentBeansNotRequestScopeCached() throws Exception {
+
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        // contentBeansTool has a non caching object converter
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+
+        final HippoBean siteContentBaseBean = ctx.getSiteContentBaseBean();
+        assertFalse(siteContentBaseBean == ctx.getSiteContentBaseBean());
+
+        final Object news = siteContentBaseBean.getBean("News");
+        assertNotNull(news);
+        assertFalse(siteContentBaseBean.getBean("News") == siteContentBaseBean.getBean("News"));
+        assertNotNull(siteContentBaseBean.getBean("News/2009"));
+        assertFalse(siteContentBaseBean.getBean("News/2009") == siteContentBaseBean.getBean("News/2009"));
+
+    }
+
+    @Test
+    public void testChildContentBeansRequestScopeCached() throws Exception {
+
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        // contentBeansTool has a non caching object converter
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
+
+        final HippoBean siteContentBaseBean = ctx.getSiteContentBaseBean();
+        assertTrue(siteContentBaseBean == ctx.getSiteContentBaseBean());
+
+        final Object news = siteContentBaseBean.getBean("News");
+        assertNotNull(news);
+        assertTrue(siteContentBaseBean.getBean("News") == siteContentBaseBean.getBean("News"));
+        assertNotNull(siteContentBaseBean.getBean("News/2009"));
+        assertTrue(siteContentBaseBean.getBean("News/2009") == siteContentBaseBean.getBean("News/2009"));
+
+        // second request
+        HstRequestContext ctx2 = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx2);// contentBeansTool now with caching object mananger
+        ((HstMutableRequestContext)ctx2).setContentBeansTool(contentBeansTool);
+        final HippoBean siteContentBaseBean2 = ctx2.getSiteContentBaseBean();
+        assertFalse(siteContentBaseBean == siteContentBaseBean2);
+        final HippoBean news2 = siteContentBaseBean2.getBean("News");
+        assertFalse(news == news2);
+    }
+
+    @Test
+    public void testAncestorContentBeansNotRequestScopeCached() throws Exception {
+
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        // contentBeansTool now with caching object mananger
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+
+        final HippoBean contentBean = ctx.getContentBean();
+        assertFalse(contentBean == ctx.getContentBean());
+
+        final HippoBean parentBean = contentBean.getParentBean();
+        assertNotNull(parentBean);
+        assertFalse(parentBean == contentBean.getParentBean());
+
+    }
+
+    @Test
+    public void testAncestorContentBeansRequestScopeCached() throws Exception {
+
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        // contentBeansTool now with caching object mananger
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
+
+        final HippoBean contentBean = ctx.getContentBean();
+        assertTrue(contentBean == ctx.getContentBean());
+
+        final HippoBean parentBean = contentBean.getParentBean();
+        assertNotNull(parentBean);
+        assertTrue(parentBean == contentBean.getParentBean());
+
+        // second request
+        HstRequestContext ctx2 = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx2);// contentBeansTool now with caching object mananger
+        ((HstMutableRequestContext)ctx2).setContentBeansTool(contentBeansTool);
+        final HippoBean contentBean2 = ctx2.getContentBean();
+        assertFalse(contentBean == contentBean2);
+        final HippoBean parentBean2 = contentBean2.getParentBean();
+        assertFalse(parentBean == parentBean2);
+    }
+
+    @Test
+    public void testSearchResultBeansAreNotRequestScopeCached() throws Exception {
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        // contentBeansTool now with caching object mananger
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setHstQueryManagerFactory((HstQueryManagerFactory)getComponent(HstQueryManagerFactory.class.getName()));
+
+        final HippoBeanIterator hippoBeans1 = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean()).execute().getHippoBeans();
+        final HippoBeanIterator hippoBeans2 = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean()).execute().getHippoBeans();
+        while (hippoBeans1.hasNext()) {
+            assertFalse(hippoBeans1.nextHippoBean() == hippoBeans2.nextHippoBean());
+        }
+    }
+
+    @Test
+      public void testSearchResultBeansAreRequestScopeCached() throws Exception {
+        HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        ModifiableRequestContextProvider.set(ctx);
+        // contentBeansTool now with caching object mananger
+        ((HstMutableRequestContext)ctx).setContentBeansTool(contentBeansTool);
+        ((HstMutableRequestContext)ctx).setCachingObjectConverter(true);
+        ((HstMutableRequestContext)ctx).setHstQueryManagerFactory((HstQueryManagerFactory)getComponent(HstQueryManagerFactory.class.getName()));
+
+        final HippoBeanIterator hippoBeans1 = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean()).execute().getHippoBeans();
+        final HippoBeanIterator hippoBeans2 = ctx.getQueryManager().createQuery(ctx.getSiteContentBaseBean()).execute().getHippoBeans();
+        while (hippoBeans1.hasNext()) {
+            assertTrue(hippoBeans1.nextHippoBean() == hippoBeans2.nextHippoBean());
+        }
     }
 
 }

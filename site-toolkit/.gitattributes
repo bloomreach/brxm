@@ -626,6 +626,7 @@ components/core/src/main/java/org/hippoecm/hst/site/container/UnregisterableMBea
 components/core/src/main/java/org/hippoecm/hst/site/container/UnregisteringMBeanExportersListener.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/session/HttpSessionEventPublisher.java -text
 components/core/src/main/java/org/hippoecm/hst/site/request/BasicHstSiteMapMatcher.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/site/request/CachingObjectConverter.java -text
 components/core/src/main/java/org/hippoecm/hst/site/request/ComponentConfigurationImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/DefaultContextCredentialsProvider.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/HstRequestContextComponentImpl.java svneol=native#text/plain
