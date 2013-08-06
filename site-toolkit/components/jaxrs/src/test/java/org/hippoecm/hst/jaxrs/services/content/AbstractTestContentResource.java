@@ -30,6 +30,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -60,7 +61,9 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     private static final String MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
     private static final String MOUNT_CONTENTPATH = "/testcontent/documents/testproject";
     private static final String MOUNT_PATH = "/preview/services";
-    
+
+    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
+
     protected Pipelines pipelines;
     protected Pipeline jaxrsPipeline;
     protected MockServletConfig servletConfig;
@@ -89,6 +92,8 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         jaxrsPipeline = this.pipelines.getPipeline("JaxrsRestContentPipeline");
         
         servletContext = new MockServletContext() { public String getRealPath(String path) { return null; } };
+        servletContext.addInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM,
+                "classpath*:org/hippoecm/hst/jaxrs/model/beans/**/*.class");
         servletConfig = new MockServletConfig(servletContext);
         
         hstContainerConfig = new HstContainerConfig() {
@@ -164,6 +169,9 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         String pathInfo = requestPath.substring(MOUNT_PATH.length() + 1);
         
         HstMutableRequestContext requestContext = createRequestContext(pathInfo);
+
+        ModifiableRequestContextProvider.set(requestContext);
+
     	request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
     	requestContext.setPathSuffix(cr.getPathSuffix());
     	requestContext.setBaseURL(urlProvider.parseURL(cr, response, requestContext.getResolvedMount()));
@@ -174,6 +182,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
             throw new ContainerException(e);
         } finally {
             jaxrsPipeline.cleanup(hstContainerConfig, requestContext, cr, response);
+            ModifiableRequestContextProvider.clear();
         }
     }
 }

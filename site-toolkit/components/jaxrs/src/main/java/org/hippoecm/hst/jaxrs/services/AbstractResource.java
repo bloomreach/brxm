@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.jaxrs.services;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -35,18 +36,12 @@ import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
-import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.model.content.Link;
-import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,9 +52,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractResource {
 
     private static Logger log = LoggerFactory.getLogger(AbstractResource.class);
-	
-    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
-    
+
     public static final String MOUNT_ALIAS_REST = ContainerConstants.MOUNT_ALIAS_REST;
     public static final String MOUNT_ALIAS_SITE = ContainerConstants.MOUNT_ALIAS_SITE;
     public static final String MOUNT_ALIAS_GALLERY = ContainerConstants.MOUNT_ALIAS_GALLERY;
@@ -68,50 +61,58 @@ public abstract class AbstractResource {
     public static final String HST_MOUNT_REL_PREFIX = "mount:";
     
     private String restRelationsBaseUri = HST_REST_RELATIONS_BASE_URI;
-    private String annotatedClassesResourcePath;
-    private List<Class<? extends HippoBean>> annotatedClasses;
-    private ObjectConverter objectConverter;
-    private HstQueryManagerFactory hstQueryManagerFactory;
-    
+
     private boolean pageLinksExternal;
     
     private ContentRewriter<String> contentRewriter;
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool
+     */
+    @Deprecated
     public String getAnnotatedClassesResourcePath() {
-        return annotatedClassesResourcePath;
+        log.warn("AbstractResource#setAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
+        return null;
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool
+     */
+    @Deprecated
     public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
-        this.annotatedClassesResourcePath = annotatedClassesResourcePath;
+        log.warn("AbstractResource#setAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
     public List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
-        if (annotatedClasses == null) {
-            String annoClassPathResourcePath = getAnnotatedClassesResourcePath();
-            
-            if (StringUtils.isBlank(annoClassPathResourcePath)) {
-                annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
-            }
-            
-            annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, annoClassPathResourcePath);
-        }
-        return annotatedClasses;
+        log.warn("AbstractResource#getAnnotatedClasses is deprecated and does not do anything any more.");
+        return Collections.emptyList();
     }
     
     public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
-        this.annotatedClasses = annotatedClasses;
+        log.warn("AbstractResource#setAnnotatedClasses is deprecated and does not do anything any more.");
     }
-    
+
+
     public ObjectConverter getObjectConverter(HstRequestContext requestContext) {
-        if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        }
-        return objectConverter;
+        return requestContext.getContentBeansTool().getObjectConverter();
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more.  If custom object converter is needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
     public void setObjectConverter(ObjectConverter objectConverter) {
-    	this.objectConverter = objectConverter;
+        log.warn("AbstractResource#setObjectConverter is deprecated and does not do anything any more.");
     }
     
     /**
@@ -119,28 +120,21 @@ public abstract class AbstractResource {
      * @return
      */
     public HstQueryManager getHstQueryManager(HstRequestContext requestContext) {
-        try {
-            return getHstQueryManager(requestContext.getSession(), requestContext);
-        } catch (RepositoryException e) {
-            throw new RuntimeException(e);
-        }
+        return requestContext.getQueryManager();
     }
     
     public HstQueryManager getHstQueryManager(Session session, HstRequestContext requestContext) {
-        if (hstQueryManagerFactory == null) {
-            ComponentManager compManager = HstServices.getComponentManager();
-            if (compManager != null) {
-                hstQueryManagerFactory = (HstQueryManagerFactory) compManager.getComponent(HstQueryManagerFactory.class.getName());
-            }
-            if (hstQueryManagerFactory == null) {
-                throw new IllegalStateException("HstQueryManagerFactory component is not found from the component manager.");
-            }
-        }
-        return hstQueryManagerFactory.createQueryManager(session, getObjectConverter(requestContext));
+        return requestContext.getQueryManager(session);
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more.  If custom object converter is needed, inject a
+     * custom  hst query manager in the HstRequestContext. This method does not do
+     * anything any more
+     */
+    @Deprecated
     public void setHstQueryManagerFactory(HstQueryManagerFactory hstQueryManagerFactory) {
-        this.hstQueryManagerFactory = hstQueryManagerFactory;
+        log.warn("AbstractResource#setHstQueryManagerFactory is deprecated and does not do anything any more.");
     }
     
     public String getRestRelationsBaseUri() {
@@ -207,7 +201,7 @@ public abstract class AbstractResource {
      * @return a bean of type T 
      */
     protected <T extends HippoBean> T getRequestContentBean(HstRequestContext requestContext, Class<T> beanMappingClass) throws ObjectBeanManagerException {
-        HippoBean bean = getRequestContentBean(requestContext);
+        HippoBean bean = requestContext.getContentBean();
         if(bean == null) {
             throw new ObjectBeanManagerException("Cannot return bean of type '"+beanMappingClass+"'");
         }
@@ -225,33 +219,7 @@ public abstract class AbstractResource {
      * @return the HippoBean where the relative contentpath of the sitemap item points to
      */
     protected HippoBean getRequestContentBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
-        String contentPathInfo = null;    
-        // first check whehter we have a resolved mount that has isMapped = true. If not mapped, we take the 
-        // contentPathInfo directly from the requestContext.getBaseURL().getPathInfo()
-        if(requestContext.getResolvedMount().getMount().isMapped()) {
-            ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-            if (resolvedSiteMapItem == null) {
-                log.debug("There is no resolved sitemap item for '{}' so no requestContentBean can be returned. Return null", requestContext.getBaseURL().getPathInfo());
-                return null;
-            } else {
-                contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
-            }
-        } else {
-            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
-        }
-           
-        String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath() + "/" + (contentPathInfo != null ? contentPathInfo : "");
-        requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
-        
-        try {
-            HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-            return bean;
-        } catch (ObjectBeanManagerException e) {
-            throw e;
-        } catch (RepositoryException e) {
-            throw new ObjectBeanManagerException(e);
-        }
-        
+        return requestContext.getContentBean();
     }
 
     /**
@@ -261,16 +229,7 @@ public abstract class AbstractResource {
      * @return HippoFolderBean the mountContentBaseBean 
      */
     public HippoFolderBean getMountContentBaseBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
-        String requestContentPath = requestContext.getResolvedMount().getMount().getContentPath();
-        
-        try {
-            HippoFolderBean bean = (HippoFolderBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-            return bean;
-        } catch (ObjectBeanManagerException e) {
-            throw e;
-        } catch (RepositoryException e) {
-            throw new ObjectBeanManagerException(e);
-        }
+        return (HippoFolderBean) requestContext.getSiteContentBaseBean();
     }
     
     protected String deleteHippoBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {

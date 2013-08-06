@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -24,20 +22,16 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
-import org.hippoecm.hst.util.ObjectConverterUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +46,6 @@ public class AbstractConfigResource {
     private ObjectConverter objectConverter;
     private HstManager hstManager;
     private MountDecorator mountDecorator;
-    private List<Class<? extends HippoBean>> annotatedClasses;
-    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
     private static final String CURRENT_MOUNT_CANONICAL_CONTENT_PATH = AbstractConfigResource.class.getName() + "-CurrentMountCanonicalContentPath";
 
@@ -191,25 +183,7 @@ public class AbstractConfigResource {
         return Response.status(Response.Status.CONFLICT).entity(entity).build();
     } 
 
-    
-    protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
-        if (annotatedClasses == null) {
-            String annoClassPathResourcePath = "";
-
-            if (StringUtils.isBlank(annoClassPathResourcePath)) {
-                annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
-            }
-
-            annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, annoClassPathResourcePath);
-        }
-        return annotatedClasses;
-    }
-
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
-        if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        }
-        return objectConverter;
+        return requestContext.getContentBeansTool().getObjectConverter();
     }
 }

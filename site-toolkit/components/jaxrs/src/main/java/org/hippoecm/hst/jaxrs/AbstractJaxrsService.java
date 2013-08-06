@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -29,20 +28,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,11 +51,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 	private Map<String,String> jaxrsConfigParameters;
 	private String serviceName;
 	private String servletPath = "";
-	
 
-    public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
-    private String annotatedClassesResourcePath;
-    private List<Class<? extends HippoBean>> annotatedClasses;
     private ObjectConverter objectConverter;
     
 	
@@ -78,43 +67,61 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     public void setServletPath(String servletPath) {
     	this.servletPath = servletPath;
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
     public String getAnnotatedClassesResourcePath() {
-        return annotatedClassesResourcePath;
-    }
-    
-    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
-        this.annotatedClassesResourcePath = annotatedClassesResourcePath;
+        log.warn("AbstractJaxrsService#getAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
+        return null;
     }
 
+    /**
+     * @deprecated since 2.28.00 not used any more.  If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
+    public void setAnnotatedClassesResourcePath(String annotatedClassesResourcePath) {
+        log.warn("AbstractJaxrsService#setAnnotatedClassesResourcePath is deprecated and does not do anything any more.");
+    }
+
+    /**
+     * @deprecated since 2.28.00 not used any more.  If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
     public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
-        this.annotatedClasses = annotatedClasses;
+        log.warn("AbstractJaxrsService#setAnnotatedClasses is deprecated and does not do anything any more.");
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more.  If custom object converter is needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
     public void setObjectConverter(ObjectConverter objectConverter) {
-        this.objectConverter = objectConverter;
+        log.warn("AbstractJaxrsService#setObjectConverter is deprecated and does not do anything any more.");
     }
-    
+
+    /**
+     * @deprecated since 2.28.00 not used any more. If custom annotated classes are needed, inject a
+     * custom object converter in the HstRequestContext through ContentBeansTool. This method does not do
+     * anything any more
+     */
+    @Deprecated
     protected List<Class<? extends HippoBean>> getAnnotatedClasses(HstRequestContext requestContext) {
-        if (annotatedClasses == null) {
-            String annoClassPathResourcePath = getAnnotatedClassesResourcePath();
-            
-            if (StringUtils.isBlank(annoClassPathResourcePath)) {
-                annoClassPathResourcePath = requestContext.getServletContext().getInitParameter(BEANS_ANNOTATED_CLASSES_CONF_PARAM);
-            }
-            
-            annotatedClasses = AnnotatedContentBeanClassesScanner.scanAnnotatedContentBeanClasses(requestContext, annoClassPathResourcePath);
-        }
-        
-        return annotatedClasses;
+        log.warn("AbstractJaxrsService#getAnnotatedClasses is deprecated and does not do anything any more.");
+        return Collections.emptyList();
     }
-    
+
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
-        if (objectConverter == null) {
-            List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
-            objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
-        }
-        return objectConverter;
+        return requestContext.getContentBeansTool().getObjectConverter();
     }
     
     public void initialize() throws ContainerException {
@@ -157,28 +164,25 @@ public abstract class AbstractJaxrsService implements JAXRSService {
             log.warn("Illegal argument for '{}' : not an absolute path", path);
             return null;
         }
-        String relPath = path.substring(1);
-        Node node = session.getRootNode();
-        String nodePath = null;
-        nodePath  = node.getPath();
-        if(!node.hasNode(relPath)) {
-            log.info("Cannot get object for node '{}' with relPath '{}'", nodePath , relPath);
+
+        if(!session.nodeExists(path)) {
+            log.info("Cannot get object for path '{}' '", path);
             return null;
         }
-        Node relNode = node.getNode(relPath);
-        if (relNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+        Node node = session.getNode(path);
+        if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
             // if its a handle, we want the child node. If the child node is not present,
             // this node can be ignored
-            if(relNode.hasNode(relNode.getName())) {
-                return relNode.getNode(relNode.getName());
+            if(node.hasNode(node.getName())) {
+                return node.getNode(node.getName());
             } 
             else {
-                log.info("Cannot get object for node '{}' with relPath '{}'", nodePath, relPath);
+                log.info("Cannot get object for path '{}''", path);
                 return null;
             }
         } 
         else {
-            return relNode;
+            return node;
         }   
     }
 	
@@ -193,7 +197,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return a bean of type T and <code>null</code> if there cannot be found a content bean for the requestContext or when the bean is not of type <code>beanMappingClass</code>
      */
     public <T extends HippoBean> T getRequestContentBean(HstRequestContext requestContext, Class<T> beanMappingClass) {
-        HippoBean bean = getRequestContentBean(requestContext);
+        HippoBean bean = requestContext.getContentBean();
         if(bean == null) {
             return null;
         }
@@ -210,36 +214,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return the HippoBean where the relative contentpath of the sitemap item points to or <code>null</code> when not found, or no relative content path is present, or no resolved sitemap item
      */
     public HippoBean getRequestContentBean(HstRequestContext requestContext) {
-       
-        String contentPathInfo = null;    
-        // first check whehter we have a resolved mount that has isMapped = true. If not mapped, we take the 
-        // contentPathInfo directly from the requestContext.getBaseURL().getPathInfo()
-        if(requestContext.getResolvedMount().getMount().isMapped()) {
-            ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-            if (resolvedSiteMapItem == null) {
-                log.debug("There is no resolved sitemap item for '{}' so no requestContentBean can be returned. Return null", requestContext.getBaseURL().getPathInfo());
-                return null;
-            } else {
-                contentPathInfo = resolvedSiteMapItem.getRelativeContentPath();
-            }
-        } else {
-            contentPathInfo = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
-        }
-        String requestContentPath = getMountContentPath(requestContext) + "/" + (contentPathInfo != null ? contentPathInfo : "");
-        requestContext.setAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY, requestContentPath);
-        
-        try {
-            HippoBean bean = (HippoBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-            return bean;
-        } catch (LoginException e) {
-            log.warn("Login Exception during fetching bean. Return null" , e.toString());
-        } catch (ObjectBeanManagerException e) {
-            log.warn("ObjectBeanManagerException during fetching bean. Return null" , e.toString());
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException during fetching bean. Return null" , e.toString());
-        }
-        
-        return null;
+       return requestContext.getContentBean();
     }
 
     /**
@@ -248,20 +223,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
      * @return the siteContentBaseBean if it can be found and <code>null</code> otherwise
      */
     public HippoFolderBean getSiteContentBaseBean(HstRequestContext requestContext) {
-        String requestContentPath = getMountContentPath(requestContext);
-        
-        try {
-            HippoFolderBean bean = (HippoFolderBean) getObjectConverter(requestContext).getObject(requestContext.getSession(), requestContentPath);
-            return bean;
-        } catch (LoginException e) {
-            log.warn("Login Exception during fetching site content base bean. Return null" , e.toString());
-        } catch (ObjectBeanManagerException e) {
-            log.warn("ObjectBeanManagerException during fetching site content base  bean. Return null" , e.toString());
-        } catch (RepositoryException e) {
-            log.warn("RepositoryException during fetching site content base  bean. Return null" , e.toString());
-        }
-        
-        return null;
+        return (HippoFolderBean)requestContext.getSiteContentBaseBean();
     }
     
 	protected static class ServletConfigImpl implements ServletConfig {

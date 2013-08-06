@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -34,6 +35,7 @@ import org.hippoecm.hst.content.beans.ContentNodeBindingException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.jaxrs.model.beans.TextPage;
+import org.hippoecm.hst.jaxrs.model.content.HippoHtmlRepresentation;
 import org.hippoecm.hst.jaxrs.model.content.TextPageRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +65,37 @@ public class TextPageContentResource extends AbstractContentResource {
             throw new WebApplicationException(e);
         }
     }
-    
+
+    @GET
+    @Path("/html/")
+    public HippoHtmlRepresentation getHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+                                                              @MatrixParam("path") String relPath,
+                                                              @MatrixParam("target") String targetMountAlias) {
+        return super.getHippoHtmlRepresentation(servletRequest, relPath, targetMountAlias);
+    }
+
+    @PUT
+    @Path("/html/")
+    public HippoHtmlRepresentation updateHippoHtmlRepresentation(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+                                                                 @MatrixParam("path") String relPath, HippoHtmlRepresentation htmlRepresentation) {
+        return super.updateHippoHtmlRepresentation(servletRequest, relPath, htmlRepresentation);
+    }
+
+    @GET
+    @Path("/html/content/")
+    public String getHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+                                      @MatrixParam("path") String relPath,
+                                      @MatrixParam("target") String targetMountAlias) {
+        return super.getHippoHtmlContent(servletRequest, relPath, targetMountAlias);
+    }
+
+    @PUT
+    @Path("/html/content/")
+    public String updateHippoHtmlContent(@Context HttpServletRequest servletRequest, @Context HttpServletResponse servletResponse, @Context UriInfo uriInfo,
+                                         @MatrixParam("path") String relPath, String htmlContent) {
+        return super.updateHippoHtmlContent(servletRequest, relPath, htmlContent);
+    }
+
     @RolesAllowed(value={"manager"})
     @GET
     @Path("/protected/")

@@ -40,8 +40,6 @@ public class TestTextPageContentResource extends AbstractTestContentResource {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        servletContext.addInitParameter(AbstractContentResource.BEANS_ANNOTATED_CLASSES_CONF_PARAM, 
-                "classpath*:org/hippoecm/hst/jaxrs/model/beans/**/*.class");
     }
     
     @Test

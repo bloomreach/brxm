@@ -32,8 +32,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * AnnotatedContentBeanClassesScanner
- * @version $Id$
+ *
+ * @deprecated since 2.28.00 not used any more.  If custom annotated classes are needed, use a custom object converter and inject a
+ * the custom object converter in the HstRequestContext through ContentBeansTool.
  */
+@Deprecated
 public class AnnotatedContentBeanClassesScanner {
     
     private static Logger log = LoggerFactory.getLogger(AnnotatedContentBeanClassesScanner.class);
