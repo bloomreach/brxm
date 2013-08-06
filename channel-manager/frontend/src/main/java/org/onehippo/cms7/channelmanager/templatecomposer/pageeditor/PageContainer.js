@@ -271,57 +271,63 @@
             mountId = this.pageContext.ids.mountId;
             hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
 
-            if (hasPreviewHstConfig) {
-                Hippo.Msg.confirm(self.resources['discard-changes-title'], self.resources['discard-changes-message'], function(btn, text) {
-                    if (btn === 'yes') {
-                        Ext.Ajax.request({
-                            method: 'POST',
-                            headers: {
-                                'FORCE_CLIENT_HOST': 'true'
-                            },
-                            url: self.composerRestMountUrl + '/' + mountId + './discard?FORCE_CLIENT_HOST=true',
-                            success: function() {
-                                // reset pageContext, the page and toolkit stores must be reloaded
-                                self.pageContext = null;
-                                self.refreshIframe.call(self, null);
-                            },
-                            failure: function(result) {
-                                var jsonData = Ext.util.JSON.decode(result.responseText);
-                                console.error('Discarding changes failed ' + jsonData.message);
-                                Hippo.Msg.alert(self.resources['discard-changes-failed-title'], self.resources['discard-changes-failed-message'], function() {
-                                    self.initComposer.call(self);
-                                });
-                            }
-                        });
-                    } else {
-                        self._complete();
-                    }
-                });
-            } else {
-                this._complete();
-            }
+            return new Hippo.Future(function(onSuccess) {
+                if (hasPreviewHstConfig) {
+                    Hippo.Msg.confirm(self.resources['discard-changes-title'], self.resources['discard-changes-message'], function(btn, text) {
+                        if (btn === 'yes') {
+                            Ext.Ajax.request({
+                                method: 'POST',
+                                headers: {
+                                    'FORCE_CLIENT_HOST': 'true'
+                                },
+                                url: self.composerRestMountUrl + '/' + mountId + './discard?FORCE_CLIENT_HOST=true',
+                                success: function() {
+                                    // reset pageContext, the page and toolkit stores must be reloaded
+                                    self.pageContext = null;
+                                    self.refreshIframe.call(self, null);
+                                    onSuccess();
+                                },
+                                failure: function(result) {
+                                    var jsonData = Ext.util.JSON.decode(result.responseText);
+                                    console.error('Discarding changes failed ' + jsonData.message);
+                                    Hippo.Msg.alert(self.resources['discard-changes-failed-title'], self.resources['discard-changes-failed-message'], function() {
+                                        self.initComposer.call(self);
+                                    });
+                                }
+                            });
+                        } else {
+                            self._complete();
+                        }
+                    });
+                } else {
+                    this._complete();
+                }
+            });
         },
 
         manageChanges: function() {
-            var self, manageChangesWindow;
+            var self = this;
 
-            self = this;
-
-            manageChangesWindow = new Hippo.ChannelManager.TemplateComposer.ManageChangesWindow({
-                cmsUser: this.cmsUser,
-                composerRestMountUrl: this.composerRestMountUrl,
-                mountId: this.pageContext.ids.mountId,
-                resources: this.resources,
-                onSuccess: this.refreshIframe.createDelegate(this),
-                onFailure: function() {
-                    Hippo.Msg.alert(
-                        self.resources['manage-changes-failed-title'],
-                        self.resources['manage-changes-failed-message'],
-                        self.initComposer.createDelegate(self)
-                    );
-                }
+            return new Hippo.Future(function(onSuccess) {
+                var manageChangesWindow = new Hippo.ChannelManager.TemplateComposer.ManageChangesWindow({
+                    cmsUser: self.cmsUser,
+                    composerRestMountUrl: self.composerRestMountUrl,
+                    mountId: self.pageContext.ids.mountId,
+                    resources: self.resources,
+                    onSuccess: function() {
+                        self.refreshIframe();
+                        onSuccess();
+                    },
+                    onFailure: function() {
+                        Hippo.Msg.alert(
+                            self.resources['manage-changes-failed-title'],
+                            self.resources['manage-changes-failed-message'],
+                            self.initComposer.createDelegate(self)
+                        );
+                    }
+                });
+                manageChangesWindow.show();
             });
-            manageChangesWindow.show();
         },
 
         toggleMode: function() {
@@ -420,22 +426,26 @@
         publishHstConfiguration: function() {
             this._lock();
             var self = this;
-            Ext.Ajax.request({
-                method: 'POST',
-                headers: {
-                    'FORCE_CLIENT_HOST': 'true'
-                },
-                url: this.composerRestMountUrl + '/' + this.pageContext.ids.mountId + './publish?FORCE_CLIENT_HOST=true',
-                success: function() {
-                    self.refreshIframe.call(self, null);
-                },
-                failure: function(result) {
-                    var jsonData = Ext.util.JSON.decode(result.responseText);
-                    console.error(self.resources['published-hst-config-failed-message'] + ' ' + jsonData.message);
-                    Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message'], function() {
-                        self.initComposer.call(self);
-                    });
-                }
+
+            return new Hippo.Future(function(onSuccess) {
+                Ext.Ajax.request({
+                    method: 'POST',
+                    headers: {
+                        'FORCE_CLIENT_HOST': 'true'
+                    },
+                    url: self.composerRestMountUrl + '/' + self.pageContext.ids.mountId + './publish?FORCE_CLIENT_HOST=true',
+                    success: function() {
+                        self.refreshIframe.call(self, null);
+                        onSuccess();
+                    },
+                    failure: function(result) {
+                        var jsonData = Ext.util.JSON.decode(result.responseText);
+                        console.error(self.resources['published-hst-config-failed-message'] + ' ' + jsonData.message);
+                        Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message'], function() {
+                            self.initComposer.call(self);
+                        });
+                    }
+                });
             });
         },
 

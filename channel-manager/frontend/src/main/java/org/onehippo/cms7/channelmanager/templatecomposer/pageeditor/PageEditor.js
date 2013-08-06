@@ -402,11 +402,7 @@
             if (toolbar.rendered) {
                 toolbar.doLayout();
             }
-            if (this.pageContainer.pageContext) {
-                Ext.getCmp('Iframe').on('show', function() {
-                    this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
-                }, this, {single: true});
-            }
+            this.updateChannelChangesNotification();
         },
 
         showOrHideButtons: function (button1, button2) {
@@ -471,8 +467,12 @@
                         hidden: true,
                         listeners: {
                             click: {
-                                fn: this.pageContainer.discardChanges,
-                                scope: this.pageContainer
+                                fn: function() {
+                                    this.pageContainer.discardChanges().when(function() {
+                                        this.fireEvent('channelChanged');
+                                    }.createDelegate(this));
+                                },
+                                scope: this
                             }
                         }
                     },
@@ -674,13 +674,27 @@
                     this.propertiesWindow.hide();
                 }
 
-                this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
+                this.updateChannelChangesNotification();
 
                 Ext.getCmp('icon-toolbar-window').hide();
             }
 
-
             Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
+        },
+
+        updateChannelChangesNotification: function() {
+            var iframe;
+
+            if (this.pageContainer.pageContext != null) {
+                iframe = Ext.getCmp('Iframe');
+                if (iframe.isVisible()) {
+                    this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
+                } else {
+                    iframe.on('show', function() {
+                        this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
+                    }, this, {single: true});
+                }
+            }
         },
 
         showOrHideChannelChangesNotification: function(fullscreen, pageContext) {
@@ -838,21 +852,21 @@
                 }.createDelegate(this));
             }, this);
 
-            this.on('channelChanged', function() {
-                this.channelStoreFuture.when(function(config) {
-                    config.store.reload();
-                    config.store.on('load', function() {
-                        var channelRecord = config.store.getById(this.channelId);
+            this.channelStoreFuture.when(function(config) {
+                config.store.on('load', function() {
+                    var channelRecord = config.store.getById(this.channelId);
 
-                        this.channel = channelRecord.data;
-                        if (this.pageContainer.previewMode) {
-                            this.createViewToolbar();
-                        } else {
-                            this.createEditToolbar();
-                        }
-                    }, this);
-                }.createDelegate(this));
-            }, this);
+                    this.channel = channelRecord.data;
+                    if (this.pageContainer.previewMode) {
+                        this.createViewToolbar();
+                    } else {
+                        this.createEditToolbar();
+                    }
+                }, this);
+                this.on('channelChanged', function() {
+                    config.store.reload();
+                }, this);
+            }.createDelegate(this));
         },
 
         createPropertiesWindow: function(mountId) {
@@ -1013,8 +1027,12 @@
                 hidden: true,
                 listeners: {
                     click: {
-                        fn: this.pageContainer.publishHstConfiguration,
-                        scope: this.pageContainer
+                        fn: function() {
+                            this.pageContainer.publishHstConfiguration().when(function() {
+                                this.fireEvent('channelChanged');
+                            }.createDelegate(this));
+                        },
+                        scope: this
                     }
                 }
             });
@@ -1027,8 +1045,12 @@
                 hidden: true,
                 listeners: {
                     click: {
-                        fn: this.pageContainer.discardChanges,
-                        scope: this.pageContainer
+                        fn: function() {
+                            this.pageContainer.discardChanges().when(function() {
+                                this.fireEvent('channelChanged');
+                            }.createDelegate(this));
+                        },
+                        scope: this
                     }
                 }
             });
@@ -1040,8 +1062,12 @@
                 hidden: !this.canManageChanges || this.channel.fineGrainedLocking === "false"  || this.channel.changedBySet.length === 0,
                 listeners: {
                     click: {
-                        fn: this.pageContainer.manageChanges,
-                        scope: this.pageContainer
+                        fn: function() {
+                            this.pageContainer.manageChanges().when(function() {
+                                this.fireEvent('channelChanged');
+                            }.createDelegate(this));
+                        },
+                        scope: this
                     }
                 }
             });
