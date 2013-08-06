@@ -92,11 +92,7 @@ public abstract class RepositoryTestCase {
             background.close();
             background = null;
         }
-        String repoPath = System.getProperty("repo.path");
-        if (repoPath == null) {
-            repoPath = getDefaultRepoPath();
-        }
-        final File storage = new File(repoPath);
+        final File storage = new File(System.getProperty("repo.path", getDefaultRepoPath()));
         String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
         for (final String path : paths) {
             FileUtils.deleteQuietly(new File(storage, path));
