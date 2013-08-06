@@ -69,18 +69,16 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstFilter implements Filter {
 
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = 1L;
-
-    private static final String LOGGER_CATEGORY_NAME = HstFilter.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(HstFilter.class);
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstFilter.class.getName();
 
@@ -216,8 +214,6 @@ public class HstFilter implements Filter {
 
 		request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
 
-    	Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-
     	boolean requestContextSetToProvider = false;
 
         Task rootTask = null;
@@ -225,7 +221,7 @@ public class HstFilter implements Filter {
         try {
     		if (!HstServices.isAvailable()) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-    			logger.error("The HST Container Services are not initialized yet.");
+    			log.error("The HST Container Services are not initialized yet.");
     			return;
     		}
 
@@ -253,7 +249,7 @@ public class HstFilter implements Filter {
 
     	    if(siteMapItemHandlerFactory == null || hstManager == null) {
                 res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                logger.error("The HstManager or siteMapItemHandlerFactory is not available");
+                log.error("The HstManager or siteMapItemHandlerFactory is not available");
                 return;
             }
 
@@ -293,7 +289,7 @@ public class HstFilter implements Filter {
 
             // when resolvedVirtualHost = null, we cannot do anything else then fall through to the next filter
             if(resolvedVirtualHost == null) {
-                logger.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
+                log.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
                 chain.doFilter(request, response);
                 return;
             }
@@ -353,7 +349,7 @@ public class HstFilter implements Filter {
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
                  * a URL for the uuid, and send a browser redirect to this URL.
                  */
-                sendRedirectToUuidUrl(req, res, requestContext, hstManager, resolvedVirtualHost, containerRequest, hostName, logger);
+                sendRedirectToUuidUrl(req, res, requestContext, hstManager, resolvedVirtualHost, containerRequest, hostName);
                 return;
             } else {
 
@@ -382,9 +378,9 @@ public class HstFilter implements Filter {
                                     MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
                                     Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount) mount);
                                     if (decoratedMount == mount) {
-                                        logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
+                                        log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
                                     } else {
-                                        logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
+                                        log.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
                                     }
                                     ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
                                 } else {
@@ -411,7 +407,7 @@ public class HstFilter implements Filter {
                         resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerUrl.getPathInfo());
                         if(resolvedSiteMapItem == null) {
                             // should not be possible as when it would be null, an exception should have been thrown
-                            logger.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
+                            log.warn(hostName+"' and '"+containerRequest.getRequestURI()+"' could not be processed by the HST: Error resolving request to sitemap item");
                             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                             return;
                         }
@@ -444,16 +440,16 @@ public class HstFilter implements Filter {
                                sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
                                return;
                            default :
-                               logger.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
+                               log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
                        }
                     }
 
-                    processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers, logger);
+                    processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers);
 
                 }
                 else {
                     if(resolvedMount.getNamedPipeline() == null) {
-                        logger.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
+                        log.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
                         sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                     }
                     else {
@@ -482,39 +478,39 @@ public class HstFilter implements Filter {
                                     sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
                                     return;
                                 default :
-                                    logger.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
+                                    log.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
                             }
                         }
-                        logger.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
+                        log.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
                         HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                     }
                 }
             }
     	}
     	catch (MatchException e) {
-    	    if(logger.isDebugEnabled()) {
-                logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+    	    if(log.isDebugEnabled()) {
+                log.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+                log.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerNotFoundException e) {
-           if(logger.isDebugEnabled()) {
-                logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+           if(log.isDebugEnabled()) {
+               log.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+               log.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
-           if(logger.isDebugEnabled()) {
-                logger.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+           if(log.isDebugEnabled()) {
+                log.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
             } else {
-                logger.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+                log.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     	catch (Exception e) {
-            logger.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
+            log.warn("Fatal error encountered while processing request '"+req.getRequestURI()+"':" , e);
             sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     	}
     	finally {
@@ -561,32 +557,32 @@ public class HstFilter implements Filter {
 
     }
 
-    private String getJcrUuidParameter(ServletRequest request, Logger logger) throws IOException {
+    private String getJcrUuidParameter(ServletRequest request) throws IOException {
         String jcrUuid = request.getParameter(REQUEST_PARAM_UUID);
 
         if (jcrUuid == null || "".equals(jcrUuid)) {
-            logger.warn("Cannot redirect when there is no UUID");
+            log.warn("Cannot redirect when there is no UUID");
             return null;
         }
 
         try {
             UUID.fromString(jcrUuid);
         } catch (IllegalArgumentException e) {
-            logger.warn("Cannot redirect because '{}' is not a valid UUID", jcrUuid);
+            log.warn("Cannot redirect because '{}' is not a valid UUID", jcrUuid);
             return null;
         }
 
         return jcrUuid;
     }
 
-    private String getTypeParameter(ServletRequest request, Logger logger) {
+    private String getTypeParameter(ServletRequest request) {
         String type = request.getParameter(REQUEST_PARAM_TYPE);
 
         if (type == null) {
-            logger.debug("No type defined. Default type is '{}'", DEFAULT_REQUEST_PARAM_TYPE);
+            log.debug("No type defined. Default type is '{}'", DEFAULT_REQUEST_PARAM_TYPE);
             type = DEFAULT_REQUEST_PARAM_TYPE;
         } else if (!"live".equals(type) && !"preview".equals(type)) {
-            logger.warn("Ignoring unknown type '{}', using '{}' instead. Known types are 'preview' and 'live'.", type, DEFAULT_REQUEST_PARAM_TYPE);
+            log.warn("Ignoring unknown type '{}', using '{}' instead. Known types are 'preview' and 'live'.", type, DEFAULT_REQUEST_PARAM_TYPE);
             type = DEFAULT_REQUEST_PARAM_TYPE;
         }
 
@@ -683,14 +679,13 @@ public class HstFilter implements Filter {
      * @param res HTTP servlet response
      * @param requestContext the HST request context
      * @param hstSitesManager
-     * @param logger
      * @throws javax.jcr.RepositoryException
      * @throws java.io.IOException
      */
     private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext,
-            HstManager hstSitesManager, ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName, Logger logger) throws RepositoryException, IOException {
+            HstManager hstSitesManager, ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName) throws RepositoryException, IOException {
 
-        final String jcrUuid = getJcrUuidParameter(req, logger);
+        final String jcrUuid = getJcrUuidParameter(req);
         if (jcrUuid == null) {
             sendError(req, res, HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -706,12 +701,12 @@ public class HstFilter implements Filter {
             try {
                 node = session.getNodeByIdentifier(jcrUuid);
             } catch (ItemNotFoundException e) {
-                logger.warn("Cannot find a node for uuid '{}'", jcrUuid);
+                log.warn("Cannot find a node for uuid '{}'", jcrUuid);
                 sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
-            final String mountType = getTypeParameter(req, logger);
+            final String mountType = getTypeParameter(req);
 
             final String hostGroupName = resolvedVirtualHost.getVirtualHost().getHostGroupName();
             final ResolvedMount mount = getMountForType(containerRequest, mountType, hostName, hostGroupName, resolvedVirtualHost.getVirtualHost().getVirtualHosts(), node.getPath());
@@ -727,7 +722,7 @@ public class HstFilter implements Filter {
 
             final HstLinkCreator linkCreator = HstServices.getComponentManager().getComponent(HstLinkCreator.class.getName());
             if (linkCreator == null) {
-                logger.error("Cannot create a 'uuid url' when there is no linkCreator available");
+                log.error("Cannot create a 'uuid url' when there is no linkCreator available");
                 sendError(req, res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 return;
             }
@@ -735,7 +730,7 @@ public class HstFilter implements Filter {
             requestContext.setURLFactory(hstSitesManager.getUrlFactory());
             final HstLink link = linkCreator.create(node, requestContext);
             if (link == null) {
-                logger.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
+                log.warn("Not able to create link for node '{}' belonging to uuid = '{}'", node.getPath(), jcrUuid);
                 sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
@@ -744,8 +739,8 @@ public class HstFilter implements Filter {
             if (requestContext.isFullyQualifiedURLs()) {
                 url += "?" + ContainerConstants.HST_REQUEST_USE_FULLY_QUALIFIED_URLS + "=true";
             }
-            if (logger.isInfoEnabled()) {
-                logger.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
+            if (log.isInfoEnabled()) {
+                log.info("Created HstLink for uuid '{}': '{}'", node.getPath(), url);
             }
             req.removeAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             res.sendRedirect(url);
@@ -795,7 +790,7 @@ public class HstFilter implements Filter {
     }
 
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager,
-            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
+            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
     	if (processHandlers) {
@@ -820,16 +815,16 @@ public class HstFilter implements Filter {
 
 		if (resolvedSiteMapItem.getErrorCode() > 0) {
 			try {
-				if (logger.isDebugEnabled()) {
-					logger.debug("The resolved sitemap item for {} has error status: {}", requestContext.getBaseURL().getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
+				if (log.isDebugEnabled()) {
+                    log.debug("The resolved sitemap item for {} has error status: {}", requestContext.getBaseURL().getRequestPath(), Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
 				}
 				res.sendError(resolvedSiteMapItem.getErrorCode());
 
 			} catch (IOException e) {
-				if (logger.isDebugEnabled()) {
-					logger.warn("Exception invocation on sendError().", e);
-				} else if (logger.isWarnEnabled()) {
-					logger.warn("Exception invocation on sendError().");
+				if (log.isDebugEnabled()) {
+                    log.warn("Exception invocation on sendError().", e);
+				} else if (log.isWarnEnabled()) {
+                    log.warn("Exception invocation on sendError().");
 				}
 			}
 			// we're done:
@@ -837,7 +832,7 @@ public class HstFilter implements Filter {
 		}
 
         if (resolvedSiteMapItem.getStatusCode() > 0) {
-            logger.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code"
+            log.debug("Setting the status code to '{}' for '{}' because the matched sitemap item has specified the status code"
                     ,String.valueOf(resolvedSiteMapItem.getStatusCode()), req.getRequestURL().toString() );
             res.setStatus(resolvedSiteMapItem.getStatusCode());
         }
@@ -857,7 +852,7 @@ public class HstFilter implements Filter {
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
             requestContext.setBaseURL(hstSitesManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
-            processResolvedSiteMapItem(req, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true, logger);
+            processResolvedSiteMapItem(req, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true);
         }
 
 		return;
@@ -881,13 +876,12 @@ public class HstFilter implements Filter {
                                                   HttpServletRequest req,
                                                   HttpServletResponse res,
                                                   FilterChain filterChain) {
-        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
 
         ResolvedSiteMapItem newResolvedSiteMapItem = orginalResolvedSiteMapItem;
         List<HstSiteMapItemHandlerConfiguration> handlerConfigsFromMatchedSiteMapItem = orginalResolvedSiteMapItem.getHstSiteMapItem().getSiteMapItemHandlerConfigurations();
         for(HstSiteMapItemHandlerConfiguration handlerConfig : handlerConfigsFromMatchedSiteMapItem) {
            HstSiteMapItemHandler handler = siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
-           logger.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
+            log.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
            try {
                if (handler instanceof FilterChainAwareHstSiteMapItemHandler) {
                    newResolvedSiteMapItem = ((FilterChainAwareHstSiteMapItemHandler) handler).process(newResolvedSiteMapItem, req, res, filterChain);
@@ -895,11 +889,11 @@ public class HstFilter implements Filter {
                    newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
                }
                if(newResolvedSiteMapItem == null) {
-                   logger.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
+                   log.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
                    return null;
                }
            } catch (HstSiteMapItemHandlerException e){
-               logger.error("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'");
+               log.error("Exception during executing siteMapItemHandler '"+handlerConfig.getName()+"'");
                throw e;
            }
         }

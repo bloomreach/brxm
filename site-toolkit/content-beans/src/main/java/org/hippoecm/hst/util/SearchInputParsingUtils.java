@@ -18,6 +18,8 @@ package org.hippoecm.hst.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Input utilities for user searches.
@@ -25,7 +27,7 @@ import org.hippoecm.hst.site.HstServices;
  */
 public final class SearchInputParsingUtils {
 
-    private static final String FQCN = SearchInputParsingUtils.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(SearchInputParsingUtils.class);
     
     private static final String WHITESPACE_PATTERN = "\\s+";
 
@@ -49,7 +51,7 @@ public final class SearchInputParsingUtils {
         parsed = rewriteNotOperatorsToMinus(parsed);
         parsed = removeLeadingAndTrailingAndReplaceWithSpaceAndOperators(parsed);
         parsed = EncodingUtils.foldToASCIIReplacer(parsed);
-        HstServices.getLogger(FQCN, FQCN).debug("Rewrote input '{}' to '{}'", input, parsed);
+        log.debug("Rewrote input '{}' to '{}'", input, parsed);
         return parsed;
     }
     
@@ -68,7 +70,7 @@ public final class SearchInputParsingUtils {
         if(parsed.length() > maxLength) {
             parsed = parsed.substring(0, maxLength);
         }
-        HstServices.getLogger(FQCN, FQCN).debug("Rewrote input '{}' to '{}'", input, parsed);
+        log.debug("Rewrote input '{}' to '{}'", input, parsed);
         return parsed;
     }
 
@@ -94,7 +96,7 @@ public final class SearchInputParsingUtils {
         }
         String output = sb.toString();
         if(!input.equals(output)) {
-            HstServices.getLogger(FQCN, FQCN).debug("Rewrote input '{}' to '{}'", input, output);
+            log.debug("Rewrote input '{}' to '{}'", input, output);
         }
         return output;
     }
@@ -181,7 +183,7 @@ public final class SearchInputParsingUtils {
         }
         String output = sb.toString();
         if(!input.equals(output)) {
-            HstServices.getLogger(FQCN, FQCN).debug("Rewrote input '{}' to '{}'", input, output);
+            log.debug("Rewrote input '{}' to '{}'", input, output);
         }
         return output;
       }

@@ -68,7 +68,6 @@
     <property name="sessionLiveCheck" value="true"/>
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
     <property name="sessionLiveCheckInterval" value="60000"/>
-    <property name="loggerFactory" ref="org.hippoecm.hst.logging.LoggerFactory"/>
     <property name="eventListenerItems" ref="jcrObservationEventListenerItems" />
   </bean>
 

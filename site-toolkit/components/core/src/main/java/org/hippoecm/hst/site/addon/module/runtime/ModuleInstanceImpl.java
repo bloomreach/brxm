@@ -39,8 +39,7 @@ import org.springframework.context.support.AbstractRefreshableConfigApplicationC
 
 public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware, ApplicationContextAware {
 
-    private static final String LOGGER_FQCN = ModuleInstanceImpl.class.getName();
-    private static Logger log = LoggerFactory.getLogger(LOGGER_FQCN);
+    private static final Logger log = LoggerFactory.getLogger(ModuleInstanceImpl.class);
 
     private ModuleDefinition moduleDefinition;
     private String name;
@@ -155,7 +154,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         try {
             bean = (T) applicationContext.getBean(name);
         } catch (Exception ignore) {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
+            log.warn("The requested bean doesn't exist: '{}'", name);
         }
         
         return bean;
@@ -167,7 +166,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         try {
             bean = (T) applicationContext.getBean(requiredType);
         } catch (Exception ignore) {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist by the required type: '{}'", requiredType);
+            log.warn("The requested bean doesn't exist by the required type: '{}'", requiredType);
         }
 
         if (bean == null) {
@@ -183,7 +182,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         try {
             beansMap = applicationContext.getBeansOfType(requiredType);
         } catch (Exception ignore) {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
+            log.warn("The requested bean doesn't exist: '{}'", name);
         }
         
         return beansMap;

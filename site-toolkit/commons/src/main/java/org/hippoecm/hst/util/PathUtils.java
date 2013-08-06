@@ -19,9 +19,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to encode and decode node from and to urls
@@ -29,7 +29,8 @@ import org.hippoecm.repository.api.NodeNameCodec;
  */
 public class PathUtils {
 
-    private static final String LOGGER_CATEGORY_NAME = PathUtils.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(PathUtils.class);
+
     private static final String HTML_SUFFIX = ".html";
     private static final String SLASH_ENCODED = "__slash__";
     
@@ -167,8 +168,7 @@ public class PathUtils {
                 return URLEncoder.encode(name, "utf-8");
             }
         } catch (UnsupportedEncodingException e) {
-            Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-            logger.error("Missing utf-8 codec?", e);
+            log.error("Missing utf-8 codec?", e);
             return "";
         }
     }
@@ -187,8 +187,7 @@ public class PathUtils {
                 return NodeNameCodec.encode(name);
             }
         } catch (UnsupportedEncodingException e) {
-            Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-            logger.error("Missing utf-8 codec?", e);
+            log.error("Missing utf-8 codec?", e);
             return "";
         }
     }

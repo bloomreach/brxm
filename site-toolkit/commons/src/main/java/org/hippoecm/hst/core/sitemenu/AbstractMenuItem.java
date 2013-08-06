@@ -22,10 +22,13 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMenuItem implements CommonMenuItem{
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractMenuItem.class);
 
     private ResolvedSiteMapItemWrapper resolvedSiteMapItem;
     
@@ -76,14 +79,14 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
             return resolvedSiteMapItem.resolvedItem;
         }
         if(this.getHstLink() == null || this.getHstLink().getPath() == null || "".equals(this.getHstLink().getPath())) {
-            HstServices.getLogger(getClass().getName()).warn("Cannot resolve to sitemap item because HstLink is null or empty. Return null"); 
+            log.warn("Cannot resolve to sitemap item because HstLink is null or empty. Return null");
             return null;
         }
         HstRequestContext ctx = request.getRequestContext();
         try {
             resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedMount()));
         }  catch (NotFoundException e) {
-            HstServices.getLogger(getClass().getName()).warn("Cannot resolve to sitemap item because '{}'. Return null.", e.getMessage()); 
+            log.warn("Cannot resolve to sitemap item because '{}'. Return null.", e.getMessage());
             return null;
         }
         return resolvedSiteMapItem.resolvedItem;

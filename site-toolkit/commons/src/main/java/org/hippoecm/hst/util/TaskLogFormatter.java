@@ -18,25 +18,26 @@ package org.hippoecm.hst.util;
 import java.util.BitSet;
 
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to get a pretty printed hierarchical task log
  */
 public class TaskLogFormatter {
 
+    private static final Logger log = LoggerFactory.getLogger(TaskLogFormatter.class);
+
     /**
      * @return returns the <code>task</code> nicely hierarchical formatted
      */
     public static String getTaskLog(Task task) {
-        Logger log = HstServices.getLogger(TaskLogFormatter.class.getName());
         StringBuilder sb = new StringBuilder(256);
-        appendTaskLog(sb, task, 0, new BitSet(0), false, log);
+        appendTaskLog(sb, task, 0, new BitSet(0), false);
         return sb.toString();
     }
 
-    private static void appendTaskLog(StringBuilder sb, Task task, int depth, final BitSet bitset, boolean lastChild, Logger log) {
+    private static void appendTaskLog(StringBuilder sb, Task task, int depth, final BitSet bitset, boolean lastChild) {
         
         BitSet hidePipeAt = new BitSet(depth);
         hidePipeAt.or(bitset);
@@ -74,9 +75,9 @@ public class TaskLogFormatter {
         for (Task childTask : task.getChildTasks()) {
             count++;
             if (count == task.getChildTasks().size()) {
-                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, true, log);
+                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, true);
             } else {
-                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, false, log);
+                appendTaskLog(sb, childTask, depth + 1,hidePipeAt, false);
             }
         }
     }

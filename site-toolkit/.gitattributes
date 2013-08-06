@@ -240,11 +240,6 @@ api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManager.java svneol
 api/src/main/java/org/hippoecm/hst/core/sitemenu/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/diagnosis/Task.java -text
 api/src/main/java/org/hippoecm/hst/jaxrs/JAXRSService.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/logging/LogEvent.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/logging/LogEventBuffer.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/logging/Logger.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/logging/LoggerFactory.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/logging/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/PropertyMap.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/ValueProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/jcr/JCRValueProvider.java svneol=native#text/plain
@@ -439,7 +434,6 @@ commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#t
 commons/src/main/java/org/hippoecm/hst/util/HstResponseUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstSiteMapUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/JcrSessionUtils.java -text
-commons/src/main/java/org/hippoecm/hst/util/NOOPLogger.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/NodeUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PageErrorUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PathUtils.java svneol=native#text/plain
@@ -585,12 +579,7 @@ components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGall
 components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGalleryExampleImageSetContainer.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/containers/HippoGalleryImageSetContainer.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/linking/resolvers/HippoResourceLocationResolver.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/logging/CircularFIFOLogEventBuffer.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/logging/HstComponentInvokerProfiler.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/logging/LogEventImpl.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/logging/Slf4jLogger.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/logging/Slf4jLoggerFactory.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/logging/TraceToolSlf4jLogger.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/order/ObjectOrderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/order/ObjectOrdererRuntimeException.java -text
 components/core/src/main/java/org/hippoecm/hst/core/search/HstQueryManagerFactoryImpl.java svneol=native#text/plain
@@ -702,8 +691,6 @@ components/core/src/test/java/org/hippoecm/hst/core/jcr/TestSessionSecurityDeleg
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewritingCrossScheme.java -text
-components/core/src/test/java/org/hippoecm/hst/core/logging/TestLogEventBuffer.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/logging/TestSlf4jLogger.java -text
 components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain

@@ -20,10 +20,12 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EncodingUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(EncodingUtils.class);
     private static final String LOGGER_CATEGORY_NAME = EncodingUtils.class.getName();
 
     public static String getEncodedPath(String unEncoded, HttpServletRequest request){
@@ -39,7 +41,6 @@ public class EncodingUtils {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            org.hippoecm.hst.logging.Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
             log.error("Unsupported encoding: ", e);
             return unEncoded;
         }

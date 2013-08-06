@@ -26,9 +26,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of default (simple) resource containers (like "hippogallery:exampleAssetSet" and "hippogallery:exampleImageSet"). 
@@ -38,8 +38,8 @@ import org.hippoecm.repository.api.HippoNodeType;
  * should implement their own {@link #resolveToPathInfo(Node, Node, Mount)} and {@link #resolveToResourceNode(Session, String)}
  */
 public abstract class AbstractResourceContainer implements ResourceContainer {
-    
-    private static final String LOGGER_CATEGORY_NAME = AbstractResourceContainer.class.getName();
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractResourceContainer.class);
     private Map<String, String> mappings = new HashMap<String, String>();
     private String primaryItem; 
     
@@ -61,7 +61,6 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
     }
     
     public String resolveToPathInfo(Node resourceContainerNode, Node resourceNode, Mount mount) {
-        Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         try {
             if(primaryItem == null && (this.mappings == null || this.mappings.isEmpty() )) {
                 return resourceNode.getPath();
@@ -100,7 +99,6 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
     }
     
     public Node resolveToResourceNode(Session session, String pathInfo) {
-        Logger log = HstServices.getLogger(LOGGER_CATEGORY_NAME);
         String actualPath = pathInfo;
         String[] elems = actualPath.substring(1).split("/");
         String mapTo = null;

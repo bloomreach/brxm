@@ -24,14 +24,15 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.hippoecm.repository.util.DateTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FilterImpl implements Filter {
 
-    private static final String FQCN = FilterImpl.class.getName();
-    
+    private static final Logger log = LoggerFactory.getLogger(FilterImpl.class);
+
     private StringBuilder jcrExpressionBuilder;
     
     private boolean negated = false;
@@ -59,7 +60,7 @@ public class FilterImpl implements Filter {
     @Deprecated
     public FilterImpl(Session session ){
         this(session, DateTools.Resolution.MILLISECOND);
-        HstServices.getLogger(FQCN, FQCN).warn("Use HstQuery#createFilter() or FilterImpl(Session, Resolution) instead of this deprecated constructor. Fast Date Range " +
+        log.warn("Use HstQuery#createFilter() or FilterImpl(Session, Resolution) instead of this deprecated constructor. Fast Date Range " +
                 "Searches are not supported with this constructor");
     }
 
@@ -100,7 +101,7 @@ public class FilterImpl implements Filter {
         } else {
             text = SearchInputParsingUtils.removeLeadingWildCardsFromWords(text);
             if(!text.equals(fullTextSearch)) {
-                HstServices.getLogger(FQCN, FQCN).warn("Replaced fullTextSearch '{}' with '{}' as " +
+                log.warn("Replaced fullTextSearch '{}' with '{}' as " +
                 		"it contained terms that started with a wildcard. Use '{}'.parse(...) to first parse the input.", new Object[]{fullTextSearch, text, SearchInputParsingUtils.class.getName()});
             }
         }
@@ -298,7 +299,7 @@ public class FilterImpl implements Filter {
     }
 
     private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
-        HstServices.getLogger(FQCN, FQCN).warn("addLike or addNotLike for FilterImpl is used. " +
+        log.warn("addLike or addNotLike for FilterImpl is used. " +
         		" It is strongly recommended to not use this because it blows up queries memory and cpu wise");
         
         if(value == null ) {
@@ -349,7 +350,7 @@ public class FilterImpl implements Filter {
         if(firstAddedType == null) {
             firstAddedType = ChildFilterType.OR;
         } else if (firstAddedType == ChildFilterType.AND) {
-            HstServices.getLogger(FQCN, FQCN).warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
+            log.warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
         }
         childFilters.add(new FilterTypeWrapper(filter, false));
         return this;
@@ -371,7 +372,7 @@ public class FilterImpl implements Filter {
        if(firstAddedType == null) {
            firstAddedType = ChildFilterType.AND;
        } else if (firstAddedType == ChildFilterType.OR) {
-           HstServices.getLogger(FQCN, FQCN).warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
+           log.warn("Mixing AND and OR filters within a single parent Filter: This results in ambiguous searches where the order of AND and OR filters matter");
        }
        childFilters.add(new FilterTypeWrapper(filter, true));       
        return this;

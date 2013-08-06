@@ -24,22 +24,17 @@ import java.util.jar.Manifest;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.logging.LoggerFactory;
-import org.hippoecm.hst.util.NOOPLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A static accessor to the {@link ComponentManager} managed by the HST container.
- * 
- * @version $Id$
+ *
  */
 public class HstServices {
-    
-    private static final String LOGGER_FACTORY_COMPONENT_NAME = LoggerFactory.class.getName();
-    
+    private static final Logger log = LoggerFactory.getLogger(HstServices.class);
     private static boolean available;
     private static ComponentManager componentManager;
-    private static NOOPLogger noopLogger = new NOOPLogger();
     private static String HST_VERSION;
 
     private HstServices() {
@@ -71,45 +66,17 @@ public class HstServices {
     }
     
     /**
-     * Returns the {@link RequestProcessor} component to serve requests.
+     * Returns the {@link HstRequestProcessor} component to serve requests.
      * @return
      */
     public static HstRequestProcessor getRequestProcessor() {
         return componentManager.getComponent(HstRequestProcessor.class.getName());
     }
     
-    /**
-     * Returns the centralized {@link Logger} component managed by the HST container.
-     * @param loggerName
-     * @return
-     */
-    public static Logger getLogger(String loggerName) {
-        if (isAvailable()) {
-            return ((LoggerFactory) getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME)).getLogger(loggerName);
-        } else {
-            return noopLogger;
-        }
-    }
-    
-    /**
-     * Returns the centralized {@link Logger} component managed by the HST container with wrapper logger fqcn used to find logging location
-     * @param loggerName
-     * @param fqcn
-     * @return
-     */
-    public static Logger getLogger(String loggerName, String fqcn) {
-        if (isAvailable()) {
-            return ((LoggerFactory) getComponentManager().getComponent(LOGGER_FACTORY_COMPONENT_NAME)).getLogger(loggerName, fqcn);
-        } else {
-            return noopLogger;
-        }
-    }
-    
     public static String getImplementationVersion(){
         if(HST_VERSION != null) {
             return HST_VERSION;
         }
-        Logger log = HstServices.getLogger(HstServices.class.getName());
         InputStream istream = null;
         try {
             StringBuffer sb = new StringBuffer();

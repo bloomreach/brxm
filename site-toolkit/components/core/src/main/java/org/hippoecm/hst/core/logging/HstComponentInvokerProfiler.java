@@ -22,20 +22,11 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.logging.LoggerFactory;
 
 public class HstComponentInvokerProfiler {
 
     public HstComponentInvokerProfiler() {
     }
-
-    /**
-     * @deprecated since 2.25.05 it does not need loggerFactory argument any more
-     */
-    @Deprecated
-    public HstComponentInvokerProfiler(LoggerFactory loggerFactory) {
-    }
-
     public Object profile(ProceedingJoinPoint call) throws Throwable {
         if (HDC.isStarted()) {
             Object [] args = call.getArgs();

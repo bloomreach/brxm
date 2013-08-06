@@ -18,8 +18,8 @@ package org.hippoecm.hst.security;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PolicyContextWrapper
@@ -32,6 +32,8 @@ import org.hippoecm.hst.site.HstServices;
  * @version $Id$
  */
 public class PolicyContextWrapper {
+
+    private static final Logger log = LoggerFactory.getLogger(PolicyContextWrapper.class);
     
     private static Class<?> policyContextClazz;
     private static Method getContextMethod;
@@ -54,8 +56,7 @@ public class PolicyContextWrapper {
                 setContextIDMethod = policyContextClazz.getMethod("setContextID", String.class);
                 setHandlerDataMethod = policyContextClazz.getMethod("setHandlerData", Object.class);
             } catch (Throwable th) {
-                Logger logger = HstServices.getLogger("org.hippoecm.hst.security.PolicyContextWrapper");
-                logger.warn("Failed to load methods of javax.security.jacc.PolicyContext", th);
+                log.warn("Failed to load methods of javax.security.jacc.PolicyContext", th);
             }
         }
     }

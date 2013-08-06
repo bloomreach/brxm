@@ -28,12 +28,12 @@ import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.hippoecm.hst.logging.Logger;
-import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
-    
-    private static final String LOGGER_NAME = HstParameterInfoProxyFactoryImpl.class.getName();
+
+    private static final Logger log = LoggerFactory.getLogger(HstParameterInfoProxyFactoryImpl.class);
 
     @Override
     public <T> T createParameterInfoProxy(final ParametersInfo parametersInfo,final ComponentConfiguration componentConfig,
@@ -83,9 +83,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
 
         @Override
         public Object invoke(Object object, Method method, Object[] args) throws Throwable {
-            
-            final Logger log = HstServices.getLogger(LOGGER_NAME);
-            
+
             if (isSetter(method, args)) {
                 throw new UnsupportedOperationException("Setter method (" + method.getName() + ") is not supported.");
             }
