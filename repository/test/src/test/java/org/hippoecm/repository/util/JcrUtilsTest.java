@@ -16,7 +16,11 @@
 package org.hippoecm.repository.util;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
+import javax.jcr.Value;
 
+import org.hippoecm.repository.api.HippoSession;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -25,12 +29,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class JcrUtilsTest extends RepositoryTestCase {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-    }
 
     @Test
     public void testCopyNodeWithAutoCreatedChildNode() throws Exception {
@@ -67,6 +65,24 @@ public class JcrUtilsTest extends RepositoryTestCase {
 
         final Node copy = session.getNode("/test/copy");
         assertTrue(copy.isNodeType("mix:referenceable"));
+    }
+
+    @Test
+    public void testMultiValuedPropertyCopied() throws Exception {
+        build(session, new String[] {
+                "/test", "nt:unstructured",
+                "/test/node", "hippo:testrelaxed",
+        });
+        Node node = session.getNode("/test/node");
+        node.setProperty("string", new Value[0], PropertyType.STRING);
+        node.setProperty("double", new Value[0], PropertyType.DOUBLE);
+        session.save();
+
+        JcrUtils.copy(session, "/test/node", "/test/copy");
+
+        final Node copy = session.getNode("/test/copy");
+        Assert.assertEquals(PropertyType.STRING, copy.getProperty("string").getType());
+        Assert.assertEquals(PropertyType.DOUBLE, copy.getProperty("double").getType());
     }
 
 }

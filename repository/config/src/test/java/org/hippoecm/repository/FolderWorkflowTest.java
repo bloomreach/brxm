@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -37,19 +36,16 @@ import javax.jcr.Value;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoQuery;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -363,7 +359,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             VersionException, ConstraintViolationException, LockException, AccessDeniedException,
             ReferentialIntegrityException, InvalidItemStateException, NoSuchNodeTypeException {
         Node source = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document");
-        Node originalHandle = ((HippoSession) session).copy(source, node.getPath() + "/d");
+        Node originalHandle = JcrUtils.copy(source, "d", node);
         Node originalDocument = originalHandle.getNode("new-document");
         session.move(originalDocument.getPath(), originalHandle.getPath() + "/d");
         session.save();

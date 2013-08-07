@@ -565,12 +565,14 @@ public class JcrUtils {
     /**
      * Copies node at <code>srcAbsPath</code> to <code>destAbsPath</code> as session operation.
      *
+     *
      * @param session to use
      * @param srcAbsPath  the absolute path of the source node
      * @param destAbsPath  the absolute path of the resulting copy
+     * @return  the created node
      * @throws RepositoryException
      */
-    public static void copy(Session session, String srcAbsPath, String destAbsPath) throws RepositoryException {
+    public static Node copy(Session session, String srcAbsPath, String destAbsPath) throws RepositoryException {
         if (destAbsPath.equals("/")) {
             throw new IllegalArgumentException("Root cannot be the destination of a copy");
         }
@@ -585,7 +587,7 @@ public class JcrUtils {
         final String destNodeName = destAbsPath.substring(idx+1);
         final Node destParentNode = session.getNode(parentDestAbsPath);
 
-        copy(srcNode, destNodeName, destParentNode);
+        return copy(srcNode, destNodeName, destParentNode);
     }
 
     /**
@@ -593,12 +595,13 @@ public class JcrUtils {
      *
      * @param srcNode the node to copy
      * @param destNodeName  the name of the to be newly created node
-     * @param destParentNode  the parent of the to be newly created node.
+     * @param destParentNode  the parent of the to be newly created node
+     * @return  the created node
      * @throws RepositoryException
      */
-    public static void copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
+    public static Node copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
         if (isVirtual(srcNode)) {
-            return;
+            return null;
         }
         final Node destNode;
         if (isAutoCreatedNode(srcNode.getName(), destParentNode) && destParentNode.hasNode(srcNode.getName())) {
@@ -628,6 +631,7 @@ public class JcrUtils {
             final Node child = nodes.nextNode();
             copy(child, child.getName(), destNode);
         }
+        return destNode;
     }
 
     /**

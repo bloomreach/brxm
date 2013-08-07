@@ -25,12 +25,11 @@ import javax.jcr.NodeIterator;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.junit.After;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -159,7 +158,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         subFolder.setProperty(HippoTranslationNodeType.ID, id);
         subFolder.setProperty(HippoTranslationNodeType.LOCALE, "en");
 
-        ((HippoSession) session).copy(session.getNode("/test/folder/document"), "/test/folder/subfolder/document");
+        JcrUtils.copy(session.getNode("/test/folder/document"), "document", session.getNode("/test/folder/subfolder"));
 
         session.save();
         session.refresh(false);

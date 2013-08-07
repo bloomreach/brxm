@@ -16,7 +16,9 @@
 package org.hippoecm.repository;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -25,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CopyNodeTest extends RepositoryTestCase {
@@ -75,4 +78,22 @@ public class CopyNodeTest extends RepositoryTestCase {
         assertTrue(root.getNode("copy").getNode("search").hasNode("documents"));
         assertTrue(root.getNode("copy").getNode("search").getNode("documents").hasNode("document"));
     }
+
+    @Test
+    public void testMultiValuedPropertyCopied() throws Exception {
+        build(session, new String[] {
+                "/test", "nt:unstructured",
+                "/test/node", "hippo:testrelaxed",
+        });
+        session.save();
+        session.refresh(false);
+        Node node = session.getRootNode().getNode("test/node");
+        node.setProperty("string", new Value[0], PropertyType.STRING);
+        node.setProperty("double", new Value[0], PropertyType.DOUBLE);
+        session.save();
+        Node copy = ((HippoSession) session).copy(node, "/test/copy");
+        assertEquals(PropertyType.STRING, copy.getProperty("string").getType());
+        assertEquals(PropertyType.DOUBLE, copy.getProperty("double").getType());
+    }
+
 }

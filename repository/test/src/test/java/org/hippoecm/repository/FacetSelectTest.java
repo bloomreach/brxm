@@ -26,7 +26,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -505,7 +505,7 @@ public class FacetSelectTest extends RepositoryTestCase {
         session.refresh(false);
 
         recurse(session.getNode("/test"));
-        ((HippoSession)session).copy(session.getRootNode().getNode("test/nav"), "/test/mirror");
+        JcrUtils.copy(session.getNode("/test/nav"), "mirror", session.getNode("/test"));
         session.save();
         session.refresh(false);
 

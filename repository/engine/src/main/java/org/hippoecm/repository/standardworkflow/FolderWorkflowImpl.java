@@ -826,7 +826,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             rootSession.save();
             return new Document(document);
         } else {
-            renameChildDocument(((HippoSession)subject.getSession()).copy(source, subject.getPath() + "/" + targetName));
+            renameChildDocument(JcrUtils.copy(source, targetName, subject));
             subject.save();
             return new Document(subject.getNode(targetName));
         }
@@ -931,7 +931,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             folder.save();
             return new Document(document);
         } else {
-            renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
+            renameChildDocument(JcrUtils.copy(source, targetName, folder));
             folder.save();
             return new Document(folder.getNode(targetName));
         }

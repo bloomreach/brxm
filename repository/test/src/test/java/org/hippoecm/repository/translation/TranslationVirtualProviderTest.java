@@ -27,8 +27,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoSession;
-import org.junit.After;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -127,7 +126,7 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         txnDoc.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         txnDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
 
-        ((HippoSession) session).copy(txnDoc.getParent(), txnDoc.getParent().getPath());
+        JcrUtils.copy(txnDoc.getParent(), txnDoc.getParent().getName(), txnDoc.getParent().getParent());
 
         session.save();
         session.refresh(false);

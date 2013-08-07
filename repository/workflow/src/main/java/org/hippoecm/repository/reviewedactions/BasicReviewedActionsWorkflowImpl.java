@@ -48,10 +48,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     protected Node cloneDocumentNode(Document document) throws RepositoryException {
         Node srcNode = document.getNode();
-        JcrUtils.ensureIsCheckedOut(srcNode.getParent(), true);
-        Node targetNode = srcNode.getParent().addNode(srcNode.getName(), srcNode.getPrimaryNodeType().getName());
-        SessionDecorator.copy(srcNode, targetNode);
-        return targetNode;
+        final Node parent = srcNode.getParent();
+        JcrUtils.ensureIsCheckedOut(parent, true);
+        return JcrUtils.copy(srcNode, srcNode.getName(), parent);
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {
