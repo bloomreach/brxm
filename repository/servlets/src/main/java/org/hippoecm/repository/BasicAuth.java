@@ -76,15 +76,11 @@ public class BasicAuth {
     }
 
     public static String[] getUsernamePasswordFromAuth(String decoded) {
-        String[] creds = new String[] { null, "" };
-        if (decoded.indexOf(':') < 1) {
-            log.warn("Invalid authorization header found '" + decoded + "'.");
+        int split = decoded.indexOf(':');
+        if (split < 1) {
+            log.warn("Invalid authorization header found '{}'.", decoded);
             return null;
         }
-        if (decoded != null) {
-            creds[0] = decoded.substring(0, decoded.indexOf(':'));
-            creds[1] = decoded.substring(decoded.indexOf(':') + 1);
-        }
-        return creds;
+        return new String[] { decoded.substring(0, split), decoded.substring(split + 1) };
     }
 }

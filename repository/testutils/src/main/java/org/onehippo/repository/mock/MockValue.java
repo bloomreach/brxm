@@ -62,6 +62,11 @@ public class MockValue implements Value {
     }
 
     @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
     public InputStream getStream() {
         throw new UnsupportedOperationException();
     }

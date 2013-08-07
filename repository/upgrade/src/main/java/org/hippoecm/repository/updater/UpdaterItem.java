@@ -63,7 +63,7 @@ public abstract class UpdaterItem implements Item {
                 if(parent.children.get(oldName).size() == 0) {
                     parent.children.remove(oldName);
                 }
-                List<UpdaterItem> siblings = new LinkedList<UpdaterItem>();
+                List<UpdaterItem> siblings;
                 if (parent.children.containsKey(name)) {
                     siblings = parent.children.get(name);
                 } else {

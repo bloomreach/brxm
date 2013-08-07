@@ -85,6 +85,7 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
 
         if (isLockProperty(prop)) {
             // don't export lock info
+            return;
         }
 
         super.process(prop, level);

@@ -28,16 +28,14 @@ class ClientWorkflowDescriptor implements WorkflowDescriptor {
 
     public ClientWorkflowDescriptor(RemoteWorkflowDescriptor workflowDescriptor) throws MappingException {
         this.remote = workflowDescriptor;
-        if(workflowDescriptor.interfaces == null) {
-            this.interfaces = null;
-        } else {
+        if(workflowDescriptor.interfaces != null) {
             this.interfaces = new Class[workflowDescriptor.interfaces.length];
-        }
-        for (int i = 0; i < interfaces.length; i++) {
-            try {
-                interfaces[i] = (Class<Workflow>)Class.forName(workflowDescriptor.interfaces[i]);
-            } catch (ClassNotFoundException ex) {
-                throw new MappingException(workflowDescriptor.interfaces[i] + " class not found", ex);
+            for (int i = 0; i < interfaces.length; i++) {
+                try {
+                    interfaces[i] = (Class<Workflow>)Class.forName(workflowDescriptor.interfaces[i]);
+                } catch (ClassNotFoundException ex) {
+                    throw new MappingException(workflowDescriptor.interfaces[i] + " class not found", ex);
+                }
             }
         }
     }

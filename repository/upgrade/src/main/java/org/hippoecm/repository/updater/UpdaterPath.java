@@ -24,17 +24,17 @@ import java.util.NoSuchElementException;
 public class UpdaterPath implements Comparable<UpdaterPath> {
 
     private String[] names;
-    private Integer[] indices;
+    private int[] indices;
     private String string;
 
     public UpdaterPath(String[] elements) {
         this(elements, elements.length+1);
     }
 
-    public UpdaterPath(String[] pathNames, Integer[] pathIndices, int endIndex) {
+    public UpdaterPath(String[] pathNames, int[] pathIndices, int endIndex) {
         StringBuffer sb = new StringBuffer();
         names = new String[endIndex+1];
-        indices = new Integer[endIndex+1];
+        indices = new int[endIndex+1];
         for (int i = 0; i <= endIndex; i++) {
             if (i > 0) {
                 sb.append("/");
@@ -54,7 +54,7 @@ public class UpdaterPath implements Comparable<UpdaterPath> {
     public UpdaterPath(String[] elements, int endIndex) {
         StringBuffer sb = new StringBuffer();
         names = new String[endIndex+1];
-        indices = new Integer[endIndex+1];
+        indices = new int[endIndex+1];
         for (int i = 0; i <= endIndex; i++) {
             String element = elements[i];
             if (i > 0) {
@@ -77,7 +77,7 @@ public class UpdaterPath implements Comparable<UpdaterPath> {
 
         String[] elements = path.split("/");
         names = new String[elements.length];
-        indices = new Integer[elements.length];
+        indices = new int[elements.length];
         for (int i = 0; i < elements.length; i++) {
             String element = elements[i];
             if (element.contains("[")) {
@@ -100,7 +100,7 @@ public class UpdaterPath implements Comparable<UpdaterPath> {
     }
 
     public Iterator<UpdaterPath> ancestors() {
-        return new Iterator() {
+        return new Iterator<UpdaterPath>() {
             int idx = 1;
             public boolean hasNext() {
                 return idx < names.length-1;
@@ -119,10 +119,11 @@ public class UpdaterPath implements Comparable<UpdaterPath> {
     }
 
     public boolean isDescendentOrSelf(UpdaterPath ancestor) {
-        if(ancestor.names.length > names.length)
+        if (ancestor.names.length > names.length) {
             return false;
-        for(int i=0; i<ancestor.names.length; i++) {
-            if(!ancestor.names[i].equals(names[i]) || ancestor.indices[i] != indices[i]) {
+        }
+        for (int i = 0; i < ancestor.names.length; i++) {
+            if (!ancestor.names[i].equals(names[i]) || ancestor.indices[i] != indices[i]) {
                 return false;
             }
         }
@@ -145,7 +146,7 @@ public class UpdaterPath implements Comparable<UpdaterPath> {
             if (result != 0) {
                 break;
             }
-            result = one.indices[i].compareTo(two.indices[i]);
+            result = one.indices[i] - two.indices[i];
             if (result != 0) {
                 break;
             }

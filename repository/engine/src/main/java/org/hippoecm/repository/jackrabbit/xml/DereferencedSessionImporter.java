@@ -471,9 +471,7 @@ public class DereferencedSessionImporter implements Importer {
                 for (int i = 0; i < uuids.length; i++) {
                     if (uuids[i] == null) {
                         String uuid = resolveReferenceConflict(node, ref.getPropertyName(), paths[i]);
-                        if (uuid == null) {
-                            //skip
-                        } else {
+                        if (uuid != null) {
                             vals.add(session.getValueFactory().createValue(uuid, PropertyType.REFERENCE));
                         }
                     } else {

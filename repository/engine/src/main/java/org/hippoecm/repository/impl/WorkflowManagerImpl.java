@@ -659,7 +659,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
-            this.arguments = (args!=null ? args.clone() : args);
+            this.arguments = (args!=null ? args.clone() : null);
             this.workflowSubjectNode = null;
             try {
                 String uuid = workflowSubject.getIdentity();
@@ -681,7 +681,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             this.workflowNode = workflowNode;
             this.workflowSubject = null;
             this.method = method;
-            this.arguments = (args!=null ? args.clone() : args);
+            this.arguments = (args!=null ? args.clone() : null);
             this.workflowSubjectNode = rootSession.getNodeByIdentifier(workflowSubject.getIdentifier());
             this.category = workflowNode.getParent().getName();
             this.workflowName = workflowNode.getName();
@@ -806,7 +806,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
             try {
                 Workflow workflow = null;
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
-                Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
                 Node item = workflowSubjectNode;
                 if (item == null) {
@@ -1028,8 +1027,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if (invocationHandlerModule != null) {
                     return newContext(workflowDefinition, subjectSession, invocationHandlerModule);
                 } else {
-                    log.debug("No context defined for class " + (specification != null ? specification.getClass().getName() : "none"));
-                    throw new MappingException("No context defined for class " + (specification != null ? specification.getClass().getName() : "none"));
+                    log.debug("No context defined for class " + specification.getClass().getName());
+                    throw new MappingException("No context defined for class " + specification.getClass().getName());
                 }
             }
         }

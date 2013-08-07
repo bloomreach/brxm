@@ -165,7 +165,8 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
     @Override
     public Collection values() {
         Set rtvalue = new LinkedHashSet() {
-            public void remove() throws UnsupportedOperationException {
+            @Override
+            public boolean remove(Object o) throws UnsupportedOperationException {
                 throw new UnsupportedOperationException();
             }
         };
@@ -199,7 +200,8 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
 
     public Set entrySet() {
         Set rtvalue = new LinkedHashSet() {
-            public void remove() throws UnsupportedOperationException {
+            @Override
+            public boolean remove(Object o) throws UnsupportedOperationException {
                 throw new UnsupportedOperationException();
             }
         };
@@ -337,7 +339,7 @@ public class RepositoryMapImpl extends AbstractMap implements RepositoryMap {
                         return null;
                         return nodeIterator.getSize();*/
                         } else if (name.equals("_index")) {
-                            return new Integer(index);
+                            return Integer.valueOf(index);
                         } else if(relPath == null && !name.startsWith("_") && node.hasProperty(name)) {
                             found = node.getProperty(name);
                         } else {

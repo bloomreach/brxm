@@ -91,6 +91,11 @@ public abstract class MockItem implements Item {
     }
 
     @Override
+    public int hashCode() {
+        return getPath().hashCode();
+    }
+
+    @Override
     public boolean isSame(final Item otherItem) {
         return this.equals(otherItem);
     }

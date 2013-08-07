@@ -344,9 +344,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         @Override
         protected void doDispose() {
             super.doDispose();
-            if (searchMgr != null) {
-                searchMgr.close();
-                searchMgr = null;
+            synchronized (this) {
+                if (searchMgr != null) {
+                    searchMgr.close();
+                    searchMgr = null;
+                }
             }
         }
 

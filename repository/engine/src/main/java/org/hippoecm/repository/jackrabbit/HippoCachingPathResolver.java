@@ -111,7 +111,7 @@ class HippoCachingPathResolver implements PathResolver {
         }
 
         @Override
-        public V get(Object key) {
+        public synchronized V get(Object key) {
             K safeKey = (K)key;
             V value = cache.get(safeKey);
             if (value == null) {
@@ -151,7 +151,7 @@ class HippoCachingPathResolver implements PathResolver {
         }
 
         @Override
-        public Set<Map.Entry<K, V>> entrySet() {
+        public synchronized Set<Map.Entry<K, V>> entrySet() {
             Set<Map.Entry<K,V>> entrySet = new TreeSet<Map.Entry<K,V>>();
             entrySet.addAll(cache.entrySet());
             entrySet.addAll(old.entrySet());

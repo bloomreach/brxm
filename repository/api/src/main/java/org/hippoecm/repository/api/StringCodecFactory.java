@@ -1512,8 +1512,6 @@ public class StringCodecFactory {
             if (name.length() == 2) {
                 return encodeTwoCharSimpleName(name.charAt(0), name.charAt(1));
             }
-            // length > 2, it could be "a:b"
-            int pos = name.indexOf(':');
             return encodeThreeOrMoreCharName(name);
         }
 

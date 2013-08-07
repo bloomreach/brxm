@@ -54,7 +54,6 @@ public class VersionNumber implements Comparable<VersionNumber> {
             default:
                 throw new NumberFormatException();
         }
-        String s = elements[0];
         elements = elements[0].split("\\.");
         numbers = new int[elements.length];
         int i = 0;

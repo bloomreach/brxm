@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.hippoecm.repository.impl.WorkflowManagerImpl;
 import org.hippoecm.repository.quartz.JCRJobDetail;
@@ -144,8 +145,13 @@ public class WorkflowJobDetail extends JCRJobDetail {
     private static Object[] valuesToObjectArray(Value[] values) throws RepositoryException, IOException, ClassNotFoundException {
         final Object[] objects = new Object[values.length];
         for (int i = 0; i < values.length; i++) {
-            ObjectInputStream ois = new ObjectInputStream(values[i].getBinary().getStream());
-            objects[i] = ois.readObject();
+            ObjectInputStream ois = null;
+            try {
+                ois = new ObjectInputStream(values[i].getBinary().getStream());
+                objects[i] = ois.readObject();
+            } finally {
+                IOUtils.closeQuietly(ois);
+            }
         }
         return objects;
     }

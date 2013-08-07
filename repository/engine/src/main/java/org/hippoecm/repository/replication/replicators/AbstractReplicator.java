@@ -232,7 +232,6 @@ abstract class AbstractReplicator implements Replicator {
     }
 
     private NodeId findFirstNonExistingParent(NodeId id) throws ItemNotFoundException {
-        String path = helper.getJCRPath(id);
         NodeState state = helper.getNodeState(id);
         if (state == null) {
             throw new ItemNotFoundException(id.toString());

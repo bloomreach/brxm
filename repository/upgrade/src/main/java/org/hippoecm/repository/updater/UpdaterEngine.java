@@ -597,7 +597,7 @@ public class UpdaterEngine {
                         }
                     }
                 } catch(UpdaterException ex) {
-                    if(exception != null) {
+                    if(exception == null) {
                         exception = ex;
                     }
                     log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
@@ -793,7 +793,7 @@ public class UpdaterEngine {
                         visitor.visit(node, 0, false);
                     }
                 } catch (UpdaterException ex) {
-                    if (exception != null) {
+                    if (exception == null) {
                         exception = ex;
                     }
                     log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
@@ -849,7 +849,7 @@ public class UpdaterEngine {
                         visitor.visit(node, 0, true);
                     }
                 } catch (UpdaterException ex) {
-                    if (exception != null) {
+                    if (exception == null) {
                         exception = ex;
                     }
                     log.error("error in migration cycle, continuing, but this might lead to subsequent errors", ex);
@@ -1088,9 +1088,7 @@ public class UpdaterEngine {
         CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader;
         String cndName;
         UpdaterContext context;
-        boolean isCollecting = false;
         boolean isExecuting = false;
-        //Set<Node> collection = new HashSet<Node>();
         NamespaceVisitorImpl lastNamespaceVisitor = null;
 
         NamespaceVisitorImpl(NamespaceRegistry nsReg, NamespaceVisitor definition) throws RepositoryException, ParseException {
@@ -1167,10 +1165,6 @@ public class UpdaterEngine {
         }
 
         public NodeIterator iterator(final Session session) throws RepositoryException {
-            isCollecting = true;
-            isExecuting = false;
-            //session.getRootNode().accept(this);
-            isCollecting = false;
             isExecuting = true;
             final NodeTypeIterator typeIter = session.getWorkspace().getNodeTypeManager().getAllNodeTypes();
             return new NodeIterator() {
@@ -1239,7 +1233,7 @@ public class UpdaterEngine {
 
         @Override
         public void visit(Property property) throws RepositoryException {
-            if ((isAtomic() && !isCollecting) || isExecuting) {
+            if (isAtomic() || isExecuting) {
                 entering(property, currentLevel);
                 leaving(property, currentLevel);
             }
@@ -1259,21 +1253,18 @@ public class UpdaterEngine {
             }
             boolean isMatch = isMatch(node);
             if (isMatch) {
-                if ((isAtomic() && !isCollecting) || isExecuting) {
+                if (isAtomic() || isExecuting) {
                     entering(node, currentLevel);
-                }
-                if (isCollecting) {
-                    //collection.add(node);
                 }
             }
             ++currentLevel;
             try {
-                if (isAtomic() || isCollecting) {
+                if (isAtomic()) {
                     for (NodeIterator nodeIter = node.getNodes(); nodeIter.hasNext();) {
                         nodeIter.nextNode().accept(this);
                     }
                 }
-                if(((isAtomic() && !isCollecting) || isExecuting) && isMatch) {
+                if((isAtomic() || isExecuting) && isMatch) {
                     for (PropertyIterator propIter = node.getProperties(); propIter.hasNext();) {
                         propIter.nextProperty().accept(this);
                     }
@@ -1286,7 +1277,7 @@ public class UpdaterEngine {
             }
             --currentLevel;
             if (isMatch) {
-                if ((isAtomic() && !isCollecting) || isExecuting) {
+                if (isAtomic() || isExecuting) {
                     leaving(node, 0);
                 }
             }

@@ -122,7 +122,7 @@ public class ReplicationJournalProducer implements ReplicationUpdateEventListene
             String msg = "Unexpected error while preparing log entry.";
             log.error(msg, e);
         } finally {
-            if (!succeeded && record != null) {
+            if (!succeeded) {
                 record.cancelUpdate();
                 return;
             }

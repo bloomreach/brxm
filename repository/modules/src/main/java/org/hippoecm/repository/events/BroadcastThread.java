@@ -132,7 +132,7 @@ class BroadcastThread extends Thread {
         this.queryLimit = limit;
     }
 
-    public void setPollingTime(final long pollingTime) {
+    public synchronized void setPollingTime(final long pollingTime) {
         this.pollingTime = pollingTime;
     }
 

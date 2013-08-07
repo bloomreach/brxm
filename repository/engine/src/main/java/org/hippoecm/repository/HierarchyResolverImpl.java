@@ -69,10 +69,10 @@ public class HierarchyResolverImpl implements HierarchyResolver {
     }
     public Item getItem(Node ancestor, String path, boolean isProperty, Entry last)
       throws InvalidItemStateException, RepositoryException {
-        if(logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("resolving path "+path+(isProperty?" as property":""));
         }
-        if(last != null) {
+        if (last != null) {
             last.node = null;
             last.relPath = null;
         }
@@ -87,34 +87,33 @@ public class HierarchyResolverImpl implements HierarchyResolver {
         Node node = ancestor;
         String[] pathElts = path.split("/");
         int pathEltsLength = pathElts.length;
-        if(isProperty)
+        if (isProperty) {
             --pathEltsLength;
-        for(int pathIdx=0; pathIdx<pathEltsLength && node != null; pathIdx++) {
+        }
+        for (int pathIdx = 0; pathIdx < pathEltsLength && node != null; pathIdx++) {
             String relPath = pathElts[pathIdx];
-            if(logger.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("resolving path element "+relPath);
             }
-            if(relPath.startsWith("{.}")) {
+            if (relPath.startsWith("{.}")) {
                 relPath = ancestor.getName() + relPath.substring("{.}".length());
-            } else if(relPath.startsWith("{_name}")) {
+            } else if (relPath.startsWith("{_name}")) {
                 relPath = ancestor.getName() + relPath.substring("{_name}".length());
-            } else if(relPath.startsWith("{_document}")) {
-                if(node != null) {
-                    for (NodeIterator iter=node.getNodes(); iter.hasNext(); ) {
-                        Node child = iter.nextNode();
-                        if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            relPath = child.getName();
-                            if(child.getIndex() > 1) {
-                                relPath += "[" + Integer.toString(child.getIndex()) + "]";
-                            }
+            } else if (relPath.startsWith("{_document}")) {
+                for (NodeIterator iter=node.getNodes(); iter.hasNext(); ) {
+                    Node child = iter.nextNode();
+                    if(child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        relPath = child.getName();
+                        if(child.getIndex() > 1) {
+                            relPath += "[" + Integer.toString(child.getIndex()) + "]";
                         }
                     }
                 }
-            } else if(relPath.startsWith("{..}")) {
+            } else if (relPath.startsWith("{..}")) {
                 relPath = ancestor.getParent().getName() + relPath.substring("{..}".length());
-            } else if(relPath.startsWith("{_parent}")) {
+            } else if (relPath.startsWith("{_parent}")) {
                 relPath = ancestor.getParent().getName() + relPath.substring("{_parent}".length());
-            } else if(relPath.startsWith("{") && relPath.endsWith("}")) {
+            } else if (relPath.startsWith("{") && relPath.endsWith("}")) {
                 String uuid = relPath.substring(1,relPath.length()-1);
                 uuid = ancestor.getProperty(uuid).getString();
                 node = node.getSession().getNodeByUUID(uuid);
@@ -122,20 +121,20 @@ public class HierarchyResolverImpl implements HierarchyResolver {
             }
             Map<String,Comparison> conditions = null;
             String relIndex = null;
-            if(relPath.contains("[") && relPath.endsWith("]")) {
+            if (relPath.contains("[") && relPath.endsWith("]")) {
                 relIndex = relPath.substring(relPath.indexOf("[")+1,relPath.lastIndexOf("]"));
                 try {
                     Integer.decode(relIndex);
-                } catch(NumberFormatException ex) {
+                } catch (NumberFormatException ex) {
                     conditions = new TreeMap<String,Comparison>();
                 }
             }
             if (conditions != null) {
                 String[] conditionElts = relIndex.split(",");
-                for(int conditionIdx=0; conditionIdx<conditionElts.length; conditionIdx++) {
+                for (int conditionIdx = 0; conditionIdx < conditionElts.length; conditionIdx++) {
                     int pos;
                     pos = conditionElts[conditionIdx].indexOf("!=");
-                    if(pos >= 0) {
+                    if (pos >= 0) {
                         String key = conditionElts[conditionIdx].substring(0,pos);
                         if (key.startsWith("@")) {
                             key = key.substring(1);
@@ -153,7 +152,7 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         continue;
                     }
                     pos = conditionElts[conditionIdx].indexOf("=");
-                    if(pos >= 0) {
+                    if (pos >= 0) {
                         String key = conditionElts[conditionIdx].substring(0,pos);
                         if (key.startsWith("@")) {
                             key = key.substring(1);
@@ -170,11 +169,11 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                         }
                         continue;
                     }
-                    if(conditionElts[conditionIdx].equals("{_similar}")) {
+                    if (conditionElts[conditionIdx].equals("{_similar}")) {
                         Node parent = ancestor.getParent();
-                        if(parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
+                        if (parent.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
                             Value[] discriminators = parent.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                            for(int i=0; i<discriminators.length; i++) {
+                            for (int i = 0; i < discriminators.length; i++) {
                                 conditions.put(discriminators[i].getString(),
                                                new EqualsComparison(ancestor.getProperty(discriminators[i].getString()).getString()));
                             }
@@ -185,18 +184,18 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                 }
                 relPath = relPath.substring(0,relPath.indexOf("["));
             }
-            if(last != null) {
+            if (last != null) {
                 last.node = node;
                 last.relPath = relPath;
             }
-            if(conditions == null || conditions.size() == 0) {
-                if(node.hasNode(relPath)) {
+            if (conditions == null || conditions.size() == 0) {
+                if (node.hasNode(relPath)) {
                     try {
                         node = node.getNode(relPath);
-                        if(logger.isDebugEnabled()) {
+                        if (logger.isDebugEnabled()) {
                             logger.debug("resolved relPath as non-conditional item "+node.getPath());
                         }
-                    } catch(PathNotFoundException ex) {
+                    } catch (PathNotFoundException ex) {
                         return null; // impossible because of hasNode statement
                     }
                 } else {
@@ -217,22 +216,22 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                 }
             } else {
                 Node child = null;
-                for(NodeIterator iter = node.getNodes(relPath); iter.hasNext(); ) {
+                for (NodeIterator iter = node.getNodes(relPath); iter.hasNext(); ) {
                     child = iter.nextNode();
-                    if(logger.isDebugEnabled()) {
+                    if (logger.isDebugEnabled()) {
                         logger.debug("considering for conditional path "+relPath+" item "+child.getPath());
                     }
-                    for(Map.Entry<String,Comparison> condition: conditions.entrySet()) {
+                    for (Map.Entry<String,Comparison> condition: conditions.entrySet()) {
                         String childValue = null;
                         try {
-                            if(child.hasProperty(condition.getKey())) {
+                            if (child.hasProperty(condition.getKey())) {
                                 childValue = child.getProperty(condition.getKey()).getString();
                             }
-                        } catch(ValueFormatException ex) {
+                        } catch (ValueFormatException ex) {
                             child = null;
                             break;
                         }
-                        if(!condition.getValue().compare(childValue)) {
+                        if (!condition.getValue().compare(childValue)) {
                             child = null;
                             break;
                         }
@@ -240,8 +239,8 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                     if(child != null)
                         break;
                 }
-                if(child == null) {
-                    if(logger.isDebugEnabled()) {
+                if (child == null) {
+                    if (logger.isDebugEnabled()) {
                         logger.debug("could not resolve conditional path "+relPath);
                     }
                     return null;
@@ -249,14 +248,14 @@ public class HierarchyResolverImpl implements HierarchyResolver {
                     node = child;
             }
         }
-        if(isProperty) {
-            if(logger.isDebugEnabled()) {
+        if (isProperty) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("resolving final property path "+pathElts[pathEltsLength]);
             }
-            if(node.hasProperty(pathElts[pathEltsLength])) {
+            if (node.hasProperty(pathElts[pathEltsLength])) {
                 return node.getProperty(pathElts[pathEltsLength]);
             } else {
-                if(last != null) {
+                if (last != null) {
                     last.node = node;
                     last.relPath = pathElts[pathEltsLength];
                 }

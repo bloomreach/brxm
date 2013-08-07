@@ -270,7 +270,6 @@ public class ExecuteOnLogLevel {
                 // get the logger
                 Object logger = logManagerClass.getMethod("getLogger", String.class).invoke(null, name);
 
-                String clazz = logger.getClass().getName();
                 // get the static level object field, e.g. Level.INFO
                 if (level == null) {
                     // from the Logger, try to get the EffectiveLevel of the first parent logger: If the effective level

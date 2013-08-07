@@ -500,7 +500,7 @@ public class UpdaterExecutor implements EventListener {
             report.getLogger().debug(format(message, t));
         }
         if (t != null) {
-            log.debug(message);
+            log.debug(message, t);
         } else {
             log.debug(message);
         }

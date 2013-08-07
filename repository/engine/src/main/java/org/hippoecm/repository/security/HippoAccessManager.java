@@ -710,20 +710,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             if (facetRule.getType() == PropertyType.NAME) {
                 log.trace("Checking node : {} for nodename: {}", nodeState.getNodeId(), facetRule);
                 Name nodeName = getNodeName(nodeState);
-                if (nodeName == null) {
-                    log.warn("Failed to resolve name of {}", nodeState.getNodeId());
-                } else {
-                    if (FacetAuthConstants.EXPANDER_USER.equals(facetRule.getValue())) {
-                        if (isUser && userIds.contains(npRes.getJCRName(nodeName))) {
-                            match = true;
-                        }
-                    } else if (FacetAuthConstants.EXPANDER_GROUP.equals(facetRule.getValue())) {
-                        if (isUser && groupIds.contains(npRes.getJCRName(nodeName))) {
-                            match = true;
-                        }
-                    } else if (nodeName.equals(facetRule.getValueName())) {
+                if (FacetAuthConstants.EXPANDER_USER.equals(facetRule.getValue())) {
+                    if (isUser && userIds.contains(npRes.getJCRName(nodeName))) {
                         match = true;
                     }
+                } else if (FacetAuthConstants.EXPANDER_GROUP.equals(facetRule.getValue())) {
+                    if (isUser && groupIds.contains(npRes.getJCRName(nodeName))) {
+                        match = true;
+                    }
+                } else if (nodeName.equals(facetRule.getValueName())) {
+                    match = true;
                 }
             }
             if (facetRule.isEqual()) {

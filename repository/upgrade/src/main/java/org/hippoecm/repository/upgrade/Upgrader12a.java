@@ -408,7 +408,7 @@ public class Upgrader12a implements UpdaterModule {
                     node.setProperty("hippostdpubwf_1_0:creationDate", calendar);
                     node.setProperty("hippostdpubwf_1_0:lastModifiedBy", "");
                     node.setProperty("hippostdpubwf_1_0:lastModificationDate", calendar);
-                    if ("published".equals(node.getProperty("hippostd:state"))) {
+                    if ("published".equals(node.getProperty("hippostd:state").getString())) {
                         node.setProperty("hippostdpubwf_1_0:publicationDate", calendar);
                     }
                 }

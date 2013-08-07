@@ -64,7 +64,6 @@ public class ReplicationConfig {
      *
      * @param home repository home directory
      * @param jc the journal configuration
-     * @param fsf file system factory
      */
     public ReplicationConfig(ReplicationJournal jc, Map<String, ReplicatorNodeConfig> replicators, String home) {
         this.jc = jc;
@@ -137,8 +136,9 @@ public class ReplicationConfig {
             if (is == null) {
                 log.info("Replication config not found: context:/{}. Disabling replicaiton.", REPLICATION_XML);
                 return null;
+            } else {
+                return new BufferedInputStream(is);
             }
-            return ReplicationConfig.class.getResourceAsStream(REPLICATION_XML);
         }
 
         // resource

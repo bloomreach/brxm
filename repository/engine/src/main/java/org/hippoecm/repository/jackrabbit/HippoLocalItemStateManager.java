@@ -817,7 +817,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                                 current = null;
                             }
                         }
-                        return (current != null);
+                        return true;
                     }
 
                     public boolean needsSkip(ItemState current) {
@@ -842,20 +842,17 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                     }
 
                     public ItemState next() throws NoSuchElementException {
-                        ItemState rtValue = null;
                         while (current == null) {
                             if (!actualIterator.hasNext()) {
                                 throw new NoSuchElementException();
                             }
-                            current = (ItemState)actualIterator.next();
+                            current = actualIterator.next();
                             if (needsSkip(current)) {
                                 current = null;
                             }
                         }
-                        rtValue = current;
+                        ItemState rtValue = current;
                         current = null;
-                        if (rtValue == null)
-                            throw new NoSuchElementException();
                         return rtValue;
                     }
 

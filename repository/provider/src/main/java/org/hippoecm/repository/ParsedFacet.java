@@ -50,19 +50,17 @@ public class ParsedFacet {
     int hashCode;
     
     
-    public static final ParsedFacet getInstance(String facetNameConfig, String facetNodeName, HippoVirtualProvider provider) throws Exception {
+    public static final ParsedFacet     getInstance(String facetNameConfig, String facetNodeName, HippoVirtualProvider provider) throws Exception {
         String cacheKey = facetNameConfig + '\uFFFF' + facetNodeName;        
         ParsedFacet pf = sharedCache.get(cacheKey);   
-        if(pf == null) {
+        if (pf == null) {
             pf = new ParsedFacet(facetNameConfig, facetNodeName, provider);
             sharedCache.put(cacheKey,pf);
         } else {
             // we need to check if the namespace did not bump or change. IF so, we evict this item from cache.
             Path currentQName = provider.resolvePath(pf.jcrPropertyName);
             // if the currentQName is equal to pf.namespacedProperty , there was no namespace bumb and we can return pf
-            if(currentQName.toString().equals(pf.namespacedProperty)) {
-               // do nothing" pf is still valid
-            } else {
+            if (!currentQName.toString().equals(pf.namespacedProperty)) {
                 pf = new ParsedFacet(facetNameConfig, facetNodeName, provider);
                 sharedCache.put(cacheKey,pf);
             }
@@ -72,7 +70,7 @@ public class ParsedFacet {
     
     public static final ParsedFacet getInstance(String namespacedFacetConfig) throws Exception{
         ParsedFacet pf = sharedCache.get(namespacedFacetConfig);   
-        if(pf == null) {
+        if (pf == null) {
             pf = new ParsedFacet(namespacedFacetConfig);
             sharedCache.put(namespacedFacetConfig,pf);
         } 

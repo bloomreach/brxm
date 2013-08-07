@@ -67,7 +67,7 @@ public class ServerQuery extends org.apache.jackrabbit.rmi.server.ServerQuery im
     }
 
     public String[] getBindVariableNames() throws RepositoryException, RemoteException {
-        return getBindVariableNames();
+        return query.getBindVariableNames();
     }
 
     public void setLimit(long limit) throws RemoteException {

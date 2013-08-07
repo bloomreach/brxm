@@ -16,12 +16,11 @@
 package org.hippoecm.repository;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.jcr.RepositoryException;
@@ -30,6 +29,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
@@ -68,13 +68,19 @@ class BootstrapHippoRepository extends HippoRepositoryImpl {
                 rs.close();
                 stmt.close();
             } catch(SQLException ex) {
-                log.warn("bootstrap database not found or not accessible, trying to create: "+ex.getMessage());
+                log.warn("bootstrap database not found or not accessible, trying to create: " + ex.getMessage());
                 stmt.close();
                 stmt = conn.createStatement();
                 stmt.executeQuery("CREATE TABLE hippotbl ( hippokey VARCHAR(64), hippoval VARCHAR(63) )");
                 stmt.close();
                 log.info("bootstrap database created, loading default content");
-                properties.load(getClass().getResourceAsStream("BootstrapHippoRepository-template.properties"));
+                InputStream is = null;
+                try {
+                    is = getClass().getResourceAsStream("BootstrapHippoRepository-template.properties");
+                    properties.load(is);
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
             }
             conn.close();
         } catch(IOException ex) {
@@ -98,12 +104,8 @@ class BootstrapHippoRepository extends HippoRepositoryImpl {
     }
 
     public synchronized void close() {
-        Session session = null;
 
         if (backingRepository != null) {
-
-            Properties properties = new Properties();
-
             try {
                 InitialContext ctx = new InitialContext();
                 DataSource ds = (DataSource) ctx.lookup(location);
@@ -112,14 +114,6 @@ class BootstrapHippoRepository extends HippoRepositoryImpl {
                     Statement stmt = conn.createStatement();
                     stmt.executeUpdate("DELETE FROM hippotbl");
                     stmt.close();
-                } {
-                    PreparedStatement stmt = conn.prepareStatement("INSERT INTO hippotbl ( hippokey, hippoval ) VALUES ( ?, ? )");
-                    for(Map.Entry entry : properties.entrySet()) {
-                        stmt.setString(1, (String) entry.getKey());
-                        stmt.setString(2, (String) entry.getValue());
-                        stmt.executeUpdate();
-                        stmt.clearParameters();
-                    }
                 }
                 conn.close();
             } catch(SQLException ex) {

@@ -531,7 +531,7 @@ public class RepositoryServlet extends HttpServlet {
             if ((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
                 writer.println("  <h3>Query executed</h3>");
                 writer.println("  <blockquote>");
-                writer.println(queryString);
+                writer.println(StringEscapeUtils.escapeHtml(queryString));
                 writer.println("  </blockquote>");
                 writer.println("  <ol>");
                 QueryManager qmgr = session.getWorkspace().getQueryManager();
@@ -614,7 +614,7 @@ public class RepositoryServlet extends HttpServlet {
             if ((queryString = req.getParameter("uuid")) != null) {
                 writer.println("  <h3>Get node by UUID</h3>");
                 writer.println("  <blockquote>");
-                writer.println("UUID = " + queryString);
+                writer.println("UUID = " + StringEscapeUtils.escapeHtml(queryString));
                 writer.println("  </blockquote>");
                 writer.println("  <ol>");
                 writer.println("    <li>");
@@ -633,7 +633,7 @@ public class RepositoryServlet extends HttpServlet {
             if ((queryString = req.getParameter("deref")) != null) {
                 writer.println("  <h3>Getting nodes having a reference to </h3>");
                 writer.println("  <blockquote>");
-                writer.println("UUID = " + queryString);
+                writer.println("UUID = " + StringEscapeUtils.escapeHtml(queryString));
                 Node n = null;
                 try {
                     n = session.getNodeByIdentifier(queryString);

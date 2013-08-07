@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -55,6 +56,8 @@ public class StringMatchFilter extends Filter {
                 }
             } catch (IOException e) {
                 System.err.println("Error while initializing log4j StringMatchFilter: " + e.toString());
+            } finally {
+                IOUtils.closeQuietly(reader);
             }
         } else {
             System.err.println("StringMatchFilter: Could not find log4j-filters.txt");

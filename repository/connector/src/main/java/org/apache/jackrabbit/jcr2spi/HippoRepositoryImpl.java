@@ -69,13 +69,13 @@ public class HippoRepositoryImpl extends AbstractRepository implements Reference
 
         Map<String, QValue[]> descr = config.getRepositoryService().getRepositoryDescriptors();
         descriptors = new HashMap<String, Value[]>(descr.size());
-        for (String key : descr.keySet()) {
-            QValue[] qvs = descr.get(key);
+        for (Map.Entry<String,QValue[]> entry : descr.entrySet()) {
+            QValue[] qvs = entry.getValue();
             Value[] vs = new Value[qvs.length];
             for (int i = 0; i < qvs.length; i++) {
                 vs[i] = ValueFormat.getJCRValue(qvs[i], resolver, vf);
             }
-            descriptors.put(key, vs);
+            descriptors.put(entry.getKey(), vs);
         }
     }
 

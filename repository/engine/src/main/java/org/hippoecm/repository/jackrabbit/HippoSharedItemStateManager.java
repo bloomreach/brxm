@@ -154,7 +154,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                         if (parentNodeTypeName != null && handleNodeName.equals(parentNodeTypeName)) {
                             handles.add(parentState);
                         } else {
-                            log.debug("Skipping {}, Id: '{}'", parentNodeTypeName.toString(), parentState.getNodeId());
+                            log.debug("Skipping {}, Id: '{}'", parentNodeTypeName, parentState.getNodeId());
                         }
                     }
                 }

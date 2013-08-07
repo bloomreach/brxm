@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.lucene.analysis.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.Analyzer;
@@ -37,46 +38,6 @@ import org.apache.lucene.util.Version;
  */
 public final class StandardHippoAnalyzer extends Analyzer {
 
-    @Override
-    public TokenStream tokenStream(String fieldName, Reader reader) {
-        TokenStream result = new ClassicTokenizer(Version.LUCENE_36, reader);
-        result = new StandardFilter(Version.LUCENE_36, result);
-        result = new LowerCaseFilter(Version.LUCENE_36, result);
-        result = new StopFilter(Version.LUCENE_36, result, new HashSet<Object>(Arrays.asList(DEFAULT_STOP_SET)));
-        result = new ASCIIFoldingFilter(result);
-        return result;
-    }
- 
-    public static String[] DEFAULT_STOP_SET;
-    {
-        DEFAULT_STOP_SET = new String[CJK_STOP_WORDS.length + SPANISH_STOP_WORDS.length + DUTCH_STOP_SET.length
-                + GERMAN_STOP_WORDS.length + FRENCH_STOP_WORDS.length + BRAZILIAN_STOP_WORDS.length
-                + CZECH_STOP_WORDS.length];
-        int destPos = 0;
-
-        System.arraycopy(CJK_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, CJK_STOP_WORDS.length);
-        destPos += CJK_STOP_WORDS.length;
-
-        System.arraycopy(SPANISH_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, SPANISH_STOP_WORDS.length);
-        destPos += SPANISH_STOP_WORDS.length;
-
-        System.arraycopy(DUTCH_STOP_SET, 0, DEFAULT_STOP_SET, destPos, DUTCH_STOP_SET.length);
-        destPos += DUTCH_STOP_SET.length;
-
-        System.arraycopy(GERMAN_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, GERMAN_STOP_WORDS.length);
-        destPos += GERMAN_STOP_WORDS.length;
-
-        System.arraycopy(FRENCH_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, FRENCH_STOP_WORDS.length);
-        destPos += FRENCH_STOP_WORDS.length;
-
-        System.arraycopy(BRAZILIAN_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, BRAZILIAN_STOP_WORDS.length);
-        destPos += BRAZILIAN_STOP_WORDS.length;
-
-        System.arraycopy(CZECH_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, CZECH_STOP_WORDS.length);
-        destPos += CZECH_STOP_WORDS.length;
-    }
-
-    
     public static final String[] CJK_STOP_WORDS = { "a", "and", "are", "as", "at", "be", "but", "by", "for", "if",
             "in", "into", "is", "it", "no", "not", "of", "on", "or", "s", "such", "t", "that", "the", "their", "then",
             "there", "these", "they", "this", "to", "was", "will", "with", "", "www" };
@@ -150,4 +111,47 @@ public final class StandardHippoAnalyzer extends Analyzer {
             "atd", "atp", "jakmile", "p\u0159i\u010dem\u017e", "j\u00e1", "on", "ona", "ono", "oni", "ony", "my", "vy",
             "j\u00ed", "ji", "m\u011b", "mne", "jemu", "tomu", "t\u011bm", "t\u011bmu", "n\u011bmu", "n\u011bmu\u017e",
             "jeho\u017e", "j\u00ed\u017e", "jeliko\u017e", "je\u017e", "jako\u017e", "na\u010de\u017e", };
+
+    public static final String[] ALL_STOP_WORDS;
+
+    static {
+        ALL_STOP_WORDS = new String[CJK_STOP_WORDS.length + SPANISH_STOP_WORDS.length + DUTCH_STOP_SET.length
+                + GERMAN_STOP_WORDS.length + FRENCH_STOP_WORDS.length + BRAZILIAN_STOP_WORDS.length
+                + CZECH_STOP_WORDS.length];
+        int destPos = 0;
+
+        System.arraycopy(CJK_STOP_WORDS, 0, ALL_STOP_WORDS, destPos, CJK_STOP_WORDS.length);
+        destPos += CJK_STOP_WORDS.length;
+
+        System.arraycopy(SPANISH_STOP_WORDS, 0, ALL_STOP_WORDS, destPos, SPANISH_STOP_WORDS.length);
+        destPos += SPANISH_STOP_WORDS.length;
+
+        System.arraycopy(DUTCH_STOP_SET, 0, ALL_STOP_WORDS, destPos, DUTCH_STOP_SET.length);
+        destPos += DUTCH_STOP_SET.length;
+
+        System.arraycopy(GERMAN_STOP_WORDS, 0, ALL_STOP_WORDS, destPos, GERMAN_STOP_WORDS.length);
+        destPos += GERMAN_STOP_WORDS.length;
+
+        System.arraycopy(FRENCH_STOP_WORDS, 0, ALL_STOP_WORDS, destPos, FRENCH_STOP_WORDS.length);
+        destPos += FRENCH_STOP_WORDS.length;
+
+        System.arraycopy(BRAZILIAN_STOP_WORDS, 0, ALL_STOP_WORDS, destPos, BRAZILIAN_STOP_WORDS.length);
+        destPos += BRAZILIAN_STOP_WORDS.length;
+
+        System.arraycopy(CZECH_STOP_WORDS, 0, ALL_STOP_WORDS, destPos, CZECH_STOP_WORDS.length);
+        destPos += CZECH_STOP_WORDS.length;
+    }
+
+    public static final Set<String> DEFAULT_STOP_SET = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(ALL_STOP_WORDS)));
+
+    @Override
+    public TokenStream tokenStream(String fieldName, Reader reader) {
+        TokenStream result = new ClassicTokenizer(Version.LUCENE_36, reader);
+        result = new StandardFilter(Version.LUCENE_36, result);
+        result = new LowerCaseFilter(Version.LUCENE_36, result);
+        result = new StopFilter(Version.LUCENE_36, result, DEFAULT_STOP_SET);
+        result = new ASCIIFoldingFilter(result);
+        return result;
+    }
+
 }

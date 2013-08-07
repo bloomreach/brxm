@@ -189,8 +189,6 @@ public class SecurityManager implements HippoSecurityManager {
                                     callback instanceof RepositoryCallback ||
                                     callback instanceof CredentialsCallback) {
                                     list.add(callback);
-                                } else {
-                                    // ignore
                                 }
                             }
                             super.handle(list.toArray(new Callback[list.size()]));
