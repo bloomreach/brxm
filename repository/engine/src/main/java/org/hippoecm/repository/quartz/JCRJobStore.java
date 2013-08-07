@@ -392,7 +392,11 @@ public class JCRJobStore extends AbstractJobStore {
                 final String triggerIdentifier = trigger.getName();
                 stopLockKeepAlive(triggerIdentifier);
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
-                if(triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME)) {
+                final Date nextFire = trigger.getFireTimeAfter(new Date());
+                if(nextFire != null) {
+                    final Calendar nextFireTime = dateToCalendar(nextFire);
+                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
+                    session.save();
                     unlock(session, triggerNode.getPath());
                 } else {
                     final String jobIdentifier = ((JCRJobDetail) jobDetail).getIdentifier();
