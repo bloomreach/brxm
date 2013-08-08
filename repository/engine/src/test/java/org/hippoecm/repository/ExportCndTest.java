@@ -42,7 +42,7 @@ import org.apache.jackrabbit.spi.QNodeTypeDefinition;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.apache.jackrabbit.spi.commons.nodetype.compact.CompactNodeTypeDefWriter;
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -316,7 +316,8 @@ public class ExportCndTest extends RepositoryTestCase {
                     prefix += ":";
                 }
 
-                String encLocalName = ISO9075Helper.encodeLocalName(name.substring(name.indexOf(":") + 1));
+                final String localname = name.substring(name.indexOf(":") + 1);
+                String encLocalName = StringCodecFactory.ISO9075Helper.encodeLocalName(localname);
                 String resolvedName = prefix + encLocalName;
 
                 // check for '-' and '+'

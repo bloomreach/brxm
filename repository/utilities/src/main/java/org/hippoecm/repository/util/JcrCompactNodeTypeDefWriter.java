@@ -36,7 +36,7 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.OnParentVersionAction;
 
-import org.hippoecm.repository.api.ISO9075Helper;
+import org.hippoecm.repository.api.StringCodecFactory;
 
 public class JcrCompactNodeTypeDefWriter {
 
@@ -276,7 +276,7 @@ public class JcrCompactNodeTypeDefWriter {
             return "";
         }
 
-        if (name.indexOf(":") > -1) {
+        if (name.contains(":")) {
 
             String prefix = name.substring(0, name.indexOf(":"));
             if (!"".equals(prefix)) {
@@ -286,7 +286,8 @@ public class JcrCompactNodeTypeDefWriter {
                 prefix += ":";
             }
 
-            String encLocalName = ISO9075Helper.encodeLocalName(name.substring(name.indexOf(":") + 1));
+            final String localName = name.substring(name.indexOf(":") + 1);
+            String encLocalName = StringCodecFactory.ISO9075Helper.encodeLocalName(localName);
             String resolvedName = prefix + encLocalName;
 
             // check for '-' and '+'
@@ -302,7 +303,7 @@ public class JcrCompactNodeTypeDefWriter {
     }
 
     private String escape(String s) {
-        StringBuffer sb = new StringBuffer(s);
+        StringBuilder sb = new StringBuilder(s);
         for (int i = 0; i < sb.length(); i++) {
             if (sb.charAt(i) == '\\') {
                 sb.insert(i, '\\');
