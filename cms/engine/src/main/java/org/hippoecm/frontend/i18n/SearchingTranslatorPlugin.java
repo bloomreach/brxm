@@ -24,15 +24,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.ISO9075Helper;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +49,7 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
         try {
             QueryManager qMgr = UserSession.get().getQueryManager();
             String strQuery = "//element(*, " + HippoNodeType.NT_TRANSLATED+ ")[fn:name()='"
-                    + ISO9075Helper.encodeLocalName(NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_KEY)))
+                    + StringCodecFactory.ISO9075Helper.encodeLocalName(NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_KEY)))
                     + "']/element(" + HippoNodeType.NT_TRANSLATION + ", " + HippoNodeType.HIPPO_TRANSLATION + ")[@" +
                     HippoNodeType.HIPPO_LANGUAGE + "='" + NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_LANGUAGE)) + "']";
             Query query = qMgr.createQuery(strQuery, Query.XPATH);
