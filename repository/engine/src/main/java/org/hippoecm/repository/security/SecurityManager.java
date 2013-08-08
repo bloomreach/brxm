@@ -69,6 +69,7 @@ import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
+import org.apache.jackrabbit.core.security.simple.SimpleAccessManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.group.DummyGroupManager;
@@ -689,16 +690,14 @@ public class SecurityManager implements HippoSecurityManager {
             if (amc == null) {
                 accessMgr = new SimpleAccessManager();
             } else {
-                accessMgr = (AccessManager) amc.newInstance(AccessManager.class);
+                accessMgr = amc.newInstance(AccessManager.class);
             }
             accessMgr.init(amContext);
             return accessMgr;
         } catch (AccessDeniedException ade) {
-            // re-throw
             throw ade;
         } catch (Exception e) {
-            // wrap in RepositoryException
-            String msg = "failed to instantiate AccessManager implementation: " + SimpleAccessManager.class.getName();
+            String msg = "Failed to instantiate AccessManager implementation";
             log.error(msg, e);
             throw new RepositoryException(msg, e);
         }

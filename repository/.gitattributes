@@ -6,7 +6,6 @@ api/src/main/java/org/hippoecm/repository/api/HippoNode.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoQuery.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoSession.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoWorkspace.java -text
-api/src/main/java/org/hippoecm/repository/api/ISO9075Helper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/repository/api/ImportMergeBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/repository/api/ImportReferenceBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/repository/api/InitializationProcessor.java -text
@@ -172,7 +171,6 @@ engine/src/main/java/org/hippoecm/repository/security/domain/Domains.java svneol
 engine/src/main/java/org/hippoecm/repository/security/domain/QFacetRule.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/group/GroupManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/group/RepositoryGroupManager.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/security/principals/AdminPrincipal.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/principals/FacetAuthPrincipal.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/principals/GroupPrincipal.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/principals/RolePrincipal.java svneol=native#text/plain
@@ -184,7 +182,6 @@ engine/src/main/java/org/hippoecm/repository/security/service/UserImpl.java -tex
 engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
-engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerImpl.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text

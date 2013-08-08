@@ -30,16 +30,6 @@ public class StringCodecFactory {
     private Map<String, StringCodec> codecs;
 
     /**
-     * Initialized a empty StringCodecFactory containing no encodings, always falling back to a no-operation encoding.
-     * @deprecated use a fully configured StringCodecFactory instead
-     */
-    @Deprecated
-    public StringCodecFactory() {
-        codecs = new HashMap<String, StringCodec>();
-        codecs.put(null, new IdentEncoding());
-    }
-
-    /**
      * Initialized a StringCodecFactory with the given and fixed StringCodec mappings.
      * @param codecs a map of codecs to bind to their symbolic names.  The map becomes immutable.
      */
@@ -640,14 +630,14 @@ public class StringCodecFactory {
         }
 
         /**
-         * @see encode(String)
+         * @see #encode(String)
          */
         public static String encodeLocalName(String name) {
             return encodeColon(encodeImpl(name));
         }
 
         /**
-         * @see decode(String)
+         * @see #decode(String)
          */
         public static String decodeLocalName(String name) {
             return decodeImpl(name);

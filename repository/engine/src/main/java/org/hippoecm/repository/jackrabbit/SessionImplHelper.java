@@ -61,6 +61,7 @@ import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -82,7 +83,6 @@ import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
@@ -335,10 +335,6 @@ abstract class SessionImplHelper {
         List<Principal> idPrincipals = new LinkedList<Principal>();
         if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
             Principal principal = subject.getPrincipals(SystemPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
-        }
-        if (!subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(org.apache.jackrabbit.core.security.principal.AdminPrincipal.class).iterator().next();
             idPrincipals.add(principal);
         }
         if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
