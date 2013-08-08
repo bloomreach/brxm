@@ -88,8 +88,8 @@ public class JCRSessionStatefulConcurrencyValve extends AbstractBaseOrderableVal
                     // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
                     refreshSession(lazySession);
                 }
+                context.invokeNext();
             }
-            context.invokeNext();
             return;
         } else {
             context.invokeNext();
