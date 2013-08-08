@@ -85,7 +85,7 @@
             this.pageRequestVariants = pageRequestVariants;
         },
 
-        load: function(hstInternalVariant) {
+        load: function(hstInternalVariant, rememberInitialActiveTab) {
             this.silent = true;
             this.beginUpdate();
             this.removeAll();
@@ -97,7 +97,9 @@
                 this.adjustBodyWidth(this.tabWidth);
 
                 this._selectInitialActiveTab(hstInternalVariant);
-                this.initialActiveTab = this.getActiveTab();
+                if (rememberInitialActiveTab !== true) {
+                    this.initialActiveTab = this.getActiveTab();
+                }
 
                 activeTab = this.getActiveTab();
                 this.fireEvent('variantChange', activeTab.componentId, activeTab.variant.id);
@@ -481,12 +483,11 @@
                 success: function() {
                     this.fireEvent('save');
                     Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
-                    Ext.getCmp('componentPropertiesPanel').load(this.newVariantId);
+                    Ext.getCmp('componentPropertiesPanel').load(this.newVariantId, true);
                 }.bind(this),
                 failure: function(form, action) {
                     Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
                             Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message'], function (id) {
-
                                 Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.pageContext = null;
                                 // reload channel manager
                                 Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.refreshIframe();
