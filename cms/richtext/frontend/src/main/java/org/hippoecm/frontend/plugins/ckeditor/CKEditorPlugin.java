@@ -22,6 +22,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -29,20 +30,21 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
-import org.hippoecm.frontend.plugins.richtext.preview.RichTextPreviewPanel;
+import org.hippoecm.frontend.plugins.richtext.view.RichTextComparePanel;
+import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CKEditorPlugin extends RenderPlugin {
 
     public static final String CONFIG_CKEDITOR_CONFIG_JSON = "ckeditor.config.json";
+    public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
     public static final String CONFIG_CHILD_LINK_PICKER = "linkpicker";
 
@@ -53,6 +55,7 @@ public class CKEditorPlugin extends RenderPlugin {
             "cms-pickers/documents", "ckeditor-linkpicker", "hippostd:folder");
 
     private static final String WICKET_ID_PANEL = "panel";
+
     private static final Logger log = LoggerFactory.getLogger(CKEditorPlugin.class);
 
     public CKEditorPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -75,8 +78,7 @@ public class CKEditorPlugin extends RenderPlugin {
             case EDIT:
                 return createEditPanel();
             case COMPARE:
-                // TODO: separate compare view
-                return createViewPanel();
+                return createComparePanel();
             default:
                 throw new IllegalStateException("Unsupported editor mode: " + mode);
         }
@@ -92,6 +94,34 @@ public class CKEditorPlugin extends RenderPlugin {
         final IPluginConfig linkPickerConfig = getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG);
         return new CKEditorPanel(WICKET_ID_PANEL, getPluginContext(), imagePickerConfig, linkPickerConfig, editorConfigJson,
                 getNodeModel(), getHtmlModel(), getHtmlCleaner());
+    }
+
+    private Panel createComparePanel() {
+        final JcrNodeModel baseNodeModel = getBaseNodeModelOrNull();
+        if (baseNodeModel == null) {
+            log.warn("Plugin '{}' cannot instantiate compare mode, using regular HTML preview instead.",
+                    getPluginConfig().getName());
+            return createViewPanel();
+        }
+
+        final JcrNodeModel currentNodeModel = (JcrNodeModel) getDefaultModel();
+
+        return new RichTextComparePanel(WICKET_ID_PANEL, baseNodeModel, currentNodeModel, getBrowser());
+    }
+
+    private JcrNodeModel getBaseNodeModelOrNull() {
+        final IPluginConfig config = getPluginConfig();
+        if (!config.containsKey(CONFIG_MODEL_COMPARE_TO)) {
+            log.warn("Plugin {} is missing configuration property '{}'", config.getName(), CONFIG_MODEL_COMPARE_TO);
+            return null;
+        }
+        final String compareToServiceId = config.getString(CONFIG_MODEL_COMPARE_TO);
+        final JcrNodeModel nodeModel = getNodeModelFromServiceOrNull(compareToServiceId);
+        if (nodeModel == null) {
+            log.warn("Plugin {} cannot get the service '{}'. Check the config property '{}'",
+                    new Object[]{config.getName(), compareToServiceId, CONFIG_MODEL_COMPARE_TO});
+        }
+        return nodeModel;
     }
 
     private IPluginConfig getChildPluginConfig(final String key, IPluginConfig defaultConfig) {
@@ -113,6 +143,20 @@ public class CKEditorPlugin extends RenderPlugin {
 
     private JcrNodeModel getNodeModel() {
         return (JcrNodeModel) getDefaultModel();
+    }
+
+    private JcrNodeModel getNodeModelFromServiceOrNull(final String serviceName) {
+        final IModelReference modelRef = getPluginContext().getService(serviceName, IModelReference.class);
+        if (modelRef == null) {
+            log.warn("The service '{}' is not available", serviceName);
+            return null;
+        }
+        final IModel model = modelRef.getModel();
+        if (model == null) {
+            log.warn("The service '{}' does not provide a valid node model", serviceName);
+            return null;
+        }
+        return (JcrNodeModel) model;
     }
 
     private IModel<String> getHtmlModel() {

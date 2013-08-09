@@ -1,4 +1,4 @@
-package org.hippoecm.frontend.plugins.richtext.preview;
+package org.hippoecm.frontend.plugins.richtext.view;
 
 import java.nio.charset.Charset;
 
@@ -17,9 +17,7 @@ import org.apache.wicket.util.encoding.UrlEncoder;
 import org.apache.wicket.util.string.*;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.ILinkDecorator;
-import org.hippoecm.frontend.plugins.xinha.XinhaNodePlugin;
 import org.hippoecm.frontend.service.IBrowseService;
-import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
