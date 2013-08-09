@@ -246,6 +246,11 @@ gallery/tmlog.lck
 gallery/version
 gallery/wdbp-error-log.txt
 gallery/workspaces
+google-analytics/.project
+google-analytics/.settings
+google-analytics/frontend/.classpath
+google-analytics/frontend/.project
+google-analytics/frontend/.settings
 google-analytics/frontend/hippo-cms-google-analytics-frontend.iml
 google-analytics/frontend/target
 google-analytics/hippo-cms-google-analytics.iml
@@ -492,6 +497,8 @@ versioning/.project
 versioning/.settings
 versioning/hippo-cms-versioning.iml
 versioning/target
+workflow/.project
+workflow/.settings
 workflow/frontend/*.tmp
 workflow/frontend/.classpath
 workflow/frontend/.pom.xml.swp
@@ -515,6 +522,9 @@ workflow/frontend/version
 workflow/frontend/wdbp-error-log.txt
 workflow/frontend/workspaces
 workflow/hippo-cms-workflow.iml
+workflow/repository/.classpath
+workflow/repository/.project
+workflow/repository/.settings
 workflow/repository/hippo-cms-workflow-repository.iml
 workflow/repository/target
 workflow/target
