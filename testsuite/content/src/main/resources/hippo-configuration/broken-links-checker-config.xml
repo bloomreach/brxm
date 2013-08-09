@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
+         sv:name="brokenlinks">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:module</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippo:moduleconfig" h:merge="combine">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:moduleconfig" h:merge="combine">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>brokenlinks:config</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>wfdropbox:call</sv:value>
+      </sv:property>
+      <sv:property sv:name="wfdropbox:workflow" sv:type="String">
+        <sv:value>org.onehippo.cms7.brokenlinks.CheckBrokenLinksWorkflow</sv:value>
+      </sv:property>
+      <sv:property sv:name="wfdropbox:category" sv:type="String">
+        <sv:value>brokenlinks</sv:value>
+      </sv:property>
+      <sv:property sv:name="wfdropbox:method" sv:type="String">
+        <sv:value>checkLinks</sv:value>
+      </sv:property>
+      <sv:node sv:name="wfdropbox:arguments" sv:type="Name">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>wfdropbox:arguments</sv:value>
+        </sv:property>
+        <sv:node sv:name="cronExpression" sv:type="Name">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>wfdropbox:argument</sv:value>
+          </sv:property>
+          <sv:property sv:name="wfdropbox:formal" sv:type="String">
+            <sv:value>org.hippoecm.repository.api.CronExpression</sv:value>
+          </sv:property>
+          <sv:property sv:name="wfdropbox:actual" sv:type="String">
+            <sv:value>0 0/5 * * * ? *</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>

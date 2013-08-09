@@ -122,6 +122,7 @@ content/src/main/resources/democontent_it/demo-wikipedia-it.xml -text
 content/src/main/resources/democontent_nl/demo-wikipedia-nl.xml -text
 content/src/main/resources/demosite-namespace.xml svneol=native#text/plain
 content/src/main/resources/demosite-types.cnd -text
+content/src/main/resources/hippo-configuration/broken-links-checker-config.xml -text
 content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
 content/src/main/resources/hippo-configuration/formdata.xml -text svneol=unset#text/plain
 content/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
