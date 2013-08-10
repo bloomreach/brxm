@@ -61,10 +61,10 @@
   <!-- console -->
   <appender name="console" class="org.apache.log4j.ConsoleAppender">
     <param name="Target" value="System.out"/>
-    <layout class="org.apache.log4j.PatternLayout"> 
+    <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] [%C.%M():%L] %m%n"/>
-    </layout> 
- </appender> 
+    </layout>
+ </appender>
 
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
@@ -94,6 +94,12 @@
   <logger additivity="false" name="org.onehippo.audit">
     <level value="info"/>
     <appender-ref ref="audit"/>
+  </logger>
+
+  <logger additivity="false" name="org.onehippo.cms7.brokenlinks">
+    <level value="info"/>
+    <appender-ref ref="cms"/>
+    <appender-ref ref="console"/>
   </logger>
 
   <!-- Site logging -->
