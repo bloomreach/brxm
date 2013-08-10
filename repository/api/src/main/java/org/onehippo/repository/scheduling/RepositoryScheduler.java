@@ -52,4 +52,13 @@ public interface RepositoryScheduler {
      * @throws RepositoryException  if an error occurs while checking for the existence of the job.
      */
     public boolean checkExists(String jobName, String groupName) throws RepositoryException;
+
+    /**
+     * Trigger the job (execute it now) identified by {@code jobName} and {@code groupName}.
+     *
+     * @param jobName  name of the job
+     * @param groupName  name of the group, may be null to indicate the default group.
+     * @throws RepositoryException
+     */
+    public void triggerJob(String jobName, String groupName) throws RepositoryException;
 }

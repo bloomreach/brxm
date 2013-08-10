@@ -79,6 +79,15 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         return getJobNode(jobName, groupName) != null;
     }
 
+    @Override
+    public void triggerJob(final String jobName, final String groupName) throws RepositoryException {
+        try {
+            scheduler.triggerJob(jobName, groupName);
+        } catch (SchedulerException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
     private Trigger createQuartzTrigger(final RepositoryJobTrigger trigger) throws RepositoryException {
         if (trigger instanceof RepositoryJobCronTrigger) {
             final String cronExpression = ((RepositoryJobCronTrigger) trigger).getCronExpression();
