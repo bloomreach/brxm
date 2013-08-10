@@ -87,6 +87,23 @@ public class SchedulerTest extends RepositoryTestCase {
         }
     }
 
+    @Test
+    public void testTriggerRepositoryJobNow() throws Exception {
+        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
+        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
+        final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date(System.currentTimeMillis()+60000));
+        scheduler.scheduleJob(testJobInfo, testJobTrigger);
+        scheduler.executeJob("test", "default");
+        try {
+            if (!repositoryJobExecuted) {
+                fail("RepositoryJob not executed within 5 seconds");
+            }
+        } finally {
+            scheduler.deleteJob("test", "default");
+        }
+    }
+
+
     private boolean waitUntilExecuted() throws Exception {
         int n = 50;
         while (n-- > 0) {

@@ -60,5 +60,5 @@ public interface RepositoryScheduler {
      * @param groupName  name of the group, may be null to indicate the default group.
      * @throws RepositoryException
      */
-    public void triggerJob(String jobName, String groupName) throws RepositoryException;
+    public void executeJob(String jobName, String groupName) throws RepositoryException;
 }

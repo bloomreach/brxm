@@ -31,10 +31,12 @@ import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.quartz.spi.TriggerFiredBundle;
 
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.*;
 
@@ -80,10 +82,24 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     }
 
     @Override
-    public void triggerJob(final String jobName, final String groupName) throws RepositoryException {
+    public void executeJob(final String jobName, String groupName) throws RepositoryException {
         try {
-            scheduler.triggerJob(jobName, groupName);
+            groupName = getGroupName(groupName);
+            final Node jobNode = getJobNode(jobName, groupName);
+            if (jobNode == null) {
+                throw new RepositoryException("No such job: " + groupName + "/" + jobName);
+            }
+            final JobDetail jobDetail = scheduler.getJobDetail(jobNode.getIdentifier(), null);
+            final RepositoryJobJob job = (RepositoryJobJob) jobDetail.getJobClass().newInstance();
+            final Date now = new Date();
+            final TriggerFiredBundle bundle = new TriggerFiredBundle(jobDetail, new SimpleTrigger("foo"), null,
+                    false, now, now, now, now);
+            job.execute(new JobExecutionContext(scheduler, bundle, job));
         } catch (SchedulerException e) {
+            throw new RepositoryException(e);
+        } catch (InstantiationException e) {
+            throw new RepositoryException(e);
+        } catch (IllegalAccessException e) {
             throw new RepositoryException(e);
         }
     }
@@ -130,17 +146,17 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         return jobGroup.addNode(name, HIPPOSCHED_REPOSITORY_JOB);
     }
 
-    private Node getJobNode(String jobName, String groupName) throws RepositoryException {
-        if (StringUtils.isEmpty(groupName)) {
-            groupName = "default";
-        }
+    private Node getJobNode(final String jobName, final String groupName) throws RepositoryException {
         final Node moduleConfig = session.getNode(CONFIG_NODE_PATH);
-        final Node groupNode = JcrUtils.getNodeIfExists(moduleConfig, groupName);
+        final Node groupNode = JcrUtils.getNodeIfExists(moduleConfig, getGroupName(groupName));
         if (groupNode != null) {
             return JcrUtils.getNodeIfExists(groupNode, jobName);
         }
         return null;
     }
 
+    private String getGroupName(final String groupName) {
+        return StringUtils.isEmpty(groupName) ? "default" : groupName;
+    }
 
 }
