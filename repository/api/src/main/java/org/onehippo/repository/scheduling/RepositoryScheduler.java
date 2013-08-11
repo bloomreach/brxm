@@ -44,6 +44,14 @@ public interface RepositoryScheduler {
     public void deleteJob(String jobName, String groupName) throws RepositoryException;
 
     /**
+     * Removes a job and its associated triggers.
+     *
+     * @param jobIdentifier  name of the job.
+     * @throws RepositoryException  if an error occurs while trying to remove the job.
+     */
+    public void deleteJob(String jobIdentifier) throws RepositoryException;
+
+    /**
      * Return whether a job already exists.
      *
      * @param jobName  name of the job.
@@ -61,4 +69,13 @@ public interface RepositoryScheduler {
      * @throws RepositoryException
      */
     public void executeJob(String jobName, String groupName) throws RepositoryException;
+
+    /**
+     * Trigger the job (execute it now) identified by {@code jobIdentifier}.
+     *
+     * @param jobIdentifier  name of the job
+     * @throws RepositoryException
+     */
+    public void executeJob(String jobIdentifier) throws RepositoryException;
+
 }

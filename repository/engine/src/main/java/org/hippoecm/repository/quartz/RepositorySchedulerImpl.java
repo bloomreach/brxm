@@ -30,6 +30,7 @@ import org.onehippo.repository.scheduling.RepositoryJobSimpleTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.quartz.CronTrigger;
+import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
@@ -38,7 +39,8 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.spi.TriggerFiredBundle;
 
-import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.*;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_JOBGROUP;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_REPOSITORY_JOB;
 
 
 /**
@@ -77,20 +79,35 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
     }
 
     @Override
+    public void deleteJob(final String jobIdentifier) throws RepositoryException {
+        synchronized (session) {
+            final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
+            if (jobNode != null) {
+                jobNode.remove();
+                session.save();
+            }
+        }
+    }
+
+    @Override
     public boolean checkExists(final String jobName, final String groupName) throws RepositoryException {
         return getJobNode(jobName, groupName) != null;
     }
 
     @Override
     public void executeJob(final String jobName, String groupName) throws RepositoryException {
+        final Node jobNode = getJobNode(jobName, groupName);
+        if (jobNode == null) {
+            throw new RepositoryException("No such job: " + getGroupName(groupName) + "/" + jobName);
+        }
+        executeJob(jobNode.getIdentifier());
+    }
+
+    @Override
+    public void executeJob(final String jobIdentifier) throws RepositoryException {
         try {
-            groupName = getGroupName(groupName);
-            final Node jobNode = getJobNode(jobName, groupName);
-            if (jobNode == null) {
-                throw new RepositoryException("No such job: " + groupName + "/" + jobName);
-            }
-            final JobDetail jobDetail = scheduler.getJobDetail(jobNode.getIdentifier(), null);
-            final RepositoryJobJob job = (RepositoryJobJob) jobDetail.getJobClass().newInstance();
+            final JobDetail jobDetail = scheduler.getJobDetail(jobIdentifier, null);
+            final Job job = (Job) jobDetail.getJobClass().newInstance();
             final Date now = new Date();
             final TriggerFiredBundle bundle = new TriggerFiredBundle(jobDetail, new SimpleTrigger("foo"), null,
                     false, now, now, now, now);
@@ -102,6 +119,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
         } catch (IllegalAccessException e) {
             throw new RepositoryException(e);
         }
+
     }
 
     private Trigger createQuartzTrigger(final RepositoryJobTrigger trigger) throws RepositoryException {
