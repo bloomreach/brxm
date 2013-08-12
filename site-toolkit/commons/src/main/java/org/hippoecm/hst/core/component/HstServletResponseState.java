@@ -831,6 +831,11 @@ public class HstServletResponseState implements HstResponseState {
         }
     }
 
+    @Override
+    public boolean isFlushed() {
+        return flushed;
+    }
+
     /**
      * Writes the list of preambles comments as comment into the output
      * @param preambles the list of preamble comments to write

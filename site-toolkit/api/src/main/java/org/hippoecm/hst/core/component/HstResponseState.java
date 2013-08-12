@@ -144,5 +144,6 @@ public interface HstResponseState
     void clear();
 
     void flush() throws IOException;
-    
+
+    boolean isFlushed();
 }

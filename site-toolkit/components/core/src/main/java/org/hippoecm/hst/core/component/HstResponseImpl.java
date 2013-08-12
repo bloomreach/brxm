@@ -32,6 +32,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
@@ -41,6 +43,7 @@ import org.w3c.dom.Element;
  */
 public class HstResponseImpl extends HttpServletResponseWrapper implements HstResponse
 {
+    private static final Logger log = LoggerFactory.getLogger(HstResponseImpl.class);
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected HstRequestContext requestContext;
@@ -408,8 +411,9 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     
     public void flushChildContent(String name) throws IOException {
         HstComponentWindow childWindow = this.componentWindow.getChildWindow(name);
-        
-        if (childWindow != null) {
+        if (childWindow == null) {
+            log.debug("Cannot find child window with name '{}' for current window '{}'. Skip child.", name, this.componentWindow.getName());
+        } else {
             childWindow.getResponseState().flush();
         }
     }
