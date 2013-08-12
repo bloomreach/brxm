@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -647,7 +648,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public ObjectBeanManager getObjectBeanManager(final Session session) {
         if (nonDefaultObjectBeanManagers == null) {
-            nonDefaultObjectBeanManagers = new HashMap<Session, ObjectBeanManager>();
+            nonDefaultObjectBeanManagers = new IdentityHashMap<Session, ObjectBeanManager>();
         }
         ObjectBeanManager nonDefaultObjectBeanManager = nonDefaultObjectBeanManagers.get(session);
         if (nonDefaultObjectBeanManager == null) {
@@ -673,7 +674,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     @Override
     public HstQueryManager getQueryManager(final Session session) throws IllegalStateException {
         if (nonDefaultHstQueryManagers == null) {
-            nonDefaultHstQueryManagers = new HashMap<Session, HstQueryManager>();
+            nonDefaultHstQueryManagers = new IdentityHashMap<Session, HstQueryManager>();
         }
         HstQueryManager nonDefaultHstQueryManager = nonDefaultHstQueryManagers.get(session);
         if (nonDefaultHstQueryManager == null) {
