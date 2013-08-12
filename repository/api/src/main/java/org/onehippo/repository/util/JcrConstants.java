@@ -19,10 +19,24 @@ public final class JcrConstants {
 
     private JcrConstants() {}
 
+    // ------------------------------------------ node types
+
     public static final String MIX_VERSIONABLE = "mix:versionable";
     public static final String MIX_LOCKABLE = "mix:lockable";
     public static final String MIX_REFERENCEABLE = "mix:referenceable";
 
+    // ------------------------------------------ properties
+
+    public static final String JCR_PRIMARY_TYPE = "jcr:primaryType";
+
+    public static final String JCR_LOCK_OWNER = "jcr:lockOwner";
+    public static final String JCR_LOCK_IS_DEEP = "jcr:lockIsDeep";
+
     public static final String JCR_UUID = "jcr:uuid";
+
+    public static final String JCR_BASE_VERSION = "jcr:baseVersion";
+    public static final String JCR_IS_CHECKED_OUT = "jcr:isCheckedOut";
+    public static final String JCR_PREDECESSORS = "jcr:predecessors";
+    public static final String JCR_VERSION_HISTORY = "jcr:versionHistory";
 
 }
