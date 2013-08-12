@@ -89,8 +89,8 @@
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
 + * (hst:containeritemcomponent)
 
-[hst:containercomponentholder] > nt:base orderable
-+ * (hst:containercomponentholder)
+[hst:containercomponentfolder] > nt:base orderable
++ * (hst:containercomponentfolder)
 + * (hst:containercomponent)
 
 [hst:catalog] > nt:base, mix:referenceable orderable
@@ -185,8 +185,8 @@
 - hst:lastmodifiedby (string)
 + * (hst:sitemenu)
 
-[hst:modifiable] > nt:base orderable
-+ hst:containers (hst:containercomponentholder) = hst:containercomponentholder
+[hst:workspace] > nt:base orderable
++ hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
@@ -200,7 +200,7 @@
 + hst:sitemenus (hst:sitemenus) = hst:sitemenus
 + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
 + hst:catalog (hst:catalog) = hst:catalog
-+ hst:modifiable (hst:modifiable) = hst:modifiable
++ hst:workspace (hst:workspace) = hst:workspace
 
 [hst:configurations] > nt:base, mix:referenceable, mix:versionable
 + * (hst:configuration) = hst:configuration version

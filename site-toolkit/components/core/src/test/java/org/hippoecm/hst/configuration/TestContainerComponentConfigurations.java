@@ -17,7 +17,6 @@
 package org.hippoecm.hst.configuration;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -182,21 +181,21 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         assertTrue(component.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT);
 
         // the id is within the current unittestproject hst:pages, while the component is inherited
-        // from hst:modifiable below unittestcommon
+        // from hst:workspace below unittestcommon
 
         assertTrue(component.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName"));
-        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/myReferenceableContainer"));
+        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"));
         String canonId = component.getCanonicalIdentifier();
         Node canonicalNode = session.getNodeByIdentifier(canonId);
-        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/myReferenceableContainer"));
+        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer"));
         assertTrue(component.getChildren().size() == 1);
         final HstComponentConfiguration child = component.getChildByName("item");
         assertNotNull(child);
         assertTrue(child.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName/item"));
-        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/myReferenceableContainer/item"));
+        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer/item"));
         String canonChildId = child.getCanonicalIdentifier();
         Node canonChildNode = session.getNodeByIdentifier(canonChildId);
-        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/myReferenceableContainer/item"));
+        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/myReferenceableContainer/item"));
 
         session.getNode(highestAncestorNewNode).remove();
         session.save();
@@ -222,18 +221,18 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         // from hst:modifiable below unittestcommon
 
         assertTrue(component.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName"));
-        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/foo/bar/myReferenceableContainer"));
+        assertTrue(component.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer"));
         String canonId = component.getCanonicalIdentifier();
         Node canonicalNode = session.getNodeByIdentifier(canonId);
-        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/foo/bar/myReferenceableContainer"));
+        assertTrue(canonicalNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer"));
         assertTrue(component.getChildren().size() == 1);
         final HstComponentConfiguration child = component.getChildByName("item");
         assertNotNull(child);
         assertTrue(child.getId().equals("hst:pages/homepage/test/containerReferencePreserveMyName/item"));
-        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/foo/bar/myReferenceableContainer/item"));
+        assertTrue(child.getCanonicalStoredLocation().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer/item"));
         String canonChildId = child.getCanonicalIdentifier();
         Node canonChildNode = session.getNodeByIdentifier(canonChildId);
-        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:modifiable/hst:containers/foo/bar/myReferenceableContainer/item"));
+        assertTrue(canonChildNode.getPath().equals("/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:containers/foo/bar/myReferenceableContainer/item"));
 
         session.getNode(highestAncestorNewNode).remove();
         session.save();
@@ -256,7 +255,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
         // trigger jcr events as during tests the jcr event listeners are not enabled
-        hstSitesManager.invalidate("/hst:hst/hst:configurations/unittestcommon/" + HstNodeTypes.NODENAME_HST_MODIFIABLE);
+        hstSitesManager.invalidate("/hst:hst/hst:configurations/unittestcommon/" + HstNodeTypes.NODENAME_HST_WORKSPACE);
         hstSitesManager.invalidate(testComponent.getPath());
 
         {
@@ -305,10 +304,10 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         String highestAncestorPath = null;
         final Node hstConfigurationNode = session.getNode("/hst:hst/hst:configurations/unittestcommon");
         Node modifiableHstNode;
-        if (hstConfigurationNode.hasNode(HstNodeTypes.NODENAME_HST_MODIFIABLE)) {
-            modifiableHstNode = hstConfigurationNode.getNode(HstNodeTypes.NODENAME_HST_MODIFIABLE);
+        if (hstConfigurationNode.hasNode(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+            modifiableHstNode = hstConfigurationNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
         } else {
-            modifiableHstNode = hstConfigurationNode.addNode(HstNodeTypes.NODENAME_HST_MODIFIABLE);
+            modifiableHstNode = hstConfigurationNode.addNode(HstNodeTypes.NODENAME_HST_WORKSPACE);
             highestAncestorPath = modifiableHstNode.getPath();
         }
         Node hstReferenceableContainers;
@@ -328,7 +327,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
                 if (folder.hasNode(elems[i])) {
                     folder = folder.getNode(elems[i]);
                 } else {
-                    folder = folder.addNode(elems[i], HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTSHOLDER);
+                    folder = folder.addNode(elems[i], HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTSFOLDER);
                     if (highestAncestorPath == null) {
                         highestAncestorPath = folder.getPath();
                     }

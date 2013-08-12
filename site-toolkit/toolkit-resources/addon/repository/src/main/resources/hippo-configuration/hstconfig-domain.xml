@@ -961,12 +961,12 @@
         <sv:value>Name</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hst:modifiable</sv:value>
+        <sv:value>hst:workspace</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
 
-  <sv:node sv:name="hst-containercomponentholder">
+  <sv:node sv:name="hst-containercomponentfolder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
@@ -987,7 +987,7 @@
         <sv:value>Name</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hst:containercomponentholder</sv:value>
+        <sv:value>hst:containercomponentfolder</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

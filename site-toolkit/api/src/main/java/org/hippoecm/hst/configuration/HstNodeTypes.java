@@ -49,7 +49,7 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_CHANNELS = "hst:channels";
     static final String NODETYPE_HST_BLUEPRINT = "hst:blueprint";
     static final String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
-    static final String NODETYPE_HST_CONTAINERCOMPONENTSHOLDER = "hst:containercomponentholder";
+    static final String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";
 
     static final String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     static final String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
@@ -197,8 +197,8 @@ public interface HstNodeTypes {
     static final String NODENAME_HST_MOUNT = "hst:mount";
     static final String NODENAME_HST_HOSTS = "hst:hosts";
     static final String NODENAME_HST_CHANNELS = "hst:channels";
-    static final String NODENAME_HST_MODIFIABLE = "hst:modifiable";
+    static final String NODENAME_HST_WORKSPACE = "hst:workspace";
     static final String NODENAME_HST_CONTAINERS = "hst:containers";
 
-    static final String RELPATH_HST_MODIFIABLE_CONTAINERS = "hst:modifiable/hst:containers";
+    static final String RELPATH_HST_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers";
 }

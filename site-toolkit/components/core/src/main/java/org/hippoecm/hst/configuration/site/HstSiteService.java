@@ -225,7 +225,7 @@ public class HstSiteService implements HstSite {
         augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES));
         augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_CATALOG));
         augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES));
-        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_MODIFIABLE));
+        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE));
         return key;
     }
 

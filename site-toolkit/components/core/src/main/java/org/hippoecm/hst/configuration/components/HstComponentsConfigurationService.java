@@ -59,7 +59,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     public HstComponentsConfigurationService(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
 
-        HstNode modifiableContainers = configurationNode.getNode(HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS);
+        HstNode modifiableContainers = configurationNode.getNode(HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS);
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
         
         if (components != null) {

@@ -392,7 +392,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (referenceableContainers == null) {
             log.warn("Component '{}' is of type '{}' but there are no referenceable containers at '{}'. Component '{}' will be ignored.",
                     new String[]{child.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE,
-                            HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS, child.getValueProvider().getPath()});
+                            HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
             return null;
         }
         // reference is mandatory so can't be null
@@ -408,14 +408,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 log.warn("Component '{}' contains an unresolvable reference '{}'. It should be a location relative to '{}'. " +
                         "Component '{}' will be ignored.",
                         new String[]{child.getValueProvider().getPath(), reference,
-                                HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS, child.getValueProvider().getPath()});
+                                HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
             }
             if (!HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT.equals(refNode.getNodeTypeName())) {
                 log.warn("Component '{}' contains an reference '{}' that does not point to a node of type '{}'. That is not allowed. " +
                         "Component '{}' will be ignored.",
                         new String[]{child.getValueProvider().getPath(), reference,
-                                HstNodeTypes.RELPATH_HST_MODIFIABLE_CONTAINERS, child.getValueProvider().getPath()});
+                                HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
                 return null;
             }
             log.debug("Succesfully found referenced containercomponent node '{}' for '{}'.", refNode.getValueProvider().getPath(),
