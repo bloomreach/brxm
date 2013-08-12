@@ -364,8 +364,8 @@ public interface HstRequestContext {
     ContentBeansTool getContentBeansTool();
 
     /**
-     * @return the root content path for the {@link org.hippoecm.hst.core.request.ResolvedMount} belonging to the current
-     * {@link javax.servlet.http.HttpServletRequest}
+     * @return the root content path relative to the root node for the {@link org.hippoecm.hst.core.request.ResolvedMount} belonging to the current
+     * {@link javax.servlet.http.HttpServletRequest}. The path never starts with a "/" as it is relative to the root node.
      */
     String getSiteContentBasePath();
 
