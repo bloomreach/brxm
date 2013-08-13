@@ -90,7 +90,8 @@ public class Detail extends BaseHstComponent {
         request.setAttribute("document", crBean);
 
         try {
-            HstQuery commentQuery = ContentBeanUtils.createIncomingBeansQuery((BaseBean) crBean, requestContext.getSiteContentBaseBean(), "demosite:commentlink/@hippo:docbase", this.getObjectConverter(), CommentBean.class, false);
+            HstQuery commentQuery = ContentBeanUtils.createIncomingBeansQuery((BaseBean) crBean,
+                    requestContext.getSiteContentBaseBean(), "demosite:commentlink/@hippo:docbase", CommentBean.class, false);
             commentQuery.addOrderByDescending("demosite:date");
             commentQuery.setLimit(15);
 
