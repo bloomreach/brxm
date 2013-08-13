@@ -115,7 +115,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     }
 
     @Test
-    public void testContainerComponentReferenceGetsRemovedWhenNoReferenceableComponentsPresent() throws Exception {
+    public void testContainerComponentReferenceGetsRemovedWhenHstWorkspaceMissing() throws Exception {
         final String containerReference = "canonicalContainerComponentReference";
         addComponentReference(testComponent, containerReference, "someReference");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -144,7 +144,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     @Test
     public void testContainerComponentReferenceGetsRemovedForNonExistingReference() throws Exception {
 
-        String highestAncestorNewNode = createReferenceableContainer("dummyContainer");
+        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("dummyContainer");
         final String containerReference = "canonicalContainerComponentReference";
         addComponentReference(testComponent, containerReference, "folderA/containerNonExisting");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
@@ -165,7 +165,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     @Test
     public void testContainerComponentReferenceNameIsPreserved() throws Exception {
 
-        String highestAncestorNewNode = createReferenceableContainer("myReferenceableContainer");
+        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("myReferenceableContainer");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "myReferenceableContainer");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -204,7 +204,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     @Test
     public void testWorkingContainerComponentReferenceInDeeperFolder() throws Exception {
 
-        String highestAncestorNewNode = createReferenceableContainer("foo/bar/myReferenceableContainer");
+        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
         VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
@@ -251,7 +251,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
             assertNull(component);
         }
         // add new config nodes
-        String highestAncestorNewNode = createReferenceableContainer("foo/bar/myReferenceableContainer");
+        String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
         // trigger jcr events as during tests the jcr event listeners are not enabled
@@ -300,7 +300,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     /**
      * @return the highest ancestor path of newly created nodes: This is the node that needs to be cleanup at the end again
      */
-    private String createReferenceableContainer(final String containerRelPath) throws RepositoryException {
+    private String createHstWorkspaceAndReferenceableContainer(final String containerRelPath) throws RepositoryException {
         String highestAncestorPath = null;
         final Node hstConfigurationNode = session.getNode("/hst:hst/hst:configurations/unittestcommon");
         Node modifiableHstNode;
