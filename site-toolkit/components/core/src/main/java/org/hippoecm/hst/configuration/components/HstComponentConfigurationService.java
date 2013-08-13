@@ -43,8 +43,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private Map<String, HstComponentConfigurationService> childConfByName = new HashMap<String, HstComponentConfigurationService>();
 
-    private Map<String, HstComponentConfiguration> derivedChildrenByName = null;
-
     private List<HstComponentConfigurationService> orderedListConfigs = new ArrayList<HstComponentConfigurationService>();
 
     private HstComponentConfiguration parent;
@@ -399,7 +397,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         String reference = child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT);
         if (reference.startsWith("/")) {
             log.warn("Component '{}' has reference '{}' that starts with a '/'. Reference should not start with a slash and " +
-                    "must be relative to '{}'. Removing trailing slash");
+                    "must be relative to '{}'. Removing leading slash");
             reference = reference.substring(1);
         }
         try {
