@@ -21,7 +21,7 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.utils.BeanUtils;
+import org.hippoecm.hst.util.ContentBeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class FacetedRight extends AbstractFacetedComponnent {
         super.doBeforeRender(request, response);
         HstQuery hstQuery = getHstQuery(request);
         
-        HippoFacetNavigationBean facNavBean = BeanUtils.getFacetNavigationBean(request, hstQuery , getObjectConverter());
+        HippoFacetNavigationBean facNavBean = ContentBeanUtils.getFacetNavigationBean(hstQuery);
 
         request.setAttribute("facetnav", facNavBean);
         

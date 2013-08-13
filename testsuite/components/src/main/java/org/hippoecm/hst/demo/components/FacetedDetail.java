@@ -20,7 +20,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.beans.ProductBean;
-import org.hippoecm.hst.utils.BeanUtils;
+import org.hippoecm.hst.util.ContentBeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class FacetedDetail extends AbstractFacetedComponnent {
         super.doBeforeRender(request, response);
         HstQuery hstQuery = getHstQuery(request);
         
-        ProductBean product = BeanUtils.getFacetedNavigationResultDocument(request, hstQuery, getObjectConverter(), ProductBean.class);
+        ProductBean product = ContentBeanUtils.getFacetedNavigationResultDocument(hstQuery, ProductBean.class);
         
         request.setAttribute("document", product);
         

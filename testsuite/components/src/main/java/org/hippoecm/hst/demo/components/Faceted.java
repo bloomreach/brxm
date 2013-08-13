@@ -30,8 +30,8 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.beans.BaseBean;
+import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.util.PathUtils;
-import org.hippoecm.hst.utils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public class Faceted extends AbstractFacetedComponnent {
         super.doBeforeRender(request, response);
         HstQuery hstQuery = getHstQuery(request);
         
-        HippoFacetNavigationBean facetNav = BeanUtils.getFacetNavigationBean(request, hstQuery, getObjectConverter());
+        HippoFacetNavigationBean facetNav = ContentBeanUtils.getFacetNavigationBean(hstQuery);
         
         List<BaseBean> resultset = new ArrayList<BaseBean>();
         request.setAttribute("resultset", resultset);
