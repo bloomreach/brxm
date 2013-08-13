@@ -318,7 +318,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                 if (cti != null) {
                     // duplicate property name
                     if (cti.isMultiple() != entry.getValue().isMultiple() ||
-                            cti.getItemType().equals(entry.getValue().getItemType())) {
+                            cti.getEffectiveType().equals(entry.getValue().getEffectiveType())) {
                         log.error("Conflicting ContentType property named {} encountered while merging ContentType {} into {}. Incoming property ignored."
                                 , new String[]{cti.getName(), other.getName(), getName()});
                     }
@@ -637,7 +637,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
                 List<EffectiveNodeTypeProperty> props = ent.getProperties().get("*");
                 if (props != null) {
                     for (EffectiveNodeTypeProperty p : props) {
-                        if (p.getType().equals(cti.getItemType()) && p.isMultiple() == cti.isMultiple()) {
+                        if (p.getType().equals(cti.getEffectiveType()) && p.isMultiple() == cti.isMultiple()) {
                             cti.setEffectiveNodeTypeItem(p);
                             if (p.isAutoCreated() && !cti.isAutoCreated()) {
                                 log.warn("Matching residual Effective NodeType {} property named {} is autoCreated while its corresponding property in ContentType {} is not. "
