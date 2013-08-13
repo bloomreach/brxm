@@ -515,7 +515,7 @@ public class BaseHstComponent extends GenericHstComponent {
      * @return
      */
     protected WorkflowPersistenceManager getWorkflowPersistenceManager(Session session, Map<String, ContentNodeBinder> contentNodeBinders) {
-        WorkflowPersistenceManagerImpl wpm = new WorkflowPersistenceManagerImpl(session, getObjectConverter(), contentNodeBinders);
+        WorkflowPersistenceManagerImpl wpm = new WorkflowPersistenceManagerImpl(session, RequestContextProvider.get().getContentBeansTool().getObjectConverter(), contentNodeBinders);
         return wpm;
     }
     
