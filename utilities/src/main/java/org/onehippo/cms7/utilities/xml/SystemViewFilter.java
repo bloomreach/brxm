@@ -35,7 +35,7 @@ public class SystemViewFilter extends ProxyContentHandler {
 
     protected final Path path;
 
-    private boolean skip = false;
+    protected boolean skip = false;
     private String context = null;
 
     public SystemViewFilter(final ContentHandler handler, final String rootPath) {
