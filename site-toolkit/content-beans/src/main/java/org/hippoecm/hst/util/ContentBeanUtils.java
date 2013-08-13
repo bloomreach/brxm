@@ -373,11 +373,8 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
             return null;
         }
 
-        String absPath = "/"+ requestContext.getSiteContentBasePath();
-        if(!"".equals(relPath)) {
-            absPath += "/" + relPath;
-        }
-        return getFacetNavigationBean(absPath, relPath, query);
+        String absBasePath = "/"+ requestContext.getSiteContentBasePath();
+        return getFacetNavigationBean(absBasePath, relPath, query);
     }
 
     /**
