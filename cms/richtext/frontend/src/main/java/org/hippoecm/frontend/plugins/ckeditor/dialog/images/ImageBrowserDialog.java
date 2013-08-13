@@ -86,12 +86,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageBrowserDialog extends AbstractBrowserDialog<CKEditorImage> implements IHeaderContributor {
-    private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ImageBrowserDialog.class);
 
     private static final ResourceReference DIALOG_SKIN = new CssResourceReference(ImageBrowserDialog.class, "ImageBrowserDialog.css");
-    private static final String CONFIG_KEY_PREFERRED_RESOURCE_NAMES = "preferred.resource.names";
+    private static final String CONFIG_PREFERRED_IMAGE_VARIANT = "preferred.image.variant";
+    private static final String DEFAULT_PREFERRED_IMAGE_VARIANT = "hippogallery:original";
     private static final String GALLERY_TYPE_SELECTOR_ID = "galleryType";
 
     public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
@@ -223,20 +224,26 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<CKEditorImage> imp
     }
 
     private void setPreferredTypeChoice() {
-        IPluginConfig config = getPluginConfig();
-        if (config.containsKey(CONFIG_KEY_PREFERRED_RESOURCE_NAMES)) {
-            String[] preferredType = config.getStringArray(CONFIG_KEY_PREFERRED_RESOURCE_NAMES);
-            if (preferredType.length > 0 && nameTypeMap.containsKey(preferredType[0])) {
-                imageModel.getObject().setType(preferredType[0]);
-            }
+        final IPluginConfig config = getPluginConfig();
+        String preferredType = config.getString(CONFIG_PREFERRED_IMAGE_VARIANT, DEFAULT_PREFERRED_IMAGE_VARIANT);
+        if (nameTypeMap.containsKey(preferredType)) {
+            imageModel.getObject().setType(preferredType);
         }
         if (StringUtils.isBlank(imageModel.getObject().getType())) {
-            log.warn("The preferred image variant configuration of the CKEditor plugin is not correct. Configure one of the available variants '{}'.", nameTypeMap.keySet());
+            log.warn("Unknown preferred image variant: '" + preferredType + "'. "
+                    + "Set the property '" + CONFIG_PREFERRED_IMAGE_VARIANT + "' to one of the available variants: " + nameTypeMap.keySet());
             if (nameTypeMap.size() > 0) {
                 String firstType = nameTypeMap.keySet().iterator().next();
                 imageModel.getObject().setType(firstType);
             }
         }
+    }
+
+    private static String[] getStringArrayOrDefault(IPluginConfig config, String name, String[] defaultValue) {
+        if (config.containsKey(name)) {
+            return config.getStringArray(name);
+        }
+        return defaultValue;
     }
 
     private void setTypeChoices(final Node imageSetNode) {

@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.ckeditor.dialog.model;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugins.richtext.model.AbstractPersistedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +28,10 @@ public abstract class CKEditorLink extends AbstractPersistedMap {
 
     static final Logger log = LoggerFactory.getLogger(CKEditorLink.class);
 
-    public static final String NEW_WINDOW = "_blank";
-
     public static final String HREF = "f_href";
     public static final String TITLE = "f_title";
     public static final String TARGET = "f_target";
-    public static final String OTHER_TARGET = "f_other_target";
+    public static final String TARGET_OPEN_IN_NEW_WINDOW = "_blank";
 
     public CKEditorLink(Map<String, String> values) {
         super(values);
@@ -46,26 +45,23 @@ public abstract class CKEditorLink extends AbstractPersistedMap {
         put(HREF, href);
     }
 
-    public boolean getTarget() {
-        String value = get(TARGET);
-        if (value != null && value.equals(NEW_WINDOW)) {
-            return true;
-        }
-        return false;
+    public boolean getOpenInNewWindow() {
+        final String target = get(TARGET);
+        return TARGET_OPEN_IN_NEW_WINDOW.equals(target);
     }
 
-    public void setTarget(boolean object) {
-        if (object) {
-            put(TARGET, NEW_WINDOW);
+    public void setOpenInNewWindow(boolean isEnabled) {
+        if (isEnabled) {
+            put(TARGET, TARGET_OPEN_IN_NEW_WINDOW);
         } else {
-            put(TARGET, "");
+            put(TARGET, StringUtils.EMPTY);
         }
     }
 
     @Override
-    protected Object serializeValue(Object value) {
+    protected String serializeValue(String value) {
         if (value == null) {
-            value = "";
+            value = StringUtils.EMPTY;
         }
         return super.serializeValue(value);
     }

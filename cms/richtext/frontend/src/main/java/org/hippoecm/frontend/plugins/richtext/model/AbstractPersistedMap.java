@@ -59,8 +59,8 @@ public abstract class AbstractPersistedMap extends HashMap<String, String> imple
         return sb.toString();
     }
 
-    protected Object serializeValue(Object value) {
-        return JavascriptUtil.serialize2JS((String) value);
+    protected String serializeValue(String value) {
+        return JavascriptUtil.serialize2JS(value);
     }
 
     protected Map<String, String> getInitialValues() {

@@ -19,12 +19,10 @@ package org.hippoecm.frontend.plugins.ckeditor.dialog.model;
 import java.util.Map;
 
 import org.apache.wicket.model.IDetachable;
-import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
 
 public abstract class InternalCKEditorLink extends DocumentLink {
     private static final long serialVersionUID = 1L;
 
-    
     public InternalCKEditorLink(Map<String, String> values, IDetachable parentModel) {
         super(values, parentModel);
     }

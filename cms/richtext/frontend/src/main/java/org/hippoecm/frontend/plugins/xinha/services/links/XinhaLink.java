@@ -63,7 +63,7 @@ public abstract class XinhaLink extends AbstractPersistedMap {
     }
 
     @Override
-    protected Object serializeValue(Object value) {
+    protected String serializeValue(String value) {
         if (value == null) {
             value = "";
         }

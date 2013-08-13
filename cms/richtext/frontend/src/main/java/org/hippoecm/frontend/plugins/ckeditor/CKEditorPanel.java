@@ -13,8 +13,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.ckeditor.dialog.images.CKEditorImageService;
 import org.hippoecm.frontend.plugins.ckeditor.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.ckeditor.dialog.links.CKEditorLinkService;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.links.InternalLinkBehavior;
-import org.hippoecm.frontend.plugins.ckeditor.hippoimagepicker.HippoImagePicker;
+import org.hippoecm.frontend.plugins.ckeditor.dialog.links.DocumentPickerBehavior;
+import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
@@ -43,12 +43,12 @@ class CKEditorPanel extends Panel {
     private final CKEditorImageService imageService;
     private final ImagePickerBehavior imagePickerBehavior;
     private final CKEditorLinkService linkService;
-    private final InternalLinkBehavior linkPickerBehavior;
+    private final DocumentPickerBehavior documentPickerBehavior;
 
     CKEditorPanel(final String id,
                   final IPluginContext context,
                   final IPluginConfig imagePickerConfig,
-                  final IPluginConfig linkPickerConfig,
+                  final IPluginConfig documentPickerConfig,
                   final String editorConfigJson,
                   final JcrNodeModel nodeModel,
                   final IModel<String> htmlModel,
@@ -67,9 +67,8 @@ class CKEditorPanel extends Panel {
         add(imagePickerBehavior);
 
         linkService = new CKEditorLinkService(new JcrRichTextLinkFactory(nodeModel), editorId);
-        boolean enableOpenInNewWindow = true; // TODO make configurable
-        linkPickerBehavior = new InternalLinkBehavior(context, linkPickerConfig, enableOpenInNewWindow, linkService);
-        add(linkPickerBehavior);
+        documentPickerBehavior = new DocumentPickerBehavior(context, documentPickerConfig, linkService, editorId);
+        add(documentPickerBehavior);
     }
 
     private TextArea<String> createTextArea(final JcrNodeModel nodeModel, final IModel<String> htmlModel, final IHtmlCleanerService htmlCleaner) {
@@ -117,8 +116,8 @@ class CKEditorPanel extends Panel {
             editorConfig.put("language", getLocale().getLanguage());
 
             // load and configure Hippo CKEditor plugins
-            JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", HippoImagePicker.PLUGIN_NAME);
-            editorConfig.put(HippoImagePicker.CONFIG_KEY, createHippoImagePickerConfiguration());
+            JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", HippoPicker.PLUGIN_NAME);
+            editorConfig.put(HippoPicker.CONFIG_KEY, createHippoPickerConfiguration());
 
             // disable custom config loading if not configured
             JsonUtils.putIfAbsent(editorConfig, "customConfig", StringUtils.EMPTY);
@@ -133,9 +132,17 @@ class CKEditorPanel extends Panel {
         }
     }
 
-    private JSONObject createHippoImagePickerConfiguration() throws JSONException {
+    private JSONObject createHippoPickerConfiguration() throws JSONException {
         JSONObject config = new JSONObject();
-        config.put(HippoImagePicker.CONFIG_CALLBACK_URL, imagePickerBehavior.getCallbackUrl().toString());
+
+        JSONObject imagePickerConfig = new JSONObject();
+        imagePickerConfig.put(HippoPicker.IMAGE_PICKER_CONFIG_CALLBACK_URL, imagePickerBehavior.getCallbackUrl().toString());
+        config.put(HippoPicker.IMAGE_PICKER_CONFIG_KEY, imagePickerConfig);
+
+        JSONObject internalLinkPickerConfig = new JSONObject();
+        internalLinkPickerConfig.put(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_CALLBACK_URL, documentPickerBehavior.getCallbackUrl().toString());
+        config.put(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_KEY, internalLinkPickerConfig);
+
         return config;
     }
 

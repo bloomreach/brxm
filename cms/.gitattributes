@@ -2110,8 +2110,10 @@ reporting/repository/src/main/resources/hippoecm-extension.xml -text
 reporting/repository/src/main/resources/hipporeport.cnd -text
 reporting/repository/src/main/resources/reporting-dashboard.xml -text
 reporting/repository/src/main/resources/reports-cluster-loader.xml -text
-richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippoimagepicker/icons/hidpi/pickimage.png -text svneol=unset#image/png
-richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippoimagepicker/icons/pickimage.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickimage.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickinternallink.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickimage.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickinternallink.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/CHANGES.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/LICENSE.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/README.md -text
@@ -2159,7 +2161,14 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/im
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_nl.properties -text svneol=unset#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImagePickerBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/CKEditorLinkService.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/InternalLinkBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.html svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_de.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_fr.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_it.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentPickerBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/CKEditorImage.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/CKEditorLink.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/DocumentLink.java -text

@@ -27,10 +27,13 @@ public class ImagePickerBehavior extends AbstractAjaxDialogBehavior {
 
     private static final long serialVersionUID = 1L;
 
-    private CKEditorImageService imageService;
-    private String editorId;
+    private final CKEditorImageService imageService;
+    private final String editorId;
 
-    public ImagePickerBehavior(IPluginContext context, IPluginConfig config, CKEditorImageService imageService, String editorId) {
+    public ImagePickerBehavior(final IPluginContext context,
+                               final IPluginConfig config,
+                               final CKEditorImageService imageService,
+                               final String editorId) {
         super(context, config);
         this.imageService = imageService;
         this.editorId = editorId;

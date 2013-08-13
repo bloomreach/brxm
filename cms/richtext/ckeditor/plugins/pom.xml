@@ -28,4 +28,22 @@
   <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
   <packaging>jar</packaging>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <assumeABrowser>true</assumeABrowser>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
+          <predefinedVars>
+            CKEDITOR,
+            Wicket
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

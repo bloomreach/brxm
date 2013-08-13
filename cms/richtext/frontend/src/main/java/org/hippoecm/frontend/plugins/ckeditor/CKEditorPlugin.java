@@ -46,13 +46,13 @@ public class CKEditorPlugin extends RenderPlugin {
     public static final String CONFIG_CKEDITOR_CONFIG_JSON = "ckeditor.config.json";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
-    public static final String CONFIG_CHILD_LINK_PICKER = "linkpicker";
+    public static final String CONFIG_CHILD_DOCUMENT_PICKER = "documentpicker";
 
     public static final IPluginConfig DEFAULT_IMAGE_PICKER_CONFIG = createNodePickerSettings(
             "cms-pickers/images", "ckeditor-imagepicker", "hippostd:gallery");
 
-    public static final IPluginConfig DEFAULT_LINK_PICKER_CONFIG = createNodePickerSettings(
-            "cms-pickers/documents", "ckeditor-linkpicker", "hippostd:folder");
+    public static final IPluginConfig DEFAULT_DOCUMENT_PICKER_CONFIG = createNodePickerSettings(
+            "cms-pickers/documents", "ckeditor-documentpicker", "hippostd:folder");
 
     private static final String WICKET_ID_PANEL = "panel";
 
@@ -91,8 +91,8 @@ public class CKEditorPlugin extends RenderPlugin {
     private Panel createEditPanel() {
         final String editorConfigJson = readAndValidateEditorConfig();
         final IPluginConfig imagePickerConfig = getChildPluginConfig(CONFIG_CHILD_IMAGE_PICKER, DEFAULT_IMAGE_PICKER_CONFIG);
-        final IPluginConfig linkPickerConfig = getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG);
-        return new CKEditorPanel(WICKET_ID_PANEL, getPluginContext(), imagePickerConfig, linkPickerConfig, editorConfigJson,
+        final IPluginConfig documentPickerConfig = getChildPluginConfig(CONFIG_CHILD_DOCUMENT_PICKER, DEFAULT_DOCUMENT_PICKER_CONFIG);
+        return new CKEditorPanel(WICKET_ID_PANEL, getPluginContext(), imagePickerConfig, documentPickerConfig, editorConfigJson,
                 getNodeModel(), getHtmlModel(), getHtmlCleaner());
     }
 

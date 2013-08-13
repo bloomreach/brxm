@@ -44,30 +44,19 @@ public class CKEditorLinkService implements IDetachable {
     }
 
     public InternalCKEditorLink create(Map<String, String> p) {
-        String path = p.get(CKEditorLink.HREF);
-        String decodedPath = RichTextUtil.decode(path); 
-        if (factory.getLinks().contains(decodedPath)) {
-            try {
-                RichTextLink rtl = factory.loadLink(decodedPath);
-                return new InternalLink(p, rtl.getTargetId());
-            } catch (RichTextException e) {
-                log.error("Could not load link", e);
+        final String path = p.get(CKEditorLink.HREF);
+        if (path != null) {
+            final String decodedPath = RichTextUtil.decode(path);
+            if (factory.getLinks().contains(decodedPath)) {
+                try {
+                    final RichTextLink link = factory.loadLink(decodedPath);
+                    return new InternalLink(p, link.getTargetId());
+                } catch (RichTextException e) {
+                    log.error("Could not load link '" + path + "'", e);
+                }
             }
         }
         return new InternalLink(p, null);
-    }
-
-    public String attach(JcrNodeModel model) {
-        try {
-            RichTextLink rtl = factory.createLink(model);
-            String href = RichTextUtil.encode(rtl.getName());
-            String script = "xinha_editors." + editorId + ".plugins.CreateLink.instance.createLink({" + CKEditorLink.HREF
-                    + ": '" + href + "', " + CKEditorLink.TARGET + ": ''}, false);";
-            return script;
-        } catch (RichTextException e) {
-            log.error("Could not attach model");
-        }
-        return null;
     }
 
     public void detach() {
@@ -89,8 +78,8 @@ public class CKEditorLinkService implements IDetachable {
         public void save() {
             if (isAttacheable()) {
                 try {
-                    RichTextLink rtl = factory.createLink(getLinkTarget());
-                    setHref(RichTextUtil.encode(rtl.getName()));
+                    final RichTextLink link = factory.createLink(getLinkTarget());
+                    setHref(RichTextUtil.encode(link.getName()));
                 } catch (RichTextException e) {
                     log.error("Error creating link", e);
                 }

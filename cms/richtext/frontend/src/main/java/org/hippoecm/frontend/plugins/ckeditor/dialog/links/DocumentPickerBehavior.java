@@ -22,27 +22,28 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.ckeditor.dialog.model.InternalCKEditorLink;
 import org.hippoecm.frontend.plugins.richtext.AbstractAjaxDialogBehavior;
-import org.hippoecm.frontend.plugins.xinha.dialog.AbstractXinhaDialog;
-import org.hippoecm.frontend.plugins.xinha.dialog.links.DocumentBrowserDialog;
 
-public class InternalLinkBehavior extends AbstractAjaxDialogBehavior {
+public class DocumentPickerBehavior extends AbstractAjaxDialogBehavior {
 
     private static final long serialVersionUID = 1L;
 
     private final CKEditorLinkService linkService;
-    private final boolean enableOpenInNewWindow;
+    private final String editorId;
 
-    public InternalLinkBehavior(IPluginContext context, IPluginConfig config, boolean enableOpenInNewWindow, CKEditorLinkService service) {
+    public DocumentPickerBehavior(final IPluginContext context,
+                                  final IPluginConfig config,
+                                  final CKEditorLinkService linkService,
+                                  final String editorId) {
         super(context, config);
-        this.linkService = service;
-        this.enableOpenInNewWindow = enableOpenInNewWindow;
+        this.linkService = linkService;
+        this.editorId = editorId;
     }
 
     @Override
     protected void respond(AjaxRequestTarget target) {
         final IModel<InternalCKEditorLink> model = new Model<InternalCKEditorLink>(linkService.create(getParameters()));
-        final AbstractXinhaDialog<InternalCKEditorLink> dialog = new DocumentBrowserDialog<InternalCKEditorLink>(
-                getPluginContext(), getPluginConfig(), !enableOpenInNewWindow, model);
+        final DocumentBrowserDialog dialog = new DocumentBrowserDialog<InternalCKEditorLink>(
+                getPluginContext(), getPluginConfig(), model, editorId);
         getDialogService().show(dialog);
     }
 
