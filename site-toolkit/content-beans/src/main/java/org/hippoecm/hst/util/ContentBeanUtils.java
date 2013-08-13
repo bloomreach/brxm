@@ -257,6 +257,12 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
             return null;
         }
 
+        String absPath = absBasePath;
+        if(!"".equals(relPath)) {
+            absPath += "/" + relPath;
+        }
+
+
         Task facnavTask = null;
         try {
             if (HDC.isStarted()) {
@@ -267,17 +273,17 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
                     facnavTask.setAttribute("no free query", "");
                 }
                 try {
-                    HippoBean bean  = (HippoBean)requestContext.getObjectBeanManager().getObject(absBasePath);
+                    HippoBean bean  = (HippoBean)requestContext.getObjectBeanManager().getObject(absPath);
                     if(bean == null) {
-                        log.info("Cannot return HippoFacetNavigationBean for path '{}'. Return null", absBasePath);
+                        log.info("Cannot return HippoFacetNavigationBean for path '{}'. Return null", absPath);
                         return null;
                     }
 
                     while(bean != null && !(bean instanceof HippoFacetNavigationBean)) {
                         log.debug("Bean for '{}' is not instance of 'HippoFacetNavigationBean'. Let's check it's parent. ", bean.getPath());
-                        if(bean.getPath().equals(absBasePath)) {
+                        if(bean.getPath().equals(absPath)) {
                             // we are at the sitebase and did not find a HippoFacetNavigationBean. return null
-                            log.info("We did not find a 'HippoFacetNavigationBean' somewhere in the path below '{}'. Return null", absBasePath);
+                            log.info("We did not find a 'HippoFacetNavigationBean' somewhere in the path below '{}'. Return null", absPath);
                             return null;
                         }
                         bean = bean.getParentBean();
@@ -285,7 +291,7 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
                     return (HippoFacetNavigationBean)bean;
 
                 } catch (ObjectBeanManagerException e) {
-                    throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"'", e);
+                    throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absPath+"'", e);
                 }
             }
 
@@ -305,8 +311,8 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
             // faceted navigation node. We CANNOT do this with the disposablePoolSession because then we TIE the faceted navigation
             // without free text search already to the disposablePoolSession
             try {
-                Node siteBaseNode = (Node)requestContext.getSession().getItem(absBasePath);
-                Node stepInto = siteBaseNode;
+                Node baseNode = (Node)requestContext.getSession().getItem(absBasePath);
+                Node stepInto = baseNode;
                 String[] pathElements = relPath.split("/");
                 for(int i = 0; i < pathElements.length ; i++) {
                     if(facetNavBean == null) {
@@ -339,11 +345,11 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
                     log.info("We did not find a HippoFacetNavigationBean for path '{}' and query '{}'. Return null.",absBasePath, query);
                 }
             } catch (PathNotFoundException e) {
-                throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"' and query '"+query+"'", e);
+                throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"', relPath '"+relPath+"' and query '"+query+"'", e);
             } catch (RepositoryException e) {
-                throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"' and query '"+query+"'", e);
+                throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"', relPath '"+relPath+"'  and query '"+query+"'", e);
             } catch (ObjectBeanManagerException e) {
-                throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"' and query '"+query+"'", e);
+                throw new HstComponentException("Could not get the HippoFacetNavigationBean for '"+absBasePath+"', relPath '"+relPath+"'  and query '"+query+"'", e);
             }
             return facetNavBean;
         } finally {
@@ -509,8 +515,8 @@ public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBea
         // faceted navigation node. We CANNOT do this with the disposablePoolSession because then we TIE the faceted navigation
         // without free text search already to the disposablePoolSession
         try {
-            Node siteBaseNode = (Node)requestContext.getSession().getItem(absPath);
-            Node stepInto = siteBaseNode;
+            Node baseNode = (Node)requestContext.getSession().getItem(absBasePath);
+            Node stepInto = baseNode;
             String[] pathElements = relPath.split("/");
 
 
