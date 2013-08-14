@@ -35,6 +35,9 @@
       <sv:property sv:name="startPath" sv:type="String">
         <sv:value>/content/documents</sv:value>
       </sv:property>
+      <sv:property sv:name="urlExcludes" sv:type="String">
+        <sv:value></sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
 </sv:node>

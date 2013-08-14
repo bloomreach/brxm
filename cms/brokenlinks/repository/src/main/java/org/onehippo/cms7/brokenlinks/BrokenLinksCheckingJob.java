@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -114,19 +116,29 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                     // could not find handle for hippostd:html node. Skip it
                     continue;
                 }
+
                 String handleUUID = handleNode.getIdentifier();
                 // hippostd:content is a mandatory property so no need to check for existence
                 String content = hippostdHtml.getProperty("hippostd:content").getString();
+
                 try {
                     Set<Link> linksForHandle = linksByHandleUUID.get(handleUUID);
                     count++;
+
                     for (String url : PlainTextLinksExtractor.getLinks(content)) {
+
+                        if (isExcludedURL(config, url)) {
+                            log.info("The URL is excluded while broken links checking in '{}': {}", hippostdHtml.getPath(), url);
+                            continue;
+                        }
+
                         if (linksForHandle == null) {
                             linksForHandle = new HashSet<Link>();
                             linksByHandleUUID.put(handleUUID, linksForHandle);
                         }
 
                         Link alreadyPresent = linksByURL.get(url);
+
                         if (alreadyPresent == null) {
                             Link link = new Link(url);
                             linksByURL.put(url, link);
@@ -136,7 +148,6 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                             log.debug("Adding to test for handle with '{}' the url '{}'", handleUUID, url);
                             linksForHandle.add(alreadyPresent);
                         }
-
                     }
                 } catch (IllegalStateException e) {
                     log.warn("Unable to get link from hippostd:html for node '{}'", hippostdHtml.getPath());
@@ -242,6 +253,18 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
             return null;
         }
         return getHandleNode(parent);
+    }
+
+    private boolean isExcludedURL(final CheckExternalBrokenLinksConfig config, final String url) {
+        for (Pattern excludePattern : config.getUrlExcludePatterns()) {
+            Matcher m = excludePattern.matcher(url);
+
+            if (m.matches()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
