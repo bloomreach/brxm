@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,17 +29,17 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
 
 public class DefineObjectsTag extends TagSupport {
-    
+
     private static final long serialVersionUID = 1L;
 
     /**
      * Helper method.
      * <p>
      * Sets an pageContext attribute with <CODE>PAGE_SCOPE</CODE>.
-     * 
+     *
      * @param attribute - the attribute object to set
      * @param attributeName - the name of the attribute object
-     * 
+     *
      * @return void
      */
     private void setAttribute(Object attribute, String attributeName){
@@ -49,29 +49,34 @@ public class DefineObjectsTag extends TagSupport {
                                      PageContext.PAGE_SCOPE);
         }
     }
-    
+
     /**
      * Processes the <CODE>defineObjects</CODE> tag.
      * @return <CODE>SKIP_BODY</CODE>
      */
     public int doStartTag() throws JspException {
-        
+
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
         HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+
+        if (hstRequest == null) {
+            return SKIP_BODY;
+        }
+
         HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-        
+
         // set attribute hstRequest
         setAttribute(hstRequest, "hstRequest");
         // set attribute hstResponse
         setAttribute(hstResponse, "hstResponse");
-        
+
         // needed to loop through child content nodes in freemarker templates
         setAttribute(hstResponse.getChildContentNames(), "hstResponseChildContentNames");
-        
+
         return SKIP_BODY;
     }
-    
+
     /**
      * TagExtraInfo class for DefineObjectsTag.
      *
@@ -89,7 +94,7 @@ public class DefineObjectsTag extends TagSupport {
                                  true,
                                  VariableInfo.AT_BEGIN)
             };
-            
+
             return info;
         }
     }
