@@ -25,7 +25,7 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.hippoecm.frontend.js.CmsHeaderItem;
+import org.hippoecm.frontend.CmsHeaderItem;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
