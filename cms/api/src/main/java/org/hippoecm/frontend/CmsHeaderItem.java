@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.js;
+package org.hippoecm.frontend;
 
 import java.util.Arrays;
 
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
 
 public class CmsHeaderItem extends HeaderItem {
 
-    private static final ResourceReference FUTURE_REFERENCE = new JavaScriptResourceReference(CmsHeaderItem.class, "future.js");
-    private static final ResourceReference GLOBAL_REFERENCE = new JavaScriptResourceReference(CmsHeaderItem.class, "global.js");
+    private static final ResourceReference SCREEN_CSS = new UrlResourceReference(Url.parse("skin/screen.css")).setContextRelative(true);
+    private static final ResourceReference SCREEN_IE_CSS = new UrlResourceReference(Url.parse("skin/screen_ie.css")).setContextRelative(true);
+    private static final ResourceReference FUTURE_REFERENCE = new JavaScriptResourceReference(CmsHeaderItem.class, "js/future.js");
+    private static final ResourceReference GLOBAL_REFERENCE = new JavaScriptResourceReference(CmsHeaderItem.class, "js/global.js");
 
     private static final CmsHeaderItem INSTANCE = new CmsHeaderItem();
 
@@ -43,7 +49,18 @@ public class CmsHeaderItem extends HeaderItem {
 
     @Override
     public void render(final Response response) {
+        CssHeaderItem.forReference(SCREEN_CSS).render(response);
+
+        if (isBrowserInternetExplorer()) {
+            CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
+        }
+
         JavaScriptReferenceHeaderItem.forReference(FUTURE_REFERENCE).render(response);
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_REFERENCE).render(response);
     }
+
+    private boolean isBrowserInternetExplorer() {
+        return WebSession.get().getClientInfo().getProperties().isBrowserInternetExplorer();
+    }
+
 }

@@ -20,7 +20,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
-import org.hippoecm.frontend.editor.resources.EditorResources;
+import org.hippoecm.frontend.editor.resources.CmsEditorHeaderItem;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -59,7 +59,7 @@ public class ComparePlugin extends RenderPlugin {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(EditorResources.getCss());
+        response.render(CmsEditorHeaderItem.get());
     }
 
     @Override

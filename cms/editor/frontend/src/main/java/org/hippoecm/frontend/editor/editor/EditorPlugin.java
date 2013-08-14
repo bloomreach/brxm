@@ -19,7 +19,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.IFormService;
-import org.hippoecm.frontend.editor.resources.EditorResources;
+import org.hippoecm.frontend.editor.resources.CmsEditorHeaderItem;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -43,7 +43,7 @@ public class EditorPlugin extends RenderPlugin implements IFormService {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(EditorResources.getCss());
+        response.render(CmsEditorHeaderItem.get());
     }
 
     @Override

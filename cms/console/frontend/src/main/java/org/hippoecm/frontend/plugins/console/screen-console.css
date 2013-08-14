@@ -64,13 +64,13 @@
 .hippo-console .wicket-tree div.row-selected span {font-weight: normal}
 
 .hippo-tree .wicket-tree span.plus,
-.hippo-tree .wicket-tree span.minus {background-image: url("images/tree-console-icons.png"); width: 14px;}
+.hippo-tree .wicket-tree span.minus {background-image: url("res/tree-console-icons.png"); width: 14px;}
 
 .hippo-tree .wicket-tree span.junction,
 .hippo-tree .wicket-tree span.junction-last,
 .hippo-tree .wicket-tree span.corner,
 .hippo-tree .wicket-tree span.indent-line,
-.hippo-tree .wicket-tree span.indent-blank {background-image: url("images/tree-console-icons.png"); width: 18px;}
+.hippo-tree .wicket-tree span.indent-blank {background-image: url("res/tree-console-icons.png"); width: 18px;}
 
 .hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
 .hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}

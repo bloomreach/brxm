@@ -122,8 +122,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
     @Override
     public void renderHead(final IHeaderResponse response) {
-        CoreLibrariesContributor.contribute(Application.get(), response);
         super.renderHead(response);
+        CoreLibrariesContributor.contribute(Application.get(), response);
+        response.render(CmsHeaderItem.get());
     }
 
     public Component getComponent() {

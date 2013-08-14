@@ -66,9 +66,6 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.root</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.skin" sv:type="String">
-        <sv:value>skin/screen.css</sv:value>
-      </sv:property>
       <sv:property sv:name="wicket.behavior" sv:type="String">
         <sv:value>service.behavior.browser.check</sv:value>
       </sv:property>
