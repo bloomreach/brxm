@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -215,39 +214,26 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
         }
 
-        boolean fineGrainedLocking = mount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking();
-
         // all the locks are on the preview mount, hence decorate it first
         Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
         channel.setPreviewHstConfigExists(previewMount.getHstSite().hasPreviewConfiguration());
         Set<String> s = new HashSet<String>();
-        if (fineGrainedLocking) {
-            channel.setFineGrainedLocking(true);
-            Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
-            try {
-                Node channelRootConfigNode = session.getNode(previewMount.getHstSite().getConfigurationPath());
-                // in finegrained locking mode, hst:sitemap, hst:catalog, etc can be separately locked/changed
-                for (Node mainConfigNode : new NodeIterable(channelRootConfigNode.getNodes())) {
-                    final String lockedBy = JcrUtils.getStringProperty(mainConfigNode, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null);
-                    if (lockedBy != null) {
-                     mainConfigNodesLockedBySet.add(lockedBy);
-                    }
-                }
-            } catch (RepositoryException e) {
-                log.error("Expected configuration node at '"+previewMount.getHstSite().getConfigurationPath()+"' but not found.");
-            }
-            Set<String> changedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
-            changedBySet.addAll(mainConfigNodesLockedBySet);
-            channel.setChangedBySet(changedBySet);
-        } else if (mount.getLockedBy() != null){
-            s.add(mount.getLockedBy());
-            channel.setChangedBySet(s);
-            final Calendar lockedOn = mount.getLockedOn();
-            if (lockedOn != null) {
-                channel.setLockedOn(lockedOn.getTimeInMillis());
-            }
-        }
 
+        Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
+        try {
+            Node channelRootConfigNode = session.getNode(previewMount.getHstSite().getConfigurationPath());
+            for (Node mainConfigNode : new NodeIterable(channelRootConfigNode.getNodes())) {
+                final String lockedBy = JcrUtils.getStringProperty(mainConfigNode, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null);
+                if (lockedBy != null) {
+                 mainConfigNodesLockedBySet.add(lockedBy);
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Expected configuration node at '"+previewMount.getHstSite().getConfigurationPath()+"' but not found.");
+        }
+        Set<String> changedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
+        changedBySet.addAll(mainConfigNodesLockedBySet);
+        channel.setChangedBySet(changedBySet);
 
         String mountPath = mount.getMountPath();
 

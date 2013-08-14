@@ -20,9 +20,6 @@ public interface ChannelManagerConstants {
     static final String HST_MOUNT_ID = "HST-Mount-Id";
     static final String HST_SITE_ID = "HST-Site-Id";
     static final String HST_PAGE_ID = "HST-Page-Id";
-    static final String HST_MOUNT_LOCKED_BY = "HST-Mount-LockedBy";
-    static final String HST_MOUNT_LOCKED_ON = "HST-Mount-LockedOn";
-    static final String HST_MOUNT_FINEGRAINED_LOCKING = "HST-Mount-FineGrainedLocking";
     static final String HST_RENDER_VARIANT = "HST-Render-Variant";
     static final String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";
     static final String HST_SITE_CHANGED_BY_SET = "HST-Changed-By-Set";

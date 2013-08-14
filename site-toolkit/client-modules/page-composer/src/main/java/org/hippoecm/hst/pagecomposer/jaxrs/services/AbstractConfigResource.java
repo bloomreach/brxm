@@ -35,10 +35,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version $Id$
- */
-
 public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
@@ -107,23 +103,6 @@ public class AbstractConfigResource {
         HttpSession session = servletRequest.getSession(true);
         Object result = session.getAttribute(CURRENT_MOUNT_CANONICAL_CONTENT_PATH);
         return result == null ? null : result.toString();
-    }
-
-    /**
-     * @deprecated use the more specific {@link #getRequestConfigNode(org.hippoecm.hst.core.request.HstRequestContext, String)}
-     */
-    @Deprecated
-    protected Node getRequestConfigNode(final HstRequestContext requestContext) {
-        String id = getRequestConfigIdentifier(requestContext);
-        if(id == null) {
-            log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
-        }
-        try {
-            return requestContext.getSession().getNodeByIdentifier(id);
-        } catch (RepositoryException e) {
-            log.warn("Cannot find requestConfigNode because could not get node with id '{}' : {}", id, e.toString());
-            return null;
-        }
     }
 
     protected Node getRequestConfigNode(final HstRequestContext requestContext, final String expectedNodeType) {

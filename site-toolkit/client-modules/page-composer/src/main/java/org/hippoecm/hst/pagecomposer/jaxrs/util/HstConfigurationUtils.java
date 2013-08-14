@@ -113,59 +113,52 @@ public class HstConfigurationUtils {
     }
 
     /**
-     * if needed (finegrained locking mode), this call tries to set a lock. If there is not yet a lock, then also
+     * tries to set a lock. If there is not yet a lock, then also
      * a timestamp validation is done whether the configuration node that needs to be locked has not been modified
      * by someone else
      *
      */
-    public static void tryLockIfNeeded(final Node configNode, final long validateLastModifiedTimestamp, final boolean finegrainedLocking) throws RepositoryException, IllegalStateException {
+    public static void tryLockIfNeeded(final Node configNode, final long validateLastModifiedTimestamp) throws RepositoryException, IllegalStateException {
         Session session = configNode.getSession();
         Node rootHstConfigNode = findRootConfigurationNode(configNode);
         if (rootHstConfigNode == null) {
             throw new IllegalStateException("Exception during creating new container item : Could not find a root hst:configuration for node for '"+configNode.getPath()+"'");
         }
+        Node containerNode = findContainerNode(configNode);
+        if (containerNode == null) {
+            log.info("No Container found for '{}'.", configNode.getPath());
+            throw new IllegalStateException("No Container found for '"+configNode.getPath()+"'.");
+        }
+        if (isLockedBySomeoneElse(containerNode)) {
+            log.info("Container '{}' is already locked by someone else.", containerNode.getPath());
+            throw new IllegalStateException("Container '"+containerNode.getPath()+"' is already locked by someone else.");
+        }
+        if (isLockedBySession(containerNode)) {
+            log.debug("Container '{}' already has a lock for user '{}'.", containerNode.getPath(), session.getUserID());
+            return;
+        }
 
-        if (finegrainedLocking) {
-            Node containerNode = findContainerNode(configNode);
-            if (containerNode == null) {
-                log.info("No Container found for '{}'.", configNode.getPath());
-                throw new IllegalStateException("No Container found for '"+configNode.getPath()+"'.");
-            }
-            if (isLockedBySomeoneElse(containerNode)) {
-                log.info("Container '{}' is already locked by someone else.", containerNode.getPath());
-                throw new IllegalStateException("Container '"+containerNode.getPath()+"' is already locked by someone else.");
-            }
-            if (isLockedBySession(containerNode)) {
-                log.debug("Container '{}' already has a lock for user '{}'.", containerNode.getPath(), session.getUserID());
-                return;
-            }
-
-            if (containerNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
-                long existingTimeStamp = containerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
-                if (existingTimeStamp != validateLastModifiedTimestamp) {
-                    Calendar existing = Calendar.getInstance();
-                    existing.setTimeInMillis(existingTimeStamp);
-                    Calendar validate = Calendar.getInstance();
-                    validate.setTimeInMillis(validateLastModifiedTimestamp);
-                    DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS zzz", Locale.US);
-                    log.info("Container '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
-                            new String[]{containerNode.getPath(), dateFormat.format(existing.getTime()),
-                                    dateFormat.format(validate.getTime()) , session.getUserID()});
-                    throw new IllegalStateException("Container '"+containerNode.getPath()+"' cannot be changed because timestamp validation did not pass.");
-                }
-            }
-            log.info("Container '{}' gets a lock for user '{}'.", containerNode.getPath(), session.getUserID());
-            containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
-            Calendar now = Calendar.getInstance();
-            if (!containerNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-                containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
-            }
-            containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-        } else {
-            if (isLockedBySomeoneElse(rootHstConfigNode)) {
-                throw new IllegalStateException("Container '"+rootHstConfigNode.getPath()+"' is already locked by someone else.");
+        if (containerNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
+            long existingTimeStamp = containerNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            if (existingTimeStamp != validateLastModifiedTimestamp) {
+                Calendar existing = Calendar.getInstance();
+                existing.setTimeInMillis(existingTimeStamp);
+                Calendar validate = Calendar.getInstance();
+                validate.setTimeInMillis(validateLastModifiedTimestamp);
+                DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS zzz", Locale.US);
+                log.info("Container '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
+                        new String[]{containerNode.getPath(), dateFormat.format(existing.getTime()),
+                                dateFormat.format(validate.getTime()) , session.getUserID()});
+                throw new IllegalStateException("Container '"+containerNode.getPath()+"' cannot be changed because timestamp validation did not pass.");
             }
         }
+        log.info("Container '{}' gets a lock for user '{}'.", containerNode.getPath(), session.getUserID());
+        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
+        Calendar now = Calendar.getInstance();
+        if (!containerNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+            containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
+        }
+        containerNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
     }
 
     /**

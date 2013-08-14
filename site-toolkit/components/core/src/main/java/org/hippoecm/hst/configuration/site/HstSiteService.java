@@ -76,9 +76,6 @@ public class HstSiteService implements HstSite {
                 hasPreviewConfiguration = true;
             }
         }
-        mount.setLockedBy(configurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
-        mount.setLockedOn(configurationNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
-
         init(configurationNode, mount, hstManager);
     }
 

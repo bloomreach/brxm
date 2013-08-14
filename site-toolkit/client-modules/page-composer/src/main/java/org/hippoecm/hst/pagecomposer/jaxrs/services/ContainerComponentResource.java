@@ -60,7 +60,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createContainerItem(@Context HttpServletRequest servletRequest,
-                                        @Context HttpServletResponse servletResponse,
                                         @PathParam("itemUUID") String itemUUID,
                                         @QueryParam("lastModifiedTimestamp") long lastModifiedTimestamp) throws ContainerException {
 
@@ -92,8 +91,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             }
 
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().
-                        getResolvedVirtualHost().getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking());
+                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
                 return error(e.getMessage());
             }
@@ -144,8 +142,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().
-                        getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking());
+                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
                 return error(e.getMessage());
             }
@@ -214,8 +211,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 return error("The item to be deleted is not a child of a container component. Cannot delete item '"+itemUUID+"'");
             }
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().
-                        getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking());
+                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
                 return error(e.getMessage());
             }

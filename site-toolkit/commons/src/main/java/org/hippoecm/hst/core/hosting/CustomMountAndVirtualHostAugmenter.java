@@ -690,30 +690,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             throw new UnsupportedOperationException(this.getClass().getName() + " does not support setChannel");
         }
 
-        @Deprecated
-        @Override
-        public String getLockedBy() {
-            return null;
-        }
-
-        @Deprecated
-        @Override
-        public void setLockedBy(final String userId) {
-            throw new UnsupportedOperationException("CustomMount does not support locking");
-        }
-
-        @Deprecated
-        @Override
-        public Calendar getLockedOn() {
-            return null;
-        }
-
-        @Deprecated
-        @Override
-        public void setLockedOn(final Calendar lockedOn) {
-            throw new UnsupportedOperationException("CustomMount does not support locking");
-        }
-
         @Override
         public String toString() {
             return "CustomMount [virtualHost=" + virtualHost.getHostName() + ", alias=" + alias

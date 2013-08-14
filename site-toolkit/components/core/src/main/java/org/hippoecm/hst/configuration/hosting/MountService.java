@@ -244,8 +244,6 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String[] defaultSiteMapItemHandlerIds;
 
     private String cmsLocation;
-    private String lockedBy;
-    private Calendar lockedOn;
 
     private Map<String, String> parameters;
 
@@ -824,30 +822,6 @@ public class MountService implements ContextualizableMount, MutableMount {
 
    public String getCmsLocation() {
         return cmsLocation;
-    }
-
-    @Deprecated
-    @Override
-    public String getLockedBy() {
-        return lockedBy;
-    }
-
-    @Deprecated
-    @Override
-    public void setLockedBy(final String userId) {
-        lockedBy = userId;
-    }
-
-    @Deprecated
-    @Override
-    public Calendar getLockedOn() {
-        return lockedOn;
-    }
-
-    @Deprecated
-    @Override
-    public void setLockedOn(final Calendar lockedOn) {
-        this.lockedOn = lockedOn;
     }
 
     public String getNamedPipeline(){

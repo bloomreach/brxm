@@ -112,10 +112,4 @@ public interface HstManager {
      */
     List<HstConfigurationAugmenter> getHstConfigurationAugmenters();
 
-
-    /**
-     * @deprecated temporary method on in the 7.8.x range. Will be removed in 7.9.x
-     */
-    @Deprecated
-    boolean isFineGrainedLocking();
 }

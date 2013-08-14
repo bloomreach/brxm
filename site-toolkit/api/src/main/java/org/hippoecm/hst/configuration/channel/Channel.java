@@ -48,10 +48,8 @@ public class Channel implements Serializable {
     private String channelInfoClassName;
     private String mountId;
     private String locale;
-    private boolean fineGrainedLocking;
     private boolean previewHstConfigExists;
     private Set<String> changedBySet = new HashSet<String>();
-    private Long lockedOn;
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.EMPTY_LIST;
     private int hashCode;
@@ -228,55 +226,12 @@ public class Channel implements Serializable {
         this.contextPath = contextPath;
     }
 
-    /**
-     * @deprecated from 7.8.x in the 7.9, this method will be removed
-     */
-    @Deprecated
-    public boolean isFineGrainedLocking() {
-        return fineGrainedLocking;
-    }
-
-    /**
-     * @deprecated from 7.8.x in the 7.9, this method will be removed
-     */
-    @Deprecated
-    public void setFineGrainedLocking(final boolean fineGrainedLocking) {
-        this.fineGrainedLocking = fineGrainedLocking;
-    }
-
     public boolean isPreviewHstConfigExists() {
         return previewHstConfigExists;
     }
 
     public void setPreviewHstConfigExists(final boolean previewHstConfigExists) {
         this.previewHstConfigExists = previewHstConfigExists;
-    }
-
-    /**
-     * @return In coarse grained locking mode: retrieves this channel lock owner's userId. Returns <code>null</code> if the channel is not locked.
-     * In finagrained locking mode : retrieves just one of the users that have a lock on a container or <code>null</code>
-     * when locked by no-one.
-     * @deprecated use {@link #getChangedBySet()} instead
-     */
-    @Deprecated
-    public String getLockedBy() {
-       if (changedBySet != null && changedBySet.size() > 0) {
-           return changedBySet.iterator().next();
-       }
-       return null;
-    }
-
-    /**
-     * @deprecated use {@link #setChangedBySet(java.util.Set)} instead
-     */
-    @Deprecated
-    public void setLockedBy(final String lockedBy) {
-        if (changedBySet != null) {
-            changedBySet.add(lockedBy);
-        } else {
-            changedBySet = new HashSet<String>(1);
-            changedBySet.add(lockedBy);
-        }
     }
 
     /**
@@ -292,28 +247,6 @@ public class Channel implements Serializable {
      */
     public void setChangedBySet(final Set<String> changedBySet) {
         this.changedBySet = changedBySet;
-    }
-
-    /**
-     * In coarse grained locking mode: retrieve the timestamp when the lock was set. Be warned that this method returns gives invalid results if the
-     * channel is not locked.
-     * In finegrained locking mode it always returns <code>null</code>
-     * @return In coarse grained locking mode the timestamp in milliseconds of when channel lock was acquired and in finegrained locking
-     * mode always returns null
-     */
-    public Long getLockedOn() {
-        if (fineGrainedLocking) {
-            return null;
-        }
-        return lockedOn;
-    }
-
-    /**
-     * Set to null if the channel is not locked.
-     * @param lockedOn timestamp in milliseconds of when channel lock was acquired
-     */
-    public void setLockedOn(final Long lockedOn) {
-        this.lockedOn = lockedOn;
     }
 
     public String getDefaultDevice() {
@@ -354,9 +287,7 @@ public class Channel implements Serializable {
         result = 31 * result + (channelInfoClassName != null ? channelInfoClassName.hashCode() : 0);
         result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
         result = 31 * result + (locale != null ? locale.hashCode() : 0);
-        result = 31 * result + (fineGrainedLocking ? 1 : 0);
         result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
-        result = 31 * result + (lockedOn != null ? lockedOn.hashCode() : 0);
         result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
         result = 31 * result + (devices != null ? devices.hashCode() : 0);
         hashCode = result;
@@ -390,7 +321,6 @@ public class Channel implements Serializable {
         b.append(",cmsPreviewPrefix=").append(cmsPreviewPrefix);
         b.append(",mountPath=").append(mountPath);
         b.append(",changedBySet=").append(changedBySet);
-        b.append(",lockedOn=").append(lockedOn);
         b.append(",devices=").append(devices);
         b.append(",defaultDevice=").append(defaultDevice);
         b.append('}');

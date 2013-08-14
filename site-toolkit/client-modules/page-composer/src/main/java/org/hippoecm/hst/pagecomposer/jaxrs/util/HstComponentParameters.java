@@ -184,8 +184,7 @@ public class HstComponentParameters {
                 throw new IllegalStateException("Node to be saved must be of type '"+HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT+"' but " +
                         "was of type '"+node.getPrimaryNodeType().getName()+"'. Skip save");
             }
-            HstConfigurationUtils.tryLockIfNeeded(node, validateLastModifiedTimestampAgainst, RequestContextProvider.get().getResolvedMount().getResolvedVirtualHost().
-                    getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking());
+            HstConfigurationUtils.tryLockIfNeeded(node, validateLastModifiedTimestampAgainst);
             HstConfigurationUtils.setLastModifiedTimestampForContainer(node);
             HstConfigurationUtils.persistChanges(node.getSession(), hstManager);
         }
