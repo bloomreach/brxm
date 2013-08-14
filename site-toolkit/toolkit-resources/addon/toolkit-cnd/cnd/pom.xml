@@ -36,23 +36,6 @@
  </dependencies>
   <build>
     <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <inherited>true</inherited>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.hst.upgrade.Upgrader2_24_A org.hippoecm.hst.upgrade.Upgrader_MicroCndChange_2_1_2 org.hippoecm.hst.upgrade.Upgrader_MicroCndChange_2_1_3</Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin> 
-    </plugins> 
   </build>
 
 </project>
