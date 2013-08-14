@@ -3,6 +3,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:workflowcategory</sv:value>
   </sv:property>
+  <!-- Deprecated. 'checkbrokenlinks' workflow has been deprecated. Do not use it. -->
   <sv:node sv:name="checkbrokenlinks">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:workflow</sv:value>
