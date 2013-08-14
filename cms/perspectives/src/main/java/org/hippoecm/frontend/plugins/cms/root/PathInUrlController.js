@@ -24,7 +24,7 @@
      * @param value the string value of the parameter (use an empty string to remove the parameter from the url).
      */
     Hippo.showParameterInUrl = function(name, value) {
-        if (window.history) {
+        if (window.history && window.history.pushState) {
             var nameValuePair = name + '=' + value,
                 urlParameters = document.location.toString().split('?'),
                 urlBase = urlParameters.shift(),
