@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+This module has been deprecated. DO NOT USE.
+-->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
 
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
