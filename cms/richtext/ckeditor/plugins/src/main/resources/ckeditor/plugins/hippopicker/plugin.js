@@ -55,10 +55,11 @@
     function initInternalLinkPicker(editor, callbackUrl) {
 
         var LINK_ATTRIBUTES_PARAMETER_MAP = {
-            href: 'f_href',
-            title: 'f_title',
-            target: 'f_target'
-        };
+                href: 'f_href',
+                title: 'f_title',
+                target: 'f_target'
+            },
+            LANG = editor.lang.hippopicker;
 
         function createLinkAttributePairs(parameters) {
             var pairs = {};
@@ -115,7 +116,7 @@
         }
 
         editor.ui.addButton('PickInternalLink', {
-            label: 'Internal link',
+            label: LANG.internalLinkTooltip,
             command: 'pickInternalLink',
             toolbar: 'insert',
             allowedContent: 'a[!href,title,target]',
@@ -171,17 +172,18 @@
 
     function initImagePicker(editor, callbackUrl) {
         var IMAGE_ATTRIBUTE_PARAMETER_MAP = {
-            src: 'f_url',
-            type: 'f_type',
-            facetselect: 'f_facetselect',
-            alt: 'f_alt',
-            align: 'f_align',
-            width: 'f_width',
-            height: 'f_height'
-        };
+                src: 'f_url',
+                type: 'f_type',
+                facetselect: 'f_facetselect',
+                alt: 'f_alt',
+                align: 'f_align',
+                width: 'f_width',
+                height: 'f_height'
+            },
+            LANG = editor.lang.hippopicker;
 
         editor.ui.addButton('PickImage', {
-            label: 'Pick an image',
+            label: LANG.imageTooltip,
             command: 'pickImage',
             toolbar: 'insert',
             allowedContent: 'img[!src,alt,align,width,height,facetselect,type]',
@@ -217,6 +219,7 @@
 
         icons: 'pickinternallink,pickimage',
         hidpi: true,
+        lang: ['en','de','fr','it','nl'],
 
         init: function(editor) {
             var config = editor.config.hippopicker;
