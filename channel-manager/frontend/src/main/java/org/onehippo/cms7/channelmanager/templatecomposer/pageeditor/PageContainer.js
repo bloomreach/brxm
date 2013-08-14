@@ -233,37 +233,6 @@
             iframe.reload();
         },
 
-        unlockMount: function() {
-            var self, mountId;
-            this._lock();
-            self = this;
-            mountId = this.pageContext.ids.mountId;
-            Hippo.Msg.confirm(self.resources['unlock-channel-title'], self.resources['unlock-channel-message'], function(btn, text) {
-                if (btn === 'yes') {
-                    Ext.Ajax.request({
-                        method: 'POST',
-                        headers: {
-                            'FORCE_CLIENT_HOST': 'true'
-                        },
-                        url: self.composerRestMountUrl + '/' + mountId + './unlock?FORCE_CLIENT_HOST=true',
-                        success: function() {
-                            self.pageContext = null;
-                            self.refreshIframe.call(self, null);
-                        },
-                        failure: function(result) {
-                            var jsonData = Ext.util.JSON.decode(result.responseText);
-                            console.error('Unlocking failed ' + jsonData.message);
-                            Hippo.Msg.alert(self.resources['unlocking-failed-title'], self.resources['unlocking-failed-message'], function() {
-                                self.initComposer.call(self);
-                            });
-                        }
-                    });
-                } else {
-                    self._complete();
-                }
-            });
-        },
-
         discardChanges: function() {
             var self, mountId, hasPreviewHstConfig;
             this._lock();
@@ -335,7 +304,6 @@
 
             self = this;
             hostToIFrame = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
-
             this._lock();
 
             this.previewMode = !this.previewMode;
@@ -348,6 +316,7 @@
                 hostToIFrame.publish('showlinks');
                 self._complete();
             } else {
+
                 if (hasPreviewHstConfig) {
                     doneCallback = function() {
                         hostToIFrame.publish('showoverlay');
@@ -355,42 +324,12 @@
                         self._complete();
                     }.createDelegate(this);
 
-                    if (this.pageContext.fineGrainedLocking) {
-                        // in case of fine grained locking we do not need to acquire a lock
-                        // reset pageContext, the page and toolkit stores must be reloaded
-                        self.pageContext = null;
-                        // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
-                        self.refreshIframe.call(self, null);
-                    } else {
-                        /**
-                         * There is a preview hst configuration. Try to acquire a lock. When this succeeds, show the overlay,
-                         * otherwise, show a failure message.
-                         */
-                        Ext.Ajax.request({
-                            url: this.composerRestMountUrl + '/' + mountId + './lock?FORCE_CLIENT_HOST=true',
-                            method: 'POST',
-                            headers: {
-                                'FORCE_CLIENT_HOST': 'true'
-                            },
-                            success: function(response) {
-                                var lockState = Ext.decode(response.responseText).data;
-                                // reset pageContext, the page and toolkit stores must be reloaded
-                                self.pageContext = null;
-                                // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
-                                self.refreshIframe.call(self, null);
-                                if (lockState === 'lock-acquired') {
-                                    doneCallback();
-                                } else {
-                                    Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                        self.initComposer.call(self);
-                                    });
-                                }
-                            },
-                            failure: function() {
-                                console.error('Failed to acquire the lock.');
-                            }
-                        });
-                    }
+                    // in case of fine grained locking we do not need to acquire a lock
+                    // reset pageContext, the page and toolkit stores must be reloaded
+                    self.pageContext = null;
+                    // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
+                    self.refreshIframe.call(self, null);
+
                 } else {
                     // create new preview hst configuration
                     Ext.Ajax.request({
@@ -407,16 +346,10 @@
                         },
                         failure: function(result) {
                             var jsonData = Ext.util.JSON.decode(result.responseText);
-                            if (jsonData.data === 'locked') {
-                                Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                    self.initComposer.call(self);
-                                });
-                            } else {
-                                console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
-                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                                    self.initComposer.call(self);
-                                });
-                            }
+                            console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
+                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
+                                self.initComposer.call(self);
+                            });
                         }
                     });
                 }
@@ -458,7 +391,7 @@
         _lock: function(cb) {
             if (this.iframeCompletion.length === 0) {
                 Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').mask();
-                this.fireEvent('lock');
+                 this.fireEvent('lock');
             }
             if (typeof cb === 'function') {
                 this.iframeCompletion.unshift(cb);

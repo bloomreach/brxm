@@ -52,11 +52,8 @@ public class HstConfigEditor extends ExtPanel {
     private Model<String> mountPointModel;
     private IClusterControl configEditorControl;
 
-    private boolean fineGrainedLocking;
-
-    public HstConfigEditor(final IPluginContext context, boolean fineGrainedLocking) {
+    public HstConfigEditor(final IPluginContext context) {
         this.context = context;
-        this.fineGrainedLocking = fineGrainedLocking;
         final String title = getLocalizer().getString("edit-hst-configuration", this);
         setTitle(new Model<String>(title));
 
@@ -105,8 +102,7 @@ public class HstConfigEditor extends ExtPanel {
 
     private static IClusterControl createPerspective(final IPluginContext context,
                                                      String channelId,
-                                                     String mountPoint,
-                                                     final boolean fineGrainedLocking) {
+                                                     String mountPoint) {
         JavaClusterConfig jcc = new JavaClusterConfig();
 
         final String navigator = "${cluster.id}." + channelId + ".navigator";
@@ -122,7 +118,6 @@ public class HstConfigEditor extends ExtPanel {
         config.put(EXTENSION_NAVIGATOR, navigator);
         config.put(Perspective.TITLE, channelId);
         config.put("plugin.class", HstEditorPerspective.class.getName());
-        config.put("finegrainedlocking", fineGrainedLocking);
         config.put(ITranslateService.TRANSLATOR_ID, TRANSLATOR_SERVICE_ID);
         config.put(AbstractRenderService.EXTENSIONS_ID, new String[]{EXTENSION_NAVIGATOR, EXTENSION_EDITOR});
         config.put(AbstractRenderService.WICKET_ID, HstConfigEditor.class.getName() + ".hst-editor");
@@ -166,7 +161,7 @@ public class HstConfigEditor extends ExtPanel {
         if (configEditorControl != null) {
             configEditorControl.stop();
         }
-        configEditorControl = createPerspective(context, channelId, mountPoint, fineGrainedLocking);
+        configEditorControl = createPerspective(context, channelId, mountPoint);
         configEditorControl.start();
         target.add(container);
     }

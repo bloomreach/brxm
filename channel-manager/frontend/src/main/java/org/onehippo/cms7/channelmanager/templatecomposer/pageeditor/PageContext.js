@@ -65,9 +65,6 @@
             this.templateComposerContextPath = config.templateComposerContextPath;
             this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
             this.renderPath = config.renderPath;
-            this.locked = false;
-            this.lockedBy = "";
-            this.lockedOn = 0;
             this.internalLinkUrlPrefix = document.location.protocol + '//' + document.location.host;
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.templateComposerContextPath);
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.cmsPreviewPrefix);
@@ -143,7 +140,7 @@
             }.createDelegate(this));
         },
 
-        _initPageModelStore: function(mountId, pageId, finegrainedLocking) {
+        _initPageModelStore: function(mountId, pageId) {
             if (this.ids.pageId === pageId) {
                 return new Hippo.Future(function(onSuccess) {
                     onSuccess(this.stores.pageModel);
@@ -151,7 +148,7 @@
             }
 
             this.ids.pageId = pageId;
-            this.stores.pageModel = this._createPageModelStore(mountId, pageId, finegrainedLocking);
+            this.stores.pageModel = this._createPageModelStore(mountId, pageId);
             this.stores.pageModel.on('exception', function(dataProxy, type, action, options, response) {
                 if (type === 'response') {
                     console.error('Server returned status ' + response.status + " for the page store.");
@@ -183,7 +180,7 @@
                 var self = this;
 
                 function handleResponse(response) {
-                    var pageId, mountId, lockedBy, pageRequestVariantsHeader, futures;
+                    var pageId, mountId, pageRequestVariantsHeader, futures;
                     pageId = response.getResponseHeader('HST-Page-Id');
                     mountId = response.getResponseHeader('HST-Mount-Id');
 
@@ -197,20 +194,6 @@
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
-                    self.fineGrainedLocking = self._getBoolean(response.getResponseHeader('HST-Mount-FineGrainedLocking'));
-
-                    lockedBy = response.getResponseHeader('HST-Mount-LockedBy');
-                    if (lockedBy !== undefined) {
-                        self.locked = self.pageContainer.cmsUser !== lockedBy;
-                        self.lockedBy = lockedBy;
-                        self.lockedOn = parseInt(response.getResponseHeader('HST-Mount-LockedOn'), 10);
-                        self.unlockable = response.getResponseHeader('HST-Mount-Unlockable') === 'true' ? true : false;
-                    } else {
-                        self.locked = false;
-                        self.lockedBy = "";
-                        self.lockedOn = 0;
-                        self.unlockable = false;
-                    }
 
                     pageRequestVariantsHeader = response.getResponseHeader('HST-Page-Request-Variants');
                     if (Ext.isString(pageRequestVariantsHeader)) {
@@ -222,7 +205,7 @@
                     if (canEdit) {
                         futures = [
                             self._initToolkitStore.call(self, mountId),
-                            self._initPageModelStore.apply(self, [mountId, pageId, self.fineGrainedLocking])
+                            self._initPageModelStore.apply(self, [mountId, pageId])
                         ];
                         Hippo.Future.join(futures).when(function() {
                             onSuccess();
@@ -309,11 +292,10 @@
             });
         },
 
-        _createPageModelStore: function(mountId, pageId, finegrainedLocking) {
+        _createPageModelStore: function(mountId, pageId) {
             return new Hippo.ChannelManager.TemplateComposer.PageModelStore({
                 mountId: mountId,
                 pageId: pageId,
-                finegrainedLocking : finegrainedLocking,
                 composerRestMountUrl: this.composerRestMountUrl,
                 resources: this.resources
             });

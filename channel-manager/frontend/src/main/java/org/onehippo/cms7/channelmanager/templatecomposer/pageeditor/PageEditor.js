@@ -168,7 +168,6 @@
             this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
             this.locale = config.locale;
 
-            this.canUnlockChannels = config.canUnlockChannels;
             this.canManageChanges = config.canManageChanges;
             this.toolbarPlugins = config.toolbarPlugins;
 
@@ -388,8 +387,6 @@
                         toolbarButtons.publish,
                         toolbarButtons.discard,
                         toolbarButtons.manageChanges,
-                        toolbarButtons.unlock,
-                        toolbarButtons.label,
                         ' ',
                         variantsComboBoxLabel,
                         variantsComboBox,
@@ -408,14 +405,8 @@
         showOrHideButtons: function (button1, button2) {
 
             var show = false;
-            if (this.channel.previewHstConfigExists === "true") {
-                if (this.channel.fineGrainedLocking === "true") {
-                    if (this.channel.changedBySet.indexOf(this.cmsUser) > -1) {
-                        show = true;
-                    }
-                } else {
-                    show = true;
-                }
+            if (this.channel.previewHstConfigExists === "true" && this.channel.changedBySet.indexOf(this.cmsUser) > -1) {
+                show = true;
             }
 
             if (show) {
@@ -460,7 +451,7 @@
                     },
                     {
                         id: 'template-composer-toolbar-discard-button',
-                        text: this.channel.fineGrainedLocking === "true" ?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
+                        text: this.initialConfig.resources['discard-my-button'],
                         iconCls: 'discard-channel',
                         allowDepress: false,
                         width: 120,
@@ -661,6 +652,7 @@
 
                 this.hideChannelChangesNotification();
             } else {
+                console.log("YESSSSSSSSSSS");
                 this.createViewToolbar();
 
                 hostToIFrame.publish('hideoverlay');
@@ -708,18 +700,13 @@
         showChannelChangesNotification: function(pageContext) {
             var notification, userIds;
             notification = Ext.getCmp('channelChangesNotification');
-            if (pageContext.fineGrainedLocking) {
-                if (this.channel.changedBySet.length === 0) {
-                    notification.hide();
-                } else {
-                    // don't reorder the changedBySet, hence first clone it
-                    userIds = this.channel.changedBySet.slice(0);
-                    moveFirstIfExists(userIds, this.cmsUser);
-                    notification.setMessage(createChangesForUsersNotificationMessage(userIds, this.cmsUser, this.resources));
-                    notification.show();
-                }
+            if (this.channel.changedBySet.length === 0) {
+                notification.hide();
             } else {
-                notification.setMessage(this.resources['previous-live-msg']);
+                // don't reorder the changedBySet, hence first clone it
+                userIds = this.channel.changedBySet.slice(0);
+                moveFirstIfExists(userIds, this.cmsUser);
+                notification.setMessage(createChangesForUsersNotificationMessage(userIds, this.cmsUser, this.resources));
                 notification.show();
             }
         },
@@ -998,18 +985,11 @@
         },
 
         getToolbarButtons: function() {
-            var editButton, publishButton, discardButton, manageChangesButton, unlockButton, lockLabel, lockedOn, locked;
-            if (this.channel.lockedBy && this.channel.fineGrainedLocking !== "true") {
-                locked = this.channel.lockedBy !== this.cmsUser;
-            } else {
-                locked = false;
-            }
-
+            var editButton, publishButton, discardButton, manageChangesButton;
             editButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-edit-button',
                 text: this.initialConfig.resources['edit-button'],
                 iconCls: 'edit-channel',
-                disabled: locked,
                 width: 120,
                 listeners: {
                     click: {
@@ -1020,9 +1000,8 @@
             });
             publishButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-publish-button',
-                text: this.channel.fineGrainedLocking  === "true" ? this.initialConfig.resources['publish-my-button'] : this.initialConfig.resources['publish-button'] ,
+                text: this.initialConfig.resources['publish-my-button'],
                 iconCls: 'publish-channel',
-                disabled: locked,
                 width: 120,
                 hidden: true,
                 listeners: {
@@ -1038,9 +1017,8 @@
             });
             discardButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-discard-button',
-                text: this.channel.fineGrainedLocking  === "true" ?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
+                text: this.initialConfig.resources['discard-my-button'],
                 iconCls: 'discard-channel',
-                disabled: locked,
                 width: 120,
                 hidden: true,
                 listeners: {
@@ -1059,7 +1037,7 @@
                 text: this.initialConfig.resources['manage-changes-button'],
                 iconCls: 'publish-channel',
                 width: 120,
-                hidden: !this.canManageChanges || this.channel.fineGrainedLocking === "false"  || this.channel.changedBySet.length === 0,
+                hidden: !this.canManageChanges || this.channel.changedBySet.length === 0,
                 listeners: {
                     click: {
                         fn: function() {
@@ -1071,30 +1049,6 @@
                     }
                 }
             });
-            unlockButton = new Ext.Toolbar.Button({
-                id: 'template-composer-toolbar-unlock-button',
-                text: this.initialConfig.resources['unlock-button'],
-                iconCls: 'remove-lock',
-                hidden: !locked || !this.canUnlockChannels,
-                width: 120,
-                listeners: {
-                    click: {
-                        fn: this.pageContainer.unlockMount,
-                        scope: this.pageContainer
-                    }
-                }
-            });
-            lockLabel = new Ext.Toolbar.TextItem({
-                id: 'template-composer-toolbar-lock-label'
-            });
-            if (locked) {
-                if (this.channel.lockedOn) {
-                    lockedOn = new Date(parseInt(this.channel.lockedOn, 10)).format(this.initialConfig.resources['mount-locked-format']);
-                } else {
-                    lockedOn = "";
-                }
-                lockLabel.setText(this.initialConfig.resources['mount-locked-toolbar'].format(this.channel.lockedBy, lockedOn));
-            }
 
             this.showOrHideButtons(Ext.getCmp('template-composer-toolbar-publish-button'),
                     Ext.getCmp('template-composer-toolbar-discard-button'));
@@ -1103,9 +1057,7 @@
                 edit: editButton,
                 publish: publishButton,
                 discard: discardButton,
-                manageChanges: manageChangesButton,
-                unlock: unlockButton,
-                label: lockLabel
+                manageChanges: manageChangesButton
             };
         }
 

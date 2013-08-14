@@ -146,10 +146,6 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private Boolean canUnlockChannels = Boolean.FALSE;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
     private Boolean canManageChanges = Boolean.FALSE;
 
     @ExtProperty
@@ -198,7 +194,6 @@ public class PageEditor extends ExtPanel {
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
             this.initializeHstConfigEditorWithPreviewContext = config.getAsBoolean("initializeHstConfigEditorWithPreviewContext", DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT);
-            this.canUnlockChannels = canUnlockChannels(this.cmsUser, config);
             this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
@@ -295,12 +290,6 @@ public class PageEditor extends ExtPanel {
         response.render(CssHeaderItem.forReference(new CssResourceReference(PageEditor.class, "plugins/colorfield/colorfield.css")));
         response.render(CssHeaderItem.forReference(new CssResourceReference(PageEditor.class, "plugins/vtabs/VerticalTabPanel.css")));
         response.render(TemplateComposerHeaderItem.get());
-    }
-
-    private static boolean canUnlockChannels(final String user, final IPluginConfig config) {
-        final String unlockChannelPrivileges = config.getString("channel.unlock.privileges", "hippo:admin");
-        final String unlockChannelPathToCheck = config.getString("channel.unlock.privileges.path", "/hst:hst/hst:channels");
-        return isAllowedTo(user, "unlock channels", unlockChannelPrivileges, unlockChannelPathToCheck);
     }
 
     private static boolean canManageChanges(final String user, final IPluginConfig config) {

@@ -89,10 +89,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         cmsPreviewPrefix,
         contextPath,
         url,
-        fineGrainedLocking,
         changedBySet,
-        lockedBy,
-        lockedOn,
         defaultDevice,
         devices,
         previewHstConfigExists
@@ -112,7 +109,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                         ChannelField.hstPreviewMountPoint.name(),
                         ChannelField.changedBySet.name(),
                         ChannelField.devices.name(),
-                        ChannelField.fineGrainedLocking.name(),
                         ChannelField.previewHstConfigExists.name()));
     }
 
