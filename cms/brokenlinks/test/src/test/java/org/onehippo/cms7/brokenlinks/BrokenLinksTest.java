@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,8 +15,14 @@
  */
 package org.onehippo.cms7.brokenlinks;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import javax.jcr.Node;
@@ -28,21 +34,16 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.test.TestWorkflow;
 import org.onehippo.cms7.test.TestWorkflowImpl;
+import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class BrokenLinksTest extends RepositoryTestCase {
 
@@ -53,28 +54,25 @@ public class BrokenLinksTest extends RepositoryTestCase {
     private static final String TEXT1 = "<html><body>\n<H1>Wat is Lorem Ipsum</H1>\n<B><A HREF=\""+GOOD+"\">Lorem Ipsum</A></B> is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. Het is in de jaren '60 populair geworden met de introductie van Letraset vellen met Lorem Ipsum passages en meer recentelijk door desktop publishing software zoals Aldus PageMaker die versies van Lorem Ipsum bevatten.\n<H1>Waar komt het vandaan?</H1>\n<P>In tegenstelling tot wat algemeen aangenomen wordt is Lorem Ipsum niet zomaar willekeurige tekst. het heeft zijn wortels in een stuk klassieke <A HREF=\""+BAD+"\">latijnse</A> literatuur uit 45 v.Chr. en is dus meer dan 2000 jaar oud. Richard McClintock, een professor <A HREF=\""+BAD+"\">latijn</A> aan de Hampden-Sydney College in Virginia, heeft één van de meer obscure <A HREF=\""+BAD+"\">latijnse</A> woorden, consectetur, uit een Lorem Ipsum passage opgezocht, en heeft tijdens het zoeken naar het woord in de klassieke literatuur de onverdachte bron ontdekt. Lorem Ipsum komt uit de secties 1.10.32 en 1.10.33 van &quot;de Finibus Bonorum et Malorum&quot; (De uitersten van goed en kwaad) door Cicero, geschreven in 45 v.Chr. Dit boek is een verhandeling over de theorie der ethiek, erg populair tijdens de renaissance. De eerste regel van Lorem Ipsum, &quot;Lorem ipsum dolor sit amet..&quot;, komt uit een zin in sectie 1.10.32.</P>\n<P>Het standaard stuk van Lorum Ipsum wat sinds de 16e eeuw wordt gebruikt is hieronder, voor wie er interesse in heeft, weergegeven. Secties 1.10.32 en 1.10.33 van &quot;de Finibus Bonorum et Malorum&quot; door Cicero zijn ook weergegeven in hun exacte originele vorm, vergezeld van engelse versies van de 1914 vertaling door H. Rackham.</P><H1>Waarom gebruiken we het?</H1>\n<P>Het is al geruime tijd een bekend gegeven dat een lezer, tijdens het bekijken van de layout van een pagina, afgeleid wordt door de tekstuele inhoud. Het belangrijke punt van het gebruik van Lorem Ipsum is dat het uit een min of meer normale verdeling van letters bestaat, in tegenstelling tot &quot;Hier uw tekst, hier uw tekst&quot; wat het tot min of meer leesbaar nederlands maakt. Veel desktop publishing pakketten en web pagina editors gebruiken tegenwoordig Lorem Ipsum als hun standaard model tekst, en een zoekopdracht naar &quot;lorem ipsum&quot; ontsluit veel websites die nog in aanbouw zijn. Verscheidene versies hebben zich ontwikkeld in de loop van de jaren, soms per ongeluk soms expres (ingevoegde humor en dergelijke).</P>\n<H1>Waar kan ik het vinden?</H1>\n<P>Er zijn vele variaties van passages van Lorem Ipsum beschikbaar maar het merendeel heeft te lijden gehad van wijzigingen in een of andere vorm, door ingevoegde humor of willekeurig gekozen woorden die nog niet half geloofwaardig ogen. Als u een passage uit Lorum Ipsum gaat gebruiken dient u zich ervan te verzekeren dat er niets beschamends midden in de tekst verborgen zit. Alle Lorum Ipsum generators op Internet hebben de eigenschap voorgedefinieerde stukken te herhalen waar nodig zodat dit de eerste echte generator is op internet. Het gebruikt een woordenlijst van 200 <A HREF=\""+GOOD+"\">latijnse</A> woorden gecombineerd met een handvol zinsstructuur modellen om een Lorum Ipsum te genereren die redelijk overkomt. De gegenereerde Lorum Ipsum is daardoor altijd vrij van herhaling, ingevoegde humor of ongebruikelijke woorden etc.</P>\n</body></html>\n";
     private static final String TEXT2 = "<html><body><A HREF=\""+BAD+"one\">One</A><A HREF=\""+BAD+"two\">Two</A><A HREF=\""+BAD+"three\">Three</A><A HREF=\""+BAD+"four\">Four</A><A HREF=\""+BAD+"five\">Five</A><A HREF=\""+BAD+"six\">Six</A><A HREF=\""+BAD+"seven\">Seven</A><A HREF=\""+BAD+"eight\">Eight</A><A HREF=\""+BAD+"nine\">Nine</A><A HREF=\""+BAD+"ten\">Ten</A><A HREF=\""+BAD+"eleven\">Eleven</A><A HREF=\""+BAD+"twelve\">Twelve</A><A HREF=\""+BAD+"thirteen\">Thirteen</A><A HREF=\""+BAD+"fourteen\">Fourteen</A><A HREF=\""+BAD+"fifteen\">Fifteen</A><A HREF=\""+BAD+"sixteen\">Sixteen</A><A HREF=\""+BAD+"seventeen\">Seventeen</A></body></html>";
     private static final String TEXT3 = "<html><body>\n<H1>Wat is Lorem Ipsum</H1>\n<B><A HREF=\""+GOOD+"\">Lorem Ipsum</A></B>\n</body></html>\n";
-    private WorkflowManager workflowManager;
     private Stack<Integer> levels;
+
+    private RepositoryJobExecutionContext jobContext;
 
     @Before
     public void setUp() throws Exception {
         levels = new Stack<Integer>();
         super.setUp();
 
-        // we need to change the default configuration setup for
-        // /hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks/hipposys:config
-        // because it has startPath = /content/documents
-        // but we need to scan for the unit tests below /test
-
-        session.getNode("/hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks/hipposys:config").setProperty(CheckExternalBrokenLinksConfig.CONFIG_START_PATH, "/test");
-        session.getNode("/hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks/hipposys:config").setProperty(CheckExternalBrokenLinksConfig.CONFIG_HTTP_CLIENT_CLASSNAME, TestHttpClient.class.getName());
+        Map<String, String> jobContextAttrs =  new HashMap<String, String>();
+        jobContextAttrs.put(CheckExternalBrokenLinksConfig.CONFIG_START_PATH, "/test");
+        jobContextAttrs.put(CheckExternalBrokenLinksConfig.CONFIG_HTTP_CLIENT_CLASSNAME, TestHttpClient.class.getName());
+        jobContext = new RepositoryJobExecutionContext(session, jobContextAttrs);
 
         while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
         session.getRootNode().addNode("test", "hippostd:folder").addMixin("hippo:harddocument");
         session.save();
-        workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         String[] content = new String[] {
             "/test/cfg", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
@@ -139,9 +137,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
         };
         build(session, content);
         session.save();
-        WorkflowDescriptor wfDesc = workflowManager.getWorkflowDescriptor("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow(wfDesc);
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
     }
 
@@ -156,8 +154,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
                     "hippostd:content", "<html><body><img src=\""+GOOD+"\"/><img src=\""+BAD+"\"/></body></html>"
                 });
         session.save();
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         Node node = session.getRootNode().getNode("test/doc");
         assertTrue(node.isNodeType("brokenlinks:brokenlinks"));
@@ -179,9 +178,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
         };
         build(session, content);
         session.save();
-        WorkflowDescriptor wfDesc = workflowManager.getWorkflowDescriptor("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow(wfDesc);
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         Node node = session.getRootNode().getNode("test/doc");
         assertTrue(node.isNodeType("brokenlinks:brokenlinks"));
@@ -203,8 +202,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         assertEquals(total, countBrokenDocuments(session.getRootNode().getNode("test")));
     }
@@ -222,8 +222,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         assertEquals(total, countBrokenDocuments(session.getRootNode().getNode("test")));
     }
@@ -240,8 +241,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
         int countDocuments = 0;
@@ -268,8 +270,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
         int countDocuments = 0;
@@ -293,8 +296,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
         int countDocuments = 0;
@@ -310,8 +314,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
         }
         session.save();
         assertEquals(total, countDocuments);
-        wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
         countDocuments = 0;
@@ -391,9 +396,11 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
+
         checker.start();
-        wf.checkLinks();
+
+        new BrokenLinksCheckingJob().execute(jobContext);
+
         session.refresh(false);
         checker.join();
         assertTrue(checker.scheduledTaskDone);
