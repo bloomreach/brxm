@@ -49,7 +49,7 @@ span.diff-html-removed {
 }
 
 span.diff-html-changed {
-  background: url(../../../../../../../../../../xinha-frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffunderline.gif) bottom repeat-x;
+  background: url(images/diffunderline.gif) bottom repeat-x;
   *background-color: #c6c6fd; /* light blue */
   cursor: pointer;
 }
@@ -94,10 +94,10 @@ div.diff-removed-image, div.diff-added-image {
 
 div.diff-removed-image {
   background-color: #fdc6c6;
-  background-image: url(../../../../../../../../../../xinha-frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffmin.gif);
+  background-image: url(images/diffmin.gif);
 }
 div.diff-added-image {
   background-color: #ccffcc;
-  background-image: url(../../../../../../../../../../xinha-frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffplus.gif);
+  background-image: url(images/diffplus.gif);
   background-repeat: no-repeat;
 }

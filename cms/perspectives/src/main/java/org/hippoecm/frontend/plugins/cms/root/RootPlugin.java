@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
-import org.hippoecm.frontend.js.CmsHeaderItem;
+import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -169,21 +168,6 @@ public class RootPlugin extends TabsPlugin {
 
         add(new AjaxIndicatorBehavior());
 
-        String[] browsers = config.getStringArray("browsers");
-        List<StylesheetConfiguration> configurations = new ArrayList<StylesheetConfiguration>(browsers.length);
-        for (String browserName : browsers) {
-            if (config.containsKey(browserName)) {
-                IPluginConfig browserConf = config.getPluginConfig(browserName);
-                String ua = browserConf.getString("user.agent", "unsupported").toUpperCase();
-                Browser browser = new Browser(UserAgent.valueOf(ua), browserConf.getInt("major.version", -1),
-                        browserConf.getInt("minor.version", -1));
-
-                configurations.add(new StylesheetConfiguration(browser, browserConf.getStringArray("stylesheets")));
-            } else {
-                log.warn("Browser " + browserName + " listed, but no configuration is provided");
-            }
-        }
-        add(new BrowserSpecificStylesheetsBehavior(configurations.toArray(new StylesheetConfiguration[configurations.size()])));
         add(new ExtHippoThemeBehavior());
 
         extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());

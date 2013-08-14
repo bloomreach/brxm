@@ -346,11 +346,6 @@ shared-dependencies/*.iml
 shared-dependencies/.project
 shared-dependencies/.settings
 shared-dependencies/target
-skin/.classpath
-skin/.project
-skin/.settings
-skin/hippo-cms-skin.iml
-skin/target
 surf/*.iml
 surf/.project
 surf/.settings

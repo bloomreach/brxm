@@ -402,12 +402,8 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.root</sv:value>
     </sv:property>
-    <sv:property sv:name="wicket.skin" sv:type="String">
-      <sv:value>skin/screen.css</sv:value>
-    </sv:property>
     <sv:property sv:name="browsers" sv:type="String">
       <sv:value>browser.ie</sv:value>
-      <sv:value>browser.ie7</sv:value>
     </sv:property>
     <sv:property sv:name="tabs" sv:type="String">
       <sv:value>service.tab</sv:value>
@@ -427,20 +423,6 @@
       </sv:property>
       <sv:property sv:name="user.agent" sv:type="String">
         <sv:value>ie</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="browser.ie7">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="stylesheets" sv:type="String">
-        <sv:value>skin/screen_ie7.css</sv:value>
-      </sv:property>
-      <sv:property sv:name="user.agent" sv:type="String">
-        <sv:value>ie</sv:value>
-      </sv:property>
-      <sv:property sv:name="major.version" sv:type="String">
-        <sv:value>7</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="layout.wireframe">

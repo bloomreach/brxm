@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -29,6 +30,7 @@ import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.extensions.yui.calendar.DatePicker;
 import org.apache.wicket.extensions.yui.calendar.DateTimeField;
 import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
@@ -40,6 +42,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.hippoecm.frontend.editor.resources.CmsEditorHeaderItem;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -58,7 +61,12 @@ import org.joda.time.format.DateTimeFormatter;
 public class YuiDateTimeField extends DateTimeField {
 
     private static final long serialVersionUID = 1L;
-    private static final CssResourceReference YUIDATETIME_STYLESHEET = new CssResourceReference(YuiDateTimeField.class, "yuidatetime.css");
+    private static final CssResourceReference YUIDATETIME_STYLESHEET = new CssResourceReference(YuiDateTimeField.class, "yuidatetime.css") {
+        @Override
+        public Iterable<? extends HeaderItem> getDependencies() {
+            return Collections.singleton(CmsEditorHeaderItem.get());
+        }
+    };
 
     public static final String MINUTES_LABEL = "minutes-label";
     public static final String HOURS_LABEL = "hours-label";

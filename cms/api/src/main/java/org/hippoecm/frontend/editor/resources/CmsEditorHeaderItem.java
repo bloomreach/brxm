@@ -15,14 +15,35 @@
  */
 package org.hippoecm.frontend.editor.resources;
 
+import java.util.Arrays;
+
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 
-public final class EditorResources {
+public final class CmsEditorHeaderItem extends HeaderItem {
 
-    public static HeaderItem getCss() {
-        return CssHeaderItem.forReference(new CssResourceReference(EditorResources.class, "editor.css"));
+    private static final ResourceReference EDITOR_CSS = new CssResourceReference(CmsEditorHeaderItem.class, "editor.css");
+
+    private static final CmsEditorHeaderItem INSTANCE = new CmsEditorHeaderItem();
+
+    public static CmsEditorHeaderItem get() {
+        return INSTANCE;
+    }
+
+    private CmsEditorHeaderItem() {
+    }
+
+    @Override
+    public Iterable<?> getRenderTokens() {
+        return Arrays.asList("hippo-cms-editor-header-item");
+    }
+
+    @Override
+    public void render(final Response response) {
+        CssHeaderItem.forReference(EDITOR_CSS).render(response);
     }
 
 }

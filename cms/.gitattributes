@@ -86,6 +86,12 @@ api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/hint.png -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/PdfParser.java -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-editor-top.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-down-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-up-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/ReferringDocumentsView_de.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/WhereUsedDialog_de.properties -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
@@ -187,6 +193,13 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BrowserPlugin.h
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BrowserPlugin.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BrowserSearchResult.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BrowserSearchResultModel.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diff-first.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diff-last.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diff-next.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diff-previous.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diffmin.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diffplus.gif -text
+api/src/main/java/org/hippoecm/frontend/plugins/standards/diff/images/diffunderline.gif -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/BrowserStyle.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/alert-128.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/icon/res/alert-16.png -text svneol=unset#image/png
@@ -791,6 +804,298 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
+api/src/main/resources/skin/images/accordion-unit-back.png -text
+api/src/main/resources/skin/images/accordion-unit-back2.png -text
+api/src/main/resources/skin/images/addfolder.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/ajaxback.png -text
+api/src/main/resources/skin/images/box-blue-back.png -text
+api/src/main/resources/skin/images/box-blue-caption.png -text
+api/src/main/resources/skin/images/box-blue.gif -text
+api/src/main/resources/skin/images/box-grey-resizable.png -text
+api/src/main/resources/skin/images/box-grey.png -text
+api/src/main/resources/skin/images/box-grey2.png -text
+api/src/main/resources/skin/images/close.png -text
+api/src/main/resources/skin/images/controls/back-control.gif -text
+api/src/main/resources/skin/images/controls/close-control.gif -text
+api/src/main/resources/skin/images/controls/down-control.gif -text
+api/src/main/resources/skin/images/controls/folder-background-selected.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/controls/folder-workflow-icon.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/controls/folderdropdownicon.png -text
+api/src/main/resources/skin/images/controls/up-control.gif -text
+api/src/main/resources/skin/images/devider.png -text
+api/src/main/resources/skin/images/document-list-back.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/documenttabs.png -text
+api/src/main/resources/skin/images/documenttabsback.png -text
+api/src/main/resources/skin/images/dropdownmenu-itemback.png -text
+api/src/main/resources/skin/images/dropdownmenuback.png -text
+api/src/main/resources/skin/images/editor-back.gif -text
+api/src/main/resources/skin/images/editor-back.png -text
+api/src/main/resources/skin/images/editor-tabpanel-back.png -text
+api/src/main/resources/skin/images/editortoolbarback.png -text
+api/src/main/resources/skin/images/gallery/imagewizard.gif -text
+api/src/main/resources/skin/images/headerBack.png -text
+api/src/main/resources/skin/images/hippo-cms.ico -text
+api/src/main/resources/skin/images/hippo-editor-body-back.png -text
+api/src/main/resources/skin/images/hippo-editor-default-back.png -text
+api/src/main/resources/skin/images/hippo-editor-field-back-even.png -text
+api/src/main/resources/skin/images/hippo-editor-field-back-odd.png -text
+api/src/main/resources/skin/images/hippo-gallery-folder.png -text
+api/src/main/resources/skin/images/hippo-gallery-image-thumbnail-back.png -text
+api/src/main/resources/skin/images/hippo-gallery-thumbnail-back.png -text
+api/src/main/resources/skin/images/hippo-icon.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/hippo-list-details-th-back.png -text
+api/src/main/resources/skin/images/hippo-paging-back.png -text
+api/src/main/resources/skin/images/hippo-panels-headerback.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-back.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-breadcrumb.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-buttons-back-off.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-buttons-back-on.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-buttons-back.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-end.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-firstlast.png -text
+api/src/main/resources/skin/images/hippo-picker-navigation-start.png -text
+api/src/main/resources/skin/images/hippo-tab-close.png -text
+api/src/main/resources/skin/images/hippo-toolbar-menu-item.png -text
+api/src/main/resources/skin/images/hippo-window-buttons-back.png -text
+api/src/main/resources/skin/images/hippo-window-input-back.png -text
+api/src/main/resources/skin/images/hippologo.png -text
+api/src/main/resources/skin/images/icons/acquire-128.png -text
+api/src/main/resources/skin/images/icons/acquire-16.png -text
+api/src/main/resources/skin/images/icons/acquire-32.png -text
+api/src/main/resources/skin/images/icons/acquire-48.png -text
+api/src/main/resources/skin/images/icons/admin-128.png -text
+api/src/main/resources/skin/images/icons/admin-16.png -text
+api/src/main/resources/skin/images/icons/admin-32.png -text
+api/src/main/resources/skin/images/icons/admin-48.png -text
+api/src/main/resources/skin/images/icons/alert-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/arrow-paging-next-16.png -text
+api/src/main/resources/skin/images/icons/arrow-paging-previous-16.png -text
+api/src/main/resources/skin/images/icons/arrow-sort-down-16.png -text
+api/src/main/resources/skin/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/arrow-sort-up-16.png -text
+api/src/main/resources/skin/images/icons/copy-16.png -text
+api/src/main/resources/skin/images/icons/delete-inline-128.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/delete-inline-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/delete-inline-32.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/delete-inline-48.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/dialog-error-128.png -text
+api/src/main/resources/skin/images/icons/dialog-error-16.png -text
+api/src/main/resources/skin/images/icons/dialog-error-32.png -text
+api/src/main/resources/skin/images/icons/dialog-error-48.png -text
+api/src/main/resources/skin/images/icons/dialog-information-128.png -text
+api/src/main/resources/skin/images/icons/dialog-information-16.png -text
+api/src/main/resources/skin/images/icons/dialog-information-32.png -text
+api/src/main/resources/skin/images/icons/dialog-information-48.png -text
+api/src/main/resources/skin/images/icons/dialog-question-128.png -text
+api/src/main/resources/skin/images/icons/dialog-question-16.png -text
+api/src/main/resources/skin/images/icons/dialog-question-32.png -text
+api/src/main/resources/skin/images/icons/dialog-question-48.png -text
+api/src/main/resources/skin/images/icons/document-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/document-copy-16.png -text
+api/src/main/resources/skin/images/icons/document-deleted-16.png -text
+api/src/main/resources/skin/images/icons/document-handle-16.png -text
+api/src/main/resources/skin/images/icons/document-lock-128.png -text
+api/src/main/resources/skin/images/icons/document-lock-16.png -text
+api/src/main/resources/skin/images/icons/document-lock-32.png -text
+api/src/main/resources/skin/images/icons/document-lock-48.png -text
+api/src/main/resources/skin/images/icons/document-new-128.png -text
+api/src/main/resources/skin/images/icons/document-new-16.png -text
+api/src/main/resources/skin/images/icons/document-new-32.png -text
+api/src/main/resources/skin/images/icons/document-new-48.png -text
+api/src/main/resources/skin/images/icons/document-revert-128.png -text
+api/src/main/resources/skin/images/icons/document-revert-16.png -text
+api/src/main/resources/skin/images/icons/document-revert-32.png -text
+api/src/main/resources/skin/images/icons/document-revert-48.png -text
+api/src/main/resources/skin/images/icons/document-save-128.png -text
+api/src/main/resources/skin/images/icons/document-save-16.png -text
+api/src/main/resources/skin/images/icons/document-save-32.png -text
+api/src/main/resources/skin/images/icons/document-save-48.png -text
+api/src/main/resources/skin/images/icons/document-unlock-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/document-virtual-16.png -text
+api/src/main/resources/skin/images/icons/domain-128.png -text
+api/src/main/resources/skin/images/icons/domain-16.png -text
+api/src/main/resources/skin/images/icons/domain-32.png -text
+api/src/main/resources/skin/images/icons/domain-48.png -text
+api/src/main/resources/skin/images/icons/edit-128.png -text
+api/src/main/resources/skin/images/icons/edit-16.png -text
+api/src/main/resources/skin/images/icons/edit-24.png -text
+api/src/main/resources/skin/images/icons/edit-32.png -text
+api/src/main/resources/skin/images/icons/edit-48.png -text
+api/src/main/resources/skin/images/icons/edit-clear-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/edit-delete-128.png -text
+api/src/main/resources/skin/images/icons/edit-delete-16.png -text
+api/src/main/resources/skin/images/icons/edit-delete-32.png -text
+api/src/main/resources/skin/images/icons/edit-delete-48.png -text
+api/src/main/resources/skin/images/icons/edit-rename-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/emblem-documents-v2-128.png -text
+api/src/main/resources/skin/images/icons/emblem-documents-v2-16.png -text
+api/src/main/resources/skin/images/icons/emblem-documents-v2-24.png -text
+api/src/main/resources/skin/images/icons/emblem-documents-v2-32.png -text
+api/src/main/resources/skin/images/icons/emblem-documents-v2-48.png -text
+api/src/main/resources/skin/images/icons/folder-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/folder-extended-new-128.png -text
+api/src/main/resources/skin/images/icons/folder-extended-new-16.png -text
+api/src/main/resources/skin/images/icons/folder-extended-new-32.png -text
+api/src/main/resources/skin/images/icons/folder-extended-new-48.png -text
+api/src/main/resources/skin/images/icons/folder-new-128.png -text
+api/src/main/resources/skin/images/icons/folder-new-16.png -text
+api/src/main/resources/skin/images/icons/folder-new-32.png -text
+api/src/main/resources/skin/images/icons/folder-new-48.png -text
+api/src/main/resources/skin/images/icons/folder-virtual-16.gif -text
+api/src/main/resources/skin/images/icons/folder-virtual-open-16.gif -text
+api/src/main/resources/skin/images/icons/go-down-128.png -text
+api/src/main/resources/skin/images/icons/go-down-16.png -text
+api/src/main/resources/skin/images/icons/go-down-32.png -text
+api/src/main/resources/skin/images/icons/go-down-48.png -text
+api/src/main/resources/skin/images/icons/go-down-disabled-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/go-next-128.png -text
+api/src/main/resources/skin/images/icons/go-next-16.png -text
+api/src/main/resources/skin/images/icons/go-next-32.png -text
+api/src/main/resources/skin/images/icons/go-next-48.png -text
+api/src/main/resources/skin/images/icons/go-previous-128.png -text
+api/src/main/resources/skin/images/icons/go-previous-16.png -text
+api/src/main/resources/skin/images/icons/go-previous-32.png -text
+api/src/main/resources/skin/images/icons/go-previous-48.png -text
+api/src/main/resources/skin/images/icons/go-up-128.png -text
+api/src/main/resources/skin/images/icons/go-up-16.png -text
+api/src/main/resources/skin/images/icons/go-up-32.png -text
+api/src/main/resources/skin/images/icons/go-up-48.png -text
+api/src/main/resources/skin/images/icons/go-up-disabled-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/image-add-128.png -text
+api/src/main/resources/skin/images/icons/image-add-16.png -text
+api/src/main/resources/skin/images/icons/image-add-32.png -text
+api/src/main/resources/skin/images/icons/image-add-48.png -text
+api/src/main/resources/skin/images/icons/image-gif-128.png -text
+api/src/main/resources/skin/images/icons/image-gif-16.png -text
+api/src/main/resources/skin/images/icons/image-gif-32.png -text
+api/src/main/resources/skin/images/icons/image-gif-48.png -text
+api/src/main/resources/skin/images/icons/image-jpeg-128.png -text
+api/src/main/resources/skin/images/icons/image-jpeg-16.png -text
+api/src/main/resources/skin/images/icons/image-jpeg-32.png -text
+api/src/main/resources/skin/images/icons/image-jpeg-48.png -text
+api/src/main/resources/skin/images/icons/image-x-generic-16.png -text
+api/src/main/resources/skin/images/icons/list-add-128.png -text
+api/src/main/resources/skin/images/icons/list-add-16.png -text
+api/src/main/resources/skin/images/icons/list-add-32.png -text
+api/src/main/resources/skin/images/icons/list-add-48.png -text
+api/src/main/resources/skin/images/icons/login-128.png -text
+api/src/main/resources/skin/images/icons/login-16.png -text
+api/src/main/resources/skin/images/icons/login-32.png -text
+api/src/main/resources/skin/images/icons/login-48.png -text
+api/src/main/resources/skin/images/icons/logout-128.png -text
+api/src/main/resources/skin/images/icons/logout-16.png -text
+api/src/main/resources/skin/images/icons/logout-32.png -text
+api/src/main/resources/skin/images/icons/logout-48.png -text
+api/src/main/resources/skin/images/icons/mail-128.png -text
+api/src/main/resources/skin/images/icons/mail-16.png -text
+api/src/main/resources/skin/images/icons/mail-32.png -text
+api/src/main/resources/skin/images/icons/mail-48.png -text
+api/src/main/resources/skin/images/icons/move-16.png -text
+api/src/main/resources/skin/images/icons/move-up-1.gif -text
+api/src/main/resources/skin/images/icons/panel-toggle-version-128.png -text
+api/src/main/resources/skin/images/icons/panel-toggle-version-16.png -text
+api/src/main/resources/skin/images/icons/panel-toggle-version-32.png -text
+api/src/main/resources/skin/images/icons/panel-toggle-version-48.png -text
+api/src/main/resources/skin/images/icons/publish-128.png -text
+api/src/main/resources/skin/images/icons/publish-16.png -text
+api/src/main/resources/skin/images/icons/publish-32.png -text
+api/src/main/resources/skin/images/icons/publish-48.png -text
+api/src/main/resources/skin/images/icons/publish-schedule-16.png -text
+api/src/main/resources/skin/images/icons/refresh-16.png -text
+api/src/main/resources/skin/images/icons/rename-128.png -text
+api/src/main/resources/skin/images/icons/rename-16.png -text
+api/src/main/resources/skin/images/icons/rename-32.png -text
+api/src/main/resources/skin/images/icons/rename-48.png -text
+api/src/main/resources/skin/images/icons/search-128.png -text
+api/src/main/resources/skin/images/icons/search-16.png -text
+api/src/main/resources/skin/images/icons/search-32.png -text
+api/src/main/resources/skin/images/icons/search-48.png -text
+api/src/main/resources/skin/images/icons/state-changed-16.png -text
+api/src/main/resources/skin/images/icons/state-live-16-05.png -text
+api/src/main/resources/skin/images/icons/state-live-16.png -text
+api/src/main/resources/skin/images/icons/state-locked-16.gif -text
+api/src/main/resources/skin/images/icons/state-locked-16.png -text
+api/src/main/resources/skin/images/icons/state-new-16.png -text
+api/src/main/resources/skin/images/icons/state-prev-changed-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/state-prev-live-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/state-prev-new-16.png -text svneol=unset#image/png
+api/src/main/resources/skin/images/icons/state-published-16.gif -text
+api/src/main/resources/skin/images/icons/state-published-16.png -text
+api/src/main/resources/skin/images/icons/state-review-16.png -text
+api/src/main/resources/skin/images/icons/structure-128.png -text
+api/src/main/resources/skin/images/icons/structure-16.png -text
+api/src/main/resources/skin/images/icons/structure-32.png -text
+api/src/main/resources/skin/images/icons/structure-48.png -text
+api/src/main/resources/skin/images/icons/support-128.png -text
+api/src/main/resources/skin/images/icons/support-16.png -text
+api/src/main/resources/skin/images/icons/support-32.png -text
+api/src/main/resources/skin/images/icons/support-48.png -text
+api/src/main/resources/skin/images/icons/tested-128.png -text
+api/src/main/resources/skin/images/icons/tested-16.png -text
+api/src/main/resources/skin/images/icons/tested-32.png -text
+api/src/main/resources/skin/images/icons/tested-48.png -text
+api/src/main/resources/skin/images/icons/tree-icons.png -text
+api/src/main/resources/skin/images/icons/unplublish-128.png -text
+api/src/main/resources/skin/images/icons/unplublish-16.png -text
+api/src/main/resources/skin/images/icons/unplublish-32.png -text
+api/src/main/resources/skin/images/icons/unplublish-48.png -text
+api/src/main/resources/skin/images/icons/unzip-128.png -text
+api/src/main/resources/skin/images/icons/unzip-16.png -text
+api/src/main/resources/skin/images/icons/unzip-32.png -text
+api/src/main/resources/skin/images/icons/unzip-48.png -text
+api/src/main/resources/skin/images/icons/version-128.png -text
+api/src/main/resources/skin/images/icons/version-16.png -text
+api/src/main/resources/skin/images/icons/version-32.png -text
+api/src/main/resources/skin/images/icons/version-48.png -text
+api/src/main/resources/skin/images/icons/workflow-128.png -text
+api/src/main/resources/skin/images/icons/workflow-16.png -text
+api/src/main/resources/skin/images/icons/workflow-32.png -text
+api/src/main/resources/skin/images/icons/workflow-48.png -text
+api/src/main/resources/skin/images/icons/workflow-accept-16.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-128-67.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-128-71.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-128-79.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-128-84.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-128.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-16-68.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-16-72.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-16-80.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-16-85.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-16.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-32-100.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-32-108.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-32-82.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-32-88.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-32.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-48-101.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-48-115.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-48-124.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-48-94.png -text
+api/src/main/resources/skin/images/icons/workflow-requestdelete-48.png -text
+api/src/main/resources/skin/images/icons/workflow-requestpublish-128.png -text
+api/src/main/resources/skin/images/icons/workflow-requestpublish-16.png -text
+api/src/main/resources/skin/images/icons/workflow-requestpublish-32.png -text
+api/src/main/resources/skin/images/icons/workflow-requestpublish-48.png -text
+api/src/main/resources/skin/images/icons/workflow-requestunpublish-128.png -text
+api/src/main/resources/skin/images/icons/workflow-requestunpublish-16.png -text
+api/src/main/resources/skin/images/icons/workflow-requestunpublish-32.png -text
+api/src/main/resources/skin/images/icons/workflow-requestunpublish-48.png -text
+api/src/main/resources/skin/images/list-add-16.png -text
+api/src/main/resources/skin/images/picker-back.png -text
+api/src/main/resources/skin/images/searchBack.png -text
+api/src/main/resources/skin/images/silver4.png -text
+api/src/main/resources/skin/images/silverBack.png -text
+api/src/main/resources/skin/images/silverBack2.png -text
+api/src/main/resources/skin/images/silverBack3.png -text
+api/src/main/resources/skin/images/state-changed-16.gif -text
+api/src/main/resources/skin/images/tab-active.png -text
+api/src/main/resources/skin/images/tabs-vertical-back.png -text
+api/src/main/resources/skin/images/tabs-vertical-top-back.png -text
+api/src/main/resources/skin/images/transparent2.png -text
+api/src/main/resources/skin/images/tree-icons.png -text
+api/src/main/resources/skin/screen.css svneol=native#text/css
+api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaDataTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageUtilTest.java -text
@@ -1146,6 +1451,8 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/t9ids/T9idsDialog_nl.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/workflow/WorkflowPlugin.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/res/tree-console-icons.png -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/screen-console.css svneol=native#text/css
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutDialog.properties -text
@@ -1352,12 +1659,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Reso
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_nl.properties -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/hippo-editor-top.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-down-16.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/arrow-sort-up-16.png -text svneol=unset#image/png
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/HtmlValidator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLogger.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.html svneol=native#text/plain
@@ -2064,7 +2365,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-48.pn
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/edit-perspective.css svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/document-list-back.png -text svneol=unset#image/png
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/images/warning.png -text svneol=unset#image/png
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/BrowserSpecificStylesheetsBehavior.java -text svneol=unset#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/LogoutLink.java -text svneol=unset#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/root/RootPlugin_de.properties -text
@@ -2244,13 +2544,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/box-grey.png -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-first.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-last.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-next.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-previous.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffmin.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffplus.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diffunderline.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/hippo-border.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager-debug.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager.js svneol=native#text/plain
@@ -2288,6 +2581,7 @@ richtext/resources/pom.xml svneol=native#text/plain
 richtext/resources/src/main/appended-resources/META-INF/LICENSE -text
 richtext/resources/src/main/patches/bugfix/CMS7-5277.patch -text
 richtext/resources/src/main/patches/enhancement/HREPTWO-4261.patch -text
+richtext/resources/src/main/resources/skin/xinhaInternal.css svneol=native#text/css
 richtext/resources/src/main/resources/xinha/XinhaCore.js -text
 richtext/resources/src/main/resources/xinha/iconsets/Hippo/de/bold.gif -text
 richtext/resources/src/main/resources/xinha/iconsets/Hippo/de/italic.gif -text
@@ -2358,302 +2652,6 @@ search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchNamespace.ja
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/SearchResult.java svneol=native#text/plain
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox-debug.js svneol=native#text/plain
 search/src/main/java/org/hippoecm/frontend/plugins/search/yui/js/searchbox/searchbox.js svneol=native#text/plain
-skin/pom.xml svneol=native#text/plain
-skin/src/main/resources/skin/images/accordion-unit-back.png -text
-skin/src/main/resources/skin/images/accordion-unit-back2.png -text
-skin/src/main/resources/skin/images/addfolder.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/ajaxback.png -text
-skin/src/main/resources/skin/images/box-blue-back.png -text
-skin/src/main/resources/skin/images/box-blue-caption.png -text
-skin/src/main/resources/skin/images/box-blue.gif -text
-skin/src/main/resources/skin/images/box-grey-resizable.png -text
-skin/src/main/resources/skin/images/box-grey.png -text
-skin/src/main/resources/skin/images/box-grey2.png -text
-skin/src/main/resources/skin/images/close.png -text
-skin/src/main/resources/skin/images/controls/back-control.gif -text
-skin/src/main/resources/skin/images/controls/close-control.gif -text
-skin/src/main/resources/skin/images/controls/down-control.gif -text
-skin/src/main/resources/skin/images/controls/folder-background-selected.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/controls/folder-workflow-icon.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/controls/folderdropdownicon.png -text
-skin/src/main/resources/skin/images/controls/up-control.gif -text
-skin/src/main/resources/skin/images/devider.png -text
-skin/src/main/resources/skin/images/document-list-back.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/documenttabs.png -text
-skin/src/main/resources/skin/images/documenttabsback.png -text
-skin/src/main/resources/skin/images/dropdownmenu-itemback.png -text
-skin/src/main/resources/skin/images/dropdownmenuback.png -text
-skin/src/main/resources/skin/images/editor-back.gif -text
-skin/src/main/resources/skin/images/editor-back.png -text
-skin/src/main/resources/skin/images/editor-tabpanel-back.png -text
-skin/src/main/resources/skin/images/editortoolbarback.png -text
-skin/src/main/resources/skin/images/gallery/imagewizard.gif -text
-skin/src/main/resources/skin/images/headerBack.png -text
-skin/src/main/resources/skin/images/hippo-cms.ico -text
-skin/src/main/resources/skin/images/hippo-editor-body-back.png -text
-skin/src/main/resources/skin/images/hippo-editor-default-back.png -text
-skin/src/main/resources/skin/images/hippo-editor-field-back-even.png -text
-skin/src/main/resources/skin/images/hippo-editor-field-back-odd.png -text
-skin/src/main/resources/skin/images/hippo-gallery-folder.png -text
-skin/src/main/resources/skin/images/hippo-gallery-image-thumbnail-back.png -text
-skin/src/main/resources/skin/images/hippo-gallery-thumbnail-back.png -text
-skin/src/main/resources/skin/images/hippo-icon.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/hippo-list-details-th-back.png -text
-skin/src/main/resources/skin/images/hippo-paging-back.png -text
-skin/src/main/resources/skin/images/hippo-panels-headerback.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-back.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-breadcrumb.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-buttons-back-off.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-buttons-back-on.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-buttons-back.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-end.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-firstlast.png -text
-skin/src/main/resources/skin/images/hippo-picker-navigation-start.png -text
-skin/src/main/resources/skin/images/hippo-tab-close.png -text
-skin/src/main/resources/skin/images/hippo-toolbar-menu-item.png -text
-skin/src/main/resources/skin/images/hippo-window-buttons-back.png -text
-skin/src/main/resources/skin/images/hippo-window-input-back.png -text
-skin/src/main/resources/skin/images/hippologo.png -text
-skin/src/main/resources/skin/images/icons/acquire-128.png -text
-skin/src/main/resources/skin/images/icons/acquire-16.png -text
-skin/src/main/resources/skin/images/icons/acquire-32.png -text
-skin/src/main/resources/skin/images/icons/acquire-48.png -text
-skin/src/main/resources/skin/images/icons/admin-128.png -text
-skin/src/main/resources/skin/images/icons/admin-16.png -text
-skin/src/main/resources/skin/images/icons/admin-32.png -text
-skin/src/main/resources/skin/images/icons/admin-48.png -text
-skin/src/main/resources/skin/images/icons/alert-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/arrow-paging-next-16.png -text
-skin/src/main/resources/skin/images/icons/arrow-paging-previous-16.png -text
-skin/src/main/resources/skin/images/icons/arrow-sort-down-16.png -text
-skin/src/main/resources/skin/images/icons/arrow-sort-left-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/arrow-sort-right-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/arrow-sort-up-16.png -text
-skin/src/main/resources/skin/images/icons/copy-16.png -text
-skin/src/main/resources/skin/images/icons/delete-inline-128.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/delete-inline-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/delete-inline-32.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/delete-inline-48.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/dialog-error-128.png -text
-skin/src/main/resources/skin/images/icons/dialog-error-16.png -text
-skin/src/main/resources/skin/images/icons/dialog-error-32.png -text
-skin/src/main/resources/skin/images/icons/dialog-error-48.png -text
-skin/src/main/resources/skin/images/icons/dialog-information-128.png -text
-skin/src/main/resources/skin/images/icons/dialog-information-16.png -text
-skin/src/main/resources/skin/images/icons/dialog-information-32.png -text
-skin/src/main/resources/skin/images/icons/dialog-information-48.png -text
-skin/src/main/resources/skin/images/icons/dialog-question-128.png -text
-skin/src/main/resources/skin/images/icons/dialog-question-16.png -text
-skin/src/main/resources/skin/images/icons/dialog-question-32.png -text
-skin/src/main/resources/skin/images/icons/dialog-question-48.png -text
-skin/src/main/resources/skin/images/icons/document-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/document-copy-16.png -text
-skin/src/main/resources/skin/images/icons/document-deleted-16.png -text
-skin/src/main/resources/skin/images/icons/document-handle-16.png -text
-skin/src/main/resources/skin/images/icons/document-lock-128.png -text
-skin/src/main/resources/skin/images/icons/document-lock-16.png -text
-skin/src/main/resources/skin/images/icons/document-lock-32.png -text
-skin/src/main/resources/skin/images/icons/document-lock-48.png -text
-skin/src/main/resources/skin/images/icons/document-new-128.png -text
-skin/src/main/resources/skin/images/icons/document-new-16.png -text
-skin/src/main/resources/skin/images/icons/document-new-32.png -text
-skin/src/main/resources/skin/images/icons/document-new-48.png -text
-skin/src/main/resources/skin/images/icons/document-revert-128.png -text
-skin/src/main/resources/skin/images/icons/document-revert-16.png -text
-skin/src/main/resources/skin/images/icons/document-revert-32.png -text
-skin/src/main/resources/skin/images/icons/document-revert-48.png -text
-skin/src/main/resources/skin/images/icons/document-save-128.png -text
-skin/src/main/resources/skin/images/icons/document-save-16.png -text
-skin/src/main/resources/skin/images/icons/document-save-32.png -text
-skin/src/main/resources/skin/images/icons/document-save-48.png -text
-skin/src/main/resources/skin/images/icons/document-unlock-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/document-virtual-16.png -text
-skin/src/main/resources/skin/images/icons/domain-128.png -text
-skin/src/main/resources/skin/images/icons/domain-16.png -text
-skin/src/main/resources/skin/images/icons/domain-32.png -text
-skin/src/main/resources/skin/images/icons/domain-48.png -text
-skin/src/main/resources/skin/images/icons/edit-128.png -text
-skin/src/main/resources/skin/images/icons/edit-16.png -text
-skin/src/main/resources/skin/images/icons/edit-24.png -text
-skin/src/main/resources/skin/images/icons/edit-32.png -text
-skin/src/main/resources/skin/images/icons/edit-48.png -text
-skin/src/main/resources/skin/images/icons/edit-clear-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/edit-delete-128.png -text
-skin/src/main/resources/skin/images/icons/edit-delete-16.png -text
-skin/src/main/resources/skin/images/icons/edit-delete-32.png -text
-skin/src/main/resources/skin/images/icons/edit-delete-48.png -text
-skin/src/main/resources/skin/images/icons/edit-rename-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/emblem-documents-v2-128.png -text
-skin/src/main/resources/skin/images/icons/emblem-documents-v2-16.png -text
-skin/src/main/resources/skin/images/icons/emblem-documents-v2-24.png -text
-skin/src/main/resources/skin/images/icons/emblem-documents-v2-32.png -text
-skin/src/main/resources/skin/images/icons/emblem-documents-v2-48.png -text
-skin/src/main/resources/skin/images/icons/folder-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/folder-extended-new-128.png -text
-skin/src/main/resources/skin/images/icons/folder-extended-new-16.png -text
-skin/src/main/resources/skin/images/icons/folder-extended-new-32.png -text
-skin/src/main/resources/skin/images/icons/folder-extended-new-48.png -text
-skin/src/main/resources/skin/images/icons/folder-new-128.png -text
-skin/src/main/resources/skin/images/icons/folder-new-16.png -text
-skin/src/main/resources/skin/images/icons/folder-new-32.png -text
-skin/src/main/resources/skin/images/icons/folder-new-48.png -text
-skin/src/main/resources/skin/images/icons/folder-virtual-16.gif -text
-skin/src/main/resources/skin/images/icons/folder-virtual-open-16.gif -text
-skin/src/main/resources/skin/images/icons/go-down-128.png -text
-skin/src/main/resources/skin/images/icons/go-down-16.png -text
-skin/src/main/resources/skin/images/icons/go-down-32.png -text
-skin/src/main/resources/skin/images/icons/go-down-48.png -text
-skin/src/main/resources/skin/images/icons/go-down-disabled-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/go-next-128.png -text
-skin/src/main/resources/skin/images/icons/go-next-16.png -text
-skin/src/main/resources/skin/images/icons/go-next-32.png -text
-skin/src/main/resources/skin/images/icons/go-next-48.png -text
-skin/src/main/resources/skin/images/icons/go-previous-128.png -text
-skin/src/main/resources/skin/images/icons/go-previous-16.png -text
-skin/src/main/resources/skin/images/icons/go-previous-32.png -text
-skin/src/main/resources/skin/images/icons/go-previous-48.png -text
-skin/src/main/resources/skin/images/icons/go-up-128.png -text
-skin/src/main/resources/skin/images/icons/go-up-16.png -text
-skin/src/main/resources/skin/images/icons/go-up-32.png -text
-skin/src/main/resources/skin/images/icons/go-up-48.png -text
-skin/src/main/resources/skin/images/icons/go-up-disabled-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/image-add-128.png -text
-skin/src/main/resources/skin/images/icons/image-add-16.png -text
-skin/src/main/resources/skin/images/icons/image-add-32.png -text
-skin/src/main/resources/skin/images/icons/image-add-48.png -text
-skin/src/main/resources/skin/images/icons/image-gif-128.png -text
-skin/src/main/resources/skin/images/icons/image-gif-16.png -text
-skin/src/main/resources/skin/images/icons/image-gif-32.png -text
-skin/src/main/resources/skin/images/icons/image-gif-48.png -text
-skin/src/main/resources/skin/images/icons/image-jpeg-128.png -text
-skin/src/main/resources/skin/images/icons/image-jpeg-16.png -text
-skin/src/main/resources/skin/images/icons/image-jpeg-32.png -text
-skin/src/main/resources/skin/images/icons/image-jpeg-48.png -text
-skin/src/main/resources/skin/images/icons/image-x-generic-16.png -text
-skin/src/main/resources/skin/images/icons/list-add-128.png -text
-skin/src/main/resources/skin/images/icons/list-add-16.png -text
-skin/src/main/resources/skin/images/icons/list-add-32.png -text
-skin/src/main/resources/skin/images/icons/list-add-48.png -text
-skin/src/main/resources/skin/images/icons/login-128.png -text
-skin/src/main/resources/skin/images/icons/login-16.png -text
-skin/src/main/resources/skin/images/icons/login-32.png -text
-skin/src/main/resources/skin/images/icons/login-48.png -text
-skin/src/main/resources/skin/images/icons/logout-128.png -text
-skin/src/main/resources/skin/images/icons/logout-16.png -text
-skin/src/main/resources/skin/images/icons/logout-32.png -text
-skin/src/main/resources/skin/images/icons/logout-48.png -text
-skin/src/main/resources/skin/images/icons/mail-128.png -text
-skin/src/main/resources/skin/images/icons/mail-16.png -text
-skin/src/main/resources/skin/images/icons/mail-32.png -text
-skin/src/main/resources/skin/images/icons/mail-48.png -text
-skin/src/main/resources/skin/images/icons/move-16.png -text
-skin/src/main/resources/skin/images/icons/move-up-1.gif -text
-skin/src/main/resources/skin/images/icons/panel-toggle-version-128.png -text
-skin/src/main/resources/skin/images/icons/panel-toggle-version-16.png -text
-skin/src/main/resources/skin/images/icons/panel-toggle-version-32.png -text
-skin/src/main/resources/skin/images/icons/panel-toggle-version-48.png -text
-skin/src/main/resources/skin/images/icons/publish-128.png -text
-skin/src/main/resources/skin/images/icons/publish-16.png -text
-skin/src/main/resources/skin/images/icons/publish-32.png -text
-skin/src/main/resources/skin/images/icons/publish-48.png -text
-skin/src/main/resources/skin/images/icons/publish-schedule-16.png -text
-skin/src/main/resources/skin/images/icons/refresh-16.png -text
-skin/src/main/resources/skin/images/icons/rename-128.png -text
-skin/src/main/resources/skin/images/icons/rename-16.png -text
-skin/src/main/resources/skin/images/icons/rename-32.png -text
-skin/src/main/resources/skin/images/icons/rename-48.png -text
-skin/src/main/resources/skin/images/icons/search-128.png -text
-skin/src/main/resources/skin/images/icons/search-16.png -text
-skin/src/main/resources/skin/images/icons/search-32.png -text
-skin/src/main/resources/skin/images/icons/search-48.png -text
-skin/src/main/resources/skin/images/icons/state-changed-16.png -text
-skin/src/main/resources/skin/images/icons/state-live-16-05.png -text
-skin/src/main/resources/skin/images/icons/state-live-16.png -text
-skin/src/main/resources/skin/images/icons/state-locked-16.gif -text
-skin/src/main/resources/skin/images/icons/state-locked-16.png -text
-skin/src/main/resources/skin/images/icons/state-new-16.png -text
-skin/src/main/resources/skin/images/icons/state-prev-changed-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/state-prev-live-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/state-prev-new-16.png -text svneol=unset#image/png
-skin/src/main/resources/skin/images/icons/state-published-16.gif -text
-skin/src/main/resources/skin/images/icons/state-published-16.png -text
-skin/src/main/resources/skin/images/icons/state-review-16.png -text
-skin/src/main/resources/skin/images/icons/structure-128.png -text
-skin/src/main/resources/skin/images/icons/structure-16.png -text
-skin/src/main/resources/skin/images/icons/structure-32.png -text
-skin/src/main/resources/skin/images/icons/structure-48.png -text
-skin/src/main/resources/skin/images/icons/support-128.png -text
-skin/src/main/resources/skin/images/icons/support-16.png -text
-skin/src/main/resources/skin/images/icons/support-32.png -text
-skin/src/main/resources/skin/images/icons/support-48.png -text
-skin/src/main/resources/skin/images/icons/tested-128.png -text
-skin/src/main/resources/skin/images/icons/tested-16.png -text
-skin/src/main/resources/skin/images/icons/tested-32.png -text
-skin/src/main/resources/skin/images/icons/tested-48.png -text
-skin/src/main/resources/skin/images/icons/tree-icons.png -text
-skin/src/main/resources/skin/images/icons/unplublish-128.png -text
-skin/src/main/resources/skin/images/icons/unplublish-16.png -text
-skin/src/main/resources/skin/images/icons/unplublish-32.png -text
-skin/src/main/resources/skin/images/icons/unplublish-48.png -text
-skin/src/main/resources/skin/images/icons/unzip-128.png -text
-skin/src/main/resources/skin/images/icons/unzip-16.png -text
-skin/src/main/resources/skin/images/icons/unzip-32.png -text
-skin/src/main/resources/skin/images/icons/unzip-48.png -text
-skin/src/main/resources/skin/images/icons/version-128.png -text
-skin/src/main/resources/skin/images/icons/version-16.png -text
-skin/src/main/resources/skin/images/icons/version-32.png -text
-skin/src/main/resources/skin/images/icons/version-48.png -text
-skin/src/main/resources/skin/images/icons/workflow-128.png -text
-skin/src/main/resources/skin/images/icons/workflow-16.png -text
-skin/src/main/resources/skin/images/icons/workflow-32.png -text
-skin/src/main/resources/skin/images/icons/workflow-48.png -text
-skin/src/main/resources/skin/images/icons/workflow-accept-16.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-128-67.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-128-71.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-128-79.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-128-84.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-128.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-16-68.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-16-72.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-16-80.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-16-85.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-16.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-32-100.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-32-108.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-32-82.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-32-88.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-32.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-48-101.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-48-115.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-48-124.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-48-94.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestdelete-48.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestpublish-128.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestpublish-16.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestpublish-32.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestpublish-48.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestunpublish-128.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestunpublish-16.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestunpublish-32.png -text
-skin/src/main/resources/skin/images/icons/workflow-requestunpublish-48.png -text
-skin/src/main/resources/skin/images/list-add-16.png -text
-skin/src/main/resources/skin/images/picker-back.png -text
-skin/src/main/resources/skin/images/searchBack.png -text
-skin/src/main/resources/skin/images/silver4.png -text
-skin/src/main/resources/skin/images/silverBack.png -text
-skin/src/main/resources/skin/images/silverBack2.png -text
-skin/src/main/resources/skin/images/silverBack3.png -text
-skin/src/main/resources/skin/images/state-changed-16.gif -text
-skin/src/main/resources/skin/images/tab-active.png -text
-skin/src/main/resources/skin/images/tabs-vertical-back.png -text
-skin/src/main/resources/skin/images/tabs-vertical-top-back.png -text
-skin/src/main/resources/skin/images/transparent2.png -text
-skin/src/main/resources/skin/images/tree-console-icons.png -text
-skin/src/main/resources/skin/images/tree-icons.png -text
-skin/src/main/resources/skin/screen-console.css svneol=native#text/css
-skin/src/main/resources/skin/screen.css svneol=native#text/css
-skin/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
-skin/src/main/resources/skin/xinhaInternal.css svneol=native#text/css
 surf/frontend/pom.xml -text
 surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.html -text
 surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.java -text

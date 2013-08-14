@@ -18,12 +18,14 @@ package org.hippoecm.frontend.plugins.console;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.js.CmsHeaderItem;
+import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -44,9 +46,9 @@ import org.slf4j.LoggerFactory;
 
 public class RootPlugin extends RenderPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
-
     private static final long serialVersionUID = 1L;
+
+    public static final CssResourceReference CSS = new CssResourceReference(RootPlugin.class, "screen-console.css");
 
     private boolean rendered = false;
     private PathHistoryBehavior pathHistoryBehavior;
@@ -99,6 +101,7 @@ public class RootPlugin extends RenderPlugin {
         super.renderHead(response);
 
         response.render(CmsHeaderItem.get());
+        response.render(CssHeaderItem.forReference(CSS));
     }
 
     private String getPageTitle(IPluginConfig config) {
