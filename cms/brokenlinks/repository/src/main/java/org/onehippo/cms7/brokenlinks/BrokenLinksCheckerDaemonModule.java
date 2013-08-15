@@ -63,10 +63,22 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
      */
     private static final String CRON_EXPRESSION_PARAM_PROP = "cronExpression";
 
+    /**
+     * Cron job name. If not specified, the FQCN of {@link BrokenLinksCheckingJob} is used.
+     */
+    private static final String CRON_JOB_NAME_PARAM_PROP = "cronJobName";
+
+    /**
+     * Cron job group. If not specified, the default group is "default".
+     */
+    private static final String CRON_JOB_GROUP_PARAM_PROP = "cronJobName";
+
     private RepositoryJobInfo brokenLinksCheckingJobInfo;
 
     private boolean enabled;
     private String cronExpression;
+    private String cronJobName;
+    private String cronJobGroup;
 
     public boolean isEnabled() {
         return enabled;
@@ -76,11 +88,31 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
         return cronExpression;
     }
 
+    public String getCronJobName() {
+        return cronJobName;
+    }
+
+    public String getCronJobGroup() {
+        return cronJobGroup;
+    }
+
     @Override
     protected void doConfigure(Node moduleConfig) throws RepositoryException {
         final Node moduleConfigNode = getNonHandleModuleConfigurationNode(moduleConfig);
         enabled = JcrUtils.getBooleanProperty(moduleConfigNode, ENABLED_PARAM_PROP, Boolean.FALSE);
         cronExpression = JcrUtils.getStringProperty(moduleConfigNode, CRON_EXPRESSION_PARAM_PROP, null);
+
+        cronJobName = JcrUtils.getStringProperty(moduleConfigNode, CRON_JOB_NAME_PARAM_PROP, null);
+
+        if (StringUtils.isBlank(cronJobName)) {
+            cronJobName = BrokenLinksCheckingJob.class.getName();
+        }
+
+        cronJobGroup = JcrUtils.getStringProperty(moduleConfigNode, CRON_JOB_GROUP_PARAM_PROP, null);
+
+        if (StringUtils.isBlank(cronJobGroup)) {
+            cronJobGroup = "default";
+        }
     }
 
     @Override
@@ -91,14 +123,19 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
 
     @Override
     protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
-        super.onConfigurationChange(moduleConfig);
-        deleteScheduledJob();
-        scheduleJob(moduleConfig);
+        try {
+            synchronized (this) {
+                super.onConfigurationChange(moduleConfig);
+                deleteScheduledJob();
+                scheduleJob(moduleConfig);
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to reconfigure broken links checker.", e);
+        }
     }
 
     @Override
     protected void doShutdown() {
-        deleteScheduledJob();
     }
 
     private void deleteScheduledJob() {
@@ -130,17 +167,22 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
 
         try {
             final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-            RepositoryJobInfo tempJobInfo = new RepositoryJobInfo(BrokenLinksCheckingJob.class.getName(), BrokenLinksCheckingJob.class);
+
+            if (repositoryScheduler.checkExists(getCronJobName(), getCronJobGroup())) {
+                return;
+            }
+
+            RepositoryJobInfo tempJobInfo = new RepositoryJobInfo(getCronJobName(), getCronJobGroup(), BrokenLinksCheckingJob.class);
 
             for (Map.Entry<String, String> entry : getModuleConfigurationParametersMap(moduleConfig).entrySet()) {
                 tempJobInfo.setAttribute(entry.getKey(), entry.getValue());
             }
 
             final RepositoryJobTrigger brokenLinksCheckingJobTrigger =
-                    new RepositoryJobCronTrigger(tempJobInfo.getName() + "-trigger", getCronExpression());
+                    new RepositoryJobCronTrigger(tempJobInfo.getGroup() + "-" + tempJobInfo.getName() + "-trigger", getCronExpression());
             repositoryScheduler.scheduleJob(tempJobInfo, brokenLinksCheckingJobTrigger);
             brokenLinksCheckingJobInfo = tempJobInfo;
-            log.info("Scheduled a job: '{}'.", tempJobInfo.getName());
+            log.info("Scheduled a job: '{}:{}'.", tempJobInfo.getGroup(), tempJobInfo.getName());
         } catch (RepositoryException e) {
             log.error("Failed to scheudle a job.", e);
         }
