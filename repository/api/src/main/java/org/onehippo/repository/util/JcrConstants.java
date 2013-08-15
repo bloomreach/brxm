@@ -19,6 +19,11 @@ public final class JcrConstants {
 
     private JcrConstants() {}
 
+    // ------------------------------------------ uris
+
+    public static final String URI_JCR = "http://www.jcp.org/jcr/1.0";
+    public static final String URI_SV = "http://www.jcp.org/jcr/sv/1.0";
+
     // ------------------------------------------ node types
 
     public static final String MIX_VERSIONABLE = "mix:versionable";
