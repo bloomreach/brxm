@@ -24,6 +24,7 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -31,6 +32,10 @@ import org.hippoecm.hst.util.HstRequestUtils;
 public class DefineObjectsTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
+    public static final String HST_REQUEST_CONTEXT_ATTR_NAME = "hstRequestContext";
+    public static final String HST_REQUEST_ATTR_NAME = "hstRequest";
+    public static final String HST_RESPONSE_ATTR_NAME = "hstResponse";
+    public static final String HST_RESPONSE_CHILD_CONTENT_NAMES_ATTR_NAME = "hstResponseChildContentNames";
 
     /**
      * Helper method.
@@ -56,19 +61,21 @@ public class DefineObjectsTag extends TagSupport {
      */
     public int doStartTag() throws JspException {
 
+        setAttribute(RequestContextProvider.get(), HST_REQUEST_CONTEXT_ATTR_NAME);
+
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
         HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
         HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
 
         // set attribute hstRequest
-        setAttribute(hstRequest, "hstRequest");
+        setAttribute(hstRequest, HST_REQUEST_ATTR_NAME);
         // set attribute hstResponse
-        setAttribute(hstResponse, "hstResponse");
+        setAttribute(hstResponse, HST_RESPONSE_ATTR_NAME);
 
         if (hstResponse != null) {
             // needed to loop through child content nodes in freemarker templates
-            setAttribute(hstResponse.getChildContentNames(), "hstResponseChildContentNames");
+            setAttribute(hstResponse.getChildContentNames(), HST_RESPONSE_CHILD_CONTENT_NAMES_ATTR_NAME);
         }
 
         return SKIP_BODY;
@@ -82,16 +89,20 @@ public class DefineObjectsTag extends TagSupport {
 
         public VariableInfo[] getVariableInfo(TagData tagData) {
             VariableInfo[] info = new VariableInfo[]{
-                new VariableInfo("hstRequest",
-                                 "org.hippoecm.hst.core.component.HstRequest",
-                                 true,
-                                 VariableInfo.AT_BEGIN),
-                    new VariableInfo("hstResponse",
+                    new VariableInfo(HST_REQUEST_ATTR_NAME,
+                            "org.hippoecm.hst.core.component.HstRequest",
+                            true,
+                            VariableInfo.AT_BEGIN),
+                    new VariableInfo(HST_RESPONSE_ATTR_NAME,
                             "org.hippoecm.hst.core.component.HstResponse",
                             true,
                             VariableInfo.AT_BEGIN),
-                    new VariableInfo("hstResponseChildContentNames",
+                    new VariableInfo(HST_RESPONSE_CHILD_CONTENT_NAMES_ATTR_NAME,
                             "java.util.List",
+                            true,
+                            VariableInfo.AT_BEGIN),
+                    new VariableInfo(HST_REQUEST_CONTEXT_ATTR_NAME,
+                            "org.hippoecm.hst.core.request.HstRequestContext",
                             true,
                             VariableInfo.AT_BEGIN)
             };
