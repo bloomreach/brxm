@@ -1194,7 +1194,6 @@ automatic-export/repository/src/test/resources/log4j-filters.txt -text
 automatic-export/repository/src/test/resources/log4j.dtd -text
 automatic-export/repository/src/test/resources/log4j.xml -text
 brokenlinks/common/pom.xml svneol=native#text/plain
-brokenlinks/common/src/main/java/org/onehippo/cms7/brokenlinks/BrokenLinksCheckerModule.java -text
 brokenlinks/frontend/pom.xml svneol=native#text/plain
 brokenlinks/frontend/src/main/appended-resources/META-INF/LICENSE -text
 brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/layout/panel/BrokenLinksPanelPlugin_nl.properties -text

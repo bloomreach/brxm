@@ -31,6 +31,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.Document;
@@ -39,7 +40,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.scheduling.RepositoryJob;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.slf4j.Logger;
@@ -58,25 +58,33 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
     @Override
     public void execute(RepositoryJobExecutionContext context) throws RepositoryException {
-
         log.info("BrokenLinksCheckingJob begins ...");
+        long start = System.currentTimeMillis();
 
-        final BrokenLinksCheckerModule brokenLinksCheckerModule = HippoServiceRegistry.getService(BrokenLinksCheckerModule.class);
+        Session session = null;
 
-        if (brokenLinksCheckerModule == null) {
-            log.error("Broken Links checking job fails to run. No service found for the type of '{}'", BrokenLinksCheckerModule.class.getName());
-            return;
+        try {
+            session = context.getSession(new SimpleCredentials("system", new char[] {}));
+
+            Map<String, String> params = new HashMap<String, String>();
+
+            for (String attrName : context.getAttributeNames()) {
+                params.put(attrName, context.getAttribute(attrName));
+            }
+
+            checkBrokenLinks(session, new CheckExternalBrokenLinksConfig(params));
+        } finally {
+            if (session != null) {
+                session.logout();
+            }
+
+            log.info("BrokenLinksCheckingJob ends, spending {} seconds.", (System.currentTimeMillis() - start) / 1000.0);
         }
+    }
 
-        final Session session = brokenLinksCheckerModule.getSession();
+    private void checkBrokenLinks(final Session session, final CheckExternalBrokenLinksConfig config) throws RepositoryException {
         final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
-        Map<String, String> params = new HashMap<String, String>();
-        for (String attrName : context.getAttributeNames()) {
-            params.put(attrName, context.getAttribute(attrName));
-        }
-
-        final CheckExternalBrokenLinksConfig config = new CheckExternalBrokenLinksConfig(params);
         final LinkChecker linkChecker = new LinkChecker(config);
         log.info("Checking broken external links, configuration: ", config);
         // For the xpath query below, do not include a path constraint to begin with, like
@@ -90,7 +98,6 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         Map<String,Set<Link>> linksByHandleUUID = new HashMap<String, Set<Link>>();
         // the unique links by URL
         Map<String,Link> linksByURL = new HashMap<String, Link>();
-
 
         long start = System.currentTimeMillis();
         int count = 0;
@@ -236,9 +243,6 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
         }
 
-        long testingLinksTook = (System.currentTimeMillis() - start);
-
-        log.info("BrokenLinksCheckingJob ends, spending {} seconds.", testingLinksTook / 1000.0);
     }
 
     /**

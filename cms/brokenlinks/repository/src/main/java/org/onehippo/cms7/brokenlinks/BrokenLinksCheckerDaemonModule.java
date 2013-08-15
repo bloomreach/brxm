@@ -30,7 +30,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
-import org.onehippo.repository.modules.ProvidesService;
 import org.onehippo.repository.modules.RequiresService;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
@@ -50,8 +49,7 @@ import org.slf4j.LoggerFactory;
  * </P>
  */
 @RequiresService(types = { RepositoryScheduler.class })
-@ProvidesService(types = { BrokenLinksCheckerModule.class })
-public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemonModule implements BrokenLinksCheckerModule {
+public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemonModule {
 
     private static Logger log = LoggerFactory.getLogger(BrokenLinksCheckerDaemonModule.class);
 
@@ -70,11 +68,6 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
     private boolean enabled;
     private String cronExpression;
 
-    @Override
-    public Session getSession() {
-        return session;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
@@ -92,7 +85,6 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
 
     @Override
     protected void doInitialize(Session session) throws RepositoryException {
-        HippoServiceRegistry.registerService(this, BrokenLinksCheckerModule.class);
         final Node moduleConfig = JcrUtils.getNodeIfExists(moduleConfigPath, session);
         scheduleJob(moduleConfig);
     }
@@ -107,7 +99,6 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
     @Override
     protected void doShutdown() {
         deleteScheduledJob();
-        HippoServiceRegistry.unregisterService(this, BrokenLinksCheckerModule.class);
     }
 
     private void deleteScheduledJob() {
