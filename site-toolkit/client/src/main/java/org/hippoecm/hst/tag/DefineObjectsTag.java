@@ -59,11 +59,6 @@ public class DefineObjectsTag extends TagSupport {
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
         HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-
-        if (hstRequest == null) {
-            return SKIP_BODY;
-        }
-
         HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
 
         // set attribute hstRequest
@@ -71,8 +66,10 @@ public class DefineObjectsTag extends TagSupport {
         // set attribute hstResponse
         setAttribute(hstResponse, "hstResponse");
 
-        // needed to loop through child content nodes in freemarker templates
-        setAttribute(hstResponse.getChildContentNames(), "hstResponseChildContentNames");
+        if (hstResponse != null) {
+            // needed to loop through child content nodes in freemarker templates
+            setAttribute(hstResponse.getChildContentNames(), "hstResponseChildContentNames");
+        }
 
         return SKIP_BODY;
     }
@@ -89,10 +86,14 @@ public class DefineObjectsTag extends TagSupport {
                                  "org.hippoecm.hst.core.component.HstRequest",
                                  true,
                                  VariableInfo.AT_BEGIN),
-                new VariableInfo("renderResponse",
-                                 "org.hippoecm.hst.core.component.HstResponse",
-                                 true,
-                                 VariableInfo.AT_BEGIN)
+                    new VariableInfo("hstResponse",
+                            "org.hippoecm.hst.core.component.HstResponse",
+                            true,
+                            VariableInfo.AT_BEGIN),
+                    new VariableInfo("hstResponseChildContentNames",
+                            "java.util.List",
+                            true,
+                            VariableInfo.AT_BEGIN)
             };
 
             return info;
