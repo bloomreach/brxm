@@ -25,10 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -66,7 +69,12 @@ public class BrokenLinksTest extends RepositoryTestCase {
         Map<String, String> jobContextAttrs =  new HashMap<String, String>();
         jobContextAttrs.put(CheckExternalBrokenLinksConfig.CONFIG_START_PATH, "/test");
         jobContextAttrs.put(CheckExternalBrokenLinksConfig.CONFIG_HTTP_CLIENT_CLASSNAME, TestHttpClient.class.getName());
-        jobContext = new RepositoryJobExecutionContext(session, jobContextAttrs);
+        jobContext = new RepositoryJobExecutionContext(session, jobContextAttrs) {
+            @Override
+            public Session getSession(Credentials credentials) throws LoginException, RepositoryException {
+                return session.impersonate(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+            }
+        };
 
         while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
