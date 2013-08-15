@@ -53,6 +53,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-api</artifactId>
+      <version>${jackrabbit.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <scope>provided</scope>

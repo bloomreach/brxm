@@ -24,8 +24,10 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -52,6 +54,9 @@ import org.slf4j.LoggerFactory;
 public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemonModule {
 
     private static Logger log = LoggerFactory.getLogger(BrokenLinksCheckerDaemonModule.class);
+
+    private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
+    private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
 
     /**
      * Flag property name whether or not the scheduled job should be enabled.
@@ -119,6 +124,12 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
     protected void doInitialize(Session session) throws RepositoryException {
         final Node moduleConfig = JcrUtils.getNodeIfExists(moduleConfigPath, session);
         scheduleJob(moduleConfig);
+    }
+
+    @Override
+    protected boolean isReconfigureEvent(Event event) throws RepositoryException {
+        String eventPath = event.getPath();
+        return !((JackrabbitEvent) event).isExternal() && !eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER);
     }
 
     @Override
