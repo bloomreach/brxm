@@ -88,7 +88,7 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
                     JACKRABBIT_EVENT_IS_EXTERNAL_METHOD = jackrabbitEventClazz.getDeclaredMethod("isExternal", new Class<?> [] {});
                 }
 
-                return (Boolean) JACKRABBIT_EVENT_IS_EXTERNAL_METHOD.invoke(event, new Object[] {});
+                return (Boolean) JACKRABBIT_EVENT_IS_EXTERNAL_METHOD.invoke(event, (Object[]) null);
             }
         } catch (Exception e) {
             log.error("Failed to invoke org.apache.jackrabbit.api.observation.JackrabbitEvent#isExternal().", e);
@@ -102,7 +102,7 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
         try {
             synchronized (this) {
                 super.onConfigurationChange(moduleConfig);
-                unscheduledJob();
+                unscheduleJob();
                 scheduleJob(moduleConfig);
             }
         } catch (RepositoryException e) {
@@ -110,7 +110,7 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
         }
     }
 
-    protected void unscheduledJob() {
+    protected void unscheduleJob() {
         if (jobInfo == null) {
             return;
         }
