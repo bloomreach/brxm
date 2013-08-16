@@ -34,6 +34,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -85,7 +86,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
     private void checkBrokenLinks(final Session session, final CheckExternalBrokenLinksConfig config) throws RepositoryException {
         final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
-        final LinkChecker linkChecker = new LinkChecker(config);
+        final LinkChecker linkChecker = new LinkChecker(config, session);
         log.info("Checking broken external links, configuration: ", config);
         // For the xpath query below, do not include a path constraint to begin with, like
         // /jcr:root/content/documents as this results in much less efficient queries
@@ -147,8 +148,15 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                         Link alreadyPresent = linksByURL.get(url);
 
                         if (alreadyPresent == null) {
-                            Link link = new Link(url);
-                            linksByURL.put(url, link);
+                            String sourceNodeIdentifier = hippostdHtml.getIdentifier();
+                            Link link = new Link(url, sourceNodeIdentifier);
+
+                            if (StringUtils.startsWithIgnoreCase(url, "http:") || StringUtils.startsWithIgnoreCase(url, "https:")) {
+                                linksByURL.put(url, link);
+                            } else {
+                                linksByURL.put(sourceNodeIdentifier + "/" + url, link);
+                            }
+
                             log.debug("Adding to test for handle with '{}' the url '{}'", handleUUID, url);
                             linksForHandle.add(link);
                         } else {

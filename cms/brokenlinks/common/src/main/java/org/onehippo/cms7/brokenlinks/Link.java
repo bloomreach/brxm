@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,7 @@ public class Link implements Comparable<Object>, Serializable {
     public static final int ERROR_CODE = -1;
     public static final int EXCEPTION_CODE = 1000;
 
+    private String sourceNodeIdentifier;
     private String url;
     private boolean isBroken;
     private int resultCode;
@@ -33,8 +34,18 @@ public class Link implements Comparable<Object>, Serializable {
     private Calendar brokenSince;
     private String excerpt;
 
+    /**
+     * @deprecated Use {@link #Link(String, String)} instead.
+     * @param url
+     */
+    @Deprecated
     public Link(String url) {
+        this(url, null);
+    }
+
+    public Link(String url, String sourceNodeIdentifier) {
         this.url = url;
+        this.sourceNodeIdentifier = sourceNodeIdentifier;
     }
 
     @Override
@@ -61,6 +72,10 @@ public class Link implements Comparable<Object>, Serializable {
         } else {
             throw new ClassCastException("Cannot compare a Link to a " + o.getClass().getCanonicalName());
         }
+    }
+
+    public String getSourceNodeIdentifier() {
+        return sourceNodeIdentifier;
     }
 
     public String getUrl() {

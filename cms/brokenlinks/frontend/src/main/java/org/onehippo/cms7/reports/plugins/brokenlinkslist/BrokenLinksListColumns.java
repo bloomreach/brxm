@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.Session;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -219,7 +219,7 @@ public class BrokenLinksListColumns implements IClusterable {
             }
 
             Locale locale = Session.get().getLocale();
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("d-MMM-yyyy").withLocale(locale);
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").withLocale(locale);
 
             try {
                 final DateTime date = new DateTime(dateProperty.getDate());
@@ -342,7 +342,7 @@ public class BrokenLinksListColumns implements IClusterable {
         public String getValue(final Node node) throws RepositoryException {
             StringBuilder aggregateCell = new StringBuilder();
             Locale locale = Session.get().getLocale();
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("d-MMM-yyyy").withLocale(locale);
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm").withLocale(locale);
 
             NodeIterator linksIterator = node.getNodes("brokenlinks:link");
             Property dateProperty = null;
