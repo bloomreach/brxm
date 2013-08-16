@@ -18,6 +18,11 @@
     background: url(ckeditor-loading.gif) no-repeat center;
 }
 
+/* hide text in the textarea by giving it the same color as the background */
+.hippo-ckeditor-textarea {
+    color: #fff;
+}
+
 .cke_wysiwyg_div.cke_editable {
     color: #333;
     font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
