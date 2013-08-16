@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,9 @@
  *  limitations under the License.
  */
 package org.onehippo.cms7.brokenlinks;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,9 +33,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public class ParseTextsTest  {
 
     private static final String HREF1 = "http://www.onehippo.org:80";
@@ -48,7 +48,7 @@ public class ParseTextsTest  {
         final List<String> links = PlainTextLinksExtractor.getLinks(text);
         assertEquals(3, links.size());
     }
-    
+
     @Test
     public void testSimpleSrcWithSingleOrDoubleAndWithoutQuotes() {
             String text = "hello <img src='http://www.example.com'/> and <IMG Src=http://www.example.com/2 /> and  <IMG src=\"http://www.example.com/3 \" />";
@@ -124,12 +124,12 @@ public class ParseTextsTest  {
 
         final List<String> links = PlainTextLinksExtractor.getLinks(text);
 
-        // 4 links expected:
+        // 5 links expected:
         // Two times HREF1 but duplicates are collapsed in 1
         // One time HREF2 and one time HREF3
         // Two SRC but with same value
-        // the mailto: does not count
-        assertEquals(4, links.size());
+        // the mailto: does also count because the parser is not responsible for filtering out non http(s) urls by itself.
+        assertEquals(5, links.size());
 
     }
 
@@ -172,7 +172,7 @@ public class ParseTextsTest  {
 
         assertTrue("String parsing should be faster", stringParsingTook < domParsingTook);
     }
-    
+
     private void parseWithDom(InputStream stream) {
         try {
             DOMParser parser = new DOMParser();
@@ -222,7 +222,7 @@ public class ParseTextsTest  {
 
 
     private static final List<String> PROTOCOLS = Arrays.asList("http", "https");
-    
+
     private void addReference(final Node node, final String attribute) {
         final NamedNodeMap attributes = node.getAttributes();
 

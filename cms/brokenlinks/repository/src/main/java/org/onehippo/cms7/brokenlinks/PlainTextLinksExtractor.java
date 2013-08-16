@@ -40,7 +40,12 @@ public class PlainTextLinksExtractor {
     protected static final String DOUBLE_QUOTE = "\"";
     protected static final String SINGLE_QUOTE = "\'";
     protected static final String SCHEME_SUFFIX = "://";
+
+    /**
+     * @deprecated this class itself should not care how to deal with each url scheme.
+     */
     protected static final List<String> PROTOCOLS = Arrays.asList("http", "https");
+
     public static final String SPACE = " ";
 
     /**

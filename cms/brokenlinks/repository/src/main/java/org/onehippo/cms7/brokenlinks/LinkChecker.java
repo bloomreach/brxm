@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -55,6 +57,8 @@ import org.slf4j.LoggerFactory;
 public class LinkChecker {
 
     private static Logger log = LoggerFactory.getLogger(LinkChecker.class);
+
+    private static final Pattern URL_SCHEME_PATTERN = Pattern.compile("^([A-Za-z]+):.*$");
 
     private final Session session;
     private final HttpClient httpClient;
@@ -166,8 +170,16 @@ public class LinkChecker {
                     String url = link.getUrl();
 
                     if (StringUtils.isNotBlank(url)) {
-                        if (StringUtils.startsWithIgnoreCase(url, "http:") || StringUtils.startsWithIgnoreCase(url, "https:")) {
-                            checkExternalHttpLink(link);
+                        Matcher schemedUrlMatcher = URL_SCHEME_PATTERN.matcher(url);
+
+                        if (schemedUrlMatcher.matches()) {
+                            final String scheme = StringUtils.lowerCase(schemedUrlMatcher.group(1));
+
+                            if (StringUtils.equals("http", scheme) || StringUtils.equals("https", scheme)) {
+                                checkExternalHttpLink(link);
+                            } else {
+                                log.debug("LinkChecker doesn't check non http(s) urls: '{}'.", url);
+                            }
                         } else {
                             checkInternalLink(link);
                         }
