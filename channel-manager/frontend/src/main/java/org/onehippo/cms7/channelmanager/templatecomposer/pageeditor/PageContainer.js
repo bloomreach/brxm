@@ -323,8 +323,6 @@
                         hostToIFrame.publish('hidelinks');
                         self._complete();
                     }.createDelegate(this);
-
-                    // in case of fine grained locking we do not need to acquire a lock
                     // reset pageContext, the page and toolkit stores must be reloaded
                     self.pageContext = null;
                     // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.

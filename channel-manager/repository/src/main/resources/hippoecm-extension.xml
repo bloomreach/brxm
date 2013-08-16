@@ -51,7 +51,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="channel-changes-privileges">
+  <sv:node sv:name="manage-changes-privileges">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -62,11 +62,11 @@
       <sv:value>hippo:admin</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/channel.changes.privileges</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/manage.changes.privileges</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="channel-changes-privileges-path">
+  <sv:node sv:name="manage-changes-privileges-path">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -77,7 +77,7 @@
       <sv:value>/hst:hst/hst:channels</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/channel.changes.privileges.path</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/manage.changes.privileges.path</sv:value>
     </sv:property>
   </sv:node>
 
