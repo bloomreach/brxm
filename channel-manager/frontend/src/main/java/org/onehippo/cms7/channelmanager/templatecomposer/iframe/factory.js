@@ -222,8 +222,8 @@
                             if (hstMetaData !== null) {
                                 return hstMetaData;
                             }
-                        } catch (e) {
-                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + e);
+                        } catch (e2) {
+                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + e2);
                         }
                     }
 
