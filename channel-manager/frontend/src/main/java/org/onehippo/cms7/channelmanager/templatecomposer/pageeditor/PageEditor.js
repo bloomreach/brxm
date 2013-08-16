@@ -652,7 +652,6 @@
 
                 this.hideChannelChangesNotification();
             } else {
-                console.log("YESSSSSSSSSSS");
                 this.createViewToolbar();
 
                 hostToIFrame.publish('hideoverlay');
