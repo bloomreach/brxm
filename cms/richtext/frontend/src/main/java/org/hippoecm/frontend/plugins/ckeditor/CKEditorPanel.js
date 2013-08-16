@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function() {
+(function($) {
     "use strict";
 
     // minimum delay for setTimeout() calls as defined in HTML5 spec
@@ -48,6 +48,6 @@
             updateEditorElementWhenDataChanged(editor);
             destroyEditorWhenElementIsDestroyed(editor, elementId);
         }, DOM_MIN_TIMEOUT_MS);
-    }
+    };
 
-}());
+}(jQuery));

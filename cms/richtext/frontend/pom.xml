@@ -131,11 +131,13 @@
         <artifactId>jslint-maven-plugin</artifactId>
         <configuration>
           <predefinedVars>
+            CKEDITOR,
             Hippo,
+            HippoAjax,
+            jQuery,
             YAHOO,
-            window,
             Wicket,
-            jQuery
+            window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
           <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
