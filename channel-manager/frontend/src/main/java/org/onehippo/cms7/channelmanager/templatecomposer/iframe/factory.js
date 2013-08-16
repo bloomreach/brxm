@@ -186,8 +186,7 @@
 
             getContainerMetaData : function(element) {
                 var childNodes, children, i, descendants, j, len, childrenLen, descendantsLen, hstMetaData, tmpElement;
-
-                if (element.className === HST.CLASS.ITEM) {
+                if ($(element).hasClass(HST.CLASS.ITEM)) {
                     if (element.tagName === 'TR') {
                         children = element.childNodes;
                         childNodes = [];
@@ -212,7 +211,23 @@
                             iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + e);
                         }
                     }
-                } else if (element.className === HST.CLASS.CONTAINER) {
+                    // now check the previous siblings of the HstContainerItem : In case of not using the built in
+                    // vbox.ftl, table.ftl, ol.ftl, etc, the meta data can be written as a sibling just before the
+                    // HstContainerItem
+                    tmpElement = element;
+                    while (tmpElement.previousSibling !== null) {
+                        tmpElement = tmpElement.previousSibling;
+                        try {
+                            hstMetaData = this.convertToHstMetaData(tmpElement);
+                            if (hstMetaData !== null) {
+                                return hstMetaData;
+                            }
+                        } catch (e) {
+                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + e);
+                        }
+                    }
+
+                } else if ($(element).hasClass(HST.CLASS.CONTAINER)) {
                     tmpElement = element;
                     while (tmpElement.previousSibling !== null) {
                         tmpElement = tmpElement.previousSibling;
