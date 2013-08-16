@@ -2447,6 +2447,7 @@ richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/lock.
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/refresh.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/readme.md -text
 richtext/frontend/pom.xml -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractBrowserDialog.html -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractBrowserDialog.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractCKEditorDialog.java svneol=native#text/plain

@@ -81,9 +81,14 @@
         }
 
         function getSelectedLinkOrNull(selection) {
-            var linkNode = selection.getStartElement().getAscendant('a', true);
-            if (linkNode !== null && linkNode.is('a')) {
-                return linkNode;
+            var startElement = selection.getStartElement(),
+                linkNode;
+
+            if (startElement !== null) {
+                linkNode = startElement.getAscendant('a', true);
+                if (linkNode !== null && linkNode.is('a')) {
+                    return linkNode;
+                }
             }
             return null;
         }

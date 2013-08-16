@@ -1,12 +1,15 @@
 package org.hippoecm.frontend.plugins.ckeditor;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -24,6 +27,8 @@ import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
+import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
+import org.hippoecm.frontend.service.IBrowseService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
@@ -36,6 +41,10 @@ import org.slf4j.LoggerFactory;
 class CKEditorPanel extends Panel {
 
     private static final String WICKET_ID_EDITOR = "editor";
+    private static final ResourceReference CKEDITOR_PANEL_CSS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.css");
+    private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js");
+    private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
+
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
 
     private final String editorConfigJson;
@@ -94,18 +103,14 @@ class CKEditorPanel extends Panel {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
+        response.render(CssHeaderItem.forReference(CKEDITOR_PANEL_CSS));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEditorConstants.CKEDITOR_JS));
+        response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEDITOR_PANEL_JS));
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForEditor()));
     }
 
     private String getJavaScriptForEditor() {
-        return "(function() {"
-                + "     var editor = CKEDITOR.replace('" + editorId + "', " + getConfigurationForEditor() + "); "
-                + "     editor.on('change', editor.updateElement); "
-                + "     HippoAjax.registerDestroyFunction(editor.element.$, function() { "
-                + "         editor.destroy(); "
-                + "     }, window); "
-                + "}());";
+        return "Hippo.createCKEditor('" + editorId + "', " + getConfigurationForEditor() + ");";
     }
 
     private String getConfigurationForEditor() {
@@ -119,11 +124,14 @@ class CKEditorPanel extends Panel {
             JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", HippoPicker.PLUGIN_NAME);
             editorConfig.put(HippoPicker.CONFIG_KEY, createHippoPickerConfiguration());
 
+            // use a div-based editor instead of an iframe-based one to decrease loading time for many editor instances
+            JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", "divarea");
+
             // disable custom config loading if not configured
             JsonUtils.putIfAbsent(editorConfig, "customConfig", StringUtils.EMPTY);
 
             if (log.isInfoEnabled()) {
-                log.info("CKEditor configuration:\n" + editorConfig.toString(2));
+                log.info("CKEditor configuration:\n" + editorConfig.toString(LOGGED_EDITOR_CONFIG_INDENT_SPACES));
             }
 
             return editorConfig.toString();
