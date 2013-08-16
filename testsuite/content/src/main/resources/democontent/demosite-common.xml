@@ -100,10 +100,29 @@
           <sv:value>hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:content" sv:type="String">
-          <sv:value>We are Hippo! Come and visit us at &lt;a
-                        href="http://www.onehippo.com" target="_blank" title="Hippo
-                        website"&gt;www.onehippo.com&lt;/a&gt;!</sv:value>
+          <sv:value>&lt;html&gt;
+&lt;body&gt;
+
+&lt;p&gt;We are Hippo! Come and visit us at
+&lt;a title="Hippo website" target="_blank" href="http://www.onehippo.com"&gt;www.onehippo.com&lt;/a&gt;!
+&lt;/p&gt;
+
+&lt;p&gt;Test Broken Internal Link to &lt;a href="home-page"&gt;Homepage&lt;/a&gt;.&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</sv:value>
         </sv:property>
+        <sv:node sv:name="home-page">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:facetselect</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:docbase" sv:type="String">
+            <sv:value>00000000-0000-0000-0000-000000000000</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
+          <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
+          <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hippo:translation">
@@ -184,14 +203,14 @@
         <sv:property sv:name="hippostd:content" sv:type="String">
            <sv:value>&lt;html&gt;
             &lt;body&gt;
-            
+
             &lt;p&gt;Now go ahead and build your own website!&lt;/p&gt;
-            
+
             &lt;p&gt;This is a &lt;strong&gt;cross-domain&lt;/strong&gt; link to the &lt;strong&gt;&lt;a href="home-page"&gt;demo French&lt;/a&gt;&lt;/strong&gt;.  If
             you change the virtual hosts such that the demo French is located at a
             different host, you'll see that there is an automatic cross-domain link to the
             different host name&lt;/p&gt;
-            
+
             &lt;/body&gt;
             &lt;/html&gt;</sv:value>
         </sv:property>
