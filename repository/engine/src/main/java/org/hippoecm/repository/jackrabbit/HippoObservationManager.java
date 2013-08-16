@@ -17,14 +17,14 @@ package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.observation.EventJournal;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.cluster.ClusterNode;
 import org.apache.jackrabbit.core.observation.EventFilter;
-import org.apache.jackrabbit.core.observation.EventJournalImpl;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
+import org.apache.jackrabbit.core.observation.RevisionEventJournalImpl;
+import org.hippoecm.repository.api.RevisionEventJournal;
 
 public class HippoObservationManager extends ObservationManagerImpl {
 
@@ -37,7 +37,7 @@ public class HippoObservationManager extends ObservationManagerImpl {
         this.session = session;
     }
 
-    public EventJournal getEventJournal(
+    public RevisionEventJournal getEventJournal(
             int eventTypes, String absPath, boolean isDeep,
             String[] uuid, String[] nodeTypeName)
             throws RepositoryException {
@@ -49,7 +49,7 @@ public class HippoObservationManager extends ObservationManagerImpl {
 
         EventFilter filter = createEventFilter(
                 eventTypes, absPath, isDeep, uuid, nodeTypeName, false);
-        return new EventJournalImpl(
+        return new RevisionEventJournalImpl(
                 filter, clusterNode.getJournal(), clusterNode.getId(), session);
     }
 
