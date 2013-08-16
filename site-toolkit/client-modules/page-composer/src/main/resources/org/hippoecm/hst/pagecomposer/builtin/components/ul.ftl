@@ -16,9 +16,16 @@
 <#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]>
 
 <@hst.defineObjects/>
-<ul class="hst-container">
+<#if hstRequest.requestContext.cmsRequest>
+    <#assign containerClass = " class=\"hst-container\"">
+    <#assign containerItemClass = " class=\"hst-container-item\"">
+<#else>
+    <#assign containerClass = "">
+    <#assign containerItemClass = "">
+</#if>
+<ul${containerClass}>
      <#list hstResponseChildContentNames as childContentName>
-        <li class="hst-container-item">
+        <li${containerItemClass}>
             <@hst.include ref="${childContentName}"/>
         </li>
     </#list>
