@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class extending {@link AbstractReconfigurableDaemonModule} to allow
- * easy (un)registering scheduled task job with some default optimization when dealing with JCR events.
+ * easy (un)registering of a scheduled job with some default optimization when dealing with JCR events.
  * <p>
  * Derived classes are responsible for creating/returning a valid job info and job trigger
- * by implementing {@link #getRepositoryJobInfo(Node)} and {@link #getRepositoryJobTrigger(Node)}.
+ * by implementing {@link #getRepositoryJobInfo(Node)} and {@link #getRepositoryJobTrigger(Node, RepositoryJobInfo)}.
  * Also, they can return false in {@link #isSchedulerEnabled(Node)} when the scheduled job should be disabled.
  * </p>
  */
@@ -154,7 +154,7 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
         }
 
         if (jobInfo == null) {
-            log.info("{} returned a null jobInfo. Skipping reigstering a scheduled job.", getClass());
+            log.info("{} returned a null jobInfo. Skipping registering a scheduled job.", getClass());
             return;
         }
 
@@ -186,7 +186,7 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
 
             repositoryScheduler.scheduleJob(jobInfo, trigger);
         } catch (RepositoryException e) {
-            log.error("Failed to scheudle a job: " + jobInfo, e);
+            log.error("Failed to schedule a job: " + jobInfo, e);
         }
     }
 
