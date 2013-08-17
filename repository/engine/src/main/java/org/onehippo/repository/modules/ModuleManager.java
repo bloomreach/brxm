@@ -126,7 +126,7 @@ public class ModuleManager {
                         }
                     } else {
                         log.warn("Cannot configure daemon module {}: " +
-                                "module is configurable but there is no module configuration");
+                                "module is configurable but there is no module configuration", moduleName);
                     }
                 }
                 try {
