@@ -76,7 +76,7 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
     /**
      * Cron job group. If not specified, the default group is "default".
      */
-    private static final String CRON_JOB_GROUP_PARAM_PROP = "cronJobName";
+    private static final String CRON_JOB_GROUP_PARAM_PROP = "cronJobGroup";
 
     private RepositoryJobInfo brokenLinksCheckingJobInfo;
 
