@@ -23,12 +23,15 @@ import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 /**
  * Context object containing operational information and helper objects for use by
  * {@link RepositoryJob}s to do their job.
  */
 public class RepositoryJobExecutionContext {
+
+    private static final Credentials SYSTEM_CREDENTIALS = new SimpleCredentials("system", new char[] {});
 
     private final Session systemSession;
     private final Map<String, String> attributes;
@@ -40,9 +43,18 @@ public class RepositoryJobExecutionContext {
 
     /**
      * Get a session with the given credentials.
+     * Caller must log out the returned session after use.
      */
     public Session getSession(Credentials credentials) throws LoginException, RepositoryException {
         return systemSession.impersonate(credentials);
+    }
+
+    /**
+     * Get a system session.
+     * Caller must log out the returned session after use.
+     */
+    public Session getSystemSession() throws LoginException, RepositoryException {
+        return getSession(SYSTEM_CREDENTIALS);
     }
 
     /**
