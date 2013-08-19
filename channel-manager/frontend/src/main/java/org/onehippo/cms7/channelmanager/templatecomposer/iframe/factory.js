@@ -185,7 +185,7 @@
             },
 
             getContainerMetaData : function(element) {
-                var childNodes, children, i, descendants, j, len, childrenLen, descendantsLen, hstMetaData, tmpElement;
+                var childNodes, children, i, descendants, j, len, childrenLen, descendantsLen, hstMetaData;
                 if ($(element).hasClass(HST.CLASS.ITEM)) {
                     if (element.tagName === 'TR') {
                         children = element.childNodes;
@@ -214,31 +214,25 @@
                     // now check the previous siblings of the HstContainerItem : In case of not using the built in
                     // vbox.ftl, table.ftl, ol.ftl, etc, the meta data can be written as a sibling just before the
                     // HstContainerItem
-                    tmpElement = element;
-                    while (tmpElement.previousSibling !== null) {
-                        tmpElement = tmpElement.previousSibling;
-                        try {
-                            hstMetaData = this.convertToHstMetaData(tmpElement);
-                            if (hstMetaData !== null) {
-                                return hstMetaData;
-                            }
-                        } catch (e2) {
-                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + e2);
-                        }
-                    }
-
+                    return this.findMetaDataOnPreviousSibling(element);
                 } else if ($(element).hasClass(HST.CLASS.CONTAINER)) {
-                    tmpElement = element;
-                    while (tmpElement.previousSibling !== null) {
-                        tmpElement = tmpElement.previousSibling;
-                        try {
-                            hstMetaData = this.convertToHstMetaData(tmpElement);
-                            if (hstMetaData !== null) {
-                                return hstMetaData;
-                            }
-                        } catch (ex) {
-                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + ex);
+                    return this.findMetaDataOnPreviousSibling(element);
+                }
+                return null;
+            },
+
+            findMetaDataOnPreviousSibling : function(element) {
+                var tmpElement, hstMetaData;
+                tmpElement = element;
+                while (tmpElement.previousSibling !== null) {
+                    tmpElement = tmpElement.previousSibling;
+                    try {
+                        hstMetaData = this.convertToHstMetaData(tmpElement);
+                        if (hstMetaData !== null) {
+                            return hstMetaData;
                         }
+                    } catch (ex) {
+                        iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + ex);
                     }
                 }
                 return null;
