@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,9 @@
 package org.onehippo.cms7.brokenlinks;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ public class CheckExternalBrokenLinksConfig {
     public static final String CONFIG_SOCKET_TIMEOUT = "socketTimeout";
     public static final String CONFIG_CONNECTION_TIMEOUT = "connectionTimeout";
     public static final String CONFIG_DOCUMENTVISITORCLASS = "documentVisitorClass";
+    public static final String CONFIG_URL_EXCLUDES = "urlExcludes";
 
     private static final String DEFAULT_START_PATH = "/content/documents";
     private static final String DEFAULT_HTTP_CLIENT_CLASSNAME = DefaultHttpClient.class.getName();
@@ -41,11 +44,15 @@ public class CheckExternalBrokenLinksConfig {
     private static final int DEFAULT_SOCKET_TIMEOUT = 10000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 10000;
 
+    private static Pattern [] EMPTY_PATTERN_ARRAY = new Pattern [] {};
+
     private final String startPath;
     private final String httpClientClassName;
     private final int nrOfHttpThreads;
     private final int socketTimeout;
     private final int connectionTimeout;
+    private final String [] urlExcludes;
+    private Pattern [] urlExcludePatterns;
 
     public CheckExternalBrokenLinksConfig(Map map) {
         startPath = getString(map, CONFIG_START_PATH, DEFAULT_START_PATH);
@@ -57,6 +64,7 @@ public class CheckExternalBrokenLinksConfig {
         if (className != null) {
             log.warn("Document visitor classname is not used any more. You can remove the property 'documentVisitorClass'. Ignoring configured documentVisitorClass = '{}'", className);
         }
+        urlExcludes = StringUtils.split(getString(map, CONFIG_URL_EXCLUDES, null), " ,\t\f\r\n");
     }
 
     public String getHttpClientClassName() {
@@ -77,6 +85,22 @@ public class CheckExternalBrokenLinksConfig {
 
     public int getConnectionTimeout() {
         return connectionTimeout;
+    }
+
+    public Pattern [] getUrlExcludePatterns() {
+        if (urlExcludes == null) {
+            return EMPTY_PATTERN_ARRAY;
+        }
+
+        if (urlExcludePatterns == null) {
+            urlExcludePatterns = new Pattern[urlExcludes.length];
+
+            for (int i = 0; i < urlExcludes.length; i++) {
+                urlExcludePatterns[i] = GlobCompiler.compileGlobPattern(urlExcludes[i], Pattern.CASE_INSENSITIVE);
+            }
+        }
+
+        return urlExcludePatterns;
     }
 
     private String getString(Map map, String name, String defaultValue) {

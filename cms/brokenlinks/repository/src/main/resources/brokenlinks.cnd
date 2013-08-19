@@ -17,3 +17,6 @@
 + brokenlinks:link (brokenlinks:link) multiple
 
 [brokenlinks:config] > hippo:document
+- * (boolean)
+- * (long)
+- * (string)

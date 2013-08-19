@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,12 @@ public class PlainTextLinksExtractor {
     protected static final String DOUBLE_QUOTE = "\"";
     protected static final String SINGLE_QUOTE = "\'";
     protected static final String SCHEME_SUFFIX = "://";
+
+    /**
+     * @deprecated this class itself should not care how to deal with each url scheme.
+     */
     protected static final List<String> PROTOCOLS = Arrays.asList("http", "https");
+
     public static final String SPACE = " ";
 
     /**
@@ -60,7 +65,7 @@ public class PlainTextLinksExtractor {
     }
 
     /**
-     * parses the <code>text</code> and adds all external http/https links to <code>urls</code>
+     * parses the <code>text</code> and adds all links to <code>urls</code>
      *
      * @throws IllegalStateException when text for some reason cannot be parsed: This indicates a programming flaw if it
      *                               happens
@@ -123,8 +128,10 @@ public class PlainTextLinksExtractor {
                     // use the orignal 'text' and not lowercasedText to extract the href
                     // thus on purpose I use new String(text.substring(hrefStart, hrefEnd))
                     String url = new String(text.substring(hrefAttrValueStart, hrefAttrValueEnd));
-                    addUrlIfExternal(urls, url);
 
+                    if (!urls.contains(url)) {
+                        urls.add(url);
+                    }
                 }
             }
         }
@@ -181,7 +188,10 @@ public class PlainTextLinksExtractor {
                     // use the orignal 'text' and not lowercasedText to extract the href
                     // thus on purpose I use new String(text.substring(hrefStart, hrefEnd))
                     String url = new String(text.substring(srcAttrValueStart, srcAttrValueEnd));
-                    addUrlIfExternal(urls, url);
+
+                    if (!urls.contains(url)) {
+                        urls.add(url);
+                    }
                 }
 
             }
@@ -201,6 +211,12 @@ public class PlainTextLinksExtractor {
         return 0;
     }
 
+    /**
+     * @deprecated
+     * @param urls
+     * @param url
+     */
+    @Deprecated
     public static void addUrlIfExternal(final List<String> urls, final String url) {
         if (url.contains(SCHEME_SUFFIX)) {
             if (PROTOCOLS.contains(url.substring(0, url.indexOf(SCHEME_SUFFIX)).toLowerCase())) {
@@ -210,5 +226,4 @@ public class PlainTextLinksExtractor {
             }
         }
     }
-
 }

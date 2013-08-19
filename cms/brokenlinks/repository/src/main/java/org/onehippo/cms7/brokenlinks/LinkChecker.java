@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -37,6 +45,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +58,23 @@ public class LinkChecker {
 
     private static Logger log = LoggerFactory.getLogger(LinkChecker.class);
 
+    private static final Pattern URL_SCHEME_PATTERN = Pattern.compile("^([A-Za-z]+):.*$");
+
+    private final Session session;
     private final HttpClient httpClient;
     private final int nrOfThreads;
 
+    /**
+     * @deprecated Use {@link #LinkChecker(CheckExternalBrokenLinksConfig, Session)} instead.
+     * @param config
+     */
+    @Deprecated
     public LinkChecker(CheckExternalBrokenLinksConfig config) {
+        this(config, null);
+    }
+
+    public LinkChecker(CheckExternalBrokenLinksConfig config, Session session) {
+        this.session = session;
         ClientConnectionManager connManager = new PoolingClientConnectionManager();
         HttpParams params = new SyncBasicHttpParams();
         params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, config.getSocketTimeout());
@@ -104,8 +126,9 @@ public class LinkChecker {
     }
 
     private void runCheckerThreads(final Iterable<Link> links) {
-        
+
         ConcurrentLinkedQueue<Link> queue = new ConcurrentLinkedQueue<Link>();
+
         for (Link link : links) {
             queue.add(link);
         }
@@ -141,49 +164,136 @@ public class LinkChecker {
         @Override
         public void run() {
             try {
-                while(true) {
+                while (true) {
                     // Get the next item to process, throws a NoSuchElementException when we're done
                     Link link = queue.remove();
                     String url = link.getUrl();
-                    if (url != null) {
-                        final HttpContext httpContext = new BasicHttpContext();
-                        HttpRequestBase httpRequest = null;
-                        try {
-                            httpRequest = new HttpHead(url);
-                            HttpResponse httpResponse = httpClient.execute(httpRequest, httpContext);
-                            int headResultCode = httpResponse.getStatusLine().getStatusCode();
-                            httpRequest.reset();
-                            if (headResultCode == HttpStatus.SC_METHOD_NOT_ALLOWED) {
-                                httpRequest = new HttpGet(url);
-                                httpResponse = httpClient.execute(httpRequest, httpContext);
-                                headResultCode = httpResponse.getStatusLine().getStatusCode();
-                                httpRequest.reset();
-                            }
 
-                            if (headResultCode == HttpStatus.SC_MOVED_PERMANENTLY || headResultCode >= HttpStatus.SC_BAD_REQUEST) {
-                                link.setBroken(true);
-                                link.setBrokenSince(Calendar.getInstance());
-                                link.setResultCode(headResultCode);
+                    if (StringUtils.isNotBlank(url)) {
+                        Matcher schemedUrlMatcher = URL_SCHEME_PATTERN.matcher(url);
+
+                        if (schemedUrlMatcher.matches()) {
+                            final String scheme = StringUtils.lowerCase(schemedUrlMatcher.group(1));
+
+                            if (StringUtils.equals("http", scheme) || StringUtils.equals("https", scheme)) {
+                                checkExternalHttpLink(link);
+                            } else {
+                                log.debug("LinkChecker doesn't check non http(s) urls: '{}'.", url);
                             }
-                        } catch (IOException ioException) {
-                            link.setBroken(true);
-                            link.setBrokenSince(Calendar.getInstance());
-                            link.setResultCode(Link.EXCEPTION_CODE);
-                            link.setResultMessage(ioException.getClass().getCanonicalName());
-                        } catch (IllegalArgumentException ex) {
-                            link.setBroken(true);
-                            link.setBrokenSince(Calendar.getInstance());
-                            link.setResultCode(Link.EXCEPTION_CODE);
-                            link.setResultMessage(ex.getClass().getCanonicalName());
-                        } finally {
-                            if ((httpRequest != null) && (!httpRequest.isAborted())) {
-                                httpRequest.reset();
-                            }
+                        } else {
+                            checkInternalLink(link);
                         }
                     }
                 }
             } catch (NoSuchElementException ex) {
                 // Deliberate ignore, end of run
+            }
+        }
+
+        private void checkInternalLink(Link link) {
+            String url = link.getUrl();
+
+            if (StringUtils.contains(url, "/")) {
+                log.debug("Not a CMS internal link which cannot have a '/': {}", url);
+                return;
+            }
+
+            if (StringUtils.isEmpty(link.getSourceNodeIdentifier())) {
+                log.debug("Unable to check internal link. The link is unaware of source node identifier: {}", url);
+                return;
+            }
+
+            if (session == null) {
+                log.warn("Session is not given to LinkChecker!");
+                return;
+            }
+
+            Node sourceNode = null;
+
+            try {
+                sourceNode = session.getNodeByIdentifier(link.getSourceNodeIdentifier());
+                Node linkedNode = findLinkedNode(sourceNode, url);
+
+                if (linkedNode == null) {
+                    link.setBroken(true);
+                    link.setBrokenSince(Calendar.getInstance());
+                    link.setResultCode(Link.ERROR_CODE);
+                    link.setResultMessage("Broken reference");
+                }
+            } catch (RepositoryException e) {
+                log.warn("Failed to find the source node.", e);
+            }
+        }
+
+        private Node findLinkedNode(final Node sourceNode, String linkName) {
+            try {
+                if (!sourceNode.hasNode(linkName)) {
+                    log.debug("The source node doesn't have the link node named '{}'.", linkName);
+                    return null;
+                }
+
+                Node linkNode = sourceNode.getNode(linkName);
+
+                if (!linkNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                    log.debug("The link node doesn't have the '{}' property.", HippoNodeType.HIPPO_DOCBASE);
+                    return null;
+                }
+
+                String docbase = linkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+
+                if (StringUtils.isBlank(docbase)) {
+                    log.debug("The link node has a blank '{}' property.", HippoNodeType.HIPPO_DOCBASE);
+                    return null;
+                }
+
+                return session.getNodeByIdentifier(docbase);
+            } catch (ItemNotFoundException e) {
+                log.debug("The linked node is not found.", e);
+            } catch (RepositoryException e) {
+                log.warn("Failed to find linked node.", e);
+            }
+
+            return null;
+        }
+
+        private void checkExternalHttpLink(Link link) {
+            String url = StringUtils.trim(link.getUrl());
+
+            final HttpContext httpContext = new BasicHttpContext();
+            HttpRequestBase httpRequest = null;
+
+            try {
+                httpRequest = new HttpHead(url);
+                HttpResponse httpResponse = httpClient.execute(httpRequest, httpContext);
+                int headResultCode = httpResponse.getStatusLine().getStatusCode();
+                httpRequest.reset();
+
+                if (headResultCode == HttpStatus.SC_METHOD_NOT_ALLOWED) {
+                    httpRequest = new HttpGet(url);
+                    httpResponse = httpClient.execute(httpRequest, httpContext);
+                    headResultCode = httpResponse.getStatusLine().getStatusCode();
+                    httpRequest.reset();
+                }
+
+                if (headResultCode == HttpStatus.SC_MOVED_PERMANENTLY || headResultCode >= HttpStatus.SC_BAD_REQUEST) {
+                    link.setBroken(true);
+                    link.setBrokenSince(Calendar.getInstance());
+                    link.setResultCode(headResultCode);
+                }
+            } catch (IOException ioException) {
+                link.setBroken(true);
+                link.setBrokenSince(Calendar.getInstance());
+                link.setResultCode(Link.EXCEPTION_CODE);
+                link.setResultMessage(ioException.getClass().getCanonicalName());
+            } catch (IllegalArgumentException ex) {
+                link.setBroken(true);
+                link.setBrokenSince(Calendar.getInstance());
+                link.setResultCode(Link.EXCEPTION_CODE);
+                link.setResultMessage(ex.getClass().getCanonicalName());
+            } finally {
+                if ((httpRequest != null) && (!httpRequest.isAborted())) {
+                    httpRequest.reset();
+                }
             }
         }
     }
