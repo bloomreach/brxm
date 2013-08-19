@@ -57,6 +57,22 @@
     text-decoration: underline;
 }
 
+.cke_wysiwyg_div.cke_editable em {
+    font-style: italic;
+}
+
+.cke_wysiwyg_div.cke_editable strong {
+    font-weight: bold;
+}
+
+.cke_wysiwyg_div.cke_editable sub {
+    vertical-align: sub;
+}
+
+.cke_wysiwyg_div.cke_editable sup {
+    vertical-align: super;
+}
+
 .cke_wysiwyg_div.cke_editable ol,
 .cke_wysiwyg_div.cke_editable ul,
 .cke_wysiwyg_div.cke_editable dl {
