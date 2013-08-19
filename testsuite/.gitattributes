@@ -137,12 +137,14 @@ content/src/main/resources/hstconfiguration/democommon/catalog.xml -text svneol=
 content/src/main/resources/hstconfiguration/democommon/components.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/democommon/pages.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/democommon/templates.xml svneol=native#text/plain
+content/src/main/resources/hstconfiguration/democommon/workspace.xml -text
 content/src/main/resources/hstconfiguration/demosite/components.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite/pages.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite/sitemap.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/demosite/sitemapitemhandlers.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite/sitemenus.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/demosite/templates.xml -text svneol=unset#text/plain
+content/src/main/resources/hstconfiguration/demosite/workspace.xml -text
 content/src/main/resources/hstconfiguration/demosite_de/sitemap.xml -text
 content/src/main/resources/hstconfiguration/demosite_fr/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_fr/sitemenus.xml -text svneol=unset#text/plain

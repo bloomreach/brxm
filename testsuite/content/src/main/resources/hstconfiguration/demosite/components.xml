@@ -50,16 +50,13 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:component</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>a0634479-6593-4681-baaa-bf680b89b363</sv:value>
-      </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
         <sv:value>org.hippoecm.hst.demo.components.Home</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
         <sv:value>testParamFromMount</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
         <sv:value>${exampleMountParam}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
@@ -69,9 +66,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>c113d364-51f9-41d9-9a67-ed3303bbc856</sv:value>
-        </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
           <sv:value>org.hippoecm.hst.demo.components.TodoList</sv:value>
         </sv:property>
@@ -79,257 +73,45 @@
           <sv:value>todolist</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="banners-div">
+      <sv:node sv:name="container-with-skipped-banners">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
+          <sv:value>hst:containercomponentreference</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>07560767-c53d-4aa2-8669-77c12b3203d0</sv:value>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/container-with-skipped-banners</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.vBox</sv:value>
-        </sv:property>
-        <sv:node sv:name="banner1-div">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>b211c864-4148-45a1-947e-c47ebc18804a</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentfiltertag" sv:type="String">
-            <sv:value>aap</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="banner2-div">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>4f050804-dcf4-4d15-9fd0-59a5ea2eac23</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentfiltertag" sv:type="String">
-            <sv:value>noot</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
       <sv:node sv:name="banners-table">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
+          <sv:value>hst:containercomponentreference</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>500bc85b-3b63-4911-9d27-480d76f11cc0</sv:value>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/banners-table</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.Table</sv:value>
-        </sv:property>
-        <sv:node sv:name="banner1-table">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>ad077b91-2aa4-4f12-baa7-4c7f17eb40b1</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternameprefixes" sv:type="String">
-            <sv:value/>
-            <sv:value>youngcyclist</sv:value>
-            <sv:value>olddriver</sv:value>
-            <sv:value>authorizeduser</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-            <sv:value>borderColor</sv:value>
-            <sv:value>borderColor</sv:value>
-            <sv:value>borderColor</sv:value>
-            <sv:value>borderColor</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>#00FF00</sv:value>
-            <sv:value>#0000FF</sv:value>
-            <sv:value>#00FFFF</sv:value>
-            <sv:value>#FFFF00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="banner2-table">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>5231e6d7-1a9b-430c-b284-714167132b4d</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
-      <sv:node sv:name="banners-ol">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>f4664ed0-0c2e-49f6-8ee7-a726e8131d14</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.OrderedList</sv:value>
-        </sv:property>
-        <sv:node sv:name="banner1-ol">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>11aeb545-f925-441b-96a0-a0bb43abd3bd</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="banner2-ol">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>12f8bffb-887b-48c0-94e1-10f1baf61d70</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
       <sv:node sv:name="banners-ul">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
+          <sv:value>hst:containercomponentreference</sv:value>
         </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>ea6e1a69-53af-45aa-aa79-fcd8da218dd0</sv:value>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/banners-ul</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.UnorderedList</sv:value>
-        </sv:property>
-        <sv:node sv:name="banner1-ul">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>2cba024c-fa1d-4758-b946-96f05985c510</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="banner2-ul">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>20140897-371e-4e29-9e32-475863a3cf6f</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-        </sv:node>
       </sv:node>
-      <sv:node sv:name="container-with-skipped-banners">
+      <sv:node sv:name="banners-ol">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
+          <sv:value>hst:containercomponentreference</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.UnorderedList</sv:value>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/banners-ol</sv:value>
         </sv:property>
-        <sv:node sv:name="banner1-ul">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-            <sv:value>ExampleComponentWindowCreationFilter.hide</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="banner2-ul">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containeritemcomponent</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.components.Banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:template" sv:type="String">
-            <sv:value>banner</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:xtype" sv:type="String">
-            <sv:value>HST.Item</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
-            <sv:value>ExampleComponentWindowCreationFilter.hide</sv:value>
-          </sv:property>
-          <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>true</sv:value>
-          </sv:property>
-        </sv:node>
+      </sv:node>
+      <sv:node sv:name="banners-div">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:containercomponentreference</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/banners-div</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>

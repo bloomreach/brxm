@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright (C) 2010 - 2011 Hippo B.V.
+    Copyright (C) 2010 - 2013 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -139,6 +139,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:component</sv:value>
       </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>0f82b12b-8b74-46ba-a9e6-ef8b3c3a23b4</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
         <sv:value>org.hippoecm.hst.demo.components.Home</sv:value>
       </sv:property>
@@ -149,6 +152,9 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:component</sv:value>
         </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>12ac3e18-2195-423c-bb3b-df4d7c9b0156</sv:value>
+        </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
           <sv:value>org.hippoecm.hst.demo.components.TodoList</sv:value>
         </sv:property>
@@ -158,24 +164,23 @@
       </sv:node>
       <sv:node sv:name="container-1">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
+          <sv:value>hst:containercomponentreference</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.vBox</sv:value>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/container-1</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="container-2">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:containercomponent</sv:value>
+          <sv:value>hst:containercomponentreference</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:xtype" sv:type="String">
-          <sv:value>HST.vBox</sv:value>
+        <sv:property sv:name="hst:referencecomponent" sv:type="String">
+          <sv:value>bodyhome/container-2</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
-  </sv:node>
-
-  <sv:node sv:name="rss">
+   </sv:node>
+    <sv:node sv:name="rss">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
     </sv:property>
