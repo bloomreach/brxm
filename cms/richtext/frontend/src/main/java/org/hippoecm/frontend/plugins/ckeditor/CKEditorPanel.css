@@ -28,7 +28,7 @@
     font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
     font-size: 13px;
     line-height: 1.6em;
-    margin: 16px 8px;
+    padding: 16px;
 }
 
 .cke_wysiwyg_div.cke_editable blockquote {
