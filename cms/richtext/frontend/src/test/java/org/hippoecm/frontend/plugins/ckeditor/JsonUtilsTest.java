@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  * Tests {@link CKEditorStringUtils}.
@@ -57,6 +58,19 @@ public class JsonUtilsTest {
         object.put("test", "value");
         JsonUtils.putIfAbsent(object, "test", "newValue");
         assertEquals("value", object.getString("test"));
+    }
+
+    @Test
+    public void getOrCreateNewChildObject() throws JSONException {
+        JSONObject child = JsonUtils.getOrCreateChildObject(object, "test");
+        assertEquals("new child object is empty", 0, child.length());
+    }
+
+    @Test
+    public void getOrCreateExistingChildObject() throws JSONException {
+        JSONObject child = new JSONObject();
+        object.put("test", child);
+        assertSame(child, JsonUtils.getOrCreateChildObject(object, "test"));
     }
 
 }

@@ -7,16 +7,26 @@ import org.json.JSONObject;
 /**
  * JSON manipulation utilities
  */
-class JsonUtils {
+public class JsonUtils {
 
-    static JSONObject createJSONObject(String jsonOrBlank) throws JSONException {
+    public static JSONObject createJSONObject(String jsonOrBlank) throws JSONException {
         if (StringUtils.isBlank(jsonOrBlank)) {
             return new JSONObject();
         }
         return new JSONObject(jsonOrBlank);
     }
 
-    static void appendToCommaSeparatedString(JSONObject object, String key, String value) throws JSONException {
+    public static JSONObject getOrCreateChildObject(JSONObject object, String key) throws JSONException {
+        if (object.has(key)) {
+            return object.getJSONObject(key);
+        } else {
+            JSONObject child = new JSONObject();
+            object.put(key, child);
+            return child;
+        }
+    }
+
+    public static void appendToCommaSeparatedString(JSONObject object, String key, String value) throws JSONException {
         if (object.has(key)) {
             final String commaSeparated = object.getString(key);
             if (StringUtils.isBlank(commaSeparated)) {
@@ -31,7 +41,7 @@ class JsonUtils {
         }
     }
 
-    static void putIfAbsent(JSONObject object, String key, String value) throws JSONException {
+    public static void putIfAbsent(JSONObject object, String key, String value) throws JSONException {
         if (!object.has(key)) {
             object.put(key, value);
         }

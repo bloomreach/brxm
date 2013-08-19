@@ -19,33 +19,13 @@ import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**
- * Renders a preview version of a rich text field, including images and clickable links that open the referring document.
+ * Renders a preview version of a rich text field. The HTML of the model is shown as-is.
  */
 public class RichTextPreviewPanel extends AbstractRichTextViewPanel {
 
-    public RichTextPreviewPanel(final String id,
-                                final JcrNodeModel nodeModel,
-                                final IModel<String> htmlModel,
-                                final IBrowseService browser) {
+    public RichTextPreviewPanel(final String id, final IModel<String> htmlModel) {
         super(id);
-
-        final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(nodeModel, browser);
-        add(previewLinksBehavior);
-
-        final IModel<String> viewModel = createViewModel(nodeModel, htmlModel, previewLinksBehavior);
-        addView(viewModel);
-    }
-
-    private IModel<String> createViewModel(JcrNodeModel nodeModel, IModel<String> htmlModel, PreviewLinksBehavior previewLinksBehavior) {
-        final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(nodeModel);
-        final IRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory(nodeModel);
-        final IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory);
-
-        final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
-        final PrefixingModel prefixingModel = new PrefixingModel(stripScriptModel, urlProvider);
-        final BrowsableModel browsableModel = new BrowsableModel(prefixingModel, previewLinksBehavior);
-
-        return browsableModel;
+        addView(htmlModel);
     }
 
 }

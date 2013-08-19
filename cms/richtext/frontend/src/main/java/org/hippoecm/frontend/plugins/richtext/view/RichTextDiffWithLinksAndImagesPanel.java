@@ -4,10 +4,8 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -36,22 +34,22 @@ import org.slf4j.LoggerFactory;
  * Elements that have been added to or removed from the base version of the model are marked with green and red,
  * respectively.
  */
-public class RichTextComparePanel extends AbstractRichTextViewPanel {
+public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPanel {
 
     private static final CssResourceReference DIFF_CSS = new CssResourceReference(HtmlDiffModel.class, "diff.css");
 
-    private static final Logger log = LoggerFactory.getLogger(RichTextComparePanel.class);
+    private static final Logger log = LoggerFactory.getLogger(RichTextDiffWithLinksAndImagesPanel.class);
 
-    public RichTextComparePanel(final String id,
-                                final JcrNodeModel baseNodeModel,
-                                final JcrNodeModel currentNodeModel,
-                                final IBrowseService browser) {
+    public RichTextDiffWithLinksAndImagesPanel(final String id,
+                                               final JcrNodeModel baseNodeModel,
+                                               final JcrNodeModel currentNodeModel,
+                                               final IBrowseService browser) {
         super(id);
 
         final PreviewLinksBehavior previewLinksBehavior = new PreviewLinksBehavior(currentNodeModel, browser);
         add(previewLinksBehavior);
 
-        final IModel<String> viewModel = createCompareModel(baseNodeModel, currentNodeModel, previewLinksBehavior);
+        final IModel<String> viewModel = createDiffModel(baseNodeModel, currentNodeModel, previewLinksBehavior);
         addView(viewModel);
     }
 
@@ -61,9 +59,9 @@ public class RichTextComparePanel extends AbstractRichTextViewPanel {
         response.render(CssHeaderItem.forReference(DIFF_CSS));
     }
 
-    private IModel<String> createCompareModel(final JcrNodeModel baseNodeModel,
-                                              final JcrNodeModel currentNodeModel,
-                                              final PreviewLinksBehavior previewLinksBehavior) {
+    private IModel<String> createDiffModel(final JcrNodeModel baseNodeModel,
+                                           final JcrNodeModel currentNodeModel,
+                                           final PreviewLinksBehavior previewLinksBehavior) {
 
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
         final IRichTextLinkFactory baseLinkFactory = new JcrRichTextLinkFactory(baseNodeModel);

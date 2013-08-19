@@ -1,12 +1,18 @@
 package org.hippoecm.frontend.plugins.ckeditor;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -27,8 +33,6 @@ import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
-import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
-import org.hippoecm.frontend.service.IBrowseService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
@@ -36,9 +40,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Renders an instance of CKEditor to edit the given model.
+ * Renders an instance of CKEditor to edit the HTML in the given model.
+ * Additional behavior can be added via the {@link #addBehavior(CKEditorPanelBehavior)} method.
  */
-class CKEditorPanel extends Panel {
+public class CKEditorPanel extends Panel {
 
     private static final String WICKET_ID_EDITOR = "editor";
     private static final ResourceReference CKEDITOR_PANEL_CSS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.css");
@@ -49,54 +54,41 @@ class CKEditorPanel extends Panel {
 
     private final String editorConfigJson;
     private final String editorId;
-    private final CKEditorImageService imageService;
-    private final ImagePickerBehavior imagePickerBehavior;
-    private final CKEditorLinkService linkService;
-    private final DocumentPickerBehavior documentPickerBehavior;
+    private final List<CKEditorPanelBehavior> behaviors;
 
-    CKEditorPanel(final String id,
-                  final IPluginContext context,
-                  final IPluginConfig imagePickerConfig,
-                  final IPluginConfig documentPickerConfig,
+    public CKEditorPanel(final String id,
                   final String editorConfigJson,
-                  final JcrNodeModel nodeModel,
-                  final IModel<String> htmlModel,
-                  IHtmlCleanerService htmlCleaner) {
+                  final IModel<String> editModel) {
         super(id);
 
         this.editorConfigJson = editorConfigJson;
 
-        final TextArea<String> textArea = createTextArea(nodeModel, htmlModel, htmlCleaner);
+        final TextArea<String> textArea = new TextArea<String>(WICKET_ID_EDITOR, editModel);
+        textArea.setOutputMarkupId(true);
         add(textArea);
 
         editorId = textArea.getMarkupId();
 
-        imageService = new CKEditorImageService(new JcrRichTextImageFactory(nodeModel), editorId);
-        imagePickerBehavior = new ImagePickerBehavior(context, imagePickerConfig, imageService, editorId);
-        add(imagePickerBehavior);
-
-        linkService = new CKEditorLinkService(new JcrRichTextLinkFactory(nodeModel), editorId);
-        documentPickerBehavior = new DocumentPickerBehavior(context, documentPickerConfig, linkService, editorId);
-        add(documentPickerBehavior);
+        behaviors = new LinkedList<CKEditorPanelBehavior>();
     }
 
-    private TextArea<String> createTextArea(final JcrNodeModel nodeModel, final IModel<String> htmlModel, final IHtmlCleanerService htmlCleaner) {
-        final IModel<String> editModel = createEditModel(nodeModel, htmlModel, htmlCleaner);
-        final TextArea<String> textArea = new TextArea<String>(WICKET_ID_EDITOR, editModel);
-        textArea.setOutputMarkupId(true);
-        return textArea;
+    /**
+     * @return the ID of the editor instance.
+     */
+    public String getEditorId() {
+        return editorId;
     }
 
-    private IModel<String> createEditModel(final JcrNodeModel nodeModel, final IModel<String> htmlModel, final IHtmlCleanerService htmlCleaner) {
-        final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(nodeModel);
-        final IRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory(nodeModel);
+    /**
+     * Adds custom server-side behavior to this panel.
+     * @param behavior the behavior to add.
+     */
+    public void addBehavior(CKEditorPanelBehavior behavior) {
+        behaviors.add(behavior);
 
-        RichTextModel model = new RichTextModel(htmlModel);
-        model.setCleaner(htmlCleaner);
-        model.setLinkFactory(linkFactory);
-
-        IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory);
-        return new PrefixingModel(model, urlProvider);
+        for (AbstractAjaxBehavior ajaxBehavior : behavior.getAjaxBehaviors()) {
+            add(ajaxBehavior);
+        }
     }
 
     @Override
@@ -117,12 +109,13 @@ class CKEditorPanel extends Panel {
         try {
             JSONObject editorConfig = JsonUtils.createJSONObject(editorConfigJson);
 
+            // configure behaviors
+            for (CKEditorPanelBehavior behavior : behaviors) {
+                behavior.addCKEditorConfiguration(editorConfig);
+            }
+
             // always use the language of the current CMS locale
             editorConfig.put("language", getLocale().getLanguage());
-
-            // load and configure Hippo CKEditor plugins
-            JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", HippoPicker.PLUGIN_NAME);
-            editorConfig.put(HippoPicker.CONFIG_KEY, createHippoPickerConfiguration());
 
             // use a div-based editor instead of an iframe-based one to decrease loading time for many editor instances
             JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", "divarea");
@@ -140,27 +133,10 @@ class CKEditorPanel extends Panel {
         }
     }
 
-    private JSONObject createHippoPickerConfiguration() throws JSONException {
-        JSONObject config = new JSONObject();
-
-        JSONObject imagePickerConfig = new JSONObject();
-        imagePickerConfig.put(HippoPicker.IMAGE_PICKER_CONFIG_CALLBACK_URL, imagePickerBehavior.getCallbackUrl().toString());
-        config.put(HippoPicker.IMAGE_PICKER_CONFIG_KEY, imagePickerConfig);
-
-        JSONObject internalLinkPickerConfig = new JSONObject();
-        internalLinkPickerConfig.put(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_CALLBACK_URL, documentPickerBehavior.getCallbackUrl().toString());
-        config.put(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_KEY, internalLinkPickerConfig);
-
-        return config;
-    }
-
     @Override
     protected void onDetach() {
-        if (imageService != null) {
-            imageService.detach();
-        }
-        if (linkService != null) {
-            linkService.detach();
+        for (CKEditorPanelBehavior behavior : behaviors) {
+            behavior.detach();
         }
         super.onDetach();
     }

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor.dialog.links;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -45,6 +46,14 @@ public class DocumentPickerBehavior extends AbstractAjaxDialogBehavior {
         final DocumentBrowserDialog dialog = new DocumentBrowserDialog<InternalCKEditorLink>(
                 getPluginContext(), getPluginConfig(), model, editorId);
         getDialogService().show(dialog);
+    }
+
+    @Override
+    public void detach(final Component component) {
+        super.detach(component);
+        if (linkService != null) {
+            linkService.detach();
+        }
     }
 
 }

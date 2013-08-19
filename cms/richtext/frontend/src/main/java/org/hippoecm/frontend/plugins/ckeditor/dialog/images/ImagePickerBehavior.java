@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor.dialog.images;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -43,6 +44,14 @@ public class ImagePickerBehavior extends AbstractAjaxDialogBehavior {
     protected void respond(AjaxRequestTarget target) {
         IModel<CKEditorImage> model = new Model<CKEditorImage>(imageService.createCKEditorImage(getParameters()));
         getDialogService().show(new ImageBrowserDialog(getPluginContext(), getPluginConfig(), model, editorId));
+    }
+
+    @Override
+    public void detach(final Component component) {
+        super.detach(component);
+        if (imageService != null) {
+            imageService.detach();
+        }
     }
 
 }
