@@ -29,38 +29,84 @@ import org.junit.Test;
  */
 public class GlobCompilerTest {
 
-    private static final String [] EXCLUDE_PATTERNS = {
-        "http://www.example.com/vpn/*",
-        "${*"
-    };
-
-    private Pattern [] excludePatterns;
-
     @Before
     public void before() throws Exception {
-        excludePatterns = new Pattern[EXCLUDE_PATTERNS.length];
-
-        for (int i = 0; i < EXCLUDE_PATTERNS.length; i++) {
-            excludePatterns[i] = GlobCompiler.compileGlobPattern(EXCLUDE_PATTERNS[i], Pattern.CASE_INSENSITIVE);
-        }
     }
 
     @Test
-    public void testGlobs() throws Exception {
-        assertFalse(isExcludedURL("http://www.example.com/"));
-        assertFalse(isExcludedURL("http://www.example.com/index.html"));
-        assertFalse(isExcludedURL("http://www.example.com/news/"));
-        assertFalse(isExcludedURL("http://www.example.com/news/news1.html"));
-        assertFalse(isExcludedURL("http://www.example.com/vpn"));
-        assertTrue(isExcludedURL("http://www.example.com/vpn/"));
-        assertTrue(isExcludedURL("http://www.eXampLe.COM/vPn/CaseInsensitive.html"));
-        assertTrue(isExcludedURL("http://www.example.com/vpn/a/b/c"));
-        assertTrue(isExcludedURL("${company.vpn.url}/a/b/c"));
+    public void testSimpleGlobExpressions() throws Exception {
+        String [] exprs = {
+            "http*://www.example.com/vpn/*", // typical http(s) urls
+            "${*"                            // some custom url pattern starting with a variable expression (${...})
+        };
+
+        Pattern [] patterns = createPatterns(new GlobCompiler(), exprs, Pattern.CASE_INSENSITIVE);
+
+        assertFalse(matchWithAnyPattern("http://www.example.com/", patterns));
+        assertFalse(matchWithAnyPattern("http://www.example.com/index.html", patterns));
+        assertFalse(matchWithAnyPattern("http://www.example.com/news/", patterns));
+        assertFalse(matchWithAnyPattern("http://www.example.com/news/news1.html", patterns));
+        assertFalse(matchWithAnyPattern("http://www.example.com/vpn", patterns));
+        assertTrue(matchWithAnyPattern("http://www.example.com/vpn/", patterns));
+        assertTrue(matchWithAnyPattern("http://www.eXampLe.COM/vPn/CaseInsensitive.html", patterns));
+        assertTrue(matchWithAnyPattern("http://www.example.com/vpn/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("https://www.example.com/vpn/secure/", patterns));
+        assertFalse(matchWithAnyPattern("https://www2.example.com/vpn/secure/", patterns));
+        assertTrue(matchWithAnyPattern("${company.vpn.url}/a/b/c", patterns));
     }
 
-    private boolean isExcludedURL(String url) {
-        for (Pattern excludePattern : excludePatterns) {
-            Matcher m = excludePattern.matcher(url);
+    @Test
+    public void testMatchOneOrZeroUnknownCharGlobExpressions() throws Exception {
+        GlobCompiler compiler = new GlobCompiler();
+        compiler.setQuestionMatchesZero(true);
+
+        String [] exprs = { "http*://www.?atclinic.com/*" };
+        Pattern [] patterns = createPatterns(compiler, exprs, Pattern.CASE_INSENSITIVE);
+
+        assertTrue(matchWithAnyPattern("http://www.batclinic.com/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("http://www.catclinic.com/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("https://www.matclinic.com/secure/", patterns));
+        assertTrue(matchWithAnyPattern("http://www.atclinic.com/a/b/c", patterns));
+        assertFalse(matchWithAnyPattern("http://www.duatclinic.com/a/b/c", patterns));
+    }
+
+    @Test
+    public void testMatchOneUnknownCharGlobExpressions() throws Exception {
+        String [] exprs = { "http*://www.?atclinic.com/*" };
+        Pattern [] patterns = createPatterns(new GlobCompiler(), exprs, Pattern.CASE_INSENSITIVE);
+
+        assertTrue(matchWithAnyPattern("http://www.batclinic.com/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("http://www.catclinic.com/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("https://www.matclinic.com/secure/", patterns));
+        assertFalse(matchWithAnyPattern("http://www.atclinic.com/a/b/c", patterns));
+        assertFalse(matchWithAnyPattern("http://www.duatclinic.com/a/b/c", patterns));
+    }
+
+    @Test
+    public void testCharsetGlobExpressions() throws Exception {
+        String [] exprs = { "http*://www.[bc]atclinic.com/*" };
+        Pattern [] patterns = createPatterns(new GlobCompiler(), exprs, Pattern.CASE_INSENSITIVE);
+
+        assertTrue(matchWithAnyPattern("http://www.batclinic.com/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("http://www.catclinic.com/a/b/c", patterns));
+        assertTrue(matchWithAnyPattern("https://www.catclinic.com/secure/", patterns));
+        assertFalse(matchWithAnyPattern("http://www.example.com/a/b/c", patterns));
+    }
+
+    private Pattern [] createPatterns(GlobCompiler compiler, String [] exprs, int options) throws Exception {
+        Pattern [] patterns = new Pattern[exprs.length];
+
+        for (int i = 0; i < exprs.length; i++) {
+            patterns[i] = compiler.compile(exprs[i], options);
+        }
+
+        return patterns;
+    }
+
+    private boolean matchWithAnyPattern(String s, final Pattern [] patterns) {
+        for (Pattern pattern : patterns) {
+            Matcher m = pattern.matcher(s);
+
             if (m.matches()) {
                 return true;
             }

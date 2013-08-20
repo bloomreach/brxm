@@ -95,8 +95,10 @@ public class CheckExternalBrokenLinksConfig {
         if (urlExcludePatterns == null) {
             urlExcludePatterns = new Pattern[urlExcludes.length];
 
+            GlobCompiler compiler = new GlobCompiler();
+
             for (int i = 0; i < urlExcludes.length; i++) {
-                urlExcludePatterns[i] = GlobCompiler.compileGlobPattern(urlExcludes[i], Pattern.CASE_INSENSITIVE);
+                urlExcludePatterns[i] = compiler.compile(urlExcludes[i], Pattern.CASE_INSENSITIVE);
             }
         }
 
