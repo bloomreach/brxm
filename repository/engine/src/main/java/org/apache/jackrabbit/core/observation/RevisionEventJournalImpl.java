@@ -440,7 +440,7 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
                     timestamp, userData, filter, Collections.emptySet(), true) {
                 @Override
                 public Object next() {
-                    return new RevisionEventImpl(session, (EventState) super.next(), timestamp, userData, revision);
+                    return new RevisionEventImpl((EventImpl)super.next(), revision);
 
                 }
             };
@@ -454,8 +454,8 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
         private final EventImpl event;
         private final long revision;
 
-        RevisionEventImpl(SessionImpl session, EventState eventState, long timestamp, String userData, long revision) {
-            this.event = new EventImpl(session, eventState, timestamp, userData);
+        RevisionEventImpl(EventImpl event, long revision) {
+            this.event = event;
             this.revision = revision;
         }
 
