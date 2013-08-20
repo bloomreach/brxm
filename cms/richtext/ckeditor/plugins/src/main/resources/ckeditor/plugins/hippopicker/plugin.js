@@ -73,7 +73,7 @@
         }
 
         function isSelectionEmpty(selection) {
-            if (selection.getType() === CKEDITOR.SELECTION_NONE) {
+            if (selection === null || selection.getType() === CKEDITOR.SELECTION_NONE) {
                 return true;
             }
             var ranges = selection.getRanges();
@@ -81,8 +81,13 @@
         }
 
         function getSelectedLinkOrNull(selection) {
-            var startElement = selection.getStartElement(),
-                linkNode;
+            var startElement, linkNode;
+
+            if (selection === null) {
+                return null;
+            }
+
+            startElement = selection.getStartElement();
 
             if (startElement !== null) {
                 linkNode = startElement.getAscendant('a', true);
