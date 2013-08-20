@@ -42,7 +42,7 @@ public class CKEditorPanelPickerBehavior implements CKEditorPanelBehavior {
 
     private void addInternalLinkPickerConfiguration(final JSONObject pickerPluginConfig) throws JSONException {
         final JSONObject config = JsonUtils.getOrCreateChildObject(pickerPluginConfig, HippoPicker.INTERNAL_LINK_PICKER_CONFIG_KEY);
-        addCallbackUrl(config, HippoPicker.INTERNAL_LINK_PICKER_CONFIG_KEY, documentPickerBehavior);
+        addCallbackUrl(config, HippoPicker.INTERNAL_LINK_PICKER_CONFIG_CALLBACK_URL, documentPickerBehavior);
     }
 
     private void addImagePickerConfiguration(final JSONObject pickerPluginConfig) throws JSONException {
