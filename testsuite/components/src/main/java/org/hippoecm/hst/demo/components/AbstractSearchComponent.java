@@ -111,6 +111,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
                 Filter filter = (Filter)hstQuery.getFilter();
                 if (filter == null) {
                     filter = hstQuery.createFilter();
+                    hstQuery.setFilter(filter);
                 }
                 dateRangeQueryConstraints.addConstraintToFilter(filter);
             }
