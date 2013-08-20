@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,6 @@
     <module>deprecated</module>
     <module>upgrade</module>
     <module>utilities</module>
-    <module>wfdropbox</module>
     <module>test</module>
     <module>testutils</module>
     <module>testcontent</module>
@@ -79,7 +78,7 @@
     <!-- Test dependencies  -->
     <atomikos.version>3.8.0</atomikos.version>
     <junit.version>4.4</junit.version>
-    
+
     <!-- Project Dependencies -->
     <commons-io.version>1.4</commons-io.version>
     <lucene.version>2.2.0</lucene.version>
@@ -227,7 +226,7 @@
             <artifactId>jta</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

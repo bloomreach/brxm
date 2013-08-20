@@ -206,12 +206,6 @@ utilities/tm.out.1
 utilities/tm.out.lck
 utilities/tmlog.lck
 utilities/wdbp-error-log.txt
-wfdropbox/.classpath
-wfdropbox/.project
-wfdropbox/.settings
-wfdropbox/hippo-addon-wfdropbox.iml
-wfdropbox/hippo-repository-tools-documentation.iml
-wfdropbox/target
 workflow/*.iml
 workflow/*.log
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/.FullReviewedActionsWorkflowImpl.java.swp

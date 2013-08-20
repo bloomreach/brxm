@@ -423,9 +423,6 @@ utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java
 utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
-wfdropbox/pom.xml svneol=native#text/plain
-wfdropbox/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-wfdropbox/src/main/resources/wfdropbox.cnd -text
 workflow/src/main/java/org/hippoecm/faceteddate/DerivedDataFunction.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflowImpl.java -text
