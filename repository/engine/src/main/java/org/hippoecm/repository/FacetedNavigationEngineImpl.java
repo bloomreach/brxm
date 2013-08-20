@@ -72,6 +72,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.OpenBitSet;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.query.lucene.AuthorizationFilter;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetFiltersQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
@@ -234,7 +235,11 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
 
         DocIdSet getAuthorisationIdSet(IndexReader reader) throws IOException {
-            return getAuthorizationFilter(session).getDocIdSet(reader);
+            final AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
+            if (authorizationFilter == null) {
+                return null;
+            }
+            return authorizationFilter.getDocIdSet(reader);
         }
     }
 
@@ -389,7 +394,9 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             final BooleanQuery authorizationQuery = contextImpl.getAuthorizationQuery();
             if (authorizationQuery != null) {
                 final DocIdSet authorisationIdSet = contextImpl.getAuthorisationIdSet(indexReader);
-                matchingDocsSetBuilder.add(authorisationIdSet);
+                if (authorisationIdSet != null) {
+                    matchingDocsSetBuilder.add(authorisationIdSet);
+                }
             }
 
             if (resultset != null) {
