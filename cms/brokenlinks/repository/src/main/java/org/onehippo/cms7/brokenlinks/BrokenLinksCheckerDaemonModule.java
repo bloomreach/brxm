@@ -23,15 +23,11 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.observation.Event;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
+import org.onehippo.repository.modules.AbstractReconfigurableSchedulingDaemonModule;
 import org.onehippo.repository.modules.RequiresService;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
@@ -51,12 +47,9 @@ import org.slf4j.LoggerFactory;
  * </P>
  */
 @RequiresService(types = { RepositoryScheduler.class })
-public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemonModule {
+public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableSchedulingDaemonModule {
 
     private static Logger log = LoggerFactory.getLogger(BrokenLinksCheckerDaemonModule.class);
-
-    private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
-    private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
 
     /**
      * Flag property name whether or not the scheduled job should be enabled.
@@ -78,129 +71,44 @@ public class BrokenLinksCheckerDaemonModule extends AbstractReconfigurableDaemon
      */
     private static final String CRON_JOB_GROUP_PARAM_PROP = "cronJobGroup";
 
-    private RepositoryJobInfo brokenLinksCheckingJobInfo;
-
-    private boolean enabled;
-    private String cronExpression;
-    private String cronJobName;
-    private String cronJobGroup;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public String getCronExpression() {
-        return cronExpression;
-    }
-
-    public String getCronJobName() {
-        return cronJobName;
-    }
-
-    public String getCronJobGroup() {
-        return cronJobGroup;
-    }
-
     @Override
-    protected void doConfigure(Node moduleConfig) throws RepositoryException {
+    protected boolean isSchedulerEnabled(Node moduleConfig) throws RepositoryException {
         final Node moduleConfigNode = getNonHandleModuleConfigurationNode(moduleConfig);
-        enabled = JcrUtils.getBooleanProperty(moduleConfigNode, ENABLED_PARAM_PROP, Boolean.FALSE);
-        cronExpression = JcrUtils.getStringProperty(moduleConfigNode, CRON_EXPRESSION_PARAM_PROP, null);
-
-        cronJobName = JcrUtils.getStringProperty(moduleConfigNode, CRON_JOB_NAME_PARAM_PROP, null);
-
-        if (StringUtils.isBlank(cronJobName)) {
-            cronJobName = BrokenLinksCheckingJob.class.getName();
-        }
-
-        cronJobGroup = JcrUtils.getStringProperty(moduleConfigNode, CRON_JOB_GROUP_PARAM_PROP, null);
-
-        if (StringUtils.isBlank(cronJobGroup)) {
-            cronJobGroup = "default";
-        }
+        return JcrUtils.getBooleanProperty(moduleConfigNode, ENABLED_PARAM_PROP, Boolean.FALSE);
     }
 
     @Override
-    protected void doInitialize(Session session) throws RepositoryException {
-        final Node moduleConfig = JcrUtils.getNodeIfExists(moduleConfigPath, session);
-        scheduleJob(moduleConfig);
+    protected RepositoryJobInfo getRepositoryJobInfo(Node moduleConfig) throws RepositoryException {
+        final Node moduleConfigNode = getNonHandleModuleConfigurationNode(moduleConfig);
+
+        String jobName = StringUtils.defaultIfBlank(JcrUtils.getStringProperty(moduleConfigNode, CRON_JOB_NAME_PARAM_PROP, null), BrokenLinksCheckingJob.class.getName());
+        String jobGroup = StringUtils.defaultIfBlank(JcrUtils.getStringProperty(moduleConfigNode, CRON_JOB_GROUP_PARAM_PROP, null), DEFAULT_GROUP);
+
+        RepositoryJobInfo jobInfo = new RepositoryJobInfo(jobName, jobGroup, BrokenLinksCheckingJob.class);
+
+        for (Map.Entry<String, String> entry : getModuleConfigurationParametersMap(moduleConfigNode).entrySet()) {
+            jobInfo.setAttribute(entry.getKey(), entry.getValue());
+        }
+
+        return jobInfo;
     }
 
     @Override
-    protected boolean isReconfigureEvent(Event event) throws RepositoryException {
-        String eventPath = event.getPath();
-        return !((JackrabbitEvent) event).isExternal() && !eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER);
-    }
+    protected RepositoryJobTrigger getRepositoryJobTrigger(Node moduleConfig, RepositoryJobInfo jobInfo) throws RepositoryException {
+        final Node moduleConfigNode = getNonHandleModuleConfigurationNode(moduleConfig);
 
-    @Override
-    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
-        try {
-            synchronized (this) {
-                super.onConfigurationChange(moduleConfig);
-                deleteScheduledJob();
-                scheduleJob(moduleConfig);
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to reconfigure broken links checker.", e);
-        }
-    }
+        String cronExpr = JcrUtils.getStringProperty(moduleConfigNode, CRON_EXPRESSION_PARAM_PROP, null);
 
-    @Override
-    protected void doShutdown() {
-    }
-
-    private void deleteScheduledJob() {
-        if (brokenLinksCheckingJobInfo == null) {
-            return;
+        if (StringUtils.isNotBlank(cronExpr)) {
+            final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger(jobInfo.getGroup() + "-" + jobInfo.getName() + "-trigger", cronExpr);
+            return jobTrigger;
         }
 
-        try {
-            final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-            repositoryScheduler.deleteJob(brokenLinksCheckingJobInfo.getName(), brokenLinksCheckingJobInfo.getGroup());
-            log.info("Deleted the scheduled job: '{}'.", brokenLinksCheckingJobInfo.getName());
-        } catch (RepositoryException e) {
-            log.error("Failed to delete job: " + brokenLinksCheckingJobInfo, e);
-        }
-
-        brokenLinksCheckingJobInfo = null;
-    }
-
-    private void scheduleJob(Node moduleConfig) {
-        if (!isEnabled()) {
-            log.info("The broken links checker is not enabled in the module configuration. Skipping broken links checker job scheduling.");
-            return;
-        }
-
-        if (StringUtils.isBlank(getCronExpression())) {
-            log.warn("The cron expression for broken links checker module is blank: '{}'. Skipping broken links checker job scheduling.", getCronExpression());
-            return;
-        }
-
-        try {
-            final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-
-            if (repositoryScheduler.checkExists(getCronJobName(), getCronJobGroup())) {
-                return;
-            }
-
-            RepositoryJobInfo tempJobInfo = new RepositoryJobInfo(getCronJobName(), getCronJobGroup(), BrokenLinksCheckingJob.class);
-
-            for (Map.Entry<String, String> entry : getModuleConfigurationParametersMap(moduleConfig).entrySet()) {
-                tempJobInfo.setAttribute(entry.getKey(), entry.getValue());
-            }
-
-            final RepositoryJobTrigger brokenLinksCheckingJobTrigger =
-                    new RepositoryJobCronTrigger(tempJobInfo.getGroup() + "-" + tempJobInfo.getName() + "-trigger", getCronExpression());
-            repositoryScheduler.scheduleJob(tempJobInfo, brokenLinksCheckingJobTrigger);
-            brokenLinksCheckingJobInfo = tempJobInfo;
-            log.info("Scheduled a job: '{}:{}'.", tempJobInfo.getGroup(), tempJobInfo.getName());
-        } catch (RepositoryException e) {
-            log.error("Failed to scheudle a job.", e);
-        }
+        return null;
     }
 
     /**
-     * Returns the default module configuration node unless the node is type of hippo:handle.
+     * Returns the _Broken_Link_Checker_Specific_ default module configuration node unless the node is type of hippo:handle.
      * If it is hippo:handle, returns the child node having the same node name for backward compatibilty.
      * @return
      * @throws RepositoryException
