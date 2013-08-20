@@ -25,22 +25,34 @@ import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Base class for CKEditor field plugins, which use CKEditor for editing fields that contain HTML.
  * Configuration properties:
- * <ul>
- *     <li>ckeditor.config.json: String property with a JSON object that specifies the configuration of
- *     the CKEditor instance created for the edited field. Will be ignored when empty or missing.</li>
+ * <dl>
+ *     <dt>ckeditor.config.overlayed.json</dt>
+ *     <dd>Overlayed JSON configuration for the CKEditor instance. This JSON gets overlayed on top of the
+ *         default configuration provided in the constructor using
+ *         {@link JsonUtils#overlay(org.json.JSONObject, org.json.JSONObject)}.
+ *         Use this property to replace default configuration values. Will be ignored when empty or missing.</dd>
+ *     <dt>ckeditor.config.appended.json</dt>
+ *     <dd>Appended JSON configuration for the CKEditor instance. This JSON gets appended to the default configuration
+ *         provided in the constructor overlayed with the JSON in ckeditor.config.overlayed.json (so overlaying goes
+ *         first, appended goes seconds). The actual appending is done using
+ *         {@link JsonUtils#append(org.json.JSONObject, org.json.JSONObject)}.
+ *         Use this property to append strings or values to existing comma-separated string properties or JSON arrays.
+ *         Will be ignored when empty or missing.</dd>
  *     <li>htmlcleaner.id: String property with the ID of the HTML cleaner service to use. Use an empty string
  *     to disable the HTML cleaner. Default value: "org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService".</li>
  * </ul>
  */
 public abstract class AbstractCKEditorPlugin extends RenderPlugin {
 
-    public static final String CONFIG_CKEDITOR_CONFIG_JSON = "ckeditor.config.json";
+    public static final String CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
+    public static final String CONFIG_CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
     public static final String CONFIG_HTML_CLEANER_SERVICE_ID = "htmlcleaner.id";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
 
@@ -48,11 +60,11 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractCKEditorPlugin.class);
 
-    public AbstractCKEditorPlugin(final IPluginContext context, final IPluginConfig config) {
+    public AbstractCKEditorPlugin(final IPluginContext context, final IPluginConfig config, final String defaultEditorConfigJson) {
         super(context, config);
 
         IEditor.Mode mode = getMode();
-        Panel panel = createPanel(mode);
+        Panel panel = createPanel(mode, defaultEditorConfigJson);
         add(panel);
     }
 
@@ -61,12 +73,13 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
         return IEditor.Mode.fromString(modeName);
     }
 
-    private Panel createPanel(final IEditor.Mode mode) {
+    private Panel createPanel(final IEditor.Mode mode, final String defaultEditorConfigJson) {
         switch (mode) {
             case VIEW:
                 return createViewPanel(WICKET_ID_PANEL);
             case EDIT:
-                return createEditPanel(WICKET_ID_PANEL);
+                final String editorConfigJson = createEditorConfiguration(defaultEditorConfigJson);
+                return createEditPanel(WICKET_ID_PANEL, editorConfigJson);
             case COMPARE:
                 return createComparePanel(WICKET_ID_PANEL);
             default:
@@ -82,21 +95,33 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
      */
     protected abstract Panel createViewPanel(final String id);
 
-    private Panel createEditPanel(final String id) {
-        final String editorConfigJson = readAndValidateEditorConfig();
-        return createEditPanel(id, editorConfigJson);
+    private String createEditorConfiguration(final String defaultEditorConfigJson) {
+        try {
+            JSONObject editorConfig = new JSONObject(defaultEditorConfigJson);
+
+            final JSONObject overlayedConfig = readAndValidateEditorConfig(CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON);
+            JsonUtils.overlay(editorConfig, overlayedConfig);
+
+            final JSONObject appendedConfig = readAndValidateEditorConfig(CONFIG_CKEDITOR_CONFIG_APPENDED_JSON);
+            JsonUtils.append(editorConfig, appendedConfig);
+
+            return editorConfig.toString();
+        } catch (JSONException e) {
+            log.warn("Error while creating CKEditor configuration, using default configuration as-is:\n" + defaultEditorConfigJson, e);
+            return defaultEditorConfigJson;
+        }
     }
 
-    private String readAndValidateEditorConfig() {
-        String jsonOrNull = getPluginConfig().getString(CONFIG_CKEDITOR_CONFIG_JSON);
+    private JSONObject readAndValidateEditorConfig(String key) {
+        String jsonOrNull = getPluginConfig().getString(key);
         try {
             // validate JSON and return the sanitized version. This also strips additional extra JSON literals from the end.
-            return JsonUtils.createJSONObject(jsonOrNull).toString();
+            return JsonUtils.createJSONObject(jsonOrNull);
         } catch (JSONException e) {
             log.warn("Ignoring CKEditor configuration variable '{}' because does not contain valid JSON, but \"{}\"",
-                    CONFIG_CKEDITOR_CONFIG_JSON, jsonOrNull);
+                    key, jsonOrNull);
         }
-        return StringUtils.EMPTY;
+        return null;
     }
 
     /**

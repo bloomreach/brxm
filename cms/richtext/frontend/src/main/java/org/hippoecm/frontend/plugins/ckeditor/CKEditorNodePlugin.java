@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,12 @@ import org.slf4j.LoggerFactory;
  */
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
 
+    public static final String DEFAULT_EDITOR_CONFIG = "{"
+            + "  codemirror: {"
+            + "    autoFormatOnStart: true"
+            + "  }"
+            + "}";
+
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
     public static final String CONFIG_CHILD_DOCUMENT_PICKER = "documentpicker";
 
@@ -61,7 +68,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
     private static final Logger log = LoggerFactory.getLogger(CKEditorNodePlugin.class);
 
     public CKEditorNodePlugin(final IPluginContext context, final IPluginConfig config) {
-        super(context, config);
+        super(context, config, DEFAULT_EDITOR_CONFIG);
     }
 
     /**

@@ -8,6 +8,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
+import org.json.JSONObject;
 
 /**
  * Property field plugin for editing HTML in a String property using CKEditor. Internal links and images are
@@ -15,8 +16,16 @@ import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
  */
 public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin {
 
+    public static final String DEFAULT_EDITOR_CONFIG = "{"
+            + "  toolbar: ["
+            + "    { name: 'styles', items: [ 'Styles' ] },"
+            + "    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', '-', 'RemoveFormat' ] },"
+            + "    { name: 'clipboard', items: [ 'Undo', 'Redo' ] }"
+            + "  ]"
+            + "}";
+
     public CKEditorPropertyPlugin(final IPluginContext context, final IPluginConfig config) {
-        super(context, config);
+        super(context, config, DEFAULT_EDITOR_CONFIG);
     }
 
     @Override
