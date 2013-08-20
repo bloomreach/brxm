@@ -17,10 +17,22 @@ package org.hippoecm.repository.api;
 
 import javax.jcr.observation.EventJournal;
 
+/**
+ * An extension of {@link EventJournal} which also allows skipping
+ * based on Event revision.
+ */
 public interface RevisionEventJournal extends EventJournal {
 
+    /**
+     * Skip all Events with revision less than or equal to <code>revision</code>.
+     *
+     * @param revision the revision after which this iterator should be positioned
+     */
     public void skipToRevision(long revision);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RevisionEvent nextEvent();
 

@@ -1,17 +1,18 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.jackrabbit.core.observation;
 
@@ -27,6 +28,7 @@ import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
@@ -49,6 +51,11 @@ import org.hippoecm.repository.api.RevisionEventJournal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Copied from Jackrabbit {@link org.apache.jackrabbit.core.observation.EventJournalImpl},
+ * with the addition of {@link #skipToRevision(long)} method to allow skipping by
+ * event revision instead of timestamp.
+ */
 public class RevisionEventJournalImpl implements RevisionEventJournal {
     /**
      * The logger instance for this class.
@@ -131,7 +138,7 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
         // get skip map for this journal
         SortedMap<Long, Long> skipMap = getSkipMap();
         synchronized (skipMap) {
-            SortedMap<Long, Long> head = skipMap.headMap(new Long(date));
+            SortedMap<Long, Long> head = skipMap.headMap(date);
             if (!head.isEmpty()) {
                 eventBundleBuffer.clear();
                 lastRevision = head.get(head.lastKey());
@@ -149,7 +156,7 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
             }
         } finally {
             time = System.currentTimeMillis() - time;
-            log.debug("Skipped event bundles in {} ms.", new Long(time));
+            log.debug("Skipped event bundles in {} ms.", time);
         }
     }
 
@@ -182,7 +189,7 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
         // above hasNext() call ensures that there is bundle with an event state
         assert bundle != null && bundle.events.hasNext();
 
-        RevisionEvent next = new RevisionEventImpl((Event)bundle.events.next(), bundle.revision);
+        RevisionEvent next = (RevisionEvent)bundle.events.next();
         if (!bundle.events.hasNext()) {
             // done with this bundle -> remove from buffer
             eventBundleBuffer.remove(0);
@@ -345,7 +352,7 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
             if (lastRevision != null) {
                 log.debug("refilling event bundle buffer starting at revision {}",
                         lastRevision);
-                records = journal.getRecords(lastRevision.longValue());
+                records = journal.getRecords(lastRevision);
             } else {
                 log.debug("refilling event bundle buffer starting at journal beginning");
                 records = journal.getRecords();
@@ -359,19 +366,19 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
                             continue;
                         }
                         cr.process(processor);
-                        lastRevision = new Long(cr.getRevision());
+                        lastRevision = cr.getRevision();
                     }
                 }
 
                 if (processor.getNumEvents() >= MIN_BUFFER_SIZE) {
                     // remember in skip map
                     SortedMap<Long, Long> skipMap = getSkipMap();
-                    Long timestamp = new Long(processor.getLastTimestamp());
+                    Long timestamp = processor.getLastTimestamp();
                     synchronized (skipMap) {
                         if (log.isDebugEnabled()) {
                             DateFormat df = DateFormat.getDateTimeInstance();
                             log.debug("remember record in skip map: {} -> {}",
-                                    df.format(new Date(timestamp.longValue())),
+                                    df.format(new Date(timestamp)),
                                     lastRevision);
                         }
                         skipMap.put(timestamp, lastRevision);
@@ -427,10 +434,16 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
          * @param userData the user data associated with this event.
          */
         private EventBundle(
-                List<EventState> eventStates, long timestamp, String userData, long revision) {
+                List<EventState> eventStates, final long timestamp, final String userData, final long revision) {
             this.events = new FilteredEventIterator(
                     session, eventStates.iterator(),
-                    timestamp, userData, filter, Collections.emptySet(), true);
+                    timestamp, userData, filter, Collections.emptySet(), true) {
+                @Override
+                public Object next() {
+                    return new RevisionEventImpl(session, (EventState) super.next(), timestamp, userData, revision);
+
+                }
+            };
             this.timestamp = timestamp;
             this.revision = revision;
         }
@@ -438,11 +451,11 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
 
     private static class RevisionEventImpl implements RevisionEvent {
 
+        private final EventImpl event;
         private final long revision;
-        private final Event event;
 
-        private RevisionEventImpl(Event event, long revision) {
-            this.event = event;
+        RevisionEventImpl(SessionImpl session, EventState eventState, long timestamp, String userData, long revision) {
+            this.event = new EventImpl(session, eventState, timestamp, userData);
             this.revision = revision;
         }
 
@@ -491,5 +504,21 @@ public class RevisionEventJournalImpl implements RevisionEventJournal {
             return event.toString() + ", Revision: " + revision;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o instanceof RevisionEventImpl) {
+                RevisionEventImpl other = (RevisionEventImpl)o;
+                return this.event.equals(other.event) && this.revision == other.revision;
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return event.hashCode() ^ Long.valueOf(revision).hashCode();
+        }
     }
 }

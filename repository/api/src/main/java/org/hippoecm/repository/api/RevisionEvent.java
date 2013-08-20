@@ -17,8 +17,17 @@ package org.hippoecm.repository.api;
 
 import javax.jcr.observation.Event;
 
+/**
+ * A JCR {@link Event} with the revision id of the corresponding ClusterRecord
+ * exposed by the {@link #getRevision()} method.
+ */
 public interface RevisionEvent extends Event {
 
+    /**
+     * The revision id of the cluster record corresponding to this Event.
+     *
+     * @return revision
+     */
     public long getRevision();
 
 }

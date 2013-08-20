@@ -282,6 +282,7 @@
               <excludes combine.children="append">
                 <!-- forked from Jackrabbit sources -->
                 <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
+                <exclude>engine/src/main/java/org/apache/jackrabbit/core/observation/RevisionEventJournalImpl.java</exclude>
                 <!-- copied from Maven sources -->
                 <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
                 <!-- repository content XML -->
