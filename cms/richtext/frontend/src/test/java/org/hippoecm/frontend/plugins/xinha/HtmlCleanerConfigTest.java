@@ -28,7 +28,7 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.plugins.xinha.htmlcleaner.JCRHtmlCleanerTemplateBuilder;
+import org.hippoecm.frontend.plugins.richtext.htmlcleaner.JCRHtmlCleanerTemplateBuilder;
 import org.junit.Test;
 
 public class HtmlCleanerConfigTest extends PluginTest {

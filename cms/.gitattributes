@@ -2495,6 +2495,7 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextP
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextUtil.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-16.png -text svneol=unset#image/png
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-32.png -text svneol=unset#image/png
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextImageFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/RichTextFacetHelper.java svneol=native#text/plain
@@ -2547,7 +2548,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/Xin
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/XinhaNamespace.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel-debug.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/box-grey.png -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/hippo-border.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager-debug.js svneol=native#text/plain

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.xinha.htmlcleaner;
+package org.hippoecm.frontend.plugins.richtext.htmlcleaner;
 
 import nl.hippo.htmlcleaner.HtmlCleaner;
 import nl.hippo.htmlcleaner.HtmlCleanerTemplate;
