@@ -34,11 +34,14 @@ import org.slf4j.LoggerFactory;
  * <ul>
  *     <li>ckeditor.config.json: String property with a JSON object that specifies the configuration of
  *     the CKEditor instance created for the edited field. Will be ignored when empty or missing.</li>
+ *     <li>htmlcleaner.id: String property with the ID of the HTML cleaner service to use. Use an empty string
+ *     to disable the HTML cleaner. Default value: "org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService".</li>
  * </ul>
  */
 public abstract class AbstractCKEditorPlugin extends RenderPlugin {
 
     public static final String CONFIG_CKEDITOR_CONFIG_JSON = "ckeditor.config.json";
+    public static final String CONFIG_HTML_CLEANER_SERVICE_ID = "htmlcleaner.id";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
 
     private static final String WICKET_ID_PANEL = "panel";
@@ -161,7 +164,26 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
      * @return the HTML cleaner for the edited model, or null if the HTML should not be cleaned.
      */
     protected IHtmlCleanerService getHtmlCleanerOrNull() {
-        return getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
+        final IPluginConfig config = getPluginConfig();
+        final String serviceId = config.getString(CONFIG_HTML_CLEANER_SERVICE_ID, IHtmlCleanerService.class.getName());
+
+        if (StringUtils.isBlank(serviceId)) {
+            log.info("CKEditor plugin '{}' does not use an HTML cleaner", config.getName());
+            return null;
+        }
+
+        final IHtmlCleanerService service = getPluginContext().getService(serviceId, IHtmlCleanerService.class);
+
+        if (service != null) {
+            log.info("CKEditor plugin '{}' uses HTML cleaner '{}'", config.getName(), serviceId);
+        } else {
+            log.warn("CKEditor plugin '" + config.getName() + "'"
+                    + " cannot load HTML cleaner '" + serviceId + "'"
+                    + " as specified in configuration property '" + CONFIG_HTML_CLEANER_SERVICE_ID + "'."
+                    + " No HTML cleaner will be used.");
+        }
+
+        return service;
     }
 
 }
