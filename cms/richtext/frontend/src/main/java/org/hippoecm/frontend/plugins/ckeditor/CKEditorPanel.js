@@ -37,6 +37,10 @@
         HippoAjax.registerDestroyFunction(element, editor.destroy, editor);
     }
 
+    function removeHippoEditorFieldBorder(elementId) {
+        $('#' + elementId).closest('.hippo-editor-field-subfield').css('border', '0');
+    }
+
     if (Hippo === undefined) {
         Hippo = {};
     }
@@ -47,6 +51,7 @@
             var editor = CKEDITOR.replace(elementId, config);
             updateEditorElementWhenDataChanged(editor);
             destroyEditorWhenElementIsDestroyed(editor, elementId);
+            removeHippoEditorFieldBorder(elementId);
         }, DOM_MIN_TIMEOUT_MS);
     };
 
