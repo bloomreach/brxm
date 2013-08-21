@@ -17,6 +17,7 @@ import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.ckeditor.CKEditorConstants;
 
 /**
  * Adds the CKEditor plugin 'hippopicker'.
@@ -33,7 +34,7 @@ public class CKEditorPanelPickerBehavior implements CKEditorPanelBehavior {
 
     @Override
     public void addCKEditorConfiguration(final JSONObject editorConfig) throws JSONException {
-        JsonUtils.appendToCommaSeparatedString(editorConfig, "extraPlugins", HippoPicker.PLUGIN_NAME);
+        JsonUtils.appendToCommaSeparatedString(editorConfig, CKEditorConstants.CONFIG_EXTRA_PLUGINS, HippoPicker.PLUGIN_NAME);
 
         final JSONObject pickerPluginConfig = JsonUtils.getOrCreateChildObject(editorConfig, HippoPicker.CONFIG_KEY);
         addInternalLinkPickerConfiguration(pickerPluginConfig);
