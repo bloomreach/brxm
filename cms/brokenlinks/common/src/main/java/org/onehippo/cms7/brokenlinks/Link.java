@@ -34,15 +34,6 @@ public class Link implements Comparable<Object>, Serializable {
     private Calendar brokenSince;
     private String excerpt;
 
-    /**
-     * @deprecated Use {@link #Link(String, String)} instead.
-     * @param url
-     */
-    @Deprecated
-    public Link(String url) {
-        this(url, null);
-    }
-
     public Link(String url, String sourceNodeIdentifier) {
         this.url = url;
         this.sourceNodeIdentifier = sourceNodeIdentifier;
