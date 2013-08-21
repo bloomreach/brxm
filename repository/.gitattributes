@@ -276,7 +276,6 @@ modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetSu
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetsAvailableNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupModule.java -text
 modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -text
-modules/src/main/resources/META-INF/MANIFEST.MF -text
 modules/src/main/resources/eventlogcleanup-module.xml -text
 modules/src/main/resources/hippobroadcast.cnd -text
 modules/src/main/resources/repository-logger-module.xml -text
