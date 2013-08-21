@@ -31,7 +31,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
@@ -65,7 +64,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         Session session = null;
 
         try {
-            session = context.getSession(new SimpleCredentials("system", new char[] {}));
+            session = context.getSystemSession();
 
             Map<String, String> params = new HashMap<String, String>();
 

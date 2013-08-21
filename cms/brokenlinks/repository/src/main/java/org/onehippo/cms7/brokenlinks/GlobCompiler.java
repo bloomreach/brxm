@@ -23,17 +23,87 @@ import java.util.regex.Pattern;
  * Translate glob expression into regular expression to compile pattern.
  * Inspired by org/apache/oro/text/GlobCompiler.java.
  * </P>
+ * <P>
+ * This compiler supports the following glob syntax:
+ * <TABLE border="1">
+ * <TR>
+ * <TH>Task</TH>
+ * <TH>Example</TH>
+ * </TR>
+ * <TR>
+ * <TD>Match one or zero unknown characters</TD>
+ * <TD>
+ * ?at matches at, Cat, cat, Bat or bat
+ * </TD>
+ * </TR>
+ * <TR>
+ * <TD>Match any number of unknown characters</TD>
+ * <TD>
+ * ?at matches Cat, cat, Bat or bat, but not at
+ * </TD>
+ * </TR>
+ * <TR>
+ * <TD>Match any number of unknown characters</TD>
+ * <TD>
+ * Law* matches Law, Laws, or Lawyer
+ * </TD>
+ * </TR>
+ * <TR>
+ * <TD>Match a character as part of a group of characters</TD>
+ * <TD>
+ * [CB]at matches Cat or Bat but not cat or bat
+ * </TD>
+ * </TR>
+ * <TR>
+ * </TABLE>
+ * <EM>Note: This compiler escapes all the meta characters such as '*', '.', etc. from the expression input automatically.</EM>
+ * </P>
+ * <P>
+ * Refer to <a href="http://en.wikipedia.org/wiki/Glob_%28programming%29">http://en.wikipedia.org/wiki/Glob_%28programming%29</a>
+ * for general information on glob expression.
+ * </P>
  */
 public class GlobCompiler {
 
-    private GlobCompiler() {
+    private boolean questionMatchesZero;
+
+    public GlobCompiler() {
     }
 
-    public static Pattern compileGlobPattern(String globExpr) {
-        return compileGlobPattern(globExpr, 0);
+    /**
+     * Returns the flag whether this compiler creates a pattern matching zero unknown character by '?' expression.
+     * If true, it matches with zero unknown character by '?'. Otherwise, it matches only with one unknown character by '?'.
+     * @return
+     */
+    public boolean isQuestionMatchesZero() {
+        return questionMatchesZero;
     }
 
-    public static Pattern compileGlobPattern(String globExpr, int options) {
+    /**
+     * Sets the flag whether this compiler creates a pattern matching zero character by '?' expression.
+     * If set to true, it matches with zero unknown character by '?'. Otherwise, it matches only with one unknown character by '?'.
+     * @param questionMatchesZero
+     */
+    public void setQuestionMatchesZero(boolean questionMatchesZero) {
+        this.questionMatchesZero = questionMatchesZero;
+    }
+
+    /**
+     * Compiles the glob expression and returns a {@link Pattern} object.
+     * @param globExpr
+     * @return
+     */
+    public Pattern compile(String globExpr) {
+        return compile(globExpr, 0);
+    }
+
+    /**
+     * Compiles the glob expression and returns a {@link Pattern} object with the Java reglar expresson compile option.
+     * @param globExpr
+     * @param options The Java regular expression compile option such as {@link Pattern#CASE_INSENSITIVE}.
+     * @return
+     */
+    public Pattern compile(String globExpr, int options) {
         char [] pattern = globExpr.toCharArray();
         boolean inCharSet;
         int ch;
@@ -55,7 +125,11 @@ public class GlobCompiler {
                 if (inCharSet)
                     buffer.append('?');
                 else {
-                    buffer.append('.');
+                    if (isQuestionMatchesZero()) {
+                        buffer.append(".?");
+                    } else {
+                        buffer.append('.');
+                    }
                 }
                 break;
             case '[':
