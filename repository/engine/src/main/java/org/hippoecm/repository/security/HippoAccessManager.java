@@ -356,6 +356,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public boolean isGranted(final ItemId id, final int permissions) throws RepositoryException {
         checkInitialized();
+
         if (permissions != Permission.READ) {
             log.warn("isGranted(ItemId, int) is DEPRECATED!", new RepositoryException(
                     "Use of deprecated method isGranted(ItemId, int)"));
@@ -394,6 +395,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     public boolean isGranted(final Path absPath, final int permissions) throws RepositoryException {
         checkInitialized();
+
         if (!absPath.isAbsolute()) {
             throw new RepositoryException("Absolute path expected");
         }
@@ -1408,6 +1410,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (privileges.length == 1 && "jcr:read".equals(privileges[0].getName())) {
             return canRead(id);
         }
+        // if virtual nodes can be read any operation on them is allowed
+        if (id instanceof HippoNodeId) {
+            return canRead(id);
+        }
+
         NodeState nodeState;
         try {
             nodeState = (NodeState) getItemState(id);
@@ -1415,7 +1422,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             throw new PathNotFoundException("Path not found " + npRes.getJCRPath(absPath), e);
         }
 
-        if (nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
+        if (nodeState.getStatus() == NodeState.STATUS_NEW) {
             return true;
         }
 
