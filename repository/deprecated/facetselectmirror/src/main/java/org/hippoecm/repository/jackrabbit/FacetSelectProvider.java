@@ -16,40 +16,40 @@
 package org.hippoecm.repository.jackrabbit;
 
 import javax.jcr.RepositoryException;
-import org.apache.jackrabbit.core.id.NodeId;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.spi.Name;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.StateProviderContext;
 
-public class FacetSelectProvider extends ViewVirtualProvider
+/**
+ * deprecated since 2.26.00
+ */
+@Deprecated
+public class FacetSelectProvider extends MirrorVirtualProvider
 {
 
-    ViewVirtualProvider subNodesProvider;
+    MirrorVirtualProvider subNodesProvider;
     
-    Name facetsName;
-    Name valuesName;
-    Name modesName;
+    private Name facetsName;
+    private Name valuesName;
+    private Name modesName;
     
     protected void initialize() throws RepositoryException {
-        this.subNodesProvider = (ViewVirtualProvider) lookup(ViewVirtualProvider.class.getName());
-        facetSelectName = resolveName(HippoNodeType.NT_FACETSELECT);
+        this.subNodesProvider = (MirrorVirtualProvider) lookup(MirrorVirtualProvider.class.getName());
         register(resolveName(HippoNodeType.NT_FACETSELECT), null);
-        docbaseName = resolveName(HippoNodeType.HIPPO_DOCBASE);
         facetsName = resolveName(HippoNodeType.HIPPO_FACETS);
         valuesName = resolveName(HippoNodeType.HIPPO_VALUES);
         modesName = resolveName(HippoNodeType.HIPPO_MODES);
-        handleName = resolveName(HippoNodeType.NT_HANDLE);
-        requestName = resolveName(HippoNodeType.NT_REQUEST);
-        translationName = resolveName(HippoNodeType.NT_TRANSLATION);
+        super.initialize();
     }
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
 
-        String[] docbase = getProperty(state.getNodeId(), docbaseName);
+        String[] docbase = getProperty(state.getNodeId(), getDocbaseName());
         String[] newFacets = getProperty(state.getNodeId(), facetsName);
         String[] newValues = getProperty(state.getNodeId(), valuesName);
         String[] newModes  = getProperty(state.getNodeId(), modesName);

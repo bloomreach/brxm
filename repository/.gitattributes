@@ -107,6 +107,9 @@ connector/src/main/java/org/hippoecm/repository/decorating/server/ServerServicin
 connector/src/main/java/org/hippoecm/repository/decorating/server/ServerServicingWorkspace.java -text
 connector/src/main/java/org/hippoecm/repository/decorating/server/ServerWorkflowDescriptor.java -text
 dependencies/pom.xml svneol=native#text/plain
+deprecated/facetselectmirror/pom.xml -text
+deprecated/facetselectmirror/src/main/java/org/hippoecm/repository/jackrabbit/FacetSelectProvider.java -text
+deprecated/facetselectmirror/src/main/java/org/hippoecm/repository/jackrabbit/MirrorNodeVirtualProvider.java -text
 deprecated/pom.xml svneol=native#text/plain
 deprecated/translation/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
@@ -265,8 +268,8 @@ ldap/src/main/resources/hippoldap.cnd -text
 modules/pom.xml svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetResultSetProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchProvider.java -text
-modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSelectProvider.java -text
-modules/src/main/java/org/hippoecm/repository/jackrabbit/ViewVirtualProvider.java -text
+modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchSubtypedDataProvider.java -text
+modules/src/main/java/org/hippoecm/repository/jackrabbit/MirrorVirtualProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/AbstractFacetNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacNavNodeType.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNavigationProvider.java svneol=native#text/plain

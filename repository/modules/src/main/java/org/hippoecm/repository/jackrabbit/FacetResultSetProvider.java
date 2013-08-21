@@ -107,7 +107,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         }
     }
 
-    ViewVirtualProvider subNodesProvider;
+    MirrorVirtualProvider subNodesProvider;
     FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
     FacetedNavigationEngine.Context facetedContext;
 
@@ -132,7 +132,7 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         countName = resolveName(HippoNodeType.HIPPO_COUNT);
         countPropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
         primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETRESULT), countName);
-        this.subNodesProvider = (ViewVirtualProvider) lookup(ViewVirtualProvider.class.getName());
+        this.subNodesProvider = (MirrorVirtualProvider) lookup(MirrorVirtualProvider.class.getName());
         register(null, resolveName(HippoNodeType.NT_FACETRESULT));
     }
 

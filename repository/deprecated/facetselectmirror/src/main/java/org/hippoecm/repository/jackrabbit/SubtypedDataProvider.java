@@ -33,6 +33,10 @@ import org.hippoecm.repository.dataprovider.DataProviderModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * deprecated since 2.26.00
+ */
+@Deprecated
 public class SubtypedDataProvider implements DataProviderModule {
     private final Logger log = LoggerFactory.getLogger(SubtypedDataProvider.class);
 
@@ -41,7 +45,6 @@ public class SubtypedDataProvider implements DataProviderModule {
 
     public void initialize(DataProviderContext context) {
         NodeTypeRegistry ntReg = context.getNodeTypeRegistry();
-        //NameFactory nameFactory = NameFactoryImpl.getInstance();
 
         Map<Name, String> subtyping = new TreeMap<Name, String>();
         try {
@@ -52,15 +55,7 @@ public class SubtypedDataProvider implements DataProviderModule {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         }
         try {
-            subtyping.put(context.getQName(HippoNodeType.NT_FACETSEARCH), FacetSearchProvider.class.getName());
-        } catch (IllegalNameException ex) {
-            log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
-        } catch (NamespaceException ex) {
-            log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
-        }
-        
-        try {
-            subtyping.put(context.getQName(HippoNodeType.NT_MIRROR), ViewVirtualProvider.class.getName());
+            subtyping.put(context.getQName(HippoNodeType.NT_MIRROR), MirrorNodeVirtualProvider.class.getName());
         } catch (IllegalNameException ex) {
             log.warn("Error registering subnodes: " + ex.getClass().getName() + ": " + ex.getMessage());
         } catch (NamespaceException ex) {

@@ -118,7 +118,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.jackrabbit.ViewVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.jackrabbit.MirrorVirtualProvider org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNavigationProvider org.hippoecm.repository.jackrabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.repository.jackrabbit.FacetSearchSubtypedDataProvider</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
