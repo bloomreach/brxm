@@ -2481,12 +2481,6 @@ richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templa
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/wsc/LICENSE.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/wsc/README.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/youtube/images/icon.png -text svneol=unset#image/png
-richtext/ckeditor/resources/src/main/resources/ckeditor/samples/assets/inlineall/logo.png -text svneol=unset#image/png
-richtext/ckeditor/resources/src/main/resources/ckeditor/samples/assets/posteddata.php -text
-richtext/ckeditor/resources/src/main/resources/ckeditor/samples/assets/sample.jpg -text svneol=unset#image/jpeg
-richtext/ckeditor/resources/src/main/resources/ckeditor/samples/plugins/htmlwriter/assets/outputforflash/outputforflash.fla -text
-richtext/ckeditor/resources/src/main/resources/ckeditor/samples/plugins/htmlwriter/assets/outputforflash/outputforflash.swf -text
-richtext/ckeditor/resources/src/main/resources/ckeditor/samples/sample_posteddata.php -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/icons.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/icons_hidpi.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/arrow.png -text svneol=unset#image/png
