@@ -506,6 +506,7 @@
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
+                <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
                 <exclude>richtext/resources/src/external/xinha/**/*</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/modules/Gecko/paraHandlerBest.js</exclude>
