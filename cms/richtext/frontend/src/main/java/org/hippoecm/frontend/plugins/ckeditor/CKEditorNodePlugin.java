@@ -46,6 +46,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.json.JSONObject;
+import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,10 +67,6 @@ import org.slf4j.LoggerFactory;
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
-            + "  contentsCss: 'ckeditor/hippocontents.css',"
-            + "  codemirror: {"
-            + "    autoFormatOnStart: true"
-            + "  },"
             + "}";
 
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
@@ -84,7 +81,31 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
     private static final Logger log = LoggerFactory.getLogger(CKEditorNodePlugin.class);
 
     public CKEditorNodePlugin(final IPluginContext context, final IPluginConfig config) {
-        super(context, config, DEFAULT_EDITOR_CONFIG);
+        super(context, config, "{"
+                + "  codemirror: {"
+                + "    autoFormatOnStart: true"
+                + "  },"
+                + "  contentsCss: 'ckeditor/hippocontents.css',"
+                + "  dialog_buttonsOrder: 'ltr',"
+                + "  keystrokes: ["
+                + "    [ " + (CKEditorConstants.CTRL + asciiCode('M')) + ", 'maximize' ],"
+                + "    [ " + (CKEditorConstants.ALT + asciiCode('B')) + ", 'showblocks' ]"
+                + "  ],"
+                + "  linkShowAdvancedTab: false,"
+                + "  linkShowTargetTab: false,"
+                + "  plugins: 'dialogui,dialog,a11yhelp,dialogadvtab,basicstyles,clipboard,button,panelbutton,panel,floatpanel,menu,contextmenu,resize,toolbar,elementspath,enterkey,entities,popup,floatingspace,listblock,richcombo,htmlwriter,wysiwygarea,indent,indentblock,indentlist,justify,link,list,liststyle,magicline,maximize,pastetext,pastefromword,removeformat,showblocks,showborders,sourcearea,specialchar,menubutton,stylescombo,tab,table,tabletools,undo,codemirror,youtube',"
+                + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
+                + "  toolbarGroups: ["
+                + "    { name: 'styles' },"
+                + "    { name: 'basicstyles' },"
+                + "    { name: 'undo' },"
+                + "    { name: 'listindentalign',  groups: [ 'list', 'indent', 'align' ] },"
+                + "    { name: 'links' },"
+                + "    { name: 'insert' },"
+                + "    { name: 'tools' },"
+                + "    { name: 'mode' }"
+                + "  ]"
+                + "}");
     }
 
     /**
@@ -208,6 +229,10 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
         config.put(NodePickerControllerSettings.LAST_VISITED_NODETYPES, lastVisitedNodeTypes);
         config.makeImmutable();
         return config;
+    }
+
+    private static final int asciiCode(char c) {
+        return (int)c;
     }
 
 }

@@ -33,6 +33,7 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
+            + "  plugins: 'basicstyles,clipboard,button,panelbutton,panel,floatpanel,menu,contextmenu,toolbar,enterkey,entities,floatingspace,listblock,richcombo,htmlwriter,wysiwygarea,magicline,removeformat,menubutton,stylescombo,tab,undo',"
             + "  toolbar: ["
             + "    { name: 'styles', items: [ 'Styles' ] },"
             + "    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', '-', 'RemoveFormat' ] },"

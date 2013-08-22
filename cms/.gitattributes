@@ -2421,22 +2421,71 @@ richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/
 richtext/ckeditor/resources/src/main/resources/ckeditor/CHANGES.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/LICENSE.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/README.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/about/dialogs/hidpi/logo_ckeditor.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/about/dialogs/logo_ckeditor.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/AutoComplete.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/AutoFormat.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/CommentSelectedRange.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/SearchCode.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/UncommentSelectedRange.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/fakeobjects/images/spacer.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/forms/images/hiddenfield.gif -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/icons.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/icons_hidpi.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/iframe/images/placeholder.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/image/images/noimage.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/link/images/anchor.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/link/images/hidpi/anchor.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/magicline/images/hidpi/icon.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/magicline/images/icon.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/pagebreak/images/pagebreak.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/scayt/LICENSE.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/scayt/README.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_address.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_blockquote.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_div.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h1.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h2.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h3.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h4.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h5.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h6.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_p.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_pre.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/angel_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/angry_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/broken_heart.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/confused_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/cry_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/devil_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/embaressed_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/embarrassed_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/envelope.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/heart.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/kiss.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/lightbulb.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/omg_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/regular_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/sad_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/shades_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/teeth_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/thumbs_down.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/thumbs_up.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/tongue_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/tounge_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/whatchutalkingabout_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/wink_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templates/images/template1.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templates/images/template2.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templates/images/template3.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/wsc/LICENSE.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/wsc/README.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/youtube/images/icon.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/samples/assets/inlineall/logo.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/samples/assets/posteddata.php -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/samples/assets/sample.jpg -text svneol=unset#image/jpeg
+richtext/ckeditor/resources/src/main/resources/ckeditor/samples/plugins/htmlwriter/assets/outputforflash/outputforflash.fla -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/samples/plugins/htmlwriter/assets/outputforflash/outputforflash.swf -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/samples/sample_posteddata.php -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/icons.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/icons_hidpi.png -text svneol=unset#image/png

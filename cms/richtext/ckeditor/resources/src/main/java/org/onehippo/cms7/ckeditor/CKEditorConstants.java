@@ -41,6 +41,13 @@ public class CKEditorConstants {
     public static final ResourceReference CKEDITOR_JS = new UrlResourceReference(new Url(Arrays.asList("ckeditor", "ckeditor.js"), Charset.forName("UTF-8")));
 
     /**
+     * CKEDITOR constants for keyboard shortcuts
+     */
+    public static final int CTRL = 0x110000;
+    public static final int SHIFT = 0x220000;
+    public static final int ALT = 0x440000;
+
+    /**
      * The CKEDITOR.config properties
      */
     public static final String CONFIG_CONTENTS_CSS = "contentsCss";

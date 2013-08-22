@@ -128,7 +128,7 @@
         editor.ui.addButton('PickInternalLink', {
             label: LANG.internalLinkTooltip,
             command: 'pickInternalLink',
-            toolbar: 'insert',
+            toolbar: 'links,5',
             allowedContent: 'a[!href,title,target]',
             requiredContent: 'a[!href]'
         });
@@ -195,7 +195,7 @@
         editor.ui.addButton('PickImage', {
             label: LANG.imageTooltip,
             command: 'pickImage',
-            toolbar: 'insert',
+            toolbar: 'insert,5',
             allowedContent: 'img[!src,alt,align,width,height,facetselect,type]',
             requiredContent: 'img[!src]'
         });
