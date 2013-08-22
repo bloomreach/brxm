@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,18 +61,12 @@ public class LinkChecker {
 
     private static final Pattern URL_SCHEME_PATTERN = Pattern.compile("^([A-Za-z]+):.*$");
 
+    // refresh session after checking 50 internal links
+    private static final int REFRESH_SESSION_INTERVAL = 50;
+
     private final Session session;
     private final HttpClient httpClient;
     private final int nrOfThreads;
-
-    /**
-     * @deprecated Use {@link #LinkChecker(CheckExternalBrokenLinksConfig, Session)} instead.
-     * @param config
-     */
-    @Deprecated
-    public LinkChecker(CheckExternalBrokenLinksConfig config) {
-        this(config, null);
-    }
 
     public LinkChecker(CheckExternalBrokenLinksConfig config, Session session) {
         this.session = session;
@@ -134,10 +129,11 @@ public class LinkChecker {
         }
 
         final int threadCount = Math.min(queue.size(), nrOfThreads);
+        final AtomicInteger internalLinksChecked = new AtomicInteger();
 
         Thread[] threads = new Thread[threadCount];
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = new LinkCheckerRunner(queue);
+            threads[i] = new LinkCheckerRunner(queue, internalLinksChecked);
             threads[i].setUncaughtExceptionHandler(new LogUncaughtExceptionHandler(log));
         }
 
@@ -153,12 +149,21 @@ public class LinkChecker {
             // aborted
         }
 
+        try {
+            session.refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Failed to clear the session.", e);
+        }
     }
 
     private class LinkCheckerRunner extends Thread {
+
         private final ConcurrentLinkedQueue<Link> queue;
-        public LinkCheckerRunner(final ConcurrentLinkedQueue<Link> queue) {
+        private final AtomicInteger internalLinksChecked;
+
+        public LinkCheckerRunner(final ConcurrentLinkedQueue<Link> queue, final AtomicInteger internalLinksChecked) {
             this.queue = queue;
+            this.internalLinksChecked = internalLinksChecked;
         }
 
         @Override
@@ -208,20 +213,24 @@ public class LinkChecker {
                 return;
             }
 
-            Node sourceNode = null;
+            synchronized (session) {
+                try {
+                    Node sourceNode = session.getNodeByIdentifier(link.getSourceNodeIdentifier());
+                    Node linkedNode = findLinkedNode(sourceNode, url);
 
-            try {
-                sourceNode = session.getNodeByIdentifier(link.getSourceNodeIdentifier());
-                Node linkedNode = findLinkedNode(sourceNode, url);
+                    if (linkedNode == null) {
+                        link.setBroken(true);
+                        link.setBrokenSince(Calendar.getInstance());
+                        link.setResultCode(Link.ERROR_CODE);
+                        link.setResultMessage("Broken reference");
+                    }
 
-                if (linkedNode == null) {
-                    link.setBroken(true);
-                    link.setBrokenSince(Calendar.getInstance());
-                    link.setResultCode(Link.ERROR_CODE);
-                    link.setResultMessage("Broken reference");
+                    if (internalLinksChecked.incrementAndGet() % REFRESH_SESSION_INTERVAL == 0) {
+                        session.refresh(false);
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Failed to find the source node.", e);
                 }
-            } catch (RepositoryException e) {
-                log.warn("Failed to find the source node.", e);
             }
         }
 
