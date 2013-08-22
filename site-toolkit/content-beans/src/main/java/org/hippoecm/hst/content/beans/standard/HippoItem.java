@@ -301,29 +301,27 @@ public class HippoItem implements HippoBean {
         List<T> childBeans = new ArrayList<T>();
         NodeIterator nodes;
         try {
-            nodes = node.getNodes();
+            nodes = node.getNodes(childNodeName);
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (child == null) {
                     continue;
                 }
-                if (child.getName().equals(childNodeName)) {
-                    try {
-                        Object bean = this.objectConverter.getObject(child);
-                        if (bean != null) {
-                            if (beanMappingClass != null) {
-                                if(beanMappingClass.isAssignableFrom(bean.getClass())) {
-                                    childBeans.add((T) bean); 
-                                } else {
-                                    log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
-                                }
+                try {
+                    Object bean = this.objectConverter.getObject(child);
+                    if (bean != null) {
+                        if (beanMappingClass != null) {
+                            if(beanMappingClass.isAssignableFrom(bean.getClass())) {
+                                childBeans.add((T) bean);
                             } else {
-                                childBeans.add((T) bean); 
+                                log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
                             }
+                        } else {
+                            childBeans.add((T) bean);
                         }
-                    } catch (ObjectBeanManagerException e) {
-                        log.warn("Skipping bean: {}", e);
                     }
+                } catch (ObjectBeanManagerException e) {
+                    log.warn("Skipping bean: {}", e);
                 }
             }
         } catch (RepositoryException e) {
@@ -403,16 +401,16 @@ public class HippoItem implements HippoBean {
     @SuppressWarnings("unchecked")
     public <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass) {
         List<T> childBeans = new ArrayList<T>();
-        String fromNode = null;
+        String relFromNodePath = null;
         String nodeName = relPath;
         if(relPath.contains("/")) {
-            fromNode = relPath.substring(0, relPath.lastIndexOf("/"));
+            relFromNodePath = relPath.substring(0, relPath.lastIndexOf("/"));
             nodeName = relPath.substring(relPath.lastIndexOf("/")+1);
         }
         Node relNode = node;
-        if(fromNode != null) {
+        if(relFromNodePath != null) {
             try {
-                relNode = relNode.getNode(fromNode);
+                relNode = relNode.getNode(relFromNodePath);
             } catch (PathNotFoundException e) {
                 log.debug("did not find relPath '{}' at '{}'. Return empty list", relPath, this.getPath());
                 return childBeans;
@@ -423,7 +421,7 @@ public class HippoItem implements HippoBean {
         }
         
         try {
-            NodeIterator nodes = relNode.getNodes();
+            NodeIterator nodes = relNode.getNodes(nodeName);
             while (nodes.hasNext()) {
                 Node child = nodes.nextNode();
                 if (child == null) {
@@ -432,12 +430,10 @@ public class HippoItem implements HippoBean {
                 Object bean;
                 try {
                     bean = this.objectConverter.getObject(child);
-                    if (child.getName().equals(nodeName)) {
-                        if(bean instanceof HippoMirrorBean) {
-                            HippoBean linked = ((HippoMirrorBean)bean).getReferencedBean();
-                            if (linked != null && beanMappingClass.isAssignableFrom(linked.getClass())) {
-                                childBeans.add((T) linked);
-                            }
+                    if(bean instanceof HippoMirrorBean) {
+                        HippoBean linked = ((HippoMirrorBean)bean).getReferencedBean();
+                        if (linked != null && beanMappingClass.isAssignableFrom(linked.getClass())) {
+                            childBeans.add((T) linked);
                         }
                     }
                 } catch (ObjectBeanManagerException e) {
