@@ -67,6 +67,28 @@ import org.slf4j.LoggerFactory;
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
+            + "  codemirror: {"
+            + "    autoFormatOnStart: true"
+            + "  },"
+            + "  contentsCss: 'ckeditor/hippocontents.css',"
+            + "  dialog_buttonsOrder: 'ltr',"
+            + "  keystrokes: ["
+            + "    [ " + (CKEditorConstants.CTRL + asciiCode('M')) + ", 'maximize' ],"
+            + "    [ " + (CKEditorConstants.ALT + asciiCode('B')) + ", 'showblocks' ]"
+            + "  ],"
+            + "  linkShowAdvancedTab: false,"
+            + "  plugins: 'dialogui,dialog,a11yhelp,dialogadvtab,basicstyles,clipboard,button,panelbutton,panel,floatpanel,menu,contextmenu,resize,toolbar,elementspath,enterkey,entities,popup,floatingspace,listblock,richcombo,htmlwriter,wysiwygarea,indent,indentblock,indentlist,justify,link,list,liststyle,magicline,maximize,pastetext,pastefromword,removeformat,showblocks,showborders,sourcearea,specialchar,menubutton,stylescombo,tab,table,tabletools,undo,codemirror,youtube',"
+            + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
+            + "  toolbarGroups: ["
+            + "    { name: 'styles' },"
+            + "    { name: 'basicstyles' },"
+            + "    { name: 'undo' },"
+            + "    { name: 'listindentalign',  groups: [ 'list', 'indent', 'align' ] },"
+            + "    { name: 'links' },"
+            + "    { name: 'insert' },"
+            + "    { name: 'tools' },"
+            + "    { name: 'mode' }"
+            + "  ]"
             + "}";
 
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
@@ -81,31 +103,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
     private static final Logger log = LoggerFactory.getLogger(CKEditorNodePlugin.class);
 
     public CKEditorNodePlugin(final IPluginContext context, final IPluginConfig config) {
-        super(context, config, "{"
-                + "  codemirror: {"
-                + "    autoFormatOnStart: true"
-                + "  },"
-                + "  contentsCss: 'ckeditor/hippocontents.css',"
-                + "  dialog_buttonsOrder: 'ltr',"
-                + "  keystrokes: ["
-                + "    [ " + (CKEditorConstants.CTRL + asciiCode('M')) + ", 'maximize' ],"
-                + "    [ " + (CKEditorConstants.ALT + asciiCode('B')) + ", 'showblocks' ]"
-                + "  ],"
-                + "  linkShowAdvancedTab: false,"
-                + "  linkShowTargetTab: false,"
-                + "  plugins: 'dialogui,dialog,a11yhelp,dialogadvtab,basicstyles,clipboard,button,panelbutton,panel,floatpanel,menu,contextmenu,resize,toolbar,elementspath,enterkey,entities,popup,floatingspace,listblock,richcombo,htmlwriter,wysiwygarea,indent,indentblock,indentlist,justify,link,list,liststyle,magicline,maximize,pastetext,pastefromword,removeformat,showblocks,showborders,sourcearea,specialchar,menubutton,stylescombo,tab,table,tabletools,undo,codemirror,youtube',"
-                + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
-                + "  toolbarGroups: ["
-                + "    { name: 'styles' },"
-                + "    { name: 'basicstyles' },"
-                + "    { name: 'undo' },"
-                + "    { name: 'listindentalign',  groups: [ 'list', 'indent', 'align' ] },"
-                + "    { name: 'links' },"
-                + "    { name: 'insert' },"
-                + "    { name: 'tools' },"
-                + "    { name: 'mode' }"
-                + "  ]"
-                + "}");
+        super(context, config, DEFAULT_EDITOR_CONFIG);
     }
 
     /**
