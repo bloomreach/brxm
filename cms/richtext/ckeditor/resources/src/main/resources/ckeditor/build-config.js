@@ -56,8 +56,7 @@ var CKBUILDER_CONFIG = {
 		'richcombo' : 1,
 		'stylescombo' : 1,
 		'save' : 1,
-		'divarea' : 1,
-		'autogrow' : 1
+		'divarea' : 1
 	},
 	languages : {
 		'nl' : 1,
