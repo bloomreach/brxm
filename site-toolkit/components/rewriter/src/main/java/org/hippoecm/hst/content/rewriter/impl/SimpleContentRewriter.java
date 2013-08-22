@@ -275,7 +275,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     }
                 }
                 
-                Node mirrorNode = null;
+                Node mirrorNode;
                 String triedPath = path;
                 if (variantPath != null) {
                     mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, variantPath);
