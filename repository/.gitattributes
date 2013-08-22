@@ -114,7 +114,6 @@ deprecated/pom.xml svneol=native#text/plain
 deprecated/translation/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/FacetedNavigationEngineImpl.java -text
-engine/src/main/java/org/hippoecm/repository/SetDocIdSetBuilder.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/BuiltinPropertyReference.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/CopyDerivedDataFunction.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/CoreDerivedDataFunction.java -text
@@ -163,6 +162,7 @@ engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneo
 engine/src/main/java/org/hippoecm/repository/query/lucene/StandardHippoAnalyzer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCache.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheManager.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilder.java -text
 engine/src/main/java/org/hippoecm/repository/security/ExampleLoginModule.java -text
 engine/src/main/java/org/hippoecm/repository/security/FacetAuthConstants.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/HippoAMContext.java -text svneol=unset#text/plain
@@ -207,7 +207,6 @@ engine/src/main/resources/org/hippoecm/repository/configuration.xml svneol=nativ
 engine/src/main/resources/org/hippoecm/repository/impl/reference-workspace.xml -text
 engine/src/test/fixtures/dump.zip -text
 engine/src/test/java/org/hippoecm/repository/DereferencedExportImportTest.java svneol=native#text/plain
-engine/src/test/java/org/hippoecm/repository/DocIdSetTest.java -text
 engine/src/test/java/org/hippoecm/repository/DocumentViewExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/ExportCndTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/FreeTextSearchTest.java svneol=native#text/plain
@@ -224,6 +223,7 @@ engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTe
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheTest.java -text svneol=unset#text/plain
+engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/resources/InvalidJobDetail.ser -text

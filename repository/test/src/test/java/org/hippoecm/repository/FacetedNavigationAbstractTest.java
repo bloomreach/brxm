@@ -47,7 +47,7 @@ public abstract class FacetedNavigationAbstractTest extends RepositoryTestCase {
     }
 
     private static String alphabet = "abcde"; // abcdefghijklmnopqrstuvwxyz
-    private static int hierDepth = 1;
+    private static int hierDepth = 3;
     private static int saveInterval = 250;
     private static final int defaultNumDocs = 20;
     private int numDocs = -1;
@@ -95,7 +95,7 @@ public abstract class FacetedNavigationAbstractTest extends RepositoryTestCase {
         }
     }
 
-    private Node getRandomDocNode() throws RepositoryException {
+    protected Node getRandomDocNode() throws RepositoryException {
         StringBuffer path = new StringBuffer("test/documents");
         for (int depth = 0; depth < hierDepth; depth++) {
             path.append("/");

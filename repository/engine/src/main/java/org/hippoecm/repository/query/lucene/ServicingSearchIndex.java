@@ -79,6 +79,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.query.lucene.util.MultiReaderQueryFilter;
 import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,13 +133,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return supportSimilarityOnBinaries;
     }
 
-    private final Cache<String, AuthorizationFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+    private final Cache<String, MultiReaderQueryFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
 
     /**
      * @return the authorization bitset and <code>null</code> when every bit is allowed to be read
      * @throws IOException
      */
-    protected AuthorizationFilter getAuthorizationFilter(final Session session) throws IOException {
+    protected MultiReaderQueryFilter getAuthorizationFilter(final Session session) throws IOException {
         if (!(session instanceof InternalHippoSession)) {
             return null;
         }
@@ -147,7 +148,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         String userId = session.getUserID();
-        AuthorizationFilter filter = cache.getIfPresent(userId);
+        MultiReaderQueryFilter filter = cache.getIfPresent(userId);
         InternalHippoSession internalHippoSession = (InternalHippoSession) session;
         BooleanQuery query = internalHippoSession.getAuthorizationQuery().getQuery();
         if (filter != null && !filter.getQuery().equals(query)) {
@@ -159,7 +160,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             // the same filter twice or more: This only happens for the first unique userID or after a change in
             // authorization. Any way, storing it needlessly twice or more only for the same userID under concurrency is
             // much preferable over introducing synchronization
-            filter = new AuthorizationFilter(query);
+            filter = new MultiReaderQueryFilter(query);
             cache.put(session.getUserID(), filter);
         }
         return filter;
@@ -191,7 +192,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         Sort sort = new Sort(createSortFields(orderProps, orderSpecs, orderFuncs));
         final IndexReader reader = getIndexReader();
         // an authorizationFilter that is equal to null means: no filter for bitset
-        AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
+        MultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
         final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
@@ -225,7 +226,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         checkOpen();
 
         final IndexReader reader = getIndexReader();
-        AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
+        MultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
         final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(

@@ -27,6 +27,7 @@ import org.apache.jackrabbit.core.query.lucene.FieldSelectors;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
 import org.apache.jackrabbit.core.query.lucene.ScoreNode;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
@@ -91,7 +92,7 @@ public class HippoSortedLuceneQueryHits extends AbstractQueryHits {
      */
     private int numHits;
 
-    private final AuthorizationFilter authorizationFilter;
+    private final Filter authorizationFilter;
 
     /**
      * Creates a new <code>QueryHits</code> instance wrapping <code>hits</code>.
@@ -105,7 +106,7 @@ public class HippoSortedLuceneQueryHits extends AbstractQueryHits {
      * @param resultFetchHint a hint on how many results should be fetched.     @throws java.io.IOException if an error occurs while reading from the index.
      */
     public HippoSortedLuceneQueryHits(IndexReader reader,
-                                      AuthorizationFilter authorizationFilter,
+                                      Filter authorizationFilter,
                                       JackrabbitIndexSearcher searcher,
                                       Query query,
                                       Sort sort,

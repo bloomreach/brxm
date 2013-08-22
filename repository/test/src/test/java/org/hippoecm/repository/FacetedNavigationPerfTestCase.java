@@ -41,19 +41,26 @@ public class FacetedNavigationPerfTestCase extends FacetedNavigationAbstractTest
     
     @Test
     public void testPerformance() throws RepositoryException, IOException {
-        int[] numberOfNodesInTests = new int[] { 500 };
+        int[] numberOfNodesInTests = new int[] { 50000 };
         for (int i = 0; i < numberOfNodesInTests.length; i++) {
             commonStart(numberOfNodesInTests[i]);
-            Node node = getSearchNode();
-            long count, tBefore, tAfter;
-            tBefore = System.currentTimeMillis();
-            node = node.getNode("x1");
-            node = node.getNode("y2");
-            node = node.getNode("z2");
-            node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
-            count = node.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
-            tAfter = System.currentTimeMillis();
-            System.out.println("FacetedNavigationPerfTest" + numberOfNodesInTests[i] +" "+Long.toString(tAfter - tBefore)+"ms");
+            for (int j = 0; j < 10; j++) {
+                Node doc = getRandomDocNode();
+                doc.setProperty("other", "z");
+                session.save();
+                session.refresh(false);
+
+                Node node = getSearchNode();
+                long count, tBefore, tAfter;
+                tBefore = System.currentTimeMillis();
+                node = node.getNode("x1");
+                node = node.getNode("y2");
+                node = node.getNode("z2");
+                node = node.getNode(HippoNodeType.HIPPO_RESULTSET);
+                count = node.getProperty(HippoNodeType.HIPPO_COUNT).getLong();
+                tAfter = System.currentTimeMillis();
+                System.out.println("FacetedNavigationPerfTest" + numberOfNodesInTests[i] + " " + Long.toString(tAfter - tBefore) + "ms");
+            }
         }
         commonEnd();
     }

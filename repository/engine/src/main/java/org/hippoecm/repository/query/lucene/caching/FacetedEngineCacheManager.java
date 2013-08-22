@@ -20,20 +20,46 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 
 public class FacetedEngineCacheManager {
-    
-    private volatile CacheAndSearcher cacheAndSearcher = null; 
-    
-    private volatile IndexReader cacheCreatedWithIndexReader = null;
-    
-    public synchronized CacheAndSearcher getCacheAndSearcherInstance(IndexReader currentReader, int docIdSetCacheSize, int facetValueCountMapCacheSize) {
-        if(cacheCreatedWithIndexReader == currentReader && cacheAndSearcher != null) {
+
+    private int facetValueCountMapSize = 250;
+    private int docIdSetCacheSize = 250;
+
+    private IndexReader searcherCreatedWithIndexReader;
+
+    private CacheAndSearcher cacheAndSearcher;
+    private IndexSearcher searcher;
+    private FacetedEngineCache cache;
+
+    public synchronized CacheAndSearcher getCacheAndSearcherInstance(IndexReader currentReader) {
+        if (searcherCreatedWithIndexReader == currentReader) {
             return cacheAndSearcher;
         }
+
         // the currentReader is not the same as the reader with which the cacheAndSearcher was created. Recreate it now 
-        cacheCreatedWithIndexReader = currentReader;
-        FacetedEngineCache feCache = new FacetedEngineCache(docIdSetCacheSize, facetValueCountMapCacheSize);
-        cacheAndSearcher = new CacheAndSearcher(feCache, new IndexSearcher(currentReader));
+        searcherCreatedWithIndexReader = currentReader;
+        searcher = new IndexSearcher(currentReader);
+        cacheAndSearcher = new CacheAndSearcher(cache, searcher);
         return cacheAndSearcher;
+    }
+
+    public void setDocIdSetCacheSize(final int docIdSetCacheSize) {
+        this.docIdSetCacheSize = docIdSetCacheSize;
+    }
+
+    public int getDocIdSetCacheSize() {
+        return docIdSetCacheSize;
+    }
+
+    public void setFacetValueCountMapSize(final int facetValueCountMapSize) {
+        this.facetValueCountMapSize = facetValueCountMapSize;
+    }
+
+    public int getFacetValueCountMapSize() {
+        return facetValueCountMapSize;
+    }
+
+    public void init() {
+        cache = new FacetedEngineCache(docIdSetCacheSize, facetValueCountMapSize);
     }
 
     public class CacheAndSearcher {

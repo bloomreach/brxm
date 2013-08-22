@@ -13,18 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository;
+package org.hippoecm.repository.query.lucene.util;
 
 import java.io.IOException;
 import java.util.Random;
 
-import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.OpenBitSet;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
-public class DocIdSetTest {
+import static org.junit.Assert.assertEquals;
+
+public class SetDocIdSetBuilderTest {
 
     @Test
     public void testCombineBigDocIdSets() throws IOException {
@@ -41,6 +40,7 @@ public class DocIdSetTest {
             bitSets[i] = bitSet;
         }
 
+        long builtCardinality;
         {
             long start = System.currentTimeMillis();
             SetDocIdSetBuilder builder = new SetDocIdSetBuilder();
@@ -48,9 +48,11 @@ public class DocIdSetTest {
                 builder.add(bitSets[i]);
             }
             final OpenBitSet result = builder.toBitSet();
-            System.out.println("docidsetbuilder time: " + (System.currentTimeMillis() - start) + ", cardinality: " + result.cardinality());
+            builtCardinality = result.cardinality();
+//            System.out.println("docidsetbuilder time: " + (System.currentTimeMillis() - start) + ", cardinality: " + builtCardinality);
         }
 
+        /*
         {
             long start = System.currentTimeMillis();
             OpenBitSet bitSet = (OpenBitSet) bitSets[0].clone();
@@ -69,14 +71,19 @@ public class DocIdSetTest {
             }
             System.out.println("to bitset + bitset#and time: " + (System.currentTimeMillis() - start));
         }
+        */
 
+        long expectedCardinality;
         {
             long start = System.currentTimeMillis();
             OpenBitSet bitSet = (OpenBitSet) bitSets[0].clone();
             for (int i = 1; i < 10; i++) {
                 bitSet.and((OpenBitSet) bitSets[i].clone());
             }
-            System.out.println("cardinality: " + bitSet.cardinality() + ", pure bitset time: " + (System.currentTimeMillis() - start));
+            expectedCardinality = bitSet.cardinality();
+            System.out.println("cardinality: " + expectedCardinality + ", pure bitset time: " + (System.currentTimeMillis() - start));
         }
+
+        assertEquals(expectedCardinality, builtCardinality);
     }
 }

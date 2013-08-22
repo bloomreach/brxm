@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.query.lucene;
+package org.hippoecm.repository.query.lucene.util;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -32,69 +31,9 @@ import org.apache.lucene.util.OpenBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuthorizationFilter extends Filter {
+public class MultiReaderQueryFilter extends Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthorizationFilter.class);
-
-    private static class MultiDocIdSet extends DocIdSet {
-
-        private final int[] maxDocs;
-        private final DocIdSet[] docIdSets;
-
-        public MultiDocIdSet(final DocIdSet[] docIdSets, final int[] maxDocs) {
-            this.docIdSets = docIdSets;
-            this.maxDocs = maxDocs;
-        }
-
-        @Override
-        public DocIdSetIterator iterator() throws IOException {
-            return new DocIdSetIterator() {
-
-                int docID = -1;
-                int docOffset = 0;
-                int docIdSetIndex = 0;
-                DocIdSetIterator currentDocIdSetIterator = (docIdSets.length == 0) ? null : docIdSets[0].iterator();
-
-                @Override
-                public int docID() {
-                    return docID;
-                }
-
-                @Override
-                public int nextDoc() throws IOException {
-                    while (currentDocIdSetIterator != null) {
-                        int currentDocIdSetDocId = currentDocIdSetIterator.nextDoc();
-                        if (currentDocIdSetDocId != NO_MORE_DOCS) {
-                            docID = docOffset + currentDocIdSetDocId;
-                            return docID;
-                        }
-                        pointCurrentToNextIterator();
-                    }
-                    docID = NO_MORE_DOCS;
-                    return docID;
-                }
-
-                /**
-                 * if there is no next iterator, currentDocIdSetIterator becomes null
-                 */
-                private void pointCurrentToNextIterator() throws IOException {
-                    currentDocIdSetIterator = null;
-                    while (currentDocIdSetIterator == null && docIdSetIndex + 1 < docIdSets.length) {
-                        docOffset += maxDocs[docIdSetIndex];
-                        docIdSetIndex++;
-                        currentDocIdSetIterator = docIdSets[docIdSetIndex].iterator();
-                    }
-                }
-
-                @Override
-                public int advance(final int target) throws IOException {
-                    while (docID < target && nextDoc() != NO_MORE_DOCS) {
-                    }
-                    return docID;
-                }
-            };
-        }
-    }
+    private static final Logger log = LoggerFactory.getLogger(MultiReaderQueryFilter.class);
 
     private static final class CachedBitSet extends OpenBitSet {
 
@@ -115,7 +54,7 @@ public class AuthorizationFilter extends Filter {
     private final Query query;
 
 
-    public AuthorizationFilter(final Query query) {
+    public MultiReaderQueryFilter(final Query query) {
         this.query = query;
     }
 

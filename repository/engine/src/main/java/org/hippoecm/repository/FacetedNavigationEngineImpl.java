@@ -63,7 +63,6 @@ import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -72,13 +71,13 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.OpenBitSet;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.hippoecm.repository.query.lucene.AuthorizationFilter;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetFiltersQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetRangeQuery;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
+import org.hippoecm.repository.query.lucene.util.MultiReaderQueryFilter;
 import org.hippoecm.repository.query.lucene.RangeFields;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
@@ -87,6 +86,7 @@ import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache.FECacheKey;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager.CacheAndSearcher;
+import org.hippoecm.repository.query.lucene.util.SetDocIdSetBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,7 +235,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
 
         DocIdSet getAuthorisationIdSet(IndexReader reader) throws IOException {
-            final AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
+            final MultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
             if (authorizationFilter == null) {
                 return null;
             }
@@ -262,9 +262,6 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
     private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
     private final FacetedEngineCacheManager facetedEngineCacheMngr = new FacetedEngineCacheManager();
-
-    private int facetValueCountMapCacheSize = 250;
-    private int docIdSetCacheSize = 250;
 
     public FacetedNavigationEngineImpl() {
     }
@@ -304,35 +301,35 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
      */
     public void setBitSetCacheSize(int bitSetCacheSize) {
         log.warn("bitSetCacheSize config parameter in repository.xml is deprecated. Please use docIdCacheSize instead.");
-        this.docIdSetCacheSize = bitSetCacheSize;
+        setDocIdSetCacheSize(bitSetCacheSize);
     }
 
     /**
      * @deprecated since 2.24.02. Use {@link #getDocIdSetCacheSize()} instead
      */
     public int getBitSetCacheSize() {
-        return docIdSetCacheSize;
+        return getDocIdSetCacheSize();
     }
 
     public void setDocIdSetCacheSize(int docIdSetCacheSize) {
-        this.docIdSetCacheSize = docIdSetCacheSize;
+        facetedEngineCacheMngr.setDocIdSetCacheSize(docIdSetCacheSize);
     }
 
     public int getDocIdSetCacheSize() {
-        return docIdSetCacheSize;
+        return facetedEngineCacheMngr.getDocIdSetCacheSize();
     }
 
     /**
      * The facetedEngineCacheMngr property for the maximum number of facetValueCount's
      */
     public void setFacetValueCountMapCacheSize(int facetValueCountMapCacheSize) {
-        this.facetValueCountMapCacheSize = facetValueCountMapCacheSize;
+        facetedEngineCacheMngr.setFacetValueCountMapSize(facetValueCountMapCacheSize);
     }
 
     // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
     // of org.apache.commons.collections.BeanMap#keyIterator
     public int getFacetValueCountMapCacheSize() {
-        return facetValueCountMapCacheSize;
+        return facetedEngineCacheMngr.getFacetValueCountMapSize();
     }
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
@@ -359,7 +356,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         try {
             indexReader = getIndexReader();
 
-            CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader, docIdSetCacheSize, facetValueCountMapCacheSize);
+            CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader);
 
             FacetedEngineCache cache = cacheAndSearcher.getCache();
             IndexSearcher searcher =  cacheAndSearcher.getSearcher();
@@ -644,6 +641,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
     @Override
     protected void doInit() throws IOException {
+        facetedEngineCacheMngr.init();
         QueryHandlerContext context = getContext();
         HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
         stateMgr.repository.setFacetedNavigationEngine(this);
@@ -803,23 +801,22 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
-    private SetDocIdSetBuilder filterDocIdSet(org.apache.lucene.search.Query query, SetDocIdSetBuilder docIdSet, FacetedEngineCache cache, IndexReader indexReader) throws IOException {
+    private SetDocIdSetBuilder filterDocIdSet(org.apache.lucene.search.Query query, SetDocIdSetBuilder docIdSetBuilder, FacetedEngineCache cache, IndexReader indexReader) throws IOException {
         if (!(query instanceof BooleanQuery) || ((BooleanQuery)query).clauses().size() > 0) {
             String key = query.toString();
-            DocIdSet queryDocIdSet = cache.getDocIdSet(key);
-            if (queryDocIdSet == null) {
-                Filter filter = new QueryWrapperFilter(query);
-                queryDocIdSet = filter.getDocIdSet(indexReader);
-                cache.putDocIdSet(key, queryDocIdSet);
+            Filter queryFilter = cache.getFilter(key);
+            if (queryFilter == null) {
+                queryFilter = new MultiReaderQueryFilter(query);
+                cache.putFilter(key, queryFilter);
             }
-            if (docIdSet == null) {
-                docIdSet = new SetDocIdSetBuilder();
+            if (docIdSetBuilder == null) {
+                docIdSetBuilder = new SetDocIdSetBuilder();
             }
-            docIdSet.add(queryDocIdSet);
+            docIdSetBuilder.add(queryFilter.getDocIdSet(indexReader));
         }
-        return docIdSet;
+        return docIdSetBuilder;
     }
-    
+
     /**
      * Creates a path with a single element out of the given <code>name</code>.
      *

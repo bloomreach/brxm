@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.lucene.search.DocIdSet;
+import org.apache.lucene.search.Filter;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,20 +29,20 @@ public class FacetedEngineCache {
     
     private static final Logger log = LoggerFactory.getLogger(FacetedEngineCache.class);
 
-    private final Map<String, DocIdSet> docIdSetCache;
+    private final Map<String, Filter> filterCache;
     private final Map<FECacheKey, Map<String, Count>> facetValueCountMapCache;
     
-    public FacetedEngineCache(int docIdSetCacheSize, int facetValueCountMapCacheSize) {
-        if (docIdSetCacheSize < 100) {
-            log.warn("Minimum docIdSetCache size is 100. Change size to 100");
-            docIdSetCacheSize = 100;
+    public FacetedEngineCache(int filterCacheSize, int facetValueCountMapCacheSize) {
+        if (filterCacheSize < 100) {
+            log.warn("Minimum filterCache size is 100. Change size to 100");
+            filterCacheSize = 100;
         }
         if (facetValueCountMapCacheSize < 100) {
             log.warn("Minimum facetValueCountMapCache size is 100. Change size to 100");
             facetValueCountMapCacheSize = 100;
         }
 
-        docIdSetCache =  Collections.synchronizedMap(new LRUMap<String, DocIdSet>(100, docIdSetCacheSize));
+        filterCache =  Collections.synchronizedMap(new LRUMap<String, Filter>(100, filterCacheSize));
         facetValueCountMapCache = Collections.synchronizedMap(new LRUMap<FECacheKey, Map<String,Count>>(100, facetValueCountMapCacheSize));
     }
     
@@ -54,16 +54,16 @@ public class FacetedEngineCache {
         facetValueCountMapCache.put(key, facetValueCountMap);
     }
 
-    public DocIdSet getDocIdSet(String key) {
-        return docIdSetCache.get(key);
+    public Filter getFilter(String key) {
+        return filterCache.get(key);
     }
 
-    public void putDocIdSet(String key, DocIdSet docIdSet) {
-        docIdSetCache.put(key, docIdSet);
+    public void putFilter(String key, Filter docIdSet) {
+        filterCache.put(key, docIdSet);
     }
 
     int getDocIdSetCacheSize() {
-        return docIdSetCache.size();
+        return filterCache.size();
     }
 
     int getFacetValueCountMapCacheSize() {
@@ -71,7 +71,7 @@ public class FacetedEngineCache {
     }
 
     void clear() {
-        docIdSetCache.clear();
+        filterCache.clear();
         facetValueCountMapCache.clear();
     }
     
