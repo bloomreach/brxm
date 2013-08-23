@@ -48,12 +48,6 @@
       <type>pom</type>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-wfdropbox</artifactId>
-      <version>${hippo.repository.version}</version>
-    </dependency>
-
     <!-- upgrade modules, optional -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
