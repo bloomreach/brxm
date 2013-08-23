@@ -48,7 +48,7 @@
     <hippo.packages.version>2.25.01-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
     <hippo.repository.version>2.25.03-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>1.03.02-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>1.03.03-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.03.02-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.contenttype.version>1.03.01-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.utilities.version>1.01.04</hippo.utilities.version>
