@@ -42,7 +42,7 @@
 
     <hippo.utilities.version>1.01.03</hippo.utilities.version>
     <hippo.repository.version>2.25.04-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.25.02-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>2.25.03-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.27.02-SNAPSHOT</hippo.hst.version>
 
     <commons-lang.version>2.4</commons-lang.version>
