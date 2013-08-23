@@ -3,43 +3,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:workflowcategory</sv:value>
   </sv:property>
-  <!-- Deprecated. 'checkbrokenlinks' workflow has been deprecated. Do not use it. -->
-  <sv:node sv:name="checkbrokenlinks">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.onehippo.cms7.brokenlinks.CheckBrokenLinksWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Report broken external links</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>brokenlinks:config</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposys:config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
-      </sv:property>
-      <sv:property sv:name="connectionTimeout" sv:type="Long">
-        <sv:value>10000</sv:value>
-      </sv:property>
-      <sv:property sv:name="nrHttpThreads" sv:type="String">
-        <sv:value>10</sv:value>
-      </sv:property>
-      <sv:property sv:name="socketTimeout" sv:type="Long">
-        <sv:value>10000</sv:value>
-      </sv:property>
-      <sv:property sv:name="startPath" sv:type="String">
-        <sv:value>/content/documents</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
   <sv:node sv:name="reportbrokenlinks">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:workflow</sv:value>
