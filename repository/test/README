@@ -8,7 +8,7 @@ as well.
 Tests can be run against different databases using profiles.
 There are two predefined profiles for h2 and mysql. Run
 'mvn test -Ph2' to run the regular tests against h2. Run
-'mvn integration-test -Pintegration,h2 to run both regular
+'mvn verify -Pintegration,h2 to run both regular
 and integration tests against h2.
 
 The mysql configuration assumes a mysql database is running
@@ -26,7 +26,7 @@ Note on StampedeTest:
 StampedeTest is a load test on the repository. It starts
 a bunch of threads that execute a random set of actions
 on the repository continually for a configured amount of time.
-For instance 'mvn test -Dtest=StampedeTest -Pintegration,h2
+For instance 'mvn test -Dtest=StampedeTest -Ph2
 -Dstampede.minutes=3 -Dstampede.threads=5' executes the
 StampedeTest against h2 for a period of 3 minutes with 5
 concurrent threads.
@@ -34,15 +34,17 @@ concurrent threads.
 Note on running StampedeTest clustered:
 There are two predefined profiles for running the StampedeTest
 in a clustered setup using mysql as the backing database.
-Open two console windows for the current directory In the one run:
+Open two console windows for the current directory.
 
-'mvn test -Dtest=StampedeTest -Pintegration,clusternode1
+In the one run:
+
+'mvn test -Dtest=StampedeTest -Pclusternode1
 -Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
 -Dstampede.prompt=true'
 
 In the other run the other profile:
 
-'mvn test -Dtest=StampedeTest -Pintegration,clusternode1
+'mvn test -Dtest=StampedeTest -Pclusternode1
 -Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
 -Dstampede.prompt=true'
 

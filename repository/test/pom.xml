@@ -152,6 +152,15 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+
+    <!-- integration test dependency -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testcontent</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -167,37 +176,26 @@
             <repo.config>${repo.config}</repo.config>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
           </systemPropertyVariables>
+          <excludes>
+            <exclude>**/*PerfTestCase.java</exclude>
+            <exclude>**/RemoteSPITest.java</exclude>
+            <exclude>**/MirrorTest.java</exclude>
+            <exclude>**/FacetedNavigationConcurrencyTest.java</exclude>
+            <exclude>**/SampleRemoteWorkflowTest.java</exclude>
+            <exclude>**/RemoteTest.java</exclude>
+            <exclude>**/WorkflowChainingTest.java</exclude>
+            <exclude>**/TotalSizeTest.java</exclude>
+            <exclude>**/CndUpdateTest.java</exclude>
+            <exclude>**/DropboxTest.java</exclude>
+            <exclude>**/UpdaterTest.java</exclude>
+            <exclude>**/StampedeTest.java</exclude>
+            <exclude>**/integration/*.java</exclude>
+            <exclude>**/UpdaterExecutorTest.java</exclude>
+            <!-- TODO DEJDO: following tests rely on JDO like inheritance behavior: either have to be rewritten or removed -->
+            <exclude>**/SampleWorkflowTest.java</exclude>
+            <!-- end TODO DEJDO -->
+          </excludes>
         </configuration>
-        <executions>
-          <execution>
-            <id>default-test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <excludes>
-                <exclude>**/*PerfTestCase.java</exclude>
-                <exclude>**/RemoteSPITest.java</exclude>
-                <exclude>**/MirrorTest.java</exclude>
-                <exclude>**/FacetedNavigationConcurrencyTest.java</exclude>
-                <exclude>**/SampleRemoteWorkflowTest.java</exclude>
-                <exclude>**/RemoteTest.java</exclude>
-                <exclude>**/WorkflowChainingTest.java</exclude>
-                <exclude>**/TotalSizeTest.java</exclude>
-                <exclude>**/CndUpdateTest.java</exclude>
-                <exclude>**/DropboxTest.java</exclude>
-                <exclude>**/UpdaterTest.java</exclude>
-                <exclude>**/StampedeTest.java</exclude>
-                <exclude>**/integration/*.java</exclude>
-                <exclude>**/UpdaterExecutorTest.java</exclude>
-                <!-- TODO DEJDO: following tests rely on JDO like inheritance behavior: either have to be rewritten or removed -->
-                <exclude>**/SampleWorkflowTest.java</exclude>
-                <!-- end TODO DEJDO -->
-              </excludes>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -221,13 +219,12 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
+            <artifactId>maven-failsafe-plugin</artifactId>
             <executions>
               <execution>
-                <id>integration-test</id>
-                <phase>integration-test</phase>
                 <goals>
-                  <goal>test</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
                 </goals>
                 <configuration>
                   <includes>
@@ -254,20 +251,6 @@
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-repository-testcontent</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-repository-workflow</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
     </profile>
     <profile>
       <id>h2</id>
