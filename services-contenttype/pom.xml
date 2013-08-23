@@ -36,7 +36,7 @@
     
     <hippo.services.version>1.03.03-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>2.25.04-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.25.02-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>2.25.03-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <scm>
