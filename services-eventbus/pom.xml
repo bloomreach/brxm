@@ -34,7 +34,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Services - eventbus</notice.project.name>
     
-    <hippo.services.version>1.03.03-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>1.03.02-alpha</hippo.services.version>
     <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
   </properties>
 
