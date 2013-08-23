@@ -50,6 +50,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>1902.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.00</sv:value>
+    </sv:property>
   </sv:node>
   <!-- hippostd:html template french translation -->
   <sv:node sv:name="hippostd-html-template-fr">
@@ -109,6 +115,12 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>1902.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.00</sv:value>
     </sv:property>
   </sv:node>
   <!-- system html template french translations -->

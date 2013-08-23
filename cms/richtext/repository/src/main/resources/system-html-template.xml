@@ -79,10 +79,20 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
+      <sv:property sv:name="ckeditor.config.appended.json" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="ckeditor.config.overlayed.json" sv:type="String">
+        <sv:value/>
+      </sv:property>
+      <sv:property sv:name="htmlcleaner.id" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService</sv:value>
+      </sv:property>
       <sv:property sv:name="frontend:properties" sv:type="String">
         <sv:value>mode</sv:value>
-        <sv:value>width</sv:value>
-        <sv:value>height</sv:value>
+        <sv:value>ckeditor.config.appended.json</sv:value>
+        <sv:value>ckeditor.config.overlayed.json</sv:value>
+        <sv:value>htmlcleaner.id</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:references" sv:type="String">
         <sv:value>wicket.model</sv:value>
@@ -96,27 +106,17 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
-        <sv:property sv:name="AutoSave" sv:type="String">
-          <sv:value>timeoutLength=1500</sv:value>
+        <sv:property sv:name="ckeditor.config.appended.json" sv:type="String">
+          <sv:value>${ckeditor.config.appended.json}</sv:value>
         </sv:property>
-        <sv:property sv:name="Xinha.config.css" sv:type="String">
-          <sv:value>../skin/xinhaInternal.css</sv:value>
+        <sv:property sv:name="ckeditor.config.overlayed.json" sv:type="String">
+          <sv:value>${ckeditor.config.overlayed.json}</sv:value>
         </sv:property>
-        <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
-          <sv:value>formatblock</sv:value>
-          <sv:value>bold</sv:value>
-          <sv:value>italic</sv:value>
-          <sv:value>underline</sv:value>
-        </sv:property>
-        <sv:property sv:name="Xinha.plugins" sv:type="String">
-          <sv:value>AutoSave</sv:value>
-          <sv:value>AutoResize</sv:value>
-        </sv:property>
-        <sv:property sv:name="Xinha.skin" sv:type="String">
-          <sv:value>hippo-lite</sv:value>
+        <sv:property sv:name="htmlcleaner.id" sv:type="String">
+          <sv:value>${htmlcleaner.id}</sv:value>
         </sv:property>
         <sv:property sv:name="plugin.class" sv:type="String">
-          <sv:value>org.hippoecm.frontend.plugins.xinha.XinhaPlugin</sv:value>
+          <sv:value>org.hippoecm.frontend.plugins.ckeditor.CKEditorPropertyPlugin</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>
