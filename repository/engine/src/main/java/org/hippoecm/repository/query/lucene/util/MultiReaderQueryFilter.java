@@ -23,6 +23,8 @@ import java.util.WeakHashMap;
 import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
@@ -49,13 +51,33 @@ public class MultiReaderQueryFilter extends Filter {
         }
     }
 
+    private static boolean requiresMultiIndexReader(Query query) {
+        if (query instanceof BooleanQuery) {
+            for (BooleanClause clause : ((BooleanQuery) query).getClauses()) {
+                final Query subQuery = clause.getQuery();
+                final String strSubQuery = subQuery.toString();
+                if (strSubQuery.startsWith("ParentAxisQuery")
+                        || strSubQuery.startsWith("ChildAxisQuery")
+                        || strSubQuery.startsWith("DescendantSelfAxisQuery")) {
+                    return true;
+                }
+                if (requiresMultiIndexReader(subQuery)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private final Map<IndexReader, CachedBitSet> cache = Collections.synchronizedMap(
             new WeakHashMap<IndexReader, CachedBitSet>());
     private final Query query;
+    private final boolean disectMultiIndex;
 
 
     public MultiReaderQueryFilter(final Query query) {
         this.query = query;
+        disectMultiIndex = !requiresMultiIndexReader(query);
     }
 
     public Query getQuery() {
@@ -64,7 +86,7 @@ public class MultiReaderQueryFilter extends Filter {
 
     @Override
     public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
-        if (reader instanceof MultiIndexReader) {
+        if (disectMultiIndex && reader instanceof MultiIndexReader) {
             MultiIndexReader multiIndexReader = (MultiIndexReader) reader;
 
             IndexReader[] indexReaders = multiIndexReader.getIndexReaders();
