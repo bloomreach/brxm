@@ -58,7 +58,7 @@
     <aspectj.version>1.6.9</aspectj.version>
     <cglib.version>2.2.2</cglib.version>
 
-    <hippo.repository.version>2.25.03-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.25.04-SNAPSHOT</hippo.repository.version>
     <hippo.utilities.version>1.01.02</hippo.utilities.version>
 
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
