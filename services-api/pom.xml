@@ -26,7 +26,7 @@
 
   <name>Hippo CMS7 Services</name>
   <artifactId>hippo-services</artifactId>
-  <version>1.03.02-SNAPSHOT</version>
+  <version>1.03.02-alpha</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -38,9 +38,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.02-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.02-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.02-alpha</url>
   </scm>
 
   <repositories>
