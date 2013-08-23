@@ -71,7 +71,7 @@
     <notice.project.name>Hippo Repository</notice.project.name>
 
     <hippo.commons.version>1.02.03-alpha</hippo.commons.version>
-    <hippo.services.version>1.03.02-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>1.03.02-alpha</hippo.services.version>
     <hippo.services.eventbus.version>1.03.02-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.utilities.version>1.01.02</hippo.utilities.version>
 
