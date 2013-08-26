@@ -775,7 +775,7 @@
                     data: data,
                     dataType: 'html',
                     success: function(response) {
-                        var emptyElementHeight, element, intervalCounter, interval, containerElement, componentElement;
+                        var emptyElementHeight, intervalCounter, interval, containerElement, componentElement;
                         containerElement = this.el;
                         containerElement.html('');
                         emptyElementHeight = containerElement.height();
