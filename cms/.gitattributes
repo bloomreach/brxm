@@ -2414,7 +2414,115 @@ reporting/repository/src/main/resources/hippoecm-extension.xml -text
 reporting/repository/src/main/resources/hipporeport.cnd -text
 reporting/repository/src/main/resources/reporting-dashboard.xml -text
 reporting/repository/src/main/resources/reports-cluster-loader.xml -text
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickimage.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickinternallink.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickimage.png -text svneol=unset#image/png
+richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickinternallink.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/appended-resources/META-INF/LICENSE -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/CHANGES.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/LICENSE.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/README.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/about/dialogs/hidpi/logo_ckeditor.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/about/dialogs/logo_ckeditor.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/AutoComplete.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/AutoFormat.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/CommentSelectedRange.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/SearchCode.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/codemirror/icons/UncommentSelectedRange.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/fakeobjects/images/spacer.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/forms/images/hiddenfield.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/icons.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/icons_hidpi.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/iframe/images/placeholder.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/image/images/noimage.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/link/images/anchor.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/link/images/hidpi/anchor.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/magicline/images/hidpi/icon.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/magicline/images/icon.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/pagebreak/images/pagebreak.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/scayt/LICENSE.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/scayt/README.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_address.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_blockquote.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_div.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h1.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h2.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h3.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h4.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h5.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_h6.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_p.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/showblocks/images/block_pre.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/angel_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/angry_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/broken_heart.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/confused_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/cry_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/devil_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/embaressed_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/embarrassed_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/envelope.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/heart.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/kiss.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/lightbulb.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/omg_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/regular_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/sad_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/shades_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/teeth_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/thumbs_down.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/thumbs_up.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/tongue_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/tounge_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/whatchutalkingabout_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/smiley/images/wink_smile.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templates/images/template1.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templates/images/template2.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/templates/templates/images/template3.gif -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/wsc/LICENSE.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/wsc/README.md -text
+richtext/ckeditor/resources/src/main/resources/ckeditor/plugins/youtube/images/icon.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/icons.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/icons_hidpi.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/arrow.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/close.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/hidpi/close.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/hidpi/lock-open.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/hidpi/lock.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/hidpi/refresh.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/lock-open.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/lock.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/refresh.png -text svneol=unset#image/png
+richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/readme.md -text
 richtext/frontend/pom.xml -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractBrowserDialog.html -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractBrowserDialog.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractCKEditorDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/CKEditorImageService.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.css -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.html svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_de.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_fr.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_it.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_nl.properties -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImagePickerBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/CKEditorLinkService.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.html svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_de.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_fr.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_it.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentPickerBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/CKEditorImage.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/CKEditorLink.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/DocumentLink.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/InternalCKEditorLink.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/AbstractAjaxDialogBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IHtmlCleanerService.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IImageURLProvider.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/ILinkDecorator.java svneol=native#text/plain
@@ -2431,9 +2539,15 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextP
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextUtil.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-16.png -text svneol=unset#image/png
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-32.png -text svneol=unset#image/png
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextImageFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/RichTextFacetHelper.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/AbstractPersistedMap.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/BrowsableModel.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/IPersisted.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/JavascriptUtil.java -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/PrefixingModel.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin.html -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin.java -text svneol=unset#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin.properties -text svneol=unset#text/plain
@@ -2441,8 +2555,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinh
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_fr.properties -text svneol=unset#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_it.properties -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/BrowsableModel.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/PrefixingModel.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/XinhaNamespace.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/XinhaNodePlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/XinhaPlugin.java -text svneol=unset#text/plain
@@ -2450,8 +2562,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/behavior/Sta
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/AbstractBrowserDialog.html -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/AbstractBrowserDialog.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/AbstractXinhaDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/JavascriptUtil.java -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/XinhaDialogBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.css -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.html svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.java svneol=native#text/plain
@@ -2482,15 +2592,12 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/Xin
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/XinhaNamespace.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel-debug.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/box-grey.png -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/hippo-border.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager-debug.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/json/JsonParser.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/model/AbstractPersistedMap.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/model/DocumentLink.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/model/IPersisted.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/images/XinhaImage.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/images/XinhaImageService.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/links/ExternalXinhaLink.java svneol=native#text/plain

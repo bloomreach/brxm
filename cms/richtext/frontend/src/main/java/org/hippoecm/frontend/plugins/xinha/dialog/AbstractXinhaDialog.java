@@ -26,7 +26,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.plugins.xinha.model.IPersisted;
+import org.hippoecm.frontend.plugins.richtext.model.IPersisted;
 
 public abstract class AbstractXinhaDialog<T extends IPersisted> extends AbstractDialog<T> {
     private static final long serialVersionUID = 1L;

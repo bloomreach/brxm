@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.xinha.services.links;
 
 import java.util.Map;
 
-import org.hippoecm.frontend.plugins.xinha.model.AbstractPersistedMap;
+import org.hippoecm.frontend.plugins.richtext.model.AbstractPersistedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public abstract class XinhaLink extends AbstractPersistedMap {
     }
 
     @Override
-    protected Object serializeValue(Object value) {
+    protected String serializeValue(String value) {
         if (value == null) {
             value = "";
         }

@@ -25,7 +25,6 @@
 
   <name>CMS Rich Text Frontend</name>
   <description>Hippo CMS Rich Text Frontend</description>
-  <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-richtext-frontend</artifactId>
   <packaging>jar</packaging>
 
@@ -57,6 +56,17 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
       <version>${hippo.htmlcleaner.version}</version>
@@ -79,6 +89,10 @@
       <artifactId>hippo-cms-richtext-repository</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymockclassextension</artifactId>
     </dependency>
 
   </dependencies>
@@ -121,11 +135,13 @@
         <artifactId>jslint-maven-plugin</artifactId>
         <configuration>
           <predefinedVars>
+            CKEDITOR,
             Hippo,
+            HippoAjax,
+            jQuery,
             YAHOO,
-            window,
             Wicket,
-            jQuery
+            window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
           <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>

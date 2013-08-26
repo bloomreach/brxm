@@ -1,0 +1,31 @@
+<!--
+  * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:panel>
+  <wicket:extend>
+    <div wicket:id="content"></div>
+    <div class="hippo-picker-properties">
+      <wicket:container wicket:id="extra"/>
+      <label><wicket:message key="title-label">Title:</wicket:message> </label>
+      <div wicket:id="title" class="text-input">[Title text box]</div>
+    </div>
+    <wicket:fragment wicket:id="popup">
+      <label><wicket:message key="new-widow-label">Open in new window:</wicket:message> </label>
+      <div wicket:id="popup" style="width: 100px; float: left; padding-top: 4px;">[Open in new window]</div>
+    </wicket:fragment>
+  </wicket:extend>
+</wicket:panel>
+</html>
