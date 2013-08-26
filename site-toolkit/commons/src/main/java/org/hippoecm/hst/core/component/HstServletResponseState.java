@@ -100,16 +100,16 @@ public class HstServletResponseState implements HstResponseState {
     protected int statusCode;
 
     protected HttpServletRequest request;
-    protected HttpServletResponse response;
+    protected HttpServletResponse parentResponse;
 
 
     private String redirectLocation;
 
     private String forwardPathInfo;
 
-    public HstServletResponseState(HttpServletRequest request, HttpServletResponse response) {
+    public HstServletResponseState(HttpServletRequest request, HttpServletResponse parentResponse) {
         this.request = request;
-        this.response = response;
+        this.parentResponse = parentResponse;
 
         HstRequestContext requestContext = HstRequestUtils.getHstRequestContext(request);
 
@@ -301,8 +301,8 @@ public class HstServletResponseState implements HstResponseState {
 
     public void forward(String pathInfo) throws IOException {
         if (isRenderResponse) {
-            if (response instanceof HstResponse) {
-                ((HstResponse) response).forward(pathInfo);
+            if (parentResponse instanceof HstResponse) {
+                ((HstResponse) parentResponse).forward(pathInfo);
             } else {
                 failIfCommitted();
                 closed = true;
@@ -334,7 +334,10 @@ public class HstServletResponseState implements HstResponseState {
     public void setHeader(String name, String value) {
         if (isMimeResponse && !committed) {
             if (statusCode == HttpServletResponse.SC_MOVED_PERMANENTLY &&  "Location".equals(name)) {
-                 redirectLocation = value;
+                failIfCommitted();
+                closed = true;
+                committed = true;
+                redirectLocation = value;
             }
             List<String> headerList = getSetHeaderList(name, true);
             headerList.clear();
@@ -370,19 +373,31 @@ public class HstServletResponseState implements HstResponseState {
             if (statusCode == HttpServletResponse.SC_MOVED_PERMANENTLY && containsHeader("Location")) {
                 // permanent redirect, set #getRedirectLocation to trigger short-circuiting of hst aggregation
                 if(setHeaders.get("Location") != null) {
+                    failIfCommitted();
+                    closed = true;
+                    committed = true;
                     redirectLocation = setHeaders.get("Location").get(0);
                 } else if (addedHeaders.get("Location") != null) {
+                    failIfCommitted();
+                    closed = true;
+                    committed = true;
                     redirectLocation = addedHeaders.get("Location").get(0);
                 }
             }
-            if (response instanceof HstResponse) {
-                response.setStatus(statusCode);
+            if (parentResponse instanceof HstResponse) {
+                this.statusCode = statusCode;
+                parentResponse.setStatus(statusCode);
             } else {
                 this.statusCode = statusCode;
                 hasStatus = true;
                 resetBuffer();
             }
         }
+    }
+
+    @Override
+    public int getStatus() {
+        return statusCode;
     }
 
     /*
@@ -602,8 +617,8 @@ public class HstServletResponseState implements HstResponseState {
             // the property should be passed into the parent component.
             // Otherwise, the property should be kept in the response state.
 
-            if (response instanceof HstResponse) {
-                ((HstResponse) response).addHeadElement(element, keyHint);
+            if (parentResponse instanceof HstResponse) {
+                ((HstResponse) parentResponse).addHeadElement(element, keyHint);
             } else {
                 if (this.headElements == null) {
                     this.headElements = new ArrayList<KeyValue<String, Element>>();
@@ -903,49 +918,49 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     protected void setResponseLocale(Locale locale) {
-        this.response.setLocale(locale);
+        this.parentResponse.setLocale(locale);
     }
 
     protected void addResponseCookie(Cookie cookie) {
-        this.response.addCookie(cookie);
+        this.parentResponse.addCookie(cookie);
     }
 
     protected void setResponseCharacterEncoding(String characterEncoding) {
-        this.response.setCharacterEncoding(characterEncoding);
+        this.parentResponse.setCharacterEncoding(characterEncoding);
     }
 
     protected void setResponseContentType(String contentType) {
-        this.response.setContentType(contentType);
+        this.parentResponse.setContentType(contentType);
     }
 
     protected void addResponseHeader(String name, String value) {
-        this.response.addHeader(name, value);
+        this.parentResponse.addHeader(name, value);
     }
 
     protected void setResponseHeader(String name, String value) {
-        this.response.setHeader(name, value);
+        this.parentResponse.setHeader(name, value);
     }
 
     protected void addResponseHeadElement(Element element, String keyHint) {
-        if (this.response instanceof HstResponse) {
-            ((HstResponse) this.response).addHeadElement(element, keyHint);
+        if (this.parentResponse instanceof HstResponse) {
+            ((HstResponse) this.parentResponse).addHeadElement(element, keyHint);
         }
     }
 
     protected void setResponseStatus(int status) {
-        this.response.setStatus(status);
+        this.parentResponse.setStatus(status);
     }
 
     protected void setResponseContentLength(int len) {
-        this.response.setContentLength(len);
+        this.parentResponse.setContentLength(len);
     }
 
     protected OutputStream getResponseOutputStream() throws IOException {
-        return this.response.getOutputStream();
+        return this.parentResponse.getOutputStream();
     }
 
     protected PrintWriter getResponseWriter() throws IOException {
-        return this.response.getWriter();
+        return this.parentResponse.getWriter();
     }
 
     private String formatDateHeaderValue(long date) {

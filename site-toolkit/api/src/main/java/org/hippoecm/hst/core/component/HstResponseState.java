@@ -87,6 +87,11 @@ public interface HstResponseState
 
     void setStatus(int statusCode);
 
+    /**
+     * @return the status when set through {@link #setStatus(int)} and 0 if not set
+     */
+    int getStatus();
+
     void flushBuffer() throws IOException;
 
     int getBufferSize();
@@ -146,4 +151,5 @@ public interface HstResponseState
     void flush() throws IOException;
 
     boolean isFlushed();
+
 }
