@@ -775,16 +775,32 @@
                     data: data,
                     dataType: 'html',
                     success: function(response) {
-                        var emptyElementHeight, element, intervalCounter, interval;
-                        this.el.html('');
-                        emptyElementHeight = this.el.height();
-                        this.el.html(response);
+                        var emptyElementHeight, element, intervalCounter, interval, containerElement, componentElement;
+                        containerElement = this.el;
+                        containerElement.html('');
+                        emptyElementHeight = containerElement.height();
+
+                        componentElement = $(response);
+                        /*
+                         When response contains hst-container-item class element, the content of that
+                         element is copied to the container item element and all attributes will
+                         be copied. By default the full response will be place in the container
+                         element.
+                          */
+                        if(componentElement.hasClass(HST.CLASS.ITEM)) {
+                            // Copy attributes to container item element
+                            this.copyAttributes(componentElement, containerElement);
+                            // Set the inner html of component's container item to container HTML
+                            containerElement.html(componentElement.html());
+                        } else {
+                            // Set the plain response to the container HTML
+                            containerElement.html(response);
+                        }
 
                         // poll for five seconds to check the component is rendered
-                        element = this.el;
                         intervalCounter = 0;
                         interval = window.setInterval(function() {
-                            if (intervalCounter > 50 || element.height() !== emptyElementHeight) {
+                            if (intervalCounter > 50 || containerElement.height() !== emptyElementHeight) {
                                 window.clearInterval(interval);
                                 callback();
                             }
@@ -793,6 +809,13 @@
                     }
                 });
             }
+        },
+
+        copyAttributes: function(sourceElement, targetElement) {
+            var attributes = sourceElement.prop("attributes");
+            $.each(attributes, function(i, attribute){
+                targetElement.attr(attribute.name, attribute.value);
+            });
         },
 
         sync: function() {
