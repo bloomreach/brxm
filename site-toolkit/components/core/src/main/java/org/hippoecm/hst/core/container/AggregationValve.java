@@ -198,17 +198,20 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
                 if (redirectLocation.startsWith("http:") || redirectLocation.startsWith("https:")) {
                     sendRedirect(servletResponse, redirectLocation, permanent);
-                } else if (!redirectLocation.startsWith("/")) {
-                    throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
-                } else if (isAlwaysRedirectLocationToAbsoluteUrl()) {
-                    /* 
+                } else if (redirectLocation.startsWith("/")) {
+                    if (isAlwaysRedirectLocationToAbsoluteUrl()) {
+                    /*
                      * We will redirect to a URL containing the scheme + hostname + portnumber to avoid problems
                      * when redirecting behind a proxy by default.
                      */
-                    String fullyQualifiedURL = requestContext.getVirtualHost().getBaseURL(servletRequest) + redirectLocation;
-                    sendRedirect(servletResponse, fullyQualifiedURL, permanent);
+                        String fullyQualifiedURL = requestContext.getVirtualHost().getBaseURL(servletRequest) + redirectLocation;
+                        sendRedirect(servletResponse, fullyQualifiedURL, permanent);
+                    } else {
+                        sendRedirect(servletResponse, redirectLocation, permanent);
+                    }
                 } else {
-                    sendRedirect(servletResponse, redirectLocation, permanent);
+                    throw new ContainerException("Can only redirect to a context relative path starting with a '/' or " +
+                            "to a fully qualified url starting with http: or https: ");
                 }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
