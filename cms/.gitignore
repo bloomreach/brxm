@@ -296,6 +296,7 @@ richtext/.settings
 richtext/ckeditor/plugins/*.iml
 richtext/ckeditor/plugins/target
 richtext/ckeditor/resources/*.iml
+richtext/ckeditor/resources/src/main/resources/ckeditor/samples
 richtext/ckeditor/resources/target
 richtext/ckeditor/target
 richtext/frontend/*.iml
