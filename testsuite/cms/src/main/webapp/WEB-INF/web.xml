@@ -97,11 +97,11 @@
     </listener>
 
   <servlet>
-    <servlet-name>XinhaResourceServlet</servlet-name>
+    <servlet-name>CKEditorResourceServlet</servlet-name>
     <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
-      <param-value>/xinha</param-value>
+      <param-value>/ckeditor</param-value>
     </init-param>
     <init-param>
       <param-name>allowedResourcePaths</param-name>
@@ -181,8 +181,8 @@
     </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>XinhaResourceServlet</servlet-name>
-    <url-pattern>/xinha/*</url-pattern>
+    <servlet-name>CKEditorResourceServlet</servlet-name>
+    <url-pattern>/ckeditor/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
