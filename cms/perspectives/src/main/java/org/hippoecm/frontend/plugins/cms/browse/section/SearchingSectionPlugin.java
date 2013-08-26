@@ -316,7 +316,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     @Override
     public void render(PluginRequestTarget target) {
         if (target != null) {
-            if (redrawSearch) {
+            if (redrawSearch && isVisibleInHierarchy()) {
                 target.add(container);
             }
         }

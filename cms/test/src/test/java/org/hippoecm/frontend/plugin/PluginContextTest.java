@@ -15,12 +15,19 @@
  */
 package org.hippoecm.frontend.plugin;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.PluginPage;
+import org.hippoecm.frontend.model.event.IObservable;
+import org.hippoecm.frontend.model.event.IObservationContext;
+import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
@@ -34,6 +41,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class PluginContextTest {
+
+    private LogService logService;
 
     public interface ITestService extends IClusterable {
 
@@ -145,10 +154,19 @@ public class PluginContextTest {
         }
     }
 
+    static class LogService implements ILogService {
+
+        protected List<String> messages = new LinkedList<String>();
+
+        public void log(String message) {
+            messages.add(message);
+        }
+
+    }
+
     protected HippoTester tester;
     private PluginPage home;
     protected IPluginContext context;
-    protected List<String> messages;
 
     @Before
     public void setUp() {
@@ -157,19 +175,13 @@ public class PluginContextTest {
         JavaPluginConfig config = new JavaPluginConfig("dummy");
         config.put("plugin.class", DummyPlugin.class.getName());
         context = home.getPluginManager().start(config);
-        messages = new LinkedList<String>();
-        context.registerService(new ILogService() {
-
-            public void log(String message) {
-                messages.add(message);
-            }
-
-        }, "service.log");
+        logService = new LogService();
+        context.registerService(logService, "service.log");
     }
 
     @After
     public void teardown() throws Exception {
-        messages = null;
+        logService = null;
         if (tester != null) {
             tester.destroy();
         }
@@ -310,5 +322,83 @@ public class PluginContextTest {
         control.stop();
 
         assertNull(context.getService(serviceId, ITestService.class));
+    }
+
+    public static class DependentServicePlugin extends Plugin {
+
+        IObservable observable;
+
+        public DependentServicePlugin(final IPluginContext context, final IPluginConfig config) {
+            super(context, config);
+        }
+
+        @Override
+        public void start() {
+            final IPluginContext context = getPluginContext();
+
+            context.registerService(new IClusterable() {}, "service.test");
+
+            final IObserver observer = new IObserver() {
+
+                private final IPluginContext context = DependentServicePlugin.this.getPluginContext();
+
+                @Override
+                public IObservable getObservable() {
+                    return observable;
+                }
+
+                @Override
+                public void onEvent(final Iterator events) {
+                }
+            };
+
+            context.registerTracker(new ServiceTracker<IClusterable>(IClusterable.class) {
+
+                @Override
+                protected void onServiceAdded(final IClusterable service, final String name) {
+                    observable = new IObservable() {
+
+                        @Override
+                        public void setObservationContext(final IObservationContext<? extends IObservable> context) {
+                        }
+
+                        @Override
+                        public void startObservation() {
+                        }
+
+                        @Override
+                        public void stopObservation() {
+                        }
+                    };
+                    context.registerService(observer, IObserver.class.getName());
+                }
+
+                @Override
+                protected void onRemoveService(final IClusterable service, final String name) {
+                    context.unregisterService(observer, IObserver.class.getName());
+                    observable = null;
+                }
+            }, "service.test");
+
+        }
+
+        @Override
+        public void stop() {
+        }
+    }
+
+    @Test
+    public void serviceUnregistrationIsImmediateDuringShutdown() throws IOException {
+        JavaPluginConfig config = new JavaPluginConfig("test");
+        config.put("plugin.class", DependentServicePlugin.class.getName());
+        JavaClusterConfig cluster = new JavaClusterConfig();
+        cluster.addPlugin(config);
+        IClusterControl control = context.newCluster(cluster, new JavaPluginConfig());
+        control.start();
+
+        control.stop();
+
+        ObjectOutputStream oos = new ObjectOutputStream(new ByteArrayOutputStream());
+        oos.writeObject(context);
     }
 }

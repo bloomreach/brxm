@@ -101,6 +101,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
         if (dialog == shown) {
             close();
+            cleanup();
         }
     }
 
@@ -113,7 +114,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     public void close() {
         if (isShown()) {
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            close(target);
+            if (target != null) {
+                close(target);
+            }
         }
     }
 

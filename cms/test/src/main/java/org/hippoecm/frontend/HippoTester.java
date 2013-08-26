@@ -426,8 +426,12 @@ public class HippoTester extends WicketTester {
 
         @Override
         public RuntimeConfigurationType getConfigurationType() {
-            // suppress development mode warning from test output
-            return RuntimeConfigurationType.DEPLOYMENT;
+            return RuntimeConfigurationType.DEVELOPMENT;
+        }
+
+        @Override
+        // suppress development mode warning from test output
+        protected void outputDevelopmentModeWarning() {
         }
 
         @Override

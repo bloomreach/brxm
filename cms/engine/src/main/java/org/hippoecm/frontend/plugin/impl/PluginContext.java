@@ -27,9 +27,9 @@ import java.util.TreeMap;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -52,6 +52,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPluginConfig config;
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
+    private Map<String, List<IClusterable>> stopped;
     private Map<IClusterable, ServiceRegistration> registrations;
     private List<ServiceRegistration> registrationOrder;
     private Map<IServiceFactory<IClusterable>, IClusterable> instances;
@@ -68,7 +69,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             throw new RuntimeException("Config (name) is null");
         }
 
-        this.services = new HashMap<String, List<IClusterable>>();
+        this.services = new LinkedHashMap<String, List<IClusterable>>();
         this.registrations = new IdentityHashMap<IClusterable, ServiceRegistration>();
         this.registrationOrder = new LinkedList<ServiceRegistration>();
         this.instances = new IdentityHashMap<IServiceFactory<IClusterable>, IClusterable>();
@@ -221,35 +222,39 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public void unregisterService(IClusterable service, String name) {
-        if (!stopping) {
-            List<IClusterable> list = services.get(name);
-            if (list != null) {
-                if (!list.remove(service)) {
-                    log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
-                            + " is unregistering service at " + name + " that wasn't registered.");
-                }
-                if (initializing) {
-                    if (registrations.containsKey(service)) {
-                        ServiceRegistration registration = registrations.get(service);
-                        registration.removeName(name);
-                        if (registration.names.size() == 0) {
-                            registration.cleanup();
-                            registrations.remove(service);
-                            registrationOrder.remove(registration);
-                        }
-                    } else {
-                        log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
-                                + " is unregistering service at " + name + " that wasn't registered.");
-                    }
-                } else {
-                    if (name != null) {
-                        manager.unregisterService(service, name);
-                    }
-                }
-            } else {
+        List<IClusterable> list = services.get(name);
+        if (list != null) {
+            if (!list.remove(service)) {
                 log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
                         + " is unregistering service at " + name + " that wasn't registered.");
             }
+            if (initializing) {
+                if (registrations.containsKey(service)) {
+                    ServiceRegistration registration = registrations.get(service);
+                    registration.removeName(name);
+                    if (registration.names.size() == 0) {
+                        registration.cleanup();
+                        registrations.remove(service);
+                        registrationOrder.remove(registration);
+                    }
+                } else {
+                    log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                            + " is unregistering service at " + name + " that wasn't registered.");
+                }
+            } else {
+                if (name != null) {
+                    manager.unregisterService(service, name);
+                }
+                if (stopping) {
+                    if (!stopped.containsKey(name)) {
+                        stopped.put(name, new LinkedList<IClusterable>());
+                    }
+                    stopped.get(name).add(service);
+                }
+            }
+        } else {
+            log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                    + " is unregistering service at " + name + " that wasn't registered.");
         }
     }
 
@@ -331,6 +336,8 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (!stopping) {
             stopping = true;
 
+            stopped = new HashMap<String, List<IClusterable>>();
+
             if (plugin != null) {
                 plugin.stop();
             }
@@ -361,8 +368,12 @@ public class PluginContext implements IPluginContext, IDetachable {
                 log.debug("unregistering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
                 for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
                     for (IClusterable service : entry.getValue()) {
-                        if (entry.getKey() != null) {
-                            manager.unregisterService(service, entry.getKey());
+                        final String key = entry.getKey();
+                        if (key != null) {
+                            if (stopped.containsKey(key) && stopped.get(key).contains(service)) {
+                                continue;
+                            }
+                            manager.unregisterService(service, key);
                         }
                     }
                 }
@@ -374,6 +385,7 @@ public class PluginContext implements IPluginContext, IDetachable {
                 registrations.clear();
             }
             services.clear();
+            stopped.clear();
         }
     }
 
@@ -416,7 +428,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (stopping && Application.exists()) {
             if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
-                throw new WicketRuntimeException("Stopped plugin is still being referenced" + plugin.getClass().getName());
+                throw new WicketRuntimeException("Stopped plugin is still being referenced: " + plugin.getClass().getName());
             }
         }
         output.defaultWriteObject();

@@ -19,8 +19,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -115,6 +118,7 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
         public void dispose() {
             for (final DialogWrapper wrapper : dialogs) {
                 rootService.hide(wrapper);
+                wrapper.dispose();
             }
             dialogs.clear();
 
@@ -164,6 +168,37 @@ public class DialogServiceFactory implements IServiceFactory<IDialogService> {
         @Override
         public void render(PluginRequestTarget target) {
             dialog.render(target);
+        }
+
+        void dispose() {
+            dialog = new Dialog() {
+                @Override
+                public void setDialogService(final IDialogService service) {
+                }
+
+                @Override
+                public void render(final PluginRequestTarget target) {
+                }
+
+                @Override
+                public Component getComponent() {
+                    return new EmptyPanel("content");
+                }
+
+                @Override
+                public IModel<String> getTitle() {
+                    return Model.of("disposed");
+                }
+
+                @Override
+                public void onClose() {
+                }
+
+                @Override
+                public IValueMap getProperties() {
+                    return new ValueMap();
+                }
+            };
         }
 
         @Override
