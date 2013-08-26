@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-brokenlinks</artifactId>
-    <version>2.25.02-CKEDITOR</version>
+    <version>2.25.03-SNAPSHOT</version>
   </parent>
 
   <name>CMS Brokenlinks test</name>
@@ -36,11 +36,6 @@
       <artifactId>hippo-services</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-wfdropbox</artifactId>
-      <version>${hippo.repository.version}</version>
-    </dependency>
-   <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${hippo.repository.version}</version>

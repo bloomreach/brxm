@@ -79,9 +79,9 @@ api/src/main/java/org/hippoecm/frontend/editor/compare/ObjectComparer.java svneo
 api/src/main/java/org/hippoecm/frontend/editor/compare/StreamComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/TypedComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHintPlugin.css -text
-api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHintPlugin.html -text
-api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHintPlugin.java -text
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHint.css -text
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHint.html -text
+api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/FieldHint.java -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/fieldhint/hint.png -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/PdfParser.java -text

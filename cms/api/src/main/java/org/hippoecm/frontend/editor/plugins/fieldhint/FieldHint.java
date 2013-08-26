@@ -29,12 +29,12 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
-public class FieldHintPlugin extends Panel {
+public class FieldHint extends Panel {
 
-    private static final PackageResourceReference HINT_PNG = new PackageResourceReference(FieldHintPlugin.class, "hint.png");
-    private static final CssResourceReference HINT_CSS = new CssResourceReference(FieldHintPlugin.class, "FieldHintPlugin.css");
+    private static final PackageResourceReference HINT_PNG = new PackageResourceReference(FieldHint.class, "hint.png");
+    private static final CssResourceReference HINT_CSS = new CssResourceReference(FieldHint.class, "FieldHint.css");
 
-    public FieldHintPlugin(String id, final String hint) {
+    public FieldHint(String id, final String hint) {
         super(id);
 
         add(createHint(hint));
