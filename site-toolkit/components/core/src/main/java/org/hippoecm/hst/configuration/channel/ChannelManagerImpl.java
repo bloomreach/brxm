@@ -659,66 +659,56 @@ public class ChannelManagerImpl implements MutableChannelManager {
     // private - internal - methods
 
     private void createChannel(Node configRoot, Blueprint blueprint, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
-        Node contentRootNode = null;
-        try {
-            // Create virtual host
-            final URI channelUri = getChannelUri(channel);
-            final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
+        // Create virtual host
+        final URI channelUri = getChannelUri(channel);
+        final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
-            // Create channel
-            copyOrCreateChannelNode(configRoot, channelId, channel);
+        // Create channel
+        copyOrCreateChannelNode(configRoot, channelId, channel);
 
-            // Create or reuse HST configuration
-            final Node blueprintNode = BlueprintHandler.getNode(session, blueprint);
-            final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
-            channel.setHstConfigPath(hstConfigPath);
+        // Create or reuse HST configuration
+        final Node blueprintNode = BlueprintHandler.getNode(session, blueprint);
+        final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
+        channel.setHstConfigPath(hstConfigPath);
 
-            // Create content if the blueprint contains a content prototype. The path of the created content node has to
-            // be set on the HST site nodes.
-            final String channelContentRootPath;
-            if (blueprint.getHasContentPrototype()) {
-                contentRootNode = createContent(blueprint, session, channelId, channel);
-                channelContentRootPath = contentRootNode.getPath();
-                channel.setContentRoot(channelContentRootPath);
-            } else {
-                channelContentRootPath = channel.getContentRoot();
+        // Create content if the blueprint contains a content prototype. The path of the created content node has to
+        // be set on the HST site nodes.
+        final String channelContentRootPath;
+        if (blueprint.getHasContentPrototype()) {
+            final Node contentRootNode = createContent(blueprint, session, channelId, channel);
+            channelContentRootPath = contentRootNode.getPath();
+            channel.setContentRoot(channelContentRootPath);
+        } else {
+            channelContentRootPath = channel.getContentRoot();
+        }
+
+        final Node sitesNode = configRoot.getNode(sites);
+        final Node liveSiteNode = createSiteNode(sitesNode, channelId, channelContentRootPath);
+        final Node previewSiteNode = createSiteNode(sitesNode, channelId + "-preview",
+                channelContentRootPath);
+
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
+            if (blueprintSiteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
+                String explicitConfigPath = blueprintSiteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+                liveSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
+                previewSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
             }
+        }
 
-            final Node sitesNode = configRoot.getNode(sites);
-            final Node liveSiteNode = createSiteNode(sitesNode, channelId, channelContentRootPath);
-            final Node previewSiteNode = createSiteNode(sitesNode, channelId + "-preview",
-                    channelContentRootPath);
+        final String mountPointPath = liveSiteNode.getPath();
+        channel.setHstMountPoint(mountPointPath);
 
-            if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-                Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
-                if (blueprintSiteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                    String explicitConfigPath = blueprintSiteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
-                    liveSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
-                    previewSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
-                }
-            }
+        final String previewMountPointPath = previewSiteNode.getPath();
+        channel.setHstPreviewMountPoint(previewMountPointPath);
 
-            final String mountPointPath = liveSiteNode.getPath();
-            channel.setHstMountPoint(mountPointPath);
-
-            final String previewMountPointPath = previewSiteNode.getPath();
-            channel.setHstPreviewMountPoint(previewMountPointPath);
-
-            // Create mount
-            Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
-            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
-            mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
-            final String locale = channel.getLocale();
-            if (locale != null) {
-                mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
-            }
-        } catch (ChannelException e) {
-            if(contentRootNode!=null){
-                Session s = contentRootNode.getSession();
-                contentRootNode.remove();
-                s.save();
-            }
-            throw e;
+        // Create mount
+        Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH, channelsRoot + channelId);
+        mount.setProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT, mountPointPath);
+        final String locale = channel.getLocale();
+        if (locale != null) {
+            mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
         }
 
 
