@@ -49,15 +49,19 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
  * Thus, suppose we have the following {@link Mount} tree configuration:
  *
  * <pre>
- *    127.0.0.1
- *      `- hst:root  (hst:mountpoint = /live/myproject, hst:ismapped = true)
- *            `- preview (hst:mountpoint = /preview/myproject, hst:ismapped = true)
+ *    +127.0.0.1
+ *       +hst:root
+ *           - hst:mountpoint = /content/documents/myproject
+ *           - hst:ismapped = true
+ *           + subsite
+ *              - hst:mountpoint = /content/documents/subsite
+ *              - hst:ismapped = true
  * </pre>
  * <p>
  * The configuration above means, that below the host 127.0.0.1 we have of course the mandatory {@link Mount} <code>hst:root</code>, and below it, we have
- * a {@link Mount} <code>preview</code>. Every request path that starts with <code>/preview</code> will be mapped to 'preview' {@link Mount}, all other request path's that do not start with '/preview'
+ * a {@link Mount} <code>subsite</code>. Every request path that starts with <code>/subsite</code> will be mapped to 'subsite' {@link Mount}, all other request path's that do not start with '/subsite'
  * resolve to the <code>hst:root<code> item. While the request path does match the next {@link Mount} descendant in the tree, the matching is continued to descendant {@link Mount} items. Thus, in the current example,
- * the request path <code>/preview/home</code> will return the {@link Mount} with name 'preview'.
+ * the request path <code>/subsite/home</code> will return the {@link Mount} with name 'subsite'.
  * </p>
  *
  * Also, you can configure some of the same properties the {@link VirtualHost} also has:
@@ -77,43 +81,15 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
  * a preview available at all. Configuration then for example could be:
  *
  * <pre>
- *    www.mycompany.com
- *        ` hst:root  (hst:mountpoint = /live/myproject)
- *    preview.mycompany.com
- *        ` hst:root  (hst:mountpoint = /preview/myproject)
+ *    +www.mycompany.com
+ *        +hst:root
+ *           - hst:mountpoint = /content/documents/myproject
+ *    +sub.mycompany.com
+ *        +hst:root
+ *           - hst:mountpoint = /content/documents/subsite
  * </pre>
  *
- * <p>As can be seen, instead of using the request path prefix to distuinguish between live and preview, we now do so by hostname.</p>
- *
- * An example with more {@link Mount} items is for example:
- *
- * <pre>
- *    127.0.0.1
- *      `- hst:root  (hst:mountpoint = /live/myproject)
- *            |-myrestservice (hst:mountpoint = /live/myproject, hst:namedpipeline=JaxrsPipeline)
- *            `- preview (hst:mountpoint = /preview/myproject)
- *                  `-myrestservice (hst:mountpoint = /preview/myproject, hst:namedpipeline=JaxrsPipeline)
- * </pre>
- *
- * <p>Now, all request path's that start with <code>/myrestservice</code> or  <code>/preview/myrestservice</code> resolve to the <code>myrestservice</code>
- * {@link Mount} item. This one has a custom <code>hst:namedpipeline</code>, where you can configure a complete custom hst request processing, in this example
- * some pipeline exposing some rest interface.</p>
- *
- * <p>
- * Optionally, wildcard matching support can be implemented, where even the wilcards can be used within the property values. For example:
- * <pre>
- *    127.0.0.1
- *      `- hst:root  (hst:mountpoint = /live/myproject)
- *            |- * (hst:mountpoint = /live/${1})
- *            `- preview (hst:mountpoint = /preview/myproject)
- *                  ` - * (hst:mountpoint = /preview/${1})
- * </pre>
- *
- * The above means, that when there is a (sub)site complying to the wildcard, this one is used, and otherwise, the default one pointing
- * to <code>myproject</code> is used. Thus, a request path like <code>/preview/mysubsite/home</code> will map to the {@link Mount} <code>/preview/*</code>
- * if there is a (sub)site at the mountpoint <code>/preview/${1}</code>, where obviously ${1} is substituted by 'mysubsite'. Assuming that there
- * is no subsite called 'news', a request path like /preview/news/2010/05/my-news-item will thus be handled by the site 'myproject'
- *
+ * Optionally, wildcard matching support can be implemented, where the wilcards can be used within the property values. For example:
  * </p>
  *
  */
@@ -150,8 +126,6 @@ public interface Mount {
     /**
      * When this {@link Mount} is not using a {@link HstSiteMap} for the request processing, this method returns <code>false</code>. When it returns <code>false</code>, then
      * {@link #getNamedPipeline()} should also be configured, and a pipeline should be invoked that is independent of the {@link ResolvedSiteMapItem} as their won't be one.
-     * Note that the {@link #getMountPoint()} can still point to a {@link HstSite} which in that case contains the hst:content node
-     * which is the filtered mirror for accessing the content
      */
     boolean isMapped();
 
