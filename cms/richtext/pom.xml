@@ -32,7 +32,5 @@
     <module>ckeditor</module>
     <module>frontend</module>
     <module>repository</module>
-    <module>resources</module>
-    <module>test</module>
   </modules>
 </project>
