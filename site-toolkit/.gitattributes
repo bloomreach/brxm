@@ -925,7 +925,6 @@ content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/AvailableTra
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/BeanWrapper.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/BeansWrapper.java -text svneol=unset#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAsset.java svneol=native#text/plain
-content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAvailableTranslations.java -text svneol=unset#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoBeanIteratorImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoDirectory.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoDocument.java svneol=native#text/plain
