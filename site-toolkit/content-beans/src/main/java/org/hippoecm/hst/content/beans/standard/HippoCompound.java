@@ -26,18 +26,13 @@ package org.hippoecm.hst.content.beans.standard;
  *  </p>
  */
 public abstract class HippoCompound extends HippoItem implements HippoCompoundBean {
-    
-    private BeansWrapper<HippoHtml> htmls;
-   
+
     /**
      * @param relPath
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        if(htmls == null) {
-            htmls = new BeansWrapper<HippoHtml>(this);
-        }
-        return htmls.getBean(relPath, HippoHtml.class);
+        return getBean(relPath, HippoHtml.class);
     }
 
 }

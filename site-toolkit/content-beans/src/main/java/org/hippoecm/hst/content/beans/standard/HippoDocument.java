@@ -22,7 +22,6 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
@@ -33,9 +32,6 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoDocument.class);
 
-    private BeansWrapper<HippoHtml> htmls;
-    private BeansWrapper<HippoCompoundBean> compounds;
-    
     private javax.jcr.Node canonicalHandleNode;
 
     private boolean availableTranslationsMappingClassInitialized;
@@ -48,10 +44,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
      */
     public HippoHtml getHippoHtml(String relPath) {
-        if(htmls == null) {
-            htmls = new BeansWrapper<HippoHtml>(this);
-        }
-        return htmls.getBean(relPath, HippoHtml.class);
+        return getBean(relPath, HippoHtml.class);
     }
     
     /**
@@ -62,11 +55,8 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
      */
     @SuppressWarnings("unchecked")
     public <T extends HippoCompoundBean> T getHippoCompound(String relPath, Class<T> beanMappingClass) {
-        if(compounds == null) {
-            compounds = new BeansWrapper<HippoCompoundBean>(this);
-        }
-        HippoBean compound = compounds.getBean(relPath, HippoCompoundBean.class);
-        if(beanMappingClass.isAssignableFrom(compound.getClass())) {
+        HippoBean compound = getBean(relPath, HippoCompoundBean.class);
+        if(compound != null && beanMappingClass.isAssignableFrom(compound.getClass())) {
             return (T)compound;
         } else {
             log.debug("Cannot return compound of type '"+beanMappingClass.getName()+"' for relPath '{}' at '{}' because the compound is of type '"+compound.getClass().getName()+"'", relPath, this.getPath());
@@ -146,14 +136,11 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
     @Override
     public void detach(){
         super.detach();
-        htmls.detach();
     }
     
     @Override
     public void attach(Session session){
         super.attach(session);
-        // htmls need to be refetched
-        htmls = null;
     }
 
 }

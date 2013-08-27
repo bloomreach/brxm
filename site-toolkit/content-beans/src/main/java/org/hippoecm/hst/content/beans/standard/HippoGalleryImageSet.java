@@ -29,10 +29,6 @@ public class HippoGalleryImageSet extends HippoDocument implements HippoGalleryI
 
     private static Logger log = LoggerFactory.getLogger(HippoGalleryImageSet.class);
 
-    private BeanWrapper<HippoGalleryImageBean> thumbnail;
-    private BeanWrapper<HippoGalleryImageBean> original; 
-    
-
     @Override
     public String getDescription() {
         return getValueProvider().getString("hippogallery:description");
@@ -49,11 +45,7 @@ public class HippoGalleryImageSet extends HippoDocument implements HippoGalleryI
      * @return the thumbnail version of the image
      */
     public HippoGalleryImageBean getThumbnail() {
-        if(thumbnail != null) {
-            return thumbnail.getBean();
-        }
-        thumbnail = getHippoGalleryImageBean("hippogallery:thumbnail");
-        return thumbnail.getBean();
+        return getBean("hippogallery:thumbnail", HippoGalleryImageBean.class);
     }
 
     /**
@@ -62,27 +54,7 @@ public class HippoGalleryImageSet extends HippoDocument implements HippoGalleryI
      * @return the picture version of the image
      */
     public HippoGalleryImageBean getOriginal() {
-        if(original != null) {
-            return original.getBean();
-        }
-        original = getHippoGalleryImageBean("hippogallery:original");
-        return original.getBean();
+        return getBean("hippogallery:original", HippoGalleryImageBean.class);
     }
 
-    private BeanWrapper<HippoGalleryImageBean> getHippoGalleryImageBean(String relPath){
-        BeanWrapper<HippoGalleryImageBean> image; 
-        HippoBean bean = this.getBean(relPath);
-        if(bean instanceof HippoGalleryImageBean) {
-            image = new BeanWrapper<HippoGalleryImageBean>((HippoGalleryImageBean)bean);
-        } else if(bean == null) {
-           log.debug(relPath + " not found for node '{}'", this.getPath());
-           image =  new BeanWrapper<HippoGalleryImageBean>((HippoGalleryImageBean)null);
-        } else {
-            log.warn("Expected resource of type HippoGalleryImageBean but found '{}'. Return null", bean.getClass().getName() );
-            image =  new BeanWrapper<HippoGalleryImageBean>((HippoGalleryImageBean)null);
-        }
-        return image;
-    }
-
-    
 }

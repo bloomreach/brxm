@@ -144,7 +144,8 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @param <T>
      * @param relPath a path that does not start with a "/"
      * @param beanMappingClass the class {@link T} that the child bean must be off
-     * @return returns the <code>HippoBean</code> of (sub)type beanMappingClass with relative path <code>relPath</code> to this bean, or <code>null</code> when it does not exist, is not of (sub)type beanMappingClass, or when the relPath is not a valid relative path
+     * @return returns the <code>HippoBean</code> of (sub)type beanMappingClass with relative path <code>relPath</code>
+     * to this bean, or <code>null</code> when it does not exist, is not of (sub)type beanMappingClass, or when the relPath is not a valid relative path
      */
     <T extends HippoBean> T getBean(String relPath, Class<T> beanMappingClass);
       
