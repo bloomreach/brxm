@@ -578,11 +578,7 @@ public class HstManagerImpl implements MutableHstManager {
 
 
     private void logModelFailedToLoad(final Exception e) {
-        if (log.isDebugEnabled()) {
-            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
-        } else {
-            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
-        }
+        log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
     }
 
 
