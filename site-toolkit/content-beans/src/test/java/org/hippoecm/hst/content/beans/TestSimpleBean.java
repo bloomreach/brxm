@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.hippoecm.repository.util.DateTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -98,7 +99,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         HstQuery hstQuery = queryManager.createQuery(folder);
 
         String query = "homepage";
-        Filter filter = new FilterImpl(session);
+        Filter filter = new FilterImpl(session, DateTools.Resolution.DAY);
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
         
@@ -106,7 +107,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         assertFalse("The query cannot find any result with '" + query + "'.", resultBeans.isEmpty());
         
         query = "is";
-        filter = new FilterImpl(session);
+        filter = new FilterImpl(session, DateTools.Resolution.DAY);
         filter.addContains(".", query);
         hstQuery.setFilter(filter);
         
