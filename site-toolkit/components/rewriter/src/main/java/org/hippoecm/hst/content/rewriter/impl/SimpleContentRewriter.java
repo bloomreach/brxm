@@ -20,7 +20,9 @@ import java.net.URLDecoder;
 import java.util.regex.Pattern;
 
 import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,6 +31,7 @@ import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.utils.SimpleHtmlExtractor;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +134,9 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         if (href != null && href.getPath() != null) {
                             sb.append(href.toUrlForm(requestContext, isFullyQualifiedLinks()));
                         } else {
-                           log.warn("Skip href because url is null");
+                            log.debug("could not resolve internal document link for '{}'. Return page not found link", documentPath);
+                            HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
+                            sb.append(notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
                         }
                         
                         if (hasQueryString) {
@@ -187,7 +192,9 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         if (binaryLink != null && binaryLink.getPath() != null) {
                             sb.append(binaryLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
                         } else {
-                            log.warn("Could not translate image src. Skip src");
+                            log.debug("could not resolve internal binary link for '{}'. Return page not found link", srcPath);
+                            HstLink notFoundLink = requestContext.getHstLinkCreator().createPageNotFoundLink(requestContext.getResolvedMount().getMount());
+                            sb.append(notFoundLink.toUrlForm(requestContext, isFullyQualifiedLinks()));
                         }
                     }
                     
@@ -244,7 +251,10 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             }
         } else {
             // relative node, most likely a mirror node:
+            String nodePath = null;
+            final String relPath = path;
             try {
+                nodePath = node.getPath();
                 /*
                  * Important: use here the HippoWorkspace hierarchy resolver and not a direct getNode(path) because the hierarchy resolver
                  * contains logic about how to fetch relative paths for for example a picked image in an RTE field. 
@@ -254,63 +264,111 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                  * The hierarchy resolver knows how to solve: [some-encoding-wildcard]
                  * 
                  */
-                String variantPath = null;
-                boolean fallback = false;
-                if (rewritingBinaryLink && getImageVariant() != null) {
-                    String[] segments = path.split("/");
-                    if (segments.length == 3) {
+                if (rewritingBinaryLink) {
+
+                    if (!isValidBinariesPath(nodePath, relPath)) {
+                        return null;
+                    }
+                    String[] binaryPathSegments = relPath.split("/");
+                    Node mirrorNode = node.getNode(binaryPathSegments[0]);
+                    if (!mirrorNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                        log.info("For '{}' a node of type hippo:mirror of hippo:facetselect is expected but was of type '{}'. Cannot " +
+                                "create a link for that node type.", mirrorNode.getPath(), mirrorNode.getPrimaryNodeType().getName());
+                        return null;
+                    }
+                    String uuid = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    Node referencedNode = mirrorNode.getSession().getNodeByIdentifier(uuid);
+                    if (!referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        log.info("Unable to rewrite path '{}' for node '{}' to proper binary url : Expected link to a " +
+                                "node of type hippo:handle but was of type '{}'.", new String[]{relPath, nodePath, referencedNode.getPrimaryNodeType().getName()});
+                        return null;
+                    }
+                    Node binaryDocument = referencedNode.getNode(referencedNode.getName());
+                    if (getImageVariant() != null) {
                         ImageVariant imageVariant = getImageVariant();
-                        fallback = imageVariant.isFallback();
+
+                        Node binary = null;
                         if (imageVariant.getReplaces().isEmpty()) {
-                            // replace segments[2] regardless the variant
-                            variantPath = segments[0] + "/" + segments[1] + "/" + imageVariant.getName();
+                            // replace binaryPathVariantSegments[2] regardless the variant
+                            if (binaryDocument.hasNode(imageVariant.getName())) {
+                                binary = binaryDocument.getNode(imageVariant.getName());
+                            } else if (imageVariant.isFallback()) {
+                                binary = binaryDocument.getNode(binaryPathSegments[2]);
+                            }
                         } else {
-                            // only replace segments[2] if it is included in imageVariant.getReplaces()
-                            if (imageVariant.getReplaces().contains(segments[2])) {
-                                variantPath = segments[0] + "/" + segments[1] + "/" + imageVariant.getName();
+                            // only replace binaryPathVariantSegments[2] if it is included in imageVariant.getReplaces()
+                            if (imageVariant.getReplaces().contains(binaryPathSegments[2])) {
+                                if (binaryDocument.hasNode(imageVariant.getName())) {
+                                    binary = binaryDocument.getNode(imageVariant.getName());
+                                } else if (imageVariant.isFallback()) {
+                                    binary = binaryDocument.getNode(binaryPathSegments[2]);
+                                }
+                            } else {
+                                binary = binaryDocument.getNode(binaryPathSegments[2]);
                             }
                         }
-                    } else {
-                        log.debug("Only know how to get a different variant for links that have 3 segments in its path. Skip variant for path '{}'", path);
-                    }
-                }
-                
-                Node mirrorNode;
-                String triedPath = path;
-                if (variantPath != null) {
-                    mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, variantPath);
-                    triedPath = variantPath;
-                    if (mirrorNode == null) {
-                        if (fallback) {
-                            log.debug("Could not find the image variant '{}', try the original path '{}'", variantPath, path);
-                            triedPath = path;
-                            mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, path);
-                        } else {
-                            // warning about this will be logged later because mirrorNode == null
-                            log.debug("Could not find the image variant '{}' and fallback is false", variantPath);
+                        if (binary == null) {
+                            log.info("Unable to rewrite path '{}' for node '{}' to proper binary url for imageVariant '{}'.", new String[]{relPath, nodePath, imageVariant.getName()});
+                            return null;
                         }
-                    } 
-                } else {
-                    mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, path);
-                }
-                if (mirrorNode != null) {
-                    if (targetMount == null) {
-                        return reqContext.getHstLinkCreator().create(mirrorNode, reqContext);
+                        if (targetMount == null) {
+                            return reqContext.getHstLinkCreator().create(binary, reqContext);
+                        } else {
+                            return reqContext.getHstLinkCreator().create(binary, targetMount);
+                        }
                     } else {
-                        return reqContext.getHstLinkCreator().create(mirrorNode, targetMount);
+                        Node binary = binaryDocument.getNode(binaryPathSegments[2]);
+                        if (targetMount == null) {
+                            return reqContext.getHstLinkCreator().create(binary, reqContext);
+                        } else {
+                            return reqContext.getHstLinkCreator().create(binary, targetMount);
+                        }
                     }
+
                 } else {
-                    log.warn("Cannot find node '{}' for internal link for document '{}'. Cannot create link", triedPath, node.getPath());
+                    Node mirrorNode = node.getNode(relPath);
+                    if (mirrorNode.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
+                        String uuid = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                        Node referencedNode = mirrorNode.getSession().getNodeByIdentifier(uuid);
+                        if (referencedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                            if (!referencedNode.hasNode(referencedNode.getName())) {
+                                log.info("Unable to rewrite path '{}' for node '{}' to proper url because no (readable) document" +
+                                        " node below linked handle node: '{}'.", new String[]{relPath, nodePath});
+                                return null;
+                            }
+                            referencedNode = referencedNode.getNode(referencedNode.getName());
+                        }
+                        if (targetMount == null) {
+                            return reqContext.getHstLinkCreator().create(referencedNode, reqContext);
+                        } else {
+                            return reqContext.getHstLinkCreator().create(referencedNode, targetMount);
+                        }
+                    } else {
+                        log.info("For '{}' a node of type hippo:mirror of hippo:facetselect is expected but was of type '{}'. Cannot " +
+                                "create a link for that node type.", mirrorNode.getPath(), mirrorNode.getPrimaryNodeType().getName());
+                    }
                 }
-            } catch (InvalidItemStateException e) {
-                log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
+            } catch (ItemNotFoundException e) {
+                log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{relPath, nodePath, e.getMessage()});
+            } catch (PathNotFoundException e) {
+                log.info("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{relPath, nodePath, e.getMessage()});
             } catch (RepositoryException e) {
-                log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());
+                log.warn("Unable to rewrite path '{}' for node '{}' to proper url : '{}'.", new String[]{relPath, nodePath, e.getMessage()});
             }
         }
         return null;
     }
-    
+
+    private boolean isValidBinariesPath(final String nodePath, final String relPath) {
+        final String[] binaryPathSegments = relPath.split("/");
+        if (binaryPathSegments.length == 3 && binaryPathSegments[1].equals("{_document}")) {
+          return true;
+        }
+        log.info("Unable to rewrite relPath '{}' for node '{}' to proper url : '{}'. For binary links we expect" +
+                " a relative relPath in the form /a/{_document}/myproject:thumbnail.", new String[]{relPath, nodePath});
+        return false;
+    }
+
     protected boolean isExternal(String path) {
         for (String prefix : EXTERNALS) {
             if (path.startsWith(prefix)) {

@@ -216,6 +216,14 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
         return postProcess(new HstLinkImpl(PathUtils.normalizePath(path), mount, containerResource));
     }
 
+    @Override
+    public HstLink createPageNotFoundLink(Mount mount) {
+        HstLink link = new HstLinkImpl(pageNotFoundPath, mount);
+        link.setNotFound(true);
+        return link;
+
+    }
+
     public HstLink create(HstSiteMapItem toHstSiteMapItem, Mount mount) {
         return postProcess(new HstLinkImpl(HstSiteMapUtils.getPath(toHstSiteMapItem), mount));
     }
@@ -311,7 +319,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             if(node == null) {
                 log.warn("Cannot create link when the jcr node null. Return a page not found link");
-                return pageNotFoundLink(mount);
+                return createPageNotFoundLink(mount);
             }
             
             boolean postProcess = true;
@@ -343,31 +351,31 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     }
                    
                     log.warn("There is no resolver that can handle a resource of type '{}'. Return do not found link", node.getPrimaryNodeType().getName());          
-                    return pageNotFoundLink(mount);
+                    return createPageNotFoundLink(mount);
                 } else {
-                    if(canonicalNode != null) {
+                    if (canonicalNode != null) {
                         node = canonicalNode;
                     } else {
                         resolverProperties.virtual = true;
                     }
-                    nodePath = node.getPath(); 
-                    if(!resolverProperties.navigationStateful && (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR))) {
+                    nodePath = node.getPath();
+                    if (node.isNodeType(HippoNodeType.NT_FACETSELECT) || node.isNodeType(HippoNodeType.NT_MIRROR)) {
                         node = NodeUtils.getDeref(node);
-                        if( node == null ) {
+                        if (node == null) {
                             log.warn("Broken content internal link for '{}'. Cannot create a HstLink for it. Return null", nodePath);
-                            return pageNotFoundLink(mount);
+                            return createPageNotFoundLink(mount);
                         }
                     }
-        
+
                     if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                         resolverProperties.representsDocument = true;
-                    } else if(node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        if (node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                             node = node.getParent();
                             resolverProperties.representsDocument = true;
                         } else if (node.getParent().isNodeType(HippoNodeType.NT_FACETRESULT)) {
                             resolverProperties.representsDocument = true;
-                        } 
+                        }
                     }
                     
                     nodePath = node.getPath();
@@ -457,7 +465,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                         
                         if(candidateMounts.size() == 0) {
                             log.warn("There is no Mount available that is suited to linkrewrite '{}'. Return page not found link.", nodePath);
-                            return pageNotFoundLink(mount);
+                            return createPageNotFoundLink(mount);
                         } else if(candidateMounts.size() == 1) {
                             linkInfo = resolveToLinkInfo(nodePath, candidateMounts.get(0), resolverProperties);
                         } else {
@@ -486,7 +494,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             
             if(linkInfo == null) {
                 log.warn("Cannot create a link for node with path '{}'. Return a page not found link", nodePath);
-                return pageNotFoundLink(mount);
+                return createPageNotFoundLink(mount);
             }
             
             HstLink link = new HstLinkImpl(linkInfo.pathInfo, linkInfo.mount, linkInfo.siteMapItem, linkInfo.containerResource);
@@ -745,13 +753,6 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return new ResolvedLocationMapTreeItemImpl(path, null);
             }
         }
-        
-        private HstLink pageNotFoundLink(Mount mount) {
-            HstLink link =  new HstLinkImpl(DefaultHstLinkCreator.this.pageNotFoundPath, mount);
-            link.setNotFound(true);
-            return link;
-        }
-
 
     }
     

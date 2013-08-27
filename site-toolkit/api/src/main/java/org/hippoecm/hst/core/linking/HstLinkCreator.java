@@ -271,8 +271,12 @@ public interface HstLinkCreator {
      * @return an <code>HstLink</code> instance or <code>null<code> 
      */
     HstLink create(String path, Mount mount, boolean containerResource);
-    
- 
+
+    /**
+     * @return a link that can be used for page not found links for <code>mount</code>
+     */
+    HstLink createPageNotFoundLink(Mount mount);
+
     /**
      * Binaries frequently have a different linkrewriting mechanism. If this method returns <code>true</code> the location is a
      * binary location. 

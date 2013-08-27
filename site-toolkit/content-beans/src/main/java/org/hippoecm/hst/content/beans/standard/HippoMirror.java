@@ -30,104 +30,62 @@ import org.slf4j.LoggerFactory;
 public class HippoMirror extends HippoFolder implements HippoMirrorBean {
 
     private static Logger log = LoggerFactory.getLogger(HippoMirror.class);
-    
-    private BeanWrapper<HippoBean> referencedWrapper;
-    private BeanWrapper<HippoBean> derefWrapper;
-    
+
     /**
-     * When you want the HippoBean that this mirror represents, you can use this method.
-     * 
-     * <ul><li>
-     * If the mirror is pointing to a hippo:handle, then <b>only</b> a bean is returned if and only if
-     * the current node has a childnode with the same name as the hippo:handle. This is to ensure live/preview
-     * correctness. 
-     * </li><li>
-     * If the mirror is <code>not</code> pointing to a hippo:handle, just this <code>HippoMirror</code> is returned. 
-     * This HippoMirror then namely represents its referencedBean already as it is a mirror, possibly with the context aware filter (livr/preview)
-     * </li>
-     * </ul>
-     * @return the referenced <code>HippoBean</code> by this mirror or <code>null</code> when the linked bean cannot
-     * be created (for example, there is no published and the current context is live)
+     * <p>
+     *      When you want the HippoBean that this mirror represents, you can use this method.
+     * </p>
+     * <p>
+     *      If the mirror is pointing to a <code>hippo:handle</code>, then <b>only</b> a {@link HippoBean} is returned
+     *      if a child node (document) with the same name is present.
+     *      A {@link HippoBean} for the document (child) is then returned. If no such child,
+     *      <code>null</code> is returned.
+     * </p>
+     * <p>
+     *     If the mirror point to a node that is not of type <code>hippo:handle</code>, a {@link HippoBean} for that
+     *     node is returned.
+     * </p>
+     * @return the referenced <code>HippoBean</code> by this mirror or <code>null</code> when missing
      */
     public HippoBean getReferencedBean(){
-        if(referencedWrapper != null) {
-            return referencedWrapper.getBean();
-        }
-        
+
         if(this.getNode() == null) {
             log.warn("Can not dereference this HippoMirror because it is detached. Return null");
-            referencedWrapper = new BeanWrapper<HippoBean>(null);
             return null;
         }
         javax.jcr.Node deref = NodeUtils.getDeref(this.getNode());
         if(deref == null) {
-            // no logging needed, JCRUtilities already does this
-            referencedWrapper = new BeanWrapper<HippoBean>(null);
             return null;
         }
         
         try {
             if (deref.isNodeType(HippoNodeType.NT_HANDLE)) {
                 /*
-                 * the link is to a hippo:handle. Only return the linked bean if, and only if, the same node is also visible
-                 * as a child node below the current virtual node. If not, it is filtered and should not be visible, for example
-                 * in case that the context is live (published), and the linked bean is only available as unpublished
+                 * the link is to a hippo:handle. Only return the linked bean if a child node (document) with the same name is
+                 * present, and return a bean for that one if there is. Otherwise return null
                  */  
-                 if(this.getNode().hasNode(deref.getName())) {
-                     javax.jcr.Node linked = this.getNode().getNode(deref.getName());
-                     referencedWrapper = new BeanWrapper<HippoBean>((HippoBean) this.objectConverter.getObject(linked));
-                     return referencedWrapper.getBean();
+                 if(deref.hasNode(deref.getName())) {
+                     javax.jcr.Node linked = deref.getNode(deref.getName());
+                     return (HippoBean)objectConverter.getObject(linked);
                  } else {
-                     referencedWrapper = new BeanWrapper<HippoBean>(null);
                      return null;
                  }
-            } 
-            referencedWrapper = new BeanWrapper<HippoBean>(this);
-            return this;
+            }
+            return (HippoBean)objectConverter.getObject(deref);
         } catch (RepositoryException e) {
             log.warn("Cannot get a derefenced HippoBean: {}. Return null", e);
         } catch (ObjectBeanManagerException e) {
             log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
         }
-        referencedWrapper = new BeanWrapper<HippoBean>(null);
         return null;
     }
     
     /**
-     * When you want the HippoBean that this mirror is pointing to, you can use this method. 
-     * 
-     * WARNING: A deref breaks out of the virtual context, and might return you a node structure, where you find
-     * published and unpublished nodes. Recommended to use is {@link #getReferencedBean()}. 
-     * 
-     * Note that this might return you a handle containing both live and preview documents. You should not use this
-     * method to get a linked item. Use {@link #getReferencedBean()}. 
-     * 
-     * @return the deferenced <code>HippoBean</code> or <code>null</code> when the bean cannot be dereferenced
+     * @deprecated since 2.28.00 use {@link #getReferencedBean()} instead
      */
+    @Deprecated
     public HippoBean getDeref(){
-        if(derefWrapper != null) {
-            return derefWrapper.getBean();
-        }
-        if(this.getNode() == null) {
-            log.warn("Can not dereference this HippoMirror because it is detached. Return null");
-            derefWrapper = new BeanWrapper<HippoBean>(null);
-            return null;
-        }
-        javax.jcr.Node deref = NodeUtils.getDeref(this.getNode());
-        if(deref == null) {
-            log.warn("Can not dereference this HippoMirror ('{}') because cannot find the node the mirror is pointing to. Return null", this.getPath());
-            derefWrapper = new BeanWrapper<HippoBean>(null);
-            return null;
-        }
-        
-        try {
-            derefWrapper = new BeanWrapper<HippoBean>((HippoBean) this.objectConverter.getObject(deref));
-            return derefWrapper.getBean();
-        } catch (ObjectBeanManagerException e) {
-            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
-        }
-        derefWrapper = new BeanWrapper<HippoBean>(null);
-        return null;
+         return getReferencedBean();
     }
 
 }

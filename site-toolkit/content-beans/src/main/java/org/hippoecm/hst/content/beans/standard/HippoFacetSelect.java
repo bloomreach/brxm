@@ -24,6 +24,6 @@ import org.hippoecm.hst.content.beans.index.Indexable;
  */
 @Indexable(ignore = true)
 @Node(jcrType="hippo:facetselect")
-public class HippoFacetSelect extends HippoMirror{
+public class HippoFacetSelect extends HippoMirror {
 
 }

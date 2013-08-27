@@ -92,15 +92,12 @@ public class NodeUtils {
             }
             // HippoNodeType.HIPPO_DOCBASE is a mandatory property so no need to test if exists
             docBaseUUID = mirrorNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-            
-            // test whether docBaseUUID can be parsed as a uuid
             try {
-                UUID.fromString(docBaseUUID);
-            } catch(IllegalArgumentException e) {
+                return mirrorNode.getSession().getNodeByIdentifier(docBaseUUID);
+            } catch (IllegalArgumentException e) {
                 log.warn("Docbase cannot be parsed to a valid uuid. Return null");
                 return null;
             }
-            return mirrorNode.getSession().getNodeByIdentifier(docBaseUUID);
         } catch (ItemNotFoundException e) {
             String path = null;
             try {

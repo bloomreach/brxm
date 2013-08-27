@@ -15,9 +15,29 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-public interface HippoMirrorBean extends HippoBean{
+public interface HippoMirrorBean extends HippoBean {
 
+    /**
+     * <p>
+     *      When you want the HippoBean that this mirror represents, you can use this method.
+     * </p>
+     * <p>
+     *      If the mirror is pointing to a <code>hippo:handle</code>, then <b>only</b> a {@link HippoBean} is returned
+     *      if a child node (document) with the same name is present.
+     *      A {@link HippoBean} for the document (child) is then returned. If no such child,
+     *      <code>null</code> is returned.
+     * </p>
+     * <p>
+     *     If the mirror point to a node that is not of type <code>hippo:handle</code>, a {@link HippoBean} for that
+     *     node is returned.
+     * </p>
+     * @return the referenced <code>HippoBean</code> by this mirror or <code>null</code> when missing
+     */
     HippoBean getReferencedBean();
-    
+
+    /**
+     * @deprecated since 2.28.00 use {@link #getReferencedBean()} instead
+     */
+    @Deprecated
     HippoBean getDeref();
 }
