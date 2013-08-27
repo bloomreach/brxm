@@ -136,19 +136,17 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String mountPath;
 
     /**
-     * The absolute path of the content (which might be the location of some mirror node)
+     * The absolute path of the content
      */
     private String contentPath;
 
     /**
-     * The absolute path of the content (which might be the location of some mirror node) of the preview version of this {@link Mount}. If
-     * there is no preview, or this Mount is already a preview, then previewContentPath equals contentPath
+     * The absolute path of the content of the preview version of this {@link Mount}. previewContentPath
      */
     private String previewContentPath;
 
     /**
-     * The absolute canonical path of the content : In case <code>contentPath</code> points to a mirror,
-     * this <code>canonicalContentPath</code> points to the location the mirror points to
+     * The absolute canonical path of the content
      */
     private String canonicalContentPath;
 
