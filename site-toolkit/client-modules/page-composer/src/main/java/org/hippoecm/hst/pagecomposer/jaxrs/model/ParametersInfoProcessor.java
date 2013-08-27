@@ -63,6 +63,9 @@ public class ParametersInfoProcessor {
     }
 
     private Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String currentMountCanonicalContentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
+        // although below the classType.getMethods() returns methods in random order (not in jdk 6 but it does in jdk 7 which is according spec)
+        // we still create a LinkedHashMap because for jdk6 this works. For jdk 7, developers must (can only) use FieldGroup annotation
+        // to specify the order of the component properties
         final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<String, ContainerItemComponentPropertyRepresentation>();
         for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {

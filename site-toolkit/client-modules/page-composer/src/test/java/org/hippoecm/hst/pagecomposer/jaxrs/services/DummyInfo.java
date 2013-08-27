@@ -15,8 +15,16 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 
+@FieldGroupList({
+        @FieldGroup(
+                titleKey = "dummy",
+                value = { "parameterOne", "parameterTwo"}
+        )
+})
 public interface DummyInfo {
 
     @Parameter(name = "parameterOne")
