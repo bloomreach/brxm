@@ -75,15 +75,6 @@
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-
-    <!-- temporarily keep the deprecated facetselectmirror dependency. After HST, CMS and plugins are independent of it,
-     it can be removed-->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-deprecated-facetselectmirror</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 
   <build>
