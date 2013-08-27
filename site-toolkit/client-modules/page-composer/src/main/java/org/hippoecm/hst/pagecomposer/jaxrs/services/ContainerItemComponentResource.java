@@ -218,7 +218,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         if (componentClassName != null) {
             Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
+                ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
                 properties = processor.getProperties(parametersInfo, locale, currentMountCanonicalContentPath);
             }
             if (componentParameters.hasPrefix(prefix)) {
