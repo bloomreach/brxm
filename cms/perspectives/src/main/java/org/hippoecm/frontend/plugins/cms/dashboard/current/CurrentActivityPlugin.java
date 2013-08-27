@@ -168,7 +168,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                     BrowseLinkTarget target = new BrowseLinkTarget(path);
                     if ("rename".equals(label.getEventMethod())) {
                         String[] arguments = label.getArguments();
-                        if (arguments != null && arguments.length > 0) {
+                        if (arguments != null && arguments.length > 1) {
                             target = new BrowseLinkTarget(path+"/"+arguments[1]);
                         }
                     }
