@@ -30,7 +30,7 @@
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
     </sv:property>
-    <sv:node sv:name="documents" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:node sv:name="documents">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hippostd:directory</sv:value>
         </sv:property>
@@ -55,7 +55,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>en</sv:value>
@@ -78,7 +77,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>fr</sv:value>
@@ -101,7 +99,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>de</sv:value>
@@ -124,7 +121,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>it</sv:value>
@@ -147,7 +143,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>nl</sv:value>

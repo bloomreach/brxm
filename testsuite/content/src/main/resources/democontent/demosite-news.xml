@@ -21,7 +21,6 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:harddocument</sv:value>
-    <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
      <sv:value>en</sv:value>
@@ -42,7 +41,6 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:harddocument</sv:value>
-     <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
        <sv:value>en</sv:value>
@@ -63,7 +61,6 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
-        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
          <sv:value>en</sv:value>
@@ -95,7 +92,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
               <sv:value>en</sv:value>
@@ -257,7 +253,6 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
-        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
          <sv:value>en</sv:value>
@@ -289,7 +284,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
              <sv:value>en</sv:value>
@@ -396,7 +390,6 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:harddocument</sv:value>
-      <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
        <sv:value>en</sv:value>
@@ -417,7 +410,6 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
-        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
          <sv:value>en</sv:value>
@@ -449,7 +441,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
              <sv:value>en</sv:value>
@@ -547,7 +538,6 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
-        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
          <sv:value>en</sv:value>
@@ -579,7 +569,6 @@
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>f3dda81f-c2a0-43c2-a91a-35055a7d7ea2</sv:value>
