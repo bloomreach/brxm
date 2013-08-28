@@ -258,6 +258,7 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>f0b9c5c2-87b2-4b80-a252-ffa530f6bb91</sv:value>
@@ -315,6 +316,7 @@
           <sv:value>hippostdpubwf:document</sv:value>
           <sv:value>hippostd:relaxed</sv:value>
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
           <sv:value>hippostd:publishableSummary</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -771,6 +773,7 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>32aa2ebd-fcf4-4c93-8a3c-9a4fa77cf146</sv:value>
@@ -843,6 +846,7 @@
           <sv:value>hippostdpubwf:document</sv:value>
           <sv:value>hippostd:relaxed</sv:value>
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
           <sv:value>hippostd:publishableSummary</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1226,6 +1230,7 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>51baa2e2-34ce-4a52-bc7c-e5fc0c35510c</sv:value>
@@ -1913,6 +1918,7 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>7e8bd1a7-3e5c-48c8-a775-0f4ef097257a</sv:value>
@@ -1986,6 +1992,7 @@
           <sv:value>hippostdpubwf:document</sv:value>
           <sv:value>hippostd:relaxed</sv:value>
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
           <sv:value>hippostd:publishableSummary</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -3227,6 +3234,7 @@
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
           <sv:value>hippostd:relaxed</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
           <sv:value>relateddocs:relatabledocs</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">

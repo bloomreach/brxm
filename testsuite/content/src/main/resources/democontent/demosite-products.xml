@@ -6,6 +6,8 @@
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
     sv:multiple="true">
     <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippotranslation:translated</sv:value>
+
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
@@ -37,6 +39,7 @@
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:date" sv:type="Date">
         <sv:value>2010-06-18T15:46:03.643+02:00</sv:value>
@@ -144,6 +147,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         sv:multiple="true">
         <sv:value>hippostd:taggable</sv:value>
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>004e68f5-bd6e-4562-a489-383fa6c3c2e0</sv:value>
@@ -294,6 +298,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         sv:multiple="true">
         <sv:value>hippostd:taggable</sv:value>
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>af5926d4-0e34-42b5-bd3b-cda90646066c</sv:value>
@@ -445,6 +450,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
 
         <sv:value>hippostd:taggable</sv:value>
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>c4400ed1-d661-4ef2-8e09-868f7627b447</sv:value>
@@ -596,6 +602,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         sv:multiple="true">
         <sv:value>hippostd:taggable</sv:value>
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
 
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -748,6 +755,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
 
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -900,6 +908,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>a7f6bac8-d88c-4b87-954d-21f44fa79cfe</sv:value>

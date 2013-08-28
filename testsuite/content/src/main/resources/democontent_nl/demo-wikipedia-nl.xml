@@ -21,6 +21,7 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
     <sv:value>nl</sv:value>

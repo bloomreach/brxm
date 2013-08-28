@@ -22,6 +22,7 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
     <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <sv:value>blueprint-translation-id</sv:value>
@@ -38,6 +39,7 @@
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:harddocument</sv:value>
+      <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
       <sv:value>en</sv:value>
@@ -63,6 +65,7 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
@@ -139,6 +142,7 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
           <sv:value>hippo:harddocument</sv:value>
+          <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
           <sv:value>en</sv:value>
