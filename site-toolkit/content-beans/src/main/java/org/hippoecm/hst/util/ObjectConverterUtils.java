@@ -34,7 +34,6 @@ import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoAsset;
-import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslations;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDirectory;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -87,8 +86,7 @@ public class ObjectConverterUtils {
         HippoFacetNavigation.class,
         HippoFacetsAvailableNavigation.class,
         HippoFacetSubNavigation.class,
-        HippoFacetResult.class,
-        HippoAvailableTranslations.class
+        HippoFacetResult.class
     };
     
     private static final String [] DEFAULT_FALLBACK_NODE_TYPES = { 

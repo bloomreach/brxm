@@ -132,7 +132,6 @@ public class ObjectConverterImpl implements ObjectConverter {
     }
     
     public Object getObject(Node node) throws ObjectBeanManagerException {
-        Object object = null;
         String jcrPrimaryNodeType;
         String path;
         try { 
@@ -147,6 +146,11 @@ public class ObjectConverterImpl implements ObjectConverter {
             Class<? extends HippoBean> proxyInterfacesOrDelegateeClass = this.jcrPrimaryNodeTypeBeanPairs.get(jcrPrimaryNodeType);
           
             if (proxyInterfacesOrDelegateeClass == null) {
+                if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
+                    log.warn("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
+                            "removed from all content including from prototypes.");
+                    return null;
+                }
                 // no exact match, try a fallback type
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
                     
@@ -163,7 +167,7 @@ public class ObjectConverterImpl implements ObjectConverter {
             }
             
             if (proxyInterfacesOrDelegateeClass != null) {
-                object = ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
+                Object object = ServiceFactory.create(node, proxyInterfacesOrDelegateeClass);
                 if (object instanceof NodeAware) {
                     ((NodeAware) object).setNode(node);
                 }
@@ -197,6 +201,11 @@ public class ObjectConverterImpl implements ObjectConverter {
             boolean isObjectType = jcrPrimaryNodeTypeBeanPairs.containsKey(jcrPrimaryNodeType);
           
             if (!isObjectType) {
+                if (jcrPrimaryNodeType.equals("hippotranslation:translations")) {
+                    log.warn("Encountered node of type 'hippotranslation:translations' : This nodetype is completely deprecated and should be " +
+                            "removed from all content including from prototypes.");
+                    return null;
+                }
                 // no exact match, try a fallback type
                 for (String fallBackJcrPrimaryNodeType : this.fallBackJcrNodeTypes) {
                     
