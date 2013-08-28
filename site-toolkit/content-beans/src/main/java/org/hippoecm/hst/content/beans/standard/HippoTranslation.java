@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.repository.api.HippoNode;
 
 /**
@@ -23,6 +24,8 @@ import org.hippoecm.repository.api.HippoNode;
  * available through {@link HippoNode#getLocalizedName()}
  *
  */
+
+@Indexable(ignore = true)
 @Node(jcrType="hippo:translation")
 public class HippoTranslation extends HippoItem {
     
