@@ -22,9 +22,6 @@ import org.hippoecm.repository.api.HippoNode;
  * This bean is only to map a hippo:translation to a bean: Normally, you never use this bean at all, as translations are 
  * available through {@link HippoNode#getLocalizedName()}
  *
- * Note that this bean is quite different then {@link HippoAvailableTranslations}, which can be used to find the 'same' bean in multiple 
- * translations. 
- * @see HippoAvailableTranslations  
  */
 @Node(jcrType="hippo:translation")
 public class HippoTranslation extends HippoItem {
