@@ -41,9 +41,9 @@ public class JcrRichTextLinkFactoryTest extends PluginTest {
                         "jcr:mixinTypes", "hippo:harddocument",
                 "/test/source", "hippo:handle",
                     "jcr:mixinTypes", "hippo:hardhandle",
-                    "/test/source/source", "xinhatest:testdocument",
+                    "/test/source/source", "richtexttest:testdocument",
                         "jcr:mixinTypes", "hippo:harddocument",
-                        "/test/source/source/xinhatest:html", "hippostd:html",
+                        "/test/source/source/richtexttest:html", "hippostd:html",
                             "hippostd:content", "testing 1 2 3"
     };
 
@@ -57,17 +57,17 @@ public class JcrRichTextLinkFactoryTest extends PluginTest {
 
     @Test
     public void linkLifecycleTest() throws RichTextException, RepositoryException {
-        Node html = root.getNode("test/source/source/xinhatest:html");
+        Node html = root.getNode("test/source/source/richtexttest:html");
         JcrRichTextLinkFactory factory = new JcrRichTextLinkFactory(new JcrNodeModel(html));
         Node target = root.getNode("test/target");
         RichTextLink link = factory.createLink(new JcrNodeModel(target));
 
-        assertTrue(root.hasNode("test/source/source/xinhatest:html/target"));
+        assertTrue(root.hasNode("test/source/source/richtexttest:html/target"));
 
         RichTextModel model = new RichTextModel(new JcrPropertyValueModel(new JcrPropertyModel(html.getProperty("hippostd:content"))));
         model.setLinkFactory(factory);
         model.setObject(model.getObject());
-        assertFalse(root.hasNode("test/source/source/xinhatest:html/target"));
+        assertFalse(root.hasNode("test/source/source/richtexttest:html/target"));
     }
 
 }

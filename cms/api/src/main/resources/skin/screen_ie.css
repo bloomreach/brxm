@@ -26,10 +26,7 @@ div.template-type-center-body, div.editor-perspective-center-body {
 
 .resource-upload input[type="file"] { border: 1px solid #666; width: 300px;}
 
-.hippo-editor-field-html .htmlarea .xinha_iframe { margin: 0; border: 0px; padding: 0px;}
-.hippo-editor-field-html .htmlarea .toolbar {padding:4px; padding-right: 0px;}
-
-/* Fix for: IE9: Fields under Xinha field moves down magically CMS7-5891 */
+/* Fix for: IE9: Fields under Rich Text field moves down magically CMS7-5891 */
 .hippo-editor-field { overflow: hidden;}
 
 /* Fix for IE toolbar issue: HREPTWO-3073 */
@@ -51,5 +48,5 @@ table.toolbarRow {
 
 .hippo-window-form td a.action { position: relative; bottom: 5px; }
 
-/* picker width invalid after switching to HTML mode in Xinha */
+/* picker width invalid after switching to HTML mode */
 .hippo-picker-navigation { width: auto; min-width: 618px; }

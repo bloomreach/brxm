@@ -2502,7 +2502,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/ILinkDeco
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IRichTextImageFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IRichTextLinkFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/PrefixingImageDecorator.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextArea.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextException.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextImage.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextImageURLProvider.java svneol=native#text/plain
@@ -2555,10 +2554,7 @@ richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRi
 richtext/frontend/src/test/resources/log4j-filters.txt -text
 richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain
-richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.properties -text
-richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent_de.properties -text
-richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent_it.properties -text
-richtext/frontend/src/test/resources/xinhatest.cnd -text
+richtext/frontend/src/test/resources/richtexttest.cnd -text
 richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
 richtext/repository/src/main/resources/hippostd-html-template_de.xml -text
 richtext/repository/src/main/resources/hippostd-html-template_it.xml -text

@@ -63,9 +63,6 @@
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
         </sv:property>
-        <sv:property sv:name="groups" sv:type="String">
-          <sv:value>drop-on-xinha</sv:value>
-        </sv:property>
       </sv:node>
       <sv:node sv:name="filters">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -191,9 +188,6 @@
       <sv:node sv:name="yui.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="groups" sv:type="String">
-          <sv:value>drop-on-xinha</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filters">
@@ -779,9 +773,6 @@
       <sv:node sv:name="yui.config">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:property sv:name="groups" sv:type="String">
-          <sv:value>drop-on-xinha</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="filters">

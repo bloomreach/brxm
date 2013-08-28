@@ -20,7 +20,7 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
-<xinhatest='http://www.hippoecm.org/xinha/test/nt/1.0'>
+<richtexttest='http://www.hippoecm.org/richtext/test/nt/1.0'>
 
-[xinhatest:testdocument] > hippo:document
-+ xinhatest:html (hippostd:html)
+[richtexttest:testdocument] > hippo:document
++ richtexttest:html (hippostd:html)

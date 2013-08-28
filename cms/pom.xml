@@ -507,19 +507,6 @@
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
                 <exclude>richtext/ckeditor/resources/src/main/resources/ckeditor/**/*</exclude>
-                <exclude>richtext/resources/src/external/xinha/**/*</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/modules/Gecko/paraHandlerBest.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/modules/InsertTable/insert_table.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/modules/FullScreen/full-screen.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/modules/WebKit/WebKit.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/plugins/UnFormat/UnFormat.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/plugins/IndentOutdent/IndentOutdent.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/plugins/Stylist/Stylist.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/plugins/Stylist/rangy-core-min.js</exclude>
-                <exclude>richtext/resources/src/main/resources/xinha/XinhaCore.js</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
                 <!-- code templates -->

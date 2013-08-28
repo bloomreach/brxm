@@ -35,16 +35,16 @@
     </sv:property>
   </sv:node>
   
-  <!-- xinhatest namespace -->
-  <sv:node sv:name="xinhatest">
+  <!-- richtexttest namespace -->
+  <sv:node sv:name="richtexttest">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/xinha/test/nt/1.0</sv:value>
+      <sv:value>http://www.hippoecm.org/richtext/test/nt/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>xinhatest.cnd</sv:value>
+      <sv:value>richtexttest.cnd</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>1905.0</sv:value>
