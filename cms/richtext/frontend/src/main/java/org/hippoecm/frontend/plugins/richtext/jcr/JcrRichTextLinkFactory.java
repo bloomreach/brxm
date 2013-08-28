@@ -25,6 +25,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
@@ -42,10 +43,10 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
 
     private final static Logger log = LoggerFactory.getLogger(JcrRichTextImageFactory.class);
 
-    private JcrNodeModel nodeModel;
+    private IModel<Node> nodeModel;
     private transient Set<String> links = null;
 
-    public JcrRichTextLinkFactory(JcrNodeModel nodeModel) {
+    public JcrRichTextLinkFactory(IModel<Node> nodeModel) {
         this.nodeModel = nodeModel;
     }
 
@@ -55,7 +56,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         }
         relPath = RichTextUtil.decode(relPath);
         try {
-            Node node = nodeModel.getNode();
+            Node node = nodeModel.getObject();
             Node linkNode = node.getNode(relPath);
             if (linkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                 String uuid = linkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
@@ -87,7 +88,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
                 throw new RichTextException("Node does not exist at " + targetModel.getItemModel().getPath());
             }
             String name = NodeNameCodec.encode(targetNode.getName());
-            Node node = nodeModel.getNode();
+            Node node = nodeModel.getObject();
             name = RichTextFacetHelper.createFacet(node, name, targetNode);
             return new RichTextLink(targetModel, name);
         } catch (RepositoryException e) {
@@ -116,7 +117,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         if (links == null) {
             links = new TreeSet<String>();
             try {
-                NodeIterator iter = nodeModel.getNode().getNodes();
+                NodeIterator iter = nodeModel.getObject().getNodes();
                 while (iter.hasNext()) {
                     Node child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
@@ -138,7 +139,7 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
      */
     public void cleanup(Set<String> references) {
         try {
-            NodeIterator iter = nodeModel.getNode().getNodes();
+            NodeIterator iter = nodeModel.getObject().getNodes();
             while (iter.hasNext()) {
                 Node child = iter.nextNode();
                 if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {

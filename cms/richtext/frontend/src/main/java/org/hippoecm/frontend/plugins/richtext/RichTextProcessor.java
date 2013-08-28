@@ -25,7 +25,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.encoding.UrlDecoder;
-import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
 public class RichTextProcessor {
 
@@ -38,6 +37,7 @@ public class RichTextProcessor {
             Pattern.CASE_INSENSITIVE);
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
+    private static Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("^[a-z]+:/", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
     private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
 
@@ -190,12 +190,7 @@ public class RichTextProcessor {
     }
 
     private static boolean isExternalLink(String link) {
-        for (String protocol : ExternalXinhaLink.PROTOCOLS) {
-            if (link.startsWith(protocol)) {
-                return true;
-            }
-        }
-        return false;
+        return EXTERNAL_LINK_PATTERN.matcher(link).find();
     }
 
 }

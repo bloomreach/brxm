@@ -27,10 +27,10 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.images.CKEditorImageService;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.links.CKEditorLinkService;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.links.DocumentPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
@@ -45,13 +45,12 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.json.JSONObject;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Node field plugin for editing HTML in the String property {@link HippoStdNodeType.HIPPOSTD_CONTENT}
+ * Node field plugin for editing HTML in the String property {@link HippoStdNodeType#HIPPOSTD_CONTENT}
  * using CKEditor. The plugin enables the 'hippopicker' CKEditor plugin for picking internal links and images.
  * Configuration properties:
  * <ul>
@@ -64,7 +63,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see NodePickerControllerSettings
  */
-public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
+public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
             + "  codemirror: {"
@@ -142,16 +141,23 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
         final IPluginConfig documentPickerConfig = getChildPluginConfig(CONFIG_CHILD_DOCUMENT_PICKER, DEFAULT_DOCUMENT_PICKER_CONFIG);
 
         final IRichTextLinkFactory linkFactory = createLinkFactory();
-        CKEditorLinkService linkService = new CKEditorLinkService(linkFactory, editorId);
+        RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
 
-        return new DocumentPickerBehavior(getPluginContext(), documentPickerConfig, linkService, editorId);
+        final DocumentPickerBehavior behavior = new DocumentPickerBehavior(getPluginContext(), documentPickerConfig, linkService);
+        behavior.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
+
+        return behavior;
     }
 
     private ImagePickerBehavior createImagePickerBehavior(final String editorId) {
         final IPluginConfig imagePickerConfig = getChildPluginConfig(CONFIG_CHILD_IMAGE_PICKER, DEFAULT_IMAGE_PICKER_CONFIG);
         final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(getNodeModel());
-        final CKEditorImageService imageService = new CKEditorImageService(imageFactory, editorId);
-        return new ImagePickerBehavior(getPluginContext(), imagePickerConfig, imageService, editorId);
+        final RichTextEditorImageService imageService = new RichTextEditorImageService(imageFactory);
+
+        final ImagePickerBehavior behavior = new ImagePickerBehavior(getPluginContext(), imagePickerConfig, imageService);
+        behavior.setCloseAction(new CKEditorInsertImageAction(editorId));
+
+        return behavior;
     }
 
     protected IModel<String> createEditModel() {
@@ -181,7 +187,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
     }
 
     @Override
-    protected Panel createComparePanel(final String id, final IModel baseModel, final IModel currentModel) {
+    protected Panel createComparePanel(final String id, final IModel<Node> baseModel, final IModel<Node> currentModel) {
         final JcrNodeModel baseNodeModel = (JcrNodeModel) baseModel;
         final JcrNodeModel currentNodeModel = (JcrNodeModel) currentModel;
         return new RichTextDiffWithLinksAndImagesPanel(id, baseNodeModel, currentNodeModel, getBrowser());
@@ -193,7 +199,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin {
     }
 
     /**
-     * @return a model for the the String property {@link HippoStdNodeType.HIPPOSTD_CONTENT} of the model node.
+     * @return a model for the the String property {@link HippoStdNodeType#HIPPOSTD_CONTENT} of the model node.
      */
     @Override
     protected IModel<String> getHtmlModel() {

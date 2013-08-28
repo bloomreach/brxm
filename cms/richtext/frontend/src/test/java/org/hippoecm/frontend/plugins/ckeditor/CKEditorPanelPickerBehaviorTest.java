@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.easymock.classextension.EasyMock;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.links.DocumentPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
 import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -67,13 +67,13 @@ public class CKEditorPanelPickerBehaviorTest {
         assertTrue("CKEditor config has configuration for the hippopicker plugin", editorConfig.has(HippoPicker.CONFIG_KEY));
         JSONObject hippoPickerConfig = editorConfig.getJSONObject(HippoPicker.CONFIG_KEY);
 
-        assertTrue("hippopicker configuration has configuration for the internal link picker", hippoPickerConfig.has(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_KEY));
-        JSONObject internalLinkPickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_KEY);
-        assertEquals(documentPickerCallbackUrl, internalLinkPickerConfig.getString(HippoPicker.INTERNAL_LINK_PICKER_CONFIG_CALLBACK_URL));
+        assertTrue("hippopicker configuration has configuration for the internal link picker", hippoPickerConfig.has(HippoPicker.InternalLink.CONFIG_KEY));
+        JSONObject internalLinkPickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.InternalLink.CONFIG_KEY);
+        assertEquals(documentPickerCallbackUrl, internalLinkPickerConfig.getString(HippoPicker.InternalLink.CONFIG_CALLBACK_URL));
 
-        assertTrue("hippopicker configuration has configuration for the image picker", hippoPickerConfig.has(HippoPicker.IMAGE_PICKER_CONFIG_KEY));
-        JSONObject imagePickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.IMAGE_PICKER_CONFIG_KEY);
-        assertEquals(imagePickerCallbackUrl, imagePickerConfig.getString(HippoPicker.IMAGE_PICKER_CONFIG_CALLBACK_URL));
+        assertTrue("hippopicker configuration has configuration for the image picker", hippoPickerConfig.has(HippoPicker.Image.CONFIG_KEY));
+        JSONObject imagePickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.Image.CONFIG_KEY);
+        assertEquals(imagePickerCallbackUrl, imagePickerConfig.getString(HippoPicker.Image.CONFIG_CALLBACK_URL));
     }
 
     @Test

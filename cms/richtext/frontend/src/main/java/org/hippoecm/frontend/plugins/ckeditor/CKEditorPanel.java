@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -28,27 +27,9 @@ import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.images.CKEditorImageService;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.links.CKEditorLinkService;
-import org.hippoecm.frontend.plugins.ckeditor.dialog.links.DocumentPickerBehavior;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
-import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
-import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextImageURLProvider;
-import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;

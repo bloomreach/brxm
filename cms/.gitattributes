@@ -2496,33 +2496,6 @@ richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/refre
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/readme.md -text
 richtext/frontend/pom.xml -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractBrowserDialog.html -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractBrowserDialog.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/AbstractCKEditorDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/CKEditorImageService.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.css -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.html svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_de.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_fr.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_it.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImageBrowserDialog_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/images/ImagePickerBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/CKEditorLinkService.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.html svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_de.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_fr.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_it.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/links/DocumentPickerBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/CKEditorImage.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/CKEditorLink.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/DocumentLink.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/dialog/model/InternalCKEditorLink.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/AbstractAjaxDialogBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IHtmlCleanerService.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IImageURLProvider.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/ILinkDecorator.java svneol=native#text/plain
@@ -2539,6 +2512,29 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextP
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/RichTextUtil.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-16.png -text svneol=unset#image/png
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/broken-image-32.png -text svneol=unset#image/png
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractAjaxDialogBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractBrowserDialog.html -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractBrowserDialog.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/AbstractRichTextEditorDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.css -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.html svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_de.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_fr.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_it.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImageBrowserDialog_nl.properties -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/ImagePickerBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/images/RichTextEditorImageService.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog.html svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_de.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_fr.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_it.properties -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentPickerBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/RichTextEditorLinkService.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextImageFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactory.java svneol=native#text/plain
@@ -2548,71 +2544,14 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/Bro
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/IPersisted.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/JavascriptUtil.java -text svneol=unset#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/PrefixingModel.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin.html -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin.java -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_de.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_fr.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_it.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/AbstractXinhaPlugin_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/XinhaNamespace.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/XinhaNodePlugin.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/XinhaPlugin.java -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/behavior/StateChangeBehavior.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/AbstractBrowserDialog.html -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/AbstractBrowserDialog.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/AbstractXinhaDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.css -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.html svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog_de.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog_fr.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog_it.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImageBrowserDialog_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/images/ImagePickerBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog.html svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog_de.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog_fr.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog_it.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog.html svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog_de.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog_fr.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog_it.properties -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/ExternalLinkDialog_nl.properties svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/links/InternalLinkBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dialog/xinha-modal.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/XinhaDropBehavior.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/XinhaNamespace.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel-debug.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/box-grey.png -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/hippo-border.gif -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager-debug.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/js/editormanager/editormanager.js svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/json/JsonParser.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/model/DocumentLink.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/images/XinhaImage.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/images/XinhaImageService.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/links/ExternalXinhaLink.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/links/InternalXinhaLink.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/links/XinhaLink.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/services/links/XinhaLinkService.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/xinha-tools-dev.js -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/xinha-tools.js -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/xinha_init.js -text svneol=unset#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextEditorDocumentLink.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextEditorImageLink.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextEditorInternalLink.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextEditorLink.java svneol=native#text/plain
 richtext/frontend/src/site/apt/index.apt -text
 richtext/frontend/src/site/site.xml svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
-richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTest.java -text
-richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.java -text
 richtext/frontend/src/test/resources/log4j-filters.txt -text
 richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain

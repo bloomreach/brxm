@@ -23,13 +23,12 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewPanel;
-import org.json.JSONObject;
 
 /**
  * Property field plugin for editing HTML in a String property using CKEditor. Internal links and images are
  * not supported.
  */
-public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin {
+public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin<String> {
 
     public static final String DEFAULT_EDITOR_CONFIG = "{"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
@@ -67,7 +66,7 @@ public class CKEditorPropertyPlugin extends AbstractCKEditorPlugin {
     }
 
     @Override
-    protected Panel createComparePanel(final String id, final IModel baseModel, final IModel currentModel) {
+    protected Panel createComparePanel(final String id, final IModel<String> baseModel, final IModel<String> currentModel) {
         final JcrPropertyValueModel<String> basePropertyModel = (JcrPropertyValueModel<String>) baseModel;
         final JcrPropertyValueModel<String> currentPropertyModel = (JcrPropertyValueModel<String>) currentModel;
         return new RichTextDiffPanel(id, basePropertyModel, currentPropertyModel);

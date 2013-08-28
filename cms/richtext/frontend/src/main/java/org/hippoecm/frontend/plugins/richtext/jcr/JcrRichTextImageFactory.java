@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -46,9 +47,9 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
 
     private final static Logger log = LoggerFactory.getLogger(JcrRichTextImageFactory.class);
 
-    private JcrNodeModel nodeModel;
+    private IModel<Node> nodeModel;
 
-    public JcrRichTextImageFactory(JcrNodeModel nodeModel) {
+    public JcrRichTextImageFactory(IModel<Node> nodeModel) {
         this.nodeModel = nodeModel;
     }
 
@@ -70,13 +71,13 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 relPath = path.substring(path.indexOf('/') + 1);
             }
             javax.jcr.Session session = UserSession.get().getJcrSession();
-            Node root = nodeModel.getNode();
+            Node root = nodeModel.getObject();
             if (root.hasNode(name)) {
                 Node link = root.getNode(name);
                 if (link.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                     String uuid = link.getProperty("hippo:docbase").getString();
                     try {
-                        Node node = session.getNodeByUUID(uuid);
+                        Node node = session.getNodeByIdentifier(uuid);
                         return createImageItem(node, name, relPath);
                     } catch (ItemNotFoundException infe) {
                         throw new RichTextException("Could not resolve " + uuid);
@@ -101,7 +102,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
     }
 
     public boolean save(RichTextImage image) throws RichTextException {
-        Node node = nodeModel.getNode();
+        Node node = nodeModel.getObject();
         try {
             Node target = ((JcrNodeModel) image.getTarget()).getNode();
             String facet = RichTextFacetHelper.createFacet(node, image.getName(), target);

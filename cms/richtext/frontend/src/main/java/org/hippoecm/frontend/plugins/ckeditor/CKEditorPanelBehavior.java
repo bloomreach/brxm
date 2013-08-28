@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.ckeditor;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.model.IDetachable;
 import org.json.JSONException;

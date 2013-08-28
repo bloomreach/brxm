@@ -49,12 +49,13 @@ import org.slf4j.LoggerFactory;
  *     to disable the HTML cleaner. Default value: "org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService".</li>
  * </ul>
  */
-public abstract class AbstractCKEditorPlugin extends RenderPlugin {
+public abstract class AbstractCKEditorPlugin<ModelType> extends RenderPlugin {
 
     public static final String CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON = "ckeditor.config.overlayed.json";
     public static final String CONFIG_CKEDITOR_CONFIG_APPENDED_JSON = "ckeditor.config.appended.json";
     public static final String CONFIG_HTML_CLEANER_SERVICE_ID = "htmlcleaner.id";
     public static final String CONFIG_MODEL_COMPARE_TO = "model.compareTo";
+    private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
 
     private static final String WICKET_ID_PANEL = "panel";
 
@@ -98,17 +99,26 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
     private String createEditorConfiguration(final String defaultEditorConfigJson) {
         try {
             JSONObject editorConfig = new JSONObject(defaultEditorConfigJson);
+            logEditorConfiguration("Default CKEditor config", editorConfig);
 
             final JSONObject overlayedConfig = readAndValidateEditorConfig(CONFIG_CKEDITOR_CONFIG_OVERLAYED_JSON);
             JsonUtils.overlay(editorConfig, overlayedConfig);
+            logEditorConfiguration("Overlayed CKEditor config", editorConfig);
 
             final JSONObject appendedConfig = readAndValidateEditorConfig(CONFIG_CKEDITOR_CONFIG_APPENDED_JSON);
             JsonUtils.append(editorConfig, appendedConfig);
+            logEditorConfiguration("Final CKEditor config", editorConfig);
 
             return editorConfig.toString();
         } catch (JSONException e) {
             log.warn("Error while creating CKEditor configuration, using default configuration as-is:\n" + defaultEditorConfigJson, e);
             return defaultEditorConfigJson;
+        }
+    }
+
+    private void logEditorConfiguration(String name, JSONObject config) throws JSONException {
+        if (log.isDebugEnabled()) {
+            log.debug(name + "\n" + config.toString(LOGGED_EDITOR_CONFIG_INDENT_SPACES));
         }
     }
 
@@ -133,14 +143,14 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
     protected abstract Panel createEditPanel(final String id, final String editorConfigJson);
 
     private Panel createComparePanel(final String id) {
-        final IModel baseModel = getBaseModelOrNull();
+        final IModel<ModelType> baseModel = getBaseModelOrNull();
         if (baseModel == null) {
             log.warn("Plugin '{}' cannot instantiate compare mode, using regular HTML preview instead.",
                     getPluginConfig().getName());
             return createViewPanel(id);
         }
 
-        final IModel currentModel = getDefaultModel();
+        final IModel<ModelType> currentModel = (IModel<ModelType>) getDefaultModel();
 
         return createComparePanel(id, baseModel, currentModel);
     };
@@ -153,9 +163,9 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
      * @param currentModel the model with the new HTML
      * @return a panel that compares the current model with the base model.
      */
-    protected abstract Panel createComparePanel(final String id, final IModel baseModel, final IModel currentModel);
+    protected abstract Panel createComparePanel(final String id, final IModel<ModelType> baseModel, final IModel<ModelType> currentModel);
 
-    private IModel getBaseModelOrNull() {
+    private IModel<ModelType> getBaseModelOrNull() {
         final IPluginConfig config = getPluginConfig();
         if (!config.containsKey(CONFIG_MODEL_COMPARE_TO)) {
             log.warn("Plugin {} is missing configuration property '{}'", config.getName(), CONFIG_MODEL_COMPARE_TO);
@@ -163,7 +173,7 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
         }
 
         final String compareToServiceId = config.getString(CONFIG_MODEL_COMPARE_TO);
-        IModel model = getModelFromServiceOrNull(compareToServiceId);
+        IModel<ModelType> model = getModelFromServiceOrNull(compareToServiceId);
         if (model == null) {
             log.warn("Plugin {} cannot get the node model from service '{}'. Check the config property '{}'",
                 new Object[]{config.getName(), compareToServiceId, CONFIG_MODEL_COMPARE_TO});
@@ -171,7 +181,8 @@ public abstract class AbstractCKEditorPlugin extends RenderPlugin {
         return model;
     }
 
-    private IModel getModelFromServiceOrNull(final String serviceName) {
+    @SuppressWarnings("unchecked")
+    private IModel<ModelType> getModelFromServiceOrNull(final String serviceName) {
         final IModelReference modelRef = getPluginContext().getService(serviceName, IModelReference.class);
         if (modelRef == null) {
             log.warn("The service '{}' is not available", serviceName);

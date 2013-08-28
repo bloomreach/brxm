@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.encoding.UrlDecoder;
@@ -45,10 +46,10 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
     private static final String JS_STOP_EVENT = "Wicket.Event.stop(event);";
     private static final Logger log = LoggerFactory.getLogger(PreviewLinksBehavior.class);
 
-    private final JcrNodeModel model;
+    private final IModel<Node> model;
     private final IBrowseService browser;
 
-    PreviewLinksBehavior(final JcrNodeModel model, final IBrowseService browser) {
+    PreviewLinksBehavior(final IModel<Node> model, final IBrowseService browser) {
         this.model = model;
         this.browser = browser;
     }
@@ -61,7 +62,7 @@ class PreviewLinksBehavior extends AbstractDefaultAjaxBehavior implements ILinkD
             String link = linkValue.toString();
             link = UrlDecoder.PATH_INSTANCE.decode(link, request.getCharset());
             if (browser != null) {
-                Node node = model.getNode();
+                Node node = model.getObject();
                 try {
                     if (node.hasNode(link)) {
                         node = node.getNode(link);

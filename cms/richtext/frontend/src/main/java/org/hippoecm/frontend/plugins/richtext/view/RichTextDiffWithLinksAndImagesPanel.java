@@ -56,8 +56,8 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
     private static final Logger log = LoggerFactory.getLogger(RichTextDiffWithLinksAndImagesPanel.class);
 
     public RichTextDiffWithLinksAndImagesPanel(final String id,
-                                               final JcrNodeModel baseNodeModel,
-                                               final JcrNodeModel currentNodeModel,
+                                               final IModel<Node> baseNodeModel,
+                                               final IModel<Node> currentNodeModel,
                                                final IBrowseService browser) {
         super(id);
 
@@ -74,8 +74,8 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         response.render(CssHeaderItem.forReference(DIFF_CSS));
     }
 
-    private IModel<String> createDiffModel(final JcrNodeModel baseNodeModel,
-                                           final JcrNodeModel currentNodeModel,
+    private IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
+                                           final IModel<Node> currentNodeModel,
                                            final PreviewLinksBehavior previewLinksBehavior) {
 
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
@@ -131,8 +131,8 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         return new BrowsableModel(diffModel, previewLinksBehavior);
     }
 
-    private static JcrPropertyValueModel getContentModelOrNull(JcrNodeModel nodeModel) {
-        Node node = nodeModel.getNode();
+    private static JcrPropertyValueModel getContentModelOrNull(IModel<Node> nodeModel) {
+        Node node = nodeModel.getObject();
         try {
             if (node == null) {
                 return null;
