@@ -18,6 +18,7 @@ package org.hippoecm.frontend.translation.components.document;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.core.util.lang.PropertyResolver;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +30,7 @@ import org.wicketstuff.js.ext.data.ExtJsonStore;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
-final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
+public final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,6 +47,15 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
                 new ExtDataField("urlfr"), new ExtDataField("id"), new ExtDataField("type"), new ExtDataField(
                         "editable", Boolean.class)));
         this.translations = translations;
+    }
+
+    public boolean verifyRecords() {
+        for (FolderTranslation data : translations) {
+            if (StringUtils.isEmpty(data.getNamefr()) || StringUtils.isEmpty(data.getUrlfr())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
