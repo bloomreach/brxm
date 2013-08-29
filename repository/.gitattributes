@@ -107,9 +107,14 @@ connector/src/main/java/org/hippoecm/repository/decorating/server/ServerServicin
 connector/src/main/java/org/hippoecm/repository/decorating/server/ServerServicingWorkspace.java -text
 connector/src/main/java/org/hippoecm/repository/decorating/server/ServerWorkflowDescriptor.java -text
 dependencies/pom.xml svneol=native#text/plain
+deprecated/facetsearch/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchProvider.java -text
+deprecated/facetsearch/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchSubtypedDataProvider.java -text
+deprecated/facetsearch/src/test/java/org/hippoecm/repository/jackrabbit/FacetSearchEntryCompareTest.java -text svneol=unset#text/plain
+deprecated/facetsearch/src/test/resources/repository-test.cnd -text
 deprecated/facetselectmirror/pom.xml -text
 deprecated/facetselectmirror/src/main/java/org/hippoecm/repository/jackrabbit/FacetSelectProvider.java -text
 deprecated/facetselectmirror/src/main/java/org/hippoecm/repository/jackrabbit/MirrorNodeVirtualProvider.java -text
+deprecated/facetselectmirror/src/test/java/org/hippoecm/repository/FacetSelectPerformanceTest.java -text
 deprecated/pom.xml svneol=native#text/plain
 deprecated/translation/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
@@ -267,8 +272,6 @@ engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
 ldap/src/main/resources/hippoldap.cnd -text
 modules/pom.xml svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetResultSetProvider.java -text
-modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchProvider.java -text
-modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetSearchSubtypedDataProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/MirrorVirtualProvider.java -text
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/AbstractFacetNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacNavNodeType.java svneol=native#text/plain
@@ -282,7 +285,6 @@ modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -tex
 modules/src/main/resources/eventlogcleanup-module.xml -text
 modules/src/main/resources/hippobroadcast.cnd -text
 modules/src/main/resources/repository-logger-module.xml -text
-modules/src/test/java/org/hippoecm/repository/jackrabbit/FacetSearchEntryCompareTest.java -text svneol=unset#text/plain
 modules/src/test/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNavigationEntryCompareTest.java -text svneol=unset#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetFilters.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetRange.java svneol=native#text/plain
@@ -304,7 +306,6 @@ test/pom.xml svneol=native#text/plain
 test/src/test/fixtures/dump.zip -text
 test/src/test/java/org/hippoecm/repository/CheckoutNodeTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/ConfigurationTest.java -text
-test/src/test/java/org/hippoecm/repository/FacetSelectPerformanceTest.java -text
 test/src/test/java/org/hippoecm/repository/FacetedAuthorizationTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationChildNameTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/FacetedNavigationNamespaceTest.java svneol=native#text/plain

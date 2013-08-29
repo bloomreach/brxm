@@ -15,47 +15,35 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import org.apache.jackrabbit.core.id.NodeId;
 
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.value.InternalValue;
-import org.apache.jackrabbit.spi.QPropertyDefinition;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.StateProviderContext;
 
-public class FacetSubSearchProvider extends AbstractFacetSearchProvider
+@Deprecated
+public class FacetSearchProvider extends AbstractFacetSearchProvider
 {
 
-    QPropertyDefinition primaryTypePropDef;
-
-    public FacetSubSearchProvider()
+    public FacetSearchProvider()
         throws RepositoryException
     {
+        super();
     }
 
     @Override
     protected void initialize() throws RepositoryException {
         super.initialize();
-        subSearchProvider = this;
+        subSearchProvider = (FacetSubSearchProvider) lookup(FacetSubSearchProvider.class.getName());
         subNodesProvider  = (FacetResultSetProvider) lookup(FacetResultSetProvider.class.getName());
-        primaryTypePropDef = lookupPropDef(resolveName(HippoNodeType.NT_FACETBASESEARCH), countName);
         virtualNodeName = resolveName(HippoNodeType.NT_FACETSUBSEARCH);
-        register(null, virtualNodeName);
+        register(resolveName(HippoNodeType.NT_FACETSEARCH), virtualNodeName);
     }
 
     @Override
-    public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
-        super.populate(context, state);
-
-        PropertyState propState = createNew(NameConstants.JCR_PRIMARYTYPE, state.getNodeId());
-        propState.setType(PropertyType.NAME);
-        propState.setValues(new InternalValue[] { InternalValue.create(resolveName(HippoNodeType.NT_FACETSUBSEARCH)) });
-        propState.setMultiValued(false);
-        state.addPropertyName(NameConstants.JCR_PRIMARYTYPE);
-
-        return state;
+    public NodeState populate(StateProviderContext context, HippoNodeId nodeId, NodeId parentId) throws RepositoryException {
+        throw new RepositoryException("Cannot populate top facetsearch node");
     }
 }

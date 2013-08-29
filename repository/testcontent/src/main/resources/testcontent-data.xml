@@ -594,34 +594,6 @@
         <sv:value>new-folder</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="tags">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:facetsearch</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:tags</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:queryname" sv:type="String">
-        <sv:value/>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="state">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:facetsearch</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-      </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String">
-        <sv:value>hippostd:state</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:queryname" sv:type="String">
-        <sv:value/>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="gallery">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -21,12 +21,14 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -41,12 +43,22 @@ public class CanonicalPathTest extends RepositoryTestCase {
                         "jcr:mixinTypes",             "hippo:harddocument",
                         "x",                          "foo"
     };
+    String[] content2 = new String[] {
+        "/test/selectnode",           "hippo:facetselect",
+            "hippo:docbase",              "/test/content",
+            "hippo:values",               null,
+            "hippo:facets",               null,
+            "hippo:modes",                null,
+    };
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         build(session, content1);
+        session.save();
+        session.refresh(false);
+        build(session, content2);
         session.save();
         session.refresh(false);
     }
@@ -58,45 +70,50 @@ public class CanonicalPathTest extends RepositoryTestCase {
     }
 
     /**
-     * Basic test on the root node: see HREPTWO-2342
+     * Asserts that also non referenceable nodes have a canonical node when applicable
      */
     @Test
-    public void testRootNode() throws RepositoryException {
-        Node root = session.getRootNode();
-        assertTrue(root instanceof HippoNode);
-        Node node = ((HippoNode) root).getCanonicalNode();
-        assertNotNull(node);
-        assertTrue(node.isSame(root));
-    }
-
-    /**
-     * Asserts that nodes that have been moved have a canonical node
-     */
-    @Test
-    public void testMovedNodeHasCanonical() throws RepositoryException {
-        Node node = traverse(session, "/test/content/nodes");
-        node.getSession().move(node.getPath(), node.getParent().getPath() + "/newnodes");
+    public void testNonReferenceableHaveCanonical() throws RepositoryException {
+        Node node = traverse(session, "/test/selectnode/nodes");
         assertNotNull(node);
         assertTrue(node instanceof HippoNode);
         Node canonical = ((HippoNode)node).getCanonicalNode();
         assertNotNull(canonical);
-        assertEquals("/test/content/newnodes", canonical.getPath());
-        node.getSession().save();
-        canonical = ((HippoNode)node).getCanonicalNode();
-        assertNotNull(canonical);
-        assertEquals("/test/content/newnodes", canonical.getPath());
+        assertEquals("/test/content/nodes", canonical.getPath());
+    }
+
+    /**
+     * A virtual node in facetselet which IS a mirror of a hippo document returns
+     * a node for getCanonicalNode()
+     */
+    @Test
+    public void testFacetSelectNotNullCanonicalPath() throws RepositoryException {
+        Node facetSelectNode = session.getRootNode().getNode("test/selectnode");
+        assertTrue(((HippoNode) facetSelectNode.getNode("nodes").getNode("mynode")).getCanonicalNode() != null);
+    }
+
+    /**
+     * Assert that the canonical node of a mirrored hippo document is not the same
+     */
+    @Test
+    public void testFacetSelectCanonicalNodeIsNotSameTest() throws RepositoryException {
+        Node facetSelectNode = session.getRootNode().getNode("test/selectnode");
+        Node mirroredHippoDoc = facetSelectNode.getNode("nodes").getNode("mynode");
+        Node canonical = ((HippoNode)mirroredHippoDoc).getCanonicalNode();
+        assertFalse(canonical.isSame(mirroredHippoDoc));
     }
 
     /*
-     * Assert that the canonical node of real hippo document has same ItemId
+     * Assert that the canonical node of a mirrored hippo document has different ItemId
      */
     @Test
-    public void testPhysicalCanonicalNodeHasSameIdTest() throws RepositoryException{
-        Node physicalHippoDoc = session.getRootNode().getNode("test").getNode("content");
-        ItemId physicalId = unwrappedItemId(physicalHippoDoc);
-        Node canonical = ((HippoNode)physicalHippoDoc).getCanonicalNode();
+    public void testFacetSelectCanonicalNodeHasOtherIdTest() throws RepositoryException {
+        Node facetSelectNode = session.getRootNode().getNode("test/selectnode");
+        Node mirroredHippoDoc = facetSelectNode.getNode("nodes").getNode("mynode");
+        ItemId mirroredId = unwrappedItemId(mirroredHippoDoc);
+        Node canonical = ((HippoNode) mirroredHippoDoc).getCanonicalNode();
         ItemId canonicalId = unwrappedItemId(canonical);
-        assertTrue(canonicalId.equals(physicalId));
+        assertFalse(canonicalId.equals(mirroredId));
     }
 
     private ItemId unwrappedItemId(Node node) {

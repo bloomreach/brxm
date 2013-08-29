@@ -21,9 +21,9 @@
     <version>2.25.04-SNAPSHOT</version>
   </parent>
 
-  <name>Repository Deprecated Facetselect Mirror</name>
-  <description>Hippo Repository Deprecated Facetselect and Mirror</description>
-  <artifactId>hippo-repository-deprecated-facetselectmirror</artifactId>
+  <name>Repository Deprecated Facetsearch</name>
+  <description>Hippo Repository Deprecated Facetsearch</description>
+  <artifactId>hippo-repository-deprecated-facetsearch</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -92,6 +92,12 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-workflow</artifactId>
+      <scope>test</scope>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Testing needs a JTA implementation -->
     <dependency>
@@ -129,7 +135,7 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.jackrabbit.MirrorNodeVirtualProvider org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jackrabbit.SubtypedDataProvider </Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.jackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoecm.repository.jackrabbit.FacetSearchSubtypedDataProvider</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

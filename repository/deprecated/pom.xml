@@ -29,5 +29,6 @@
   <modules>
     <module>translation</module>
     <module>facetselectmirror</module>
+    <module>facetsearch</module>
   </modules>
 </project>

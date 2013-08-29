@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Hippo B.V. (http://www.onehippo.com)
+Implementation-Title: Repository Deprecated Facetselect Mirror
+Implementation-Version: 2.25.04-SNAPSHOT
+Implementation-Vendor-Id: org.onehippo.cms7
+Built-By: frnk
+Build-Jdk: 1.7.0_17
+Specification-Vendor: Hippo B.V. (http://www.onehippo.com)
+Specification-Title: Repository Deprecated Facetselect Mirror
+Created-By: Apache Maven 3.0.5
+Specification-Version: 2.25.04-SNAPSHOT
+Hippo-Modules: org.hippoecm.repository.jackrabbit.FacetSubSearchProvid
+ er org.hippoecm.repository.jackrabbit.FacetSearchProvider org.hippoec
+ m.repository.jackrabbit.FacetSearchSubtypedDataProvider
+Archiver-Version: Plexus Archiver
+

@@ -16,9 +16,6 @@
 package org.hippoecm.repository.jackrabbit;
 
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +28,9 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.hippoecm.repository.jackrabbit.AbstractFacetSearchProvider.FacetSearchEntry;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class FacetSearchEntryCompareTest {
 

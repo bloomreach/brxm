@@ -21,11 +21,6 @@ import java.util.Date;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.util.TraversingItemVisitor;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,8 +29,6 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class DerivedDateTest extends RepositoryTestCase {
 
@@ -145,110 +138,4 @@ public class DerivedDateTest extends RepositoryTestCase {
         assertFalse(session.nodeExists("/test/doc/doc/hippo:d2fields"));
     }
 
-    @Test
-    public void testSearch() throws Exception {
-        Node docs = session.getNode("/test").addNode("docs","nt:unstructured");
-        docs.addMixin("mix:referenceable");
-
-        Node handle = docs.addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
-        Node doc = handle.addNode("doc", "hippo:datedocument1");
-        doc.addMixin("hippo:harddocument");
-        doc = doc.addNode("hippo:d");
-        doc.addMixin("mix:referenceable");
-        doc.setProperty("hippostd:date", date);
-        session.save();
-
-        Node search = session.getNode("/test").addNode("search", "hippo:facetsearch");
-        search.setProperty("hippo:queryname", "test");
-        search.setProperty("hippo:docbase", session.getNode("/test").getNode("docs").getIdentifier());
-        search.setProperty("hippo:facets", new String[]{"hippo:d/hippostd:dayofmonth"});
-        session.save();
-
-        assertNotNull(traverse(session, "/test/search/" + date.get(Calendar.DAY_OF_MONTH) + "/hippo:resultset/doc"));
-    }
-
-
-    @Test
-    public void testSearchMultiLevel() throws Exception {
-        root.addNode("docs","nt:unstructured").addMixin("mix:referenceable");
-        Node handle = root.getNode("docs").addNode("doc", "hippo:handle");
-        handle.addMixin("hippo:hardhandle");
-        Node doc = handle.addNode("doc", "hippo:datedocument1");
-        doc.addMixin("hippo:harddocument");
-        doc = doc.addNode("hippo:d");
-        doc.addMixin("mix:referenceable");
-        doc.setProperty("hippostd:date", date);
-        session.save();
-
-        Node search = root.addNode("search", "hippo:facetsearch");
-        search.setProperty("hippo:queryname", "test");
-        search.setProperty("hippo:docbase", root.getNode("docs").getIdentifier());
-        search.setProperty("hippo:facets", new String[] { "hippo:d/hippostd:dayofmonth", "hippo:d/hippostd:year" });
-        session.save();
-
-        assertNotNull(traverse(session, "/test/search/" + date.get(Calendar.DAY_OF_MONTH) + "/" + date.get(Calendar.YEAR) + "/hippo:resultset/doc"));
-    }
-
-    @Test
-    public void testQuery() throws Exception {
-        int level1 = 3;
-        int level2 = 4;
-        int level3 = 3;
-        int level4 = 2;
-        Node node = root.addNode("documents", "nt:unstructured");
-        node.addMixin("mix:referenceable");
-        for (int i1 = 0; i1 < level1; i1++) {
-            Node child1 = node.addNode("folder" + i1, "hippostd:folder");
-            child1.addMixin("hippo:harddocument");
-            for (int i2 = 0; i2 < level2; i2++) {
-                Node child2 = child1.addNode("folder" + i2, "hippostd:folder");
-                child2.addMixin("hippo:harddocument");
-                for (int i3 = 0; i3 < level3; i3++) {
-                    Node child3 = child2.addNode("folder" + i3, "hippostd:folder");
-                    child3.addMixin("hippo:harddocument");
-                    for (int i4 = 0; i4 < level4; i4++) {
-                        Node handle = child3.addNode("document" + i4, "hippo:handle");
-                        handle.addMixin("hippo:hardhandle");
-                        Node document = handle.addNode("document" + i4, "hippo:datedocument1");
-                        document.addMixin("hippo:harddocument");
-                        Node date = document.addNode("hippo:d");
-                        date.addMixin("mix:referenceable");
-                        Calendar cal = Calendar.getInstance();
-                        cal.set(2000 + i1, i2, i3 + 1);
-                        date.setProperty("hippostd:date", cal);
-                    }
-                }
-            }
-        }
-        session.save();
-
-        Node search = root.addNode("search", "hippo:facetsearch");
-        search.setProperty("hippo:queryname", "test");
-        search.setProperty("hippo:docbase", root.getNode("documents").getIdentifier());
-        search.setProperty("hippo:facets", new String[] {"hippo:d/hippostd:month", "hippo:d/hippostd:year", "hippo:d/hippostd:dayofmonth"});
-        session.save();
-
-        search = root.getNode("search");
-        search.accept(new TraversingItemVisitor.Default() {
-            public void entering(Node node, int level) {
-
-            }
-            public void visit(Node node) throws RepositoryException {
-                if(node.getName().equals("hippo:resultset"))
-                    return;
-                super.visit(node);
-            }
-        });
-        QueryManager qmgr = session.getWorkspace().getQueryManager();
-        Query query = qmgr.createQuery("//*[hippo:d/@hippostd:year=2002] order by @hippostd:month asc", Query.XPATH);
-        QueryResult result = query.execute();
-        int count = 0;
-        for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-            Node n = iter.nextNode();
-            ++count;
-        }
-        // there happen to be 1595 created docs in the year 2002 with the above for loop
-        assertTrue("Count should be 1595", 24 == count);
-    }
 }

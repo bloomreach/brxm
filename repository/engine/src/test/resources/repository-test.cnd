@@ -28,6 +28,7 @@
 [hippo:testdocument] > hippo:document
 + * (nt:base) = hippo:ntunstructured multiple
 - *
+- * multiple
 
 [hippo:testcardocument] > hippo:document
 + * (nt:base) = hippo:ntunstructured multiple

@@ -115,19 +115,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- integration test dependencies -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-deprecated-translation</artifactId>
-      <scope>test</scope>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-deprecated-facetselectmirror</artifactId>
-      <scope>test</scope>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>

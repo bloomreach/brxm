@@ -16,7 +16,6 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -84,6 +83,9 @@ public abstract class RepositoryTestCase {
     public static void tearDownClass() throws Exception {
         if (!Boolean.getBoolean(KEEPSERVER_SYSPROP)) {
             clearRepository();
+        } else {
+            background.close();
+            background = null;
         }
     }
 

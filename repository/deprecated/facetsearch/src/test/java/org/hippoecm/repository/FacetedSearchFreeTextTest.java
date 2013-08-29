@@ -16,7 +16,6 @@
 package org.hippoecm.repository;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.junit.After;
@@ -33,32 +32,32 @@ public class FacetedSearchFreeTextTest extends RepositoryTestCase {
 
     private static String[] content = new String[] {
         "/test",           "nt:unstructured",
-        "jcr:mixinTypes",  "mix:referenceable",
-        "/test/docs",      "nt:unstructured",
-        "jcr:mixinTypes",  "mix:referenceable",
-        "/test/docs/a",    "hippo:handle",
-        "jcr:mixinTypes",  "hippo:hardhandle",
-        "/test/docs/a/a",  "hippo:testdocument",
-        "jcr:mixinTypes",  "hippo:harddocument",
-        "x",               "a",
-        "y",               "z",
-        "text",            "aap",
-        "/test/docs/b",    "hippo:handle",
-        "jcr:mixinTypes",  "hippo:hardhandle",
-        "/test/docs/b/b",  "hippo:testdocument",
-        "jcr:mixinTypes",  "hippo:harddocument",
-        "x",               "b",
-        "y",               "z",
-        "text",            "noot",
-        "/test/nav1",      "hippo:facetsearch",
-        "hippo:facets",    "x",
-        "hippo:docbase",   "/test/docs",
-        "hippo:queryname", "test",
-        "/test/nav2",      "hippo:facetsearch",
-        "hippo:facets",    "y",
-        "hippo:facets",    "x",
-        "hippo:docbase",   "/test/docs",
-        "hippo:queryname", "test"
+            "jcr:mixinTypes",  "mix:referenceable",
+            "/test/docs",      "nt:unstructured",
+                "jcr:mixinTypes",  "mix:referenceable",
+                "/test/docs/a",    "hippo:handle",
+                    "jcr:mixinTypes",  "hippo:hardhandle",
+                    "/test/docs/a/a",  "hippo:testdocument",
+                        "jcr:mixinTypes",  "hippo:harddocument",
+                        "x",               "a",
+                        "y",               "z",
+                        "text",            "aap",
+                "/test/docs/b",    "hippo:handle",
+                    "jcr:mixinTypes",  "hippo:hardhandle",
+                    "/test/docs/b/b",  "hippo:testdocument",
+                        "jcr:mixinTypes",  "hippo:harddocument",
+                        "x",               "b",
+                        "y",               "z",
+                        "text",            "noot",
+            "/test/nav1",      "hippo:facetsearch",
+                "hippo:facets",    "x",
+                "hippo:docbase",   "/test/docs",
+                "hippo:queryname", "test",
+            "/test/nav2",      "hippo:facetsearch",
+                "hippo:facets",    "y",
+                "hippo:facets",    "x",
+                "hippo:docbase",   "/test/docs",
+                "hippo:queryname", "test"
     };
 
     private static String[] searchPatterns = new String[] {"[aap]", "{aap}", "'aap'" };

@@ -24,18 +24,18 @@ public class FacetedSelectVersioningTest extends RepositoryTestCase {
 
     String[] content1 = new String[] {
         "/test", "nt:unstructured",
-        "/test/doc", "hippo:handle",
-        "jcr:mixinTypes", "hippo:hardhandle",
-        "/test/doc/doc", "hippo:realdocument",
-        "jcr:mixinTypes", "hippo:harddocument"
+            "/test/doc", "hippo:handle",
+                "jcr:mixinTypes", "hippo:hardhandle",
+                "/test/doc/doc", "hippo:realdocument",
+                    "jcr:mixinTypes", "hippo:harddocument"
     };
     String[] content2 = new String[] {
         "/test/doc/doc/hippo:mirror", "hippo:facetselect",
-        //"jcr:mixinTypes", "mix:versionable",
-        "hippo:docbase", "/test/doc",
-        "hippo:values", null,
-        "hippo:facets", null,
-        "hippo:modes", null
+            //"jcr:mixinTypes", "mix:versionable",
+            "hippo:docbase", "/test/doc",
+            "hippo:values", null,
+            "hippo:facets", null,
+            "hippo:modes", null
     };
 
     @Test
