@@ -133,14 +133,4 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
         return (HippoAvailableTranslationsBean<T>)availableTranslationsMappingClass;
     }
     
-    @Override
-    public void detach(){
-        super.detach();
-    }
-    
-    @Override
-    public void attach(Session session){
-        super.attach(session);
-    }
-
 }
