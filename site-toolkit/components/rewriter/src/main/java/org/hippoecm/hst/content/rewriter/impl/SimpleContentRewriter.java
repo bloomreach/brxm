@@ -19,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.regex.Pattern;
 
-import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -32,7 +31,6 @@ import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.utils.SimpleHtmlExtractor;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -255,15 +253,6 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
             final String relPath = path;
             try {
                 nodePath = node.getPath();
-                /*
-                 * Important: use here the HippoWorkspace hierarchy resolver and not a direct getNode(path) because the hierarchy resolver
-                 * contains logic about how to fetch relative paths for for example a picked image in an RTE field. 
-                 * 
-                 * For example, the relative path of a picked image in RTE field is something like: facetNode/[some-encoding-wildcard]/thumbnail
-                 * 
-                 * The hierarchy resolver knows how to solve: [some-encoding-wildcard]
-                 * 
-                 */
                 if (rewritingBinaryLink) {
 
                     if (!isValidBinariesPath(nodePath, relPath)) {
