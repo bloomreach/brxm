@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.util;
 
-import java.util.UUID;
-
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
