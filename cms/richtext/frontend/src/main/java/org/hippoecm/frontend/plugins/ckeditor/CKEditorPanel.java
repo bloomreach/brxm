@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Renders an instance of CKEditor to edit the HTML in the given model.
- * Additional behavior can be added via the {@link #addBehavior(CKEditorPanelBehavior)} method.
+ * Additional extensions can be added via the {@link #addExtension(CKEditorPanelExtension)} method.
  */
 public class CKEditorPanel extends Panel {
 
@@ -51,7 +51,7 @@ public class CKEditorPanel extends Panel {
 
     private final String editorConfigJson;
     private final String editorId;
-    private final List<CKEditorPanelBehavior> behaviors;
+    private final List<CKEditorPanelExtension> extensions;
 
     public CKEditorPanel(final String id,
                   final String editorConfigJson,
@@ -66,7 +66,7 @@ public class CKEditorPanel extends Panel {
 
         editorId = textArea.getMarkupId();
 
-        behaviors = new LinkedList<CKEditorPanelBehavior>();
+        extensions = new LinkedList<CKEditorPanelExtension>();
     }
 
     /**
@@ -78,13 +78,13 @@ public class CKEditorPanel extends Panel {
 
     /**
      * Adds custom server-side behavior to this panel.
-     * @param behavior the behavior to add.
+     * @param extension the behavior to add.
      */
-    public void addBehavior(CKEditorPanelBehavior behavior) {
-        behaviors.add(behavior);
+    public void addExtension(CKEditorPanelExtension extension) {
+        extensions.add(extension);
 
-        for (AbstractAjaxBehavior ajaxBehavior : behavior.getAjaxBehaviors()) {
-            add(ajaxBehavior);
+        for (Behavior behavior : extension.getBehaviors()) {
+            add(behavior);
         }
     }
 
@@ -105,9 +105,9 @@ public class CKEditorPanel extends Panel {
         try {
             JSONObject editorConfig = JsonUtils.createJSONObject(editorConfigJson);
 
-            // configure behaviors
-            for (CKEditorPanelBehavior behavior : behaviors) {
-                behavior.addCKEditorConfiguration(editorConfig);
+            // configure extensions
+            for (CKEditorPanelExtension extension : extensions) {
+                extension.addConfiguration(editorConfig);
             }
 
             // always use the language of the current CMS locale
@@ -133,7 +133,7 @@ public class CKEditorPanel extends Panel {
         }
     }
 
-    private void renderContentsCss(IHeaderResponse response, JSONObject editorConfig) {
+    protected void renderContentsCss(IHeaderResponse response, JSONObject editorConfig) {
         String contentsCss = "";
         try {
             contentsCss = editorConfig.getString(CKEditorConstants.CONFIG_CONTENTS_CSS);
@@ -149,7 +149,7 @@ public class CKEditorPanel extends Panel {
 
     @Override
     protected void onDetach() {
-        for (CKEditorPanelBehavior behavior : behaviors) {
+        for (CKEditorPanelExtension behavior : extensions) {
             behavior.detach();
         }
         super.onDetach();

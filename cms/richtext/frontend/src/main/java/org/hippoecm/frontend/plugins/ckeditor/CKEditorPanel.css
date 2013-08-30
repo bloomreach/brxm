@@ -20,5 +20,5 @@
 
 /* hide text in the textarea by giving it the same color as the background */
 .hippo-ckeditor .hippo-ckeditor-textarea {
-    color: #fff;
+    opacity: 0;
 }

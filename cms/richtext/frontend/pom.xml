@@ -144,6 +144,7 @@
             window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
           <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
         </configuration>
       </plugin>

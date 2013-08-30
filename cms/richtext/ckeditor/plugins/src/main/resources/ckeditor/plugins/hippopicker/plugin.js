@@ -229,7 +229,7 @@
 
         icons: 'pickinternallink,pickimage',
         hidpi: true,
-        lang: ['en','de','fr','it','nl'],
+        lang: CKEDITOR.tools.objectKeys(CKEDITOR.lang.languages),
 
         init: function(editor) {
             var config = editor.config.hippopicker;
@@ -238,7 +238,7 @@
             initImagePicker(editor, config.image.callbackUrl);
 
             // Ensure compatibility with the 'Maximize' plugin. That plugin breaks the styling of Hippo's modal Wicket
-            // dialogs because it removes all CSS classes (including 'hipo-root') from the document body when the
+            // dialogs because it removes all CSS classes (including 'hippo-root') from the document body when the
             // editor is maximized. Here we explicitly re-add the 'hippo-root' CSS class when the editor is maximized
             // so the image picker dialog still looks good.
             editor.on("afterCommandExec", function(event) {

@@ -115,7 +115,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     /**
      * Creates the {@link CKEditorPanel} with the CKEditor instance to edit HTML.
-     * Override this method to add custom server-side {@link CKEditorPanelBehavior}
+     * Override this method to add custom server-side {@link CKEditorPanelExtension}
      * to the returned panel.
      *
      * @param id the Wicket ID of the panel
@@ -133,8 +133,8 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         final String editorId = editPanel.getEditorId();
         final DocumentPickerBehavior documentPickerBehavior = createDocumentPickerBehavior(editorId);
         final ImagePickerBehavior imagePickerBehavior = createImagePickerBehavior(editorId);
-        final CKEditorPanelPickerBehavior pickerBehavior = new CKEditorPanelPickerBehavior(documentPickerBehavior, imagePickerBehavior);
-        editPanel.addBehavior(pickerBehavior);
+        final CKEditorPanelPickerExtension pickerBehavior = new CKEditorPanelPickerExtension(documentPickerBehavior, imagePickerBehavior);
+        editPanel.addExtension(pickerBehavior);
     }
 
     private DocumentPickerBehavior createDocumentPickerBehavior(final String editorId) {

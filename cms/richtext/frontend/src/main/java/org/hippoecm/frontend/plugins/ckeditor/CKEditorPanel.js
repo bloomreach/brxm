@@ -48,10 +48,18 @@
     Hippo.createCKEditor = function(elementId, config) {
         // queue editor creation
         window.setTimeout(function() {
-            var editor = CKEDITOR.replace(elementId, config);
-            updateEditorElementWhenDataChanged(editor);
-            destroyEditorWhenElementIsDestroyed(editor, elementId);
-            removeHippoEditorFieldBorder(elementId);
+            try {
+                var editor = CKEDITOR.replace(elementId, config);
+                if (editor !== null) {
+                    updateEditorElementWhenDataChanged(editor);
+                    destroyEditorWhenElementIsDestroyed(editor, elementId);
+                    removeHippoEditorFieldBorder(elementId);
+                } else {
+                    console.error("CKEditor instance with id '" + elementId + "' was not created");
+                }
+            } catch (exception) {
+                console.error("Cannot create CKEditor instance with id '" + elementId + "'", exception);
+            }
         }, DOM_MIN_TIMEOUT_MS);
     };
 

@@ -14,6 +14,24 @@
  * limitations under the License.
  */
 
+/*
+ * Hippo-specific contents.css file to style both the editing area of CKEditor
+ * and the 'styles' combo box. It differs from the normal contents.css file in
+ * CKEditor because Hippo enables the 'divarea' plugin by default for each editor,
+ * instance. This plugin renders the editing area in a div instead of an iframe.
+ * Normally, contents.css is added to the iframe to style the editing area, but with
+ * the 'divarea' plugin this is no longer done. To complicate things, the same
+ * contents.css is also added to the iframe in which the 'styles' combo box is rendered.
+ * That still happens when the 'divarea' plugin is used.
+ *
+ * To still be able to style both the 'styles' combo box and *only* the editing area of
+ * CKEditor (and not the whole CMS UI), all CSS rules in this hippo-specific contents.css
+ * file must be scoped. Available scopes are:
+ *
+ * - ".cke_wysiwyg_div.cke_editable" for the editing area
+ * - ".cke_panel_container" for the 'styles' combo box
+ */
+
 .cke_wysiwyg_div.cke_editable {
     line-height: 1.6em;
     padding: 16px;

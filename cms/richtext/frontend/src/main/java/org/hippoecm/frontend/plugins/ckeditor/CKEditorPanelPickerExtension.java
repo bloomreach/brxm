@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.ckeditor;
 import java.util.Arrays;
 
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
 import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
@@ -28,18 +29,18 @@ import org.onehippo.cms7.ckeditor.CKEditorConstants;
 /**
  * Adds the CKEditor plugin 'hippopicker'.
  */
-public class CKEditorPanelPickerBehavior implements CKEditorPanelBehavior {
+public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
     private final DocumentPickerBehavior documentPickerBehavior;
     private final ImagePickerBehavior imagePickerBehavior;
 
-    public CKEditorPanelPickerBehavior(final DocumentPickerBehavior documentPickerBehavior, final ImagePickerBehavior imagePickerBehavior) {
+    public CKEditorPanelPickerExtension(final DocumentPickerBehavior documentPickerBehavior, final ImagePickerBehavior imagePickerBehavior) {
         this.documentPickerBehavior = documentPickerBehavior;
         this.imagePickerBehavior = imagePickerBehavior;
     }
 
     @Override
-    public void addCKEditorConfiguration(final JSONObject editorConfig) throws JSONException {
+    public void addConfiguration(final JSONObject editorConfig) throws JSONException {
         JsonUtils.appendToCommaSeparatedString(editorConfig, CKEditorConstants.CONFIG_EXTRA_PLUGINS, HippoPicker.PLUGIN_NAME);
 
         final JSONObject pickerPluginConfig = JsonUtils.getOrCreateChildObject(editorConfig, HippoPicker.CONFIG_KEY);
@@ -63,8 +64,8 @@ public class CKEditorPanelPickerBehavior implements CKEditorPanelBehavior {
     }
 
     @Override
-    public Iterable<AbstractAjaxBehavior> getAjaxBehaviors() {
-        return Arrays.<AbstractAjaxBehavior>asList(documentPickerBehavior, imagePickerBehavior);
+    public Iterable<Behavior> getBehaviors() {
+        return Arrays.<Behavior>asList(documentPickerBehavior, imagePickerBehavior);
     }
 
     @Override

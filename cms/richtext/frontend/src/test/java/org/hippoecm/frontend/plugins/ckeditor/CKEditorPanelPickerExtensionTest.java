@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.ckeditor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.easymock.classextension.EasyMock;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
@@ -34,19 +34,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests {@link CKEditorPanelPickerBehavior}.
+ * Tests {@link CKEditorPanelPickerExtension}.
  */
-public class CKEditorPanelPickerBehaviorTest {
+public class CKEditorPanelPickerExtensionTest {
 
     private DocumentPickerBehavior documentPickerBehavior;
     private ImagePickerBehavior imagePickerBehavior;
-    private CKEditorPanelPickerBehavior behavior;
+    private CKEditorPanelPickerExtension extension;
 
     @Before
     public void setUp() {
         documentPickerBehavior = EasyMock.createMock(DocumentPickerBehavior.class);
         imagePickerBehavior = EasyMock.createMock(ImagePickerBehavior.class);
-        behavior = new CKEditorPanelPickerBehavior(documentPickerBehavior, imagePickerBehavior);
+        extension = new CKEditorPanelPickerExtension(documentPickerBehavior, imagePickerBehavior);
     }
 
     @Test
@@ -60,7 +60,7 @@ public class CKEditorPanelPickerBehaviorTest {
         replay(documentPickerBehavior, imagePickerBehavior);
 
         final JSONObject editorConfig = new JSONObject();
-        behavior.addCKEditorConfiguration(editorConfig);
+        extension.addConfiguration(editorConfig);
 
         verify(documentPickerBehavior, imagePickerBehavior);
 
@@ -77,14 +77,14 @@ public class CKEditorPanelPickerBehaviorTest {
     }
 
     @Test
-    public void testGetAjaxBehaviors() throws Exception {
-        List ajaxBehaviors = new ArrayList();
-        for (AbstractAjaxBehavior ajaxBehavior : behavior.getAjaxBehaviors()) {
-            ajaxBehaviors.add(ajaxBehavior);
+    public void testGetBehaviors() throws Exception {
+        List behaviors = new ArrayList();
+        for (Behavior behavior : this.extension.getBehaviors()) {
+            behaviors.add(behavior);
         }
-        assertEquals(2, ajaxBehaviors.size());
-        assertTrue(ajaxBehaviors.contains(documentPickerBehavior));
-        assertTrue(ajaxBehaviors.contains(imagePickerBehavior));
+        assertEquals(2, behaviors.size());
+        assertTrue(behaviors.contains(documentPickerBehavior));
+        assertTrue(behaviors.contains(imagePickerBehavior));
     }
 
 }
