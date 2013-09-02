@@ -218,7 +218,6 @@
             Hippo,
             self,
             Wicket,
-            wicketSubmitForm,
             window,
             YAHOO,
             jQuery

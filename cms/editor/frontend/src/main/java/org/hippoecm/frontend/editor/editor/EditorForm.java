@@ -26,7 +26,7 @@ import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
+import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.StringResourceModel;
@@ -151,12 +151,10 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
      * response which in turn is handled by the hidden Iframe and renders the application in a locked state.
      * To fix this we simply ensure that a request marked as ajax has a corresponding {@link AjaxRequestTarget}.
      *
-     * @param formSubmittingComponent
+     * @param submittingComponent
      */
-    /*
-    TODO: is this code still relevant after the upgrade to wicket-6?
     @Override
-    public void process(final IFormSubmittingComponent formSubmittingComponent) {
+    public void process(IFormSubmitter submittingComponent) {
         RequestCycle rc = RequestCycle.get();
         final WebRequest request = (WebRequest) rc.getRequest();
         if (request.isAjax() && rc.find(AjaxRequestTarget.class) == null) {
@@ -164,9 +162,9 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
             AjaxRequestTarget target = app.newAjaxRequestTarget(getPage());
             RequestCycle.get().scheduleRequestHandlerAfterCurrent(target);
         }
-        super.process(formSubmittingComponent);
+        super.process(submittingComponent);
     }
-    */
+
 
     public void destroy() {
         if (cluster != null) {

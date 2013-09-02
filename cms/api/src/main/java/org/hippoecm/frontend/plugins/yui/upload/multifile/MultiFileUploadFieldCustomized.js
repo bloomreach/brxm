@@ -66,7 +66,7 @@
  * - added scrollbars if list get's to big for dialog (very hard-coded atm)
  */
 
-/*global wicketSubmitForm, YAHOO*/
+/*global YAHOO*/
 
 function MultiSelector(prefix, listId, listLabel, useMultipleAttr, deleteLabel, maxNumberOfFiles,
                        submitAfterSelect, clearAfterSubmit) {
@@ -136,18 +136,22 @@ function MultiSelector(prefix, listId, listLabel, useMultipleAttr, deleteLabel, 
             element.onchange = function() {
                 var filename,
                     submit = function() {
-                        var form = multiSelector.form,
-                            element = multiSelector.current_element;
+                        var form = multiSelector.form;
                         if (form.hasAttribute('action')) {
-                            // the action should be the form url
-                            wicketSubmitForm(form, form.getAttribute('action'), null, function() {
-                                //success
-                                if (multiSelector.clearAfterSubmit) {
+                            new Wicket.Ajax.Call().ajax({
+                                u: form.getAttribute('action'),
+                                f: form,
+                                mp: true,
+                                sh: function() {
+                                    //success
+                                    if (multiSelector.clearAfterSubmit) {
+                                        multiSelector.reset();
+                                    }
+                                },
+                                fh: function() {
+                                    //failure
                                     multiSelector.reset();
                                 }
-                            }, function() {
-                                //failure
-                                multiSelector.reset();
                             });
                         }
                     };
