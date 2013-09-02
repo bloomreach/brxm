@@ -144,7 +144,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         workflow.addTranslation("de", new Document(deFolder));
 
         session.refresh(false);
-        assertEquals(FOLDER_T9N_ID, session.getProperty("/test/folder_de/" + HippoTranslationNodeType.ID));
+        assertEquals(FOLDER_T9N_ID, session.getProperty("/test/folder_de/" + HippoTranslationNodeType.ID).getString());
     }
 
     @Test
