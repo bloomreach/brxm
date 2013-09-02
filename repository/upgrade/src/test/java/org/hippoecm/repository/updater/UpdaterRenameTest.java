@@ -19,7 +19,6 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -38,12 +37,12 @@ public class UpdaterRenameTest extends RepositoryTestCase {
 
     private final String[] content = {
         "/test", "nt:unstructured",
-        "/test/d", "testsubns:document",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "testsuperns:x", "1",
-        "testsubns:x", "2",
-        "testsuperns:y", "11",
-        "testsubns:y", "12"
+            "/test/d", "testsubns:document",
+                "jcr:mixinTypes", "hippo:harddocument",
+                "testsuperns:x", "1",
+                "testsubns:x", "2",
+                "testsuperns:y", "11",
+                "testsubns:y", "12"
     };
 
     @Override

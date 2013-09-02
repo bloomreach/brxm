@@ -170,7 +170,10 @@ public abstract class RepositoryTestCase {
                     }
                 }
                 if ("jcr:mixinTypes".equals(contents[i])) {
-                    node.addMixin(contents[i + 1]);
+                    final String mixins = contents[i + 1];
+                    for (String mixin : mixins.split(",")) {
+                        node.addMixin(mixin);
+                    }
                 } else {
                     if (propDef != null && propDef.isMultiple()) {
                         Value[] values;

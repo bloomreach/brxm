@@ -128,8 +128,6 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         session.refresh(false);
         assertTrue(session.nodeExists("/test/folder_nl/dokument"));
         assertTrue(session.nodeExists("/test/folder_nl/dokument/dokument"));
-        assertTrue(session.nodeExists("/test/folder/document/document/" + HippoTranslationNodeType.TRANSLATIONS
-                + "/nl"));
     }
 
     @Test
@@ -146,7 +144,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         workflow.addTranslation("de", new Document(deFolder));
 
         session.refresh(false);
-        assertTrue(session.nodeExists("/test/folder/" + HippoTranslationNodeType.TRANSLATIONS + "/de"));
+        assertEquals(FOLDER_T9N_ID, session.getProperty("/test/folder_de/" + HippoTranslationNodeType.ID));
     }
 
     @Test
