@@ -69,6 +69,7 @@ public class HippoRepositoryFactory {
         if (defaultLocation != null) {
             return getHippoRepository(defaultLocation);
         }
+
         try {
             Class cls = Class.forName("org.hippoecm.repository.LocalHippoRepository");
             defaultRepository = (HippoRepository) cls.getMethod("create", new Class[] { String.class } ).invoke(null, (String)null);
@@ -97,7 +98,6 @@ public class HippoRepositoryFactory {
 
         if (location.startsWith("rmi://")) {
             try {
-                defaultLocation = location;
                 if(!location.endsWith("/spi")) {
                     return RemoteHippoRepository.create(location);
                 } else {
@@ -120,7 +120,6 @@ public class HippoRepositoryFactory {
 
         if(location.startsWith("java:")) {
             try {
-                defaultLocation = location;
                 InitialContext ctx = new InitialContext();
                 return (HippoRepository) ctx.lookup(location);
             } catch (NamingException ex) {
@@ -131,7 +130,6 @@ public class HippoRepositoryFactory {
 
         if(location.startsWith("bootstrap:")) {
             try {
-                defaultLocation = location;
                 location = location.substring("bootstrap:".length());
                 return (HippoRepository) Class.forName("org.hippoecm.repository.BootstrapHippoRepository").getMethod("create", new Class[] { String.class }).invoke(null, new Object[] { location });
             } catch(ClassNotFoundException ex) {
@@ -152,7 +150,6 @@ public class HippoRepositoryFactory {
         }
 
         if(location.startsWith("vm:")) {
-            defaultLocation = location;
             return VMHippoRepository.create(location);
         }
 
@@ -193,11 +190,6 @@ public class HippoRepositoryFactory {
             } else {
                 throw new RepositoryException("unchecked exception: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             }
-        }
-
-        // in case this local repository is build from the default location
-        if (defaultRepository == null && location.equals(defaultLocation)) {
-            defaultRepository = repository;
         }
 
         return repository;
