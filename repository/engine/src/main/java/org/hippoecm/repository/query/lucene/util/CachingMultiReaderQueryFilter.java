@@ -35,22 +35,8 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
     private static final Logger log = LoggerFactory.getLogger(CachingMultiReaderQueryFilter.class);
 
-    private static final class CachedBitSet extends OpenBitSet {
-
-        private final int maxDoc;
-
-        CachedBitSet(int maxDoc) {
-            super(maxDoc);
-            this.maxDoc = maxDoc;
-        }
-
-        boolean isValid(IndexReader reader) {
-            return maxDoc == reader.maxDoc();
-        }
-    }
-
-    private final Map<IndexReader, CachedBitSet> cache = new ConcurrentHashMap<IndexReader, CachedBitSet>(
-            new WeakHashMap<IndexReader, CachedBitSet>());
+    private final Map<IndexReader, OpenBitSet> cache = new ConcurrentHashMap<IndexReader, OpenBitSet>(
+            new WeakHashMap<IndexReader, OpenBitSet>());
 
     private final Query query;
 
@@ -93,26 +79,18 @@ public class CachingMultiReaderQueryFilter extends Filter {
     }
 
     private DocIdSet getIndexReaderDocIdSet(final IndexReader reader) throws IOException {
-        CachedBitSet docIdSet = cache.get(reader);
-        if (docIdSet == null || !docIdSet.isValid(reader)) {
-            docIdSet = createAndCacheDocIdSet(reader);
-        }
-        return docIdSet;
-    }
-
-    private CachedBitSet createAndCacheDocIdSet(IndexReader reader) throws IOException {
-        CachedBitSet docIdSet = cache.get(reader);
-        if (docIdSet != null && docIdSet.isValid(reader)) {
+        OpenBitSet docIdSet = cache.get(reader);
+        if (docIdSet != null) {
             return docIdSet;
         }
-        // no synchronization needed: wo
+        // no synchronization needed: worst case scenario two concurrent thread do it both
         docIdSet = createDocIdSet(reader);
         cache.put(reader, docIdSet);
         return docIdSet;
     }
 
-    private CachedBitSet createDocIdSet(IndexReader reader) throws IOException {
-        final CachedBitSet bits = new CachedBitSet(reader.maxDoc());
+    private OpenBitSet createDocIdSet(IndexReader reader) throws IOException {
+        final OpenBitSet bits = new OpenBitSet(reader.maxDoc());
 
         long start = System.currentTimeMillis();
 
@@ -125,7 +103,7 @@ public class CachingMultiReaderQueryFilter extends Filter {
         });
 
         long docIdSetCreationTime = System.currentTimeMillis() - start;
-        log.info("Creating authorization doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
+        log.info("Creating CachingMultiReaderQueryFilter doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
 
         return bits;
     }
