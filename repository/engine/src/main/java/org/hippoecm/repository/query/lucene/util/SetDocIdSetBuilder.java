@@ -27,8 +27,14 @@ public class SetDocIdSetBuilder {
 
     private final List<DocIdSet> docIdSets = new ArrayList<DocIdSet>();
 
+    /**
+     * @param docIdSet the docIdSet to add. <code>docIdSet</code> is allowed to be <code>null</code> in which case it is
+     *                 ignored
+     */
     public void add(DocIdSet docIdSet) {
-        docIdSets.add(docIdSet);
+        if (docIdSet != null) {
+            docIdSets.add(docIdSet);
+        }
     }
 
     public OpenBitSet toBitSet() throws IOException {
@@ -66,7 +72,9 @@ public class SetDocIdSetBuilder {
                 currentIter = iterIndex;
                 currentDoc = newDoc;
             }
-            iterIndex = (++iterIndex % size);
+            if (++iterIndex == size) {
+                iterIndex = 0;
+            }
         }
         return bitSet;
     }

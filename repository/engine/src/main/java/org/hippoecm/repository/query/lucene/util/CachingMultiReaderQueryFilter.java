@@ -16,15 +16,13 @@
 package org.hippoecm.repository.query.lucene.util;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
@@ -33,9 +31,9 @@ import org.apache.lucene.util.OpenBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultiReaderQueryFilter extends Filter {
+public class CachingMultiReaderQueryFilter extends Filter {
 
-    private static final Logger log = LoggerFactory.getLogger(MultiReaderQueryFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(CachingMultiReaderQueryFilter.class);
 
     private static final class CachedBitSet extends OpenBitSet {
 
@@ -51,33 +49,24 @@ public class MultiReaderQueryFilter extends Filter {
         }
     }
 
-    private static boolean requiresMultiIndexReader(Query query) {
-        if (query instanceof BooleanQuery) {
-            for (BooleanClause clause : ((BooleanQuery) query).getClauses()) {
-                final Query subQuery = clause.getQuery();
-                final String strSubQuery = subQuery.toString();
-                if (strSubQuery.startsWith("ParentAxisQuery")
-                        || strSubQuery.startsWith("ChildAxisQuery")
-                        || strSubQuery.startsWith("DescendantSelfAxisQuery")) {
-                    return true;
-                }
-                if (requiresMultiIndexReader(subQuery)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private final Map<IndexReader, CachedBitSet> cache = new ConcurrentHashMap<IndexReader, CachedBitSet>(
+            new WeakHashMap<IndexReader, CachedBitSet>());
+
+    private final Query query;
+
+    // for some queries, typically the jackrabbit parentAxis / childAxis queries do not support
+    // multi index dissection as they require to be able to jump through multiple indexes for a query.
+    // these queries need to be done with dissectMultiIndex = false.
+    private boolean dissectMultiIndex = true;
+
+    public CachingMultiReaderQueryFilter(final Query query) {
+        this.query = query;
     }
 
-    private final Map<IndexReader, CachedBitSet> cache = Collections.synchronizedMap(
-            new WeakHashMap<IndexReader, CachedBitSet>());
-    private final Query query;
-    private final boolean disectMultiIndex;
 
-
-    public MultiReaderQueryFilter(final Query query) {
+    public CachingMultiReaderQueryFilter(final Query query, boolean dissectMultiIndex) {
         this.query = query;
-        disectMultiIndex = !requiresMultiIndexReader(query);
+        this.dissectMultiIndex = dissectMultiIndex;
     }
 
     public Query getQuery() {
@@ -86,7 +75,7 @@ public class MultiReaderQueryFilter extends Filter {
 
     @Override
     public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
-        if (disectMultiIndex && reader instanceof MultiIndexReader) {
+        if (dissectMultiIndex && reader instanceof MultiIndexReader) {
             MultiIndexReader multiIndexReader = (MultiIndexReader) reader;
 
             IndexReader[] indexReaders = multiIndexReader.getIndexReaders();
@@ -111,12 +100,12 @@ public class MultiReaderQueryFilter extends Filter {
         return docIdSet;
     }
 
-    private synchronized CachedBitSet createAndCacheDocIdSet(IndexReader reader) throws IOException {
-        CachedBitSet docIdSet;
-        docIdSet = cache.get(reader);
+    private CachedBitSet createAndCacheDocIdSet(IndexReader reader) throws IOException {
+        CachedBitSet docIdSet = cache.get(reader);
         if (docIdSet != null && docIdSet.isValid(reader)) {
             return docIdSet;
         }
+        // no synchronization needed: wo
         docIdSet = createDocIdSet(reader);
         cache.put(reader, docIdSet);
         return docIdSet;

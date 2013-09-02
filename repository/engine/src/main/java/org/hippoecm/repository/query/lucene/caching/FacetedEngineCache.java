@@ -42,6 +42,7 @@ public class FacetedEngineCache {
             facetValueCountMapCacheSize = 100;
         }
 
+        // do not make below ConcurrentHashMap as that will not be a LRUMap any more
         filterCache =  Collections.synchronizedMap(new LRUMap<String, Filter>(100, filterCacheSize));
         facetValueCountMapCache = Collections.synchronizedMap(new LRUMap<FECacheKey, Map<String,Count>>(100, facetValueCountMapCacheSize));
     }

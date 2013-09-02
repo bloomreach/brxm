@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import org.apache.jackrabbit.core.query.lucene.MatchAllDocsQuery;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
-import org.hippoecm.repository.query.lucene.util.MultiReaderQueryFilter;
+import org.hippoecm.repository.query.lucene.util.CachingMultiReaderQueryFilter;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -30,7 +30,7 @@ public class FacetedEngineCacheTest {
     public void testCacheMaximumSize() {
         FacetedEngineCache facetedEngineCache = new FacetedEngineCache(250, 500);
         for(int i = 0 ; i < 11000; i++) {
-            facetedEngineCache.putFilter(String.valueOf(i), new MultiReaderQueryFilter(new MatchAllDocsQuery()));
+            facetedEngineCache.putFilter(String.valueOf(i), new CachingMultiReaderQueryFilter(new MatchAllDocsQuery()));
             Object[] objs = new Object[1];
             objs[0] = new Object();
             facetedEngineCache.putFacetValueCountMap(new FacetedEngineCache.FECacheKey(objs), new HashMap<String, Count>());
@@ -44,7 +44,7 @@ public class FacetedEngineCacheTest {
         // the cache size is at a minimum of 100, even if configured lower
         FacetedEngineCache facetedEngineCache = new FacetedEngineCache(90,90);
         for(int i = 0 ; i < 11000; i++) {
-            facetedEngineCache.putFilter(String.valueOf(i), new MultiReaderQueryFilter(new MatchAllDocsQuery()));
+            facetedEngineCache.putFilter(String.valueOf(i), new CachingMultiReaderQueryFilter(new MatchAllDocsQuery()));
             Object[] objs = new Object[1];
             objs[0] = new Object();
             facetedEngineCache.putFacetValueCountMap(new FacetedEngineCache.FECacheKey(objs), new HashMap<String, Count>());

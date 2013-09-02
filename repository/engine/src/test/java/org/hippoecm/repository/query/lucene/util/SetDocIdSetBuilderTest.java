@@ -76,9 +76,9 @@ public class SetDocIdSetBuilderTest {
         long expectedCardinality;
         {
             long start = System.currentTimeMillis();
-            OpenBitSet bitSet = (OpenBitSet) bitSets[0].clone();
+            OpenBitSet bitSet =  (OpenBitSet)bitSets[0].clone();
             for (int i = 1; i < 10; i++) {
-                bitSet.and((OpenBitSet) bitSets[i].clone());
+                bitSet.and(bitSets[i]);
             }
             expectedCardinality = bitSet.cardinality();
             System.out.println("cardinality: " + expectedCardinality + ", pure bitset time: " + (System.currentTimeMillis() - start));

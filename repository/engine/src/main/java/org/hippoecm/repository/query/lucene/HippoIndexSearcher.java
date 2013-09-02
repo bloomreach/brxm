@@ -26,14 +26,14 @@ import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
-import org.hippoecm.repository.query.lucene.util.MultiReaderQueryFilter;
+import org.hippoecm.repository.query.lucene.util.CachingMultiReaderQueryFilter;
 
 public class HippoIndexSearcher extends JackrabbitIndexSearcher {
 
     private final IndexReader reader;
-    private final MultiReaderQueryFilter authorizationFilter;
+    private final CachingMultiReaderQueryFilter authorizationFilter;
 
-    public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final MultiReaderQueryFilter authorizationFilter) {
+    public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final CachingMultiReaderQueryFilter authorizationFilter) {
         super(s, r, ism);
         reader = r;
         this.authorizationFilter = authorizationFilter;

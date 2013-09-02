@@ -77,7 +77,6 @@ import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
 import org.hippoecm.repository.query.lucene.FacetRangeQuery;
 import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
-import org.hippoecm.repository.query.lucene.util.MultiReaderQueryFilter;
 import org.hippoecm.repository.query.lucene.RangeFields;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
@@ -86,6 +85,7 @@ import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache.FECacheKey;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager.CacheAndSearcher;
+import org.hippoecm.repository.query.lucene.util.CachingMultiReaderQueryFilter;
 import org.hippoecm.repository.query.lucene.util.SetDocIdSetBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -178,15 +178,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                         throw new IllegalArgumentException("error while building query", ex);
                     }
                 } else if (javax.jcr.query.Query.SQL.equals(language)) {
-//                    try {
-//                        QueryHandler queryHandler = ((RepositoryImpl)context.session.getRepository()).getSearchManager(context.session.getWorkspace().getName()).getQueryHandler();
-//                        queryHandler.createExecutableQuery((SessionImpl)context.session, (SessionImpl)context.session.getItemManager, statement, language);
-//                        FacetedNavigationEngineThirdImpl.this.getContext
-//                    } catch (NoSuchWorkspaceException ex) {
-//                        throw new IllegalArgumentException("error while building query", ex);
-//                    } catch (RepositoryException ex) {
-//                        throw new IllegalArgumentException("error while building query", ex);
-//                    }
+                    log.warn("SQL not supported as free query in faceted navigation nodes");
                 }
             }
             return queryAndSort;
@@ -235,7 +227,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
 
         DocIdSet getAuthorisationIdSet(IndexReader reader) throws IOException {
-            final MultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
+            final CachingMultiReaderQueryFilter authorizationFilter = getAuthorizationFilter(session);
             if (authorizationFilter == null) {
                 return null;
             }
@@ -361,14 +353,16 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             FacetedEngineCache cache = cacheAndSearcher.getCache();
             IndexSearcher searcher =  cacheAndSearcher.getSearcher();
 
+            SetDocIdSetBuilder matchingDocsSetBuilder = new SetDocIdSetBuilder();
+
             BooleanQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings).getQuery();
-            SetDocIdSetBuilder matchingDocsSetBuilder = filterDocIdSet(facetsQuery, null, cache, indexReader);
+            matchingDocsSetBuilder.add(filterDocIdSet(facetsQuery, cache, indexReader));
 
             BooleanQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings, this).getQuery();
-            matchingDocsSetBuilder = filterDocIdSet(facetRangeQuery, matchingDocsSetBuilder, cache, indexReader);
+            matchingDocsSetBuilder.add(filterDocIdSet(facetRangeQuery, cache, indexReader));
 
             BooleanQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings).getQuery();
-            matchingDocsSetBuilder = filterDocIdSet(inheritedFilterQuery, matchingDocsSetBuilder, cache, indexReader);
+            matchingDocsSetBuilder.add(filterDocIdSet(inheritedFilterQuery, cache, indexReader));
 
             org.apache.lucene.search.Query initialLuceneQuery = null;
             if (initialQuery != null && initialQuery.scopes != null && initialQuery.scopes.length > 0) {
@@ -381,7 +375,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     }
                 }
             }
-            matchingDocsSetBuilder = filterDocIdSet(initialLuceneQuery, matchingDocsSetBuilder, cache, indexReader);
+            matchingDocsSetBuilder.add(filterDocIdSet(initialLuceneQuery, cache, indexReader));
 
             FacetFiltersQuery facetFiltersQuery = null;
             if (initialQuery != null && initialQuery.facetFilters != null) {
@@ -408,12 +402,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
                    // Not a search involving scoring, thus compute bitsets for facetFiltersQuery & freeSearchInjectedSort
                    if (facetFiltersQuery != null) {
-                       matchingDocsSetBuilder = filterDocIdSet(facetFiltersQuery.getQuery(), matchingDocsSetBuilder, cache, indexReader);
+                       matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), cache, indexReader));
                    }
 
                    if (openQuery != null) {
                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                       matchingDocsSetBuilder = filterDocIdSet(queryAndSort.query, matchingDocsSetBuilder, cache, indexReader);
+                       matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, cache, indexReader, true));
                    }
 
                    OpenBitSet matchingDocs = matchingDocsSetBuilder.toBitSet();
@@ -444,17 +438,16 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                      * facetPropExists: the node must have the property as facet
                      */
 
-                   matchingDocsSetBuilder = filterDocIdSet(new FacetPropExistsQuery(propertyName).getQuery(), matchingDocsSetBuilder, cache, indexReader);
+                    matchingDocsSetBuilder.add(filterDocIdSet(new FacetPropExistsQuery(propertyName).getQuery(), cache, indexReader));
 
+                    matchingDocs = matchingDocsSetBuilder.toBitSet();
+                    cardinality = (int) matchingDocs.cardinality();
                     // this method populates the facetValueCountMap for the current facet
-                    Object[] keyObjects = {matchingDocsSetBuilder,propertyName,parsedFacet};
-                       
+                    Object[] keyObjects = {matchingDocs,propertyName,parsedFacet};
                     FECacheKey feKey = new FECacheKey(keyObjects);
                     Map<String, Count> facetValueCountMap = cache.getFacetValueCountMap(feKey);
                     if(facetValueCountMap == null) { 
                         facetValueCountMap =  new HashMap<String, Count>();
-                        matchingDocs = matchingDocsSetBuilder.toBitSet();
-                        cardinality = (int) matchingDocs.cardinality();
                         populateFacetValueCountMap(propertyName, parsedFacet, facetValueCountMap, matchingDocs, indexReader);
                         cache.putFacetValueCountMap(feKey, facetValueCountMap);
                     } 
@@ -475,12 +468,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                 if (!hitsRequested.isResultRequested()) {
                     // No search with SCORING involved, this everything can be done with BitSet's
                     if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
-                        matchingDocsSetBuilder = filterDocIdSet(facetFiltersQuery.getQuery(), matchingDocsSetBuilder, cache, indexReader);
+                        matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), cache, indexReader));
                     }
                     
                     if (openQuery != null) {
                         QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                        matchingDocsSetBuilder = filterDocIdSet(queryAndSort.query, matchingDocsSetBuilder, cache, indexReader);
+                        matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, cache, indexReader, true));
                     }
 
                     int size = (int) matchingDocsSetBuilder.toBitSet().cardinality();
@@ -568,11 +561,11 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                         } else {
                             // because we have at least one explicit sort, scoring can be skipped. We can use cached bitsets combined with a match all query
                             if (facetFiltersQuery != null) {
-                                matchingDocsSetBuilder = filterDocIdSet(facetFiltersQuery.getQuery(), matchingDocsSetBuilder, cache, indexReader);
+                                matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), cache, indexReader));
                             }
                             if (openQuery != null) {
                                 QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                                matchingDocsSetBuilder = filterDocIdSet(queryAndSort.query, matchingDocsSetBuilder, cache, indexReader);
+                                matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, cache, indexReader));
                             }
 
                             Filter filterToApply = new DocIdSetFilter(matchingDocsSetBuilder.toBitSet());
@@ -660,7 +653,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             IndexReader indexReader = getIndexReader(false);
             IndexSearcher searcher = new IndexSearcher(indexReader);
            
-            TopDocs tfDocs = searcher.search(query, (Filter) null, 1000);
+            TopDocs tfDocs = searcher.search(query, null, 1000);
             ScoreDoc[] hits = tfDocs.scoreDocs;
             int position = 0;
 
@@ -801,20 +794,32 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
-    private SetDocIdSetBuilder filterDocIdSet(org.apache.lucene.search.Query query, SetDocIdSetBuilder docIdSetBuilder, FacetedEngineCache cache, IndexReader indexReader) throws IOException {
-        if (!(query instanceof BooleanQuery) || ((BooleanQuery)query).clauses().size() > 0) {
-            String key = query.toString();
-            Filter queryFilter = cache.getFilter(key);
-            if (queryFilter == null) {
-                queryFilter = new MultiReaderQueryFilter(query);
-                cache.putFilter(key, queryFilter);
-            }
-            if (docIdSetBuilder == null) {
-                docIdSetBuilder = new SetDocIdSetBuilder();
-            }
-            docIdSetBuilder.add(queryFilter.getDocIdSet(indexReader));
+
+    private DocIdSet filterDocIdSet(final org.apache.lucene.search.Query query,
+                                    final FacetedEngineCache cache,
+                                    final IndexReader indexReader) throws IOException {
+        return filterDocIdSet(query, cache, indexReader, false);
+    }
+
+    private DocIdSet filterDocIdSet(final org.apache.lucene.search.Query query,
+                                              final FacetedEngineCache cache,
+                                              final IndexReader indexReader,
+                                              final boolean isOpenQuery) throws IOException {
+        if ((query instanceof BooleanQuery) && ((BooleanQuery)query).clauses().size() == 0) {
+            // no constraints. Return null
+            return null;
         }
-        return docIdSetBuilder;
+        String key = query.toString();
+        Filter queryFilter = cache.getFilter(key);
+        if (queryFilter == null) {
+            if (isOpenQuery) {
+                queryFilter = new CachingMultiReaderQueryFilter(query, false);
+            } else {
+                queryFilter = new CachingMultiReaderQueryFilter(query);
+            }
+            cache.putFilter(key, queryFilter);
+        }
+        return queryFilter.getDocIdSet(indexReader);
     }
 
     /**
