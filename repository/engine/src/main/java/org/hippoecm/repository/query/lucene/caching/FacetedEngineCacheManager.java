@@ -38,7 +38,7 @@ public class FacetedEngineCacheManager {
         // the currentReader is not the same as the reader with which the cacheAndSearcher was created. Recreate it now 
         searcherCreatedWithIndexReader = currentReader;
         searcher = new IndexSearcher(currentReader);
-        cacheAndSearcher = new CacheAndSearcher(cache, searcher);
+        cacheAndSearcher = new CacheAndSearcher(new FacetedEngineCache(docIdSetCacheSize, facetValueCountMapSize), searcher);
         return cacheAndSearcher;
     }
 
@@ -56,10 +56,6 @@ public class FacetedEngineCacheManager {
 
     public int getFacetValueCountMapSize() {
         return facetValueCountMapSize;
-    }
-
-    public void init() {
-        cache = new FacetedEngineCache(docIdSetCacheSize, facetValueCountMapSize);
     }
 
     public class CacheAndSearcher {

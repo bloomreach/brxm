@@ -634,7 +634,6 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
     @Override
     protected void doInit() throws IOException {
-        facetedEngineCacheMngr.init();
         QueryHandlerContext context = getContext();
         HippoSharedItemStateManager stateMgr = (HippoSharedItemStateManager) context.getItemStateManager();
         stateMgr.repository.setFacetedNavigationEngine(this);
