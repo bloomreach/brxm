@@ -75,6 +75,7 @@ public abstract class RepositoryTestCase {
             if (System.getProperty("repo.path") == null) {
                 System.setProperty("repo.path", getDefaultRepoPath());
             }
+            clearRepository();
             background = HippoRepositoryFactory.getHippoRepository();
         }
     }
@@ -83,9 +84,6 @@ public abstract class RepositoryTestCase {
     public static void tearDownClass() throws Exception {
         if (!Boolean.getBoolean(KEEPSERVER_SYSPROP)) {
             clearRepository();
-        } else {
-            background.close();
-            background = null;
         }
     }
 
