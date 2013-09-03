@@ -44,12 +44,12 @@ public class SetDocIdSetBuilderTest {
         {
             long start = System.currentTimeMillis();
             SetDocIdSetBuilder builder = new SetDocIdSetBuilder();
-            for (int i = 1; i < 10; i++) {
+            for (int i = 0; i < 10; i++) {
                 builder.add(bitSets[i]);
             }
             final OpenBitSet result = builder.toBitSet();
             builtCardinality = result.cardinality();
-//            System.out.println("docidsetbuilder time: " + (System.currentTimeMillis() - start) + ", cardinality: " + builtCardinality);
+            //System.out.println("docidsetbuilder time: " + (System.currentTimeMillis() - start) + ", cardinality: " + builtCardinality);
         }
 
         /*
