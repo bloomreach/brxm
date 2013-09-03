@@ -52,7 +52,14 @@
             
              <tbody>
 	            <c:forEach var="result" items="${resultset}">
-	              <hst:link var="link" hippobean="${result}" navigationStateful="true"/>
+                <c:choose>
+                  <c:when  test="${navigationStatefulLinks}">
+                    <hst:link var="link" hippobean="${result}" navigationStateful="true"/>
+                  </c:when>
+                  <c:otherwise>
+                    <hst:link var="link" hippobean="${result}" />
+                  </c:otherwise>
+                </c:choose>
 
 	                 <tr>
 	                    <td>

@@ -66,7 +66,12 @@ public class Faceted extends AbstractFacetedComponnent {
             // the it.getPosition gets increased on it.next() call, hence above, skip - 1
             resultset.add(it.next());
         }
-            
+
+        boolean isNavigationStatefulLinks = true;
+        if (getComponentParameter("navigationStatefulLinks") != null) {
+            isNavigationStatefulLinks  = Boolean.parseBoolean(getComponentParameter("navigationStatefulLinks"));
+        }
+        request.setAttribute("navigationStatefulLinks", isNavigationStatefulLinks);
     }
     
     @Override

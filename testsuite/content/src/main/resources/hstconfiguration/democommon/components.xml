@@ -617,6 +617,12 @@
       <sv:property sv:name="hst:componentclassname" sv:type="String">
         <sv:value>org.hippoecm.hst.demo.components.Faceted</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
+        <sv:value>navigationStatefulLinks</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
+        <sv:value>false</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>faceted</sv:value>
       </sv:property>
