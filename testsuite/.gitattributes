@@ -173,6 +173,7 @@ linear-algebra/pom.xml -text
 linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/MatrixOperatorImpl.java -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/linearalgebra/base.xml -text
+/mysql_setup_patch.patch -text
 /pom.xml svneol=native#text/plain
 random-numbers/pom.xml -text
 random-numbers/src/main/java/org/hippoecm/hst/demo/addonmodules/randomnumbers/RandomGeneratorImpl.java -text

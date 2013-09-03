@@ -1,0 +1,207 @@
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pom.xml	(revision 40678)
++++ pom.xml	(revision )
+@@ -70,6 +70,16 @@
+     </repository>
+   </repositories>
+ 
++  <dependencies>
++    <dependency>
++      <groupId>mysql</groupId>
++      <artifactId>mysql-connector-java</artifactId>
++      <version>5.1.18</version>
++      <scope>provided</scope>
++    </dependency>
++  </dependencies>
++
++
+   <dependencyManagement>
+     <dependencies>
+ 
+@@ -218,6 +228,11 @@
+                     <todir>conf/</todir>
+                     <tofile>hst.properties</tofile>
+                   </configfile>
++                  <configfile>
++                    <file>${project.basedir}/conf/context.xml</file>
++                    <todir>conf/</todir>
++                    <tofile>context.xml</tofile>
++                  </configfile>
+                 </configfiles>
+               </configuration>
+               <container>
+@@ -225,7 +240,15 @@
+                   <log4j.configuration>file:${project.basedir}/conf/log4j.xml</log4j.configuration>
+                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
+                   <solr.data.dir>${solr.data.dir}</solr.data.dir>
++                  <repo.config>file:${project.basedir}/conf/repository.xml</repo.config>
+                 </systemProperties>
++                <dependencies>
++                  <dependency>
++                    <groupId>mysql</groupId>
++                    <artifactId>mysql-connector-java</artifactId>
++                    <classpath>extra</classpath>
++                  </dependency>
++                </dependencies>
+               </container>
+             </configuration>
+           </plugin>
+Index: cms/src/main/webapp/WEB-INF/web.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- cms/src/main/webapp/WEB-INF/web.xml	(revision 40678)
++++ cms/src/main/webapp/WEB-INF/web.xml	(revision )
+@@ -195,4 +195,11 @@
+         <session-timeout>60</session-timeout>
+     </session-config>
+ 
++
++  <resource-ref>
++    <res-ref-name>jdbc/repositoryDS</res-ref-name>
++    <res-type>javax.sql.DataSource</res-type>
++    <res-auth>Container</res-auth>
++  </resource-ref>
++
+ </web-app>
+Index: conf/repository.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- conf/repository.xml	(revision )
++++ conf/repository.xml	(revision )
+@@ -0,0 +1,106 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE Repository
++  PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
++  "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
++<Repository>
++
++  <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
++    <param name="url" value="java:comp/env/jdbc/repositoryDS"/>
++    <param name="driver" value="javax.naming.InitialContext"/>
++    <param name="schemaObjectPrefix" value="repository_"/>
++    <param name="schema" value="mysql"/>
++  </FileSystem>
++
++  <Security appName="Jackrabbit">
++    <SecurityManager
++      class="org.hippoecm.repository.security.SecurityManager"/>
++    <AccessManager
++      class="org.hippoecm.repository.security.HippoAccessManager"/>
++    <LoginModule
++      class="org.hippoecm.repository.security.HippoLoginModule"/>
++  </Security>
++
++  <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
++
++  <Workspace name="${wsp.name}">
++    <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
++      <param name="url" value="java:comp/env/jdbc/repositoryDS"/>
++      <param name="driver" value="javax.naming.InitialContext"/>
++      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
++      <param name="schema" value="mysql"/>
++    </FileSystem>
++
++    <PersistenceManager
++      class="org.apache.jackrabbit.core.persistence.bundle.MySqlPersistenceManager">
++      <param name="driver" value="javax.naming.InitialContext"/>
++      <param name="url" value="java:comp/env/jdbc/repositoryDS"/>
++      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
++      <param name="externalBLOBs" value="true"/>
++      <param name="consistencyCheck" value="false"/>
++      <param name="consistencyFix" value="false"/>
++    </PersistenceManager>
++
++    <SearchIndex
++      class="org.hippoecm.repository.FacetedNavigationEngineImpl">
++      <param name="indexingConfiguration"
++             value="indexing_configuration.xml"/>
++      <param name="indexingConfigurationClass"
++             value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
++      <param name="path" value="${wsp.home}/index"/>
++      <param name="useCompoundFile" value="true"/>
++      <param name="minMergeDocs" value="1000"/>
++      <param name="volatileIdleTime" value="10"/>
++      <param name="maxMergeDocs" value="1000000000"/>
++      <param name="mergeFactor" value="5"/>
++      <param name="maxFieldLength" value="10000"/>
++      <param name="bufferSize" value="1000"/>
++      <param name="cacheSize" value="1000"/>
++      <param name="forceConsistencyCheck" value="false"/>
++      <param name="enableConsistencyCheck" value="false"/>
++      <param name="autoRepair" value="true"/>
++      <param name="analyzer"
++             value="org.hippoecm.repository.query.lucene.StandardHippoAnalyzer"/>
++      <param name="queryClass"
++             value="org.apache.jackrabbit.core.query.QueryImpl"/>
++      <param name="respectDocumentOrder" value="false"/>
++      <param name="resultFetchSize" value="2147483647"/>
++      <param name="extractorPoolSize" value="0"/>
++      <param name="extractorTimeout" value="100"/>
++      <param name="extractorBackLogSize" value="100"/>
++      <param name="excerptProviderClass"
++             value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/>
++      <param name="supportHighlighting" value="true"/>
++    </SearchIndex>
++    <ISMLocking
++      class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
++  </Workspace>
++
++  <Versioning rootPath="${rep.home}/version">
++    <FileSystem class="org.apache.jackrabbit.core.fs.db.DbFileSystem">
++      <param name="url" value="java:comp/env/jdbc/repositoryDS"/>
++      <param name="driver" value="javax.naming.InitialContext"/>
++      <param name="schemaObjectPrefix" value="version_"/>
++      <param name="schema" value="mysql"/>
++    </FileSystem>
++
++    <PersistenceManager
++      class="org.apache.jackrabbit.core.persistence.bundle.MySqlPersistenceManager">
++      <param name="driver" value="javax.naming.InitialContext"/>
++      <param name="url" value="java:comp/env/jdbc/repositoryDS"/>
++      <param name="schemaObjectPrefix" value="version_"/>
++      <param name="externalBLOBs" value="true"/>
++      <param name="consistencyCheck" value="false"/>
++      <param name="consistencyFix" value="false"/>
++    </PersistenceManager>
++    <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
++  </Versioning>
++
++  <DataStore class="org.apache.jackrabbit.core.data.db.DbDataStore">
++    <param name="url" value="java:comp/env/jdbc/repositoryDS"/>
++    <param name="driver" value="javax.naming.InitialContext"/>
++    <param name="databaseType" value="mysql"/>
++    <param name="minRecordLength" value="1024"/>
++    <param name="maxConnections" value="5"/>
++    <param name="copyWhenReading" value="true"/>
++  </DataStore>
++</Repository>
+\ No newline at end of file
+Index: conf/context.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- conf/context.xml	(revision 40678)
++++ conf/context.xml	(revision )
+@@ -28,4 +28,13 @@
+     <Parameter name="hst-config-properties" value="file:${catalina.base}/conf/hst.properties" override="false"/>
+     -->
+ 
++  <Resource
++    name="jdbc/repositoryDS" auth="Container" type="javax.sql.DataSource"
++    maxActive="20" maxIdle="10" minIdle="2" initialSize="2" maxWait="10000"
++    testOnBorrow="true" validationQuery="select 1 from dual"
++    poolPreparedStatements="true"
++    username="hippo" password="hippo"
++    driverClassName="com.mysql.jdbc.Driver"
++    url="jdbc:mysql://localhost:3306/hippo?autoReconnect=true&amp;characterEncoding=utf8" />
++
+ </Context>
