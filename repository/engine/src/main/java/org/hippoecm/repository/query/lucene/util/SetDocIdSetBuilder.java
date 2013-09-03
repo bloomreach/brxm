@@ -22,9 +22,12 @@ import java.util.List;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.OpenBitSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetDocIdSetBuilder {
 
+    private static final Logger log = LoggerFactory.getLogger(SetDocIdSetBuilder.class);
     private final List<DocIdSet> docIdSets = new ArrayList<DocIdSet>();
 
     /**
@@ -38,6 +41,7 @@ public class SetDocIdSetBuilder {
     }
 
     public OpenBitSet toBitSet() throws IOException {
+        long start = System.currentTimeMillis();
         final int size = docIdSets.size();
         DocIdSetIterator[] iterators = new DocIdSetIterator[size];
         for (int i = 0; i < size; i++) {
@@ -76,6 +80,8 @@ public class SetDocIdSetBuilder {
                 iterIndex = 0;
             }
         }
+        log.info("Creating OpenBitSet of lenght '{}' for '{}' DocIdSet's took '{}' ms.",
+                new String[]{String.valueOf(bitSet.length()), String.valueOf(size), String.valueOf(System.currentTimeMillis() - start)});
         return bitSet;
     }
 
