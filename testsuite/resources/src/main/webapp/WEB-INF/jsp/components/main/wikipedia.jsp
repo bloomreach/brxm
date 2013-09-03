@@ -86,6 +86,10 @@
             <td><input type="checkbox" name="images" /></td>
           </tr>
           <tr>
+            <td>Skip versioning: </td>
+            <td><input type="checkbox" name="skipVersioning" checked="true"/></td>
+          </tr>
+          <tr>
             <td></td>
             <td><input type="submit" value="Add wikipedia docs"/></td>
           </tr>
