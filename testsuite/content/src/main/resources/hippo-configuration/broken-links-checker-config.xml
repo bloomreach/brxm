@@ -14,7 +14,7 @@
         <sv:value>brokenlinks:config</sv:value>
       </sv:property>
       <sv:property sv:name="enabled" sv:type="Boolean">
-        <sv:value>true</sv:value>
+        <sv:value>false</sv:value>
       </sv:property>
       <sv:property sv:name="cronExpression" sv:type="String">
         <sv:value>0 0/5 * * * ? *</sv:value>
