@@ -845,6 +845,7 @@ public class HstFilter implements Filter {
                 // should not be possible as when it would be null, an exception should have been thrown
                 throw new MatchException("Error resolving request to sitemap item: '"+HstRequestUtils.getFarthestRequestHost(req)+"' and '"+req.getRequestURI()+"'");
             }
+            requestContext.clearObjectAndQueryManagers();
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
             requestContext.setBaseURL(hstSitesManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
