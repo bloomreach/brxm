@@ -93,7 +93,6 @@ public class CachingMultiReaderQueryFilter extends Filter {
         final OpenBitSet bits = new OpenBitSet(reader.maxDoc());
 
         long start = System.currentTimeMillis();
-
         new IndexSearcher(reader).search(query, new AbstractHitCollector() {
 
             @Override
@@ -101,10 +100,7 @@ public class CachingMultiReaderQueryFilter extends Filter {
                 bits.set(doc);  // set bit for hit
             }
         });
-
-        long docIdSetCreationTime = System.currentTimeMillis() - start;
-        log.info("Creating CachingMultiReaderQueryFilter doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
-
+        log.info("Creating CachingMultiReaderQueryFilter doc id set took {} ms.", String.valueOf(System.currentTimeMillis() - start));
         return bits;
     }
 
