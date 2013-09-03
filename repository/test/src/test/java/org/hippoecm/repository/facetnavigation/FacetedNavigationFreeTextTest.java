@@ -41,8 +41,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         Node testNode = session.getRootNode().getNode("test");
         createDateStructure(testNode);
 
-        Node facetNavigation = testNode.addNode("facetnavigation");
-        facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
+        Node facetNavigation = testNode.addNode("facetnavigation").addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
                 .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
@@ -71,7 +70,21 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         // NOTE WE HAVE 3 now instead of 7
         assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong());
-        
+
+        // assert correct results after changing first document to have a different YEAR
+        testNode.getNode("documents").getNode("cardocs").getNode("cardoc1").getNode("cardoc1").setProperty("hippo:date", twoyearearlier);
+        session.save();
+
+        facetNavigation = testNode.getNode("facetnavigation").getNode("hippo:navigation");
+
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 6L);
+
+        session.refresh(false);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+        assertEquals(2L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
     }
     
     @Test
@@ -158,7 +171,18 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         // WE HAVE 1 red peugeot that contains 'jumps'
         assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong());
-        
+
+
+        // assert correct results after changing first document to have a different YEAR
+        testNode.getNode("documents").getNode("cardocs").getNode("cardoc1").getNode("cardoc1").setProperty("hippo:date", twoyearearlier);
+        session.save();
+
+        // search in only the content
+        xpath = "xpath(//*[jcr:contains(contents/@content,'jumps')])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        assertEquals(2L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
     }
     
     @Test
@@ -195,6 +219,16 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
         
         // only cardoc1 contains 'jumps'. cardoc6 does not, so we expect 1 result 
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 1L);
+
+        // assert correct results after changing first document to have a different YEAR
+        testNode.getNode("documents").getNode("cardocs").getNode("cardoc1").getNode("cardoc1").setProperty("hippo:date", twoyearearlier);
+        session.save();
+
+        facetNavigation = testNode.getNode("facetnavigation").getNode("hippo:navigation");
+        // cardocs1 is not part of 'currentyear' any more
+        // we have as multiple scopes two cars only, but cardoc1 is not in current year any more
         assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong() == 1L);
     }
