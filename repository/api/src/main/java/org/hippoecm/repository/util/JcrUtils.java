@@ -591,7 +591,7 @@ public class JcrUtils {
     }
 
     /**
-     * Copies {@link Node} {@code srcNode} to {@code destParentNode} with name {@code sestNodeName}.
+     * Copies {@link Node} {@code srcNode} to {@code destParentNode} with name {@code destNodeName}.
      *
      * @param srcNode the node to copy
      * @param destNodeName  the name of the to be newly created node
