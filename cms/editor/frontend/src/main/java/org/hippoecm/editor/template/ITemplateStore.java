@@ -27,11 +27,10 @@ public interface ITemplateStore extends IStore<IClusterConfig> {
     List<String> getMetadataEditors();
 
     /**
-     * Store an object.  The object need not be created by the store, it only needs to conform
-     * to the interface T.  An id is generated for the object when one did not exist yet, otherwise
-     * the existing id is returned.
+     * Store an cluster config for a document or compound type.
      *
-     * @param object
+     * @param object the cluster config to persist
+     * @param type the type that can be edited by the cluster
      * @return id of the object
      * @throws org.hippoecm.frontend.model.ocm.StoreException
      */
