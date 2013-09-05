@@ -18,10 +18,23 @@ package org.hippoecm.editor.template;
 import java.util.List;
 
 import org.hippoecm.frontend.model.ocm.IStore;
+import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public interface ITemplateStore extends IStore<IClusterConfig> {
 
     List<String> getMetadataEditors();
+
+    /**
+     * Store an object.  The object need not be created by the store, it only needs to conform
+     * to the interface T.  An id is generated for the object when one did not exist yet, otherwise
+     * the existing id is returned.
+     *
+     * @param object
+     * @return id of the object
+     * @throws org.hippoecm.frontend.model.ocm.StoreException
+     */
+    String save(IClusterConfig object, ITypeDescriptor type) throws StoreException;
 
 }

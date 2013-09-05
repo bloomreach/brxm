@@ -28,7 +28,6 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.editor.EditorNodeType;
 import org.hippoecm.editor.model.JcrNamespace;
@@ -146,35 +145,36 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
                 throw new StoreException(ex);
             }
         } else {
-            String type = cluster.getString("type");
-            if (type == null) {
-                throw new StoreException("Can only store clusters with a type");
+            throw new StoreException("Can only store clusters with a type");
+        }
+    }
+
+    @Override
+    public String save(IClusterConfig cluster, ITypeDescriptor typeDescriptor) throws StoreException {
+        try {
+            Node node = getTemplateNode(typeDescriptor, true);
+
+            JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node));
+            for (Map.Entry<String, Object> entry : cluster.entrySet()) {
+                jcrConfig.put(entry.getKey(), entry.getValue());
             }
-            try {
-                Node node = getTemplateNode(typeLocator.locate(type), true);
 
-                JcrClusterConfig jcrConfig = new JcrClusterConfig(new JcrNodeModel(node));
-                for (Map.Entry<String, Object> entry : cluster.entrySet()) {
-                    jcrConfig.put(entry.getKey(), entry.getValue());
+            for (IPluginConfig plugin : cluster.getPlugins()) {
+                Node child = node.addNode(plugin.getName(), FrontendNodeType.NT_PLUGIN);
+                JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
+                for (Map.Entry<String, Object> entry : plugin.entrySet()) {
+                    pluginConfig.put(entry.getKey(), entry.getValue());
                 }
-
-                for (IPluginConfig plugin : cluster.getPlugins()) {
-                    Node child = node.addNode(plugin.getName(), FrontendNodeType.NT_PLUGIN);
-                    JcrPluginConfig pluginConfig = new JcrPluginConfig(new JcrNodeModel(child));
-                    for (Map.Entry<String, Object> entry : plugin.entrySet()) {
-                        pluginConfig.put(entry.getKey(), entry.getValue());
-                    }
-                }
-
-                node.setProperty(FrontendNodeType.FRONTEND_SERVICES, getValues(cluster.getServices()));
-                node.setProperty(FrontendNodeType.FRONTEND_REFERENCES, getValues(cluster.getReferences()));
-                node.setProperty(FrontendNodeType.FRONTEND_PROPERTIES, getValues(cluster.getProperties()));
-
-                node.save();
-                return node.getPath();
-            } catch (RepositoryException ex) {
-                throw new StoreException(ex);
             }
+
+            node.setProperty(FrontendNodeType.FRONTEND_SERVICES, getValues(cluster.getServices()));
+            node.setProperty(FrontendNodeType.FRONTEND_REFERENCES, getValues(cluster.getReferences()));
+            node.setProperty(FrontendNodeType.FRONTEND_PROPERTIES, getValues(cluster.getProperties()));
+
+            node.save();
+            return node.getPath();
+        } catch (RepositoryException ex) {
+            throw new StoreException(ex);
         }
     }
 

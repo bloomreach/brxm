@@ -66,10 +66,10 @@ public class NewCompoundTypeAction extends Action {
 
         // create layout
         // FIXME: should be managed by template engine
-        JcrTemplateStore templateStore = new JcrTemplateStore(new JcrDraftLocator(prefix));
+        final JcrDraftLocator typeStore = new JcrDraftLocator(prefix);
+        JcrTemplateStore templateStore = new JcrTemplateStore(typeStore);
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
-        template.put("type", prefix + ":" + name);
-        templateStore.save(template);
+        templateStore.save(template, typeStore.locate(prefix + ":" + name));
 
         openEditor(prefix + ":" + name);
 

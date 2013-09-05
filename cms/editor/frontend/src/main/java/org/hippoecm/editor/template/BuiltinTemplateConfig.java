@@ -50,7 +50,7 @@ public class BuiltinTemplateConfig extends JavaClusterConfig {
         this.type = type;
         this.locator = locator;
         this.typeLocator = typeLocator;
-        super.put("type", type.getName());
+        super.put("nodetype", type.getName());
         this.name = type.getName().replace(':', '_');
     }
 

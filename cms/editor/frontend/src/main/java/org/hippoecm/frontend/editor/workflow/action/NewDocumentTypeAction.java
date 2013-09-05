@@ -116,8 +116,7 @@ public class NewDocumentTypeAction extends Action {
         // FIXME: should be managed by template engine
         JcrTemplateStore templateStore = new JcrTemplateStore(typeLocator);
         IClusterConfig template = new TemplateFactory().createTemplate(layoutProvider.getDescriptor(layout));
-        template.put("type", prefix + ":" + name);
-        templateStore.save(template);
+        templateStore.save(template, typeLocator.locate(prefix + ":" + name));
 
         openEditor(prefix + ":" + name);
 

@@ -56,6 +56,7 @@ public class BuiltinTemplateStore implements ITemplateStore {
         this.locator = locator;
     }
 
+    @Override
     public Iterator<IClusterConfig> find(Map<String, Object> criteria) {
         if (criteria.containsKey("type")) {
             List<IClusterConfig> list = new ArrayList<IClusterConfig>(1);
@@ -65,6 +66,7 @@ public class BuiltinTemplateStore implements ITemplateStore {
         return new ArrayList<IClusterConfig>(0).iterator();
     }
 
+    @Override
     public IClusterConfig load(String id) throws StoreException {
         try {
             return new BuiltinTemplateConfig(typeLocator.locate(id), typeLocator, locator);
@@ -73,14 +75,22 @@ public class BuiltinTemplateStore implements ITemplateStore {
         }
     }
 
+    @Override
     public String save(IClusterConfig cluster) throws StoreException {
         throw new UnsupportedOperationException("Builtin template store is read only");
     }
 
+    @Override
+    public String save(final IClusterConfig object, final ITypeDescriptor type) throws StoreException {
+        throw new UnsupportedOperationException("Builtin template store is read only");
+    }
+
+    @Override
     public void delete(IClusterConfig object) {
         throw new UnsupportedOperationException("Builtin template store is read only");
     }
 
+    @Override
     public List<String> getMetadataEditors() {
         return Collections.emptyList();
     }

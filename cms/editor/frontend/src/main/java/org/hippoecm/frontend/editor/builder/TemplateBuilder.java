@@ -15,6 +15,32 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.io.Serializable;
+import java.util.AbstractList;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.nodetype.ItemDefinition;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
+
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -22,6 +48,7 @@ import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.editor.EditorUtils;
 import org.hippoecm.editor.prototype.JcrPrototypeStore;
 import org.hippoecm.editor.template.BuiltinTemplateStore;
+import org.hippoecm.editor.template.ITemplateStore;
 import org.hippoecm.editor.template.JcrTemplateStore;
 import org.hippoecm.editor.template.TemplateLocator;
 import org.hippoecm.editor.type.JcrDraftStore;
@@ -53,34 +80,8 @@ import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.nodetype.ItemDefinition;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
-import java.io.Serializable;
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class TemplateBuilder implements IDetachable, IObservable {
 
@@ -755,7 +756,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private final IModel selectedExtPtModel;
     private final IModel<String> pluginModel;
 
-    private final IStore<IClusterConfig> jcrTemplateStore;
+    private final ITemplateStore jcrTemplateStore;
 
     private final JcrTypeStore jcrTypeStore;
     private final ITypeLocator typeLocator;
@@ -833,7 +834,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     iter = builtinTemplateStore.find(criteria);
                     if (iter.hasNext()) {
                         try {
-                            String id = jcrTemplateStore.save(iter.next());
+                            String id = jcrTemplateStore.save(iter.next(), typeDescriptor);
                             clusterConfig = jcrTemplateStore.load(id);
                             initPluginCache();
                         } catch (StoreException ex) {
