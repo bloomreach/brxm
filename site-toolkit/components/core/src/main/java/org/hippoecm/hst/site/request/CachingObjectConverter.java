@@ -63,7 +63,7 @@ class CachingObjectConverter implements ObjectConverter {
         CacheKey key = new CacheKey(session, path);
         Optional<Object> cached = objectCache.get(key);
         if (cached != null) {
-            return cached.get();
+            return cached.orNull();
         }
         Object o = delegatee.getObject(session, path);
         setObjectConverter(o);
@@ -76,7 +76,7 @@ class CachingObjectConverter implements ObjectConverter {
         CacheKey key = new CacheKey(node);
         Optional<Object> cached = objectCache.get(key);
         if (cached != null) {
-            return cached.get();
+            return cached.orNull();
         }
         Object o = delegatee.getObject(node);
         setObjectConverter(o);
@@ -97,7 +97,7 @@ class CachingObjectConverter implements ObjectConverter {
         CacheKey key = new CacheKey(node, relPath);
         Optional<Object> cached = objectCache.get(key);
         if (cached != null) {
-            return cached.get();
+            return cached.orNull();
         }
         Object o = delegatee.getObject(node, relPath);
         setObjectConverter(o);
@@ -110,7 +110,7 @@ class CachingObjectConverter implements ObjectConverter {
         CacheKey key = new CacheKey(session, uuid);
         Optional<Object> cached = objectCache.get(key);
         if (cached != null) {
-            return cached.get();
+            return cached.orNull();
         }
         Object o = delegatee.getObject(uuid, session);
         setObjectConverter(o);
@@ -123,7 +123,7 @@ class CachingObjectConverter implements ObjectConverter {
         CacheKey key = new CacheKey(node, uuid);
         Optional<Object> cached = objectCache.get(key);
         if (cached != null) {
-            return cached.get();
+            return cached.orNull();
         }
         Object o = delegatee.getObject(uuid, node);
         setObjectConverter(o);
