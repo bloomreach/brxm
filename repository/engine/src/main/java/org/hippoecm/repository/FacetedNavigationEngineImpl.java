@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,12 +25,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.query.InvalidQueryException;
 import javax.security.auth.Subject;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -81,10 +86,6 @@ import org.hippoecm.repository.query.lucene.RangeFields;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
-import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
-import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache.FECacheKey;
-import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager;
-import org.hippoecm.repository.query.lucene.caching.FacetedEngineCacheManager.CacheAndSearcher;
 import org.hippoecm.repository.query.lucene.util.CachingMultiReaderQueryFilter;
 import org.hippoecm.repository.query.lucene.util.SetDocIdSetBuilder;
 import org.slf4j.Logger;
@@ -253,9 +254,18 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
-    private final FacetedEngineCacheManager facetedEngineCacheMngr = new FacetedEngineCacheManager();
+    // note some Jackrabbit Queries like ParentAxisQuery cannot be very well cached because do not have proper equals and hashCode :
+    // however, for single fac nav nodes the same ParentAxisQuery instance is reused, and thus still valuable. Also note
+    // that most 'free text queries' do not involve parent or child axis queries: We need to document the cost of using these in faceted
+    // navigation contexts.
+    private Cache<org.apache.lucene.search.Query, Filter> filterCache =
+            CacheBuilder.newBuilder().softValues().maximumSize(1000).expireAfterAccess(30, TimeUnit.MINUTES).build();
+
+    private Cache<FVCKey, Map<String, Count>> facetValueCountCache  =
+            CacheBuilder.newBuilder().softValues().maximumSize(1000).expireAfterAccess(30, TimeUnit.MINUTES).build();
 
     public FacetedNavigationEngineImpl() {
+
     }
 
     public ContextImpl prepare(String userId, Subject subject, List<QueryImpl> initialQueries, Session session)
@@ -288,41 +298,31 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         // deliberate ignore
     }
 
-    /**
-     * @deprecated  since 2.24.02. Use {@link #setDocIdSetCacheSize(int)} instead
-     */
-    public void setBitSetCacheSize(int bitSetCacheSize) {
-        log.warn("bitSetCacheSize config parameter in repository.xml is deprecated. Please use docIdCacheSize instead.");
-        setDocIdSetCacheSize(bitSetCacheSize);
-    }
 
-    /**
-     * @deprecated since 2.24.02. Use {@link #getDocIdSetCacheSize()} instead
-     */
-    public int getBitSetCacheSize() {
-        return getDocIdSetCacheSize();
-    }
+    private int docIdSetCacheSize = 1000;
+    private int facetValueCountMapCacheSize = 1000;
 
     public void setDocIdSetCacheSize(int docIdSetCacheSize) {
-        facetedEngineCacheMngr.setDocIdSetCacheSize(docIdSetCacheSize);
+        this.docIdSetCacheSize = docIdSetCacheSize;
     }
 
     public int getDocIdSetCacheSize() {
-        return facetedEngineCacheMngr.getDocIdSetCacheSize();
+        return docIdSetCacheSize;
     }
 
     /**
      * The facetedEngineCacheMngr property for the maximum number of facetValueCount's
      */
     public void setFacetValueCountMapCacheSize(int facetValueCountMapCacheSize) {
-        facetedEngineCacheMngr.setFacetValueCountMapSize(facetValueCountMapCacheSize);
+        this.facetValueCountMapCacheSize = facetValueCountMapCacheSize;
     }
 
     // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
     // of org.apache.commons.collections.BeanMap#keyIterator
     public int getFacetValueCountMapCacheSize() {
-        return facetedEngineCacheMngr.getFacetValueCountMapSize();
+        return facetValueCountMapCacheSize;
     }
+
 
     public Result view(String queryName, QueryImpl initialQuery, ContextImpl contextImpl,
                        List<KeyValue<String, String>> facetsQueryList, List<FacetRange> rangeQuery, QueryImpl openQuery,
@@ -348,21 +348,17 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         try {
             indexReader = getIndexReader(false);
 
-            CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader);
-
-            FacetedEngineCache cache = cacheAndSearcher.getCache();
-            IndexSearcher searcher =  cacheAndSearcher.getSearcher();
-
+            IndexSearcher searcher = new IndexSearcher(indexReader);
             SetDocIdSetBuilder matchingDocsSetBuilder = new SetDocIdSetBuilder();
 
             BooleanQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings).getQuery();
-            matchingDocsSetBuilder.add(filterDocIdSet(facetsQuery, cache, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSet(facetsQuery, indexReader));
 
             BooleanQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings, this).getQuery();
-            matchingDocsSetBuilder.add(filterDocIdSet(facetRangeQuery, cache, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSet(facetRangeQuery, indexReader));
 
             BooleanQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings).getQuery();
-            matchingDocsSetBuilder.add(filterDocIdSet(inheritedFilterQuery, cache, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSet(inheritedFilterQuery, indexReader));
 
             org.apache.lucene.search.Query initialLuceneQuery = null;
             if (initialQuery != null && initialQuery.scopes != null && initialQuery.scopes.length > 0) {
@@ -375,7 +371,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     }
                 }
             }
-            matchingDocsSetBuilder.add(filterDocIdSet(initialLuceneQuery, cache, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSet(initialLuceneQuery, indexReader));
 
             FacetFiltersQuery facetFiltersQuery = null;
             if (initialQuery != null && initialQuery.facetFilters != null) {
@@ -402,12 +398,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
                    // Not a search involving scoring, thus compute bitsets for facetFiltersQuery & freeSearchInjectedSort
                    if (facetFiltersQuery != null) {
-                       matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), cache, indexReader));
+                       matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), indexReader));
                    }
 
                    if (openQuery != null) {
                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                       matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, cache, indexReader, true));
+                       matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, indexReader, true));
                    }
 
                    OpenBitSet matchingDocs = matchingDocsSetBuilder.toBitSet();
@@ -438,18 +434,20 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                      * facetPropExists: the node must have the property as facet
                      */
 
-                    matchingDocsSetBuilder.add(filterDocIdSet(new FacetPropExistsQuery(propertyName).getQuery(), cache, indexReader));
+                    matchingDocsSetBuilder.add(filterDocIdSet(new FacetPropExistsQuery(propertyName).getQuery(), indexReader));
 
                     matchingDocs = matchingDocsSetBuilder.toBitSet();
                     cardinality = (int) matchingDocs.cardinality();
                     // this method populates the facetValueCountMap for the current facet
                     Object[] keyObjects = {matchingDocs,propertyName,parsedFacet};
-                    FECacheKey feKey = new FECacheKey(keyObjects);
-                    Map<String, Count> facetValueCountMap = cache.getFacetValueCountMap(feKey);
+
+                    FVCKey fvcKey = new FVCKey(keyObjects);
+
+                    Map<String, Count> facetValueCountMap = facetValueCountCache.getIfPresent(fvcKey);
                     if(facetValueCountMap == null) { 
                         facetValueCountMap =  new HashMap<String, Count>();
                         populateFacetValueCountMap(propertyName, parsedFacet, facetValueCountMap, matchingDocs, indexReader);
-                        cache.putFacetValueCountMap(feKey, facetValueCountMap);
+                        facetValueCountCache.put(fvcKey, facetValueCountMap);
                     } 
                     
                     Map<String, Count> resultFacetValueCountMap = resultset.get(namespacedFacet);
@@ -468,12 +466,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                 if (!hitsRequested.isResultRequested()) {
                     // No search with SCORING involved, this everything can be done with BitSet's
                     if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
-                        matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), cache, indexReader));
+                        matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), indexReader));
                     }
                     
                     if (openQuery != null) {
                         QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                        matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, cache, indexReader, true));
+                        matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, indexReader, true));
                     }
 
                     int size = (int) matchingDocsSetBuilder.toBitSet().cardinality();
@@ -561,11 +559,11 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                         } else {
                             // because we have at least one explicit sort, scoring can be skipped. We can use cached bitsets combined with a match all query
                             if (facetFiltersQuery != null) {
-                                matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), cache, indexReader));
+                                matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), indexReader));
                             }
                             if (openQuery != null) {
                                 QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                                matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, cache, indexReader));
+                                matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, indexReader));
                             }
 
                             Filter filterToApply = new DocIdSetFilter(matchingDocsSetBuilder.toBitSet());
@@ -795,29 +793,30 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
 
     private DocIdSet filterDocIdSet(final org.apache.lucene.search.Query query,
-                                    final FacetedEngineCache cache,
                                     final IndexReader indexReader) throws IOException {
-        return filterDocIdSet(query, cache, indexReader, false);
+        return filterDocIdSet(query, indexReader, false);
     }
 
     private DocIdSet filterDocIdSet(final org.apache.lucene.search.Query query,
-                                              final FacetedEngineCache cache,
                                               final IndexReader indexReader,
                                               final boolean isOpenQuery) throws IOException {
         if ((query instanceof BooleanQuery) && ((BooleanQuery)query).clauses().size() == 0) {
             // no constraints. Return null
             return null;
         }
-        String key = query.toString();
-        Filter queryFilter = cache.getFilter(key);
-        if (queryFilter == null) {
-            if (isOpenQuery) {
-                queryFilter = new CachingMultiReaderQueryFilter(query, false);
-            } else {
-                queryFilter = new CachingMultiReaderQueryFilter(query);
-            }
-            cache.putFilter(key, queryFilter);
+
+        Filter queryFilter = filterCache.getIfPresent(query);
+        if (queryFilter != null) {
+             log.debug("For query '{}' getting queryFilter from cache", query);
+             return queryFilter.getDocIdSet(indexReader);
         }
+        if (isOpenQuery) {
+            queryFilter = new CachingMultiReaderQueryFilter(query, false);
+        } else {
+            queryFilter = new CachingMultiReaderQueryFilter(query);
+        }
+        filterCache.put(query, queryFilter);
+
         return queryFilter.getDocIdSet(indexReader);
     }
 
@@ -838,4 +837,33 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
+    private class FVCKey {
+        final Object[] keyObjects;
+        public FVCKey(final Object[] keyObjects) {
+            this.keyObjects = keyObjects;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            final FVCKey fvcKey = (FVCKey) o;
+
+            if (!Arrays.equals(keyObjects, fvcKey.keyObjects)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return keyObjects != null ? Arrays.hashCode(keyObjects) : 0;
+        }
+    }
 }
