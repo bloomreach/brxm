@@ -80,11 +80,63 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong() == 6L);
 
+        testNode.getNode("documents").getNode("cardocs").getNode("cardoc2").remove();
+        session.save();
+
+        facetNavigation = testNode.getNode("facetnavigation").getNode("hippo:navigation");
+        assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong() == 5L);
+
         session.refresh(false);
 
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
-        assertEquals(2L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+        assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong());
+
+        session.refresh(false);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+        assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());session.refresh(false);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+        assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());session.refresh(false);
+
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+        assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
+        for (int i = 0; i < 100; i++) {
+            Node carDocs = testNode.getNode("documents").getNode("cardocs");
+            addCarDoc(carDocs, "cardoc2", onehourearlier, "brown fox jumps over the lazy dog", "peugeot", "green");
+            session.save();
+            facetNavigation = testNode.getNode("facetnavigation").getNode("hippo:navigation");
+            assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                    .getLong() == 6L);
+            session.refresh(false);
+            facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+            assertEquals(2L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                    .getLong());
+
+
+            // instead of modifying a document, now DELETE car2 : this must also result in one count less. We do these
+            // tests to assure we cache correctly on index reader instances from Jackrabbit
+
+            testNode.getNode("documents").getNode("cardocs").getNode("cardoc2").remove();
+            session.save();
+
+            facetNavigation = testNode.getNode("facetnavigation").getNode("hippo:navigation");
+            assertTrue(facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                    .getLong() == 5L);
+
+            session.refresh(false);
+
+            facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{jumps}]");
+            assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                    .getLong());
+        }
+
     }
     
     @Test

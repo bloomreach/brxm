@@ -16,9 +16,6 @@
 package org.hippoecm.repository.query.lucene.util;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
@@ -28,6 +25,7 @@ import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.OpenBitSet;
+import org.apache.lucene.util.WeakIdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +33,7 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
     private static final Logger log = LoggerFactory.getLogger(CachingMultiReaderQueryFilter.class);
 
-    private final Map<IndexReader, OpenBitSet> cache = new ConcurrentHashMap<IndexReader, OpenBitSet>(
-            new WeakHashMap<IndexReader, OpenBitSet>());
+    private final WeakIdentityMap<Object, ValidityBitSet> cache = WeakIdentityMap.newConcurrentHashMap();
 
     private final Query query;
 
@@ -69,23 +66,43 @@ public class CachingMultiReaderQueryFilter extends Filter {
             int[] maxDocs = new int[indexReaders.length];
             for (int i = 0; i < indexReaders.length; i++) {
                 IndexReader subReader = indexReaders[i];
-                docIdSets[i] = getIndexReaderDocIdSet(subReader);
+                docIdSets[i] = getIndexReaderDocIdSet(subReader, subReader);
                 maxDocs[i] = subReader.maxDoc();
             }
 
             return new MultiDocIdSet(docIdSets, maxDocs);
         }
-        return getIndexReaderDocIdSet(reader);
+        // Jackrabbit creates a *NEW* JackrabbitIndexReader instance for *EVERY* search. Hence
+        // if the reader is a JackrabbitIndexReader, the cache would be pointless.
+        // Since all index readers in JR extend from FilterIndexReader, we use
+        // reader.getCoreCacheKey() : The FilterIndexReader delegates that call to the
+        // wrapped index reader
+        // HOWEVER, for other index readers, the CACHEKEY must not be of the wrapped index reader as this one
+        // does not contain the DELETED bitset for example that READ-ONLY indexreader has
+        //System.out.println(reader.getCoreCacheKey());
+        return getIndexReaderDocIdSet(reader, reader.getCoreCacheKey());
     }
 
-    private DocIdSet getIndexReaderDocIdSet(final IndexReader reader) throws IOException {
-        OpenBitSet docIdSet = cache.get(reader);
-        if (docIdSet != null) {
-            return docIdSet;
+    private DocIdSet getIndexReaderDocIdSet(final IndexReader reader, Object cacheKey) throws IOException {
+
+        ValidityBitSet validityBitSet = cache.get(cacheKey);
+        if (validityBitSet != null) {
+            // unfortunately, Jackrabbit can return a ReadOnlyIndexReader which is the same instance as used previously,
+            // but still happened to be changed through it's ***deleted*** bitset : This is a optimisation.
+            // See AbstractIndex#getReadOnlyIndexReader. This is why even though we use an IDENTITY as cachekey, we
+            // now still need to check whether the cached bit set is really still valid. We can only do this by checking
+            // numDocs as when a doc id gets deleted in the ReadOnlyIndexReader, numDocs decreases
+            if (reader.numDocs() == validityBitSet.numDocs) {
+                log.debug("Return cached bitSet for reader '{}'", reader);
+                return validityBitSet.bitSet;
+            } else {
+                log.debug("ReadOnlyIndexReader '{}' deleted bitset got changed. Cached entry not valid any more", reader);
+                cache.remove(cacheKey);
+            }
         }
         // no synchronization needed: worst case scenario two concurrent thread do it both
-        docIdSet = createDocIdSet(reader);
-        cache.put(reader, docIdSet);
+        OpenBitSet docIdSet = createDocIdSet(reader);
+        cache.put(cacheKey, new ValidityBitSet(reader.numDocs(), docIdSet));
         return docIdSet;
     }
 
@@ -102,6 +119,16 @@ public class CachingMultiReaderQueryFilter extends Filter {
         });
         log.info("Creating CachingMultiReaderQueryFilter doc id set took {} ms.", String.valueOf(System.currentTimeMillis() - start));
         return bits;
+    }
+
+
+    private class ValidityBitSet {
+        private int numDocs;
+        private OpenBitSet bitSet;
+        private ValidityBitSet(int numDocs, OpenBitSet bitSet) {
+            this.numDocs = numDocs;
+            this.bitSet = bitSet;
+        }
     }
 
 }

@@ -16,27 +16,45 @@
 
 package org.hippoecm.repository.query.lucene.caching;
 
+import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FacetedEngineCacheManager {
+
+    private static final Logger log = LoggerFactory.getLogger(FacetedEngineCacheManager.class);
 
     private int facetValueCountMapSize = 250;
     private int docIdSetCacheSize = 250;
 
-    private IndexReader searcherCreatedWithIndexReader;
+    private Object searcherCreatedWithObject;
 
     private CacheAndSearcher cacheAndSearcher;
     private IndexSearcher searcher;
     private FacetedEngineCache cache;
 
     public synchronized CacheAndSearcher getCacheAndSearcherInstance(IndexReader currentReader) {
-        if (searcherCreatedWithIndexReader == currentReader) {
-            return cacheAndSearcher;
+        if (currentReader instanceof JackrabbitIndexReader) {
+            // for every search a new JackrabbitIndexReader is created that is a wrapper around potentially
+            // the same index reader as for the previous request. Since JackrabbitIndexReader extends FilterIndexReader
+            // the getCoreCacheKey returns instance of wrapped index.
+            if (searcherCreatedWithObject == currentReader.getCoreCacheKey()) {
+                log.debug("Return valid cache and searcher");
+                return cacheAndSearcher;
+            }
+            log.debug("Create new cache and searcher");
+            searcherCreatedWithObject = currentReader.getCoreCacheKey();
+        } else {
+            if (searcherCreatedWithObject == currentReader) {
+                log.debug("Return valid cache and searcher");
+                return cacheAndSearcher;
+            }
+            log.debug("Create new cache and searcher");
+            searcherCreatedWithObject = currentReader;
         }
 
-        // the currentReader is not the same as the reader with which the cacheAndSearcher was created. Recreate it now 
-        searcherCreatedWithIndexReader = currentReader;
         searcher = new IndexSearcher(currentReader);
         cacheAndSearcher = new CacheAndSearcher(new FacetedEngineCache(docIdSetCacheSize, facetValueCountMapSize), searcher);
         return cacheAndSearcher;

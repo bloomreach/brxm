@@ -346,7 +346,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
         IndexReader indexReader = null;
         try {
-            indexReader = getIndexReader();
+            indexReader = getIndexReader(false);
 
             CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader);
 
