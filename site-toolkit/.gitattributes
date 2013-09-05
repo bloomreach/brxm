@@ -703,6 +703,7 @@ components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactor
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManagerWithAddonModules.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/session/SessionIdStoringApplicationListener.java -text
+components/core/src/test/java/org/hippoecm/hst/site/request/CachingObjectConverterTest.java -text
 components/core/src/test/java/org/hippoecm/hst/site/request/TestHstRequestContextImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/site/request/TestMountDecoratorImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/request/TestSiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
