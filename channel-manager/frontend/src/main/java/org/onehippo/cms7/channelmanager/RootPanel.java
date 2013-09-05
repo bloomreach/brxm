@@ -23,6 +23,8 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeUtils;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -148,6 +150,11 @@ public class RootPanel extends ExtPanel {
 
     @Override
     public void renderHead(final IHeaderResponse response) {
+        final IWireframe parentWireframe = WireframeUtils.getParentWireframe(this);
+        if (parentWireframe != null) {
+            response.render(parentWireframe.getHeaderItem());
+        }
+
         super.renderHead(response);
 
         response.render(ChannelManagerHeaderItem.get());
