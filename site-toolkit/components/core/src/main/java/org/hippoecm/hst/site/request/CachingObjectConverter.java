@@ -56,7 +56,7 @@ class CachingObjectConverter implements ObjectConverter {
 
     @Override
     public Object getObject(final Session session, final String path) throws ObjectBeanManagerException {
-        if(StringUtils.isEmpty(path) || !path.startsWith("/")) {
+        if (StringUtils.isEmpty(path) || !path.startsWith("/")) {
             log.warn("Illegal argument for '{}' : not an absolute path", path);
             return null;
         }
@@ -86,11 +86,11 @@ class CachingObjectConverter implements ObjectConverter {
 
     @Override
     public Object getObject(final Node node, final String relPath) throws ObjectBeanManagerException {
-        if(StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
+        if (StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
             log.warn("'{}' is not a valid relative path. Return null.", relPath);
             return null;
         }
-        if(node == null) {
+        if (node == null) {
             log.warn("Node is null. Cannot get document with relative path '{}'", relPath);
             return null;
         }
@@ -204,14 +204,8 @@ class CachingObjectConverter implements ObjectConverter {
 
             final CacheKey cacheKey = (CacheKey) o;
 
-            if (!pathOrUuid.equals(cacheKey.pathOrUuid)) {
-                return false;
-            }
-            if (!sessionUserId.equals(cacheKey.sessionUserId)) {
-                return false;
-            }
+            return pathOrUuid.equals(cacheKey.pathOrUuid) && sessionUserId.equals(cacheKey.sessionUserId);
 
-            return true;
         }
 
         @Override
