@@ -53,7 +53,7 @@ public class DocumentTranslationView extends ExtPanel {
     private static final JavaScriptResourceReference TRANSLATE_DOCUMENT_JS = new JavaScriptResourceReference(DocumentTranslationView.class, "translate-document.js");
     private static final CssResourceReference TRANSLATE_DOCUMENT_SKIN = new CssResourceReference(DocumentTranslationView.class, "style.css");
 
-    private FolderTranslationStore store;
+    private ExtJsonStore<FolderTranslation> store;
     private AbstractAjaxBehavior codecBehavior;
     private LocaleImageService imageService;
 
@@ -111,10 +111,6 @@ public class DocumentTranslationView extends ExtPanel {
         properties.put("emptyImg", rc.urlFor(new ResourceReferenceRequestHandler(EMPTY_PNG)));
         properties.put("folderImg", rc.urlFor(new ResourceReferenceRequestHandler(FOLDER_PNG)));
         properties.put("documentImg", rc.urlFor(new ResourceReferenceRequestHandler(DOCUMENT_PNG)));
-    }
-
-    public FolderTranslationStore getStore() {
-        return this.store;
     }
 
 }

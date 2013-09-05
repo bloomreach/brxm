@@ -15,11 +15,11 @@
  */
 package org.hippoecm.frontend.translation.workflow;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import java.util.List;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
@@ -28,12 +28,9 @@ import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
 import org.hippoecm.frontend.translation.components.document.FolderTranslation;
-import org.hippoecm.frontend.translation.components.document.FolderTranslationStore;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-
-import java.util.List;
 
 public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
 
@@ -41,7 +38,6 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
 
     private IModel<String> title;
     private ISettingsService settingsService;
-    private DocumentTranslationView documentTranslationView;
 
     public DocumentTranslationDialog(ISettingsService settings,
             IWorkflowInvoker action, IModel<String> title, List<FolderTranslation> folders, IModel<Boolean> autoTranslateContent,
@@ -51,7 +47,7 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
         this.settingsService = settings;
         this.title = title;
 
-        documentTranslationView = new DocumentTranslationView("grid", folders,
+        DocumentTranslationView dtv = new DocumentTranslationView("grid", folders,
                 sourceLanguage, targetLanguage,
                 new LoadableDetachableModel<StringCodec>() {
                     private static final long serialVersionUID = 1L;
@@ -62,9 +58,9 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
                         return stringCodecFactory.getStringCodec("encoding.node");
                     }
                 }, provider);
-        documentTranslationView.setFrame(false);
-        add(documentTranslationView);
-        if (autoTranslateContent != null) {
+        dtv.setFrame(false);
+        add(dtv);
+        if(autoTranslateContent != null) {
             add(new BooleanFieldWidget("translate", autoTranslateContent));
         } else {
             add(new Label("translate").setVisible(false));
@@ -79,18 +75,4 @@ public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
     public IValueMap getProperties() {
         return new ValueMap("width=675,height=405").makeImmutable();
     }
-
-    @Override
-    protected void handleSubmit() {
-        final AjaxRequestTarget ajaxRequestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (ajaxRequestTarget != null) {
-            final FolderTranslationStore store = documentTranslationView.getStore();
-            if (!store.verifyRecords()) {
-                ajaxRequestTarget.appendJavaScript("Hippo.Translation.Dialog.update();");
-            } else {
-                super.handleSubmit();
-            }
-        }
-    }
-
 }
