@@ -43,11 +43,14 @@ public class FacetFiltersQuery {
      * used in scoring as well!
      */
     private BooleanQuery query = new BooleanQuery(false);
-    
+
+    private boolean plainLuceneQuery = true;
+
     public FacetFiltersQuery(FacetFilters facetFilters, NamespaceMappings nsMappings, Analyzer analyzer, SynonymProvider synonymProvider) throws IllegalArgumentException {
        try {
             for (FacetFilter filter : facetFilters.getFilters()) {
                 if (filter.operator == FacetFilters.NOOP_OPERATOR) {
+                    plainLuceneQuery = false;
                     QueryParser parser = new JackrabbitQueryParser(FieldNames.FULLTEXT, analyzer, synonymProvider, null);
                     Query freeTextQuery = parser.parse(filter.queryString);
                     if(filter.negated) {
@@ -55,6 +58,7 @@ public class FacetFiltersQuery {
                     }
                     query.add(freeTextQuery, Occur.MUST);
                 } else if (filter.operator == FacetFilters.CONTAINS_OPERATOR) {
+                    plainLuceneQuery = false;
                     Name propName = NameFactoryImpl.getInstance().create(filter.namespacedProperty);
                     StringBuffer tmp = new StringBuffer();
                     tmp.append(nsMappings.getPrefix(propName.getNamespaceURI()));
@@ -104,6 +108,10 @@ public class FacetFiltersQuery {
     
     public BooleanQuery getQuery() {
         return query;
+    }
+
+    public boolean isPlainLuceneQuery() {
+        return plainLuceneQuery;
     }
 
 }

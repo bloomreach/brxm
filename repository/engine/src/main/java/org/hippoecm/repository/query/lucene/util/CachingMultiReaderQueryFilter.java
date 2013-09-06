@@ -33,23 +33,16 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
     private static final Logger log = LoggerFactory.getLogger(CachingMultiReaderQueryFilter.class);
 
-    private final WeakIdentityMap<Object, ValidityBitSet> cache = WeakIdentityMap.newConcurrentHashMap();
+    private final WeakIdentityMap<IndexReader, ValidityBitSet> cache = WeakIdentityMap.newConcurrentHashMap();
 
     private final Query query;
 
-    // for some queries, typically the jackrabbit parentAxis / childAxis queries do not support
-    // multi index dissection as they require to be able to jump through multiple indexes for a query.
-    // these queries need to be done with dissectMultiIndex = false.
-    private boolean dissectMultiIndex = true;
-
+    /**
+     * @param query only plain Lucene queries are allowed here, as Jackrabbit Query implementations are very specific,
+     *              keep references to index readers, need multi index readers, etc etc
+     */
     public CachingMultiReaderQueryFilter(final Query query) {
         this.query = query;
-    }
-
-
-    public CachingMultiReaderQueryFilter(final Query query, boolean dissectMultiIndex) {
-        this.query = query;
-        this.dissectMultiIndex = dissectMultiIndex;
     }
 
     public Query getQuery() {
@@ -58,7 +51,7 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
     @Override
     public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
-        if (dissectMultiIndex && reader instanceof MultiIndexReader) {
+        if (reader instanceof MultiIndexReader) {
             MultiIndexReader multiIndexReader = (MultiIndexReader) reader;
 
             IndexReader[] indexReaders = multiIndexReader.getIndexReaders();
@@ -72,18 +65,12 @@ public class CachingMultiReaderQueryFilter extends Filter {
 
             return new MultiDocIdSet(docIdSets, maxDocs);
         }
-        // Jackrabbit creates a *NEW* JackrabbitIndexReader instance for *EVERY* search. Hence
-        // if the reader is a JackrabbitIndexReader, the cache would be pointless.
-        // Since all index readers in JR extend from FilterIndexReader, we use
-        // reader.getCoreCacheKey() : The FilterIndexReader delegates that call to the
-        // wrapped index reader
-        // HOWEVER, for other index readers, the CACHEKEY must not be of the wrapped index reader as this one
-        // does not contain the DELETED bitset for example that READ-ONLY indexreader has
-        //System.out.println(reader.getCoreCacheKey());
-        return getIndexReaderDocIdSet(reader, reader.getCoreCacheKey());
+        log.warn("MultiIndexReader was expected but not found. Do not dissect the reader but use it as one instead");
+
+        return getIndexReaderDocIdSet(reader, reader);
     }
 
-    private DocIdSet getIndexReaderDocIdSet(final IndexReader reader, Object cacheKey) throws IOException {
+    private DocIdSet getIndexReaderDocIdSet(final IndexReader reader, IndexReader cacheKey) throws IOException {
 
         ValidityBitSet validityBitSet = cache.get(cacheKey);
         if (validityBitSet != null) {

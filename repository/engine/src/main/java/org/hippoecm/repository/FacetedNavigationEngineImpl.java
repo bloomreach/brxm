@@ -44,6 +44,7 @@ import org.apache.jackrabbit.core.query.lucene.JackrabbitQueryParser;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.Util;
+import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
@@ -352,13 +353,13 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             SetDocIdSetBuilder matchingDocsSetBuilder = new SetDocIdSetBuilder();
 
             BooleanQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings).getQuery();
-            matchingDocsSetBuilder.add(filterDocIdSet(facetsQuery, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(facetsQuery, indexReader));
 
             BooleanQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings, this).getQuery();
-            matchingDocsSetBuilder.add(filterDocIdSet(facetRangeQuery, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(facetRangeQuery, indexReader));
 
             BooleanQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings).getQuery();
-            matchingDocsSetBuilder.add(filterDocIdSet(inheritedFilterQuery, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(inheritedFilterQuery, indexReader));
 
             org.apache.lucene.search.Query initialLuceneQuery = null;
             if (initialQuery != null && initialQuery.scopes != null && initialQuery.scopes.length > 0) {
@@ -371,7 +372,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     }
                 }
             }
-            matchingDocsSetBuilder.add(filterDocIdSet(initialLuceneQuery, indexReader));
+            matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(initialLuceneQuery, indexReader));
 
             FacetFiltersQuery facetFiltersQuery = null;
             if (initialQuery != null && initialQuery.facetFilters != null) {
@@ -398,12 +399,17 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
                    // Not a search involving scoring, thus compute bitsets for facetFiltersQuery & freeSearchInjectedSort
                    if (facetFiltersQuery != null) {
-                       matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), indexReader));
+                       if (facetFiltersQuery.isPlainLuceneQuery()) {
+                           matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(facetFiltersQuery.getQuery(), indexReader));
+                       } else {
+                           matchingDocsSetBuilder.add(filterDocIdSetJackRabbitQuery(facetFiltersQuery.getQuery(), indexReader));
+                       }
                    }
 
                    if (openQuery != null) {
                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                       matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, indexReader, true));
+                       // open query is always a jackrabbit query
+                       matchingDocsSetBuilder.add(filterDocIdSetJackRabbitQuery(queryAndSort.query, indexReader));
                    }
 
                    OpenBitSet matchingDocs = matchingDocsSetBuilder.toBitSet();
@@ -434,13 +440,16 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                      * facetPropExists: the node must have the property as facet
                      */
 
-                    matchingDocsSetBuilder.add(filterDocIdSet(new FacetPropExistsQuery(propertyName).getQuery(), indexReader));
+                    matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(new FacetPropExistsQuery(propertyName).getQuery(), indexReader));
 
                     matchingDocs = matchingDocsSetBuilder.toBitSet();
                     cardinality = (int) matchingDocs.cardinality();
                     // this method populates the facetValueCountMap for the current facet
-                    Object[] keyObjects = {matchingDocs,propertyName,parsedFacet};
 
+                   // index reader is instance of JackrabbitIndexReader : we need the wrapped multi-index reader as
+                   // cache key : since during deletes only, the backing index reader can stay the same, we
+                   // also need to use numDocs to be sure we get the right cached values
+                    Object[] keyObjects = {matchingDocs,propertyName,parsedFacet, indexReader.getCoreCacheKey(), indexReader.numDocs()};
                     FVCKey fvcKey = new FVCKey(keyObjects);
 
                     Map<String, Count> facetValueCountMap = facetValueCountCache.getIfPresent(fvcKey);
@@ -448,7 +457,10 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                         facetValueCountMap =  new HashMap<String, Count>();
                         populateFacetValueCountMap(propertyName, parsedFacet, facetValueCountMap, matchingDocs, indexReader);
                         facetValueCountCache.put(fvcKey, facetValueCountMap);
-                    } 
+                        log.debug("Caching new facet value count map");
+                    } else {
+                        log.debug("Reusing previously cached facet value count map");
+                    }
                     
                     Map<String, Count> resultFacetValueCountMap = resultset.get(namespacedFacet);
                     resultFacetValueCountMap.putAll(facetValueCountMap);
@@ -466,12 +478,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                 if (!hitsRequested.isResultRequested()) {
                     // No search with SCORING involved, this everything can be done with BitSet's
                     if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
-                        matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), indexReader));
+                        matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(facetFiltersQuery.getQuery(), indexReader));
                     }
                     
                     if (openQuery != null) {
                         QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                        matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, indexReader, true));
+                        matchingDocsSetBuilder.add(filterDocIdSetJackRabbitQuery(queryAndSort.query, indexReader));
                     }
 
                     int size = (int) matchingDocsSetBuilder.toBitSet().cardinality();
@@ -559,11 +571,11 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                         } else {
                             // because we have at least one explicit sort, scoring can be skipped. We can use cached bitsets combined with a match all query
                             if (facetFiltersQuery != null) {
-                                matchingDocsSetBuilder.add(filterDocIdSet(facetFiltersQuery.getQuery(), indexReader));
+                                matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(facetFiltersQuery.getQuery(), indexReader));
                             }
                             if (openQuery != null) {
                                 QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                                matchingDocsSetBuilder.add(filterDocIdSet(queryAndSort.query, indexReader));
+                                matchingDocsSetBuilder.add(filterDocIdSetPlainLuceneQuery(queryAndSort.query, indexReader));
                             }
 
                             Filter filterToApply = new DocIdSetFilter(matchingDocsSetBuilder.toBitSet());
@@ -792,32 +804,50 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
     }
 
 
-    private DocIdSet filterDocIdSet(final org.apache.lucene.search.Query query,
+    private DocIdSet filterDocIdSetPlainLuceneQuery(final org.apache.lucene.search.Query query,
                                     final IndexReader indexReader) throws IOException {
-        return filterDocIdSet(query, indexReader, false);
+        if ((query instanceof BooleanQuery) && ((BooleanQuery)query).clauses().size() == 0) {
+            // no constraints. Return null
+            return null;
+        }
+        Filter queryFilter = filterCache.getIfPresent(query);
+        if (queryFilter != null) {
+            log.debug("For query '{}' getting queryFilter from cache", query);
+            return queryFilter.getDocIdSet(indexReader);
+        }
+        else {
+            queryFilter = new CachingMultiReaderQueryFilter(query);
+        }
+        return queryFilter.getDocIdSet(indexReader);
     }
 
-    private DocIdSet filterDocIdSet(final org.apache.lucene.search.Query query,
-                                              final IndexReader indexReader,
-                                              final boolean isOpenQuery) throws IOException {
+    private DocIdSet filterDocIdSetJackRabbitQuery(final org.apache.lucene.search.Query query,
+                                              final IndexReader indexReader) throws IOException {
         if ((query instanceof BooleanQuery) && ((BooleanQuery)query).clauses().size() == 0) {
             // no constraints. Return null
             return null;
         }
 
-        Filter queryFilter = filterCache.getIfPresent(query);
-        if (queryFilter != null) {
-             log.debug("For query '{}' getting queryFilter from cache", query);
-             return queryFilter.getDocIdSet(indexReader);
-        }
-        if (isOpenQuery) {
-            queryFilter = new CachingMultiReaderQueryFilter(query, false);
-        } else {
-            queryFilter = new CachingMultiReaderQueryFilter(query);
-        }
-        filterCache.put(query, queryFilter);
+        // TODO CACHE jackrabbit queries still need to be cached. Difficult parts are
+        // 1: Jackrabbit Queries do not have hashCode or equals
+        // 2: Jackrabbit Query implementations keep REFERENCES (!!) to index readers
+        // 3.Jackrabbit creates a *NEW* JackrabbitIndexReader instance for *EVERY* search. Hence
+        // if the reader is a JackrabbitIndexReader, the cache would be pointless.
+        // Since all index readers in JR extend from FilterIndexReader, we can use
+        // reader.getCoreCacheKey() : The FilterIndexReader delegates that call to the
+        // wrapped index reader
+        // TODO CACHE
+        final OpenBitSet bits = new OpenBitSet(indexReader.maxDoc());
+        long start = System.currentTimeMillis();
+        new IndexSearcher(indexReader).search(query, new AbstractHitCollector() {
+            @Override
+            public final void collect(int doc, float score) {
+                bits.set(doc);  // set bit for hit
+            }
+        });
+        log.info("Creating doc id set for Jackrabbit Query took {} ms.", String.valueOf(System.currentTimeMillis() - start));
+        return new DocIdSetFilter(bits).getDocIdSet(indexReader);
 
-        return queryFilter.getDocIdSet(indexReader);
     }
 
     /**
@@ -866,4 +896,5 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             return keyObjects != null ? Arrays.hashCode(keyObjects) : 0;
         }
     }
+
 }

@@ -174,17 +174,44 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
                 .getLong() == 7L);
         
         session.refresh(false);
-        
         String xpath = "xpath(//*[jcr:contains(.,'jumps')])";
-        
         facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
         // WE HAVE 3 cars that contains jumps.
         assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
                 .getLong());
-        
-        
+
+
         session.refresh(false);
-        
+        xpath = "xpath(//*[jcr:contains(.,'laziest')])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 1 cars that contains laziest
+        assertEquals(1L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
+
+        session.refresh(false);
+        xpath = "xpath(//*[jcr:contains(.,'lazy*')])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 4 cars that contains lazy*
+        assertEquals(4L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
+        session.refresh(false);
+        xpath = "xpath(//*[jcr:contains(.,'laz*')])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 4 cars that contains lazy*
+        assertEquals(5L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
+        session.refresh(false);
+        xpath = "xpath(//*[jcr:contains(.,'jump*')])";
+        facetNavigation = session.getRootNode().getNode("test/facetnavigation/hippo:navigation[{"+xpath+"}]");
+        // WE HAVE 4 cars that contains lazy*
+        assertEquals(3L, facetNavigation.getNode("year").getNode(String.valueOf(currentYear)).getProperty(HippoNodeType.HIPPO_COUNT)
+                .getLong());
+
+
+        session.refresh(false);
         // search in only the content
         xpath = "xpath(//*[jcr:contains(contents/@content,'jumps')])";
         
