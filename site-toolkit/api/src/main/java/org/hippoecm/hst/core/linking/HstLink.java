@@ -21,14 +21,21 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
- * HstLink is the object representing a link. The {@link #getPath()} return you the value of the link, and {@link #getPathElements()}
- * returns you the path splitted on "/"'s. The String[] version is more practical because the {@link javax.servlet.http.HttpServletResponse#encodeURL(String)}
- * also encodes slashes. 
- * 
- * Furthermore, the {@link HstSite} that the link is meant for is accessible through this HstLink, because it is needed if the link is
- * out of the scope of the current HstSite. The HstSite can access the {@link org.hippoecm.hst.configuration.hosting.VirtualHost} through which
- * in turn even links to different hosts can be created. 
- *
+ * <p>
+ *     HstLink is the object representing a link. The {@link #getPath()} return you the value of the link, and {@link #getPathElements()}
+ *     returns you the path splitted on "/"'s. The String[] version is more practical because the {@link javax.servlet.http.HttpServletResponse#encodeURL(String)}
+ *     also encodes slashes.
+ * </p>
+ * <p>
+ *     Furthermore, the {@link HstSite} that the link is meant for is accessible through this HstLink, because it is needed if the link is
+ *     out of the scope of the current HstSite. The HstSite can access the {@link org.hippoecm.hst.configuration.hosting.VirtualHost} through which
+ *     in turn even links to different hosts can be created.
+ * </p>
+ * <p>
+ *     Note do *not* use {@link HstLink} objects in caches and do *not* store them on http sessions (for example last
+ *     visited URLs). HstLink objects hold references to the backing hst model, which should be by accident held from
+ *     garbage collection due to objects retaining it (by accident)
+ * </p>
  */
 public interface HstLink {
     
