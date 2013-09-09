@@ -33,6 +33,7 @@ public final class JcrConstants {
     // ------------------------------------------ properties
 
     public static final String JCR_PRIMARY_TYPE = "jcr:primaryType";
+    public static final String JCR_MIXIN_TYPES = "jcr:mixinTypes";
 
     public static final String JCR_LOCK_OWNER = "jcr:lockOwner";
     public static final String JCR_LOCK_IS_DEEP = "jcr:lockIsDeep";
