@@ -40,7 +40,7 @@ import org.hippoecm.repository.util.RepoUtils;
 public class StatusServlet extends HttpServlet {
 
     public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
-    public static final String DEFAULT_REPOSITORY_ADDRESS = "rmi://localhost:1099/hipporepository";
+    public static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
 
     String repositoryLocation;
 
