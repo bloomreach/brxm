@@ -51,6 +51,10 @@ dependencies/.project
 dependencies/.settings
 dependencies/target
 deprecated/*.iml
+deprecated/facetsearch/*.iml
+deprecated/facetsearch/target
+deprecated/facetselectmirror/hippo-repository-deprecated-facetselectmirror.iml
+deprecated/facetselectmirror/target
 deprecated/target
 deprecated/translation/hippo-repository-deprecated-translation.iml
 deprecated/translation/target
