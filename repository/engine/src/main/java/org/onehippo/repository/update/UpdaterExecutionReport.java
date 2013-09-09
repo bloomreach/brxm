@@ -157,5 +157,9 @@ class UpdaterExecutionReport {
         IOUtils.closeQuietly(updatedStream);
         IOUtils.closeQuietly(failedStream);
         IOUtils.closeQuietly(skippedStream);
+        logFile.delete();
+        updatedFile.delete();
+        failedFile.delete();
+        skippedFile.delete();
     }
 }
