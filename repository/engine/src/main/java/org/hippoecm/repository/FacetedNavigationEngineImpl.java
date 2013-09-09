@@ -813,10 +813,10 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         Filter queryFilter = filterCache.getIfPresent(query);
         if (queryFilter != null) {
             log.debug("For query '{}' getting queryFilter from cache", query);
-            return queryFilter.getDocIdSet(indexReader);
         }
         else {
             queryFilter = new CachingMultiReaderQueryFilter(query);
+            filterCache.put(query, queryFilter);
         }
         return queryFilter.getDocIdSet(indexReader);
     }
