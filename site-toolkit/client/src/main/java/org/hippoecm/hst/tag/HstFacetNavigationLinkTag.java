@@ -106,9 +106,9 @@ public class HstFacetNavigationLinkTag extends TagSupport {
             }
 
             for(HippoFacetSubNavigation toRemove : combinedRemovedList) {
-                String removeFacetValue = "/"+toRemove.getFacetValueCombi().getKey()+"/"+toRemove.getFacetValueCombi().getValue();
+                String removeFacetValue = toRemove.getFacetValueCombi().getKey()+"/"+toRemove.getFacetValueCombi().getValue();
                 if(path.contains(removeFacetValue)) {
-                    path = path.replace(removeFacetValue, "");
+                    path = path.replaceAll(removeFacetValue+"(/|\\z)", "");
                     log.debug("Removed facetvalue combi. Link from '{}' --> '{}'", path, link.getPath());
                 } else {
                     log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", removeFacetValue, path);
