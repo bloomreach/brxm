@@ -1,0 +1,144 @@
+/*
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.onehippo.cms7.repository.upgrade;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionIterator;
+import javax.jcr.version.VersionManager;
+
+import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.util.JcrConstants;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
+public class HandleMigratorTest extends RepositoryTestCase {
+
+    private Node documents;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        documents = session.getNode("/content/documents");
+        createTestDocuments(5);
+        session.save();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        removeDocuments();
+        super.tearDown();
+    }
+
+    @Test
+    public void testHandleMigration() throws Exception {
+        editAndPublishTestDocuments();
+        final HandleMigrator handleMigrator = new HandleMigrator(session);
+        handleMigrator.migrate();
+        for (int i = 0; i < 5; i++) {
+            checkDocumentHistory(getPreview(i));
+        }
+    }
+
+    private void checkDocumentHistory(final Node document) throws RepositoryException {
+        assertNotNull("No preview available", document);
+        assertTrue("Document is not versionable", document.isNodeType(JcrConstants.MIX_VERSIONABLE));
+        final VersionManager versionManager = session.getWorkspace().getVersionManager();
+        final VersionHistory versionHistory = versionManager.getVersionHistory(document.getPath());
+        final VersionIterator versions = versionHistory.getAllVersions();
+        assertEquals("Unexpected number of versions", 6, versions.getSize());
+    }
+
+    private void editAndPublishTestDocuments() throws Exception {
+        for (Node handle : new NodeIterable(documents.getNodes())) {
+            if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                continue;
+            }
+            for (int i = 0; i < 5; i++) {
+                final Node document = handle.getNode(handle.getName());
+                publishTestDocument(editTestDocument(document, i));
+            }
+        }
+    }
+
+    private Node editTestDocument(final Node document, int i) throws Exception {
+        final Document draft = getFullReviewedActionsWorkflow(document).obtainEditableInstance();
+        draft.getNode().setProperty("foo", "bar" + i);
+        session.save();
+        return getFullReviewedActionsWorkflow(draft.getNode()).commitEditableInstance().getNode();
+    }
+
+    private void createTestDocuments(final int count) throws Exception {
+        for (int i = 0; i < count; i++) {
+            createTestDocument(i);
+        }
+    }
+
+    private void removeDocuments() throws RepositoryException {
+        for (Node document : new NodeIterable(documents.getNodes())) {
+            document.remove();
+        }
+        session.save();
+    }
+
+    private void publishTestDocument(final Node document) throws Exception {
+        getFullReviewedActionsWorkflow(document).publish();
+    }
+
+    private String createTestDocument(int index) throws Exception {
+        return getFolderWorkflow(documents).add("new-document", "testcontent:news", "document" + index);
+    }
+
+    private Node getPreview(final int index) throws RepositoryException {
+        final NodeIterator documents = session.getNode("/content/documents/document" + index).getNodes("document" + index);
+        while (documents.hasNext()) {
+            final Node variant = documents.nextNode();
+            if (HippoStdNodeType.UNPUBLISHED.equals(JcrUtils.getStringProperty(variant, HippoStdNodeType.HIPPOSTD_STATE, null))) {
+                return variant;
+            }
+        }
+        return null;
+    }
+
+    private FullReviewedActionsWorkflow getFullReviewedActionsWorkflow(final Node document) throws RepositoryException {
+        return (FullReviewedActionsWorkflow) getWorkflow("default", document);
+    }
+
+    private FolderWorkflow getFolderWorkflow(final Node folder) throws RepositoryException {
+        return (FolderWorkflow) getWorkflow("internal", folder);
+    }
+
+    private Workflow getWorkflow(final String category, final Node node) throws RepositoryException {
+        final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        return workflowManager.getWorkflow(category, node);
+    }
+
+}

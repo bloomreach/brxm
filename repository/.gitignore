@@ -187,6 +187,8 @@ upgrade/*.tmp
 upgrade/.classpath
 upgrade/.project
 upgrade/.settings
+upgrade/handlemigration/hippo-repository-version-history-migration.iml
+upgrade/handlemigration/target
 upgrade/local.properties
 upgrade/nbproject
 upgrade/target
