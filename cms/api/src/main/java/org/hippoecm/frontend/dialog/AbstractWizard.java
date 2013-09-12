@@ -15,17 +15,14 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import java.util.List;
-
 import org.apache.wicket.Component;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.extensions.wizard.IWizardStep;
-import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
@@ -126,13 +123,7 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
 
     protected final boolean hasError() {
         FeedbackPanel feedback = (FeedbackPanel) getForm().get(FEEDBACK_ID);
-        List<FeedbackMessage> messages = (List) feedback.getFeedbackMessagesModel().getObject();
-        for (FeedbackMessage message : messages) {
-            if (message.getLevel() == FeedbackMessage.ERROR) {
-                return true;
-            }
-        }
-        return false;
+        return feedback.anyErrorMessage();
     }
 
     /**

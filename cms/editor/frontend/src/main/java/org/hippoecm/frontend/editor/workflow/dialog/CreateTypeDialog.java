@@ -22,8 +22,6 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractWizard;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.Action;
 
 public abstract class CreateTypeDialog extends AbstractWizard {
@@ -32,9 +30,8 @@ public abstract class CreateTypeDialog extends AbstractWizard {
 
     private Action action;
     private FeedbackPanel feedback;
-    private IDialogService dialogService;
 
-    public CreateTypeDialog(Action action, ILayoutProvider layouts) {
+    public CreateTypeDialog(Action action) {
         this.action = action;
         final IFeedbackMessageFilter[] filters = new IFeedbackMessageFilter[2];
         filters[0] = new ContainerFeedbackMessageFilter(action);
@@ -63,8 +60,11 @@ public abstract class CreateTypeDialog extends AbstractWizard {
 
     @Override
     public void onFinish() {
-        action.execute();
+        // Important: first call super so the dialog can validate errors.
+        // The action will remove this dialog from the page, after which the
+        // error validation will fail (see CMS7-7357)
         super.onFinish();
+        action.execute();
     }
 
     public IValueMap getProperties() {

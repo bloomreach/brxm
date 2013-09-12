@@ -57,7 +57,7 @@ public class CreateDocumentTypeDialog extends CreateTypeDialog {
     }
 
     public CreateDocumentTypeDialog(NewDocumentTypeAction action, ILayoutProvider layouts) {
-        super(action, layouts);
+        super(action);
 
         WizardModel wizardModel = new WizardModel() {
             private static final long serialVersionUID = 1L;

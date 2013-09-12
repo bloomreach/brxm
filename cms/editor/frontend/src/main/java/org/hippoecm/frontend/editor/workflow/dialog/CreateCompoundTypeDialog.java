@@ -53,7 +53,7 @@ public class CreateCompoundTypeDialog extends CreateTypeDialog {
     }
 
     public CreateCompoundTypeDialog(NewCompoundTypeAction action, ILayoutProvider layouts) {
-        super(action, layouts);
+        super(action);
 
         WizardModel wizardModel = new WizardModel() {
             @Override
