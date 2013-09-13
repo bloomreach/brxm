@@ -38,31 +38,6 @@
                 </tr>
             </table>
         </wicket:enclosure>
-        <wicket:enclosure child="external-memberships-label">
-            <span wicket:id="external-memberships-label"/>
-            <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="externalMembershipsContainer">
-                <tr wicket:id="external-memberships">
-                    <th>
-                        <wicket:message key="table-header-groups"/>
-                    </th>
-                    <th>
-                        <wicket:message key="table-header-actions"/>
-                    </th>
-                    <th>
-                        <wicket:message key="table-header-roles"/>
-                    </th>
-                    <th>
-                        <wicket:message key="table-header-security-domain"/>
-                    </th>
-                    <td><label wicket:id="external-membership"/></td>
-                    <td>
-                        <li class="delete-inline-16-disabled icon-16"/>
-                    </td>
-                    <td><label wicket:id="role"/></td>
-                    <td><label wicket:id="securityDomain"/></td>
-                </tr>
-            </table>
-        </wicket:enclosure>
         <div class="hippo-controlpanel-options">
             <wicket:message key="user-membership-make-member-of"/>
             <select wicket:id="local-groups">
@@ -70,6 +45,23 @@
             </select>
             <input type="submit" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
         </div>
+        <wicket:enclosure child="external-memberships-label">
+            <span wicket:id="external-memberships-label"/>
+            <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="externalMembershipsContainer">
+                <tr>
+                    <th>
+                        <wicket:message key="table-header-groups"/>
+                    </th>
+                    <th>
+                        <wicket:message key="table-header-security-domain"/>
+                    </th>
+                </tr>
+                <tr wicket:id="external-memberships">
+                    <td><span wicket:id="label">[[label]]</span></td>
+                    <td><label wicket:id="securityDomains"/></td>
+                </tr>
+            </table>
+        </wicket:enclosure>
         <div class="hippo-controlpanel-actions">
             <input type="submit" wicket:message="value:user-back-action" wicket:id="back-button"/>
         </div>
