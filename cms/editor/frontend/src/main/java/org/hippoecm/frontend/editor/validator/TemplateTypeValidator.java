@@ -23,8 +23,10 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -40,8 +42,6 @@ public class TemplateTypeValidator implements ITypeValidator {
 
     static final Logger log = LoggerFactory.getLogger(TemplateTypeValidator.class);
 
-    public final static String PATH_USED_MULTIPLE_TIMES = "path-is-used-multiple-times";
-    
     public Set<Violation> validate(IModel model) throws ValidationException {
         Set<Violation> violations = new HashSet<Violation>();
         try {
@@ -68,7 +68,8 @@ public class TemplateTypeValidator implements ITypeValidator {
                         String path = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         if (paths.contains(path)) {
                             // TODO: add actual paths
-                            violations.add(new Violation(new HashSet<ModelPath>(), PATH_USED_MULTIPLE_TIMES, null));
+                            violations.add(new Violation(new HashSet<ModelPath>(),
+                                    new ClassResourceModel(ValidatorMessages.PATH_USED_MULTIPLE_TIMES, ValidatorMessages.class)));
                         }
                         if (!path.equals("*")) {
                             paths.add(path);

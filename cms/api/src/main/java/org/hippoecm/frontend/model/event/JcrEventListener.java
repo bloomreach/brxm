@@ -18,6 +18,7 @@ package org.hippoecm.frontend.model.event;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.EventIterator;
@@ -25,7 +26,6 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -73,6 +73,8 @@ public class JcrEventListener implements EventListener, IClusterable {
             obMgr.addEventListener(this, eventTypes, absPath, isDeep, uuid, nodeTypeName, false);
         } catch (PathNotFoundException ex) {
             log.warn("Not starting event listener for non existing path: " + absPath);
+        } catch (ItemNotFoundException ex) {
+            log.warn("Not starting event listener for non existing item: " + uuid);
         } catch (RepositoryException ex) {
             log.error("unable to register event listener", ex);
         }

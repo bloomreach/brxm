@@ -30,6 +30,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.CancelEventIfAjaxListener;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
@@ -37,7 +38,9 @@ import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
@@ -62,6 +65,41 @@ import org.hippoecm.frontend.service.render.ICardView;
 public class TabbedPanel extends WebMarkupContainer {
 
     private static final long serialVersionUID = 1L;
+
+    abstract static class CloseLink<T> extends AbstractLink {
+
+        private static final long serialVersionUID = 1L;
+
+        public CloseLink(final String id, final IModel<T> model, Form form) {
+            super(id, model);
+
+            if (form != null) {
+                add(new AjaxFormSubmitBehavior(form, "click") {
+
+                    @Override
+                    protected void onSubmit(final AjaxRequestTarget target) {
+                        onClick(target);
+                    }
+
+                    @Override
+                    protected void onError(final AjaxRequestTarget target) {
+                        onClick(target);
+                    }
+                });
+            } else {
+                add(new AjaxEventBehavior("click") {
+
+                    @Override
+                    protected void onEvent(final AjaxRequestTarget target) {
+                        onClick(target);
+                    }
+                });
+            }
+        }
+
+        protected abstract void onClick(AjaxRequestTarget target);
+
+    }
 
     public static final String TAB_PANEL_ID = "panel";
 
@@ -140,11 +178,16 @@ public class TabbedPanel extends WebMarkupContainer {
 
         });
 
-        panelContainer = new WebMarkupContainer("panel-container");
+        panelContainer = newPanelContainer("panel-container");
         cardView = new CardView(tabs);
         panelContainer.add(cardView);
-        panelContainer.setOutputMarkupId(true);
         add(panelContainer);
+    }
+
+    protected WebMarkupContainer newPanelContainer(String id) {
+        WebMarkupContainer container = new WebMarkupContainer(id);
+        container.setOutputMarkupId(true);
+        return container;
     }
 
     private WebMarkupContainer createContextMenu(String contextMenu, final int index) {
@@ -152,40 +195,34 @@ public class TabbedPanel extends WebMarkupContainer {
         WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
         menuContainer.setOutputMarkupId(true);
         menuContainer.setVisible(false);
-        AjaxLink closeLink = new AjaxLink("editor-close") {
+
+        menuContainer.add(new CloseLink<TabsPlugin.Tab>("editor-close", Model.of(tab), tab.getForm()) {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            protected void onClick(AjaxRequestTarget target) {
                 plugin.onClose(tab, target);
             }
-        };
 
+        });
 
-        menuContainer.add(closeLink);
-
-        AjaxLink closeOthersLink = new AjaxLink("editor-close-others") {
+        menuContainer.add(new CloseLink<Void>("editor-close-others", null, getPanelContainerForm()) {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 //Create a copy so we won't run into ConcurrentModificationException
                 plugin.closeAll(tab, target);
             }
-        };
+        });
 
-        menuContainer.add(closeOthersLink);
-
-        AjaxLink closeAllLink = new AjaxLink("editor-close-all") {
+        menuContainer.add(new CloseLink<Void>("editor-close-all", null, getPanelContainerForm()) {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 plugin.closeAll(null, target);
             }
-        };
+        });
 
-
-        menuContainer.add(closeAllLink);
-
-        AjaxLink closeUnmodifiedLink = new AjaxLink("editor-close-unmodified") {
+        menuContainer.add(new CloseLink<Void>("editor-close-unmodified", null, getPanelContainerForm()) {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
@@ -195,9 +232,7 @@ public class TabbedPanel extends WebMarkupContainer {
                     plugin.onCloseUnmodified(currentTab, target);
                 }
             }
-        };
-
-        menuContainer.add(closeUnmodifiedLink);
+        });
 
         return menuContainer;
     }
@@ -230,16 +265,16 @@ public class TabbedPanel extends WebMarkupContainer {
     // used by superclass to add title to the container
     protected WebMarkupContainer getTitleMarkupContainer(final int index) {
         WebMarkupContainer container = new WebMarkupContainer("container", new Model<Integer>(index));
-        TabsPlugin.Tab tab = getTabs().get(index);
+        final TabsPlugin.Tab tab = getTabs().get(index);
         final IModel<TabsPlugin.Tab> tabModel = new Model<TabsPlugin.Tab>(tab);
         if (tab.isEditorTab()) {
-            container.add(new AjaxLink<TabsPlugin.Tab>("close", tabModel) {
-                private static final long serialVersionUID = 1L;
+            container.add(new CloseLink<TabsPlugin.Tab>("close", tabModel, tab.getForm()) {
 
                 @Override
-                public void onClick(AjaxRequestTarget target) {
-                    plugin.onClose(getModelObject(), target);
+                protected void onClick(AjaxRequestTarget target) {
+                    plugin.onClose(tab, target);
                 }
+
             });
         } else {
             container.add(new Label("close").setVisible(false));
@@ -317,6 +352,10 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
         };
+    }
+
+    protected Form getPanelContainerForm() {
+        return null;
     }
 
     public void setMaxTitleLength(int maxTitleLength) {

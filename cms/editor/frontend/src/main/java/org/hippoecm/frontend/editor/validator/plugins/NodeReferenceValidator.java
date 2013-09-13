@@ -25,6 +25,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 
 public class NodeReferenceValidator extends AbstractCmsValidator {
@@ -45,7 +46,7 @@ public class NodeReferenceValidator extends AbstractCmsValidator {
         Set<Violation> violations = new HashSet<Violation>();
         String ref = (String) childModel.getObject();
         if(ref == null || ref.equals("") || ref.equals("cafebabe-cafe-babe-cafe-babecafebabe")) {
-            violations.add(fieldValidator.newValueViolation(childModel, "reference-is-empty"));
+            violations.add(fieldValidator.newValueViolation(childModel, getDefaultMessage(ValidatorMessages.REFERENCE_IS_EMPTY)));
         }
         return violations;
     }

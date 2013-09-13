@@ -556,6 +556,8 @@ api/src/main/java/org/hippoecm/frontend/util/PluginConfigMapper.java svneol=nati
 api/src/main/java/org/hippoecm/frontend/validation/IFieldValidator.java -text
 api/src/main/java/org/hippoecm/frontend/validation/IValidationListener.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/validation/IValidationService.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/validation/ValidatorMessages_de.properties -text
+api/src/main/java/org/hippoecm/frontend/validation/ValidatorMessages_it.properties -text
 api/src/main/java/org/hippoecm/frontend/widgets/AbstractView.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/AjaxDateTimeField.java -text svneol=unset#text/plain
@@ -1552,8 +1554,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeE
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeEditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/TemplateTypeLayout.html -text svneol=unset#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorForm.java -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorForm_de.properties -text
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorForm_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/editor/EditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/impl/DefaultCmsEditor.java svneol=native#text/plain
@@ -2360,6 +2360,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/updater
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditorTabsPlugin.html svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/TooManyEditorsDialog_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/document-128.png -text svneol=unset#image/png

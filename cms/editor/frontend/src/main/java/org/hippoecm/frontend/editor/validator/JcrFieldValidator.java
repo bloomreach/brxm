@@ -29,12 +29,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +46,6 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(JcrFieldValidator.class);
-
-    public static final String REQUIRED_FIELD_NOT_PRESENT = "required-field-not-present";
 
     private IFieldDescriptor field;
     private ITypeDescriptor fieldType;
@@ -104,7 +104,8 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             }
             Iterator<? extends IModel> iter = provider.iterator(0, provider.size());
             if (required && !iter.hasNext()) {
-                violations.add(newViolation(field.getPath(), 0, REQUIRED_FIELD_NOT_PRESENT, null));
+                violations.add(newViolation(new ModelPathElement(field, field.getPath(), 0),
+                        getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT)));
             }
             while (iter.hasNext()) {
                 IModel childModel = iter.next();
@@ -138,7 +139,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     private void addTypeViolations(Set<Violation> violations, IModel childModel, Set<Violation> typeViolations)
             throws ValidationException {
-    	JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
+        JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
         String name = field.getPath();
         if ("*".equals(name)) {
             try {
@@ -147,9 +148,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 throw new ValidationException("Could not resolve path for invalid value", e);
             }
         }
-        int index = 0;
+        int index;
         try {
-        	index = childNodeModel.getNode().getIndex() - 1;
+            index = childNodeModel.getNode().getIndex() - 1;
         } catch (RepositoryException e) {
             throw new ValidationException("Could not resolve path for invalid value", e);
         }
@@ -163,11 +164,20 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 elements[0] = new ModelPathElement(field, name, index);
                 paths.add(new ModelPath(elements));
             }
-            violations.add(new Violation(paths, violation.getMessageKey(), violation.getParameters()));
+            violations.add(new Violation(paths, violation.getMessage()));
         }
     }
 
     public Violation newValueViolation(IModel childModel, String key) throws ValidationException {
+        return newValueViolation(childModel, getMessage(key));
+    }
+
+    @Override
+    public Violation newValueViolation(final IModel childModel, final IModel<String> message) throws ValidationException {
+        return newViolation(getElement(childModel), message);
+    }
+
+    private ModelPathElement getElement(IModel childModel) throws ValidationException {
         String name = field.getPath();
         int index = 0;
         if (childModel instanceof JcrPropertyValueModel) {
@@ -184,15 +194,29 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 index = 0;
             }
         }
-        return newViolation(name, index, key, null);
+        return new ModelPathElement(field, name, index);
     }
 
-    public Violation newViolation(String name, int index, String message, Object[] parameters) {
+    private IModel<String> getMessage(String key, Object... parameters) {
+        return new ClassResourceModel(key, ValidatorMessages.class, parameters);
+    }
+
+    public Violation newViolation(ModelPathElement child, String message, Object[] parameters) {
+        Set<ModelPath> paths = getModelPaths(child);
+        return new Violation(paths, message, parameters);
+    }
+
+    private Set<ModelPath> getModelPaths(final ModelPathElement child) {
         ModelPathElement[] elements = new ModelPathElement[1];
-        elements[0] = new ModelPathElement(field, name, index);
+        elements[0] = child;
         Set<ModelPath> paths = new HashSet<ModelPath>();
         paths.add(new ModelPath(elements));
-        return new Violation(paths, message, parameters);
+        return paths;
+    }
+
+    public Violation newViolation(ModelPathElement child, IModel<String> messageModel) {
+        Set<ModelPath> paths = getModelPaths(child);
+        return new Violation(paths, messageModel);
     }
 
 }

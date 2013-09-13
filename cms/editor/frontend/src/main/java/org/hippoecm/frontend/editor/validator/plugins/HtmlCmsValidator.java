@@ -55,7 +55,6 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
         if ("Html".equals(type.getFieldType().getName())) {
             log.warn("Explicit html validation is not necessary for fields of type 'Html'.  This is covered by the 'non-empty' validator.");
         }
-
     }
 
     @Override
@@ -63,7 +62,7 @@ public class HtmlCmsValidator extends AbstractCmsValidator {
         Set<Violation> violations = new HashSet<Violation>();
         String value = (String) childModel.getObject();
         for (String key : htmlValidator.validateNonEmpty(value)) {
-            violations.add(fieldValidator.newValueViolation(childModel, key));
+            violations.add(fieldValidator.newValueViolation(childModel, getDefaultMessage(key)));
         }
         return violations;
     }

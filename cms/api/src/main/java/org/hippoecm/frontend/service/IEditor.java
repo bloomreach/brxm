@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.service;
 
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IModel;
 
@@ -68,6 +69,7 @@ public interface IEditor<T> extends IClusterable {
 
     boolean isValid() throws EditorException;
 
+    Form getForm();
 
 
 

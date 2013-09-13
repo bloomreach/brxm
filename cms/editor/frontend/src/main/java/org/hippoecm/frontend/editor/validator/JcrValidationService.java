@@ -127,7 +127,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 listener.onValidation(result);
             }
             for (Violation violation : result.getViolations()) {
-                logger.error(violation.getMessageKey(), violation.getParameters());
+                logger.error(violation.getMessage());
             }
         } catch (RepositoryException e) {
             throw new ValidationException("Repository error", e);

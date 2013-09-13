@@ -62,7 +62,7 @@ public class NonEmptyCmsValidator extends AbstractCmsValidator {
         String value = (String) childModel.getObject();
         if (htmlValidator != null) {
             for (String key : htmlValidator.validateNonEmpty(value)) {
-                violations.add(fieldValidator.newValueViolation(childModel, key));
+                violations.add(fieldValidator.newValueViolation(childModel, getDefaultMessage(key)));
             }
         } else {
             if (StringUtils.isBlank(value)) {

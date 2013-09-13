@@ -29,9 +29,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
@@ -225,10 +223,8 @@ public class FileUploadWidget extends Panel {
 
     private void handleViolations() {
         if (violations.size() > 0) {
-            for (Violation v : violations) {
-                IModel<String> error = new ClassResourceModel(v.getMessageKey(), v.getResourceBundleClass(),
-                                                              v.getParameters());
-                error(error.getObject());
+            for (Violation violation : violations) {
+                error(violation.getMessage().getObject());
             }
             violations.clear();
         }

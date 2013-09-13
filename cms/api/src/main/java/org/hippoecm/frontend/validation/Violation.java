@@ -18,6 +18,8 @@ package org.hippoecm.frontend.validation;
 import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 /**
  * Validation constraint violation.  Provides the list of {@link ModelPath}s that
@@ -33,6 +35,7 @@ public final class Violation implements IDetachable {
     private String messageKey;
     private Object[] parameters;
     private Class<?> resourceBundleClass;
+    private IModel<String> message;
 
     /**
      * Create a new violation whose resource bundle is looked up relative to the class that uses the
@@ -49,6 +52,7 @@ public final class Violation implements IDetachable {
         this.fieldPaths = fieldPaths;
         this.messageKey = messageKey;
         this.parameters = parameters;
+        this.message = new ClassResourceModel(messageKey, ValidatorMessages.class, parameters);
     }
 
     /**
@@ -59,19 +63,41 @@ public final class Violation implements IDetachable {
      * @param parameters  Optional parameters for value substitution in translations
      * @param fieldPaths  List of {@link ModelPath}s that led up to the violation
      */
+    @Deprecated
     public Violation(Class<?> resourceBundleClass, String messageKey, Object[] parameters, Set<ModelPath> fieldPaths) {
         this.fieldPaths = fieldPaths;
         this.messageKey = messageKey;
         this.parameters = parameters;
         this.resourceBundleClass = resourceBundleClass;
+        this.message = new ClassResourceModel(messageKey, resourceBundleClass, parameters);
     }
 
+    public Violation(final Set<ModelPath> paths, final IModel<String> messageModel) {
+        this.fieldPaths = paths;
+        this.message = messageModel;
+    }
+
+    @Deprecated
     public String getMessageKey() {
         return messageKey;
     }
 
+    @Deprecated
     public Object[] getParameters() {
         return parameters;
+    }
+
+    /**
+     * Returns the class of the resource bundle that contains the translation of the message.
+     * Deprecated; use the {@link #getMessage()} method to get a (resolved) message.
+     */
+    @Deprecated
+    public Class<?> getResourceBundleClass() {
+        return resourceBundleClass;
+    }
+
+    public IModel<String> getMessage() {
+        return message;
     }
 
     public Set<ModelPath> getDependentPaths() {
@@ -84,7 +110,7 @@ public final class Violation implements IDetachable {
         sb.append("paths: ");
         sb.append(fieldPaths.toString());
         sb.append(", message: ");
-        sb.append(messageKey);
+        sb.append(getMessage().getObject());
         return sb.toString();
     }
 
@@ -94,7 +120,4 @@ public final class Violation implements IDetachable {
         }
     }
 
-    public Class<?> getResourceBundleClass() {
-        return resourceBundleClass;
-    }
 }

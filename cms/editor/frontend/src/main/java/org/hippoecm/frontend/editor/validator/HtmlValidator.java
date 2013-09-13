@@ -25,6 +25,7 @@ import com.google.common.base.CharMatcher;
 import org.apache.wicket.util.io.IClusterable;
 import org.cyberneko.html.parsers.SAXParser;
 import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -33,9 +34,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class HtmlValidator implements IClusterable {
 
     private static final long serialVersionUID = 1L;
-
-    public static final String INVALID_XML = "invalid-xml";
-    public static final String HTML_IS_EMPTY = "html-is-empty";
 
     public static final String[] VALID_ELEMENTS = new String[] {"img", "object", "embed", "form", "applet"};
 
@@ -86,10 +84,10 @@ public class HtmlValidator implements IClusterable {
             parser.parse(is);
 
             if (!handler.isValid()) {
-                result.add(HTML_IS_EMPTY);
+                result.add(ValidatorMessages.HTML_IS_EMPTY);
             }
         } catch (SAXException e) {
-            result.add(INVALID_XML);
+            result.add(ValidatorMessages.INVALID_XML);
         } catch (IOException e) {
             throw new ValidationException("Input/output error", e);
         }

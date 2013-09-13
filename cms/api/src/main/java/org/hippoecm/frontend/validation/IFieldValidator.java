@@ -30,6 +30,27 @@ public interface IFieldValidator extends IClusterable {
 
     ITypeDescriptor getFieldType();
 
-    Violation newValueViolation(IModel childModel, String translation) throws ValidationException;
+    /**
+     * Create a Violation object with field information.
+     *
+     * @param childModel
+     * @param key
+     * @return
+     * @throws ValidationException
+     *
+     * @deprecated : use the {@link #newValueViolation(IModel, IModel)} signature instead
+     */
+    @Deprecated
+    Violation newValueViolation(IModel childModel, String key) throws ValidationException;
+
+    /**
+     * Create a Violation object with field information.
+     *
+     * @param childModel
+     * @param message
+     * @return
+     * @throws ValidationException
+     */
+    Violation newValueViolation(IModel childModel, IModel<String> message) throws ValidationException;
 
 }

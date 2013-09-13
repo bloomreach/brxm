@@ -115,7 +115,7 @@ public class TabsPlugin extends RenderPlugin {
         tabsContainer.setOutputMarkupId(true);
 
         tabs = new ArrayList<Tab>();
-        add(tabbedPanel = new TabbedPanel("tabs", TabsPlugin.this, tabs, tabsContainer));
+        add(tabbedPanel = newTabbedPanel("tabs", tabs, tabsContainer));
         tabbedPanel.setMaxTitleLength(properties.getInt(MAX_TAB_TITLE_LENGTH, 12));
         tabbedPanel.setIconType(IconSize.getIconSize(properties.getString(TAB_ICON_SIZE, "tiny")));
 
@@ -168,6 +168,10 @@ public class TabsPlugin extends RenderPlugin {
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
 
+    }
+
+    protected TabbedPanel newTabbedPanel(String id, List<Tab> tabs, MarkupContainer tabsContainer) {
+        return new TabbedPanel(id, TabsPlugin.this, tabs, tabsContainer);
     }
 
     @Override
@@ -290,7 +294,6 @@ public class TabsPlugin extends RenderPlugin {
             dialogService.show(new CloseAllDialog(changedTabs, ignoredTab));
 
         } else {
-
             List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
             for (TabsPlugin.Tab currentTab : tabsCopy) {
                 if(ignoredTab != null && ignoredTab.equals(currentTab)){
@@ -418,7 +421,7 @@ public class TabsPlugin extends RenderPlugin {
         return tabbedPanel;
     }
 
-    class Tab implements ITab, IObserver<IObservable> {
+    protected class Tab implements ITab, IObserver<IObservable> {
         private static final long serialVersionUID = 1L;
 
         ServiceTracker<ITitleDecorator> decoratorTracker;
@@ -538,6 +541,12 @@ public class TabsPlugin extends RenderPlugin {
             return (editor != null);
         }
 
+        public Form getForm() {
+            IServiceReference<IRenderService> reference = getPluginContext().getReference(renderer);
+            IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+            return editor.getForm();
+        }
+
         void select() {
             if (tabs.indexOf(this) != getTabbedPanel().getSelectedTab()) {
                 getTabbedPanel().setSelectedTab(tabs.indexOf(this));
@@ -556,6 +565,7 @@ public class TabsPlugin extends RenderPlugin {
         public boolean isVisible() {
             return true;
         }
+
     }
 
     private class CloseAllDialog extends AbstractDialog {

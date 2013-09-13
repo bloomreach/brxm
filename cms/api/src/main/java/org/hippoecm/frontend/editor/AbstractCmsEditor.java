@@ -19,9 +19,10 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.wicket.util.io.IClusterable;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -363,6 +364,19 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
 
     protected String getRendererServiceId() {
         return context.getReference(renderer).getServiceId();
+    }
+
+    public Form getForm() {
+        if (cluster != null) {
+            final String formServiceId = cluster.getClusterConfig().getString("service.form");
+            if (formServiceId != null) {
+                final IFormService formService = context.getService(formServiceId, IFormService.class);
+                if (formService != null) {
+                    return formService.getForm();
+                }
+            }
+        }
+        return null;
     }
 
     protected void onClose() {

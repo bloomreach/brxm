@@ -29,6 +29,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -201,12 +202,24 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
         }
     }
 
-    public void error(String messageKey, Object[] parameters) {
-        error(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey).getObject());
+    @Override
+    public void warn(String messageKey, Object[] parameters) {
+        warn(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey));
     }
 
-    public void warn(String messageKey, Object[] parameters) {
-        warn(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey).getObject());
+    @Override
+    public void error(String messageKey, Object[] parameters) {
+        error(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey));
+    }
+
+    @Override
+    public void warn(final IModel<String> message) {
+        super.warn(message.getObject());
+    }
+
+    @Override
+    public void error(final IModel<String> message) {
+        super.error(message.getObject());
     }
 
     @Override

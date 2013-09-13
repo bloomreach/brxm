@@ -41,6 +41,7 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -58,12 +59,11 @@ import org.slf4j.LoggerFactory;
  * Algorithm to determine what is shown:
  * <code>
  * when draft exists:
- * show draft in edit mode
- * else:
- * when unpublished exists:
- * show unpublished in preview mode
+ *     show draft in edit mode
+ * else when unpublished exists:
+ *     show unpublished in preview mode
  * else
- * show published in preview mode
+ *     show published in preview mode
  * </code>
  * <p/>
  * The editor model is the variant that is shown.
@@ -240,15 +240,28 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     public boolean isModified() {
-        return this.modified;
+        if (this.modified) {
+            return true;
+        }
+        final Node node;
+        try {
+            node = getEditorModel().getObject();
+            HippoSession session = (HippoSession) node.getSession();
+            return session.pendingChanges(node, "nt:base", true).hasNext();
+        } catch (EditorException e) {
+            log.error("Could not determine whether there are pending changes", e);
+        } catch (RepositoryException e) {
+            log.error("Could not determine whether there are pending changes", e);
+        }
+        return false;
     }
 
     public boolean isValid() throws EditorException {
-        if(isValid == null){
+        if (isValid == null) {
             try {
                 validate();
             } catch (ValidationException e) {
-                 throw new EditorException("Unable to validate the document", e);
+                throw new EditorException("Unable to validate the document", e);
             }
         }
         return this.isValid;
@@ -440,7 +453,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         editorModel = getEditorModel();
         if (getMode() == Mode.EDIT) {
             try {
-	        UserSession session = UserSession.get();
+                UserSession session = UserSession.get();
                 session.getObservationManager().addEventListener(this,
                         Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED |
                                 Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
@@ -472,7 +485,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         super.stop();
         if (getMode() == Mode.EDIT) {
             try {
-	        UserSession session = UserSession.get();
+                UserSession session = UserSession.get();
                 session.getObservationManager().removeEventListener(this);
                 modified = false;
             } catch (RepositoryException e) {
@@ -570,7 +583,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 throw new EditorException("Invalid node, not of type " + HippoNodeType.NT_HANDLE);
             }
-            for (NodeIterator iter = handleNode.getNodes(); iter.hasNext();) {
+            for (NodeIterator iter = handleNode.getNodes(); iter.hasNext(); ) {
                 Node child = iter.nextNode();
                 if (child.getName().equals(handleNode.getName())) {
                     wfState.process(child);

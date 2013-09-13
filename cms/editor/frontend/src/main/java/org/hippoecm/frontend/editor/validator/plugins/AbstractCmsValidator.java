@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.wicket.Session;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.IStringResourceProvider;
@@ -28,8 +30,10 @@ import org.hippoecm.frontend.editor.validator.ValidatorService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.validation.ICmsValidator;
+import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +58,22 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
         return name;
     }
 
-    protected String getTranslation() {
-        return translateKey(getName());
+    protected IModel<String> getTranslation() {
+        return new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                return translateKey(getName());
+            }
+        };
+    }
+
+    /**
+     * Return translations of the default messages (those in {@link ValidatorMessages})
+     * @param key
+     * @return
+     */
+    protected IModel<String> getDefaultMessage(String key) {
+        return new ClassResourceModel(key, ValidatorMessages.class);
     }
 
     protected String translateKey(String key) {
