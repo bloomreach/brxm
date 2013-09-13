@@ -1,0 +1,40 @@
+<div class="comments">
+	{{#page.comments}}
+	<div class="itemdiv commentdiv">
+		<div class="user">
+			<img alt="{{name}}'s Avatar" src="{{path.assets}}/avatars/{{avatar}}" />
+		</div>
+		
+		<div class="body">
+			<div class="name"><a href="#">{{name}}</a></div>
+			<div class="time"><i class="icon-time"></i> <span class="{{time-color}}">{{time}}</span></div>
+			<div class="text">
+				<i class="icon-quote-left"></i> {{comment}} &hellip;
+			</div>
+		</div>
+		
+		<div class="tools">
+			{{#menu}}
+			<div class="inline position-relative">
+				<button class="btn btn-minier bigger btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-angle-down icon-only bigger-120"></i></button>
+				<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
+					<li><a href="#" class="tooltip-success" data-rel="tooltip" title="Approve" data-placement="left"><span class="green"><i class="icon-ok"></i></span></a></li>
+					<li><a href="#" class="tooltip-warning" data-rel="tooltip" title="Reject" data-placement="left"><span class="orange"><i class="icon-remove"></i></span> </a></li>
+					<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="left"><span class="red"><i class="icon-trash"></i></span> </a></li>
+				</ul>
+			</div>
+			{{/menu}}
+			{{^menu}}
+			<a href="#" class="btn btn-minier btn-info"><i class="icon-only icon-pencil"></i></a>
+			<a href="#" class="btn btn-minier btn-danger"><i class="icon-only icon-trash"></i></a>
+			{{/menu}}
+		</div>
+	</div>
+	{{/page.comments}}
+</div>
+
+<div class="hr hr8"></div>
+<div class="center">
+		<i class="icon-comments-alt icon-2x green"></i> &nbsp; <a href="#">See all comments &nbsp; <i class="icon-arrow-right"></i></a>
+</div>
+<div class="hr hr-double hr8"></div>

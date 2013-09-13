@@ -1,0 +1,41 @@
+<div class="clearfix">
+	{{#page.members}}
+	<div class="itemdiv memberdiv">
+		<div class="user">
+			<img alt="{{name}}'s avatar" src="{{path.assets}}/avatars/{{avatar}}" />
+		</div>
+		
+		<div class="body">
+			<div class="name"><a href="#">{{name}}</a></div>
+			<div class="time"><i class="icon-time"></i> <span class="green">{{time}}</span></div>
+			<div>
+				{{#pending}}
+				<span class="label label-warning">pending</span>									
+				<div class="inline position-relative">
+					<button class="btn btn-minier bigger btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-angle-down icon-only bigger-120"></i></button>
+					<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
+						<li><a href="#" class="tooltip-success" data-rel="tooltip" title="Approve" data-placement="right"><span class="green"><i class="icon-ok"></i></span></a></li>
+						<li><a href="#" class="tooltip-warning" data-rel="tooltip" title="Reject" data-placement="right"><span class="orange"><i class="icon-remove"></i></span> </a></li>
+						<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="right"><span class="red"><i class="icon-trash"></i></span> </a></li>
+					</ul>
+				</div>
+				{{/pending}}
+				{{#blocked}}
+				<span class="label label-important">blocked</span>
+				{{/blocked}}
+				{{#approved}}
+				<span class="label label-success arrowed-in">approved</span>
+				{{/approved}}
+				{{#online}}
+				<span class="label label-info arrowed-in  arrowed-in-right">online</span>
+				{{/online}}
+			</div>
+		</div>
+	</div>
+	{{/page.members}}
+</div>
+
+<div class="center">
+	<i class="icon-group icon-2x green"></i> &nbsp; <a href="#">See all members &nbsp; <i class="icon-arrow-right"></i></a>
+</div>
+<div class="hr hr-double hr8"></div>

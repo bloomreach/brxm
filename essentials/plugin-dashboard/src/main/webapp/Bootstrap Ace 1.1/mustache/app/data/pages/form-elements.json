@@ -1,0 +1,11 @@
+{
+ "title" : "Form Elements"
+ ,
+ "description" : "Common form elements and layouts"
+ ,
+ "styles" : ["jquery-ui" , "chosen" , "datepicker" , "timepicker", "daterangepicker" , "colorpicker"]
+ ,
+ "scripts" : ["jquery-ui" , "chosen" , "spinner" , "datepicker" , "timepicker" , "daterangepicker" , "colorpicker" , "knob" , "autosize", "inputlimiter", "maskedinput"]
+ ,
+ "ie_scripts" : [{"version":8, "name":"excanvas"}]
+}

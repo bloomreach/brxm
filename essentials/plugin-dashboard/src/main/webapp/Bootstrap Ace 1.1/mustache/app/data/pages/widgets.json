@@ -1,0 +1,7 @@
+{
+ "title" : "Widgets"
+ ,
+ "description" : "Widget Boxes & Containers"
+ ,
+ "scripts" : ["jquery-ui" , "slimscroll"]
+}

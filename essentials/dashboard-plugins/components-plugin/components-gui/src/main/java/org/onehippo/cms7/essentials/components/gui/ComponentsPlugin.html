@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en">
+
+<wicket:extend>
+    <h3>Select components</h3>
+    <div class="clearfix"></div>
+
+    <form wicket:id="form" class="form-vertical">
+        <fieldset>
+            <div class="control-group">
+
+                <div class="controls">
+                    <div wicket:id="group">
+                        <label>
+                            <select wicket:id="sites" name="sites" size="10">
+                            </select>
+                        </label>
+
+                        <label class="checkbox">
+                            <input type="checkbox" wicket:id="groupselector"/>
+                            <span class="label label-success">check/uncheck all</span>
+                        </label>
+
+                        <wicket:container wicket:id="components">
+                            <label>
+                                <input type="checkbox" wicket:id="checkbox" class="ace-checkbox-2"/>
+                                <span class="lbl" wicket:id="label">[LABEL]</span>
+                            </label>
+                        </wicket:container>
+
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" wicket:id="save">Save</button>
+        </fieldset>
+        <!--<div wicket:id="feedback">feedbackmessages will be put here</div>-->
+        <!--<div class="form-actions">-->
+        <!--<button type="button" wicket:id="submit" class="btn">Save</button>-->
+        <!--</div>-->
+    </form>
+</wicket:extend>
+</html>

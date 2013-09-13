@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>7.8.4</version>
+  </parent>
+
+  <name>Hippo Essentials dashboard plugins sdk</name>
+  <description>Hippo Essentials dashboard plugins sdk</description>
+  <artifactId>hippo-dashboard-plugin-sdk</artifactId>
+  <groupId>org.onehippo.cms7.essentials</groupId>
+  <version>1.01.00-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <junit.version>4.11</junit.version>
+    <wicket.version>6.9.0</wicket.version>
+    <maven-model.version>3.0.5</maven-model.version>
+    <commons-io.version>2.3</commons-io.version>
+    <tika-parsers.version>0.9</tika-parsers.version>
+    <core.jdt.version>3.3.0-v_771</core.jdt.version>
+    <commons-lang.version>2.6</commons-lang.version>
+    <guava.version>12.0.1</guava.version>
+    <jaxb-impl.version>2.2.6</jaxb-impl.version>
+    <freemarker.version>2.3.18</freemarker.version>
+    <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
+    <geronimo-jta_1.1_spec.version>1.1.1</geronimo-jta_1.1_spec.version>
+  </properties>
+
+  <modules>
+    <module>api</module>
+    <module>implementation</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-connector</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-modules</artifactId>
+        <version>${hippo.repository.version}</version>
+        <exclusions>
+          <exclusion>
+            <artifactId>tika-parsers</artifactId>
+            <groupId>org.apache.tika</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-model</artifactId>
+        <version>${maven-model.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-core</artifactId>
+        <version>${wicket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-extensions</artifactId>
+        <version>${wicket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.eclipse.jdt</groupId>
+        <artifactId>core</artifactId>
+        <type>jar</type>
+        <version>${core.jdt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>${jaxb-impl.version}</version>
+      </dependency>
+      <!--
+        //############################################
+        // TEST
+        //############################################
+      -->
+      <dependency>
+        <artifactId>tika-parsers</artifactId>
+        <groupId>org.apache.tika</groupId>
+        <version>${tika-parsers.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+        <version>${junit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-content-beans</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-api</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <inherited>true</inherited>
+          <configuration>
+            <target>1.7</target>
+            <source>1.7</source>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>http://maven.onehippo.com/maven2/</url>
+    </repository>
+  </repositories>
+
+
+</project>

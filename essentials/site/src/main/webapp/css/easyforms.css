@@ -1,0 +1,150 @@
+/*
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ */
+
+.form div, label {
+    font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+    font-size: 0.9em;
+}
+
+.form div:hover {
+    background-color: #DAE6EF;
+
+}
+
+.form div.ef-field, div.ef-buttons {
+    width: 400px;
+    clear: left;
+    margin: 0;
+    padding: 10px 0 8px 165px;
+    border-bottom: 1px dashed #999999;
+    height: 1%;
+    font-size: 0.8em;
+}
+
+form div.ef-buttons {
+    border: 0;
+}
+
+.form div.error {
+    font-size: 0.8em;
+    color: #FF0000;
+    display: block;
+    background-color: #FFFFE0;
+    border: 1px solid #ccc;
+    height: 20px;
+}
+
+.form label {
+    font-weight: 400;
+    float: left;
+    margin-left: -165px;
+    width: 160px;
+    font-size: 1em;
+    color: #666666;
+
+}
+
+.form input {
+    border: 1px solid #999999;
+}
+
+.form input[type="text"], .form select, .form textarea {
+    width: 350px;
+}
+
+.form input.date {
+    width: 175px;
+}
+
+.form input.textfield-other {
+    width: 280px;
+}
+
+.form textarea {
+    border: 1px solid #999999;
+    height: 160px;
+}
+
+.form h2 {
+    color: #ff3300;
+    font-size: 1.2em;
+}
+
+.ef-hint {
+    clear: both;
+    display: block;
+    color: #929292;
+    font-size: 0.85em;
+    font-style: italic;
+    margin-top: 3px;
+    text-align: left;
+}
+
+.ef-buttons {
+    border: 0;
+}
+
+* html .threepxfix {
+    margin-left: 3px;
+}
+
+/*
+    validation
+*/
+.fc-error {
+    background-color: #FFFFE0;
+    border: 1px solid #CCCCCC;
+}
+
+.ef-req {
+    color: #ff3333;
+}
+
+.ef-field div {
+    margin: 0;
+    padding: 0;
+    width: 350px;
+
+}
+
+.ef-text {
+    border: 0;
+    margin-top: 20px;
+}
+
+.ef-text p {
+    padding-left: 30px;
+    font-style: italic;
+}
+
+.fc-error div, .fc-error div:hover {
+    margin: 0;
+    border: 0;
+    line-height: 1em;
+    padding: 5px;
+    color: #FF0000;
+    font-size: 0.8em;
+}
+
+.ef-likert-table th {
+    color: #666666;
+    border-right: 1px solid #C1DAD7;
+    border-bottom: 1px solid #C1DAD7;
+    border-top: 1px solid #C1DAD7;
+    text-align: left;
+    padding: 2px 2px 2px 4px;
+}
+
+.ef-likert-table td {
+    border-right: 1px solid #C1DAD7;
+    border-bottom: 1px solid #C1DAD7;
+    padding: 2px 2px 2px 4px;
+    color: #666666;
+    width: 80px;
+}
+
+.nojs-error {
+    color: #FF0000;
+    font-size: 0.8em;
+}

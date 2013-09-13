@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-release</artifactId>
+    <version>7.8.1</version>
+  </parent>
+
+
+  <modelVersion>4.0.0</modelVersion>
+  <name>Hippo Essentials dashboard plugins</name>
+  <description>Hippo Essentials dashboard plugins</description>
+  <groupId>org.onehippo.cms7.essentials</groupId>
+  <artifactId>hippo-dashboard-plugins</artifactId>
+  <version>1.01.00-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
+    <junit.version>4.11</junit.version>
+    <hippo-dashboard-plugin-api.version>1.01.00-SNAPSHOT</hippo-dashboard-plugin-api.version>
+    <freemarker.version>2.3.18</freemarker.version>
+  </properties>
+
+  <modules>
+    <module>dashboard-setup-plugin</module>
+    <module>dashboard-gallery-plugin</module>
+    <module>dashboard-xinha-plugin</module>
+    <module>dashboard-relateddocs-plugin</module>
+    <module>dashboard-taxonomy-plugin</module>
+    <module>dashboard-restservices-plugin</module>
+    <module>dashboard-contentblocks-plugin</module>
+    <module>dashboard-easyforms-plugin</module>
+    <module>components-plugin</module>
+    <module>beanwriter-plugin</module>
+    <module>dashboard-wizard-plugin</module>
+  </modules>
+  <dependencyManagement>
+
+
+    <dependencies>
+      <!-- PLUGIN API -->
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-dashboard-plugin-api</artifactId>
+        <version>${hippo-dashboard-plugin-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+        <version>${hippo-dashboard-plugin-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-connector</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.freemarker</groupId>
+        <artifactId>freemarker</artifactId>
+        <version>${freemarker.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-client</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-api</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <scope>test</scope>
+        <version>${junit.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin.version}</version>
+          <inherited>true</inherited>
+          <configuration>
+            <target>1.7</target>
+            <source>1.7</source>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>http://maven.onehippo.com/maven2/</url>
+    </repository>
+  </repositories>
+
+</project>

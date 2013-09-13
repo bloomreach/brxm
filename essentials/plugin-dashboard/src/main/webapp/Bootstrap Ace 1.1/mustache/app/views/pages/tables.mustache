@@ -1,0 +1,131 @@
+<div class="row-fluid">
+	<div class="span12">
+		<table id="table_bug_report" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="center">
+						<label><input type="checkbox" /><span class="lbl"></span></label>
+					</th>
+					<th>Domain</th>
+					<th>Price</th>
+					<th class="hidden-480">Clicks</th>
+					<th class="hidden-phone"><i class="icon-time hidden-phone"></i> Update</th>
+					<th class="hidden-480">Status</th>
+					<th></th>
+				</tr>
+			</thead>
+									
+			<tbody>
+				{{#page.domains1}}
+				<tr>
+					<td class='center'>
+						<label><input type='checkbox' /><span class="lbl"></span></label>
+					</td>
+					<td><a href='#'>{{name}}</a></td>
+					<td>{{price}}</td>
+					<td class='hidden-480'>{{clicks}}</td>
+					<td class='hidden-phone'>{{update}}</td>
+					<td class='hidden-480'>
+						{{#expiring}}
+						<span class='label label-warning'>Expiring</span>
+						{{/expiring}}
+						{{#registered}}
+						<span class='label label-success'>Registered</span>
+						{{/registered}}
+						{{#flagged}}
+						<span class='label label-inverse arrowed-in'>Flagged</span>
+						{{/flagged}}
+						{{#sold}}
+						<span class='label label-info arrowed arrowed-righ'>Sold</span>
+						{{/sold}}
+					</td>
+					<td>
+						<div class="inline position-relative">
+							<button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-cog icon-only bigger-110"></i></button>
+							<ul class="dropdown-menu dropdown-icon-only dropdown-light pull-right dropdown-caret dropdown-close">
+								<li><a href="#" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
+								<li><a href="#" class="tooltip-warning" data-rel="tooltip" title="Flag" data-placement="left"><span class="blue"><i class="icon-flag"></i></span> </a></li>
+								<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="left"><span class="red"><i class="icon-trash"></i></span> </a></li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+				{{/page.domains1}}
+			</tbody>
+		</table>
+	</div><!--/span-->
+</div><!--/row-->
+
+
+
+<div class="row-fluid">
+	<h3 class="header smaller lighter blue">jQuery dataTables</h3>
+	<div class="table-header">
+		Results for "Latest Registered Domains"
+	</div>
+	
+		<table id="table_report" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="center">
+						<label><input type="checkbox" /><span class="lbl"></span></label>
+					</th>
+					<th>Domain</th>
+					<th>Price</th>
+					<th class="hidden-480">Clicks</th>
+					<th class="hidden-phone"><i class="icon-time hidden-phone"></i> Update</th>
+					<th class="hidden-480">Status</th>
+					<th></th>
+				</tr>
+			</thead>
+									
+			<tbody>
+
+				{{#page.domains2}}
+				<tr>
+					<td class='center'>
+						<label><input type='checkbox' /><span class="lbl"></span></label>
+					</td>
+					<td><a href='#'>{{name}}</a></td>
+					<td>{{price}}</td>
+					<td class='hidden-480'>{{clicks}}</td>
+					<td class='hidden-phone'>{{update}}</td>
+					<td class='hidden-480'>
+						{{#expiring}}
+						<span class='label label-warning'>Expiring</span>
+						{{/expiring}}
+						{{#registered}}
+						<span class='label label-success'>Registered</span>
+						{{/registered}}
+						{{#flagged}}
+						<span class='label label-inverse arrowed-in'>Flagged</span>
+						{{/flagged}}
+						{{#sold}}
+						<span class='label label-info arrowed arrowed-righ'>Sold</span>
+						{{/sold}}
+					</td>
+					<td class="td-actions">
+						<div class='hidden-phone visible-desktop btn-group'>
+							<button class='btn btn-mini btn-success'><i class='icon-ok bigger-120'></i></button>
+							<button class='btn btn-mini btn-info'><i class='icon-edit bigger-120'></i></button>
+							<button class='btn btn-mini btn-danger'><i class='icon-trash bigger-120'></i></button>
+							<button class='btn btn-mini btn-warning'><i class='icon-flag bigger-120'></i></button>
+						</div>
+						<div class='hidden-desktop visible-phone'>
+							<div class="inline position-relative">
+								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only bigger-120"></i></button>
+								<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
+									<li><a href="#" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
+									<li><a href="#" class="tooltip-warning" data-rel="tooltip" title="Flag" data-placement="left"><span class="blue"><i class="icon-flag"></i></span> </a></li>
+									<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="left"><span class="red"><i class="icon-trash"></i></span> </a></li>
+								</ul>
+							</div>
+						</div>
+					</td>
+				</tr>
+				{{/page.domains2}}
+
+			</tbody>
+		</table>
+	
+</div>

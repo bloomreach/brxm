@@ -1,0 +1,24 @@
+package org.onehippo.cms7.essentials.site.beans;
+
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+
+@Node(jcrType = "hippoplugins:basedocument")
+public class BaseDocument extends HippoDocument {
+
+    // TODO resolve constants
+    /*
+    private static final String TITLE = "hippoplugins:title2";
+    public String getTitle2() {
+            return getProperty(TITLE);
+    }
+    */
+
+    public String getTitle() {
+        return getProperty("hippoplugins:title");
+    }
+
+    public String getDescription() {
+        return getProperty("hippoplugins:description");
+    }
+}

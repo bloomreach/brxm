@@ -1,0 +1,25 @@
+/*
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ */
+
+package project.site.org.onehippo.cms7.essentials.dashboard.test.beans;
+
+import org.hippoecm.hst.content.beans.Node;
+
+/**
+ * @version "$Id: PluginDocument.txt 173014 2013-08-07 09:50:50Z mmilicevic $"
+ */
+@Node(jcrType = "hippoplugins:plugin")
+public class PluginDocument extends BaseDocument {
+
+
+
+    public String getPluginId() {
+        return getProperty("hippoplugins:pluginid");
+    }
+
+
+    public VendorDocument getVendor(){
+        return getLinkedBean("hippoplugins:vendor", VendorDocument.class);
+    }
+}

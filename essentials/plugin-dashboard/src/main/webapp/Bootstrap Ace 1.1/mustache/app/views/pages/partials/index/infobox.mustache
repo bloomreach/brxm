@@ -1,0 +1,44 @@
+<div class="infobox infobox-{{color}} {{#small}}infobox-small{{/small}} {{#dark}}infobox-dark{{/dark}}">
+	{{#icon}}
+	 <div class="infobox-icon">
+		<i class="{{icon}}"></i>
+	 </div>
+	{{/icon}}
+	{{#progress}}
+	 <div class="infobox-progress">
+		<div class="easy-pie-chart percentage" data-percent="{{progress}}" data-size="{{^small}}46{{/small}}{{#small}}39{{/small}}">
+			<span class="percent">{{progress}}</span>%
+		</div>
+	 </div>
+	{{/progress}}
+	{{#chart}}
+	 <div class="infobox-chart">
+		<span class="sparkline" data-values="{{chart}}"></span>
+	 </div>
+	{{/chart}}
+	
+	<div class="infobox-data">
+		{{#number}}
+		<span class="infobox-data-number">{{number}}</span>
+		{{/number}}
+		{{#text}}
+		<span class="infobox-text">{{text}}</span>
+		{{/text}}
+
+		{{#content}}{{! sometimes we have two content texts like in smaller infoboxes, so loop }}
+		<div class="infobox-content">{{{.}}}</div>
+		{{/content}}
+	</div>
+	{{#stat-success}}
+	 <div class="stat stat-success">{{stat-success}}</div>
+	{{/stat-success}}
+	{{#stat-important}}
+	 <div class="stat stat-important">{{stat-important}}</div>
+	{{/stat-important}}
+	{{#badge-success}}
+	 <div class="badge badge-success">{{badge-success}} <i class="icon-arrow-up"></i></div>
+	{{/badge-success}}
+	{{#badge-important}}
+	 <div class="badge badge-important">{{badge-important}} <i class="icon-arrow-down"></i></div>
+	{{/badge-important}}
+</div>

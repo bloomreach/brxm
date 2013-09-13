@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<collection page="1" totalSize="0">
+  <plugin>
+    <dependency>
+      <artifactId>dashboard-taxonomy-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <repositoryId></repositoryId>
+      <repositoryUrl></repositoryUrl>
+      <scope>compile</scope>
+      <version>1.01.00-SNAPSHOT</version>
+    </dependency>
+    <introduction>Editors can enrich their metadata using the Taxonomy plugin to categorize the content. The CMS administrator can edit the taxonomy itself.</introduction>
+    <title>Taxonomy plugin</title>
+    <vendor>
+      <content></content>
+      <introduction>Hippo sets the standard for how organizations can bring real-time relevance to their audience and is the foundation for personalized communication across all channels: mobile, social and web.</introduction>
+      <name>Hippo</name>
+      <url>http://www.onehippo.com/</url>
+    </vendor>
+  </plugin>
+  <plugin>
+    <dependency>
+    <artifactId>dashboard-easyforms-plugin</artifactId>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <repositoryId></repositoryId>
+      <repositoryUrl></repositoryUrl>
+      <scope>compile</scope>
+      <version>1.01.00-SNAPSHOT</version>
+    </dependency>
+    <introduction>The EasyForms plugin allows you to build simple HTML forms within Hippo CMS.</introduction>
+    <title>Easy Forms plugin</title>
+    <vendor>
+      <content></content>
+      <introduction>Hippo sets the standard for how organizations can bring real-time relevance to their audience and is the foundation for personalized communication across all channels: mobile, social and web.</introduction>
+      <name>Hippo</name>
+      <url>http://www.onehippo.com/</url>
+    </vendor>
+  </plugin>
+</collection>

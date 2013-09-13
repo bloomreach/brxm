@@ -1,0 +1,33 @@
+<div class="span2 pricing-span">
+	<div class="widget-box pricing-box-small">
+		<div class="widget-header header-color-{{title-color}}">
+			<h5 class="bigger lighter">{{title}}</h5>
+		</div>
+		<div class="widget-body">
+		 <div class="widget-main no-padding">
+			<ul class="unstyled list-striped pricing-table">
+				{{#values}}
+					<li>
+						{{#available}}
+						<i class="icon-ok green"></i>
+						{{/available}}
+						{{#unavailable}}
+						<i class="icon-remove red"></i>
+						{{/unavailable}}						
+						{{value}}
+					</li>
+				{{/values}}
+			</ul>
+			
+			<div class="price">
+				<span class="label label-large label-inverse arrowed-in arrowed-in-right">
+					{{price}}<small>/{{duration}}</small>
+				</span>
+			</div>
+		 </div>
+		 <div>
+			<a href="#" class="btn btn-block btn-small btn-{{btn-color}}"><span>Buy</span></a>
+		 </div>
+		</div>
+	</div>
+</div>

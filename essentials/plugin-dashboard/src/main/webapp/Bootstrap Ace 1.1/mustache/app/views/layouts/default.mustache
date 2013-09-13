@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{page.title}} - {{site.title}}</title>
+		<meta name="description" content="{{page.description}}" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<!-- basic styles -->
+		<link href="{{{path.assets}}}/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="{{{path.assets}}}/css/bootstrap-responsive.min.css" rel="stylesheet" />
+
+		<link rel="stylesheet" href="{{{path.assets}}}/css/font-awesome.min.css" />
+		<!--[if IE 7]>
+		  <link rel="stylesheet" href="{{{path.assets}}}/css/font-awesome-ie7.min.css" />
+		<![endif]-->
+
+
+		<!-- page specific plugin styles -->
+		{{#page.styles}}
+		<link rel="stylesheet" href="{{{path.assets}}}/css/{{{.}}}" />
+		{{/page.styles}}
+		
+		<!-- fonts -->
+		<link rel="stylesheet" href="{{{site.protocol}}}//fonts.googleapis.com/css?family=Open+Sans:400,300" />
+		
+		<!-- ace styles -->
+		<link rel="stylesheet" href="{{{path.assets}}}/css/ace.min.css" />
+		<link rel="stylesheet" href="{{{path.assets}}}/css/ace-responsive.min.css" />
+		<link rel="stylesheet" href="{{{path.assets}}}/css/ace-skins.min.css" />
+		<!--[if lte IE 8]>
+		  <link rel="stylesheet" href="{{{path.assets}}}/css/ace-ie.min.css" />
+		<![endif]-->
+
+		<!-- inline styles if any -->
+		{{#page.inline_styles}}
+		<style type="text/css">
+		{{{page.inline_styles}}}
+		</style>
+		{{/page.inline_styles}}
+	</head>
+
+
+	<body>
+	{{> layout.topbar}}
+
+		<div class="container-fluid" id="main-container">
+		{{> layout.sidenav}}
+
+			<div id="main-content" class="clearfix">
+					{{> layout.breadcrumbs}}
+
+					<div id="page-content" class="clearfix">
+
+						{{^page.no-header}}{{!if no such thing as no-header, then print header}}
+						<div class="page-header position-relative">
+							<h1>{{page.title}} {{#page.description}}<small><i class="icon-double-angle-right"></i> {{page.description}}</small>{{/page.description}}</h1>
+						</div><!--/.page-header-->
+						{{/page.no-header}}
+
+						<div class="row-fluid">
+						<!-- PAGE CONTENT BEGINS HERE -->
+{{> page.content }}
+						<!-- PAGE CONTENT ENDS HERE -->
+						 </div><!--/row-->
+
+					</div><!--/#page-content-->
+
+					{{> layout.settings}}
+
+			</div><!--/#main-content -->
+
+
+		</div><!--/.fluid-container#main-container-->
+
+
+
+
+		<a href="#" id="btn-scroll-up" class="btn btn-small btn-inverse">
+			<i class="icon-double-angle-up icon-only bigger-110"></i>
+		</a>
+
+
+		<!-- basic scripts -->
+		<script src="{{{site.protocol}}}//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		window.jQuery || document.write("<script src='{{{path.assets}}}/js/jquery-1.9.1.min.js'>"+"<"+"/script>");
+		</script>
+
+		<script src="{{{path.assets}}}/js/bootstrap.min.js"></script>
+
+		<!-- page specific plugin scripts -->
+		{{!put IE only scripts here, currently we use ExCanvas.js from time to time}}
+		{{#page.ie_scripts}}
+		<!--[if lte IE {{version}}]>
+		  <script src="{{{path.assets}}}/js/{{name}}"></script>
+		<![endif]-->
+		{{/page.ie_scripts}}
+
+		{{#page.scripts}}
+		<script src="{{{path.assets}}}/js/{{{.}}}"></script>
+		{{/page.scripts}}
+
+		<!-- ace scripts -->
+		<script src="{{{path.assets}}}/js/ace-elements.min.js"></script>
+		<script src="{{{path.assets}}}/js/ace.min.js"></script>
+
+
+		<!-- inline scripts related to this page -->
+		{{#page.inline_scripts}}
+		<script type="text/javascript">
+		{{{page.inline_scripts}}}
+		</script>
+		{{/page.inline_scripts}}
+
+	</body>
+</html>

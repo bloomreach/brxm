@@ -1,0 +1,30 @@
+<div class="span3">
+	<div class="widget-box pricing-box">
+		<div class="widget-header header-color-{{title-color}}">
+			<h5 class="bigger lighter">{{title}}</h5>
+		</div>
+		<div class="widget-body">
+			<div class="widget-main">
+				<ul class="unstyled spaced2">
+					{{#features}}
+						{{^unavailable}}
+						<li><i class="icon-ok green"></i> {{name}} </li>
+						{{/unavailable}}
+						{{#unavailable}}
+						<li><i class="icon-remove red"></i> {{name}} </li>
+						{{/unavailable}}
+					{{/features}}
+				</ul>
+				
+				<hr />
+				<div class="price">
+					{{price}}<small>/{{duration}}</small>
+				</div>
+			</div>
+			
+			<div>
+				<a href="#" class="btn btn-block btn-{{btn-color}}"><span>Buy</span></a>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,21 @@
+{
+ "timepicker" : "bootstrap-timepicker.css",
+
+ "chosen" : "chosen.css",
+ 
+ "colorbox" : "colorbox.css",
+
+ "colorpicker" : "colorpicker.css",
+
+ "datepicker" : "datepicker.css",
+
+ "daterangepicker" : "daterangepicker.css",
+
+ "fullcalendar" : "fullcalendar.css",
+
+ "gritter" : "jquery.gritter.css",
+
+ "jquery-ui" : "jquery-ui-1.10.3.custom.min.css",
+
+ "prettify" : "prettify.css"
+}

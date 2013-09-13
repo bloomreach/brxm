@@ -1,0 +1,36 @@
+<li class="green">
+	<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+		<i class="icon-envelope-alt icon-only icon-animated-vertical"></i>
+		<span class="badge badge-success">{{layout.topbar_messages.count}}</span>
+	</a>
+	<ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-closer">
+		<li class="nav-header">
+			<i class="icon-envelope"></i> {{layout.topbar_messages.count}} Messages
+		</li>
+		
+		{{#layout.topbar_messages.latest}}
+		<li>
+			<a href="#">
+				<img src="{{path.assets}}/avatars/{{img}}" class="msg-photo" alt="{{name}}'s Avatar">
+				<span class="msg-body">
+					<span class="msg-title">
+						<span class="blue">{{name}}:</span>
+						{{summary}}
+					</span>
+					<span class="msg-time">
+						<i class="icon-time"></i> <span>{{time}}</span>
+					</span>
+				</span>
+			</a>
+		</li>
+		{{/layout.topbar_messages.latest}}
+		
+		<li>
+			<a href="#">
+				See all messages
+				<i class="icon-arrow-right"></i>
+			</a>
+		</li>
+
+	</ul>
+</li>

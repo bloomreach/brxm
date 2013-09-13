@@ -1,0 +1,31 @@
+<div class="dialogs">
+	{{#page.conversations}}
+	<div class="itemdiv dialogdiv">
+		<div class="user">
+			<img alt="{{name}}'s Avatar" src="{{path.assets}}/avatars/{{avatar}}" />
+		</div>
+
+		<div class="body">
+			<div class="time"><i class="icon-time"></i> <span class="{{time-color}}">{{time}}</span></div>
+			<div class="name">
+				<a href="#">{{name}}</a>
+				{{#admin}}
+				<span class="label label-info arrowed arrowed-in-right">admin</span>
+				{{/admin}}
+			</div>
+			<div class="text">{{message}}</div>
+			
+			<div class="tools">
+				<a href="#" class="btn btn-minier btn-info"><i class="icon-only icon-share-alt"></i></a>
+			</div>
+		</div>
+	</div>
+	{{/page.conversations}}
+</div>
+
+<form>
+	<div class="form-actions input-append">
+		<input placeholder="Type your message here ..." type="text" class="width-75" name="message" />
+		<button class="btn btn-small btn-info no-radius" onclick="return false;"><i class="icon-share-alt"></i> <span class="hidden-phone">Send</span></button>
+	</div>
+</form>

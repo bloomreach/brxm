@@ -1,0 +1,28 @@
+{   "id": "12345",
+    "name": "",
+    "vendor": "",
+    "description": "Easy forms description",
+    "dependencies": [
+    {
+        "projectType": "HST",
+        "groupId": "org.onehippo.forge",
+        "artifact": "easy-forms-hst2",
+        "version": "2.12.03",
+        "scope": "compile"
+    },
+    {
+        "projectType": "CMS",
+        "groupId": "org.onehippo.forge",
+        "artifact": "easy-forms-repository2",
+        "version": "2.12.03",
+        "scope": "compile"
+    },
+    {
+        "projectType": "CMS",
+        "groupId": "org.onehippo.forge",
+        "artifact": "easy-forms-cms2",
+        "version": "2.12.03",
+        "scope": "compile"
+    }
+]
+}

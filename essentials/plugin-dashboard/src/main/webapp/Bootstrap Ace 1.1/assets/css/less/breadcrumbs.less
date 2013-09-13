@@ -1,0 +1,81 @@
+//some breadcrumbs variables
+@breadcrumb-height:40px;
+@breadcrumb-bg:#F5F5F5;
+@breadcrumb-border:#E5E5E5;
+@breadcrumb-text-color:#555;
+@breadcrumb-link-color:#4C8FBD;
+@breadcrumb-arrow-color:#B2B6BF;
+
+
+
+/* breadcrumbs and searchbox */
+#breadcrumbs {
+ position:relative;
+ z-index:13;
+
+ border-bottom:1px solid @breadcrumb-border;
+ background-color:@breadcrumb-bg;
+ 
+ min-height:@breadcrumb-height;
+ line-height:(@breadcrumb-height - 1);
+
+ padding:0 12px 0 0;
+ 
+ display:block;
+ 
+ &.fixed {
+   position:fixed;
+   left:(@sidebar-width + 1); right:0;
+ }
+}
+
+
+.breadcrumb {
+ background-color:transparent;
+ display:inline-block;
+ line-height:24px;
+
+ margin:0 22px 0 12px; padding:0;
+
+ font-size:13px;
+ color:#333;
+ 
+ border-radius:0;
+  > li {
+    & , &.active {
+	  color:@breadcrumb-text-color;
+	}
+	
+	> .divider {
+	  padding:0 4px;
+	}
+	
+	> a {
+	  display:inline-block;
+	  padding:0 4px;
+	  color:@breadcrumb-link-color;
+    }
+  }
+  
+
+  .icon-home {
+	 margin-left:4px; margin-right:2px;
+	 font-size:20px;
+	 position:relative; top:2px;
+  }
+ 
+  .icon-angle-right {
+	 height:22px;
+	 padding:0;
+	 margin:0;
+
+	 position:relative; top:1px;
+
+	 font-size:14px;
+	 color:@breadcrumb-arrow-color;
+  }
+ 
+}
+
+
+

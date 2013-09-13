@@ -1,0 +1,12 @@
+[
+   	 { "link" :"index", "title" : "Dashboard", "icon" : "icon-dashboard" } ,
+	 {
+	  "link" : null, "title" : "UI Elements" , "icon" : "icon-desktop",
+	  "submenu" :
+	  [
+		{ "link" : "elements" , "title" : "Elements" } ,
+
+		{ "link" : "buttons" , "title" : "Buttons & Icons" }
+	  ]
+	 }
+]

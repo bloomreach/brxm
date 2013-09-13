@@ -1,0 +1,51 @@
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+    <ul class="nav nav-list">
+        <li>
+            <a href="#" wicket:id="dashboardLink">
+                <i class="icon-cogs"></i>
+                <span class="menu-text"> Setup </span>
+            </a>
+        </li>
+        <li>
+            <a href="#" wicket:id="marketplaceLink">
+                <i class="icon-exchange"></i>
+                <span class="menu-text"> Marketplace </span>
+            </a>
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="icon-wrench"></i>
+                <span class="menu-text"> System configuration </span>
+                <b class="arrow icon-angle-down"></b>
+            </a>
+            <ul class="submenu">
+                <wicket:container wicket:id="mainPlugins">
+                    <li>
+                        <a href="#" wicket:id="item">
+                            <i class="icon-double-angle-right"></i>
+                            <wicket:container wicket:id="itemLabel">label</wicket:container>
+                        </a>
+                    </li>
+                </wicket:container>
+            </ul>
+        </li>
+        <li>
+            <a href="#" class="dropdown-toggle">
+                <i class="icon-desktop"></i>
+                <span class="menu-text"> Plugin configuration </span>
+                <b class="arrow icon-angle-down"></b>
+            </a>
+            <ul class="submenu">
+                <wicket:container wicket:id="menuItems">
+                    <li>
+                        <a href="#" wicket:id="item">
+                            <i class="icon-double-angle-right"></i>
+                            <wicket:container wicket:id="itemLabel">label</wicket:container>
+                        </a>
+                    </li>
+                </wicket:container>
+            </ul>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</wicket:panel>

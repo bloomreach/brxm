@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="versions">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:folder</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippotranslation:translated</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>42b7d6d8-d8f6-4540-883d-55ba73a263a4</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+    <sv:value>new-translated-folder</sv:value>
+    <sv:value>new-document</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:id" sv:type="String">
+    <sv:value>230738e6-ffde-4050-a25f-7de232ff1787</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:locale" sv:type="String">
+    <sv:value>en</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippotranslation:translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippotranslation:translations</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="easyforms">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>hippotranslation:translated</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+      <sv:value>38b118b3-e5e2-44a5-bd9c-6a290abcd0c2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+      <sv:value>new-translated-folder</sv:value>
+      <sv:value>new-document</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippotranslation:id" sv:type="String">
+      <sv:value>b9304d99-c96a-47a7-a60d-7b2afe620c29</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippotranslation:locale" sv:type="String">
+      <sv:value>en</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippotranslation:translations">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippotranslation:translations</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="version">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>hippo:hardhandle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>bf7c717c-e297-4535-9310-e1bbaa5c6ec8</sv:value>
+      </sv:property>
+      <sv:node sv:name="version">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippoplugins:version</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>07388ca0-dec7-45b0-89a2-55d41fb89662</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+          <sv:value>live</sv:value>
+          <sv:value>preview</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+          <sv:value>versions/easyforms/version</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippoplugins:pluginid" sv:type="String">
+          <sv:value>12345</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippoplugins:version" sv:type="String">
+          <sv:value>2.12.03</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:holder" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:state" sv:type="String">
+          <sv:value>published</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+          <sv:value>live</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+          <sv:value>2013-03-08T14:33:15.400+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+          <sv:value>2013-03-08T14:38:01.075+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+          <sv:value>admin</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+          <sv:value>2013-03-08T14:38:02.844+01:00</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:id" sv:type="String">
+          <sv:value>652d1f93-4a14-411f-b39a-e5ee629b3734</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+          <sv:value>en</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippotranslation:translations">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippotranslation:translations</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoplugins:dependency">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippoplugins:dependency</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:artifactid" sv:type="String">
+            <sv:value>easy-forms-hst</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:dependencytype" sv:type="String">
+            <sv:value>jar</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:groupid" sv:type="String">
+            <sv:value>org.onehippo.forge</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:projecttype" sv:type="String">
+            <sv:value>site</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:scope" sv:type="String">
+            <sv:value>compile</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:version" sv:type="String">
+            <sv:value>2.12.03</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoplugins:dependency">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippoplugins:dependency</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:artifactid" sv:type="String">
+            <sv:value>easy-forms-hst</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:dependencytype" sv:type="String">
+            <sv:value>jar</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:groupid" sv:type="String">
+            <sv:value>org.onehippo.forge</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:projecttype" sv:type="String">
+            <sv:value>cms</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:scope" sv:type="String">
+            <sv:value>compile</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:version" sv:type="String">
+            <sv:value>2.12.03</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippoplugins:dependency">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippoplugins:dependency</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:artifactid" sv:type="String">
+            <sv:value>easy-forms-repository</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:dependencytype" sv:type="String">
+            <sv:value>jar</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:groupid" sv:type="String">
+            <sv:value>org.onehippo.forge</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:projecttype" sv:type="String">
+            <sv:value>cms</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:scope" sv:type="String">
+            <sv:value>compile</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippoplugins:version" sv:type="String">
+            <sv:value>2.12.03</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>

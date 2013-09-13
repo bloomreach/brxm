@@ -1,0 +1,36 @@
+package org.onehippo.cms7.essentials.installer;
+
+import org.apache.wicket.RuntimeConfigurationType;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.protocol.http.WebApplication;
+
+/**
+ * Application object for your web application. If you want to run this application without deploying, run the Start class.
+ *
+ * @see org.onehippo.cms7.essentials.installer.Start#main(String[])
+ */
+public class WicketApplication extends WebApplication {
+    /**
+     * @see org.apache.wicket.Application#getHomePage()
+     */
+    @Override
+    public Class<? extends WebPage> getHomePage() {
+        return HomePage.class;
+    }
+
+    /**
+     * @see org.apache.wicket.Application#init()
+     */
+    @Override
+    public void init() {
+        super.init();
+        getMarkupSettings().setStripWicketTags(true);
+
+    }
+
+    @Override
+    public RuntimeConfigurationType getConfigurationType() {
+        // TODO call super, testing only
+        return RuntimeConfigurationType.DEVELOPMENT;
+    }
+}

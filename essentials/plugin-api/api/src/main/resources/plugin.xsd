@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns="http://www.onehippo.org/essentials" targetNamespace="http://www.onehippo.org/essentials">
+  <xs:element name="plugin" type="pluginType"/>
+  <!--
+    //############################################
+    // SCREENSHOTS
+    //############################################
+
+  -->
+  <xs:complexType name="screenshotsType">
+    <xs:sequence>
+      <xs:element type="screenshotType" name="screenshot" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="screenshotType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="path"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!--
+    //############################################
+    // ASSETS
+    //############################################
+
+  -->
+  <xs:simpleType name="mimeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="text/plain"/>
+      <xs:enumeration value="image/jpeg"/>
+      <xs:enumeration value="image/png"/>
+      <xs:enumeration value="application/pdf"/>
+      <xs:enumeration value="image/gif"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:complexType name="assetsType" mixed="true">
+    <xs:sequence>
+      <xs:element type="assetType" name="asset" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- NOTE: if URI is defined, data value will be ignored-->
+  <xs:complexType name="assetType" mixed="true">
+    <xs:attribute use="required" name="id"/>
+    <xs:attribute use="required" name="type" type="mimeType" default="text/plain"/>
+    <xs:attribute use="optional" name="url" type="xs:anyURI"/>
+  </xs:complexType>
+
+  <xs:complexType name="pluginType">
+    <xs:all minOccurs="0" maxOccurs="1">
+      <xs:element type="xs:string" name="name" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="plugin-class" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="type" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="description" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="vendor" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="documentation-link" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:string" name="issues-link" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="screenshotsType" name="screenshots" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="assetsType" name="assets" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:string" name="vendorLink" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:string" name="icon" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+</xs:schema>

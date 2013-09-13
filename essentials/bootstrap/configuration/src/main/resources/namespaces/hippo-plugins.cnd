@@ -1,0 +1,27 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippoplugins'='http://www.onehippo.org/hippoplugins/nt/1.0'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+
+[hippoplugins:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[hippoplugins:dependency] > hippo:compound, hippostd:relaxed
+  orderable
+
+[hippoplugins:newsdocument] > hippoplugins:basedocument, hippostd:relaxed
+  orderable
+
+[hippoplugins:plugin] > hippoplugins:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[hippoplugins:textdocument] > hippoplugins:basedocument, hippostd:relaxed
+  orderable
+
+[hippoplugins:vendor] > hippoplugins:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[hippoplugins:version] > hippoplugins:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+

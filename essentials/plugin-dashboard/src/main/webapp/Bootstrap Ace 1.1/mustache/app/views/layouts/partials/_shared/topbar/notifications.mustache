@@ -1,0 +1,34 @@
+<li class="purple">
+	<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+		<i class="icon-bell-alt icon-only icon-animated-bell"></i>
+		<span class="badge badge-important">{{layout.topbar_notifications.count}}</span>
+	</a>
+	<ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-closer">
+		<li class="nav-header">
+			<i class="icon-warning-sign"></i> {{layout.topbar_notifications.count}} Notifications
+		</li>
+
+		{{#layout.topbar_notifications.latest}}
+		<li>
+			<a href="#">
+				{{#badge}}
+				<div class="clearfix">
+					<span class="pull-left"><i class="btn btn-mini no-hover {{icon-class}} {{icon}}"></i> {{title}}</span>
+					<span class="pull-right badge {{badge-class}}">{{badge}}</span>					
+				</div>
+				{{/badge}}
+				{{^badge}}
+					<i class="btn btn-mini {{icon-class}} {{icon}}"></i> {{title}}
+				{{/badge}}
+			</a>
+		</li>
+		{{/layout.topbar_notifications.latest}}
+
+		<li>
+			<a href="#">
+				See all notifications
+				<i class="icon-arrow-right"></i>
+			</a>
+		</li>
+	</ul>
+</li>

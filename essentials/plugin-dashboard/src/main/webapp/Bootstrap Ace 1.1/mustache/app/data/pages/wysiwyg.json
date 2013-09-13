@@ -1,0 +1,7 @@
+{
+ "title" : "Wysiwyg & Markdown Editor"
+ ,
+ "description" : null
+ ,
+ "scripts" : ["markdown", "wysiwyg" , "bootbox"]
+}

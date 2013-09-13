@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      lang="en">
+<wicket:panel>
+    <div class="widget-box ">
+        <div class="widget-header">
+            <h5>
+                <wicket:container wicket:id="title">[TITLE]</wicket:container>
+            </h5>
+        </div>
+        <div class="widget-body">
+            <div class="widget-main">
+                <wicket:child>
+                    [PANEL CONTENT]
+                </wicket:child>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid">
+        <ul class="ace-thumbnails">
+            <li wicket:id="screenshots"><a wicket:id="link"><img wicket:id="image"/></a></li>
+        </ul>
+    </div>
+
+    <script type="application/javascript">
+        //############################################
+        // GALLERY
+        //############################################
+        var colorbox_params = {
+            reposition: true,
+            scalePhotos: true,
+            scrolling: false,
+            previous: '<i class="icon-arrow-left"></i>',
+            next: '<i class="icon-arrow-right"></i>',
+            close: '&times;',
+            current: '{current} of {total}',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            onOpen: function () {
+                document.body.style.overflow = 'hidden';
+            },
+            onClosed: function () {
+                document.body.style.overflow = 'auto';
+            },
+            onComplete: function () {
+                $.colorbox.resize();
+            }
+        };
+
+        $('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
+        $("#cboxLoadingGraphic").append("<i class='icon-spinner orange'></i>");//let's add a custom loading icon
+
+
+    </script>
+
+
+</wicket:panel>
+</html>

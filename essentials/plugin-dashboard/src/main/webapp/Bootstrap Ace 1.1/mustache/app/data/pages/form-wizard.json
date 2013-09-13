@@ -1,0 +1,9 @@
+{
+ "title" : "Form Wizard"
+ ,
+ "description" : "and Validation"
+ ,
+ "styles" : ["chosen"]
+ ,
+ "scripts" : ["wizard" , "validate" , "bootbox" , "maskedinput" , "chosen"]
+}

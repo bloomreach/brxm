@@ -1,0 +1,28 @@
+/*
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ */
+
+package project.site.org.onehippo.cms7.essentials.dashboard.test.beans;
+
+import java.util.List;
+
+import org.hippoecm.hst.content.beans.Node;
+import project.site.org.onehippo.cms7.essentials.dashboard.test.beans.compounds.DependencyCompound;
+
+/**
+ * @version "$Id: VersionDocument.txt 173014 2013-08-07 09:50:50Z mmilicevic $"
+ */
+@Node(jcrType = "hippoplugins:version")
+public class VersionDocument extends BaseDocument {
+
+
+    public String getVersion() {
+        return getProperty("hippoplugins:version");
+    }
+
+
+    public List<DependencyCompound> getDependencies() {
+        return getChildBeans(DependencyCompound.class);
+    }
+
+}
