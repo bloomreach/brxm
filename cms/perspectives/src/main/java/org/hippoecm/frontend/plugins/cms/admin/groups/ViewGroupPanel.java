@@ -135,9 +135,8 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 new StringResourceModel("group-members-label", this, new Model<Group>(group)));
         add(groupMembersLabel);
         ArrayList<DetachableUser> membersOfGroup = new ArrayList<DetachableUser>(group.getMembersAsDetachableUsers());
-        final Model<ArrayList<DetachableUser>> listModel = new Model<ArrayList<DetachableUser>>(membersOfGroup);
-        final GroupMembersListView groupMembersListView =
-                new GroupMembersListView(group, "groupmembers", listModel, context);
+        Model<ArrayList<DetachableUser>> listModel = new Model<ArrayList<DetachableUser>>(membersOfGroup);
+        GroupMembersListView groupMembersListView = new GroupMembersListView(group, "groupmembers", listModel, context);
         add(groupMembersListView);
     }
 
@@ -296,11 +295,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             final DetachableUser detachableUser = item.getModelObject();
             final User user = detachableUser.getUser();
             item.add(new ViewUserLinkLabel("username", detachableUser, ViewGroupPanel.this, context));
-            item.add(
-                    new DeleteGroupMembershipActionLinkLabel(
-                            "remove", new ResourceModel("group-member-remove-action"),
-                            user
-                    ));
+            item.add(new DeleteGroupMembershipActionLinkLabel(
+                    "remove", new ResourceModel("group-member-remove-action"), user
+            ));
         }
 
         private class DeleteGroupMembershipActionLinkLabel extends AjaxLinkLabel {
@@ -346,7 +343,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     /**
      * Delete a member from the list of group members.
      *
-     * @param userName      The userName of the user which is a member of the Group.
+     * @param userName The userName of the user which is a member of the Group.
      */
     private void deleteGroupMemberShip(final String userName) {
         try {

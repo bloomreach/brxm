@@ -92,6 +92,7 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_PROVIDER = HippoNodeType.HIPPO_SECURITYPROVIDER;
     public static final String PROP_PREVIOUSPASSWORDS = HippoNodeType.HIPPO_PREVIOUSPASSWORDS;
     public static final String PROP_PASSWORDLASTMODIFIED = HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
+    public static final String PROP_SYSTEM = HippoNodeType.HIPPO_SYSTEM;
 
     private static final String QUERY_USER = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
@@ -102,6 +103,7 @@ public class User implements Comparable<User>, IClusterable {
 
     private boolean external = false;
     private boolean active = true;
+    private boolean system = false;
     private String path;
     private String username;
     private String firstName;
@@ -138,14 +140,11 @@ public class User implements Comparable<User>, IClusterable {
         final String queryString = QUERY_USER.replace("{}", Text.escapeIllegalJcr10Chars(ISO9075.encode(NodeNameCodec.encode(username))));
         try {
             final Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            if (query.execute().getNodes().hasNext()) {
-                return true;
-            }
+            return query.execute().getNodes().hasNext();
         } catch (RepositoryException e) {
             log.error("Unable to check if user '{}' exists, returning true", username, e);
             return true;
         }
-        return false;
     }
 
     /**
@@ -180,6 +179,10 @@ public class User implements Comparable<User>, IClusterable {
 
     public void setActive(final boolean active) {
         this.active = active;
+    }
+
+    public boolean isSystemUser() {
+        return system;
     }
 
     public String getUsername() {
@@ -332,6 +335,8 @@ public class User implements Comparable<User>, IClusterable {
                 provider = p.getString();
             } else if (name.equals(PROP_PASSWORDLASTMODIFIED)) {
                 passwordLastModified = p.getDate();
+            } else if (name.equals(PROP_SYSTEM)) {
+                system = p.getBoolean();
             } else {
                 properties.put(name, p.getString());
             }

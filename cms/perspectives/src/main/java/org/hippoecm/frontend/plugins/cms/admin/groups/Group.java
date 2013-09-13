@@ -224,12 +224,24 @@ public class Group implements Comparable<Group>, IClusterable {
         }
     }
 
+    /**
+     * Returns all non-system users that are part of this group, including users that don't exist anymore
+     * @return a list of {@link User}s
+     * @throws RepositoryException
+     */
     public List<String> getMembers() throws RepositoryException {
         List<String> members = new ArrayList<String>();
         if (node.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
             Value[] vals = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
             for (Value val : vals) {
-                members.add(val.getString());
+                String username = val.getString();
+                if (User.userExists(username)) {
+                    User user = new User(username);
+                    if (user.isSystemUser()) {
+                        continue;
+                    }
+                }
+                members.add(username);
             }
         }
         Collections.sort(members);
