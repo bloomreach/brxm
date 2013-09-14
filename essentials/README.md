@@ -1,5 +1,5 @@
 #Hippo Essentials
-===
+
 
 Hippo Essentials is a project aimed at speeding up [Hippo CMS](http://www.onehippo.org) project implementations. It allows developers to easily install and configure Hippo CMS functionalities.
 
