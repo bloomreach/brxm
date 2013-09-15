@@ -11,6 +11,36 @@ To get started with the Hippo Essentials checkout the current master branch.
 $ git clone https://github.com/onehippo/essentials.git
 ```
 
+
+
+Create local working branch to work on:
+```
+$ git checkout -b YOUR_LOCAL_BRANCH_NAME
+```
+
+Now work on files, use git status to & git add and git commit files.
+NOTE: This can be done within Intellij as well, just commit files
+
+Push your changes to remote repository, -u option is to create remote tracking branch:
+
+```
+$ git push -u origin YOUR_LOCAL_BRANCH_NAME
+```
+This will make a remote branch, visible to other team members.
+
+Once you are make changes,  use git push to push your changes to above mentioned remote branch.
+Once you are ready to integrate your work into master, request a pull request through GITHUB website.
+
+NOTE: If you wanna merge your changes yourself do following:
+
+
+```
+$ git checkout master
+$ git pull
+$ git pull origin YOUR_LOCAL_BRANCH_NAME
+$ git push
+```
+
 ##Running locally
 
 
