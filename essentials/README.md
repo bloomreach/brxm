@@ -41,6 +41,11 @@ $ git pull origin YOUR_LOCAL_BRANCH_NAME
 $ git push
 ```
 
+To delete remote branch:
+```
+$ git push origin --delete  YOUR_LOCAL_BRANCH_NAME
+```
+
 ##Running locally
 
 
