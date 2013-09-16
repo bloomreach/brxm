@@ -86,9 +86,13 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 final boolean nextAvailable = wizardModel.isNextAvailable();
-                final EssentialsWizardStep activeStep = (EssentialsWizardStep) wizardModel.getActiveStep();
-                activeStep.setProcessed(true);
-                if (nextAvailable) {
+                final IWizardStep activeStep = wizardModel.getActiveStep();
+                activeStep.applyState();
+                final boolean complete = activeStep.isComplete();
+                if(!complete){
+                    log.info("Current step not completed, stay: {}," , activeStep);
+                }
+                if (complete && nextAvailable) {
                     wizardModel.next();
                     onActiveStepChanged(wizardModel.getActiveStep());
                     if (!wizardModel.isNextAvailable()) {
@@ -125,8 +129,13 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
 
     @Override
     public void onActiveStepChanged(final IWizardStep newStep) {
-        form.replace(newStep.getView("view", this, this));
+        if(newStep.isComplete()){
+            form.replace(newStep.getView("view", this, this));
+        }
+
     }
+
+
 
     @Override
     public void onCancel() {

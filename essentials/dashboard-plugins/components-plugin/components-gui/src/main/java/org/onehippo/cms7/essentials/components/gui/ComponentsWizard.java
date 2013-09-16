@@ -19,7 +19,8 @@ public class ComponentsWizard extends DashboardPlugin {
     public ComponentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
         final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
-        panel.addWizard(new DocumentRegisterPanel("installer"));
+        panel.addWizard(new DocumentRegisterPanel(this, "installer"));
+        panel.addWizard(new DocumentRegisterPanel(this, "installer2"));
         //
         // panel.addWizard(new DocumentRegisterPanel("installer2"));
         //

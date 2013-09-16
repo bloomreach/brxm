@@ -85,7 +85,7 @@ public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
     public static final String JSP_FOLDER = File.separator + "essentials" + File.separator + "components" + File.separator;
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ComponentsPlugin.class);
-    final ListChoice<String> sitesChoice;
+    private final ListChoice<String> sitesChoice;
     private String selectedSite;
     private List<String> selectedComponents = new ArrayList<>();
 
