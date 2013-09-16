@@ -378,6 +378,11 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/.DS_Store
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/.idea
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/*.iml
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/.DS_Store
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/.idea
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/target
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/target
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/hippo-plugins.iws
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/target

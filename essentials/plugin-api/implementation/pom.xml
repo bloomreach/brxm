@@ -157,6 +157,10 @@
       <version>1.2.16</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-common</artifactId>
+    </dependency>
 
   </dependencies>
 

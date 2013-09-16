@@ -17,11 +17,12 @@
 
 
   <properties>
-    <!--  OVERRIDE SERVICES VERSION -->
-    <!--<hippo.services.version>1.03.01-alpha</hippo.services.version>
-    <hippo.repository.version>2.25.02-alpha</hippo.repository.version>
-    <hippo.cms.version>2.25.01-alpha</hippo.cms.version>-->
+
     <!--***START temporary override of versions*** -->
+    <hippo.cms.version>2.24.05</hippo.cms.version>
+    <hippo.hst.version>2.26.06</hippo.hst.version>
+    <hippo.repository.version>2.24.08</hippo.repository.version>
+    <hippo.addon-channel-manager.version>2.24.06</hippo.addon-channel-manager.version>
     <!-- ***END temporary override of versions*** -->
 
     <jstl.version>1.1.2</jstl.version>
