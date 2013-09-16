@@ -1515,6 +1515,11 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/.idea
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/target
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/*.iml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/.DS_Store
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/.idea
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/hippo-plugins.iws
