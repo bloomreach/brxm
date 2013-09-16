@@ -281,6 +281,7 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
 dashboard-plugins/components-plugin/components-library/src/main/resources/META-INF/plugin.xml -text
+dashboard-plugins/components-plugin/components-library/src/main/resources/news_template.xml -text
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
@@ -437,6 +438,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtils.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DocumentTemplateUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/EssentialConst.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GalleryUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GlobalUtils.java -text
@@ -497,6 +499,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
 plugin-api/implementation/src/test/resources/log4j.xml -text
+plugin-api/implementation/src/test/resources/news_template.xml -text
 plugin-api/implementation/src/test/resources/plugin-example/META-INF/MANIFEST.MF -text
 plugin-api/implementation/src/test/resources/plugin-example/META-INF/maven/org.onehippo.essentials/hippo-dahsboard-gallery-plugin/pom.properties -text
 plugin-api/implementation/src/test/resources/plugin-example/META-INF/maven/org.onehippo.essentials/hippo-dahsboard-gallery-plugin/pom.xml -text

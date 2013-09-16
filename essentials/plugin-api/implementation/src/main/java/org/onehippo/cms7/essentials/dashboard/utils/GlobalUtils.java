@@ -7,6 +7,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -28,6 +29,35 @@ public class GlobalUtils {
 
     private GlobalUtils() {
     }
+
+    /**
+     *  * Replaces {@code #placeholder#} variable with string replacement provided
+     * @param input input string
+     * @param placeholder placeholder name
+     * @param replacement replacement string
+     * @return input string replaced with replacements
+     */
+    public static String replacePlaceholders(final String input, final String placeholder, final String replacement){
+        if(Strings.isNullOrEmpty(input)){
+            return "";
+        }
+
+        final StringBuffer buffer = new StringBuffer(input);
+        try {
+            final Pattern pattern = Pattern.compile("(#" + placeholder + "#)", Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(buffer);
+            while (matcher.find()) {
+                buffer.replace(matcher.start(), matcher.end(), replacement);
+            }
+        } catch (Exception ignore) {
+            //ignore
+        }
+        return buffer.toString();
+    }
+
+
+
+
 
     public static StringBuilder readStreamAsText(final InputStream stream) {
         final StringBuilder builder = new StringBuilder();

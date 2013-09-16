@@ -1,10 +1,14 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.InputStream;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 /**
@@ -12,7 +16,30 @@ import static org.junit.Assert.assertEquals;
  */
 public class GlobalUtilsTest {
 
+    public static final String REPLACE_NAMESPACE = "testnamespace";
+    public static final String REPLACE_DOC_NAME = "mytestname";
     private static Logger log = LoggerFactory.getLogger(GlobalUtilsTest.class);
+
+    @Test
+    public void testReplacePlaceholders() throws Exception {
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/news_template.xml");
+        final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
+        assertTrue("expected valid String", myBuilder != null);
+
+         String input = myBuilder.toString();
+        String output = input;
+        assertEquals(input, output);
+        output = GlobalUtils.replacePlaceholders(input, "NAMESPACE", REPLACE_NAMESPACE);
+        assertNotEquals(input, output);
+        input = output;
+        assertEquals(input, output);
+        output = GlobalUtils.replacePlaceholders(input, "DOCUMENT_NAME", REPLACE_DOC_NAME);
+        assertNotEquals(input, output);
+        assertTrue("expected NAMESPACE replacement", output.contains(REPLACE_NAMESPACE));
+        assertTrue("expected DOCUMENT_NAME replacement", output.contains(REPLACE_DOC_NAME));
+
+
+    }
 
     @Test
     public void testGenerateMethodName() throws Exception {
