@@ -64,6 +64,8 @@ public class LinkChecker {
     // refresh session after checking 50 internal links
     private static final int REFRESH_SESSION_INTERVAL = 50;
 
+    private static final String BROKEN_REFERENCE_MESSAGE = "Broken reference";
+
     private final Session session;
     private final HttpClient httpClient;
     private final int nrOfThreads;
@@ -222,7 +224,15 @@ public class LinkChecker {
                         link.setBroken(true);
                         link.setBrokenSince(Calendar.getInstance());
                         link.setResultCode(Link.ERROR_CODE);
-                        link.setResultMessage("Broken reference");
+                        link.setResultMessage(BROKEN_REFERENCE_MESSAGE);
+                    } else if (linkedNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        // when there's no variant node under the handle (e.g, in the attic), it's broken link as well.
+                        if (!linkedNode.hasNode(linkedNode.getName())) {
+                            link.setBroken(true);
+                            link.setBrokenSince(Calendar.getInstance());
+                            link.setResultCode(Link.ERROR_CODE);
+                            link.setResultMessage(BROKEN_REFERENCE_MESSAGE);
+                        }
                     }
 
                     if (internalLinksChecked.incrementAndGet() % REFRESH_SESSION_INTERVAL == 0) {

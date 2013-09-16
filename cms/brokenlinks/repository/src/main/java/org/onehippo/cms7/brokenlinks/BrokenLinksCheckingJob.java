@@ -31,6 +31,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,7 +91,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         // For the xpath query below, do not include a path constraint to begin with, like
         // /jcr:root/content/documents as this results in much less efficient queries
         String xpath = "//element(*,hippostd:html)";
-        QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+        QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
         NodeIterator hippostdHtmlNodes =  result.getNodes();
 
 
