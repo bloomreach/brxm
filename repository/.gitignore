@@ -58,6 +58,8 @@ deprecated/facetselectmirror/target
 deprecated/target
 deprecated/translation/hippo-repository-deprecated-translation.iml
 deprecated/translation/target
+deprecated/updater/hippo-repository-updater-module.iml
+deprecated/updater/target
 engine/*.tmp
 engine/.classpath
 engine/.pom.xml.swp

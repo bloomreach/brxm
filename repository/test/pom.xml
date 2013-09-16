@@ -77,7 +77,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-upgrade</artifactId>
+      <artifactId>hippo-repository-updater-module</artifactId>
       <version>${project.version}</version>
     </dependency>
 
