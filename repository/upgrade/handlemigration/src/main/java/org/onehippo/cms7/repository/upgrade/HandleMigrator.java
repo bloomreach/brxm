@@ -54,6 +54,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
+/**
+ * Queries for all nodes of type hippo:hardhandle and for each node found:
+ * - migrates the version history:
+ *   - merge version histories into one
+ * - migrates the handle:
+ *   - remove hippo:hardhandle and replace with mix:referenceable
+ *   - remove mix:versionable from draft and live variants and replace with mix:referenceable
+ *
+ * Because of a bug in the caching internals of the VersionManager it is not possible at the moment to remove
+ * the obsoleted versions here. (After the hardhandle and harddocument mixins have been dropped from the
+ * handle and respective variants the orphaned version histories cannot be cleaned because of cached references)
+ */
 class HandleMigrator {
 
     private static final Logger log = LoggerFactory.getLogger(HandleMigrator.class);
@@ -61,6 +73,8 @@ class HandleMigrator {
     private static final String JCR_FROZEN_PRIMARY_TYPE = "jcr:frozenPrimaryType";
     private static final String JCR_FROZEN_MIXIN_TYPES = "jcr:frozenMixinTypes";
     private static final String NT_FROZEN_NODE = "nt:frozenNode";
+
+    private static final int VERSIONS_RETAIN_COUNT = Integer.getInteger("org.onehippo.cms7.migration.versions_retain_count", Integer.MAX_VALUE);
 
     private final Session defaultSession;
     private Session migrationSession;
@@ -84,27 +98,11 @@ class HandleMigrator {
         }
     }
 
-    private Iterable<Node> getHardHandles() {
-        try {
-            final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle", Query.SQL);
-            return new NodeIterable(query.execute().getNodes());
-        } catch (RepositoryException e) {
-            log.error("Failed to query for handles to migrate", e);
-        }
-        return Collections.emptyList();
-    }
-
-    private boolean migrationPending() {
-        return getHardHandles().iterator().hasNext();
-    }
-
     void migrate() {
         log.debug("Running handle migration tool");
 
         if (migrationPending()) {
             try {
-                init();
                 int count = 0;
                 for (Node handle : getHardHandles()) {
                     if (cancelled) {
@@ -119,8 +117,6 @@ class HandleMigrator {
                     }
                 }
                 log.info("Migrated {} handles to new model", count);
-            } catch (RepositoryException e) {
-                log.error("Migration failed", e);
             } finally {
                 if (migrationSession != null) {
                     migrationSession.logout();
@@ -128,6 +124,21 @@ class HandleMigrator {
             }
         }
 
+    }
+
+    private Iterable<Node> getHardHandles() {
+        try {
+            final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();
+            final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle", Query.SQL);
+            return new NodeIterable(query.execute().getNodes());
+        } catch (RepositoryException e) {
+            log.error("Failed to query for handles to migrate", e);
+        }
+        return Collections.emptyList();
+    }
+
+    private boolean migrationPending() {
+        return getHardHandles().iterator().hasNext();
     }
 
     private void throttle(final int count) {
@@ -165,12 +176,26 @@ class HandleMigrator {
 
     private void migrateHandle(final Node handle) throws RepositoryException {
         log.debug("Migrating handle {}", handle.getPath());
-        // we need to remove all incoming references here before we can remove the hard handle
-        final Map<Node, String> references = removeReferences(handle);
-        handle.removeMixin(HippoNodeType.NT_HARDHANDLE);
-        handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
-        addReferences(handle, references);
+        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+            if (!HippoStdNodeType.UNPUBLISHED.equals(JcrUtils.getStringProperty(variant, HippoStdNodeType.HIPPOSTD_STATE, null))) {
+                removeMixin(variant, HippoNodeType.NT_HARDDOCUMENT);
+            }
+        }
+        removeMixin(handle, HippoNodeType.NT_HARDHANDLE);
         defaultSession.save();
+    }
+
+    private void removeMixin(final Node node, final String mixin) throws RepositoryException {
+        if (node.isNodeType(mixin)) {
+            JcrUtils.ensureIsCheckedOut(node, false);
+            final Map<Node, String> references = removeReferences(node);
+            try {
+                node.removeMixin(mixin);
+                node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+            } finally {
+                addReferences(node, references);
+            }
+        }
     }
 
     private void addReferences(final Node handle, final Map<Node, String> references) throws RepositoryException {
@@ -233,7 +258,11 @@ class HandleMigrator {
         final VersionManagerImpl versionManager = (VersionManagerImpl)
                 migrationSession.getWorkspace().getVersionManager();
         int count = 0;
-        for (Version version : getVersions(handle)) {
+        final List<Version> versions = getVersions(handle);
+        while (versions.size() > VERSIONS_RETAIN_COUNT) {
+            versions.remove(0);
+        }
+        for (Version version : versions) {
             clear(tmp);
             copy(version.getFrozenNode(), tmp);
             tmp.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED);
@@ -311,6 +340,9 @@ class HandleMigrator {
         if (node.isNodeType(NT_FROZEN_NODE)) {
             if (node.hasProperty(JCR_FROZEN_MIXIN_TYPES)) {
                 for (Value value : node.getProperty(JCR_FROZEN_MIXIN_TYPES).getValues()) {
+                    if (value.getString().equals(HippoNodeType.NT_HARDDOCUMENT)) {
+                        continue;
+                    }
                     result.add(value.getString());
                 }
             }

@@ -37,6 +37,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -62,19 +63,27 @@ public class HandleMigratorTest extends RepositoryTestCase {
     public void testHandleMigration() throws Exception {
         editAndPublishTestDocuments();
         final HandleMigrator handleMigrator = new HandleMigrator(session);
+        handleMigrator.init();
         handleMigrator.migrate();
         for (int i = 0; i < 5; i++) {
             checkDocumentHistory(getPreview(i));
         }
     }
 
-    private void checkDocumentHistory(final Node document) throws RepositoryException {
+    private void checkDocumentHistory(Node document) throws Exception {
         assertNotNull("No preview available", document);
+        assertFalse("Preview still has harddocument mixin", document.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
         assertTrue("Document is not versionable", document.isNodeType(JcrConstants.MIX_VERSIONABLE));
         final VersionManager versionManager = session.getWorkspace().getVersionManager();
-        final VersionHistory versionHistory = versionManager.getVersionHistory(document.getPath());
+        final String documentPath = document.getPath();
+        final String documentIdentifier = document.getIdentifier();
+        final VersionHistory versionHistory = versionManager.getVersionHistory(documentPath);
         final VersionIterator versions = versionHistory.getAllVersions();
         assertEquals("Unexpected number of versions", 6, versions.getSize());
+        versionManager.restore(documentPath, "1.2", true);
+        document = session.getNodeByIdentifier(documentIdentifier);
+        assertEquals("Unexpected property value", "bar2", JcrUtils.getStringProperty(document, "foo", null));
+        assertFalse("Preview still has harddocument mixin", document.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
     }
 
     private void editAndPublishTestDocuments() throws Exception {
@@ -90,10 +99,10 @@ public class HandleMigratorTest extends RepositoryTestCase {
     }
 
     private Node editTestDocument(final Node document, int i) throws Exception {
-        final Document draft = getFullReviewedActionsWorkflow(document).obtainEditableInstance();
-        draft.getNode().setProperty("foo", "bar" + i);
-        session.save();
-        return getFullReviewedActionsWorkflow(draft.getNode()).commitEditableInstance().getNode();
+        final Node draft = getFullReviewedActionsWorkflow(document).obtainEditableInstance().getNode();
+        draft.setProperty("foo", "bar" + i);
+        draft.getSession().save();
+        return getFullReviewedActionsWorkflow(draft).commitEditableInstance().getNode();
     }
 
     private void createTestDocuments(final int count) throws Exception {
@@ -129,7 +138,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
     }
 
     private FullReviewedActionsWorkflow getFullReviewedActionsWorkflow(final Node document) throws RepositoryException {
-        return (FullReviewedActionsWorkflow) getWorkflow("default", document);
+        return (FullReviewedActionsWorkflow) getWorkflow("deprecated", document);
     }
 
     private FolderWorkflow getFolderWorkflow(final Node folder) throws RepositoryException {

@@ -59,9 +59,14 @@ public class HandleMigrationModule implements ConfigurableDaemonModule {
                     if (lock(lockSession, moduleConfigPath)) {
                         startLockKeepAlive(lockSession);
                         migrator = new HandleMigrator(session);
-                        migrator.migrate();
-                        migrator.shutdown();
-                        migrator = null;
+                        try {
+                            migrator.init();
+                            migrator.migrate();
+                            migrator.shutdown();
+                            migrator = null;
+                        } catch (RepositoryException e) {
+                            log.error("Handle migration failed", e);
+                        }
                     }
                 } finally {
                     stopLockKeepAlive();
