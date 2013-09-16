@@ -193,6 +193,12 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
         wizardModel.add(step);
     }
 
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        initSteps();
+    }
+
     public void initSteps() {
         wizardModel.reset();
         final Component view = wizardModel.getActiveStep().getView("view", this, this);

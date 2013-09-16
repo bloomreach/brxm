@@ -7,7 +7,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
   <name>Components Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.components.gui.ComponentsPlugin</plugin-class>
+  <plugin-class>org.onehippo.cms7.essentials.components.gui.ComponentsWizard</plugin-class>
   <type>system</type>
   <vendor>Hippo</vendor>
   <description>Hippo essentials components plugin</description>

@@ -91,10 +91,13 @@ dashboard-plugins/components-plugin/components-gui/pom.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/ComponentsInstaller.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/ComponentsPlugin.html -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/ComponentsPlugin.java -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/ComponentsWizard.html -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/ComponentsWizard.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-document.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-document.png -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-list.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-list.png -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentRegisterPanel.html -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentRegisterPanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
