@@ -14,7 +14,6 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo;
 import org.onehippo.cms7.essentials.components.model.RepositoryMenuItem;
-import org.onehippo.marketplace.beans.BaseDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +46,7 @@ public class EssentialsRepositoryMenuComponent extends CommonComponent {
         if (rootFolderBean == null) {
             request.setAttribute("previewMessage", "Please select a root folder");
         } else {
-            request.setAttribute("repoBasedMenu", getContents(rootFolderBean, paramInfo.getDepth(), request.getRequestContext().getContentBean()));
+            request.setAttribute("repoBasedMenu", getContents(rootFolderBean, paramInfo.getDepth(), rootFolderBean));
         }
 
         log.debug("Calling EssentialsRepositoryMenuComponentInfo for root folder path:  [{}]", rootPath);
@@ -58,7 +57,7 @@ public class EssentialsRepositoryMenuComponent extends CommonComponent {
 
 
     private List<RepositoryMenuItem> getContents(HippoBean bean, int depth, HippoBean contentBean) {
-        List<BaseDocument> documents = bean.getChildBeans(BaseDocument.class);
+        List<HippoBean> documents = bean.getChildBeans(HippoBean.class);
         List<HippoFolderBean> folders = bean.getChildBeans(HippoFolderBean.class);
         List<RepositoryMenuItem> menu = new ArrayList<>();
 

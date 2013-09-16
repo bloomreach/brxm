@@ -19,7 +19,7 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
-import org.onehippo.marketplace.beans.PluginDocument;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class EssentialsListComponent extends CommonComponent {
             if (build != null) {
                 final HstQueryResult execute = build.execute();
                 final int pageSize = 4;// NPE??? paramInfo.pageSize();
-                final Pageable<PluginDocument> pageable = new IterablePagination<>(
+                final Pageable<HippoBean> pageable = new IterablePagination<>(
                         execute.getHippoBeans(),
                         execute.getTotalSize(),
                         pageSize,
