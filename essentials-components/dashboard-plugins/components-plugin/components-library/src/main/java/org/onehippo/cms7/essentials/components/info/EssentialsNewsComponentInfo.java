@@ -16,9 +16,15 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.Parameter;
+
 /**
  * @version "$Id$"
  */
 public interface EssentialsNewsComponentInfo extends EssentialsDocumentListComponentInfo {
+
+    // TODO better description
+    @Parameter(name = "hideFutureItems", defaultValue = "true", required = false, displayName = "Hide future documents")
+    Boolean isHideFutureItems();
 
 }
