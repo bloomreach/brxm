@@ -73,10 +73,6 @@
     <module>package-cms-dependencies</module>
   </modules>
 
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
-
   <profiles>
     <profile>
       <id>pedantic</id>

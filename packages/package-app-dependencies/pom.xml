@@ -47,17 +47,6 @@
       <version>${hippo.cms.version}</version>
       <type>pom</type>
     </dependency>
-
-    <!-- upgrade modules, optional -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-upgrade</artifactId>
-      <version>${hippo.repository.version}</version>
-    </dependency>
   </dependencies>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
 
 </project>
