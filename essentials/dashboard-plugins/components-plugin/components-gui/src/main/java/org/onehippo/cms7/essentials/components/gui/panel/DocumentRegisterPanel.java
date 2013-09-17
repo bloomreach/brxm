@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeExistsException;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
-import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
+import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
@@ -26,11 +26,12 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(DocumentRegisterPanel.class);
     private final ListMultipleChoice<String> availableDocuments;
+    private final ComponentsWizard parent;
     private List<String> selectedDocuments;
     private DocumentTemplateModel model;
-    private final DashboardPlugin parent;
 
-    public DocumentRegisterPanel(final DashboardPlugin  parent, final String id) {
+
+    public DocumentRegisterPanel(final ComponentsWizard parent, final String id) {
         super(id);
         this.parent = parent;
 
@@ -43,6 +44,7 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
         availableDocuments.setOutputMarkupId(true);
         availableDocuments.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
+
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 log.debug("selectedDocuments {}", selectedDocuments);
@@ -51,31 +53,31 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
         form.add(availableDocuments);
         add(form);
 
-
-
     }
-
-
 
 
     @Override
     public void applyState() {
         setComplete(false);
+        parent.clearRegistered();
         log.info("@INSTALLING DOCUMENTS", selectedDocuments);
-        if(selectedDocuments !=null && selectedDocuments.size() >0){
+        if (selectedDocuments != null && selectedDocuments.size() > 0) {
             final PluginContext context = parent.getContext();
             for (String selectedDocument : selectedDocuments) {
                 final String prefix = context.getProjectNamespacePrefix();
                 try {
                     final String superType = String.format("%s:basedocument", prefix);
-                    CndUtils.registerDocumentType(context, prefix, selectedDocument, true, false, superType,"hippostd:relaxed");
+                    CndUtils.registerDocumentType(context, prefix, selectedDocument, true, false, superType, "hippostd:relaxed");
+                    parent.addRegisteredDocument(selectedDocument);
+                } catch (NodeTypeExistsException e) {
+                    // just add already exiting ones:
+                    parent.addRegisteredDocument(selectedDocument);
                 } catch (RepositoryException e) {
                     log.error(String.format("Error registering document type: %s", selectedDocument), e);
                 }
             }
 
-        }
-        else{
+        } else {
             // skip installing documents
             log.info("No selected documents");
         }

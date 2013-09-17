@@ -94,7 +94,10 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
                 }
                 if (complete && nextAvailable) {
                     wizardModel.next();
-                    onActiveStepChanged(wizardModel.getActiveStep());
+                    final EssentialsWizardStep nextActiveStep = (EssentialsWizardStep) wizardModel.getActiveStep();
+                    onActiveStepChanged(nextActiveStep);
+                    nextActiveStep.refresh(target);
+
                     if (!wizardModel.isNextAvailable()) {
                         replace(new Label("nextorfinish", getFinishButtonLabel()));
                     }

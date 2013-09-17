@@ -33,7 +33,7 @@ public final class DocumentTemplateUtils {
      * @param overwrite    overwrite existing template
      * @throws RepositoryException on repo error
      */
-    public void importTemplate(final PluginContext context, final String content, final String documentName, final String namespace, final boolean overwrite) throws RepositoryException {
+    public static void importTemplate(final PluginContext context, final String content, final String documentName, final String namespace, final boolean overwrite) throws RepositoryException {
         final Session session = context.getSession();
         final String path = NAMESPACE_ROOT + '/' + namespace + '/' + documentName;
         try {
@@ -61,7 +61,7 @@ public final class DocumentTemplateUtils {
      * @return  true if template exists, false otherwise
      * @throws RepositoryException
      */
-    public boolean templateExists(final PluginContext context, final String documentName, final String namespace) throws RepositoryException {
+    public static boolean templateExists(final PluginContext context, final String documentName, final String namespace) throws RepositoryException {
         final Session session = context.getSession();
         final String path = NAMESPACE_ROOT + '/' + namespace + '/' + documentName;
         log.debug("Checking if template exists: {}", path);

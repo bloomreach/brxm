@@ -100,7 +100,11 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentRegisterPanel.html -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentRegisterPanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentTemplateModel.java -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentTemplatePanel.html -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentTemplatePanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/eventsdocument.xml -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/newsdocument.xml -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-library/pom.xml -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/CommonComponent.java -text
@@ -281,7 +285,6 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
 dashboard-plugins/components-plugin/components-library/src/main/resources/META-INF/plugin.xml -text
-dashboard-plugins/components-plugin/components-library/src/main/resources/news_template.xml -text
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text

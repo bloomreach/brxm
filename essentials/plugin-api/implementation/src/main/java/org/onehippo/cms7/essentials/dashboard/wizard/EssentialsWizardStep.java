@@ -1,5 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.wizard;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.wizard.WizardStep;
 
 /**
@@ -12,6 +13,13 @@ public class EssentialsWizardStep extends WizardStep {
 
     public EssentialsWizardStep(final String title) {
         super(title, null);
+    }
+
+    /**
+     * Called before component is rendered
+     */
+    public void refresh(final AjaxRequestTarget target) {
+        // do nothing
     }
 
     public boolean isProcessed() {
