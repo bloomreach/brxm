@@ -17,18 +17,23 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +43,27 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     private static final long serialVersionUID = 1L;
 
+    private static final String[] PROTECTED_MIXINS = new String[]{
+            "mix:referenceable",
+            "mix:versionable",
+            "hippo:harddocument",
+            "hippostd:publishable",
+            "hippostd:publishableSummary",
+            "hippostdpubwf:document"
+    };
+    private static final String[] PROTECTED_PROPERTIES = new String[]{
+            "hippo:availability",
+            "hippostd:state",
+            "hippostd:holder",
+            "hippostdpubwf:publicationDate",
+            "hippostdpubwf:lastModifiedBy",
+            "hippostdpubwf:lastModificationDate"
+    };
+    static {
+        Arrays.sort(PROTECTED_PROPERTIES);
+        Arrays.sort(PROTECTED_MIXINS);
+    }
+
     protected PublishableDocument draftDocument;
 
     protected PublishableDocument unpublishedDocument;
@@ -46,17 +72,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     protected PublicationRequest current;
 
-    protected Node cloneDocumentNode(Document document) throws RepositoryException {
-        Node srcNode = document.getNode();
-        final Node parent = srcNode.getParent();
-        JcrUtils.ensureIsCheckedOut(parent, true);
-        return JcrUtils.copy(srcNode, srcNode.getName(), parent);
-    }
-
-    protected void deleteDocument(Document document) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(document.getNode(), true);
-        JcrUtils.ensureIsCheckedOut(document.getNode().getParent(), true);
-        document.getNode().remove();
+    public BasicReviewedActionsWorkflowImpl() throws RemoteException {
     }
 
     public void setNode(Node node) throws RepositoryException {
@@ -66,22 +82,19 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
         draftDocument = unpublishedDocument = publishedDocument = null;
         for (Node sibling : new NodeIterable(parent.getNodes(node.getName()))) {
-            String state = JcrUtils.getStringProperty(sibling, "hippostd:state","");
+            String state = JcrUtils.getStringProperty(sibling, "hippostd:state", "");
             if ("draft".equals(state)) {
                 draftDocument = new PublishableDocument(sibling);
-            }
-            else if ("unpublished".equals(state)) {
+            } else if ("unpublished".equals(state)) {
                 unpublishedDocument = new PublishableDocument(sibling);
-            }
-            else if ("published".equals(state)) {
+            } else if ("published".equals(state)) {
                 publishedDocument = new PublishableDocument(sibling);
             }
         }
         current = null;
-        String requestType = null;
         for (Node request : new NodeIterable(parent.getNodes("hippo:request"))) {
-            requestType = JcrUtils.getStringProperty(request, "hippostdpubwf:type", "");
-            if (!("rejected".equals(JcrUtils.getStringProperty(request, "hippostdpubwf:type", "")))) {
+            String requestType = JcrUtils.getStringProperty(request, "hippostdpubwf:type", "");
+            if (!("rejected".equals(requestType))) {
                 current = new PublicationRequest(request);
             }
         }
@@ -102,33 +115,38 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             pendingRequest = false;
         }
         try {
-            String state = JcrUtils.getStringProperty(getNode(), "hippostd:state", "");
+            final String userIdentity = super.getWorkflowContext().getUserIdentity();
+            final String state = JcrUtils.getStringProperty(getNode(), "hippostd:state", "");
+
+            boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
+            boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("live");
+            boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
 
             if (PublishableDocument.DRAFT.equals(state)) {
-                editable = draftDocument.getOwner() == null || draftDocument.getOwner().equals(super.getWorkflowContext().getUserIdentity());
+                editable = !draftInUse;
                 depublishable = false;
                 publishable = false;
                 status = true;
                 deleteable = null;
             } else if (PublishableDocument.PUBLISHED.equals(state)) {
-                if (draftDocument == null && unpublishedDocument == null) {
+                if (!draftInUse && unpublishedDocument == null) {
                     status = true;
                 }
-                if (draftDocument != null || unpublishedDocument != null) {
+                if (unpublishedDocument != null || draftDocument != null) {
                     editable = false;
                 } else if (pendingRequest) {
                     editable = false;
                 } else {
                     editable = true;
                 }
-                if (draftDocument == null && !pendingRequest) {
+                if (!draftInUse && !pendingRequest && publishedLive) {
                     depublishable = true;
                 }
                 if (unpublishedDocument != null) {
                     deleteable = null;
                 }
             } else if (PublishableDocument.UNPUBLISHED.equals(state)) {
-                if (draftDocument == null) {
+                if (!draftInUse) {
                     status = true;
                 }
                 if (draftDocument != null) {
@@ -138,33 +156,130 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 } else {
                     editable = true;
                 }
-                if (draftDocument == null && !pendingRequest) {
+                if (!draftInUse && !pendingRequest && unpublishedDirty) {
                     publishable = true;
                 }
-                if (draftDocument == null && publishedDocument == null && !pendingRequest) {
+                if (!draftInUse && (publishedDocument == null || publishedDocument.isAvailable("live")) && !pendingRequest) {
                     deleteable = true;
                 }
             } else {
                 editable = false;
             }
-            if (!editable && PublishableDocument.DRAFT.equals(state)) {
+
+
+            if (!editable && PublishableDocument.DRAFT.equals(state) && draftInUse) {
                 info.put("inUseBy", draftDocument.getOwner());
             }
-        }
-        catch (RepositoryException ex) {
+            info.put("obtainEditableInstance", editable);
+            info.put("publish", publishable);
+            info.put("depublish", depublishable);
+            if (deleteable != null) {
+                info.put("delete", deleteable);
+            }
+            info.put("status", status);
+        } catch (RepositoryException ex) {
             // TODO DEJDO: ignore?
         }
-        info.put("obtainEditableInstance", editable);
-        info.put("publish", publishable);
-        info.put("depublish", depublishable);
-        if (deleteable != null) {
-            info.put("delete", deleteable);
-        }
-        info.put("status", status);
         return info;
     }
 
-    public BasicReviewedActionsWorkflowImpl() throws RemoteException {
+    protected Node cloneDocumentNode(Document document) throws RepositoryException {
+        Node srcNode = document.getNode();
+        final Node parent = srcNode.getParent();
+        JcrUtils.ensureIsCheckedOut(parent, true);
+
+        Node destNode = parent.addNode(srcNode.getName(), srcNode.getPrimaryNodeType().getName());
+        destNode.addMixin("hippo:harddocument");
+        if (!destNode.isNodeType("hippostdpubwf:document")) {
+            destNode.addMixin("hippostdpubwf:document");
+        }
+        return copyTo(srcNode, destNode);
+    }
+
+    protected void deleteDocument(Document document) throws RepositoryException {
+        JcrUtils.ensureIsCheckedOut(document.getNode(), true);
+        JcrUtils.ensureIsCheckedOut(document.getNode().getParent(), true);
+        document.getNode().remove();
+    }
+
+    protected void copyDocumentTo(Document source, Document target) throws RepositoryException {
+        clearDocument(target);
+        copyTo(source.getNode(), target.getNode());
+    }
+
+    protected void clearDocument(Document target) throws RepositoryException {
+        final Node targetNode = target.getNode();
+        JcrUtils.ensureIsCheckedOut(targetNode, true);
+
+        for (Property property : new PropertyIterable(targetNode.getProperties())) {
+            if (property.getDefinition().isProtected()) {
+                continue;
+            }
+            String name = property.getName();
+            if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
+                continue;
+            }
+            property.remove();
+        }
+
+        for (Node child : new NodeIterable(targetNode.getNodes())) {
+            if (child.getDefinition().isProtected()) {
+                continue;
+            }
+            child.remove();
+        }
+
+        final NodeType[] mixins = targetNode.getMixinNodeTypes();
+        for (NodeType mixin : mixins) {
+            String name = mixin.getName();
+            if (Arrays.binarySearch(PROTECTED_MIXINS, name) >= 0) {
+                continue;
+            }
+            targetNode.removeMixin(mixin.getName());
+        }
+
+    }
+
+    /**
+     * Copies {@link Node} {@code srcNode} to {@code destNode}.
+     * Special properties and mixins are filtered out; those are actively maintained by the workflow.
+     *
+     * @param srcNode the node to copy
+     * @param destNode the node that the contents of srcNode will be copied to
+     * @return destNode
+     * @throws RepositoryException
+     */
+    protected Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
+        for (NodeType mixin : srcNode.getMixinNodeTypes()) {
+            String name = mixin.getName();
+            if (Arrays.binarySearch(PROTECTED_MIXINS, name) >= 0) {
+                continue;
+            }
+            destNode.addMixin(mixin.getName());
+        }
+
+        final PropertyIterator properties = srcNode.getProperties();
+        while (properties.hasNext()) {
+            final Property property = properties.nextProperty();
+            if (!property.getDefinition().isProtected()) {
+                String name = property.getName();
+                if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
+                    continue;
+                }
+                if (property.isMultiple()) {
+                    destNode.setProperty(property.getName(), property.getValues(), property.getType());
+                } else {
+                    destNode.setProperty(property.getName(), property.getValue());
+                }
+            }
+        }
+
+        final NodeIterator nodes = srcNode.getNodes();
+        while (nodes.hasNext()) {
+            final Node child = nodes.nextNode();
+            JcrUtils.copy(child, child.getName(), destNode);
+        }
+        return destNode;
     }
 
     public Document obtainEditableInstance() throws WorkflowException {
@@ -177,21 +292,16 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 Node draftNode = cloneDocumentNode(unpublishedDocument != null ? unpublishedDocument : publishedDocument);
                 draftDocument = new PublishableDocument(draftNode);
                 draftDocument.setState(PublishableDocument.DRAFT);
-                draftDocument.setAvailability(new String[0]);
-                draftDocument.setOwner(getWorkflowContext().getUserIdentity());
-                if (unpublishedDocument != null) {
-                    unpublishedDocument.setOwner(getWorkflowContext().getUserIdentity());
-                }
-                if (publishedDocument != null) {
-                    publishedDocument.setOwner(getWorkflowContext().getUserIdentity());
-                }
-            } else {
-                if (draftDocument.getOwner() != null
-                        && !getWorkflowContext().getUserIdentity().equals(draftDocument.getOwner()))
+                draftDocument.setAvailability(null);
+                draftDocument.setModified(getWorkflowContext().getUserIdentity());
+            } else if (draftDocument.getOwner() != null) {
+                if (!getWorkflowContext().getUserIdentity().equals(draftDocument.getOwner())) {
                     throw new WorkflowException("document already being edited");
+                }
             }
+            draftDocument.setOwner(getWorkflowContext().getUserIdentity());
         } catch (RepositoryException ex) {
-            throw new WorkflowException("Failed to obtain an editable instance");
+            throw new WorkflowException("Failed to obtain an editable instance", ex);
         }
         return draftDocument;
     }
@@ -199,45 +309,45 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     public Document commitEditableInstance() throws WorkflowException {
         log.info("commit editable instance of document ");
         try {
-            if (draftDocument != null) {
-                if (unpublishedDocument != null) {
-                    deleteDocument(unpublishedDocument);
-                }
-                unpublishedDocument = draftDocument;
-                draftDocument = null;
-                unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
-                unpublishedDocument.setAvailability(new String[] { "preview" });
-                unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
-                if (publishedDocument != null) {
-                    publishedDocument.setAvailability(new String[] { "live" });
-                }
-                return unpublishedDocument;
-            } else {
+            if (draftDocument == null) {
                 throw new WorkflowException("no draft version of publication");
             }
-        }
-        catch (RepositoryException ex) {
-            throw new WorkflowException("failed to commit editable instance");
+            draftDocument.setOwner(null);
+
+            if (unpublishedDocument == null) {
+                final Node node = cloneDocumentNode(draftDocument);
+                unpublishedDocument = new PublishableDocument(node);
+                unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
+            } else {
+                copyDocumentTo(draftDocument, unpublishedDocument);
+            }
+
+            unpublishedDocument.setAvailability(new String[]{"preview"});
+            if (publishedDocument != null) {
+                publishedDocument.setAvailability(new String[]{"live"});
+            }
+            unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
+            return unpublishedDocument;
+        } catch (RepositoryException ex) {
+            throw new WorkflowException("failed to commit editable instance", ex);
         }
     }
 
     public Document disposeEditableInstance() throws WorkflowException {
         log.info("dispose editable instance on document ");
-        if (draftDocument != null) {
-            try {
-                deleteDocument(draftDocument);
-                draftDocument = null;
+        try {
+            if (draftDocument != null) {
+                draftDocument.setOwner(null);
             }
-            catch (RepositoryException ex) {
-                throw new WorkflowException("failed to dispose editable instance");
+            if (unpublishedDocument != null && unpublishedDocument.isAvailable("preview")) {
+                return unpublishedDocument;
+            } else if (publishedDocument != null) {
+                return publishedDocument;
+            } else {
+                return null;
             }
-        }
-        if (unpublishedDocument != null) {
-            return unpublishedDocument;
-        } else if (publishedDocument != null) {
-            return publishedDocument;
-        } else {
-            return null;
+        } catch (RepositoryException ex) {
+            throw new WorkflowException("failed to dispose editable instance", ex);
         }
     }
 
@@ -248,7 +358,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 current = new PublicationRequest(PublicationRequest.DELETE, getNode(), unpublishedDocument, getWorkflowContext()
                         .getUserIdentity());
             } catch (RepositoryException e) {
-                throw new WorkflowException("request deletion failure");
+                throw new WorkflowException("request deletion failure", e);
             }
         } else {
             throw new WorkflowException("request deletion failure");
@@ -276,7 +386,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 current = new PublicationRequest(PublicationRequest.DEPUBLISH, getNode(), publishedDocument, getWorkflowContext()
                         .getUserIdentity());
             } catch (RepositoryException e) {
-                throw new WorkflowException("request de-publication failure");
+                throw new WorkflowException("request de-publication failure", e);
             }
         } else {
             throw new WorkflowException("publication request already pending");
@@ -290,7 +400,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 current = new PublicationRequest(PublicationRequest.SCHEDPUBLISH, getNode(), unpublishedDocument, getWorkflowContext()
                         .getUserIdentity(), publicationDate);
             } catch (RepositoryException e) {
-                throw new WorkflowException("request publication failure");
+                throw new WorkflowException("request publication failure", e);
             }
         } else {
             throw new WorkflowException("publication request already pending");
@@ -309,7 +419,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 current = new PublicationRequest(PublicationRequest.SCHEDDEPUBLISH, getNode(), publishedDocument, getWorkflowContext()
                         .getUserIdentity(), depublicationDate);
             } catch (RepositoryException e) {
-                throw new WorkflowException("request de-publication failure");
+                throw new WorkflowException("request de-publication failure", e);
             }
         } else {
             throw new WorkflowException("publication request already pending");

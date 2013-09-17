@@ -37,7 +37,7 @@
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippostd:state</sv:value>
+        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippo:availability</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="unpublished">
@@ -45,23 +45,7 @@
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippostd:state</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="draft">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:resolvepropertyreference</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='draft']/hippostd:state</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="request">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:resolvepropertyreference</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../request[@hippostdpubwf:type='publish']/type</sv:value>
+        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippo:availability</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

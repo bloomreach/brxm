@@ -134,7 +134,14 @@ public class Document implements Serializable {
 
     protected void setStringProperty(String relPath, String value) throws RepositoryException {
         if (hasNode()) {
-            getCheckedOutNode().setProperty(relPath, value);
+            Node node = getCheckedOutNode();
+            if (value == null) {
+                if (node.hasProperty(relPath)) {
+                    node.getProperty(relPath).remove();
+                }
+            } else {
+                node.setProperty(relPath, value);
+            }
         }
     }
 
@@ -153,7 +160,14 @@ public class Document implements Serializable {
 
     protected void setStringsProperty(String relPath, String[] values) throws RepositoryException {
         if (hasNode()) {
-            getCheckedOutNode().setProperty(relPath, values);
+            Node node = getCheckedOutNode();
+            if (values == null) {
+                if (node.hasProperty(relPath)) {
+                    node.getProperty(relPath).remove();
+                }
+            } else {
+                node.setProperty(relPath, values);
+            }
         }
     }
 

@@ -68,6 +68,20 @@ public class PublishableDocument extends Document {
         return getStringsProperty("hippo:availability");
     }
 
+    protected boolean isAvailable(String environment) throws RepositoryException {
+        String[] availability = getAvailability();
+        if (availability == null) {
+            return true;
+        } else {
+            for (String env : availability) {
+                if (environment.equals(env)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void setModified(String username) throws RepositoryException{
         setStringProperty("hippostdpubwf:lastModifiedBy", username);
         setDateProperty("hippostdpubwf:lastModificationDate", new Date());

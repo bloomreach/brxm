@@ -303,23 +303,24 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             throws WorkflowException, RepositoryException {
         Node handle = getHandle(subject);
         VersionHistory handleHistory = handle.getVersionHistory();
-        for (VersionIterator iter = handleHistory.getAllVersions(); iter.hasNext();) {
+        for (VersionIterator iter = handleHistory.getAllVersions(); iter.hasNext(); ) {
             Version handleVersion = iter.nextVersion();
             if (!handleVersion.getName().equals("jcr:rootVersion")) {
-                for (NodeIterator children = handleVersion.getNode("jcr:frozenNode").getNodes(); children.hasNext();) {
+                for (NodeIterator children = handleVersion.getNode("jcr:frozenNode").getNodes(); children.hasNext(); ) {
                     Node child = children.nextNode();
                     if (child.isNodeType("nt:versionedChild")) {
                         String ref = child.getProperty("jcr:childVersionHistory").getString();
                         VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(ref);
-                        for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext();) {
+                        for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext(); ) {
                             Version version = childIter.nextVersion();
                             if (!version.getName().equals("jcr:rootVersion")) {
                                 if (version.getCreated().equals(historic)) {
                                     if (matches(version.getNode("jcr:frozenNode"), criteria)) {
-                                        if (returnHandle)
+                                        if (returnHandle) {
                                             return handleVersion;
-                                        else
+                                        } else {
                                             return version;
+                                        }
                                     } else {
                                         return null;
                                     }

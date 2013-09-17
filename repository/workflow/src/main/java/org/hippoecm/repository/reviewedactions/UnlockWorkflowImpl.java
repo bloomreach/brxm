@@ -41,7 +41,7 @@ public class UnlockWorkflowImpl extends WorkflowImpl implements UnlockWorkflow {
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
         try {
-            if (document == null || !"draft".equals(document.getState())) {
+            if (document == null || !"draft".equals(document.getState()) || document.getOwner() == null) {
                 info.put("unlock", false);
             }
         }

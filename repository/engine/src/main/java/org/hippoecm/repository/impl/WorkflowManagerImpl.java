@@ -394,7 +394,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         String category = workflowNode.getParent().getName();
         String workflowName = workflowNode.getName();
         String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
-        Class clazz = null;
+        Class clazz;
         try {
             clazz = Class.forName(classname);
         } catch (ClassNotFoundException e) {
@@ -411,7 +411,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
          */
         synchronized (SessionDecorator.unwrap(rootSession)) {
 
-            Workflow workflow = null;
+            Workflow workflow;
             if (WorkflowImpl.class.isAssignableFrom(clazz)) {
                 try {
                     workflow = (Workflow)clazz.newInstance();
@@ -491,30 +491,33 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Method targetMethod = null;
             Object returnObject = null;
             Throwable returnException = null;
+
+            if ("toString".equals(method.getName()) && (args == null || args.length == 0)) {
+                return "WorkflowInvocationHandler[" + category + ", " + workflowName + "]";
+            }
 
             invocationChain = new LinkedList<WorkflowInvocation>();
             invocationIndex = invocationChain.listIterator();
 
-            rootSession.refresh(false);
+            synchronized (SessionDecorator.unwrap(rootSession)) {
+                rootSession.refresh(false);
 
-            WorkflowPostActions postActions = null;
-            boolean resetInteraction = false;
-            try {
-                String interactionId = INTERACTION_ID.get();
-                String interaction = INTERACTION.get();
-                if (interactionId == null) {
-                    interactionId = UUID.randomUUID().toString();
-                    INTERACTION_ID.set(interactionId);
-                    interaction = category + ":" + workflowName + ":" + method.getName();
-                    INTERACTION.set(interaction);
-                    resetInteraction = true;
-                }
+                WorkflowPostActions postActions = null;
+                boolean resetInteraction = false;
+                try {
+                    String interactionId = INTERACTION_ID.get();
+                    String interaction = INTERACTION.get();
+                    if (interactionId == null) {
+                        interactionId = UUID.randomUUID().toString();
+                        INTERACTION_ID.set(interactionId);
+                        interaction = category + ":" + workflowName + ":" + method.getName();
+                        INTERACTION.set(interaction);
+                        resetInteraction = true;
+                    }
 
-                targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
-                synchronized (SessionDecorator.unwrap(rootSession)) {
+                    Method targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                     postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, uuid);
                     returnObject = targetMethod.invoke(upstream, args);
                     if (objectPersist && !targetMethod.getName().equals("hints")) {
@@ -543,56 +546,56 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     if (postActions != null) {
                         postActions.execute(returnObject);
                     }
-                }
-                return returnObject;
-            } catch (NoSuchMethodException ex) {
-                rootSession.refresh(false);
-                throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
-            } catch (IllegalAccessException ex) {
-                rootSession.refresh(false);
-                throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
-            } catch (InvocationTargetException ex) {
-                rootSession.refresh(false);
-                log.info(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw returnException = ex.getCause();
-            } finally {
-                if (resetInteraction) {
-                    INTERACTION.remove();
-                    INTERACTION_ID.remove();
-                }
-                if (postActions != null) {
-                    postActions.dispose();
-                }
-                StringBuffer sb = new StringBuffer();
-                sb.append("AUDIT workflow invocation ");
-                sb.append(uuid);
-                sb.append(".");
-                sb.append(upstream!=null ? upstream.getClass().getName() : "<unknown>");
-                sb.append(".");
-                sb.append(method!=null ? method.getName() : "<unknown>");
-                sb.append("(");
-                if (args!=null) {
-                    for (int i = 0; i<args.length; i++) {
-                        if (i>0) {
-                            sb.append(", ");
+                    return returnObject;
+                } catch (NoSuchMethodException ex) {
+                    rootSession.refresh(false);
+                    throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
+                } catch (IllegalAccessException ex) {
+                    rootSession.refresh(false);
+                    throw returnException = new RepositoryException("Impossible failure for workflow proxy", ex);
+                } catch (InvocationTargetException ex) {
+                    rootSession.refresh(false);
+                    log.info(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                    throw returnException = ex.getCause();
+                } finally {
+                    if (resetInteraction) {
+                        INTERACTION.remove();
+                        INTERACTION_ID.remove();
+                    }
+                    if (postActions != null) {
+                        postActions.dispose();
+                    }
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("AUDIT workflow invocation ");
+                    sb.append(uuid);
+                    sb.append(".");
+                    sb.append(upstream!=null ? upstream.getClass().getName() : "<unknown>");
+                    sb.append(".");
+                    sb.append(method!=null ? method.getName() : "<unknown>");
+                    sb.append("(");
+                    if (args!=null) {
+                        for (int i = 0; i<args.length; i++) {
+                            if (i>0) {
+                                sb.append(", ");
+                            }
+                            sb.append(args[i]!=null ? args[i].toString() : "null");
                         }
-                        sb.append(args[i]!=null ? args[i].toString() : "null");
                     }
-                }
-                sb.append(") -> ");
-                if (returnException!=null) {
-                    sb.append(returnException.getClass().getName());
-                } else if (returnObject!=null) {
-                    sb.append(returnObject.toString());
-                } else {
-                    sb.append("<<null>>");
-                }
-                if(method!=null && method.getName().equals("hints")) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(new String(sb));
+                    sb.append(") -> ");
+                    if (returnException!=null) {
+                        sb.append(returnException.getClass().getName());
+                    } else if (returnObject!=null) {
+                        sb.append(returnObject.toString());
+                    } else {
+                        sb.append("<<null>>");
                     }
-                } else {
-                    log.info(new String(sb));
+                    if(method!=null && method.getName().equals("hints")) {
+                        if (log.isDebugEnabled()) {
+                            log.debug(new String(sb));
+                        }
+                    } else {
+                        log.info(new String(sb));
+                    }
                 }
             }
         }

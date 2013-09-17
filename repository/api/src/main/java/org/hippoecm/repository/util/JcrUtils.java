@@ -610,6 +610,18 @@ public class JcrUtils {
             destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
         }
 
+        return copyTo(srcNode, destNode);
+    }
+
+    /**
+     * Copies {@link Node} {@code srcNode} to {@code destParentNode} with name {@code destNodeName}.
+     *
+     * @param srcNode the node to copy
+     * @param destNode the node that the contents of srcNode will be copied to
+     * @return destNode
+     * @throws RepositoryException
+     */
+    public static Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
         for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
             destNode.addMixin(nodeType.getName());
         }

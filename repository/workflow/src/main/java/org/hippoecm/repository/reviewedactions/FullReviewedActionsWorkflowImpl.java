@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
@@ -49,8 +50,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     @Override
-    public Map<String,Serializable> hints()  {
-        Map<String,Serializable> info = super.hints();
+    public Map<String, Serializable> hints() {
+        Map<String, Serializable> info = super.hints();
         if (info.containsKey("delete")) {
             info.put("rename", info.get("delete"));
             info.put("move", info.get("delete"));
@@ -59,8 +60,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             String state = JcrUtils.getStringProperty(getNode(), "hippostd:state", "");
             info.put("copy", (unpublishedDocument != null && PublishableDocument.UNPUBLISHED.equals(state))
                     || (unpublishedDocument == null && publishedDocument != null && PublishableDocument.PUBLISHED.equals(state)));
-        }
-        catch (RepositoryException ex) {
+        } catch (RepositoryException ex) {
             // TODO DEDJO: ignore?
         }
         return info;
@@ -68,12 +68,19 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void delete() throws WorkflowException {
         log.info("deletion on document ");
-        if(current != null)
+        if (current != null) {
             throw new WorkflowException("cannot delete document with pending request");
-        if(publishedDocument != null)
-            throw new WorkflowException("cannot delete published document");
-        if(draftDocument != null)
-            throw new WorkflowException("cannot delete document being edited");
+        }
+        try {
+            if (publishedDocument != null && publishedDocument.isAvailable("live")) {
+                throw new WorkflowException("cannot delete published document");
+            }
+            if (draftDocument != null && draftDocument.getOwner() != null) {
+                throw new WorkflowException("cannot delete document being edited");
+            }
+        } catch (RepositoryException ex) {
+            throw new WorkflowException("Unable to determine legitimacy of delete operation", ex);
+        }
         doDelete();
     }
 
@@ -82,7 +89,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         throw new WorkflowException("unsupported");
     }
 
-   public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void publish(Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         doSchedPublish(publicationDate);
     }
 
@@ -101,16 +108,16 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         try {
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
             defaultWorkflow.archive();
-        } catch(MappingException ex) {
+        } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);
             fallbackDelete = true;
-        } catch(WorkflowException ex) {
+        } catch (WorkflowException ex) {
             log.warn("no default workflow for published documents, falling back in behaviour", ex);
             fallbackDelete = true;
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             log.warn("exception trying to archive document, falling back in behaviour", ex);
             fallbackDelete = true;
-        } catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             log.warn("exception trying to archive document, falling back in behaviour", ex);
             fallbackDelete = true;
         }
@@ -123,10 +130,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                     deleteDocument(unpublishedDocument);
                 }
                 unpublishedDocument = draftDocument = null;
-            }
-            catch (RepositoryException ex) {
-                log.error("exception trying to delete document", ex);
-                // TODO DEDJO: ignore?
+            } catch (RepositoryException ex) {
+                throw new WorkflowException("exception trying to delete document", ex);
             }
         }
     }
@@ -136,7 +141,7 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if (newName == null || newName.equals("")) {
             throw new WorkflowException("missing required name to copy document");
         }
-        if(publishedDocument == null && unpublishedDocument == null) {
+        if (publishedDocument == null && unpublishedDocument == null) {
             throw new WorkflowException("cannot copy unsaved document");
         }
 
@@ -149,18 +154,18 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             Document folder = getContainingFolder(publishedDocument);
             Workflow workflow = getWorkflowContext(null).getWorkflow(folderWorkflowCategory, destination);
             if (workflow instanceof EmbedWorkflow) {
-                Document copy = ((EmbedWorkflow)workflow).copyTo(folder, publishedDocument, newName, null);
+                Document copy = ((EmbedWorkflow) workflow).copyTo(folder, publishedDocument, newName, null);
                 FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext(null).getWorkflow("default", copy);
                 copiedDocumentWorkflow.depublish();
-            } else
+            } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
+            }
         } else {
             Document folder = getContainingFolder(unpublishedDocument);
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
-            if(workflow instanceof EmbedWorkflow) {
-                ((EmbedWorkflow)workflow).copyTo(folder, unpublishedDocument, newName, null);
-            }
-            else {
+            if (workflow instanceof EmbedWorkflow) {
+                ((EmbedWorkflow) workflow).copyTo(folder, unpublishedDocument, newName, null);
+            } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
             }
         }
@@ -168,52 +173,79 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     public void move(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         log.info("move document");
-        if(current != null)
-            throw new WorkflowException("cannot move document with pending request");
-        if(publishedDocument != null)
-            throw new WorkflowException("cannot move published document");
-        if(draftDocument != null)
-            throw new WorkflowException("cannot move document being edited");
 
-        Document folder = getContainingFolder(unpublishedDocument);
+        if (current != null) {
+            throw new WorkflowException("cannot move document with pending request");
+        }
+        if (publishedDocument != null && publishedDocument.isAvailable("live")) {
+            throw new WorkflowException("cannot move published document");
+        }
+        if (draftDocument != null && draftDocument.getOwner() != null) {
+            throw new WorkflowException("cannot move document being edited");
+        }
+
+        PublishableDocument document = unpublishedDocument;
+        if (document == null) {
+            document = publishedDocument;
+            if (document == null) {
+                document = draftDocument;
+            }
+        }
+
+        Document folder = getContainingFolder(document);
         String folderWorkflowCategory = "internal";
         RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
         Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
-        if(workflow instanceof FolderWorkflow) {
-            ((FolderWorkflow)workflow).move(unpublishedDocument, destination, newName);
-        }
-        else {
+        if (workflow instanceof FolderWorkflow) {
+            ((FolderWorkflow) workflow).move(document, destination, newName);
+        } else {
             throw new WorkflowException("cannot move document which is not contained in a folder");
         }
     }
 
     public void rename(String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         log.info("rename on document ");
-        if(current != null)
+        if (current != null) {
             throw new WorkflowException("cannot rename document with pending request");
-        if(publishedDocument != null || unpublishedDocument == null)
+        }
+        if (publishedDocument != null && publishedDocument.isAvailable("live")) {
             throw new WorkflowException("cannot rename published document");
-        if(draftDocument != null)
+        }
+        if (draftDocument != null && draftDocument.getOwner() != null) {
             throw new WorkflowException("cannot rename document being edited");
+        }
+        PublishableDocument document = unpublishedDocument;
+        if (document == null) {
+            document = publishedDocument;
+            if (document == null) {
+                document = draftDocument;
+            }
+        }
         // doDepublish();
-        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
+        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", document);
         defaultWorkflow.rename(newName);
     }
 
     public void publish() throws WorkflowException, MappingException {
         log.info("publication on document ");
-        if(unpublishedDocument == null) {
-            if(publishedDocument == null) {
-                throw new WorkflowException("No unpublished version of document available for publication");
-            } else {
-                throw new WorkflowException("Document has already been published");
+
+        try {
+            if (unpublishedDocument == null) {
+                if (publishedDocument == null) {
+                    throw new WorkflowException("No unpublished version of document available for publication");
+                } else if (publishedDocument.isAvailable("live")) {
+                    throw new WorkflowException("Document has already been published");
+                }
             }
-        }
-        if(draftDocument != null) {
-            throw new WorkflowException("cannot publish document being edited");
+
+            if (draftDocument != null && draftDocument.getOwner() != null) {
+                throw new WorkflowException("cannot publish document being edited");
+            }
+        } catch (RepositoryException e) {
+            throw new WorkflowException("Cannot determine whether document can be published", e);
         }
         doPublish();
     }
@@ -221,63 +253,70 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     public void doPublish() throws WorkflowException, MappingException {
         try {
             if (publishedDocument != null) {
-                deleteDocument(publishedDocument);
+                copyDocumentTo(unpublishedDocument, publishedDocument);
+            } else {
+                final Node node = cloneDocumentNode(unpublishedDocument);
+                publishedDocument = new PublishableDocument(node);
+                publishedDocument.setState(PublishableDocument.PUBLISHED);
             }
-            publishedDocument = unpublishedDocument;
-            unpublishedDocument = null;
-            publishedDocument.setState(PublishableDocument.PUBLISHED);
+            publishedDocument.setAvailability(new String[]{"live", "preview"});
             publishedDocument.setPublicationDate(new Date());
-            publishedDocument.setAvailability(new String[] { "live", "preview" });
+            publishedDocument.setModified(getWorkflowContext().getUserIdentity());
+            unpublishedDocument.setAvailability(new String[0]);
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
             versionWorkflow.version();
-        } catch(MappingException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } catch(RemoteException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (MappingException ex) {
+            log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+        } catch (RemoteException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
         }
     }
 
     public void depublish() throws WorkflowException {
         log.info("depublication on document ");
-        if(draftDocument != null)
-            throw new WorkflowException("cannot publish document being edited");
+        try {
+            if (draftDocument != null && draftDocument.getOwner() != null) {
+                throw new WorkflowException("cannot publish document being edited");
+            }
+        } catch (RepositoryException e) {
+            throw new WorkflowException("cannot determine draft ownership for depublication");
+        }
         doDepublish();
     }
 
     void doDepublish() throws WorkflowException {
         try {
             VersionWorkflow versionWorkflow;
-            if(unpublishedDocument == null) {
-                unpublishedDocument = publishedDocument;
+            if (unpublishedDocument == null) {
+                Node unpublished = cloneDocumentNode(publishedDocument);
+                unpublishedDocument = new PublishableDocument(unpublished);
                 unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
-                unpublishedDocument.setAvailability(new String[] { "preview" });
+                unpublishedDocument.setAvailability(new String[]{"preview"});
             }
-            else {
-                deleteDocument(publishedDocument);
-            }
-            publishedDocument = null;
+            unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
+            publishedDocument.setAvailability(new String[]{});
             versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             try {
                 versionWorkflow.version();
-            } catch(MappingException ex) {
-                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (MappingException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 throw new WorkflowException("Versioning of published document failed");
-            } catch(RemoteException ex) {
-                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (RemoteException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 throw new WorkflowException("Versioning of published document failed");
-            } catch(RepositoryException ex) {
-                log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } catch (RepositoryException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 throw new WorkflowException("Versioning of published document failed");
             }
-        } catch(MappingException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (MappingException ex) {
+            log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
-        } catch(RepositoryException ex) {
-            log.warn(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (RepositoryException ex) {
+            log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             throw new WorkflowException("Versioning of published document failed");
         }
     }

@@ -196,7 +196,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
     }
     
     private void restore(Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        Node node = getNode("test/versiondocument/versiondocument");
+        Node node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
         assertNotNull(node);
         node.getParent().checkout();
         node.checkout();
