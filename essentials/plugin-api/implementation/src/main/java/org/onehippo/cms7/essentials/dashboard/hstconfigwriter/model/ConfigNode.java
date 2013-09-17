@@ -17,8 +17,8 @@ public class ConfigNode {
 
     private final ConfigType type;
     private final String name;
-    private List<ConfigNode> childNodes = new ArrayList<ConfigNode>();
-    private List<HstConfigProperty> properties = new ArrayList<HstConfigProperty>();
+    private List<ConfigNode> childNodes = new ArrayList<>();
+    private List<HstConfigProperty> properties = new ArrayList<>();
     private ConfigNode parent;
 
 

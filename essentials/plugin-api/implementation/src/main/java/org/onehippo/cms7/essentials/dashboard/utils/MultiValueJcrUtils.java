@@ -102,13 +102,13 @@ public class MultiValueJcrUtils {
         if (node.hasProperty(propertyName)) {
             Property prop = node.getProperty(propertyName);
             Value[] values = prop.getValues();
-            List<String> valueList = new ArrayList<String>(values.length);
+            List<String> valueList = new ArrayList<>(values.length);
             for (Value value : values) {
                 valueList.add(value.getString());
             }
             return valueList;
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     public static void updateMultiValueProperty(Node node, String propertyName, List<String> values) throws RepositoryException {

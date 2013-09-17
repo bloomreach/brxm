@@ -350,7 +350,7 @@ public final class HippoNodeUtils {
             if (typeNode.getName().equals("hipposysedit:prototype")) {
                 String documentType = typeNode.getPrimaryNodeType().getName();
                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
-                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher == null || matcher != null && matcher.matches(typeNode))) {
+                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
                     prototypes.add(documentType);
                 }
             } else {

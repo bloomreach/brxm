@@ -15,6 +15,7 @@ import org.onehippo.cms7.essentials.dashboard.hstconfigwriter.model.ConfigNode;
 import org.onehippo.cms7.essentials.dashboard.hstconfigwriter.model.HstConfigProperty;
 import org.onehippo.cms7.essentials.dashboard.hstconfigwriter.model.ctx.Context;
 import org.onehippo.cms7.essentials.dashboard.hstconfigwriter.model.types.ConfigType;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,13 +132,13 @@ public class HstConfigWriter {
         log.debug("@ saving session @");
         if (context.isDebug()) {
             log.warn("DEBUG mode not saving changes");
-            session.refresh(false);
+            GlobalUtils.refreshSession(session, false);
         } else {
             try {
                 session.save();
             } catch (RepositoryException e) {
                 log.error("Error saving  session", e);
-                session.refresh(false);
+                GlobalUtils.refreshSession(session, false);
             }
 
         }

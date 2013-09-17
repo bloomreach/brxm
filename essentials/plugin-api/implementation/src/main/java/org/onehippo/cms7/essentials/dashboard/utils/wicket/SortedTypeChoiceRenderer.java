@@ -70,8 +70,8 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
      *                  translated type names. When <code>null</code>, no backup will be used.
      */
     public SortedTypeChoiceRenderer(PluginContext context, Collection<String> types, Locale locale, Component component) {
-        choices = new ArrayList<Choice>(types.size());
-        typeToTranslationMap = new HashMap<String, String>();
+        choices = new ArrayList<>(types.size());
+        typeToTranslationMap = new HashMap<>();
 
         for (String type : types) {
             String translation = translateType(context, component, type);

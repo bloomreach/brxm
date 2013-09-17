@@ -29,8 +29,8 @@ public class UpdateUtils {
     public static void copyFromRegistryToQueue(final PluginContext context, final String name) {
         final Session session = context.getSession();
         try {
-            if (session.itemExists(UPDATE_UTIL_PATH + UpdateType.REGISTRY.getPath() + "/" + name)) {
-                session.getWorkspace().copy(UPDATE_UTIL_PATH + UpdateType.REGISTRY.getPath() + "/" + name, UPDATE_UTIL_PATH + UpdateType.QUEUE.getPath() + "/" + name);
+            if (session.itemExists(UPDATE_UTIL_PATH + UpdateType.REGISTRY.getPath() + '/' + name)) {
+                session.getWorkspace().copy(UPDATE_UTIL_PATH + UpdateType.REGISTRY.getPath() + '/' + name, UPDATE_UTIL_PATH + UpdateType.QUEUE.getPath() + '/' + name);
                 session.save();
             } else {
                 throw new IllegalArgumentException("there is no updater in registry with name " + name);

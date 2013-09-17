@@ -83,11 +83,11 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         @Override
         protected String load() {
-            String name = getNodeTypeModel().getType();
+            String myName = getNodeTypeModel().getType();
             try {
                 Node node = getNodeModel();
                 if (node != null) {
-                    name = NodeNameCodec.decode(node.getName());
+                    myName = NodeNameCodec.decode(node.getName());
                     if (node.isNodeType("hippo:translated")) {
                         Locale locale = org.apache.wicket.Session.get().getLocale();
                         NodeIterator nodes = node.getNodes("hippo:translation");
@@ -106,7 +106,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                 log.error(ex.getMessage());
             }
 
-            return name;
+            return myName;
         }
 
         void onDetachTranslator() {
@@ -132,7 +132,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         @Override
         protected String load() {
-            IModel<String> name = value;
+            IModel<String> myName = value;
             try {
                 Node node = getNodeModel();
                 if (node != null) {
@@ -144,7 +144,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
                             if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && child.hasProperty(HippoNodeType.HIPPO_PROPERTY)
                                     && child.hasProperty(HippoNodeType.HIPPO_VALUE)) {
                                 if (child.getProperty(HippoNodeType.HIPPO_PROPERTY).getString().equals(property)
-                                        && child.getProperty(HippoNodeType.HIPPO_VALUE).getString().equals(name.getObject())) {
+                                        && child.getProperty(HippoNodeType.HIPPO_VALUE).getString().equals(myName.getObject())) {
                                     String language = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
                                     if (locale.getLanguage().equals(language)) {
                                         return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
@@ -157,7 +157,7 @@ public class TypeTranslator extends NodeTypeModelWrapper {
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
-            return name.getObject();
+            return myName.getObject();
         }
 
         @Override
@@ -180,37 +180,34 @@ public class TypeTranslator extends NodeTypeModelWrapper {
 
         @Override
         protected String load() {
-            Node nodeModel = null;
+            Node myModeModel = null;
             try {
-                nodeModel = getNodeModel();
+                myModeModel = getNodeModel();
             } catch (RepositoryException e) {
                 log.error("", e);
             }
-            if (nodeModel != null) {
-                Node node = nodeModel;
-                if (node != null) {
-                    try {
-                        if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {
-                            Locale locale = org.apache.wicket.Session.get().getLocale();
-                            NodeIterator nodes = node.getNodes(HippoNodeType.HIPPO_TRANSLATION);
-                            while (nodes.hasNext()) {
-                                Node child = nodes.nextNode();
-                                if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
-                                    if (child.getProperty(HippoNodeType.HIPPO_PROPERTY).getString().equals(propertyName)) {
-                                        String language = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
-                                        if (locale.getLanguage().equals(language)) {
-                                            return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
-                                        }
+            if (myModeModel != null) {
+                try {
+                    if (myModeModel.isNodeType(HippoNodeType.NT_TRANSLATED)) {
+                        Locale locale = org.apache.wicket.Session.get().getLocale();
+                        NodeIterator nodes = myModeModel.getNodes(HippoNodeType.HIPPO_TRANSLATION);
+                        while (nodes.hasNext()) {
+                            Node child = nodes.nextNode();
+                            if (child.isNodeType(HippoNodeType.NT_TRANSLATION) && child.hasProperty(HippoNodeType.HIPPO_PROPERTY)) {
+                                if (child.getProperty(HippoNodeType.HIPPO_PROPERTY).getString().equals(propertyName)) {
+                                    String language = child.getProperty(HippoNodeType.HIPPO_LANGUAGE).getString();
+                                    if (locale.getLanguage().equals(language)) {
+                                        return child.getProperty(HippoNodeType.HIPPO_MESSAGE).getString();
                                     }
                                 }
                             }
                         }
-                    } catch (RepositoryException ex) {
-                        log.error(ex.getMessage());
                     }
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage());
                 }
             }
-            int colonIndex = propertyName.indexOf(":");
+            int colonIndex = propertyName.indexOf(':');
             if (colonIndex != -1 && colonIndex + 1 < propertyName.length()) {
                 return propertyName.substring(colonIndex + 1);
             } else {
