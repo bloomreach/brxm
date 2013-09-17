@@ -32,7 +32,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Extended Rich Editor</sv:value>
+      <sv:value>Rich Text Editor</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
