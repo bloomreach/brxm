@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -26,7 +26,7 @@ public class GlobalUtilsTest {
         final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
         assertTrue("expected valid String", myBuilder != null);
 
-         String input = myBuilder.toString();
+        String input = myBuilder.toString();
         String output = input;
         assertEquals(input, output);
         output = GlobalUtils.replacePlaceholders(input, "NAMESPACE", REPLACE_NAMESPACE);
@@ -62,7 +62,6 @@ public class GlobalUtilsTest {
 
     }
 
-
     @Test
     public void testGenerateClassName() throws Exception {
         String name = GlobalUtils.createClassName(null);
@@ -76,8 +75,6 @@ public class GlobalUtilsTest {
 
 
     }
-
-
 
     @Test
     public void testReadTextFile() throws Exception {
