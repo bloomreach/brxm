@@ -23,7 +23,7 @@
 
   <name>Repository Upgrade Module</name>
   <description>Hippo Repository Updater Module</description>
-  <artifactId>hippo-repository-updater-module</artifactId>
+  <artifactId>hippo-repository-deprecated-updater-module</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
