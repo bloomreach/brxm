@@ -95,6 +95,7 @@ public class DocumentTemplatePanel extends EssentialsWizardStep {
                 if (stream != null) {
                     final StringBuilder builder = GlobalUtils.readStreamAsText(stream);
                     final PluginContext context = parent.getContext();
+
                     try {
                         String input = builder.toString();
                         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
@@ -102,6 +103,7 @@ public class DocumentTemplatePanel extends EssentialsWizardStep {
                         input = GlobalUtils.replacePlaceholders(input, "NAMESPACE", projectNamespacePrefix);
                         DocumentTemplateUtils.importTemplate(context, input, selectedDocument, projectNamespacePrefix, overwrite);
                     } catch (RepositoryException e) {
+                        GlobalUtils.refreshSession(context, false);
                         log.error(String.format("Error registering template: %s", selectedDocument), e);
                     }
                 }

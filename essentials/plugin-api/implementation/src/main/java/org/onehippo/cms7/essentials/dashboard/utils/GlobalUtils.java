@@ -10,7 +10,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.commons.io.IOUtils;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,14 +35,15 @@ public class GlobalUtils {
     }
 
     /**
-     *  * Replaces {@code #placeholder#} variable with string replacement provided
-     * @param input input string
+     * * Replaces {@code #placeholder#} variable with string replacement provided
+     *
+     * @param input       input string
      * @param placeholder placeholder name
      * @param replacement replacement string
      * @return input string replaced with replacements
      */
-    public static String replacePlaceholders(final String input, final String placeholder, final String replacement){
-        if(Strings.isNullOrEmpty(input)){
+    public static String replacePlaceholders(final String input, final String placeholder, final String replacement) {
+        if (Strings.isNullOrEmpty(input)) {
             return "";
         }
 
@@ -54,10 +59,6 @@ public class GlobalUtils {
         }
         return buffer.toString();
     }
-
-
-
-
 
     public static StringBuilder readStreamAsText(final InputStream stream) {
         final StringBuilder builder = new StringBuilder();
@@ -164,5 +165,19 @@ public class GlobalUtils {
             return EssentialConst.INVALID_CLASS_NAME;
         }
         return capitalize(parts[1]);
+    }
+
+    public static void refreshSession(final PluginContext context, final boolean keepChanges) {
+        final Session session = context.getSession();
+        refreshSession(session, keepChanges);
+    }
+
+    @SuppressWarnings("HippoHstCallNodeRefreshInspection")
+    public static void refreshSession(final Session session, final boolean keepChanges) {
+        try {
+            session.refresh(keepChanges);
+        } catch (RepositoryException e) {
+            log.error("Error refreshing session", e);
+        }
     }
 }

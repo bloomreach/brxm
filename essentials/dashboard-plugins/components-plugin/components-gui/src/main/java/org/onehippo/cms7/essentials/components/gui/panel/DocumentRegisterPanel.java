@@ -64,6 +64,7 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
         if (selectedDocuments != null && selectedDocuments.size() > 0) {
             final PluginContext context = parent.getContext();
             for (String selectedDocument : selectedDocuments) {
+
                 final String prefix = context.getProjectNamespacePrefix();
                 try {
                     final String superType = String.format("%s:basedocument", prefix);

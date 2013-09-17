@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -45,7 +46,12 @@ public final class DocumentTemplateUtils {
                     return;
                 }
             }
-            session.importXML(path, new ByteArrayInputStream(content.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            // node already deleted, add new one:
+            final Node namespaceNode = session.getNode(NAMESPACE_ROOT + '/' + namespace);
+            /*final Node templateNode = namespaceNode.addNode(documentName, "hipposysedit:templatetype");
+            templateNode.addMixin("mix:referenceable");
+            templateNode.addMixin("editor:editable");*/
+            session.importXML(namespaceNode.getPath(), new ByteArrayInputStream(content.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
             session.save();
         } catch (IOException e) {
             log.error("Error importing template", e);
