@@ -178,15 +178,15 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
         form.add(addButton);
         add(form);
 
-        final Session session = context.getSession();
+        final Session mySession = context.getSession();
         final List<String> primaryNodeTypes = new ArrayList<>();
         final List<String> available = new ArrayList<>();
         final List<String> toAdd = new ArrayList<>();
 
         try {
-            available.addAll(HippoNodeUtils.getPrimaryTypes(session, new HasNotTaxonomyMatcher(), "new-document"));
-            toAdd.addAll(HippoNodeUtils.getPrimaryTypes(session, new HasTaxonomyMatcher(), "new-document"));
-            primaryNodeTypes.addAll(HippoNodeUtils.getPrimaryTypes(session, "new-document"));
+            available.addAll(HippoNodeUtils.getPrimaryTypes(mySession, new HasNotTaxonomyMatcher(), "new-document"));
+            toAdd.addAll(HippoNodeUtils.getPrimaryTypes(mySession, new HasTaxonomyMatcher(), "new-document"));
+            primaryNodeTypes.addAll(HippoNodeUtils.getPrimaryTypes(mySession, "new-document"));
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve node types", e);
         }

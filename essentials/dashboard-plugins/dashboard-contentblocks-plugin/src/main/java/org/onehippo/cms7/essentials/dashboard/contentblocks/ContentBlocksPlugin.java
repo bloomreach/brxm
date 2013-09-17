@@ -231,7 +231,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
     private boolean removeContentBlockFromType(final ContentBlockModel contentBlockModel) {
         final Session session = getContext().getSession();
         final String documentType = contentBlockModel.getDocumentType();
-        final String name = contentBlockModel.getName();
+        final String myName = contentBlockModel.getName();
         try {
             Node docType;
             if (documentType.contains(":")) {
@@ -239,11 +239,11 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
             } else {
                 docType = session.getNode("/hippo:namespaces/system/" + documentType);
             }
-            final String nodeTypePath = String.format("hipposysedit:nodetype/hipposysedit:nodetype/%s", name);
+            final String nodeTypePath = String.format("hipposysedit:nodetype/hipposysedit:nodetype/%s", myName);
             if (docType.hasNode(nodeTypePath)) {
                 docType.getNode(nodeTypePath).remove();
             }
-            final String templatePath = String.format("editor:templates/_default_/%s", name);
+            final String templatePath = String.format("editor:templates/_default_/%s", myName);
             if (docType.hasNode(templatePath)) {
                 docType.getNode(templatePath).remove();
             }
@@ -278,10 +278,10 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
             if (docType.hasNode("hipposysedit:nodetype/hipposysedit:nodetype")) {
                 nodeType = docType.getNode("hipposysedit:nodetype/hipposysedit:nodetype");
             }
-            PluginType pluginType = null;
             if (docType.hasNode("editor:templates/_default_/root")) {
                 final Node ntemplate = docType.getNode("editor:templates/_default_");
                 final Node root = docType.getNode("editor:templates/_default_/root");
+                PluginType pluginType = null;
                 if (root.hasProperty("plugin.class")) {
                     pluginType = PluginType.get(root.getProperty("plugin.class").getString());
                 }
@@ -295,7 +295,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                     data.put("name", contentBlockModel.getName());
                     data.put("path", new StringCodecFactory.UriEncoding().encode(contentBlockModel.getName()));
                     data.put("documenttype", documentType);
-                    data.put("namespace", documentType.substring(0, documentType.indexOf(":")));
+                    data.put("namespace", documentType.substring(0, documentType.indexOf(':')));
                     data.put("type", contentBlockModel.getType().getType());
                     data.put("provider", contentBlockModel.getProvider());
 

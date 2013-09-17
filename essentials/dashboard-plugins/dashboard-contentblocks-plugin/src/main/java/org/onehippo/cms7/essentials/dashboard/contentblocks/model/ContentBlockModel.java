@@ -34,13 +34,13 @@ public class ContentBlockModel implements Serializable {
 
     public ContentBlockModel(Node node) {
         try {
-            final String provider = getProperty(node, "cpItemsPath").getString();
+            final String myProvider = getProperty(node, "cpItemsPath").getString();
             final Node _default_ = node.getParent();
-            final Property documentType = getProperty(_default_, "type");
-            final String name = node.getName();
-            setName(name);
-            setDocumentType(documentType.getString());
-            setProvider(provider);
+            final Property myDocumentType = getProperty(_default_, "type");
+            final String myName = node.getName();
+            setName(myName);
+            setDocumentType(myDocumentType.getString());
+            setProvider(myProvider);
         } catch (RepositoryException e) {
             log.error("Repository exception while trying to populate content blocks added list. Check if the property \"type\" exists on your _default_ node in you namespace template {}", e);
         }

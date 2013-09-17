@@ -56,7 +56,7 @@ public class RestServicesPlugin extends DashboardPlugin {
     // The type of services to be able to select in the plugin
     private static final String SERVICE_TYPE_PLAIN = "plain"; // TODO check this
     private static final String SERVICE_TYPE_CONTENT = "content";
-    private static final List SERVICE_TYPES = Arrays.asList(new String[]{SERVICE_TYPE_PLAIN, SERVICE_TYPE_CONTENT});
+    private static final List<String> SERVICE_TYPES = Arrays.asList(SERVICE_TYPE_PLAIN, SERVICE_TYPE_CONTENT);
 
     private static final String HST_REST_TYPE_PLAIN = "JaxrsRestPlainPipeline"; // TODO check this
     private static final String HST_REST_TYPE_CONTENT = "JaxrsRestContentPipeline";

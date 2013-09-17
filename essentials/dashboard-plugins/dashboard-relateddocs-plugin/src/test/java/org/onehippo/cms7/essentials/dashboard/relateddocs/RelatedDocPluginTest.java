@@ -98,20 +98,20 @@ public class RelatedDocPluginTest {
 
 
     public boolean addRelatedDocsPluginToNodeType(String type, Prefer prefer) {
-        final Session session = this.session;
+        final Session mySession = this.session;
         InputStream in = null;
         try {
             Node docType;
             if (type.contains(":")) {
-                docType = session.getNode("/hippo:namespaces/" + type.replace(':', '/'));
+                docType = mySession.getNode("/hippo:namespaces/" + type.replace(':', '/'));
             } else {
-                docType = session.getNode("/hippo:namespaces/system/" + type);
+                docType = mySession.getNode("/hippo:namespaces/system/" + type);
             }
             if (docType.hasNode("editor:templates/_default_/root")) {
                 final Node root = docType.getNode("editor:templates/_default_/root");
                 if (root.hasProperty("plugin.class")) {
                     final String pluginClazz = root.getProperty("plugin.class").getString();
-                    final HippoSession hippoSession = (HippoSession) session;
+                    final HippoSession hippoSession = (HippoSession) mySession;
                     RelatedDocsPlugin.PluginType pluginType = RelatedDocsPlugin.PluginType.get(pluginClazz);
                     String absPath = docType.getNode("editor:templates").getPath();
                     boolean addedRelatedDocs = false;
@@ -145,13 +145,13 @@ public class RelatedDocPluginTest {
     }
 
     public boolean removeRelatedDocsPluginToNodeType(String type) {
-        final Session session = this.session;
+        final Session mySession = this.session;
         try {
             Node docType;
             if (type.contains(":")) {
-                docType = session.getNode("/hippo:namespaces/" + type.replace(':', '/'));
+                docType = mySession.getNode("/hippo:namespaces/" + type.replace(':', '/'));
             } else {
-                docType = session.getNode("/hippo:namespaces/system/" + type);
+                docType = mySession.getNode("/hippo:namespaces/system/" + type);
             }
             if (docType.hasNode("editor:templates/_default_")) {
                 boolean hasRelatedDocs = false;
@@ -177,7 +177,7 @@ public class RelatedDocPluginTest {
                         }
                     }
                 }
-                session.save();
+                mySession.save();
                 return hasRelatedDocs;
             }
         } catch (RepositoryException e) {
