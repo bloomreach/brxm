@@ -1,7 +1,28 @@
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-    Install document templates:
+
+    <h3 class="header smaller lighter green"> Install document templates:</h3>
 
     <form wicket:id="form">
-        <select wicket:id="documentTypes"></select>
+
+        <div class="control-group">
+            <label class="control-label">Overwrite existing template:</label>
+
+            <div class="controls">
+                <input type="checkbox" wicket:id="overwrite"/>
+                <label class="lbl">Overwrite</label>
+            </div>
+        </div>
+
+
+        <div class="control-group">
+            <label class="control-label">Available document templates</label>
+
+            <div class="controls">
+                <select wicket:id="documentTypes"></select>
+                <label class="lbl">Select templates to install</label>
+            </div>
+        </div>
+
+
     </form>
 </wicket:panel>

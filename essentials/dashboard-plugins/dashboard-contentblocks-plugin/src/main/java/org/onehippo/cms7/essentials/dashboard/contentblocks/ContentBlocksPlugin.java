@@ -43,6 +43,7 @@ import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderM
 import org.onehippo.cms7.essentials.dashboard.contentblocks.model.ContentBlockModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.wicket.SortedTypeChoiceRenderer;
 import org.slf4j.Logger;
@@ -92,7 +93,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         final SortedTypeChoiceRenderer renderer = new SortedTypeChoiceRenderer(context, this, primaryNodeTypes);
         final SortedTypeChoiceRenderer providerRender = new SortedTypeChoiceRenderer(context, this, providerList);
 
-        final DropDownChoice<String> myProvider = new DropDownChoice<String>("provider", new PropertyModel<String>(this, "provider"), providerList, providerRender);
+        final DropDownChoice<String> myProvider = new DropDownChoice<>("provider", new PropertyModel<String>(this, "provider"), providerList, providerRender);
         myProvider.add(new OnChangeAjaxBehavior() {
 
             private static final long serialVersionUID = 1L;
@@ -251,7 +252,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 session.save();
                 return true;
             } else {
-                //error
+                //TODO add error message
             }
         } catch (RepositoryException e) {
             log.error("", e);
@@ -331,13 +332,10 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                     return true;
                 }
             }
-            session.refresh(false);
-        } catch (RepositoryException e) {
-            log.error("", e);
-        } catch (TemplateException e) {
-            log.error("", e);
-        } catch (IOException e) {
-            log.error("", e);
+
+        } catch (RepositoryException | TemplateException | IOException e) {
+            GlobalUtils.refreshSession(session, false);
+            log.error("Error in content bocks plugin", e);
         } finally {
             IOUtils.closeQuietly(in);
             IOUtils.closeQuietly(out);
@@ -350,6 +348,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         final Session session = getContext().getSession();
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
+            @SuppressWarnings("deprecation")
             final Query query = queryManager.createQuery("hippo:namespaces//element(*,frontend:plugin)[@plugin.class = 'org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin']", Query.XPATH);
             final NodeIterator it = query.execute().getNodes();
             while (it.hasNext()) {

@@ -193,7 +193,10 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
             item.add(new AttributeAppender("class", processes ? " complete" : ""));
             item.add(new AttributeModifier("data-target", String.format("#step%s", index)));
             item.add(new Label("no", index));
-            item.add(new Label("title", wizardStep.getTitle()));
+            final String titleText = "<h4 class=\"header smaller lighter blue\">"+wizardStep.getTitle()+"</h4>";
+            final Label title = new Label("title", titleText);
+            title.setEscapeModelStrings(false);
+            item.add(title);
             final String s = String.valueOf(100 / list.size());
             item.add(new AttributeModifier("style", String.format("min-width: %s%%; max-width: %s%%;", s, s)));
         }

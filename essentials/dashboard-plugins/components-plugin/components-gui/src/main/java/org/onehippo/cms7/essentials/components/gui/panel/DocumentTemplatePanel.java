@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
@@ -49,7 +50,7 @@ public class DocumentTemplatePanel extends EssentialsWizardStep {
     private final ComponentsWizard parent;
     private List<String> selectedDocuments;
     private List<String> items;
-    private boolean overwrite; // TODO overwrite
+    private boolean overwrite;
 
     public DocumentTemplatePanel(final ComponentsWizard parent, final String title) {
         super(title);
@@ -70,6 +71,8 @@ public class DocumentTemplatePanel extends EssentialsWizardStep {
                 log.debug("selectedDocuments {}", selectedDocuments);
             }
         });
+        final CheckBox overwriteCheckbox = new CheckBox("overwrite", new PropertyModel<Boolean>(this, "overwrite"));
+        form.add(overwriteCheckbox);
         form.add(availableDocuments);
         add(form);
 
