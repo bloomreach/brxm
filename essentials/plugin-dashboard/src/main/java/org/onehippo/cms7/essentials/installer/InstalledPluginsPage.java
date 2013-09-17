@@ -7,6 +7,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * @author Jeroen Reijn
  */
 public class InstalledPluginsPage extends WebPage {
+    private static final long serialVersionUID = 1L;
 
     public InstalledPluginsPage(final PageParameters parameters) {
         super(parameters);

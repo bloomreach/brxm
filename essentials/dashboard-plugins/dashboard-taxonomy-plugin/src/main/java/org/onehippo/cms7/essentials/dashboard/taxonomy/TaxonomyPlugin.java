@@ -102,6 +102,7 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
 
         final DropDownChoice<TaxonomyModel> taxonomy = new DropDownChoice<>("taxonomy", new PropertyModel<TaxonomyModel>(this, "selectedTaxonomy"), populateTaxonomyModelList(), new ChoiceRenderer<TaxonomyModel>("name"));
         taxonomy.add(new OnChangeAjaxBehavior() {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 //empty
@@ -125,6 +126,7 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
         });
 
         prefer.add(new OnChangeAjaxBehavior() {
+            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
@@ -243,6 +245,7 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
         Form buttonForm = new Form("form-updater");
 
         final AjaxButton run = new AjaxButton("run") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 super.onSubmit(target, form);
@@ -251,6 +254,7 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
         };
 
         final AjaxButton create = new AjaxButton("create") {
+            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 super.onSubmit(target, form);

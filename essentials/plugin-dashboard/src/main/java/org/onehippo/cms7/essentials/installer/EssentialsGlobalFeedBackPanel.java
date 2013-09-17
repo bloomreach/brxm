@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
  * @version "$Id$"
  */
 public class EssentialsGlobalFeedBackPanel extends FeedbackPanel {
+    private static final long serialVersionUID = 1L;
 
     public EssentialsGlobalFeedBackPanel(String id) {
         super(id);

@@ -27,6 +27,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class EventBusServlet extends WebSocketServlet {
 
+    private static final long serialVersionUID = 1L;
     public static final String PROJECT_BASEDIR_PROPERTY = "project.basedir";
 
     private Map<String, Channel> channels = new HashMap<String, Channel>();

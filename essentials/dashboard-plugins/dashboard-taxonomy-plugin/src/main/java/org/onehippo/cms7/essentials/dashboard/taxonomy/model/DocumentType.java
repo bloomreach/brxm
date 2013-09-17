@@ -6,6 +6,7 @@ import org.apache.wicket.util.io.IClusterable;
  * @author Jeroen Reijn
  */
 public class DocumentType implements IClusterable {
+    private static final long serialVersionUID = 1L;
 
     private String path;
     private String name;

@@ -96,6 +96,7 @@ public class MenuPanel extends Panel {
 
 
         add(new AjaxLink<Plugin>("dashboardLink",null) {
+            private static final long serialVersionUID = 1L;
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 dashboard.onSetupSelected(target);
@@ -103,6 +104,7 @@ public class MenuPanel extends Panel {
         });
 
         add(new AjaxLink<Plugin>("marketplaceLink",null) {
+            private static final long serialVersionUID = 1L;
 
             //final Plugin model = plugin.getModelObject();
             @Override

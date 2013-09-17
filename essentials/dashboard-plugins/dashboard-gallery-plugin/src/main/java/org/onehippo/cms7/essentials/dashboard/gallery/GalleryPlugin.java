@@ -115,6 +115,7 @@ public class GalleryPlugin extends DashboardPlugin {
     private LoadableDetachableModel<List<String>> createImageSetTypesModel() {
 
         return new LoadableDetachableModel<List<String>>() {
+            private static final long serialVersionUID = 1L;
 
             @Override
             protected List<String> load() {

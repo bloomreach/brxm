@@ -92,8 +92,8 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         final SortedTypeChoiceRenderer renderer = new SortedTypeChoiceRenderer(context, this, primaryNodeTypes);
         final SortedTypeChoiceRenderer providerRender = new SortedTypeChoiceRenderer(context, this, providerList);
 
-        final DropDownChoice<String> provider = new DropDownChoice<String>("provider", new PropertyModel(this, "provider"), providerList, providerRender);
-        provider.add(new OnChangeAjaxBehavior() {
+        final DropDownChoice<String> myProvider = new DropDownChoice<String>("provider", new PropertyModel<String>(this, "provider"), providerList, providerRender);
+        myProvider.add(new OnChangeAjaxBehavior() {
 
             private static final long serialVersionUID = 1L;
 
@@ -102,10 +102,11 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 //empty
             }
         });
-        provider.setOutputMarkupId(true);
-        add(provider);
+        myProvider.setOutputMarkupId(true);
+        add(myProvider);
 
         final DropDownChoice<Prefer> prefer = new DropDownChoice<>("prefer", new PropertyModel<Prefer>(this, "selected"), Arrays.asList(Prefer.RIGHT, Prefer.LEFT), new IChoiceRenderer<Prefer>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public Object getDisplayValue(final Prefer object) {
                 return object;
@@ -130,7 +131,8 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         add(prefer);
 
 
-        final DropDownChoice<Type> type = new DropDownChoice<>("type", new PropertyModel<Type>(this, "type"), Arrays.asList(Type.DROPDOWN, Type.LINKS), new IChoiceRenderer<Type>() {
+        final DropDownChoice<Type> myType = new DropDownChoice<>("type", new PropertyModel<Type>(this, "type"), Arrays.asList(Type.DROPDOWN, Type.LINKS), new IChoiceRenderer<Type>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public Object getDisplayValue(final Type object) {
                 return object;
@@ -141,7 +143,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 return object.getType();
             }
         });
-        type.add(new OnChangeAjaxBehavior() {
+        myType.add(new OnChangeAjaxBehavior() {
 
             private static final long serialVersionUID = 1L;
 
@@ -150,8 +152,8 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 //empty
             }
         });
-        type.setOutputMarkupId(true);
-        add(type);
+        myType.setOutputMarkupId(true);
+        add(myType);
 
         TextField<String> path = new TextField<>("name", new PropertyModel<String>(this, "name"));
         path.add(new OnChangeAjaxBehavior() {
@@ -170,7 +172,9 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         final ListChoice<String> availableTypesListChoice = new ListChoice<>("available-types", available, renderer);
         availableTypesListChoice.setOutputMarkupId(true);
 
-        final ListChoice<ContentBlockModel> addToTypesListChoice = new ListChoice("add-to-types", new PropertyModel<ContentBlockModel>(this, "contentblock"), toAdd, new IChoiceRenderer<ContentBlockModel>() {
+        final ListChoice<ContentBlockModel> addToTypesListChoice = new ListChoice<>("add-to-types", new PropertyModel<ContentBlockModel>(this, "contentblock"), toAdd, new IChoiceRenderer<ContentBlockModel>() {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public Object getDisplayValue(final ContentBlockModel object) {
                 return providerRender.getDisplayValue(object.getProvider()) + " on " + renderer.getDisplayValue(object.getDocumentType());

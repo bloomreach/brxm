@@ -72,6 +72,7 @@ public class RelatedDocsPlugin extends InstallablePlugin<RelatedDocsInstaller> {
         }
 
         final DropDownChoice<Prefer> prefer = new DropDownChoice<>("prefer", new PropertyModel<Prefer>(this, "selected"), Arrays.asList(Prefer.RIGHT, Prefer.LEFT), new IChoiceRenderer<Prefer>() {
+            private static final long serialVersionUID = 1L;
             @Override
             public Object getDisplayValue(final Prefer object) {
                 return object;
@@ -84,6 +85,7 @@ public class RelatedDocsPlugin extends InstallablePlugin<RelatedDocsInstaller> {
         });
 
         prefer.add(new OnChangeAjaxBehavior() {
+            private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
