@@ -59,6 +59,8 @@ class PropertyValueEditor extends DataView {
                 item.add(new BinaryEditor("value", propertyModel));
             } else if (ReferenceEditor.isReference(valueModel)) {
                 item.add(new ReferenceEditor("value", propertyModel, valueModel));
+            } else if (HstReferenceEditor.isHstReference(valueModel)) {
+                item.add(new HstReferenceEditor("value", propertyModel, valueModel));
             } else if (propertyModel.getProperty().getDefinition().isProtected()) {
                 item.add(new Label("value", valueModel));
             } else if (propertyModel.getProperty().getType() == PropertyType.BOOLEAN) {
