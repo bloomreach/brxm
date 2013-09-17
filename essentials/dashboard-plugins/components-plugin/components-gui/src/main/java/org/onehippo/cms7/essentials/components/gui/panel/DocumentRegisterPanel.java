@@ -28,7 +28,7 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
     private final ListMultipleChoice<String> availableDocuments;
     private final ComponentsWizard parent;
     private List<String> selectedDocuments;
-    private DocumentTemplateModel model;
+
 
 
     public DocumentRegisterPanel(final ComponentsWizard parent, final String id) {
@@ -68,10 +68,11 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
                 final String prefix = context.getProjectNamespacePrefix();
                 try {
                     final String superType = String.format("%s:basedocument", prefix);
-                    CndUtils.registerDocumentType(context, prefix, selectedDocument, true, false, superType, "hippostd:relaxed");
+                    CndUtils.registerDocumentType(context, prefix, selectedDocument, true, false, superType, "hippostd:relaxed","hippotranslation:translated");
                     parent.addRegisteredDocument(selectedDocument);
                 } catch (NodeTypeExistsException e) {
                     // just add already exiting ones:
+                    // TODO check if we have all mixins:
                     parent.addRegisteredDocument(selectedDocument);
                 } catch (RepositoryException e) {
                     log.error(String.format("Error registering document type: %s", selectedDocument), e);

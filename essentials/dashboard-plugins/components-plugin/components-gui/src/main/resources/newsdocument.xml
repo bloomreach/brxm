@@ -38,6 +38,7 @@
       <sv:property sv:multiple="true" sv:name="hipposysedit:supertype" sv:type="String">
         <sv:value>#NAMESPACE#:basedocument</sv:value>
         <sv:value>hippostd:relaxed</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <!-- TODO: change namespace uri?-->
@@ -196,12 +197,23 @@
       <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
         <sv:value/>
       </sv:property>
+      <sv:property sv:name="hippotranslation:id" sv:type="String">
+        <sv:value>document-type-locale-id</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippotranslation:locale" sv:type="String">
+        <sv:value>document-type-locale</sv:value>
+      </sv:property>
       <sv:property sv:name="#NAMESPACE#:introduction" sv:type="String">
         <sv:value/>
       </sv:property>
       <sv:property sv:name="#NAMESPACE#:title" sv:type="String">
         <sv:value/>
       </sv:property>
+      <sv:node sv:name="hippotranslation:translations">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippotranslation:translations</sv:value>
+        </sv:property>
+      </sv:node>
       <sv:node sv:name="#NAMESPACE#:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
