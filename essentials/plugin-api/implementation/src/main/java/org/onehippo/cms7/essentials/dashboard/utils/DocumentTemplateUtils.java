@@ -36,7 +36,8 @@ public final class DocumentTemplateUtils {
      */
     public static void importTemplate(final PluginContext context, final String content, final String documentName, final String namespace, final boolean overwrite) throws RepositoryException {
         final Session session = context.getSession();
-        final String path = NAMESPACE_ROOT + '/' + namespace + '/' + documentName;
+        final String docNamespaceRoot = NAMESPACE_ROOT + '/' + namespace;
+        final String path = docNamespaceRoot + '/' + documentName;
         try {
             if (session.nodeExists(path)) {
                 if (overwrite) {
@@ -46,12 +47,7 @@ public final class DocumentTemplateUtils {
                     return;
                 }
             }
-            // node already deleted, add new one:
-            final Node namespaceNode = session.getNode(NAMESPACE_ROOT + '/' + namespace);
-            /*final Node templateNode = namespaceNode.addNode(documentName, "hipposysedit:templatetype");
-            templateNode.addMixin("mix:referenceable");
-            templateNode.addMixin("editor:editable");*/
-            session.importXML(namespaceNode.getPath(), new ByteArrayInputStream(content.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+            session.importXML(docNamespaceRoot, new ByteArrayInputStream(content.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
             session.save();
         } catch (IOException e) {
             log.error("Error importing template", e);
