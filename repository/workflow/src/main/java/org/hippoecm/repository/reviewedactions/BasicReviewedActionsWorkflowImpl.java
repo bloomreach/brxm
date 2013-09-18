@@ -28,12 +28,15 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,20 +47,25 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     private static final long serialVersionUID = 1L;
 
     private static final String[] PROTECTED_MIXINS = new String[]{
-            "mix:referenceable",
-            "mix:versionable",
-            "hippo:harddocument",
-            "hippostd:publishable",
-            "hippostd:publishableSummary",
-            "hippostdpubwf:document"
+            JcrConstants.MIX_VERSIONABLE,
+            JcrConstants.MIX_REFERENCEABLE,
+            HippoNodeType.NT_HARDDOCUMENT,
+            HippoStdNodeType.NT_PUBLISHABLE,
+            HippoStdNodeType.NT_PUBLISHABLESUMMARY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT
     };
     private static final String[] PROTECTED_PROPERTIES = new String[]{
-            "hippo:availability",
-            "hippostd:state",
-            "hippostd:holder",
-            "hippostdpubwf:publicationDate",
-            "hippostdpubwf:lastModifiedBy",
-            "hippostdpubwf:lastModificationDate"
+            HippoNodeType.HIPPO_AVAILABILITY,
+            HippoNodeType.HIPPO_RELATED,
+            HippoNodeType.HIPPO_PATHS,
+            HippoStdNodeType.HIPPOSTD_STATE,
+            HippoStdNodeType.HIPPOSTD_HOLDER,
+            HippoStdNodeType.HIPPOSTD_STATESUMMARY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE
     };
     static {
         Arrays.sort(PROTECTED_PROPERTIES);
@@ -82,7 +90,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
         draftDocument = unpublishedDocument = publishedDocument = null;
         for (Node sibling : new NodeIterable(parent.getNodes(node.getName()))) {
-            String state = JcrUtils.getStringProperty(sibling, "hippostd:state", "");
+            String state = JcrUtils.getStringProperty(sibling, HippoStdNodeType.HIPPOSTD_STATE, "");
             if ("draft".equals(state)) {
                 draftDocument = new PublishableDocument(sibling);
             } else if ("unpublished".equals(state)) {
@@ -116,7 +124,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         }
         try {
             final String userIdentity = super.getWorkflowContext().getUserIdentity();
-            final String state = JcrUtils.getStringProperty(getNode(), "hippostd:state", "");
+            final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
 
             boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
             boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("live");
@@ -189,9 +197,11 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         JcrUtils.ensureIsCheckedOut(parent, true);
 
         Node destNode = parent.addNode(srcNode.getName(), srcNode.getPrimaryNodeType().getName());
-        destNode.addMixin("hippo:harddocument");
-        if (!destNode.isNodeType("hippostdpubwf:document")) {
-            destNode.addMixin("hippostdpubwf:document");
+        if (!destNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
+            destNode.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+        }
+        if (srcNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY) && !destNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
+            destNode.addMixin(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
         }
         return copyTo(srcNode, destNode);
     }
@@ -274,12 +284,32 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
         }
 
+        copyMetaData(srcNode, destNode);
+
         final NodeIterator nodes = srcNode.getNodes();
         while (nodes.hasNext()) {
             final Node child = nodes.nextNode();
             JcrUtils.copy(child, child.getName(), destNode);
         }
         return destNode;
+    }
+
+    private void copyMetaData(final Node srcNode, final Node destNode) throws RepositoryException {
+        if (srcNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)
+                && destNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
+            for (String propertyName : new String[] {
+                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE,
+                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY,
+                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE,
+                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY,
+                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE }) {
+                if (srcNode.hasProperty(propertyName)) {
+                    destNode.setProperty(propertyName, srcNode.getProperty(propertyName).getValue());
+                } else if (destNode.hasProperty(propertyName)) {
+                    destNode.getProperty(propertyName).remove();
+                }
+            }
+        }
     }
 
     public Document obtainEditableInstance() throws WorkflowException {
@@ -289,11 +319,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 if (current != null) {
                     throw new WorkflowException("unable to edit document with pending operation");
                 }
-                Node draftNode = cloneDocumentNode(unpublishedDocument != null ? unpublishedDocument : publishedDocument);
-                draftDocument = new PublishableDocument(draftNode);
-                draftDocument.setState(PublishableDocument.DRAFT);
-                draftDocument.setAvailability(null);
-                draftDocument.setModified(getWorkflowContext().getUserIdentity());
+                createDraft();
             } else if (draftDocument.getOwner() != null) {
                 if (!getWorkflowContext().getUserIdentity().equals(draftDocument.getOwner())) {
                     throw new WorkflowException("document already being edited");
@@ -315,9 +341,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             draftDocument.setOwner(null);
 
             if (unpublishedDocument == null) {
-                final Node node = cloneDocumentNode(draftDocument);
-                unpublishedDocument = new PublishableDocument(node);
-                unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
+                createUnpublished(draftDocument);
             } else {
                 copyDocumentTo(draftDocument, unpublishedDocument);
             }
@@ -349,6 +373,33 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         } catch (RepositoryException ex) {
             throw new WorkflowException("failed to dispose editable instance", ex);
         }
+    }
+
+    protected void createDraft() throws RepositoryException {
+        Node draftNode = cloneDocumentNode(unpublishedDocument != null ? unpublishedDocument : publishedDocument);
+        if (!draftNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+            draftNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        }
+        draftDocument = new PublishableDocument(draftNode);
+        draftDocument.setState(PublishableDocument.DRAFT);
+        draftDocument.setAvailability(null);
+        draftDocument.setModified(getWorkflowContext().getUserIdentity());
+    }
+
+    protected void createUnpublished(Document from) throws RepositoryException {
+        final Node node = cloneDocumentNode(from);
+        unpublishedDocument = new PublishableDocument(node);
+        unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
+        node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+    }
+
+    protected void createPublished() throws RepositoryException {
+        final Node node = cloneDocumentNode(unpublishedDocument);
+        if (!node.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+            node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        }
+        publishedDocument = new PublishableDocument(node);
+        publishedDocument.setState(PublishableDocument.PUBLISHED);
     }
 
     public void requestDeletion() throws WorkflowException {

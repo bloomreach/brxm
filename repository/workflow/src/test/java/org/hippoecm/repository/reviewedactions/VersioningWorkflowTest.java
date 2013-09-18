@@ -18,13 +18,12 @@ package org.hippoecm.repository.reviewedactions;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -92,13 +91,14 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         }
         root = root.addNode("test");
         node = root.addNode("versiondocument", "hippo:handle");
-        node.addMixin("hippo:hardhandle");
         node.addMixin("mix:referenceable");
-        node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[] { session.getValueFactory().createValue("hippostd:state") });
+        node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[]{session.getValueFactory().createValue("hippostd:state")});
         node = node.addNode("versiondocument", "hippo:document");
         node.addMixin("hippo:harddocument");
         node.addMixin("hippostdpubwf:document");
         node.addMixin("hippostd:languageable");
+        node.addMixin("hippostd:publishableSummary");
+        node.setProperty("hippo:availability", new String[]{"preview"});
         node.setProperty("hippostd:state", "unpublished");
         node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:language", "aa");
@@ -136,50 +136,75 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
     public void testVersioning() throws WorkflowException, RepositoryException, RemoteException {
         Node node;
         Document document;
-        Vector<String> expected = new Vector<String>();
+
+        class DocVersion {
+            final String language;
+            final String state;
+
+            DocVersion(Node node) throws RepositoryException {
+                this.language = node.getProperty("hippostd:language").getString();
+                this.state = node.getProperty("hippostd:stateSummary").getString();
+            }
+
+            @Override
+            public String toString() {
+                return "DocVersion[language='" + language + "', state='" + state + "']";
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                if (obj == this) {
+                    return true;
+                }
+                if (!(obj instanceof DocVersion)) {
+                    return false;
+                }
+                DocVersion that = (DocVersion) obj;
+                return that.language.equals(language) && that.state.equals(state);
+            }
+        }
+
+        List<DocVersion> expected = new LinkedList<DocVersion>();
 
         edit();
         publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+        expected.add(new DocVersion(getUnpublished()));
 
         edit();
         publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+        expected.add(new DocVersion(getUnpublished()));
 
         edit();
         publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+        expected.add(new DocVersion(getUnpublished()));
 
         edit();
         edit();
         publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+        expected.add(new DocVersion(getUnpublished()));
 
         depublish();
-        expected.add("--");
+        expected.add(new DocVersion(getUnpublished()));
         edit();
         edit();
 
         publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+        expected.add(new DocVersion(getUnpublished()));
 
         edit();
         publish();
-        expected.add(getNode("test/versiondocument/versiondocument[@hippostd:state='published']").getProperty("hippostd:language").getString());
+        expected.add(new DocVersion(getUnpublished()));
 
-        node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
+        node = getUnpublished();
         assertNotNull(node);
+
         VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
         Map<Calendar, Set<String>> history = versionwf.list();
-        Vector<String> versions = new Vector<String>();
+        LinkedList<DocVersion> versions = new LinkedList<DocVersion>();
         for (Map.Entry<Calendar, Set<String>> entry : history.entrySet()) {
             document = versionwf.retrieve(entry.getKey());
-            if(document != null) {
-                Node version = session.getNodeByUUID(document.getIdentity());
-                versions.add(version.getProperty("hippostd:language").getString());
-            } else {
-                versions.add("--");
-            }
+            Node version = session.getNodeByUUID(document.getIdentity());
+            versions.add(new DocVersion(version));
         }
 
         /* FIXME: sometimes this test fails because of invalid earlier data in the repository */
@@ -190,21 +215,23 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
 
         restore(history.keySet().iterator().next());
         assertNotNull(getNode("test/versiondocument/versiondocument[@hippostd:state='published']"));
-        assertNotNull(getNode("test/versiondocument/versiondocument[@hippostd:state='unpublished']"));
+        assertNotNull(getUnpublished());
 
         restore(history.keySet().iterator().next());
     }
-    
+
+    private Node getUnpublished() throws RepositoryException {
+        return getNode("test/versiondocument/versiondocument[@hippostd:state='unpublished']");
+    }
+
     private void restore(Calendar historic) throws WorkflowException, RepositoryException, RemoteException {
-        Node node = getNode("test/versiondocument/versiondocument[@hippostd:state='published']");
+        Node node = getUnpublished();
         assertNotNull(node);
         node.getParent().checkout();
         node.checkout();
         session.save();
-        Map<String, String[]> replacements = new TreeMap<String, String[]>();
-        replacements.put("./hippostd:state", new String[] { "unpublished" });
         VersionWorkflow versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
-        versionwf.restore(historic, replacements);
+        versionwf.restore(historic);
         session.save();
         session.refresh(false);
     }
@@ -213,7 +240,6 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         Node node;
         FullReviewedActionsWorkflow publishwf;
         Document document;
-        Property prop;
 
         getNode("test/versiondocument").checkout();
 
@@ -248,7 +274,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
     }
 
     private void publish() throws WorkflowException, RepositoryException, RemoteException {
-        Node node = getNode("test/versiondocument/versiondocument[@hippostd:state='unpublished']");
+        Node node = getUnpublished();
         assertNotNull(node);
         node.getParent().checkout();
         node.checkout();

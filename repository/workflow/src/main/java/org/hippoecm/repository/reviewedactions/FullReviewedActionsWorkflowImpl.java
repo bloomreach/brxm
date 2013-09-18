@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Map;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
@@ -255,15 +254,13 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             if (publishedDocument != null) {
                 copyDocumentTo(unpublishedDocument, publishedDocument);
             } else {
-                final Node node = cloneDocumentNode(unpublishedDocument);
-                publishedDocument = new PublishableDocument(node);
-                publishedDocument.setState(PublishableDocument.PUBLISHED);
+                createPublished();
             }
             publishedDocument.setAvailability(new String[]{"live", "preview"});
             publishedDocument.setPublicationDate(new Date());
             publishedDocument.setModified(getWorkflowContext().getUserIdentity());
             unpublishedDocument.setAvailability(new String[0]);
-            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", publishedDocument);
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             versionWorkflow.version();
         } catch (MappingException ex) {
             log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
@@ -290,16 +287,14 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
 
     void doDepublish() throws WorkflowException {
         try {
-            VersionWorkflow versionWorkflow;
             if (unpublishedDocument == null) {
-                Node unpublished = cloneDocumentNode(publishedDocument);
-                unpublishedDocument = new PublishableDocument(unpublished);
-                unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
-                unpublishedDocument.setAvailability(new String[]{"preview"});
+                createUnpublished(publishedDocument);
             }
+            unpublishedDocument.setAvailability(new String[]{"preview"});
             unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
             publishedDocument.setAvailability(new String[]{});
-            versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
+
+            VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             try {
                 versionWorkflow.version();
             } catch (MappingException ex) {

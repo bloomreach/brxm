@@ -48,17 +48,13 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
             Set<String> unpublishedAvailability = getValues(parameters.get("unpublished"));
             Set<String> publishedAvailability = getValues(parameters.get("published"));
 
-            if (unpublishedAvailability.size() == 0) {
-                if (publishedAvailability.size() > 0) {
+            if (publishedAvailability.size() == 0) {
+                stateSummary = "new";
+            } else {
+                if (unpublishedAvailability.size() == 0) {
                     stateSummary = "live";
                 } else {
-                    stateSummary = "new";
-                }
-            } else {
-                if (publishedAvailability.size() > 0) {
                     stateSummary = "changed";
-                } else {
-                    stateSummary = "new";
                 }
             }
         } catch (RepositoryException e) {

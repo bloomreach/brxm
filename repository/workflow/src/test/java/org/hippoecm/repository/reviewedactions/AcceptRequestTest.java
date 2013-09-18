@@ -21,6 +21,7 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -42,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 
 public class AcceptRequestTest extends RepositoryTestCase {
 
-    protected static final String LOREM = "Lorem ipsum dolor sit amet, consectetaur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum";
+    protected static final String LOREM = "Lorem ipsum dolor sit amet";
 
     protected WorkflowManager workflowMgr = null;
 
@@ -62,10 +63,12 @@ public class AcceptRequestTest extends RepositoryTestCase {
         node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippostdpubwf:test");
         node.addMixin("hippo:harddocument");
+        node.addMixin("hippostd:publishableSummary");
         node.setProperty("hippostdpubwf:content", LOREM);
         node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:state", "published");
-        node.setProperty("hippo:availability", new String[] { "live" });
+        node.setProperty("hippo:availability", new String[] { "live", "preview" });
+        node.setProperty("hippostd:stateSummary", "live");
         node.setProperty("hippostdpubwf:createdBy", "admin");
         node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
         node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
@@ -181,8 +184,8 @@ public class AcceptRequestTest extends RepositoryTestCase {
         node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
         assertNotNull(node);
         assertEquals("published", node.getProperty("hippostd:state").getString());
-        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
-        assertNull(node);
+        final Value[] values = node.getProperty("hippostd:stateSummary").getValues();
+        assertEquals(2, values.length);
     }
  
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {

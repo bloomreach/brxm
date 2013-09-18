@@ -96,7 +96,10 @@ public interface VersionWorkflow extends Workflow {
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     *
+     * @deprecated use the {@link #restore(java.util.Calendar)} method and implement any further operations on the returned document.
      */
+    @Deprecated
     public Document restore(Calendar historic, Map<String, String[]> replacements)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
