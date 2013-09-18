@@ -50,10 +50,12 @@
                     query = document.evaluate("//comment()", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
                     for (i = 0, length = query.snapshotLength; i < length; i++) {
                         element = query.snapshotItem(i);
-                        hstMetaData = this.convertToHstMetaData(element);
-                        if (hstMetaData !== null) {
-                            links.push(hstMetaData[HST.ATTR.ID]);
-                            this._createLink(element, hstMetaData);
+                        if (this.isComment(element)) {
+                            hstMetaData = this.convertCommentToHstMetaData(element);
+                            if (hstMetaData !== null) {
+                                links.push(hstMetaData[HST.ATTR.ID]);
+                                this._createLink(element, hstMetaData);
+                            }
                         }
                     }
                 } else {
@@ -64,8 +66,8 @@
                             return;
                         }
                         var i, hstMetaData, childNode, length;
-                        if (node.nodeType === 8) {
-                            hstMetaData = self.convertToHstMetaData(node);
+                        if (self.isComment(node)) {
+                            hstMetaData = self.convertCommentToHstMetaData(node);
                             if (hstMetaData !== null) {
                                 links.push(hstMetaData[HST.ATTR.ID]);
                                 self._createLink(node, hstMetaData);
@@ -83,6 +85,10 @@
             } catch(e) {
                 iframeToHost.exception('Error initializing manager.', e);
             }
+        },
+
+        isComment: function(element) {
+            return element.nodeType === 8;
         },
 
         _createLink : function(commentElement, hstMetaData) {
@@ -122,29 +128,44 @@
             commentElement.parentNode.removeChild(commentElement);
         },
 
-        convertToHstMetaData : function(element) {
-            var commentJsonObject;
-
-            if (element.nodeType !== 8) {
-                return null;
-            }
+        convertCommentToHstMetaData : function(element) {
+            var commentData, commentJsonObject;
             try {
-                if (!element.data || element.data.length === 0
-                        || element.data.indexOf(HST.ATTR.ID) === -1
-                        || element.data.indexOf(HST.ATTR.TYPE) === -1
-                        || element.data.indexOf(HST.ATTR.URL) === -1) {
-                    return null;
-                }
-                commentJsonObject = JSON.parse(element.data);
-                if (commentJsonObject[HST.ATTR.TYPE] === HST.CMSLINK
+                commentData = this.getCommentData(element);
+                if (this.isHstMetaData(commentData)) {
+                    commentJsonObject = JSON.parse(commentData);
+                    if (commentJsonObject !== null
+                        && commentJsonObject[HST.ATTR.TYPE] === HST.CMSLINK
                         && commentJsonObject[HST.ATTR.ID] !== undefined
                         && commentJsonObject[HST.ATTR.URL] !== undefined) {
-                    return commentJsonObject;
+                        return commentJsonObject;
+                    }
                 }
             } catch (e) {
-                iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(element.data) + ' ' + e);
+                iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(commentData) + ' ' + e);
             }
             return null;
+        },
+
+        getCommentData: function(element) {
+            if (element.length < 0) {
+                // Skip conditional comments in IE: reading their 'data' property throws an
+                // Error "Not enough storage space is available to complete this operation."
+                // Conditional comments can be recognized by a negative 'length' property.
+                return null;
+            }
+            if (!element.data || element.data.length === 0) {
+                // no data available
+                return null;
+            }
+            return element.data;
+        },
+
+        isHstMetaData: function(dataString) {
+            return dataString !== null
+                && dataString.indexOf(HST.ATTR.ID) !== -1
+                && dataString.indexOf(HST.ATTR.TYPE) !== -1
+                && dataString.indexOf(HST.ATTR.URL) !== -1;
         }
 
     };
