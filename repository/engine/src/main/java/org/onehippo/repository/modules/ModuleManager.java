@@ -68,6 +68,7 @@ public class ModuleManager {
         cancelModules();
         stopModules();
         session.logout();
+        executorService.shutdown();
     }
 
     private void registerModules() throws RepositoryException {

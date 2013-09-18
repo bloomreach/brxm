@@ -24,6 +24,13 @@ import javax.jcr.RepositoryException;
  * having been called, the module is marked as executed in the repository
  * and not run again. The repository also makes sure that only one
  * cluster node executes the module.
+ *
+ * <p>
+ * For long running jobs implementers must make sure cancel actually
+ * causes execute to be cancelled and to return quickly. Otherwise
+ * the repository will not be able to shut down until the module execution
+ * has been completed.
+ * </p>
  */
 public interface ExecutableDaemonModule extends DaemonModule {
 
