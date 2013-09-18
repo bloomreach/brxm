@@ -395,6 +395,9 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
 
     public void detach() {
         model.detach();
+        if (modelService != null) {
+            modelService.detach();
+        }
     }
 
 }

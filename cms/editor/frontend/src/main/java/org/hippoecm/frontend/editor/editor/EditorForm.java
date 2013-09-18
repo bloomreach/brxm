@@ -224,7 +224,14 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
 
     @Override
     protected void onDetach() {
+        IModel<Node> model = this.getModel();
+        if (model != null) {
+            model.detach();
+        }
         engineFactory.detach();
+        if (modelService != null) {
+            modelService.detach();
+        }
         super.onDetach();
     }
 
