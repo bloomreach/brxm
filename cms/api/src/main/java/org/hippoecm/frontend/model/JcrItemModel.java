@@ -261,7 +261,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                         throw ex;
                     }
                 }
-            } else if (absPath != null) {
+            } else if (absPath != null && !absPath.isEmpty()) {
                 if (property) {
                     return (T) session.getProperty(absPath);
                 } else {

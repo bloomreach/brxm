@@ -171,16 +171,18 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
         JcrNodeModel model = (JcrNodeModel) getDefaultModel();
         TreePath treePath = treeModel.lookup(model);
-        ITreeState treeState = tree.getTreeState();
-        if (!navigating) {
-            for (Object node : treePath.getPath()) {
-                TreeNode treeNode = (TreeNode) node;
-                if (!treeState.isNodeExpanded(treeNode)) {
-                    treeState.expandNode(treeNode);
+        if (treePath != null) {
+            ITreeState treeState = tree.getTreeState();
+            if (!navigating) {
+                for (Object node : treePath.getPath()) {
+                    TreeNode treeNode = (TreeNode) node;
+                    if (!treeState.isNodeExpanded(treeNode)) {
+                        treeState.expandNode(treeNode);
+                    }
                 }
             }
+            treeState.selectNode(treePath.getLastPathComponent(), true);
         }
-        treeState.selectNode(treePath.getLastPathComponent(), true);
     }
 
     private class BrowserTree extends JcrTree {
