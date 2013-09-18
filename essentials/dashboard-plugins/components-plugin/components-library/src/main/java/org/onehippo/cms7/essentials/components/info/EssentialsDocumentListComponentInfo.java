@@ -51,7 +51,10 @@ public interface EssentialsDocumentListComponentInfo {
 
 
     @Parameter(name = "pageSize", required = true, defaultValue = "10", displayName = "Page size", description = "Nr of items per page")
-    int pageSize();
+    int getPageSize();
+
+    @Parameter(name = "showPagination", required = false, displayName = "Show pagination")
+    Boolean getShowPagination();
 
 
 }
