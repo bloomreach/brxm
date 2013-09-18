@@ -19,6 +19,9 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 /**
  * @version "$Id$"
  */
@@ -30,6 +33,8 @@ public final class TemplateUtils {
     }
 
     public static String injectTemplate(final String template) {
+        final Configuration config = new Configuration();
+        //
         return null;
     }
 }
