@@ -40,7 +40,20 @@ public class ModuleRegistryTest {
     }
 
     @Test
-    public void testOrderModules() throws Exception {
+    public void testOrderModulesAfterAnnotation() throws Exception {
+        final ModuleRegistry registry = new ModuleRegistry();
+        registry.registerModule("test", new TestModule());
+        registry.registerModule("test4", new Test4Module());
+
+        final List<ModuleRegistration> registrations = registry.getModuleRegistrations();
+
+        assertEquals(2, registrations.size());
+        assertEquals("test", registrations.get(0).getModuleName());
+        assertEquals("test4", registrations.get(1).getModuleName());
+    }
+
+    @Test
+    public void testOrderModulesServiceDependencies() throws Exception {
         ModuleRegistry registry = new ModuleRegistry();
         registry.registerModule("test1", new Test1Module());
         registry.registerModule("test2", new Test2Module());
@@ -82,6 +95,9 @@ public class ModuleRegistryTest {
 
     @ProvidesService(types = Test3.class)
     public static class Test3Module extends TestModule {}
+
+    @After(modules = TestModule.class)
+    public static class Test4Module extends TestModule {}
 
     public interface Test1 {}
 

@@ -243,6 +243,7 @@
 
 [hipposys:module] > nt:base
 - hipposys:className (string)
+- hipposys:executed (date)
 + hippo:moduleconfig
 
 [hipposys:modulefolder] > nt:base

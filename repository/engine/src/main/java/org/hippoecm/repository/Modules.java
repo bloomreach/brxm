@@ -35,12 +35,12 @@ public final class Modules<T extends Object> implements Iterable<T> {
 
     private static Modules allModules;
 
-    private Set modules;
+    private Set<T> modules;
 
     public Modules() {
-        modules = new TreeSet<T>(new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return o1.getClass().getName().compareTo(o2.getClass().getName());
+        modules = new TreeSet<T>(new Comparator<T>() {
+            public int compare(Object t1, Object t2) {
+                return t1.getClass().getName().compareTo(t2.getClass().getName());
             }
         });
     }
@@ -99,7 +99,7 @@ public final class Modules<T extends Object> implements Iterable<T> {
                                     Class moduleClass = Class.forName(moduleClassName, true, loader);
                                     if (clazz == null || clazz.isAssignableFrom(moduleClass)) {
                                         Object moduleInstance = moduleClass.newInstance();
-                                        modules.add(moduleInstance);
+                                        modules.add((T) moduleInstance);
                                     }
                                 } catch (NoClassDefFoundError ex) {
                                     log.warn("Cannot instantiate module class {}: {}", moduleClassName, ex);

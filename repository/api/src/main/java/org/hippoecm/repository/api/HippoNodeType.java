@@ -170,6 +170,8 @@ public interface HippoNodeType {
 
     public static final String NT_WORKFLOWFOLDER = "hipposys:workflowfolder";
 
+    public static final String NT_MODULE = "hipposys:module";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_SYSTEM = "hipposys:system";
@@ -207,6 +209,8 @@ public interface HippoNodeType {
     public static final String HIPPO_DOMAINSPATH = "hipposys:domainspath";
 
     public static final String HIPPO_EQUALS = "hipposys:equals";
+
+    public static final String HIPPO_EXECUTED = "hipposys:executed";
 
     public static final String HIPPO_EXTENSIONSOURCE = "hipposys:extensionsource";
 
@@ -252,6 +256,8 @@ public interface HippoNodeType {
     public static final String HIPPO_MIXIN = "hipposysedit:mixin";
 
     public static final String HIPPO_MODES = "hippo:modes";
+
+    public static final String HIPPO_MODULECONFIG = "hippo:moduleconfig";
 
     public static final String HIPPO_MULTIPLE = "hipposysedit:multiple";
 

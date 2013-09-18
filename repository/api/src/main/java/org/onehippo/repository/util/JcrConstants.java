@@ -30,6 +30,9 @@ public final class JcrConstants {
     public static final String MIX_LOCKABLE = "mix:lockable";
     public static final String MIX_REFERENCEABLE = "mix:referenceable";
 
+    public static final String NT_BASE = "nt:base";
+    public static final String NT_UNSTRUCTURED = "nt:unstructured";
+
     // ------------------------------------------ properties
 
     public static final String JCR_PRIMARY_TYPE = "jcr:primaryType";

@@ -89,6 +89,10 @@ class HandleMigrator {
         migrationSession = loginToMigrationWorkspace();
     }
 
+    void cancel() {
+        cancelled = true;
+    }
+
     void shutdown() {
         if (defaultSession != null) {
             defaultSession.logout();
@@ -425,7 +429,4 @@ class HandleMigrator {
         return DecoratorFactoryImpl.getSessionDecorator(repositoryImpl.getRootSession(HANDLE_MIGRATION_WORKSPACE).impersonate(credentials), credentials);
     }
 
-    public void cancel() {
-        cancelled = true;
-    }
 }

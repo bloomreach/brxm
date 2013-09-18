@@ -24,7 +24,9 @@ api/src/main/java/org/onehippo/repository/RepositoryService.java -text
 api/src/main/java/org/onehippo/repository/cluster/RepositoryClusterService.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableDaemonModule.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableSchedulingDaemonModule.java -text
+api/src/main/java/org/onehippo/repository/modules/After.java -text
 api/src/main/java/org/onehippo/repository/modules/ConfigurableDaemonModule.java -text
+api/src/main/java/org/onehippo/repository/modules/ExecutableDaemonModule.java -text
 api/src/main/java/org/onehippo/repository/modules/ProvidesService.java -text
 api/src/main/java/org/onehippo/repository/modules/RequiresService.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJob.java -text
@@ -239,6 +241,7 @@ engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTe
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
+engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/resources/InvalidJobDetail.ser -text
@@ -421,6 +424,8 @@ testutils/src/test/resources/log4j-filters.txt -text
 upgrade/handlemigration/pom.xml -text
 upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/HandleMigrationModule.java -text
 upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/HandleMigrator.java -text
+upgrade/handlemigration/src/main/resources/handlemigration-module.xml -text
+upgrade/handlemigration/src/main/resources/hippoecm-extension.xml -text
 upgrade/handlemigration/src/main/resources/org/onehippo/cms7/repository/upgrade/handlemigration-workspace.xml -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedBasicReviewedActionsWorkflowImpl.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedFullReviewedActionsWorkflowImpl.java -text

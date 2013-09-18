@@ -34,11 +34,13 @@ class ModuleRegistry {
 
     ModuleRegistry() {}
 
-    void registerModule(final String moduleName, final DaemonModule module) throws RepositoryException {
-        addRegistration(new ModuleRegistration(moduleName, module));
+    ModuleRegistration registerModule(final String moduleName, final DaemonModule module) throws RepositoryException {
+        final ModuleRegistration registration = new ModuleRegistration(moduleName, module);
+        addRegistration(registration);
+        return registration;
     }
 
-    void addRegistration(final ModuleRegistration registration) throws RepositoryException {
+    private void addRegistration(final ModuleRegistration registration) throws RepositoryException {
         final List<ModuleRegistration> updated = new ArrayList<ModuleRegistration>(registrations);
         updated.add(registration);
         checkDependencyGraph(updated);
@@ -56,11 +58,11 @@ class ModuleRegistry {
         final Queue<ModuleRegistration> startNodes = new LinkedList<ModuleRegistration>();
         final List<Edge> edges = new LinkedList<Edge>();
         for (ModuleRegistration reg : regs) {
-            if (reg.requirements().isEmpty()) {
+            if (reg.requirements().isEmpty() && reg.after().isEmpty()) {
                 startNodes.add(reg);
             } else {
                 for (ModuleRegistration other : regs) {
-                    if (reg.requires(other)) {
+                    if (reg.after(other)) {
                         edges.add(new Edge(reg, other));
                     }
                 }
