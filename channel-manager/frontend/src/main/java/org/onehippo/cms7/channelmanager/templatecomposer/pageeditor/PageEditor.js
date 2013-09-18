@@ -840,13 +840,15 @@
 
             this.channelStoreFuture.when(function(config) {
                 config.store.on('load', function() {
-                    var channelRecord = config.store.getById(this.channelId);
+                    if (this.channelId) {
+                        var channelRecord = config.store.getById(this.channelId);
 
-                    this.channel = channelRecord.data;
-                    if (this.pageContainer.previewMode) {
-                        this.createViewToolbar();
-                    } else {
-                        this.createEditToolbar();
+                        this.channel = channelRecord.data;
+                        if (this.pageContainer.previewMode) {
+                            this.createViewToolbar();
+                        } else {
+                            this.createEditToolbar();
+                        }
                     }
                 }, this);
                 this.on('channelChanged', function() {
