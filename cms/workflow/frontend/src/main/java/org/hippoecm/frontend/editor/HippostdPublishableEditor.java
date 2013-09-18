@@ -95,8 +95,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                     published = new JcrNodeModel(child);
                 } else if (state.equals(HippoStdNodeType.DRAFT)) {
                     draft = new JcrNodeModel(child);
-                    if (!child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
-                            || child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
+                    if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
+                            && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
                         isHolder = true;
                     }
                 }
