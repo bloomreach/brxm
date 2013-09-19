@@ -67,7 +67,7 @@ public class HstTemplate {
         isNamed = named;
     }
 
-    public static Node createTemplateNode(final Node parent, final HstTemplate template) throws RepositoryException {
+    public static Node createTemplateNode(final Node parent, final HstTemplate template) throws RepositoryException, TemplateExistsException {
         if(parent == null) {
             throw new RepositoryException("Parent is not available.");
         }
@@ -76,7 +76,7 @@ public class HstTemplate {
         }
 
         if(parent.hasNode(template.getName())) {
-            throw new RepositoryException("Template already exists.");
+            throw new TemplateExistsException("Template already exists.");
         }
 
         final Node templateNode = parent.addNode(template.getName(), HST_TEMPLATE);

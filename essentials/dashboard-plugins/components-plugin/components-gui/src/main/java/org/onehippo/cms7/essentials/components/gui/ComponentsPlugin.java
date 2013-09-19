@@ -18,7 +18,6 @@ import javax.jcr.Session;
 import org.apache.commons.io.FileUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.wizard.IWizardStep;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Check;
 import org.apache.wicket.markup.html.form.CheckGroup;
@@ -85,7 +84,7 @@ public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
     public static final String JSP_FOLDER = File.separator + "essentials" + File.separator + "components" + File.separator;
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ComponentsPlugin.class);
-    private final ListChoice<String> sitesChoice;
+    final ListChoice<String> sitesChoice;
     private String selectedSite;
     private List<String> selectedComponents = new ArrayList<>();
 
