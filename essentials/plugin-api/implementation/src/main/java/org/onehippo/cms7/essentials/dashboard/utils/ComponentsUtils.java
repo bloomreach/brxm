@@ -146,6 +146,24 @@ public final class ComponentsUtils {
 
     }
 
+    public static void removeFromCatalog(final CatalogObject catalog, final PluginContext context) {
+        try {
+            final Session session = context.getSession();
+            final Node siteRoot = session.getRootNode().getNode(HST_CONFIG_PATH);
+            final Node site = siteRoot.getNode(catalog.getSiteName());
+            final Node rootCatalogNode = site.getNode(CATALOG_PATH);
+            final Node catalogNode = createEssentialsCatalogNode(rootCatalogNode);
+            final String name = catalog.getName();
+            if(catalogNode.hasNode(name)){
+                //log.warn("Catalog: component node already exists {}", catalogNode);
+                catalogNode.getNode(name).remove();
+                session.save();
+            }
+        } catch (RepositoryException e) {
+            log.error("Error writing nodes", e);
+        }
+    }
+
     private static Node createEssentialsCatalogNode(final Node root) throws RepositoryException {
         if(root.hasNode(HIPPOESSENTIALS_CATALOG)){
             return root.getNode(HIPPOESSENTIALS_CATALOG);

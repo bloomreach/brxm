@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstTemplate;
+import org.onehippo.cms7.essentials.dashboard.model.hst.TemplateExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public final class HstUtils {
      * @return the newly added template node
      * @throws RepositoryException exception when repository exception occurs
      */
-    public static Node addTemplateNodeToConfiguration(final Session session, final String configName, final HstTemplate template) throws RepositoryException {
+    public static Node addTemplateNodeToConfiguration(final Session session, final String configName, final HstTemplate template) throws RepositoryException, TemplateExistsException {
         final Node hstTemplatesNode = getHstTemplatesNode(session, configName);
         return HstTemplate.createTemplateNode(hstTemplatesNode, template);
     }
