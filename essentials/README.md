@@ -38,7 +38,7 @@ NOTE: If you wanna merge your changes yourself do following:
 $ git checkout master
 $ git pull
 $ git pull origin YOUR_LOCAL_BRANCH_NAME
-$ git push
+$ git push                                    jhkjh
 ```
 
 To delete remote branch:
