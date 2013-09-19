@@ -224,9 +224,10 @@ public class ModuleManager {
     }
 
     void cancelModule(final ModuleRegistration registration) {
+        log.info("Cancelling module {}", registration.getModuleName());
         final ExecutableDaemonModule module = (ExecutableDaemonModule) registration.getModule();
-        module.cancel();
         registration.cancel();
+        module.cancel();
         registration.acquire();
     }
 
