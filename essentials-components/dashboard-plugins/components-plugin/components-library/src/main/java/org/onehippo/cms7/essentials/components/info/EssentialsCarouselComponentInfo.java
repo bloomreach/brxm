@@ -16,9 +16,53 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.Parameter;
+
 /**
  * @version "$Id$"
  */
 public interface EssentialsCarouselComponentInfo {
+
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 1")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem1();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 2")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem2();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 3")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem3();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 4")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem4();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 5")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem5();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 6")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem6();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 7")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem7();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 8")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem8();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 9")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem9();
+
+    @Parameter(name = "document", required = false, displayName = "Carousel item 10")
+    @DocumentLink(allowCreation = false, docLocation = "/content/documents", docType = "hippo:document")
+    String getCarouselItem10();
 
 }
