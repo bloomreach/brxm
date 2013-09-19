@@ -38,6 +38,7 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.Event;
 import javax.jcr.version.VersionManager;
 
@@ -653,20 +654,25 @@ public class JcrUtils {
         if (mixinNodeTypes.length > 0) {
             System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
         }
-
         List<Property> properties = new LinkedList<Property>();
         for (PropertyIterator iter = source.getProperties(); iter.hasNext(); ) {
             Property property = iter.nextProperty();
-            if (property.getDefinition().isMultiple()) {
+            final String propertyName = property.getName();
+            if (propertyName.startsWith("jcr:")) {
+                continue;
+            }
+
+            final PropertyDefinition definition = property.getDefinition();
+            if (definition.isMultiple()) {
                 for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(property.getName(), property.getValues())) {
+                    if (nodeType.canSetProperty(propertyName, property.getValues())) {
                         properties.add(property);
                         break;
                     }
                 }
             } else {
                 for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(property.getName(), property.getValue())) {
+                    if (nodeType.canSetProperty(propertyName, property.getValue())) {
                         properties.add(property);
                         break;
                     }

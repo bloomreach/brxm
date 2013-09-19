@@ -50,7 +50,6 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
-import org.hippoecm.repository.util.Utilities;
 import org.onehippo.repository.util.JcrConstants;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
@@ -419,7 +418,6 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     public Document restore(Calendar historic) throws WorkflowException, RepositoryException {
-
         Version version = lookup(historic, false);
         if (version == null)
             throw new WorkflowException("No such historic version");
@@ -428,6 +426,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             throw new WorkflowException("version never existed");
         }
 
+        JcrUtils.ensureIsCheckedOut(subject, false);
         for (Property property : new PropertyIterable(subject.getProperties())) {
             if (property.getDefinition().isProtected()) {
                 continue;
@@ -455,10 +454,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             }
         }
 
-        Utilities.dump(frozenNode);
-        Utilities.dump(subject);
         JcrUtils.copyTo(frozenNode, subject);
-        Utilities.dump(subject);
 
         subject.getSession().save();
         subject.checkin();

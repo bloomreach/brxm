@@ -193,7 +193,7 @@ public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl imp
                     throw new WorkflowException("document already being edited");
             }
         } catch (RepositoryException ex) {
-            throw new WorkflowException("Failed to obtain an editable instance");
+            throw new WorkflowException("Failed to obtain an editable instance", ex);
         }
         return draftDocument;
     }

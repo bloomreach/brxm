@@ -115,6 +115,7 @@ class HandleMigrator {
         if (size > 0) {
             try {
                 int count = 0;
+                final long progressInterval = (size + 99) / 100;
                 for (Node handle : new NodeIterable(hardHandles)) {
                     if (cancelled) {
                         break;
@@ -129,7 +130,7 @@ class HandleMigrator {
                         if (count % 100 == 0) {
                             log.info("Migrated {} handles", count);
                         }
-                        if (count % (size / 100) == 0) {
+                        if (count % progressInterval == 0) {
                             long progress = Math.round(100.0 * count / size);
                             log.info("Progress: {} %", progress);
                         }

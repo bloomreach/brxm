@@ -68,6 +68,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         Iterator<Map.Entry<Calendar, Set<String>>> iter = list.entrySet().iterator();
         iter.next();
         Document restored = versionwf.restore(iter.next().getKey());
+        session.refresh(false);
         assertFalse(session.getNodeByIdentifier(restored.getIdentity()).hasProperty("aap"));
     }
 
