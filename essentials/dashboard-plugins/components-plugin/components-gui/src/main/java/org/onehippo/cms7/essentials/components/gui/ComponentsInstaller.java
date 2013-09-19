@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Installs maven dependencies  for components
  *
- * @version "$Id: ComponentsInstaller.java 174159 2013-08-19 11:30:46Z jreijn $"
+ * @version "$Id$"
  */
 public class ComponentsInstaller extends AbstractDependencyInstaller {
 

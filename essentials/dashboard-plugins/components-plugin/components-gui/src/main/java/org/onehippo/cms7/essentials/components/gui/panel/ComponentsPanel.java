@@ -2,7 +2,7 @@
  * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  */
 
-package org.onehippo.cms7.essentials.components.gui;
+package org.onehippo.cms7.essentials.components.gui.panel;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +30,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListChoice;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
+import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.Asset;
-import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.CatalogObject;
@@ -41,13 +41,14 @@ import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HstUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
+import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id: ComponentsPlugin.java 164085 2013-05-13 10:05:42Z mmilicevic $"
+ * @version "$Id$"
  */
-public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
+public class ComponentsPanel extends EssentialsWizardStep {
 
     public static final ImmutableBiMap<String, CatalogObject> COMPONENTS_MAPPING = new ImmutableBiMap.Builder<String, CatalogObject>()
             .put("Document Component",
@@ -80,16 +81,18 @@ public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
     public static final String JSP_FOLDER = File.separator + "essentials" + File.separator + "components" + File.separator;
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ComponentsPlugin.class);
+    private static Logger log = LoggerFactory.getLogger(ComponentsPanel.class);
 
     private final ListChoice<String> sitesChoice;
     private final ListChoice<String> availableTypesListChoice;
     private final ListChoice<String> addToTypesListChoice;
+    private final PluginContext context;
 
     private String selectedSite;
 
-    public ComponentsPlugin(final String id, final Plugin descriptor, final PluginContext context) {
-        super(id, descriptor, context);
+    public ComponentsPanel(final ComponentsWizard parent, final String id) {
+        super(id);
+        context = parent.getContext();
         final FeedbackPanel feedbackPanel = new EssentialsFeedbackPanel("feedback");
         feedbackPanel.setOutputMarkupId(true);
         add(feedbackPanel);
@@ -137,8 +140,8 @@ public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
         // Component add components
         //############################################
 
-        final List<String> available = new ArrayList();
-        final List<String> toAdd = new ArrayList();
+        final List<String> available = new ArrayList<>();
+        final List<String> toAdd = new ArrayList<>();
 
         availableTypesListChoice = new ListChoice<>("available-types", available);
         availableTypesListChoice.setOutputMarkupId(true);
@@ -152,6 +155,7 @@ public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
             @Override
             protected void onEvent(final AjaxRequestTarget target) {
                 if (selectedSite != null) {
+                    @SuppressWarnings("unchecked")
                     final List<String> availableChoices = (List<String>) availableTypesListChoice.getChoices();
                     final String input = availableChoices.get(Integer.parseInt(availableTypesListChoice.getInput()));
 
@@ -277,11 +281,6 @@ public class ComponentsPlugin extends InstallablePlugin<ComponentsInstaller> {
                 log.error("Error writing file", e);
             }
         }
-    }
-
-    @Override
-    public ComponentsInstaller getInstaller() {
-        return new ComponentsInstaller();
     }
 
 
