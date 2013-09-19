@@ -31,11 +31,23 @@ public class CommonComponent extends BaseHstComponent {
      * Name of the content not found (404) redirect page
      */
     public static final String PAGE_404 = "404page";
+    /**
+     * Attributes  names used within Essentials
+     */
+    public static final String ATTRIBUTE_DOCUMENTS = "documents";
     private static Logger log = LoggerFactory.getLogger(CommonComponent.class);
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         // do nothing
+    }
+
+    public <T extends HippoBean> T getHippoBeanForPath(final String documentPath, Class<T> beanMappingClass, final HstRequest request) {
+        if (!Strings.isNullOrEmpty(documentPath)) {
+            final HippoBean root = getSiteContentBaseBean(request);
+            return root.getBean(documentPath, beanMappingClass);
+        }
+        return null;
     }
 
     /**
@@ -93,7 +105,6 @@ public class CommonComponent extends BaseHstComponent {
     // UTILS
     //############################################
 
-
     /**
      * Find HippoBean for given path. If path is null or empty, site root bean will be returned
      *
@@ -130,7 +141,6 @@ public class CommonComponent extends BaseHstComponent {
         }
         return defaultValue;
     }
-
 
     public boolean getBooleanParam(HstRequest request, String parameter, boolean defaultValue) {
         final String p = getAnyParameter(request, parameter);
