@@ -36,7 +36,7 @@ NOTE: If you wanna merge your changes yourself do following:
 
 ```
 $ git checkout master
-$ git pull
+$ git pull                           ff
 $ git pull origin YOUR_LOCAL_BRANCH_NAME
 $ git push
 ```
