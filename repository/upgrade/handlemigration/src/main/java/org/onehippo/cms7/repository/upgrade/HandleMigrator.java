@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -42,6 +43,7 @@ import javax.jcr.version.VersionManager;
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
 import org.apache.jackrabbit.core.VersionManagerImpl;
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
@@ -94,10 +96,10 @@ class HandleMigrator {
     }
 
     void shutdown() {
-        if (defaultSession != null) {
+        if (defaultSession != null && defaultSession.isLive()) {
             defaultSession.logout();
         }
-        if (migrationSession != null) {
+        if (migrationSession != null && migrationSession.isLive()) {
             migrationSession.logout();
         }
     }
@@ -105,17 +107,32 @@ class HandleMigrator {
     void migrate() {
         log.debug("Running handle migration tool");
 
-        if (migrationPending()) {
+        final HippoNodeIterator hardHandles = (HippoNodeIterator) getHardHandles();
+        final long size = hardHandles.getTotalSize();
+
+        log.debug("{} handles to migrate", size);
+
+        if (size > 0) {
             try {
                 int count = 0;
-                for (Node handle : getHardHandles()) {
+                for (Node handle : new NodeIterable(hardHandles)) {
                     if (cancelled) {
                         break;
                     }
                     try {
+                        if (isExcluded(handle)) {
+                            continue;
+                        }
                         migrate(handle);
                         count++;
                         throttle(count);
+                        if (count % 100 == 0) {
+                            log.info("Migrated {} handles", count);
+                        }
+                        if (count % (size / 100) == 0) {
+                            long progress = Math.round(100.0 * count / size);
+                            log.info("Progress: {} %", progress);
+                        }
                     } catch (RepositoryException e) {
                         log.error("Failed to migrate " + JcrUtils.getNodePathQuietly(handle), e);
                     }
@@ -130,19 +147,20 @@ class HandleMigrator {
 
     }
 
-    private Iterable<Node> getHardHandles() {
+    private boolean isExcluded(final Node handle) throws RepositoryException {
+        return handle.getPath().startsWith("/content/attic");
+    }
+
+
+    private NodeIterator getHardHandles() {
         try {
             final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle", Query.SQL);
-            return new NodeIterable(query.execute().getNodes());
+            final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle ORDER BY jcr:name", Query.SQL);
+            return query.execute().getNodes();
         } catch (RepositoryException e) {
             log.error("Failed to query for handles to migrate", e);
         }
-        return Collections.emptyList();
-    }
-
-    private boolean migrationPending() {
-        return getHardHandles().iterator().hasNext();
+        return null;
     }
 
     private void throttle(final int count) {
@@ -318,23 +336,33 @@ class HandleMigrator {
 
         for (Property property : new PropertyIterable(srcNode.getProperties())) {
             if (!excludeProperty(property.getName())) {
-                if (property.isMultiple()) {
-                    destNode.setProperty(property.getName(), property.getValues(), property.getType());
-                } else {
-                    destNode.setProperty(property.getName(), property.getValue(), property.getType());
+                try {
+                    if (property.isMultiple()) {
+                        destNode.setProperty(property.getName(), property.getValues(), property.getType());
+                    } else {
+                        destNode.setProperty(property.getName(), property.getValue(), property.getType());
+                    }
+                } catch (ConstraintViolationException e) {
+                    log.debug("Property {} not applicable to node {}", property.getName(), destNode.getPath());
                 }
             }
         }
 
         for (Node srcChild : new NodeIterable(srcNode.getNodes())) {
-            Node destChild;
+            Node destChild = null;
             if (destNode.hasNode(srcChild.getName())) {
                 destChild = destNode.getNode(srcChild.getName());
             } else {
                 final String primaryNodeType = getPrimaryTypeToCopy(srcChild);
-                destChild = destNode.addNode(srcChild.getName(), primaryNodeType);
+                try {
+                    destChild = destNode.addNode(srcChild.getName(), primaryNodeType);
+                } catch (ConstraintViolationException e) {
+                    log.debug("Cannot add child {} of type {} to {}", new String[] { srcChild.getName(), primaryNodeType, destNode.getPath() });
+                }
             }
-            copy(srcChild, destChild);
+            if (destChild != null) {
+                copy(srcChild, destChild);
+            }
         }
 
     }
