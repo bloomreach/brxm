@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.nio.file.Path;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,12 @@ public final class TemplateUtils {
 
     private TemplateUtils() {
     }
+
+    public static void parseBeanProperties(final Path beanPath){
+        // TODO implement
+
+    }
+
 
     public static String injectTemplate(final String template) {
         final Configuration config = new Configuration();
