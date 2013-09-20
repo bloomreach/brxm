@@ -20,7 +20,7 @@ to perform GIT operations. The clone can be created by the following command:
 $ git clone https://github.com/onehippo/essentials.git
 ```
 
-### Git clone (recommended)
+### SSH clone (recommended)
 
 The second options is to use a SSH clone. By using the SSH clone, you don't have to provide your username
 and password. You just have to create a SSH key and configure the key in your GIT account. There are
