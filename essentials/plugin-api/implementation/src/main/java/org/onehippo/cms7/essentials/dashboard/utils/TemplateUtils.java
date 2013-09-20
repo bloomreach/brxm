@@ -189,6 +189,7 @@ public final class TemplateUtils {
                 return "<img src=\"<hst:link hippobean=\"${" + baseName + '.' + propertyName + ".original}\"/>\"\" />";
             }
 
+            log.warn("Missing property mapping for: {}", this);
             return "";
         }
 
