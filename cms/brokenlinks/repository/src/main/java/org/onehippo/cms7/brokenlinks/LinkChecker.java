@@ -18,6 +18,7 @@ package org.onehippo.cms7.brokenlinks;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -282,7 +283,8 @@ public class LinkChecker {
             HttpRequestBase httpRequest = null;
 
             try {
-                httpRequest = new HttpHead(url);
+                URI linkUri = LinkURIUtils.createHttpURIFromString(url);
+                httpRequest = new HttpHead(linkUri);
                 HttpResponse httpResponse = httpClient.execute(httpRequest, httpContext);
                 int headResultCode = httpResponse.getStatusLine().getStatusCode();
                 httpRequest.reset();

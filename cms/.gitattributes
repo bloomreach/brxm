@@ -1207,6 +1207,7 @@ brokenlinks/repository/pom.xml svneol=native#text/plain
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/BrokenLinksCheckerDaemonModule.java -text
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/BrokenLinksCheckingJob.java -text
 brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/GlobCompiler.java -text
+brokenlinks/repository/src/main/java/org/onehippo/cms7/brokenlinks/LinkURIUtils.java -text
 brokenlinks/repository/src/main/resources/brokenlinks-authorization.xml -text
 brokenlinks/repository/src/main/resources/brokenlinks-config.xml svneol=native#text/plain
 brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
@@ -1216,6 +1217,7 @@ brokenlinks/repository/src/main/resources/brokenlinks.cnd -text
 brokenlinks/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 brokenlinks/repository/src/test/java/org/onehippo/cms7/brokenlinks/GlobCompilerTest.java -text
 brokenlinks/repository/src/test/java/org/onehippo/cms7/brokenlinks/LinkCheckerTest.java -text
+brokenlinks/repository/src/test/java/org/onehippo/cms7/brokenlinks/LinkURIUtilsTest.java -text
 brokenlinks/test/pom.xml svneol=native#text/plain
 brokenlinks/test/src/test/resources/brokenlinks-test.cnd -text
 brokenlinks/test/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
