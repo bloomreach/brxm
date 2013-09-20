@@ -43,9 +43,5 @@ public class LinkURIUtilsTest {
         url = "http://www.example.com/?q=hello%20world#section1";
         uri = LinkURIUtils.createHttpURIFromString(url);
         assertEquals(url, uri.toString());
-
-        url = "http://www.example.com/?q=hello%20world?param1=value1&param2=value2#section1#section2";
-        uri = LinkURIUtils.createHttpURIFromString(url);
-        assertEquals(url, uri.toString());
     }
 }

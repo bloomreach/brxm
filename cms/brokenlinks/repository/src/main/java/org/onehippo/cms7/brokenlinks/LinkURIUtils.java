@@ -57,7 +57,7 @@ public class LinkURIUtils {
             if (m.matches()) {
                 String scheme = m.group(1);
                 String host = m.group(2);
-                int port = 0;
+                int port = -1;
                 int offset = host.indexOf(':');
                 if (offset != -1) {
                     port = NumberUtils.toInt(host.substring(offset + 1), 0);
