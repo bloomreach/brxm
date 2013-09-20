@@ -93,8 +93,6 @@
 
     <htmlcleaner.version>2.2</htmlcleaner.version>
 
-    <jsr311.version>1.1.1</jsr311.version>
-
     <geronimo-stax-api_1.2_spec.version>1.1</geronimo-stax-api_1.2_spec.version>
     <stax.version>1.2.0</stax.version>
     <stax2-api.version>3.1.1</stax2-api.version>
@@ -546,12 +544,6 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.ws.rs</groupId>
-        <artifactId>jsr311-api</artifactId>
-        <version>${jsr311.version}</version>
       </dependency>
 
       <!-- STAX API -->
