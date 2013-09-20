@@ -15,12 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
@@ -41,24 +37,18 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 class HstReferenceEditor extends Panel {
     private static final long serialVersionUID = 1L;
 
+    protected static final String PROPERTY_HST_TEMPLATE = "hst:template";
+    protected static final String PROPERTY_HST_COMPONENTCONFIGURATIONID = "hst:componentconfigurationid";
+    protected static final String PROPERTY_HST_REFERENCECOMPONENT = "hst:referencecomponent";
+
     private static final String NODE_HST_CONFIGURATION = "hst:configuration";
     private static final String NODE_HST_CONFIGURATIONS = "hst:configurations";
     private static final String NODE_HST_DEFAULT = "hst:default";
     private static final String NODE_HST_TEMPLATES = "hst:templates";
     private static final String PROPERY_HST_INHERITSFROM = "hst:inheritsfrom";
-    private static final String PROPERTY_HST_TEMPLATE = "hst:template";
     private static final String PROPERTY_HST_RENDERPATH = "hst:renderpath";
     private static final String PROPERTY_HST_SCRIPT = "hst:script";
-    private static final String PROPERTY_HST_COMPONENTCONFIGURATIONID = "hst:componentconfigurationid";
-    private static final String PROPERTY_HST_REFERENCECOMPONENT = "hst:referencecomponent";
     private static final String PROPERTY_HST_COMPONENTCLASSNAME = "hst:componentclassname";
-
-    private static List<String> referenceProperties = new ArrayList<String>(3);
-    static {
-        referenceProperties.add(PROPERTY_HST_TEMPLATE);
-        referenceProperties.add(PROPERTY_HST_COMPONENTCONFIGURATIONID);
-        referenceProperties.add(PROPERTY_HST_REFERENCECOMPONENT);
-    }
 
     HstReferenceEditor(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel) {
         super(id);
@@ -194,24 +184,6 @@ class HstReferenceEditor extends Panel {
            return hstConfiguration.getNode(relPath.toString());
         }
         return null;
-    }
-
-    /**
-     * Determines if a JcrPropertyValueModel represents a hst:template reference.
-     * @param valueModel the model to inspect
-     * @return true if the property is of type hst:template
-     */
-    static boolean isHstReference(JcrPropertyValueModel valueModel) {
-        if (valueModel == null) {
-            return false;
-        }
-        try {
-            Property property = valueModel.getJcrPropertymodel().getProperty();
-            return referenceProperties.contains(property.getName());
-        } catch (RepositoryException e) {
-            NodeEditor.log.error(e.getMessage());
-            return false;
-        }
     }
 
     private class DisabledLink extends AjaxLink {

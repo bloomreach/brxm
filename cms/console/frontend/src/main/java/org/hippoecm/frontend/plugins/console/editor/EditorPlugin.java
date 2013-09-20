@@ -36,6 +36,10 @@ public class EditorPlugin extends RenderPlugin<Node> {
         add(new ToggleBehavior());
     }
 
+    protected IPluginContext getPluginContext() {
+        return super.getPluginContext();
+    }
+
     @Override
     public void onModelChanged() {
         super.onModelChanged();

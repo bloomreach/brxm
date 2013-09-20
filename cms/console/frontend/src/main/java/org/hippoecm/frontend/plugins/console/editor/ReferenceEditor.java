@@ -19,8 +19,6 @@ import java.util.regex.Pattern;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -36,7 +34,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.HippoNodeType;
 
 class ReferenceEditor extends Panel {
     private static final long serialVersionUID = 1L;
@@ -91,48 +88,6 @@ class ReferenceEditor extends Panel {
         } catch (RepositoryException e) {
             add(new Label("reference-edit", e.getClass().getName()));
             add(new DisabledLink("reference-link", new Model(e.getMessage())));
-        }
-    }
-
-    static boolean isReference(JcrPropertyValueModel valueModel) {
-        if (valueModel == null) {
-            return false;
-        }
-        try {
-            String asString = valueModel.getValue().getString();
-            Property property = valueModel.getJcrPropertymodel().getProperty();
-            if ((property.getType() == PropertyType.REFERENCE || property.getName().equals(HippoNodeType.HIPPO_DOCBASE)) &&
-                pattern.matcher(asString).matches()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (RepositoryException e) {
-            NodeEditor.log.error(e.getMessage());
-            return false;
-        }
-    }
-
-    static boolean isReference(JcrPropertyModel propertyModel) {
-        try {
-            String asString = "";
-            Property property = propertyModel.getProperty();
-            if (property.getDefinition().isMultiple()) {
-                if (property.getValues().length > 0) {
-                    asString = property.getValues()[0].getString();
-                }
-            } else {
-                asString = property.getString();
-            }
-            if ((property.getType() == PropertyType.REFERENCE || property.getName().equals(HippoNodeType.HIPPO_DOCBASE)) &&
-                pattern.matcher(asString).matches()) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (RepositoryException e) {
-            NodeEditor.log.error(e.getMessage());
-            return false;
         }
     }
 

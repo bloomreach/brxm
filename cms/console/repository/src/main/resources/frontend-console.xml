@@ -340,6 +340,22 @@
         <sv:value>service.logout.dialog</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="referenceplugin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.editor.ReferenceEditorPlugin</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hstreferenceplugin">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.editor.HstReferenceEditorPlugin</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="browserBehavior">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>

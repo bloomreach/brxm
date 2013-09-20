@@ -1353,6 +1353,7 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/Edit
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/EditorPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditor.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstReferenceEditorPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstTemplateEditor.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstTemplateEditor_de.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/HstTemplateEditor_fr.properties -text
@@ -1365,8 +1366,10 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/Prop
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertyValueEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.java -text svneol=unset#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditorPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ValueEditorFactory.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-collapsed.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-expanded.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/MenuPlugin.html svneol=native#text/plain
