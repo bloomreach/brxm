@@ -60,6 +60,7 @@
     <commons-logging.version>1.1.1</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <guava.version>12.0.1</guava.version>
+    <jsr311.version>1.1.1</jsr311.version>
 
     <!--
         Below are only the defined versions of some dependencies that are used in multiple projects.
@@ -355,6 +356,11 @@
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.ws.rs</groupId>
+        <artifactId>jsr311.api</artifactId>
+        <version>${jsr311.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
