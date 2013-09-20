@@ -50,7 +50,7 @@ public class BeanWriterUtilsTest extends BaseTest {
                 assertEquals(2, annotated.getMethods().size());
             } else if (path.toFile().getName().equals("NewsDocument.txt")) {
                 // one extra method added
-                assertEquals(5, annotated.getMethods().size());
+                assertEquals(9, annotated.getMethods().size());
             } else if (path.toFile().getName().equals("TextDocument.txt")) {
                 // unchanged
                 assertEquals(2, annotated.getMethods().size());

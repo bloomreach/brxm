@@ -10,6 +10,22 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 public class NewsDocument extends BaseDocument{
 
 
+    public String myMethod() {
+       return "dummy";
+    }
+
+    public String getDummyMethod() {
+       return "dummy";
+    }
+
+    public int getCountMethod() {
+        return 1;
+    }
+
+    public void getVoidMethod() {
+        // DO nothing
+    }
+
     public String getSummary() {
         return getProperty("hippoplugins:summary");
     }
