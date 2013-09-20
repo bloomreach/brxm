@@ -284,6 +284,22 @@ public class BeanWriterUtils {
 
     }
 
+
+    /**
+     * Add HippoGenerated annotation to an existing bean
+     * @param context plugin context instance
+     * @param path path to source file
+     */
+    public static void annotateExistingMethods(final PluginContext context, final Path path){
+
+        final NoAnnotationMethodVisitor methodCollection = JavaSourceUtils.getAnnotateMethods(context, path);
+        final List<EssentialsGeneratedMethod> methodsNames = methodCollection.getModifiableMethods();
+        for (EssentialsGeneratedMethod method : methodsNames) {
+            JavaSourceUtils.annotateMethod(method, path);
+        }
+    }
+
+
     /**
      * Adds (missing) methods to a HippoBean
      *
