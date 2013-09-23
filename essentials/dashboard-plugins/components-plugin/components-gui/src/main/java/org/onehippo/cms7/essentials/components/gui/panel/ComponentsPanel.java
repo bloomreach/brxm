@@ -18,6 +18,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -288,10 +290,11 @@ public class ComponentsPanel extends EssentialsWizardStep {
             try {
                 final Node rootNode = session.getRootNode();
                 final Node node = rootNode.getNode(HST_CONFIG_PATH);
-                if (node.hasNode(siteName + '/' + CATALOG_PATH + '/' + HIPPOESSENTIALS_CATALOG)) {
+                final String sitePath = siteName + '/' + CATALOG_PATH + '/' + HIPPOESSENTIALS_CATALOG;
+                if (node.hasNode(sitePath)) {
                     //final Node site = node.getNode(siteName);
-                    //todo get parent stuff..
-                    final Node essentialsCatalog = node.getNode(siteName + '/' + CATALOG_PATH + '/' + HIPPOESSENTIALS_CATALOG);
+                    //todo get parent stuff: check if existing from another configuration
+                    final Node essentialsCatalog = node.getNode(sitePath);
                     final NodeIterator it = essentialsCatalog.getNodes();
                     while (it.hasNext()) {
                         final Node essentialContainerItem = it.nextNode();
@@ -313,5 +316,40 @@ public class ComponentsPanel extends EssentialsWizardStep {
             abv.removeAll(added);
             return abv;
         }
+
+        public static List<String> getExistingContainers(final PluginContext context, final String selectedSite) {
+            final Node siteNode = getSiteNode(context, selectedSite);
+            final List<String> containers = new ArrayList<>();
+            if (siteNode != null) {
+                try {
+                    final Session session = context.getSession();
+                    final String replacePart = "//hst:hst/hst:configurations/" + selectedSite + "/hst:pages/";
+                    final String queryPath = replacePart + "/element(*, hst:containercomponent)";
+                    final Query query = session.getWorkspace().getQueryManager().createQuery(queryPath, "xpath");
+                    final QueryResult queryResult = query.execute();
+                    final NodeIterator nodes = queryResult.getNodes();
+                    final int splitAt = replacePart.length() -1;
+                    while(nodes.hasNext()){
+                        final Node containerNode = nodes.nextNode();
+                        containers.add(containerNode.getPath().substring(splitAt));
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Error fetching site nodes", e);
+                }
+            }
+            return containers;
+        }
+
+        private static Node getSiteNode(final PluginContext context, final String siteName) {
+            final Session session = context.getSession();
+            try {
+                return session.getNode('/' + HST_CONFIG_PATH + '/' + siteName);
+            } catch (RepositoryException e) {
+                log.error("Error fetching components", e);
+            }
+            return null;
+
+        }
+
     }
 }

@@ -54,7 +54,9 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     private final ComponentsWizard parent;
     private List<String> selectedDocuments;
     private final ListChoice<String> sitesChoice;
+    private final ListChoice<String> containerChoice;
     private String selectedSite;
+    private String selectedContainer;
     private final ListMultipleChoice<String> componentsChoice;
     private  List<String> componentsList;
 
@@ -85,9 +87,15 @@ public class AttachComponentPanel extends EssentialsWizardStep {
                 }
                 selectedSite = sitesChoice.getChoices().get(Integer.valueOf(selectedInput));
                 log.info("#selected site: {}", selectedSite);
+                // load components:
                 final List<String> addedComponents = ComponentsPanel.Util.getAddedComponents(context, selectedSite);
                 componentsChoice.setChoices(addedComponents);
-                target.add(componentsChoice);
+                // load site containers:
+                final List<String> existingContainers = ComponentsPanel.Util.getExistingContainers(context, selectedSite);
+                containerChoice.setChoices(existingContainers);
+                // render components
+                target.add(componentsChoice, containerChoice);
+
             }
         });
         //############################################
@@ -98,16 +106,39 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         componentsList = new ArrayList<>();
         final PropertyModel<List<String>> componentModel = new PropertyModel<>(this, "componentsList");
         componentsChoice = new ListMultipleChoice<>("componentList", componentModel, componentsList);
+        componentsChoice.add(new AjaxEventBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
 
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+                onComponentSelected(target);
+
+            }
+        });
+        //############################################
+        // CONTAINERS
+        //############################################
+        final List<String> containers = new ArrayList<>();
+        final PropertyModel<String> containerModel = new PropertyModel<>(this, "selectedContainer");
+        containerChoice = new ListChoice<>("containers", containerModel, containers);
 
         //############################################
-        // ADD COMPONENTS
+        // SETUP
         //############################################
+
+        sitesChoice.setNullValid(false);
         componentsChoice.setOutputMarkupId(true);
+        containerChoice.setOutputMarkupId(true);
+        sitesChoice.setOutputMarkupId(true);
 
         add(form);
         form.add(sitesChoice);
         form.add(componentsChoice);
+        form.add(containerChoice);
+    }
+
+    private void onComponentSelected(final AjaxRequestTarget target) {
+        log.info("Component selected# {}", target);
     }
 
 
