@@ -33,6 +33,7 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
@@ -55,8 +56,10 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     private List<String> selectedDocuments;
     private final ListChoice<String> sitesChoice;
     private final ListChoice<String> containerChoice;
+    private final ListChoice<String> beansChoice;
     private String selectedSite;
     private String selectedContainer;
+    private String selectedBean;
     private final ListMultipleChoice<String> componentsChoice;
     private  List<String> componentsList;
 
@@ -121,6 +124,13 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         final List<String> containers = new ArrayList<>();
         final PropertyModel<String> containerModel = new PropertyModel<>(this, "selectedContainer");
         containerChoice = new ListChoice<>("containers", containerModel, containers);
+        //############################################
+        // BEANS
+        //############################################
+        final List<String> beans = BeanWriterUtils.findExitingBeanNames(context, "java");
+        final PropertyModel<String> beansModel = new PropertyModel<>(this, "selectedBean");
+        beansChoice = new ListChoice<>("beans", beansModel, beans);
+
 
         //############################################
         // SETUP
@@ -129,12 +139,14 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         sitesChoice.setNullValid(false);
         componentsChoice.setOutputMarkupId(true);
         containerChoice.setOutputMarkupId(true);
+        beansChoice.setOutputMarkupId(true);
         sitesChoice.setOutputMarkupId(true);
 
         add(form);
         form.add(sitesChoice);
         form.add(componentsChoice);
         form.add(containerChoice);
+        form.add(beansChoice);
     }
 
     private void onComponentSelected(final AjaxRequestTarget target) {
