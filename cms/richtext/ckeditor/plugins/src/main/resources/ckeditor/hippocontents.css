@@ -108,12 +108,12 @@
 .cke_wysiwyg_div.cke_editable h4,
 .cke_wysiwyg_div.cke_editable h5,
 .cke_wysiwyg_div.cke_editable h6,
-.cke_panel_listItem h1,
-.cke_panel_listItem h2,
-.cke_panel_listItem h3,
-.cke_panel_listItem h4,
-.cke_panel_listItem h5,
-.cke_panel_listItem h6 {
+.cke_panel_container .cke_panel_listItem h1,
+.cke_panel_container .cke_panel_listItem h2,
+.cke_panel_container .cke_panel_listItem h3,
+.cke_panel_container .cke_panel_listItem h4,
+.cke_panel_container .cke_panel_listItem h5,
+.cke_panel_container .cke_panel_listItem h6 {
     font-weight: bold;
     line-height: 1.2em;
 }
