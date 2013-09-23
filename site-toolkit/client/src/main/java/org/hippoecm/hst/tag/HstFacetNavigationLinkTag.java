@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -106,13 +107,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
             }
 
             for(HippoFacetSubNavigation toRemove : combinedRemovedList) {
-                String removeFacetValue = toRemove.getFacetValueCombi().getKey()+"/"+toRemove.getFacetValueCombi().getValue();
-                if(path.contains(removeFacetValue)) {
-                    path = path.replaceAll(removeFacetValue+"(/|\\z)", "");
-                    log.debug("Removed facetvalue combi. Link from '{}' --> '{}'", path, link.getPath());
-                } else {
-                    log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", removeFacetValue, path);
-                }
+                path = removeFacetKeyValueFromPath(path, toRemove.getFacetValueCombi().getKey(), toRemove.getFacetValueCombi().getValue());
             }
             link.setPath(path);
             String urlString = link.toUrlForm(requestContext, false);
@@ -141,6 +136,26 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         } finally {
             cleanup();
         }
+    }
+
+    static String removeFacetKeyValueFromPath(final String path, final String facetKey, final String facetValue) {
+        // assume the facetkey is 'a' and value is 'b' then from path,
+        // only a/b should be removed at the beginning or at then end, and in the middle
+        // hence we first at a leading and trailing slash, which we at the end remove again
+        String modifiablePath = "/" + path + "/";
+        String facetKeyValueRegExp = "/" + facetKey+"/"+facetValue + "/";
+
+        // do not use String#replaceAll as that fails in case you need to replace /a/b/ from /a/b/a/b/c/d : In this case
+        // only the first /a/b/ is matched and not the second
+        while (modifiablePath.contains(facetKeyValueRegExp)) {
+            modifiablePath = modifiablePath.replace(facetKeyValueRegExp, "/");
+        }
+
+        if (path.equals(modifiablePath)) {
+            log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", facetKey+"/"+facetValue, path);
+        }
+        // remove again leading and trailing extra slashes
+        return modifiablePath.substring(1, modifiablePath.length()-1);
     }
 
     protected void cleanup() {
