@@ -413,4 +413,5 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_LOGTAIL = "hipposys:logtail";
 
+    public static final String HIPPO_IGNORABLE = "hippo:ignorable";
 }

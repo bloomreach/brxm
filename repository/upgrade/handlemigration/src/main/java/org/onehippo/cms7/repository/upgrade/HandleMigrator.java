@@ -90,6 +90,7 @@ class HandleMigrator {
     void init() throws RepositoryException {
         createMigrationWorkspaceIfNotExists();
         migrationSession = loginToMigrationWorkspace();
+        defaultSession.getWorkspace().getObservationManager().setUserData(HippoNodeType.HIPPO_IGNORABLE);
     }
 
     void cancel() {
