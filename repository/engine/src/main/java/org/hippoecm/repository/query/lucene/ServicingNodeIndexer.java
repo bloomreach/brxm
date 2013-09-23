@@ -105,9 +105,14 @@ public class ServicingNodeIndexer extends NodeIndexer {
     private void addFacetValues(final Document doc, final PropertyId id, final Name propName) throws RepositoryException {
         try {
             PropertyState propState = (PropertyState) stateProvider.getItemState(id);
+
+            final String fieldName = resolver.getJCRName(propName);
+            doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
+                    Field.TermVector.NO));
+
             InternalValue[] values = propState.getValues();
             for (final InternalValue value : values) {
-                addFacetValue(doc, value, resolver.getJCRName(propName), propName);
+                addFacetValue(doc, value, fieldName, propName);
             }
         } catch (ItemStateException e) {
             throwRepositoryException(e);
@@ -404,8 +409,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void indexFacet(Document doc, String fieldName, String value, Field.TermVector termVector) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
-                Field.TermVector.NO));
         String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);
         doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS, termVector));
     }
@@ -415,9 +418,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void indexDateFacet(Document doc, String fieldName, Calendar calendar) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
-                Field.TermVector.NO));
-        
         Map<String, String> resolutions = new HashMap<String, String>();
         resolutions.put("year", DateTools.timeToString(calendar.getTimeInMillis(),
                 DateTools.Resolution.YEAR));
