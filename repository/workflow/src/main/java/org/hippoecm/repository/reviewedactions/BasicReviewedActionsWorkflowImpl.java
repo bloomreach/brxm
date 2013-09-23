@@ -167,7 +167,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 if (!draftInUse && !pendingRequest && unpublishedDirty) {
                     publishable = true;
                 }
-                if (!draftInUse && (publishedDocument == null || publishedDocument.isAvailable("live")) && !pendingRequest) {
+                if (!draftInUse && (publishedDocument == null || !publishedDocument.isAvailable("live")) && !pendingRequest) {
                     deleteable = true;
                 }
             } else {
