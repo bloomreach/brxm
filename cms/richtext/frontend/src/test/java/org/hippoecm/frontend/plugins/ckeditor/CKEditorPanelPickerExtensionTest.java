@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.wicket.behavior.Behavior;
 import org.easymock.classextension.EasyMock;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -38,38 +38,38 @@ import static org.junit.Assert.assertTrue;
  */
 public class CKEditorPanelPickerExtensionTest {
 
-    private DocumentPickerBehavior documentPickerBehavior;
+    private LinkPickerBehavior linkPickerBehavior;
     private ImagePickerBehavior imagePickerBehavior;
     private CKEditorPanelPickerExtension extension;
 
     @Before
     public void setUp() {
-        documentPickerBehavior = EasyMock.createMock(DocumentPickerBehavior.class);
+        linkPickerBehavior = EasyMock.createMock(LinkPickerBehavior.class);
         imagePickerBehavior = EasyMock.createMock(ImagePickerBehavior.class);
-        extension = new CKEditorPanelPickerExtension(documentPickerBehavior, imagePickerBehavior);
+        extension = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
     }
 
     @Test
     public void callbackUrlsAreAddedToCKEditorConfiguration() throws Exception {
-        final String documentPickerCallbackUrl = "./documentpicker/callback";
+        final String linkPickerCallbackUrl = "./linkpicker/callback";
         final String imagePickerCallbackUrl = "./imagepicker/callback";
 
-        expect(documentPickerBehavior.getCallbackUrl()).andReturn(documentPickerCallbackUrl);
+        expect(linkPickerBehavior.getCallbackUrl()).andReturn(linkPickerCallbackUrl);
         expect(imagePickerBehavior.getCallbackUrl()).andReturn(imagePickerCallbackUrl);
 
-        replay(documentPickerBehavior, imagePickerBehavior);
+        replay(linkPickerBehavior, imagePickerBehavior);
 
         final JSONObject editorConfig = new JSONObject();
         extension.addConfiguration(editorConfig);
 
-        verify(documentPickerBehavior, imagePickerBehavior);
+        verify(linkPickerBehavior, imagePickerBehavior);
 
         assertTrue("CKEditor config has configuration for the hippopicker plugin", editorConfig.has(HippoPicker.CONFIG_KEY));
         JSONObject hippoPickerConfig = editorConfig.getJSONObject(HippoPicker.CONFIG_KEY);
 
         assertTrue("hippopicker configuration has configuration for the internal link picker", hippoPickerConfig.has(HippoPicker.InternalLink.CONFIG_KEY));
         JSONObject internalLinkPickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.InternalLink.CONFIG_KEY);
-        assertEquals(documentPickerCallbackUrl, internalLinkPickerConfig.getString(HippoPicker.InternalLink.CONFIG_CALLBACK_URL));
+        assertEquals(linkPickerCallbackUrl, internalLinkPickerConfig.getString(HippoPicker.InternalLink.CONFIG_CALLBACK_URL));
 
         assertTrue("hippopicker configuration has configuration for the image picker", hippoPickerConfig.has(HippoPicker.Image.CONFIG_KEY));
         JSONObject imagePickerConfig = hippoPickerConfig.getJSONObject(HippoPicker.Image.CONFIG_KEY);
@@ -83,7 +83,7 @@ public class CKEditorPanelPickerExtensionTest {
             behaviors.add(behavior);
         }
         assertEquals(2, behaviors.size());
-        assertTrue(behaviors.contains(documentPickerBehavior));
+        assertTrue(behaviors.contains(linkPickerBehavior));
         assertTrue(behaviors.contains(imagePickerBehavior));
     }
 

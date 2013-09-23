@@ -24,15 +24,15 @@ import org.hippoecm.frontend.plugins.richtext.dialog.AbstractAjaxDialogBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.AbstractRichTextEditorDialog;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorInternalLink;
 
-public class DocumentPickerBehavior extends AbstractAjaxDialogBehavior {
+public class LinkPickerBehavior extends AbstractAjaxDialogBehavior {
 
     private static final long serialVersionUID = 1L;
 
     private final RichTextEditorLinkService linkService;
 
-    public DocumentPickerBehavior(final IPluginContext context,
-                                  final IPluginConfig config,
-                                  final RichTextEditorLinkService linkService) {
+    public LinkPickerBehavior(final IPluginContext context,
+                              final IPluginConfig config,
+                              final RichTextEditorLinkService linkService) {
         super(context, config);
         this.linkService = linkService;
     }

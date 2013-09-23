@@ -2546,7 +2546,7 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/li
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_fr.properties -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_it.properties -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentBrowserDialog_nl.properties -text svneol=unset#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/DocumentPickerBehavior.java svneol=native#text/plain
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/LinkPickerBehavior.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/dialog/links/RichTextEditorLinkService.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/htmlcleaner/HtmlCleanerPlugin.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextImageFactory.java svneol=native#text/plain

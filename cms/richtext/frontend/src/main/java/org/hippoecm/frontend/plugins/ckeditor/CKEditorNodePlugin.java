@@ -30,7 +30,7 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
@@ -55,10 +55,10 @@ import org.slf4j.LoggerFactory;
  * Configuration properties:
  * <ul>
  *     <li>imagepicker: child node with node picker controller settings for the image picker dialog.
- *         Default image picker settings: @{link DEFAULT_IMAGE_PICKER_CONFIG}</li>
- *     <li>documentpicker: child node with node picker controller settings for the document picker dialog
+ *         Default image picker settings: {@link DEFAULT_IMAGE_PICKER_CONFIG}</li>
+ *     <li>linkpicker: child node with node picker controller settings for the document picker dialog
  *         opened by the internal link picker button.
- *         Default document picker settings: @{link DEFAULT_DOCUMENT_PICKER_CONFIG}</li>
+ *         Default link picker settings: {@link DEFAULT_LINK_PICKER_CONFIG}</li>
  * </ul>
  *
  * @see NodePickerControllerSettings
@@ -91,13 +91,13 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "}";
 
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
-    public static final String CONFIG_CHILD_DOCUMENT_PICKER = "documentpicker";
+    public static final String CONFIG_CHILD_LINK_PICKER = "linkpicker";
 
     public static final IPluginConfig DEFAULT_IMAGE_PICKER_CONFIG = createNodePickerSettings(
             "cms-pickers/images", "ckeditor-imagepicker", "hippostd:gallery");
 
-    public static final IPluginConfig DEFAULT_DOCUMENT_PICKER_CONFIG = createNodePickerSettings(
-            "cms-pickers/documents", "ckeditor-documentpicker", "hippostd:folder");
+    public static final IPluginConfig DEFAULT_LINK_PICKER_CONFIG = createNodePickerSettings(
+            "cms-pickers/documents", "ckeditor-linkpicker", "hippostd:folder");
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorNodePlugin.class);
 
@@ -131,19 +131,19 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
     private void addPickerBehavior(final CKEditorPanel editPanel) {
         final String editorId = editPanel.getEditorId();
-        final DocumentPickerBehavior documentPickerBehavior = createDocumentPickerBehavior(editorId);
+        final LinkPickerBehavior linkPickerBehavior = createLinkPickerBehavior(editorId);
         final ImagePickerBehavior imagePickerBehavior = createImagePickerBehavior(editorId);
-        final CKEditorPanelPickerExtension pickerBehavior = new CKEditorPanelPickerExtension(documentPickerBehavior, imagePickerBehavior);
+        final CKEditorPanelPickerExtension pickerBehavior = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
         editPanel.addExtension(pickerBehavior);
     }
 
-    private DocumentPickerBehavior createDocumentPickerBehavior(final String editorId) {
-        final IPluginConfig documentPickerConfig = getChildPluginConfig(CONFIG_CHILD_DOCUMENT_PICKER, DEFAULT_DOCUMENT_PICKER_CONFIG);
+    private LinkPickerBehavior createLinkPickerBehavior(final String editorId) {
+        final IPluginConfig linkPickerConfig = getChildPluginConfig(CONFIG_CHILD_LINK_PICKER, DEFAULT_LINK_PICKER_CONFIG);
 
         final IRichTextLinkFactory linkFactory = createLinkFactory();
         RichTextEditorLinkService linkService = new RichTextEditorLinkService(linkFactory);
 
-        final DocumentPickerBehavior behavior = new DocumentPickerBehavior(getPluginContext(), documentPickerConfig, linkService);
+        final LinkPickerBehavior behavior = new LinkPickerBehavior(getPluginContext(), linkPickerConfig, linkService);
         behavior.setCloseAction(new CKEditorInsertInternalLinkAction(editorId));
 
         return behavior;

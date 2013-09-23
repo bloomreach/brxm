@@ -20,7 +20,7 @@ import java.util.Arrays;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.DocumentPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,11 +31,11 @@ import org.onehippo.cms7.ckeditor.CKEditorConstants;
  */
 public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
-    private final DocumentPickerBehavior documentPickerBehavior;
+    private final LinkPickerBehavior linkPickerBehavior;
     private final ImagePickerBehavior imagePickerBehavior;
 
-    public CKEditorPanelPickerExtension(final DocumentPickerBehavior documentPickerBehavior, final ImagePickerBehavior imagePickerBehavior) {
-        this.documentPickerBehavior = documentPickerBehavior;
+    public CKEditorPanelPickerExtension(final LinkPickerBehavior linkPickerBehavior, final ImagePickerBehavior imagePickerBehavior) {
+        this.linkPickerBehavior = linkPickerBehavior;
         this.imagePickerBehavior = imagePickerBehavior;
     }
 
@@ -50,7 +50,7 @@ public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
     private void addInternalLinkPickerConfiguration(final JSONObject pickerPluginConfig) throws JSONException {
         final JSONObject config = JsonUtils.getOrCreateChildObject(pickerPluginConfig, HippoPicker.InternalLink.CONFIG_KEY);
-        addCallbackUrl(config, HippoPicker.InternalLink.CONFIG_CALLBACK_URL, documentPickerBehavior);
+        addCallbackUrl(config, HippoPicker.InternalLink.CONFIG_CALLBACK_URL, linkPickerBehavior);
     }
 
     private void addImagePickerConfiguration(final JSONObject pickerPluginConfig) throws JSONException {
@@ -65,7 +65,7 @@ public class CKEditorPanelPickerExtension implements CKEditorPanelExtension {
 
     @Override
     public Iterable<Behavior> getBehaviors() {
-        return Arrays.<Behavior>asList(documentPickerBehavior, imagePickerBehavior);
+        return Arrays.<Behavior>asList(linkPickerBehavior, imagePickerBehavior);
     }
 
     @Override

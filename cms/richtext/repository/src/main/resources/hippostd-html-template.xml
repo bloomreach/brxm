@@ -213,7 +213,7 @@
             <sv:value>${imagepicker.preferred.image.variant}</sv:value>
           </sv:property>
         </sv:node>
-        <sv:node sv:name="documentpicker">
+        <sv:node sv:name="linkpicker">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
           </sv:property>
