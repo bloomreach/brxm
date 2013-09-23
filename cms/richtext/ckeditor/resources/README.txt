@@ -37,3 +37,11 @@ The CKEditor sources can be updated as follows:
 
 Step 8 is needed because the current CKEditor builder does not include the 'icons' directory
 of the CodeMirror plugin by default.
+
+
+Creating table with CKEditor widget information
+-----------------------------------------------
+
+The script 'create-widget-table.js' can be used to create an HTML table with information about
+all CKEditor widgets (buttons, comboboxes etc.) that are available in a CKEditor distribution.
+This table can then be included in end-user documentation.
