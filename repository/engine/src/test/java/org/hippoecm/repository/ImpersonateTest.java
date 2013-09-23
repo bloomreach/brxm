@@ -22,6 +22,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -35,20 +36,10 @@ public class ImpersonateTest extends RepositoryTestCase {
     private static final String TEST_USER_ID = "testuser";
     private static final String TEST_USER_PASS = "password";
 
-    public void cleanup() throws RepositoryException  {
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        if (users.hasNode(TEST_USER_ID)) {
-            users.getNode(TEST_USER_ID).remove();
-        }
-        session.save();
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        cleanup();
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
 
@@ -58,6 +49,22 @@ public class ImpersonateTest extends RepositoryTestCase {
         session.save();
 
     }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
+        Node users = config.getNode(HippoNodeType.USERS_PATH);
+
+        if (users.hasNode(TEST_USER_ID)) {
+            users.getNode(TEST_USER_ID).remove();
+        }
+
+        session.save();
+
+        super.tearDown();
+    }
+
     @Test
     public void testImpersonate() throws RepositoryException {
         // setup user session
