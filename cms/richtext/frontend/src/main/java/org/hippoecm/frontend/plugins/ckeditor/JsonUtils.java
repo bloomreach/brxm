@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.ckeditor;
 import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -139,14 +140,15 @@ public class JsonUtils {
 
     /**
      * Appends a JSON object to an existing one. New values will be copied to the existing object.
-     * Existing strings will be appended to existing ones using a comma as separator. Existing arrays to get
-     * the new values appended. Existing objects will be appended recursively.
+     * Strings will be appended to existing strings using a comma as separator. Arrays will be joined with existing
+     * arrays, otherwise existing arrays will get the new values appended. Existing objects will be appended recursively.
      *
      * For example, if the existing object is:
      * {
      *     a: 'a1',
      *     b: {
      *         c: [ 'c1', 'c2' ]
+     *         d: [ 'd1', 'd2' ]
      *     }
      * }
      *
@@ -155,7 +157,8 @@ public class JsonUtils {
      *     a: 'a2',
      *     b: {
      *         c: 'c3',
-     *         d: false
+     *         d: [ 'd3', 'd4' ],
+     *         e: false
      *     }
      * }
      *
@@ -164,7 +167,8 @@ public class JsonUtils {
      *     a: 'a1,a2',
      *     b: {
      *         c: [ 'c1', 'c2', 'c3' ],
-     *         d: false
+     *         d: [ 'd1', 'd2', 'd3', 'd4' ],
+     *         e: false
      *     }
      * }
      *
@@ -188,11 +192,24 @@ public class JsonUtils {
                     append((JSONObject)oldValue, (JSONObject)newValue);
                 } else if (oldValue instanceof String && newValue instanceof String) {
                     appendToCommaSeparatedString(object, newKey, (String)newValue);
+                } else if (oldValue instanceof JSONArray && newValue instanceof JSONArray) {
+                    JSONArray concatenated = concatArrays((JSONArray) oldValue, (JSONArray) newValue);
+                    object.put(newKey, concatenated);
                 } else {
                     object.append(newKey, newValue);
                 }
             }
         }
+    }
+
+    private static JSONArray concatArrays(final JSONArray... arrays) throws JSONException {
+        JSONArray result = new JSONArray();
+        for (JSONArray array : arrays) {
+            for (int i = 0; i < array.length(); i++) {
+                result.put(array.get(i));
+            }
+        }
+        return result;
     }
 
 }

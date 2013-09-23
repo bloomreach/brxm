@@ -213,6 +213,14 @@ public class JsonUtilsTest {
         assertEquals("\"one\",\"two\",\"three\"", object.getJSONArray("key").join(","));
     }
 
+    @Test
+    public void appendArrayToArrayConcatenatesTheArrays() throws JSONException {
+        object.put("key", new JSONArray("['one','two']"));
+        JsonUtils.append(object, new JSONObject("{ key: ['three', 'four' ] }"));
+        assertEquals(1, object.length());
+        assertEquals("\"one\",\"two\",\"three\",\"four\"", object.getJSONArray("key").join(","));
+    }
+
     @Test(expected = JSONException.class)
     public void appendBooleanToStringThrowsException() throws JSONException {
         object.put("key", "first");
