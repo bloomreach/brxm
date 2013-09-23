@@ -103,13 +103,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void addFacetValues(final Document doc, final PropertyId id, final Name propName) throws RepositoryException {
+        final String fieldName = resolver.getJCRName(propName);
+        indexFacetProperty(doc, fieldName);
+
         try {
             PropertyState propState = (PropertyState) stateProvider.getItemState(id);
-
-            final String fieldName = resolver.getJCRName(propName);
-            doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
-                    Field.TermVector.NO));
-
             InternalValue[] values = propState.getValues();
             for (final InternalValue value : values) {
                 addFacetValue(doc, value, fieldName, propName);
@@ -240,7 +238,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     // below: When the QName is configured to be a facet, also index like one
     protected void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) throws RepositoryException {
-
         switch (value.getType()) {
         case PropertyType.BOOLEAN:
             indexFacet(doc, fieldName, value.toString());
@@ -371,6 +368,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 final Field field = createFieldWithoutNorms(jcrName, nodeName, PropertyType.STRING);
                 doc.add(field);
 
+                indexFacetProperty(doc, jcrName);
                 indexFacet(doc, jcrName, nodeName);
 
                 // index the local name for full text search
@@ -406,6 +404,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
         localNameField.setBoost(5);
         doc.add(localNameField);
         doc.add(localNameFullTextField);
+    }
+
+    protected void indexFacetProperty(final Document doc, final String fieldName) {
+        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
+                Field.TermVector.NO));
     }
 
     private void indexFacet(Document doc, String fieldName, String value, Field.TermVector termVector) {
@@ -451,29 +454,34 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
         for (Entry<String, String> keyValue : resolutions.entrySet()) {
             String compoundFieldName = fieldName + ServicingFieldNames.DATE_RESOLUTION_DELIMITER + keyValue.getKey();
+            indexFacetProperty(doc, compoundFieldName);
             indexFacet(doc, compoundFieldName, keyValue.getValue());
         }
 
         for (Entry<String, Integer> keyValue : byDateNumbers.entrySet()) {
             String compoundFieldName = fieldName + ServicingFieldNames.DATE_NUMBER_DELIMITER + keyValue.getKey();
+            indexFacetProperty(doc, compoundFieldName);
             indexFacet(doc, compoundFieldName, String.valueOf(keyValue.getValue()));
         }
     }
 
     private void indexLongFacet(Document doc, String fieldName, long value) {
         indexFacet(doc, fieldName, String.valueOf(value));
+
+        // for efficient range queries on long fields, we also index a lexical format and store term vector
         String compoundFieldName = fieldName + ServicingFieldNames.LONG_POSTFIX;
-        // for efficient range queries on long fields, we also index a legical format and store term vector
+        indexFacetProperty(doc, compoundFieldName);
         indexFacet(doc, compoundFieldName, LongField.longToString(value), Field.TermVector.YES);
     }
 
     private void indexStringFacet(Document doc, String fieldName, String value) {
         indexFacet(doc, fieldName, value);
 
-        // lowercase index the the first, first 2 and first 3 chars in seperate fields
+        // lowercase index the the first, first 2 and first 3 chars in separate fields
         for (int i = 1; i <= 3; i++) {
             String ngram = fieldName + ServicingFieldNames.STRING_DELIMITER + i
                     + ServicingFieldNames.STRING_CHAR_POSTFIX;
+            indexFacetProperty(doc, ngram);
             if (value.length() > i) {
                 indexFacet(doc, ngram, value.substring(0, i).toLowerCase());
             } else {
@@ -485,8 +493,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private void indexDoubleFacet(Document doc, String fieldName, double value) {
         indexFacet(doc, fieldName, String.valueOf(value));
+
+        // for efficient range queries on long fields, we also index a lexical format and store term vector
         String compoundFieldName = fieldName + ServicingFieldNames.DOUBLE_POSTFIX;
-        // for efficient range queries on long fields, we also index a legical format and store term vector
+        indexFacetProperty(doc, compoundFieldName);
         indexFacet(doc, compoundFieldName, DoubleField.doubleToString(value), Field.TermVector.YES);
     }
 

@@ -19,6 +19,8 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -31,32 +33,43 @@ public class RepositoryMapTest extends RepositoryTestCase {
 
     String[] content = new String[] {
         "/content", "nt:unstructured",
-        "/content/articles", "hippo:testdocument",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "/content/articles/myarticle1", "hippo:handle",
-        "jcr:mixinTypes", "hippo:hardhandle",
-        "/content/articles/myarticle1/myarticle1", "hippo:testdocument",
-        "jcr:mixinTypes", "hippo:harddocument"
+            "/content/articles", "hippo:testdocument",
+                "jcr:mixinTypes", "hippo:harddocument",
+                "/content/articles/myarticle1", "hippo:handle",
+                    "jcr:mixinTypes", "hippo:hardhandle",
+                    "/content/articles/myarticle1/myarticle1", "hippo:testdocument",
+                        "jcr:mixinTypes", "hippo:harddocument"
     };
 
+    @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
-        root = session.getRootNode();
-        if(root.hasNode("test"))
-            root = root.getNode("test");
+        Node test;
+        if(session.nodeExists("/test"))
+            test = session.getNode("/test");
         else
-            root = root.addNode("test");
-        root.setProperty("aap", "noot");
-        root.setProperty("mies", new String[] { "a", "b" });
+            test = session.getRootNode().addNode("test");
+        test.setProperty("aap", "noot");
+        test.setProperty("mies", new String[] { "a", "b" });
 
-        root = session.getRootNode();
-        if(root.hasNode("content")) {
-            root.getNode("content").remove();
-            root.save();
+        if (session.nodeExists("/content")) {
+            session.getNode("/content").remove();
+            session.save();
         }
         build(session, content);
-        root = root.getNode("content");
+        root = session.getNode("/content");
         session.save();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        if (session.nodeExists("/content")) {
+            session.getNode("/content").remove();
+            session.save();
+        }
+        super.tearDown();
     }
 
     @Test

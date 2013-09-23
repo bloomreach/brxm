@@ -57,6 +57,7 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     private static final int NUM_CONCURRENT_LOGINS = 25;
 
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
 
@@ -65,7 +66,11 @@ public class RepositoryLoginTest extends RepositoryTestCase {
         StringTokenizer tokenizer = new StringTokenizer(USERS_PATH, "/");
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
-            node = node.addNode(token);
+            if (node.hasNode(token)) {
+                node = node.getNode(token);
+            } else {
+                node = node.addNode(token);
+            }
         }
 
         // create test users
@@ -83,6 +88,7 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     }
 
     @After
+    @Override
     public void tearDown() throws Exception {
         if (users != null) {
             if (users.hasNode(TESTUSER_ID_PLAIN)) {

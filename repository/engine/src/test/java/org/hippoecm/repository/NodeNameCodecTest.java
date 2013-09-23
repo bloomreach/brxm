@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -127,6 +128,16 @@ public class NodeNameCodecTest extends RepositoryTestCase {
         }
         testPath = session.getRootNode().addNode(TEST_PATH);
         session.save();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        if (session.getRootNode().hasNode(TEST_PATH)) {
+            session.getRootNode().getNode(TEST_PATH).remove();
+        }
+        session.save();
+        super.tearDown();
     }
 
     @Test

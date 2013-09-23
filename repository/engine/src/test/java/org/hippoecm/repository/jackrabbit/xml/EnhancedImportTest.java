@@ -73,6 +73,7 @@ public class EnhancedImportTest extends RepositoryTestCase {
         while (session.getRootNode().hasNode("compare")) {
             session.getRootNode().getNode("compare").remove();
         }
+        session.save();
         super.tearDown();
     }
 

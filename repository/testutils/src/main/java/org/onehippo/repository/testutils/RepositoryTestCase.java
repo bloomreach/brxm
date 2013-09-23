@@ -16,6 +16,8 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -28,6 +30,7 @@ import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -68,6 +71,8 @@ public abstract class RepositoryTestCase {
     protected static HippoRepository background = null;
     protected HippoRepository server = null;
     protected Session session = null;
+
+    private Set<String> topLevelNodes;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -125,6 +130,12 @@ public abstract class RepositoryTestCase {
             session.getNode("/test").remove();
             session.save();
         }
+
+        // save top-level nodes for tearDown validation
+        topLevelNodes = new HashSet<String>();
+        for (Node node : new NodeIterable(session.getRootNode().getNodes())) {
+            topLevelNodes.add(node.getName() + "[" + node.getIndex() + "]");
+        }
     }
 
     @After
@@ -135,13 +146,28 @@ public abstract class RepositoryTestCase {
     protected void tearDown(boolean clearRepository) throws Exception {
         if (session != null) {
             session.refresh(false);
-            while (session.nodeExists("/test")) {
-                session.getNode("/test").remove();
-                session.save();
-            }
             session.logout();
             session = null;
         }
+
+        Session cleanupSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        while (cleanupSession.nodeExists("/test")) {
+            cleanupSession.getNode("/test").remove();
+            cleanupSession.save();
+        }
+
+        for (Node node : new NodeIterable(cleanupSession.getRootNode().getNodes())) {
+            final boolean removed = topLevelNodes.remove(node.getName() + "[" + node.getIndex() + "]");
+            if (!removed) {
+                throw new Exception("tearDown found node with name '" + node.getName() + "' in session; this node should be removed in subclass");
+            }
+        }
+        if (topLevelNodes.size() > 0) {
+            throw new Exception("tearDown found nodes " + topLevelNodes + " missing");
+        }
+
+        cleanupSession.logout();
+
         if (clearRepository) {
             clearRepository();
         }
