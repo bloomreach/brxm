@@ -3,6 +3,7 @@ package org.onehippo.cms7.essentials.components.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.onehippo.cms7.essentials.components.gui.panel.AttachComponentPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.ComponentsPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.DocumentRegisterPanel;
 import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
@@ -24,6 +25,8 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
     public ComponentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
         final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
+        // TODO move attach to last
+        panel.addWizard(new AttachComponentPanel(this, "Attach components"));
         panel.addWizard(new DocumentRegisterPanel(this, "Register document types"));
         panel.addWizard(new DocumentRegisterPanel(this, "Register document types"));
         panel.addWizard(new ComponentsPanel(this, "Component installer"));

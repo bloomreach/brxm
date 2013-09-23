@@ -33,6 +33,7 @@ import org.onehippo.cms7.essentials.dashboard.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PanelPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
@@ -87,7 +88,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
 
         menu = new MenuPanel("menu", this, pluginList, mainPlugins);
 
-        globalToolbarPanel = new GlobalToolbarPanel("globalToolbar");
+        globalToolbarPanel = new GlobalToolbarPanel("globalToolbar", new PanelPluginContext(createSession(), eventBus));
         add(globalToolbarPanel);
         add(menu);
         add(body);

@@ -19,30 +19,10 @@
                 <li class="purple">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                         <i class="icon-bell-alt icon-only icon-animated-bell"></i>
-                        <span class="badge badge-important">8</span>
+                        <span class="badge badge-important" wicket:id="totalNotifications">[NR OF NOTIFICATIONS]</span>
                     </a>
-
-                    <ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-closer">
-                        <li class="nav-header">
-                            <i class="icon-warning-sign"></i>8 Plugin Updates
-                        </li>
-                        <li>
-                            <a href="#">
-                                <div class="clearfix">
-                                    <span class="pull-left">
-                                        <i class="btn btn-mini no-hover btn-success icon-shopping-cart"></i>
-                                        2 New Plugins
-                                    </span>
-                                    <span class="pull-right badge badge-success">+8</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                See all notifications
-                                <i class="icon-arrow-right"></i>
-                            </a>
-                        </li>
+                    <ul wicket:id="repeatableList" class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-closer">
+                        <li class="nav-header"><i class="icon-warning-sign"><span wicket:id="label">[LABEL]</span></i></li>
                     </ul>
                 </li>
             </ul>
