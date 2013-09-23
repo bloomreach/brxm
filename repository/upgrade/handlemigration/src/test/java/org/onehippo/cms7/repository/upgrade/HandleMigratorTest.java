@@ -15,15 +15,19 @@
  */
 package org.onehippo.cms7.repository.upgrade;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -44,11 +48,13 @@ import static junit.framework.Assert.assertTrue;
 public class HandleMigratorTest extends RepositoryTestCase {
 
     private Node documents;
+    private Node attic;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         documents = session.getNode("/content/documents");
+        attic = session.getNode("/content/attic");
         createTestDocuments(5);
         session.save();
     }
@@ -62,9 +68,76 @@ public class HandleMigratorTest extends RepositoryTestCase {
     @Test
     public void testHandleMigration() throws Exception {
         editAndPublishTestDocuments();
+        migrate();
+        checkDocumentHistory();
+    }
+
+    @Test
+    public void testDeletedHandleMigration() throws Exception {
+        editAndPublishTestDocuments();
+        deleteDocuments();
+        migrate();
+        checkAtticDocumentHistory();
+    }
+
+    private void deleteDocuments() throws Exception {
+        for (Node handle : new NodeIterable(documents.getNodes())) {
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                final Node document = handle.getNode(handle.getName());
+                deleteTestDocument(document);
+            }
+        }
+    }
+
+    private void deleteTestDocument(final Node document) throws Exception {
+        final FullReviewedActionsWorkflow workflow = getFullReviewedActionsWorkflow(document);
+        workflow.depublish();
+        workflow.delete();
+    }
+
+    private void checkAtticDocumentHistory() throws RepositoryException {
+        final List<Node> handles = new ArrayList<Node>();
+        attic.accept(new ItemVisitor() {
+            @Override
+            public void visit(final Property property) throws RepositoryException {
+            }
+            @Override
+            public void visit(final Node node) throws RepositoryException {
+                if (JcrUtils.isVirtual(node)) {
+                    return;
+                }
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    handles.add(node);
+                    return;
+                }
+                for (Node child : new NodeIterable(node.getNodes())) {
+                    visit(child);
+                }
+            }
+        });
+        for (Node handle : handles) {
+            checkAtticHandle(handle);
+        }
+    }
+
+    private void checkAtticHandle(final Node handle) throws RepositoryException {
+        assertTrue("No hippo:deleted node under attic handle", handle.hasNode(handle.getName()));
+        final Node deleted = handle.getNode(handle.getName());
+        assertTrue(deleted.isNodeType(HippoNodeType.NT_DELETED));
+        final VersionManager versionManager = session.getWorkspace().getVersionManager();
+        final String documentPath = deleted.getPath();
+        final VersionHistory versionHistory = versionManager.getVersionHistory(documentPath);
+        final VersionIterator versions = versionHistory.getAllVersions();
+        assertEquals("Unexpected number of versions", 8, versions.getSize());
+    }
+
+    private void migrate() throws RepositoryException {
         final HandleMigrator handleMigrator = new HandleMigrator(session);
         handleMigrator.init();
         handleMigrator.migrate();
+    }
+
+    private void checkDocumentHistory() throws Exception {
         for (int i = 0; i < 5; i++) {
             checkDocumentHistory(getPreview(i));
         }

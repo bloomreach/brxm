@@ -138,3 +138,5 @@
 - hippo:version (string) multiple // never specify this item at this time
 - hippo:sequence (double) // not yet supported
 + * (hippo:initializeitem) = hippo:initializeitem
+
+[hippo:deleted] > hippo:document, mix:versionable

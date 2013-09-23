@@ -75,6 +75,7 @@ class HandleMigrator {
     private static final String JCR_FROZEN_PRIMARY_TYPE = "jcr:frozenPrimaryType";
     private static final String JCR_FROZEN_MIXIN_TYPES = "jcr:frozenMixinTypes";
     private static final String NT_FROZEN_NODE = "nt:frozenNode";
+    private static final String ATTIC_PATH = "/content/attic";
 
     private static final int VERSIONS_RETAIN_COUNT = Integer.getInteger("org.onehippo.cms7.migration.versions_retain_count", Integer.MAX_VALUE);
 
@@ -121,9 +122,6 @@ class HandleMigrator {
                         break;
                     }
                     try {
-                        if (isExcluded(handle)) {
-                            continue;
-                        }
                         migrate(handle);
                         count++;
                         throttle(count);
@@ -146,10 +144,6 @@ class HandleMigrator {
             }
         }
 
-    }
-
-    private boolean isExcluded(final Node handle) throws RepositoryException {
-        return handle.getPath().startsWith("/content/attic");
     }
 
 
@@ -181,20 +175,15 @@ class HandleMigrator {
     void migrate(final Node handle) throws RepositoryException {
         log.debug("Migrating {}", handle.getPath());
         try {
-            if (hasHistory(handle)) {
-                migrateVersionHistory(handle);
+            final List<Version> versions = getVersions(handle);
+            if (!versions.isEmpty()) {
+                migrateVersionHistory(handle, versions);
             }
             migrateHandle(handle);
         } finally {
             defaultSession.refresh(false);
             migrationSession.refresh(false);
         }
-    }
-
-    private boolean hasHistory(final Node handle) throws RepositoryException {
-        final VersionManager versionManager = defaultSession.getWorkspace().getVersionManager();
-        final Version baseVersion = versionManager.getBaseVersion(handle.getPath());
-        return !baseVersion.getName().equals("jcr:rootVersion");
     }
 
     private void migrateHandle(final Node handle) throws RepositoryException {
@@ -243,27 +232,34 @@ class HandleMigrator {
         return references;
     }
 
-    private void migrateVersionHistory(final Node handle) throws RepositoryException {
+    private void migrateVersionHistory(final Node handle, final List<Version> versions) throws RepositoryException {
         log.debug("Migrating version history of {}", handle.getPath());
         try {
-            final Node tmp  = createTemporaryNode(handle);
-            replayHistory(handle, tmp);
-            replacePreview(handle, tmp.getIdentifier());
+            final Node tmp  = createTemporaryNode(versions);
+            replayHistory(tmp, versions);
+            setPreview(handle, tmp.getIdentifier());
         } finally {
             removeTemporaryNode();
         }
     }
 
-    private void replacePreview(final Node handle, final String identifier) throws RepositoryException {
+    private void setPreview(final Node handle, final String identifier) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(handle, false);
         final String docPath = handle.getPath() + "/" + handle.getName();
         defaultSession.getWorkspace().clone(HANDLE_MIGRATION_WORKSPACE, "/tmp", docPath, true);
-        final Node oldPreview = getOldPreview(handle, identifier);
-        if (oldPreview != null) {
-            final Node newPreview = defaultSession.getNodeByIdentifier(identifier);
-            copy(oldPreview, newPreview);
-            oldPreview.remove();
+        final Node newPreview = defaultSession.getNodeByIdentifier(identifier);
+        boolean deleted = handle.getPath().startsWith(ATTIC_PATH);
+        if (deleted) {
+            clear(newPreview);
+            newPreview.setPrimaryType(HippoNodeType.NT_DELETED);
             defaultSession.save();
+        } else {
+            final Node oldPreview = getOldPreview(handle, identifier);
+            if (oldPreview != null) {
+                copy(oldPreview, newPreview);
+                oldPreview.remove();
+                defaultSession.save();
+            }
         }
     }
 
@@ -277,11 +273,10 @@ class HandleMigrator {
         return null;
     }
 
-    private void replayHistory(final Node handle, final Node tmp) throws RepositoryException {
+    private void replayHistory(final Node tmp, final List<Version> versions) throws RepositoryException {
         final VersionManagerImpl versionManager = (VersionManagerImpl)
                 migrationSession.getWorkspace().getVersionManager();
         int count = 0;
-        final List<Version> versions = getVersions(handle);
         while (versions.size() > VERSIONS_RETAIN_COUNT) {
             versions.remove(0);
         }
@@ -297,9 +292,9 @@ class HandleMigrator {
         log.debug("Replayed {} versions", count);
     }
 
-    private Node createTemporaryNode(final Node handle) throws RepositoryException {
-        final Node document = handle.getNode(handle.getName());
-        final String primaryType = document.getPrimaryNodeType().getName();
+    private Node createTemporaryNode(final List<Version> versions) throws RepositoryException {
+        final Version latest = versions.get(versions.size() - 1);
+        final String primaryType = latest.getFrozenNode().getProperty(JCR_FROZEN_PRIMARY_TYPE).getString();
         final Node tmp = migrationSession.getRootNode().addNode("tmp", primaryType);
         tmp.addMixin(JcrConstants.MIX_VERSIONABLE);
         return tmp;
@@ -325,6 +320,11 @@ class HandleMigrator {
         for (Node node : new NodeIterable(srcNode.getNodes())) {
             if (!node.getDefinition().isProtected()) {
                 node.remove();
+            }
+        }
+        for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
+            if (!nodeType.getName().equals(JcrConstants.MIX_VERSIONABLE)) {
+                srcNode.removeMixin(nodeType.getName());
             }
         }
     }
