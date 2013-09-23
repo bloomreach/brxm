@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,8 @@ import java.rmi.RemoteException;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.api.annotation.WorkflowAction;
 
 /**
  * A workflow is a set of procedures that can be performed on a document in the repository.  These procedures can be accessed by obtaining a Workflow implementation from the {@link WorkflowManager}.  Calling a method that is defined by an interface extending the {@link Workflow} interface causes such a workflow step (procedure) to be executed.
@@ -46,5 +48,6 @@ public interface Workflow extends Remote, Serializable {
      * @throws java.rmi.RemoteException a connection error with the repository
      * @throws javax.jcr.RepositoryException a generic error communicating with the repository
      */
+    @WorkflowAction(loggable=false)
     public Map<String,Serializable> hints() throws WorkflowException, RemoteException, RepositoryException;
 }

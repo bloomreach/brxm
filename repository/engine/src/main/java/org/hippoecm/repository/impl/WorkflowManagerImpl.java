@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.repository.impl;
+
+import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -59,6 +61,7 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.annotation.WorkflowAction;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.ext.WorkflowInvocation;
@@ -68,12 +71,11 @@ import org.hippoecm.repository.ext.WorkflowManagerModule;
 import org.hippoecm.repository.ext.WorkflowManagerRegister;
 import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflow;
 import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl;
+import org.hippoecm.repository.util.AnnotationUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
 
 /** This class is not part of a public accessible API or extensible interface */
 public class WorkflowManagerImpl implements WorkflowManager {
@@ -538,7 +540,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                         invocationIndex = invocationChain.listIterator();
                         current.invoke(WorkflowManagerImpl.this);
                     }
-                    if (!targetMethod.getName().equals("hints")) {
+                    WorkflowAction wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
+                    if (wfActionAnno == null || wfActionAnno.loggable()) {
                         eventLoggerWorkflow.logWorkflowStep(session.getUserID(), upstream.getClass().getName(),
                                 targetMethod.getName(), args, returnObject, path, interaction, interactionId,
                                 category, workflowName);
@@ -702,7 +705,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         @Override
         public void setSubject(Node node) {
             try {
-                workflowManager = ((HippoWorkspace)node.getSession().getWorkspace()).getWorkflowManager(); 
+                workflowManager = ((HippoWorkspace)node.getSession().getWorkspace()).getWorkflowManager();
             } catch(RepositoryException ex) {
                 log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             }
@@ -871,7 +874,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     if (objectPersist && !targetMethod.getName().equals("hints")) {
                         manager.rootSession.save();
                     }
-                    if (!targetMethod.getName().equals("hints")) {
+                    WorkflowAction wfActionAnno = AnnotationUtils.findMethodAnnotation(targetMethod, WorkflowAction.class);
+                    if (wfActionAnno == null || wfActionAnno.loggable()) {
                         manager.eventLoggerWorkflow.logWorkflowStep(userId, workflow.getClass().getName(),
                                 targetMethod.getName(), arguments, returnObject, path, interaction, interactionId,
                                 category, workflowName);
@@ -1013,7 +1017,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             }
             return null;
         }
-        
+
         public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
             if(specification instanceof Document) {
                 String uuid = ((Document)specification).getIdentity();
@@ -1052,17 +1056,17 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
 
         protected abstract WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification);
-        
+
         public abstract Workflow getWorkflow(String category) throws MappingException, WorkflowException, RepositoryException;
 
         public String getUserIdentity() {
             return session.getUserID();
         }
-        
+
         public Session getUserSession() {
             return session;
         }
-        
+
         public Session getInternalWorkflowSession() {
             return WorkflowManagerImpl.this.rootSession;
         }
@@ -1110,7 +1114,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             log.debug("Workflow for category "+category+" on document is not available");
             throw new MappingException("Workflow for category "+category+" on document is not available");
         }
-        
+
         protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification) {
             return new WorkflowContextNodeImpl(workflowDefinition, subjectSession, subject, specification);
         }
@@ -1143,7 +1147,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
             log.debug("Workflow for category "+category+" on document is not available");
             throw new MappingException("Workflow for category "+category+" on document is not available");
         }
-        
+
         protected WorkflowContextImpl newContext(Node workflowDefinition, Session subjectSession, WorkflowInvocationHandlerModule specification) {
             return new WorkflowContextDocumentImpl(workflowDefinition, subjectSession, subject, specification);
         }
