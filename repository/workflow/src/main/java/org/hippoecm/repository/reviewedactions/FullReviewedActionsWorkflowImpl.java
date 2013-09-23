@@ -97,12 +97,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void doDelete() throws WorkflowException {
-        /* Previous behaviour was to let the handle exists, and only delete all variants.  This is still the best option
-         * especially when there are multiple language variants.  Then the document should remain existing.  For now,
-         * that behaviour which was implemented with just:
-         *    unpublished = draft = null;
-         * is removed and we will archive the document.
-         */
         boolean fallbackDelete = false;
         try {
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);

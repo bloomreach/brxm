@@ -30,8 +30,6 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -42,7 +40,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -50,14 +47,13 @@ import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
@@ -65,6 +61,8 @@ import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,14 +104,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Map<String,Serializable> info = new TreeMap<String,Serializable>();
-        info.put("add", Boolean.valueOf(true));
-        info.put("list", Boolean.valueOf(false));
-        info.put("archive", Boolean.valueOf(true));
-        info.put("delete", Boolean.valueOf(true));
-        info.put("rename", Boolean.valueOf(true));
-        info.put("copy", Boolean.valueOf(true));
-        info.put("duplicate", Boolean.valueOf(true));
-        info.put("move", Boolean.valueOf(true));
+        info.put("add", true);
+        info.put("list", false);
+        info.put("archive", true);
+        info.put("delete", true);
+        info.put("rename", true);
+        info.put("copy", true);
+        info.put("duplicate", true);
+        info.put("move", true);
         info.put("prototypes", (Serializable) prototypes());
 
         if (subject.getPrimaryNodeType().hasOrderableChildNodes()) {
@@ -127,7 +125,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     break;
                 }
             }
-            info.put("reorder", Boolean.valueOf(isEnabled));
+            info.put("reorder", isEnabled);
         }
         return info;
     }
@@ -349,30 +347,53 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    private void doArchive(String source, String destination) throws ConstraintViolationException, PathNotFoundException, ItemNotFoundException, VersionException, VersionException, AccessDeniedException, RepositoryException {
+    private void doArchive(String source, String destination) throws RepositoryException {
         rootSession.move(source, destination);
         rootSession.save();
         String targetParentPath = destination.substring(0, destination.lastIndexOf("/"));
         String targetName = destination.substring(destination.lastIndexOf("/")+1);
-        for (NodeIterator targetsIter = rootSession.getNode(targetParentPath).getNodes(targetName); targetsIter.hasNext(); ) {
-            Node target = targetsIter.nextNode();
+        for (final Node target : new NodeIterable(rootSession.getNode(targetParentPath).getNodes(targetName))) {
             try {
                 if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
-                    target.checkout();
-                    for (NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
-                        Node child = iter.nextNode();
-                        if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            child.checkin();
+                    JcrUtils.ensureIsCheckedOut(target, false);
+                    Node unpublished = null;
+                    for (final Node child : new NodeIterable(target.getNodes(target.getName()))) {
+                        final String state = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_STATE, null);
+                        if (HippoStdNodeType.UNPUBLISHED.equals(state)) {
+                            unpublished = child;
+                        } else {
+                            child.remove();
                         }
                     }
-                    for (NodeIterator iter = target.getNodes(); iter.hasNext(); ) {
-                        iter.nextNode().remove();
+                    rootSession.save();
+                    if (unpublished != null) {
+                        final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
+                        versionManager.checkpoint(unpublished.getPath());
+                        clear(unpublished);
+                        unpublished.setPrimaryType(HippoNodeType.NT_DELETED);
+                        rootSession.save();
                     }
-                    target.save();
-                    target.checkin();
                 }
             } catch(RepositoryException ex) {
                 log.error("error while deleting document variants from attic", ex);
+            }
+        }
+    }
+
+    private void clear(final Node node) throws RepositoryException {
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            if (!property.getDefinition().isProtected()) {
+                property.remove();
+            }
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            if (!child.getDefinition().isProtected()) {
+                child.remove();
+            }
+        }
+        for (NodeType nodeType : node.getMixinNodeTypes()) {
+            if (!nodeType.getName().equals(HippoNodeType.NT_HARDDOCUMENT)) {
+                node.removeMixin(nodeType.getName());
             }
         }
     }
