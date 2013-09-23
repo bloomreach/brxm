@@ -1,24 +1,41 @@
-//
-// Creates an HTML table with information about all CKEditor widgets (buttons, combo boxes, etc.) that are
-// available in a CKEditor distribution. The table lists for each widget:
-// - name
-// - label in the UI (the 'tool tip')
-// - associated CKEditor command
-// - CKEditor plugin the widget came from
-// - toolbar group in which the widget is placed by default
-// - position in the toolbar group
-//
-// Execute this script in the example page 'samples/replacebyclass.html' that is part of the CKEditor sources:
-// 1. open http://ckeditor.com/builder
-// 2. upload 'build-config.js' next to this file
-// 3. download the source version of CKEditor
-// 4. unzip the downloaded archive
-// 5. open 'samples/replacebyclass.html' in Chrome
-// 6. open the 'console' tab in Chrome developer tools
-// 7. paste the contents of this file into the console and hit <enter>
-//
-// The table should appear above the CKEditor instance.
-//
+/*
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Creates an HTML table with information about all CKEditor widgets (buttons, combo boxes, etc.) that are
+ * available in a CKEditor distribution. The table lists for each widget:
+ * - name
+ * - label in the UI (the 'tool tip')
+ * - associated CKEditor command
+ * - CKEditor plugin the widget came from
+ * - toolbar group in which the widget is placed by default
+ * - position in the toolbar group
+ *
+ * Execute this script in the example page 'samples/replacebyclass.html' that is part of the CKEditor sources:
+ * 1. open http://ckeditor.com/builder
+ * 2. upload 'build-config.js' next to this file
+ * 3. download the source version of CKEditor
+ * 4. unzip the downloaded archive
+ * 5. open 'samples/replacebyclass.html' in Chrome
+ * 6. open the 'console' tab in Chrome developer tools
+ * 7. paste the contents of this file into the console and hit <enter>
+ *
+ * The table should appear above the CKEditor instance.
+ */
+
 (function() {
     function getPluginPerCommand() {
         var plugins = CKEDITOR.plugins.registered,
