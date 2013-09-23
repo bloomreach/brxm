@@ -184,7 +184,7 @@ public class AcceptRequestTest extends RepositoryTestCase {
         node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
         assertNotNull(node);
         assertEquals("published", node.getProperty("hippostd:state").getString());
-        final Value[] values = node.getProperty("hippostd:stateSummary").getValues();
+        final Value[] values = node.getProperty("hippo:availability").getValues();
         assertEquals(2, values.length);
     }
  
