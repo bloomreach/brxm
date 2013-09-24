@@ -56,11 +56,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <source>1.6</source>
           <sourcepath>${basedir}/src/main/java</sourcepath>
-          <links>
-            <link>http://download.oracle.com/javase/6/docs/api</link>
-          </links>
         </configuration>
       </plugin>
     </plugins>
