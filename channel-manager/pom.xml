@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>23</version>
+    <version>24-SNAPSHOT</version>
   </parent>
 
 
