@@ -110,11 +110,11 @@
          override on command line with -Dcargo.debug.suspend=y -->
     <cargo.debug.suspend>n</cargo.debug.suspend>
     <!-- Cargo Tomcat container version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.major.version>6</cargo.tomcat.major.version>
+    <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
     <!-- Cargo Tomcat full version used for Tomcat tarball distribution url -->
-    <cargo.tomcat.full.version>6.0-latest</cargo.tomcat.full.version>
+    <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
     <!-- Cargo Tomcat distribution prefix URL used for Tomcat tarball distribution url -->
-    <cargo.tomcat.distribution.url.prefix>http://apache.hippo.nl/tomcat/</cargo.tomcat.distribution.url.prefix>
+    <cargo.tomcat.distribution.url.prefix>http://archive.apache.org/dist/tomcat/</cargo.tomcat.distribution.url.prefix>
     <!-- Cargo Tomcat distribution archive path used for Tomcat tarball distribution url -->
     <cargo.tomcat.distribution.url.archive>tomcat-${cargo.tomcat.major.version}/v${cargo.tomcat.full.version}/bin/apache-tomcat-${cargo.tomcat.full.version}</cargo.tomcat.distribution.url.archive>
     <!-- Cargo Tomcat distribution url postfix used for Tomcat tarball distribution url -->
@@ -562,8 +562,8 @@
             <fork>true</fork>
             <meminitial>128m</meminitial>
             <maxmem>256m</maxmem>
-            <target>1.6</target>
-            <source>1.6</source>
+            <target>1.7</target>
+            <source>1.7</source>
           </configuration>
         </plugin>
         <plugin>
@@ -904,7 +904,7 @@
                 <!-- exclude IntelliJ Atlassian plugin file -->
                 <exclude>**/atlassian-ide-plugin.xml</exclude>
               </excludes>
-            </configuration>
+              </configuration>
           </plugin>
         </plugins>
       </build>
