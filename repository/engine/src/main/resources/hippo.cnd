@@ -54,7 +54,7 @@
 
 // DATA TYPES: VIRTUAL LAYER
 
-[hippo:facetresult]
+[hippo:facetresult] orderable
 - hippo:count (long)
 + * multiple ignore
 

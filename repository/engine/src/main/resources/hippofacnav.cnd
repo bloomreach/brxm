@@ -28,7 +28,7 @@
 + * (hippofacnav:abstractfacetnavigation) multiple ignore
 + hippo:resultset (hippo:facetresult) = hippo:facetresult
 
-[hippofacnav:facetnavigation] 
+[hippofacnav:facetnavigation] orderable
 - hippo:docbase (string) mandatory
 - hippofacnav:facets (string) mandatory multiple
 - hippofacnav:facetnodenames (string) multiple
@@ -45,8 +45,8 @@
 + * (hippofacnav:abstractfacetnavigation) multiple ignore
 
 
-[hippofacnav:facetsavailablenavigation] > hippofacnav:abstractfacetnavigation
+[hippofacnav:facetsavailablenavigation] > hippofacnav:abstractfacetnavigation orderable
 
-[hippofacnav:facetsubnavigation] > hippofacnav:abstractfacetnavigation
+[hippofacnav:facetsubnavigation] > hippofacnav:abstractfacetnavigation orderable
 - hippofacnav:leaf (boolean) 
 
