@@ -76,7 +76,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "    [ " + (CKEditorConstants.ALT + asciiCode('B')) + ", 'showblocks' ]"
             + "  ],"
             + "  linkShowAdvancedTab: false,"
-            + "  plugins: 'dialogui,dialog,a11yhelp,dialogadvtab,basicstyles,clipboard,button,panelbutton,panel,floatpanel,menu,contextmenu,resize,toolbar,elementspath,enterkey,entities,popup,floatingspace,listblock,richcombo,htmlwriter,wysiwygarea,indent,indentblock,indentlist,justify,link,list,liststyle,magicline,maximize,pastetext,pastefromword,removeformat,showblocks,showborders,sourcearea,specialchar,menubutton,stylescombo,tab,table,tabletools,undo,codemirror,youtube',"
+            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,sourcearea,specialchar,stylescombo,tab,table,tabletools,toolbar,undo,youtube',"
             + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
             + "  toolbarGroups: ["
             + "    { name: 'styles' },"

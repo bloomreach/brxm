@@ -117,9 +117,6 @@ public class CKEditorPanel extends Panel {
             // load the localized hippo styles if no other styles are specified
             JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));
 
-            // use a div-based editor instead of an iframe-based one to decrease loading time for many editor instances
-            JsonUtils.appendToCommaSeparatedString(editorConfig, CKEditorConstants.CONFIG_EXTRA_PLUGINS, CKEditorConstants.PLUGIN_DIVAREA);
-
             // disable custom config loading if not configured
             JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_CUSTOM_CONFIG, StringUtils.EMPTY);
 
