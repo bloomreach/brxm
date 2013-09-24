@@ -607,6 +607,7 @@
           <version>${maven.plugin.javadoc.version}</version>
           <configuration>
             <source>1.7</source>
+            <javadocVersion>1.7</javadocVersion>
             <links>
               <link>http://download.oracle.com/javase/7/docs/api</link>
             </links>
