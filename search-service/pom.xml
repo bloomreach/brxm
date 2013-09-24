@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>23</version>
+    <version>24-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Search Service</name>
@@ -365,26 +365,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven.plugin.javadoc.version}</version>
-        <configuration>
-          <destDir>userapidocs</destDir>
-          <source>1.6</source>
-          <sourcepath>${basedir}/api/src/main/java:${basedir}/mock/src/main/java:${basedir}/commons/src/main/java:${basedir}/content-beans/src/main/java:${basedir}/client/src/main/java</sourcepath>
-          <links>
-            <link>http://download.oracle.com/javase/6/docs/api</link>
-          </links>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven.plugin.javadoc.version}</version>
         <configuration>
           <aggregate>true</aggregate>
-          <source>1.6</source>
-          <links>
-            <link>http://download.oracle.com/javase/6/docs/api</link>
-          </links>
+          <destDir>userapidocs</destDir>
+          <sourcepath>${basedir}/api/src/main/java:${basedir}/mock/src/main/java:${basedir}/commons/src/main/java:${basedir}/content-beans/src/main/java:${basedir}/client/src/main/java</sourcepath>
         </configuration>
         <reportSets>
           <reportSet>
