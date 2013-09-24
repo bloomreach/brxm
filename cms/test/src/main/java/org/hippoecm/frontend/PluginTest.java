@@ -168,7 +168,8 @@ public abstract class PluginTest extends RepositoryTestCase {
     }
 
     @After
-    public void teardown() throws Exception {
+    @Override
+    public void tearDown() throws Exception {
         if(tester != null) {
             tester.destroy();
         }
