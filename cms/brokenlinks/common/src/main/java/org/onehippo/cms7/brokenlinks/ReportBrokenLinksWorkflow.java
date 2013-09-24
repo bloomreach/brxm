@@ -22,7 +22,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.annotation.WorkflowAction;
+import org.onehippo.repository.api.annotation.WorkflowAction;
 
 public interface ReportBrokenLinksWorkflow extends Workflow {
 
