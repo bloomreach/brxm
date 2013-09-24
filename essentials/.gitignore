@@ -1766,6 +1766,12 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/target
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/*.iml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/.DS_Store
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/.idea
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/*.iml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/.DS_Store
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/.idea

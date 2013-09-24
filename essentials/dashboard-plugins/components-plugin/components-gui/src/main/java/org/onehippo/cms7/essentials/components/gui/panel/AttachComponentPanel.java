@@ -17,24 +17,21 @@
 package org.onehippo.cms7.essentials.components.gui.panel;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeTypeExistsException;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListChoice;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.panels.DoubleSelectBox;
+import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
+import org.onehippo.cms7.essentials.dashboard.panels.SelectBoxPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
@@ -51,17 +48,17 @@ public class AttachComponentPanel extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(AttachComponentPanel.class);
-
     private final ComponentsWizard parent;
-    private List<String> selectedDocuments;
     private final ListChoice<String> sitesChoice;
     private final ListChoice<String> containerChoice;
     private final ListChoice<String> beansChoice;
+    private final ListMultipleChoice<String> componentsChoice;
+    private List<String> selectedDocuments;
     private String selectedSite;
     private String selectedContainer;
     private String selectedBean;
-    private final ListMultipleChoice<String> componentsChoice;
-    private  List<String> componentsList;
+    private List<String> componentsList;
+    private final DoubleSelectBox<String> doubleBox;
 
     public AttachComponentPanel(final ComponentsWizard parent, final String id) {
         super(id);
@@ -84,7 +81,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             @Override
             protected void onEvent(final AjaxRequestTarget target) {
                 final String selectedInput = sitesChoice.getInput();
-                if(Strings.isNullOrEmpty(selectedInput)){
+                if (Strings.isNullOrEmpty(selectedInput)) {
                     log.debug("No site selected");
                     return;
                 }
@@ -147,17 +144,42 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         form.add(componentsChoice);
         form.add(containerChoice);
         form.add(beansChoice);
+        //############################################
+        // NEW SELECT PANEL
+        //############################################
+        final ArrayList<String> strings = new ArrayList<>();
+        strings.add("test");
+        strings.add("test2");
+        final SelectBoxPanel<String> selectBox = new SelectBoxPanel<>("myPanel", form, strings, new EventListener<String>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
+                log.info("####SELECTED ITEMS: {}", selectedItems);
+            }
+        });
+        //############################################
+        // DOUBLE
+        //############################################
+        final ArrayList<String> doubleModel = new ArrayList<>();
+        doubleModel.add("test1");
+        doubleModel.add("test2");
+
+        doubleBox = new DoubleSelectBox<>("doubleBox", form, doubleModel);
+
+
     }
 
     private void onComponentSelected(final AjaxRequestTarget target) {
         log.info("Component selected# {}", target);
     }
 
-
     @Override
     public void applyState() {
         setComplete(false);
-
+        final List<String> selectedItems = doubleBox.getSelectedItems();
+        for (String selectedItem : selectedItems) {
+            log.info("OUR SELECTED ITEMS: {}", selectedItem);
+        }
         setComplete(true);
 
     }
