@@ -128,7 +128,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
         final String documentPath = deleted.getPath();
         final VersionHistory versionHistory = versionManager.getVersionHistory(documentPath);
         final VersionIterator versions = versionHistory.getAllVersions();
-        assertEquals("Unexpected number of versions", 8, versions.getSize());
+        assertEquals("Unexpected number of versions", 7, versions.getSize());
     }
 
     private void migrate() throws RepositoryException {

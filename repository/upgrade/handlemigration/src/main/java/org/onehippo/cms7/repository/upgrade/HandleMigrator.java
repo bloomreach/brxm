@@ -147,7 +147,6 @@ class HandleMigrator {
 
     }
 
-
     private NodeIterator getHardHandles() {
         try {
             final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();

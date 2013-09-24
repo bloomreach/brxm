@@ -17,10 +17,13 @@ package org.onehippo.cms7.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
@@ -33,8 +36,10 @@ import org.hippoecm.repository.reviewedactions.PublishableDocument;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflowImpl;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,45 +98,55 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
     }
 
     public void doDelete() throws WorkflowException {
-        /* Previous behaviour was to let the handle exists, and only delete all variants.  This is still the best option
-         * especially when there are multiple language variants.  Then the document should remain existing.  For now,
-         * that behaviour which was implemented with just:
-         *    unpublished = draft = null;
-         * is removed and we will archive the document.
-         */
-        boolean fallbackDelete = false;
         try {
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
-            defaultWorkflow.archive();
-        } catch(MappingException ex) {
-            log.warn("invalid default workflow, falling back in behaviour", ex);
-            fallbackDelete = true;
-        } catch(WorkflowException ex) {
-            log.warn("no default workflow for published documents, falling back in behaviour", ex);
-            fallbackDelete = true;
-        } catch(RepositoryException ex) {
-            log.warn("exception trying to archive document, falling back in behaviour", ex);
-            fallbackDelete = true;
-        } catch(RemoteException ex) {
-            log.warn("exception trying to archive document, falling back in behaviour", ex);
-            fallbackDelete = true;
-        }
-        if (fallbackDelete) {
-            try {
-                if (draftDocument != null) {
-                    deleteDocument(draftDocument);
-                }
-                if (unpublishedDocument != null) {
-                    deleteDocument(unpublishedDocument);
-                }
-                unpublishedDocument = draftDocument = null;
-            }
-            catch (RepositoryException ex) {
-                log.error("exception trying to delete document", ex);
-                // TODO DEDJO: ignore?
-            }
+            archive();
+        } catch (RepositoryException e) {
+            log.error("Failed to delete document", e);
         }
     }
+
+    private void archive() throws RepositoryException {
+        final Session session = unpublishedDocument.getNode().getSession();
+        Node handle = unpublishedDocument.getNode().getParent();
+        final String source = handle.getPath();
+        final String destination = "/content/attic/" + atticName("/content/attic", handle.getName(), true, session);
+        session.move(source, destination);
+        session.save();
+        handle = session.getNode(destination);
+        JcrUtils.ensureIsCheckedOut(handle, false);
+        for (Node node : new NodeIterable(handle.getNodes())) {
+            node.remove();
+        }
+        session.save();
+    }
+
+    private String atticName(String atticPath, String documentName, boolean createPath, final Session session) throws RepositoryException {
+        Calendar now = Calendar.getInstance();
+        String year = Integer.toString(now.get(Calendar.YEAR));
+        String month = Integer.toString(now.get(Calendar.MONTH) + 1);
+        String day = Integer.toString(now.get(Calendar.DAY_OF_MONTH));
+        if(createPath) {
+            Node destination, attic = session.getNode(atticPath);
+            if(!attic.hasNode(year)) {
+                destination = attic.addNode(year, "nt:unstructured");
+            } else {
+                destination = attic.getNode(year);
+            }
+            if(!destination.hasNode(month)) {
+                destination = destination.addNode(month, "nt:unstructured");
+            } else {
+                destination = destination.getNode(month);
+            }
+            if(!destination.hasNode(day)) {
+                destination = destination.addNode(day, "nt:unstructured");
+            } else {
+                destination = destination.getNode(day);
+            }
+            attic.save();
+        }
+        return year + "/" + month + "/" + day + "/" + documentName;
+    }
+
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
         log.info("copy document");
