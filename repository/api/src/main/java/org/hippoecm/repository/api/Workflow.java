@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.annotation.WorkflowAction;
+import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * A workflow is a set of procedures that can be performed on a document in the repository.  These procedures can be accessed by obtaining a Workflow implementation from the {@link WorkflowManager}.  Calling a method that is defined by an interface extending the {@link Workflow} interface causes such a workflow step (procedure) to be executed.

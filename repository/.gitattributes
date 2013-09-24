@@ -12,7 +12,6 @@ api/src/main/java/org/hippoecm/repository/api/InitializationProcessor.java -text
 api/src/main/java/org/hippoecm/repository/api/MappingException.java -text
 api/src/main/java/org/hippoecm/repository/api/ReferenceWorkspace.java -text
 api/src/main/java/org/hippoecm/repository/api/SynchronousEventListener.java -text
-api/src/main/java/org/hippoecm/repository/api/annotation/WorkflowAction.java -text
 api/src/main/java/org/hippoecm/repository/ext/InternalWorkflow.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowInvocationHandlerModuleFactory.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerModule.java -text
@@ -22,6 +21,7 @@ api/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 api/src/main/java/org/hippoecm/repository/util/NodeIterable.java -text
 api/src/main/java/org/hippoecm/repository/util/PropertyIterable.java -text
 api/src/main/java/org/onehippo/repository/RepositoryService.java -text
+api/src/main/java/org/onehippo/repository/api/annotation/WorkflowAction.java -text
 api/src/main/java/org/onehippo/repository/cluster/RepositoryClusterService.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableDaemonModule.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableSchedulingDaemonModule.java -text
@@ -208,7 +208,6 @@ engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImp
 engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text
-engine/src/main/java/org/hippoecm/repository/util/AnnotationUtils.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistration.java -text
 engine/src/main/java/org/onehippo/repository/modules/ModuleRegistry.java -text
@@ -217,6 +216,7 @@ engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionModule.java 
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionReport.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterInfo.java -text
+engine/src/main/java/org/onehippo/repository/util/AnnotationUtils.java -text
 engine/src/main/resources/hippo.cnd -text
 engine/src/main/resources/hippofacnav.cnd -text
 engine/src/main/resources/hipposched.cnd -text
@@ -243,10 +243,10 @@ engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTe
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
-engine/src/test/java/org/hippoecm/repository/util/AnnotationUtilsTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
+engine/src/test/java/org/onehippo/repository/util/AnnotationUtilsTest.java -text
 engine/src/test/resources/InvalidJobDetail.ser -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain

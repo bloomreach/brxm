@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.repository.util;
+package org.onehippo.repository.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,9 +24,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.annotation.WorkflowAction;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.junit.Test;
+import org.onehippo.repository.api.annotation.WorkflowAction;
+import org.onehippo.repository.util.AnnotationUtils;
 
 /**
  * AnnotationUtilsTest
