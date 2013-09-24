@@ -16,21 +16,27 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -72,7 +78,13 @@ public abstract class RepositoryTestCase {
     protected HippoRepository server = null;
     protected Session session = null;
 
+    /**
+     * Check whether repository content & configuration are the same before & after the test.
+     */
+    private int configurationHashcode;
     private Set<String> topLevelNodes;
+    private String debugPath = "/hippo:configuration";
+    private Map<String, Integer> hashes;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -131,11 +143,7 @@ public abstract class RepositoryTestCase {
             session.save();
         }
 
-        // save top-level nodes for tearDown validation
-        topLevelNodes = new HashSet<String>();
-        for (Node node : new NodeIterable(session.getRootNode().getNodes())) {
-            topLevelNodes.add(node.getName() + "[" + node.getIndex() + "]");
-        }
+        saveState();
     }
 
     @After
@@ -150,10 +158,79 @@ public abstract class RepositoryTestCase {
             session = null;
         }
 
+        checkState();
+
+        if (clearRepository) {
+            clearRepository();
+        }
+    }
+
+    /**
+     * Sets the configuration change debugger path.
+     * Retains
+     * @param path
+     */
+    protected final void setConfigurationChangeDebugPath(String path) {
+        this.debugPath = path;
+    }
+
+    private void saveState() throws RepositoryException {
+        // save top-level nodes for tearDown validation
+        topLevelNodes = new HashSet<String>();
+        for (Node node : new NodeIterable(session.getRootNode().getNodes())) {
+            topLevelNodes.add(node.getName() + "[" + node.getIndex() + "]");
+        }
+
+        configurationHashcode = hashCode(session.getNode("/hippo:configuration"));
+
+        hashes = new HashMap<String, Integer>();
+        final Node configChangeDebugNode = session.getNode(debugPath);
+        for (Node configChild : new NodeIterable(configChangeDebugNode.getNodes())) {
+            hashes.put(configChild.getName(), hashCode(configChild));
+        }
+        for (Property configProp : new PropertyIterable(configChangeDebugNode.getProperties())) {
+            hashes.put(configProp.getName(), hashCode(configProp));
+        }
+    }
+
+    private void checkState() throws Exception {
         Session cleanupSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         while (cleanupSession.nodeExists("/test")) {
             cleanupSession.getNode("/test").remove();
             cleanupSession.save();
+        }
+
+        int configHashcode = hashCode(cleanupSession.getNode("/hippo:configuration"));
+        if (configHashcode != configurationHashcode) {
+            Map<String, Integer> afterHash = new HashMap<String, Integer>();
+            final Node configChangeDebugNode = cleanupSession.getNode(debugPath);
+            for (Node configChild : new NodeIterable(configChangeDebugNode.getNodes())) {
+                afterHash.put(configChild.getName(), hashCode(configChild));
+            }
+            for (Property configProp : new PropertyIterable(configChangeDebugNode.getProperties())) {
+                afterHash.put(configProp.getName(), hashCode(configProp));
+            }
+
+            Set<String> missing = new HashSet<String>();
+            Set<String> changed = new HashSet<String>();
+            Set<String> added = new HashSet<String>();
+            for (Map.Entry<String, Integer> oldHashEntry : hashes.entrySet()) {
+                final String name = oldHashEntry.getKey();
+                if (!afterHash.containsKey(name)) {
+                    missing.add(name);
+                } else if (!afterHash.get(name).equals(oldHashEntry.getValue())) {
+                    changed.add(name);
+                }
+            }
+            for (String name : afterHash.keySet()) {
+                if (!hashes.containsKey(name)) {
+                    added.add(name);
+                }
+            }
+
+            throw new Exception("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
+                    "Detected changes: added = " + added + ", changed = " + changed + ", removed = " + missing + ".  " +
+                    "Use RepositoryTestCase#setConfigurationChangeDebugPath to narrow down.");
         }
 
         for (Node node : new NodeIterable(cleanupSession.getRootNode().getNodes())) {
@@ -167,10 +244,52 @@ public abstract class RepositoryTestCase {
         }
 
         cleanupSession.logout();
+    }
 
-        if (clearRepository) {
-            clearRepository();
+    protected int hashCode(Node node) throws RepositoryException {
+        String name = node.getName();
+        String type = node.getPrimaryNodeType().getName();
+        int hashCode = name.hashCode() + type.hashCode() * 31;
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            hashCode = 31 * hashCode + hashCode(property);
         }
+        boolean orderable = node.getPrimaryNodeType().hasOrderableChildNodes();
+        for (NodeType mixin : node.getMixinNodeTypes()) {
+            if (mixin.hasOrderableChildNodes()) {
+                orderable = true;
+            }
+        }
+        int hash = 0;
+        for (Node child : new NodeIterable(node.getNodes())) {
+            if (child instanceof HippoNode) {
+                if (((HippoNode) child).isVirtual()) {
+                    continue;
+                }
+            }
+            if (orderable) {
+                hash = 31 * hash + hashCode(child);
+            } else {
+                hash = hash + hashCode(child);
+            }
+        }
+        hashCode = 31 * hashCode + hash;
+        return hashCode;
+    }
+
+    protected int hashCode(Property property) throws RepositoryException {
+        int hashCode = property.getName().hashCode();
+        if (property.isMultiple()) {
+            for (Value value : property.getValues()) {
+                hashCode = hashCode(value) + (hashCode * 31);
+            }
+        } else {
+            hashCode = hashCode(property.getValue()) + (hashCode * 31);
+        }
+        return hashCode;
+    }
+
+    protected int hashCode(Value value) throws RepositoryException {
+        return value.getString().hashCode();
     }
 
     protected void build(Session session, String[] contents) throws RepositoryException {

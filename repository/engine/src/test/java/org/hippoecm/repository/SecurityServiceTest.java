@@ -25,6 +25,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.junit.After;
 import org.junit.Test;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
@@ -36,6 +37,22 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 public class SecurityServiceTest extends RepositoryTestCase {
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        final Node users = session.getNode("/hippo:configuration/hippo:users");
+        final String encodedName = NodeNameCodec.encode("'t hart", true);
+        if (users.hasNode(encodedName)) {
+            users.getNode(encodedName).remove();
+        }
+        final Node groups = session.getNode("/hippo:configuration/hippo:groups");
+        if (groups.hasNode(encodedName)) {
+            groups.getNode(encodedName).remove();
+        }
+        session.save();
+        super.tearDown();
+    }
 
     @Test
     public void testGetUser() throws Exception {

@@ -15,8 +15,12 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
@@ -34,19 +38,21 @@ public class FailingWorkflowTest extends RepositoryTestCase {
 
     private String[] content = {
         "/test", "nt:unstructured",
-        "/test/folder", "hippostd:folder",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "/test/folder/document", "hippo:handle",
-        "jcr:mixinTypes", "hippo:hardhandle",
-        "/test/folder/document/document", "hippostdpubwf:test",
-        "hippostdpubwf:createdBy", "admin",
-        "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
-        "hippostdpubwf:lastModifiedBy", "admin",
-        "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "hippostd:holder", "admin",
-        "hippostd:state", "published"
+            "/test/folder", "hippostd:folder",
+                "jcr:mixinTypes", "hippo:harddocument",
+                "/test/folder/document", "hippo:handle",
+                    "jcr:mixinTypes", "hippo:hardhandle",
+                    "/test/folder/document/document", "hippostdpubwf:test",
+                        "jcr:mixinTypes", "hippo:harddocument",
+                        "hippostdpubwf:createdBy", "admin",
+                        "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
+                        "hippostdpubwf:lastModifiedBy", "admin",
+                        "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00",
+                        "hippostd:holder", "admin",
+                        "hippostd:state", "published"
     };
+
+    Map<String, Value[]> privileges = new HashMap<String, Value[]>();
 
     @Before
     public void setUp() throws Exception {
@@ -55,16 +61,29 @@ public class FailingWorkflowTest extends RepositoryTestCase {
         build(session, content);
         session.save();
 
+        privileges.clear();
+
         for (NodeIterator iter = session.getRootNode().getNode("hippo:configuration/hippo:workflows").getNodes(); iter.hasNext(); ) {
             for (NodeIterator i = iter.nextNode().getNodes(); i.hasNext(); ) {
                 Node workflowNode = i.nextNode();
                 if (workflowNode.hasProperty("hipposys:privileges")) {
+                    privileges.put(workflowNode.getPath(), workflowNode.getProperty("hipposys:privileges").getValues());
                     workflowNode.getProperty("hipposys:privileges").remove();
                 }
             }
         }
 
         session.save();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        for (Map.Entry<String, Value[]> toRestore : privileges.entrySet()) {
+            session.getNode(toRestore.getKey()).setProperty("hipposys:privileges", toRestore.getValue());
+        }
+        session.save();
+        super.tearDown();
     }
 
     @Test

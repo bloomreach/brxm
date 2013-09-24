@@ -23,6 +23,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
@@ -77,6 +78,29 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         }
 
         session.save();
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        final Node users = session.getNode("/hippo:configuration/hippo:users");
+        if (users.hasNode("bob")) {
+            users.getNode("bob").remove();
+        }
+        if (users.hasNode("alice")) {
+            users.getNode("alice").remove();
+        }
+
+        final Node domains = session.getNode("/hippo:configuration/hippo:domains");
+        if (domains.hasNode("alicesdomain")) {
+            domains.getNode("alicesdomain").remove();
+        }
+        if (domains.hasNode("bobsdomain")) {
+            domains.getNode("bobsdomain").remove();
+        }
+
+        session.save();
+        super.tearDown();
     }
 
     /**

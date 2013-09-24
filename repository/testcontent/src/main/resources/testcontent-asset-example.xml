@@ -43,7 +43,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>52817c59-692f-4cd5-b9ef-7b3946de4ea5</sv:value>

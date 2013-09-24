@@ -69,6 +69,7 @@ public class DerivedDataTest extends RepositoryTestCase {
         if(session.getRootNode().hasNode("hippo:configuration/hippo:derivatives/org.hippoecm.repository.DerivedDataTest")) {
             session.getRootNode().getNode("hippo:configuration/hippo:derivatives/org.hippoecm.repository.DerivedDataTest") .
                 remove();
+            session.save();
         }
         super.tearDown();
     }

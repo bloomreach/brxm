@@ -32,6 +32,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
     @Before
     @Override
     public void setUp() throws Exception {
+        setConfigurationChangeDebugPath("/hippo:configuration/hippo:queries");
         super.setUp();
     }
 

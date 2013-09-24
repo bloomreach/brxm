@@ -64,6 +64,14 @@ public class MemoryTest extends FacetedNavigationAbstractTest {
     @Override
     @After
     public void tearDown() throws Exception {
+        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
+        Node users = config.getNode(HippoNodeType.USERS_PATH);
+
+        if (users.hasNode(TEST_USER_ID)) {
+            users.getNode(TEST_USER_ID).remove();
+        }
+        session.save();
+
         super.tearDown();
     }
     

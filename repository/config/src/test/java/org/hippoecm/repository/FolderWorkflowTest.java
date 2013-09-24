@@ -83,10 +83,13 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     Value[] embeddedModifyOnCopy;
     Value[] internalModifyOnCopy;
-    
+
     @Before
     public void setUp() throws Exception {
+        setConfigurationChangeDebugPath("/hippo:configuration/hippo:initialize");
+
         super.setUp();
+
         root = session.getRootNode().addNode("test");
         session.save();
 
@@ -113,10 +116,12 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     @After
     public void tearDown() throws Exception {
         Node folderWorkflowConfig = session.getNode(
-                "/hippo:configuration/hippo:workflows/embedded/folder/hipposys:config");
+                "/hippo:configuration/hippo:workflows/embedded/folder-extended/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", embeddedModifyOnCopy);
         folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", internalModifyOnCopy);
+        session.save();
+
         super.tearDown();
     }
 

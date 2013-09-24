@@ -303,6 +303,9 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
+        userSession.logout();
+        userSession = null;
+
         cleanup();
         super.tearDown();
     }

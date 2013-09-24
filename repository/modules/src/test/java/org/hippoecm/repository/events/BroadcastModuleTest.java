@@ -49,15 +49,20 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        for (Node node : new NodeIterable(session.getNode("/hippo:configuration/hippo:modules/broadcast/hippo:moduleconfig").getNodes())) {
-            node.remove();
-        }
-
         if (session.nodeExists("/hippo:log")) {
             session.getNode("/hippo:log").remove();
         }
         session.getRootNode().addNode("hippo:log", "hippolog:folder");
         session.save();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        for (Node node : new NodeIterable(session.getNode("/hippo:configuration/hippo:modules/broadcast/hippo:moduleconfig").getNodes())) {
+            node.remove();
+        }
+        session.save();
+        super.tearDown();
     }
 
     @Test
