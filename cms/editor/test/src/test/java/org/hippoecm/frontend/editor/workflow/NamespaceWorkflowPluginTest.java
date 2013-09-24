@@ -107,8 +107,8 @@ public class NamespaceWorkflowPluginTest extends PluginTest {
 
     @After
     @Override
-    public void teardown() throws Exception {
-        super.teardown();
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
