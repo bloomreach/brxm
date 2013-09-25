@@ -84,6 +84,10 @@ public class DoubleSelectBox<T> extends Panel {
                 for (EventListener<T> listener : listeners) {
                     listener.onSelected(target, selectedLeftItems);
                 }
+                if (!removeFromLeft) {
+                    log.info("@remove form left box not enabled");
+                    return;
+                }
                 final Collection<T> selectedItems = new ArrayList<>(selectedLeftItems);
                 removeFromLeftBox(target, selectedItems);
                 addToRightBox(target, selectedItems);
@@ -105,6 +109,10 @@ public class DoubleSelectBox<T> extends Panel {
             protected void onUpdate(final AjaxRequestTarget target) {
                 log.debug("@selected right-box items {}", selectedRightItems);
                 // add items to the right box:
+                if (!removeFromLeft) {
+                    log.info("@remove form right box not enabled");
+                    return;
+                }
                 final Collection<T> selected = new ArrayList<>(selectedRightItems);
                 addToLeftBox(target, selected);
                 removeFromRightBox(target, selected);
@@ -126,10 +134,6 @@ public class DoubleSelectBox<T> extends Panel {
     }
 
     private void removeFromLeftBox(final AjaxRequestTarget target, final Collection<T> selected) {
-        if (!removeFromLeft) {
-            log.info("@remove form left box not enabled ");
-            return;
-        }
         log.debug("@left removing {}", selected);
         leftItems.removeAll(selected);
         target.add(leftBox, rightBox);
@@ -138,10 +142,6 @@ public class DoubleSelectBox<T> extends Panel {
 
 
     public void addToLeftBox(final AjaxRequestTarget target, final Iterable<T> selected) {
-        if (!removeFromLeft) {
-            log.info("@add to left box not enabled");
-            return;
-        }
         for (T item : selected) {
             if (!leftItems.contains(item)) {
                 log.debug("@left adding {}", item);

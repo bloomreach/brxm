@@ -58,7 +58,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     private String selectedContainer;
     private String selectedBean;
     private List<String> componentsList;
-    private final DoubleSelectBox<String> doubleBox;
+
 
     public AttachComponentPanel(final ComponentsWizard parent, final String id) {
         super(id);
@@ -147,25 +147,6 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         //############################################
         // NEW SELECT PANEL
         //############################################
-        final List<String> strings = new ArrayList<>();
-        strings.add("test");
-        strings.add("test2");
-        final SelectBoxPanel<String> selectBox = new SelectBoxPanel<>("myPanel", "example select box", form, strings, new EventListener<String>() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
-                log.info("####SELECTED ITEMS: {}", selectedItems);
-            }
-        });
-        //############################################
-        // DOUBLE
-        //############################################
-        final List<String> doubleModel = new ArrayList<>();
-        doubleModel.add("test1");
-        doubleModel.add("test2");
-
-        doubleBox = new DoubleSelectBox<>("doubleBox", "Example double box", form, doubleModel);
-
 
     }
 
@@ -176,10 +157,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     @Override
     public void applyState() {
         setComplete(false);
-        final List<String> selectedItems = doubleBox.getSelectedRightItems();
-        for (String selectedItem : selectedItems) {
-            log.info("OUR SELECTED ITEMS: {}", selectedItem);
-        }
+
         setComplete(true);
 
     }
