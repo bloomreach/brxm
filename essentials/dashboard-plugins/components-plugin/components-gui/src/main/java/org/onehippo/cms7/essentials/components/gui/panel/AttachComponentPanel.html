@@ -21,24 +21,10 @@
 
     <form wicket:id="form">
         <fieldset>
-            <div class="control-group">
-                <label class="control-label" for="sites">Choose site:</label>
-                <div class="controls">
-                    <label>
-                        <select wicket:id="sites" name="sites" id="sites">
-                        </select>
-                    </label>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label" for="sites">Choose  component:</label>
-                <div class="controls">
-                    <label>
-                        <select wicket:id="componentList" name="components" id="components">
-                        </select>
-                    </label>
-                </div>
-            </div>
+           <wicket:panel wicket:id="sites">[SITES DROPDOWN]</wicket:panel>
+           <wicket:panel wicket:id="componentList">[COMPONENT LIST]</wicket:panel>
+
+<!--
             <div class="control-group">
                 <label class="control-label" for="containers">Choose component container:</label>
                 <div class="controls">
@@ -57,6 +43,7 @@
                     </label>
                 </div>
             </div>
+-->
 
 
         </fieldset>

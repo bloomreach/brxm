@@ -445,8 +445,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/p
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/EventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/MultiSelectBoxPanel.html -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/MultiSelectBoxPanel.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/SingleSelectBoxPanel.html -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/SingleSelectBoxPanel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/JcrInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/JcrRecorder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/EssentialsFeedbackPanel.java -text

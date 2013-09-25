@@ -43,6 +43,7 @@ public class MultiSelectBoxPanel extends Panel {
     @SuppressWarnings("UnusedDeclaration")
     private List<String> selectedItems;
     private List<String> items;
+    private final ListMultipleChoice<String> selectBox;
 
     public MultiSelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener) {
         this(id, title, form, model);
@@ -55,13 +56,12 @@ public class MultiSelectBoxPanel extends Panel {
     }
 
     public MultiSelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<String> model) {
-
         super(id);
-
         items = new ArrayList<>();
         items.addAll(model);
         final PropertyModel<List<String>> listModel = new PropertyModel<>(this, "selectedItems");
-        final ListMultipleChoice<String> selectBox = new ListMultipleChoice<>("selectBox", listModel, items);
+
+        selectBox = new ListMultipleChoice<>("selectBox", listModel, items);
 
         selectBox.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
@@ -90,7 +90,7 @@ public class MultiSelectBoxPanel extends Panel {
         if (newModel != null) {
             items.addAll(newModel);
         }
-        target.add(this);
+        target.add(selectBox);
     }
 
     public void removeListener(final EventListener<String> listener) {
@@ -105,5 +105,9 @@ public class MultiSelectBoxPanel extends Panel {
 
     public List<String> getSelectedItems() {
         return selectedItems;
+    }
+
+    public ListMultipleChoice<String> getSelectBox() {
+        return selectBox;
     }
 }

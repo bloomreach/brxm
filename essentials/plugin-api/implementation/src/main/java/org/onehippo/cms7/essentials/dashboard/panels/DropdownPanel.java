@@ -63,8 +63,6 @@ public class DropdownPanel extends Panel {
         final PropertyModel<String> siteModel = new PropertyModel<>(this, "selectedItem");
         dropDown = new ListChoice<>("dropDown", siteModel, items);
         dropDown.setNullValid(false);
-        dropDown.setOutputMarkupId(true);
-
         dropDown.add(new AjaxEventBehavior("onchange") {
             private static final long serialVersionUID = 1L;
 
@@ -88,18 +86,18 @@ public class DropdownPanel extends Panel {
         //  ADD COMPONENTS
         //############################################
         dropDown.setOutputMarkupId(true);
+        this.setOutputMarkupId(true);
         add(dropDown);
         add(new Label("title", title));
         form.add(this);
     }
-
 
     public void changeModel(final AjaxRequestTarget target, final Collection<String> newModel) {
         items.clear();
         if (newModel != null) {
             items.addAll(newModel);
         }
-        target.add(this);
+        target.add(dropDown);
     }
 
     public void removeListener(final EventListener<String> listener) {
