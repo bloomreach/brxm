@@ -127,53 +127,33 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
 
             boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
-            boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("live");
+            boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("preview");
             boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
 
-            if (PublishableDocument.DRAFT.equals(state)) {
-                editable = !draftInUse;
-                depublishable = false;
-                publishable = false;
-                status = true;
-                deleteable = null;
-            } else if (PublishableDocument.PUBLISHED.equals(state)) {
-                if (!draftInUse && unpublishedDocument == null) {
-                    status = true;
-                }
-                if (unpublishedDocument != null || draftDocument != null) {
-                    editable = false;
-                } else if (pendingRequest) {
-                    editable = false;
-                } else {
-                    editable = true;
-                }
-                if (!draftInUse && !pendingRequest && publishedLive) {
-                    depublishable = true;
-                }
-                if (unpublishedDocument != null) {
-                    deleteable = null;
-                }
-            } else if (PublishableDocument.UNPUBLISHED.equals(state)) {
-                if (!draftInUse) {
-                    status = true;
-                }
-                if (draftDocument != null) {
-                    editable = false;
-                } else if (pendingRequest) {
-                    editable = false;
-                } else {
-                    editable = true;
-                }
-                if (!draftInUse && !pendingRequest && unpublishedDirty) {
-                    publishable = true;
-                }
-                if (!draftInUse && (publishedDocument == null || !publishedDocument.isAvailable("live")) && !pendingRequest) {
-                    deleteable = true;
-                }
-            } else {
-                editable = false;
-            }
+            status = !draftInUse;
+            editable = !draftInUse && !pendingRequest;
+            publishable = unpublishedDirty && !pendingRequest;
+            depublishable = publishedLive && !pendingRequest;
+            deleteable = !publishedLive;
 
+            // put everything on the unpublished; unless it doesn't exist
+            if (unpublishedDocument != null && !PublishableDocument.UNPUBLISHED.equals(state)) {
+                status = editable = publishable = depublishable = false;
+                deleteable = null;
+            } else if (unpublishedDocument == null) {
+                // unpublished is null
+                // put edit, publish actions on draft, depublish, delete on published.
+                if (PublishableDocument.DRAFT.equals(state)) {
+                    if (publishedDocument != null) {
+                        depublishable = status = false;
+                        deleteable = null;
+                    }
+                } else if (PublishableDocument.PUBLISHED.equals(state)) {
+                    if (draftDocument != null) {
+                        editable = publishable = false;
+                    }
+                }
+            }
 
             if (!editable && PublishableDocument.DRAFT.equals(state) && draftInUse) {
                 info.put("inUseBy", draftDocument.getOwner());
@@ -347,7 +327,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
 
             unpublishedDocument.setAvailability(new String[]{"preview"});
-            if (publishedDocument != null) {
+            if (publishedDocument != null && publishedDocument.isAvailable("live")) {
                 publishedDocument.setAvailability(new String[]{"live"});
             }
             unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
