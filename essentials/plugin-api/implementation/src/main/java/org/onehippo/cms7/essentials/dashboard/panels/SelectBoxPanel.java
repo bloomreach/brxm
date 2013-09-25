@@ -39,7 +39,7 @@ public class SelectBoxPanel<T> extends Panel {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SelectBoxPanel.class);
-    private final List<EventListener<T>> listeners = new CopyOnWriteArrayList<>();
+    private final Collection<EventListener<T>> listeners = new CopyOnWriteArrayList<>();
     @SuppressWarnings("UnusedDeclaration")
     private List<T> selectedItems;
     private List<T> items;
