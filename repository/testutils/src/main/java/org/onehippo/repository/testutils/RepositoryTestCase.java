@@ -15,7 +15,9 @@
  */
 package org.onehippo.repository.testutils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -86,6 +88,7 @@ public abstract class RepositoryTestCase {
     private Set<String> topLevelNodes;
     private String debugPath = "/hippo:configuration";
     private Map<String, Integer> hashes;
+    private ByteArrayOutputStream configStream;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -175,6 +178,8 @@ public abstract class RepositoryTestCase {
         this.debugPath = path;
     }
 
+
+
     private void saveState() throws RepositoryException {
         // save top-level nodes for tearDown validation
         topLevelNodes = new HashSet<String>();
@@ -192,6 +197,9 @@ public abstract class RepositoryTestCase {
         for (Property configProp : new PropertyIterable(configChangeDebugNode.getProperties())) {
             hashes.put(configProp.getName(), hashCode(configProp));
         }
+
+        configStream = new ByteArrayOutputStream();
+        Utilities.dump(new PrintStream(configStream), session.getNode("/hippo:configuration"));
     }
 
     private void checkState() throws Exception {
@@ -229,6 +237,10 @@ public abstract class RepositoryTestCase {
                 }
             }
 
+            System.out.println("Before:");
+            System.out.write(configStream.toByteArray());
+
+            System.out.println("After:");
             Utilities.dump(cleanupSession.getNode("/hippo:configuration"));
 
             throw new Exception("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
