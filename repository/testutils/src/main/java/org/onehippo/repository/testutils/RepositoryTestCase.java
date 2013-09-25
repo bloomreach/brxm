@@ -101,7 +101,6 @@ public abstract class RepositoryTestCase {
     private Set<String> topLevelNodes;
     private String debugPath = "/hippo:configuration";
     private Map<String, Integer> hashes;
-    private ByteArrayOutputStream configStream;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -211,8 +210,6 @@ public abstract class RepositoryTestCase {
             hashes.put(configProp.getName(), hashCode(configProp));
         }
 
-        configStream = new ByteArrayOutputStream();
-        Utilities.dump(new PrintStream(configStream), session.getNode("/hippo:configuration"));
     }
 
     private void checkState() throws Exception {
@@ -249,12 +246,6 @@ public abstract class RepositoryTestCase {
                     added.add(name);
                 }
             }
-
-            System.out.println("Before:");
-            System.out.write(configStream.toByteArray());
-
-            System.out.println("After:");
-            Utilities.dump(cleanupSession.getNode("/hippo:configuration"));
 
             throw new Exception("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
                     "Detected changes: added = " + added + ", changed = " + changed + ", removed = " + missing + ".  " +
