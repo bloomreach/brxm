@@ -67,15 +67,11 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     // recursion detection
     private transient boolean detaching = false;
 
-    private static final Map<String, String> initializedAndNotDetached = new HashMap<String, String>();
-
     // constructors
 
     public JcrItemModel(T item) {
         super(item);
-        if (log.isDebugEnabled()) {
-            trackInit(item);
-        }
+        TraceMonitor.track(item);
         relPath = null;
         uuid = null;
         if (item != null) {
@@ -89,9 +85,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         absPath = path;
         try {
             final Item item = UserSession.get().getJcrSession().getItem(path);
-            if (log.isDebugEnabled()) {
-                trackInit(item);
-            }
+            TraceMonitor.track(item);
             property = !item.isNode();
         } catch (RepositoryException e) {
             log.warn("Instantiation of item model by path failed: " + e);
@@ -102,24 +96,6 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         uuid = null;
         absPath = path;
         this.property = property;
-    }
-
-    private void trackInit(Item item) {
-        if (item == null) {
-            return;
-        }
-        initializedAndNotDetached.put(item.toString(), getCallees());
-    }
-
-    private static final String getCallees() {
-        Exception exception = new RuntimeException("determine callee");
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintWriter pw = new PrintWriter(os);
-        exception.printStackTrace(pw);
-        pw.flush();
-
-        return os.toString();
     }
 
     /**
@@ -204,9 +180,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     @Override
     protected T load() {
         T object = loadModel();
-        if (log.isDebugEnabled() && object instanceof Item) {
-            trackInit((Item)object);
-        }
+        TraceMonitor.track(object);
         return object;
     }
 
@@ -282,12 +256,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public void detach() {
-        if (log.isDebugEnabled()) {
-            Object object = this.getObject();
-            if (object instanceof Item) {
-                initializedAndNotDetached.remove(((Item)object).toString());
-            }
-        }
+        TraceMonitor.release(this.getObject());
         detaching = true;
         save();
         super.detach();
@@ -370,14 +339,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (isAttached()) {
             log.warn("Undetached JcrItemModel "+getPath());
-            if (log.isDebugEnabled()) {
-                T object = this.getObject();
-                if (object instanceof Item && initializedAndNotDetached.containsKey(object.toString())) {
-                    String stackTrace = initializedAndNotDetached.get(object.toString());
-                    log.debug("\n"+stackTrace);
-                }
-            }
-
+            TraceMonitor.trace(this.getObject());
             if (RuntimeConfigurationType.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
                 detach();
             }

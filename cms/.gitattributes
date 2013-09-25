@@ -116,6 +116,7 @@ api/src/main/java/org/hippoecm/frontend/model/JcrQueryModel.java -text
 api/src/main/java/org/hippoecm/frontend/model/ModelReference.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/model/NodeModelWrapper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/model/PropertyValueProvider.java -text
+api/src/main/java/org/hippoecm/frontend/model/TraceMonitor.java -text
 api/src/main/java/org/hippoecm/frontend/model/event/EventCollection.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/model/event/IEvent.java -text
 api/src/main/java/org/hippoecm/frontend/model/event/IObservable.java -text
