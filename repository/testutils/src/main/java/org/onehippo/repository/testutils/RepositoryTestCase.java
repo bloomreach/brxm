@@ -18,6 +18,8 @@ package org.onehippo.repository.testutils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -45,6 +47,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for writing tests against repository.
@@ -91,6 +95,7 @@ public abstract class RepositoryTestCase {
         defaultRepoPath = storage.getAbsolutePath();
     }
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected HippoRepository server = null;
     protected Session session = null;
 
@@ -101,6 +106,8 @@ public abstract class RepositoryTestCase {
     private Set<String> topLevelNodes;
     private String debugPath = "/hippo:configuration";
     private Map<String, Integer> hashes;
+    private ByteArrayOutputStream debugStream;
+
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -191,7 +198,6 @@ public abstract class RepositoryTestCase {
     }
 
 
-
     private void saveState() throws RepositoryException {
         // save top-level nodes for tearDown validation
         topLevelNodes = new HashSet<String>();
@@ -210,6 +216,10 @@ public abstract class RepositoryTestCase {
             hashes.put(configProp.getName(), hashCode(configProp));
         }
 
+        if (log.isDebugEnabled()) {
+            debugStream = new ByteArrayOutputStream();
+            Utilities.dump(new PrintStream(debugStream), configChangeDebugNode);
+        }
     }
 
     private void checkState() throws Exception {
@@ -247,6 +257,14 @@ public abstract class RepositoryTestCase {
                 }
             }
 
+            if (log.isDebugEnabled()) {
+                System.out.println("Before:");
+                System.out.write(debugStream.toByteArray());
+
+                System.out.println("After:");
+                Utilities.dump(cleanupSession.getNode(debugPath));
+            }
+
             throw new Exception("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
                     "Detected changes: added = " + added + ", changed = " + changed + ", removed = " + missing + ".  " +
                     "Use RepositoryTestCase#setConfigurationChangeDebugPath to narrow down.");
@@ -266,6 +284,9 @@ public abstract class RepositoryTestCase {
     }
 
     protected int hashCode(Node node) throws RepositoryException {
+        if (excludeFromHashCode(node)) {
+            return 0;
+        }
         String name = node.getName();
         String type = node.getPrimaryNodeType().getName();
         int hashCode = name.hashCode() + type.hashCode() * 31;
@@ -313,6 +334,14 @@ public abstract class RepositoryTestCase {
 
     protected int hashCode(Value value) throws RepositoryException {
         return value.getString().hashCode();
+    }
+
+    private boolean excludeFromHashCode(final Node node) throws RepositoryException {
+        return getExcludedFromHashCodePaths().contains(node.getPath());
+    }
+
+    protected Collection<String> getExcludedFromHashCodePaths() {
+        return Collections.emptySet();
     }
 
     protected void build(Session session, String[] contents) throws RepositoryException {
