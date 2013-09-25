@@ -26,11 +26,12 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
     public ComponentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
         final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
+        panel.addWizard(new AttachComponentPanel(this, "Attach components"));
         // TODO move attach to last
         panel.addWizard(new ComponentsPanel(this, "Component installer"));
         panel.addWizard(new DocumentRegisterPanel(this, "Register document types"));
         panel.addWizard(new DocumentTemplatePanel(this, "Import document templates"));
-        panel.addWizard(new AttachComponentPanel(this, "Attach components"));
+
 
 
         //

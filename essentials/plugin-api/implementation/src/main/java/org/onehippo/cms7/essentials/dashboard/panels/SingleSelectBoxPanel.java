@@ -35,43 +35,43 @@ import org.slf4j.LoggerFactory;
  * Select box wrapper. Items is added to the form, so there is no need to call {@code form.add(box)}
  * @version "$Id$"
  */
-public class SelectBoxPanel<T> extends Panel {
+public class SingleSelectBoxPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(SelectBoxPanel.class);
-    private final Collection<EventListener<T>> listeners = new CopyOnWriteArrayList<>();
+    private static Logger log = LoggerFactory.getLogger(SingleSelectBoxPanel.class);
+    private final Collection<EventListener<String>> listeners = new CopyOnWriteArrayList<>();
     @SuppressWarnings("UnusedDeclaration")
-    private List<T> selectedItems;
-    private List<T> items;
+    private String selectedItem;
+    private List<String> items;
 
-    public SelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<T> model, final EventListener<T> listener) {
+    public SingleSelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener) {
         this(id, title, form, model);
         addListener(listener);
     }
 
-    public SelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<T> model, final Collection<EventListener<T>> listeners) {
+    public SingleSelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final Collection<EventListener<String>> listeners) {
         this(id, title, form, model);
         listeners.addAll(listeners);
     }
 
-    public SelectBoxPanel(final String id, final String title,  final Form<?> form, final Collection<T> model) {
-
+    public SingleSelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<String> model) {
         super(id);
-
         items = new ArrayList<>();
         items.addAll(model);
-        final PropertyModel<List<T>> listModel = new PropertyModel<>(this, "selectedItems");
-        final ListMultipleChoice<T> selectBox = new ListMultipleChoice<>("selectBox", listModel, items);
+        final PropertyModel<List<String>> listModel = new PropertyModel<>(this, "selectedItem");
+        final ListMultipleChoice<String> selectBox = new ListMultipleChoice<>("selectBox", listModel, items);
 
         selectBox.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
-                log.debug("@selected items {}", selectedItems);
+                log.debug("@selected item {}", selectedItem);
                 // notify listeners for changes
-                for (EventListener<T> listener : listeners) {
-                    listener.onSelected(target, items);
+                for (EventListener<String> listener : listeners) {
+                    final List<String> selectedItems = new ArrayList<>();
+                    selectedItems.add(selectedItem);
+                    listener.onSelected(target, selectedItems);
                 }
             }
         });
@@ -85,7 +85,7 @@ public class SelectBoxPanel<T> extends Panel {
         form.add(this);
     }
 
-    public void changeModel(final AjaxRequestTarget target, final Collection<T> newModel) {
+    public void changeModel(final AjaxRequestTarget target, final Collection<String> newModel) {
         items.clear();
         if (newModel != null) {
             items.addAll(newModel);
@@ -93,17 +93,17 @@ public class SelectBoxPanel<T> extends Panel {
         target.add(this);
     }
 
-    public void removeListener(final EventListener<T> listener) {
+    public void removeListener(final EventListener<String> listener) {
         log.debug("@removing event listener {}", listener);
         listeners.remove(listener);
     }
 
-    public void addListener(final EventListener<T> listener) {
+    public void addListener(final EventListener<String> listener) {
         log.debug("@adding listener {}", listener);
         listeners.add(listener);
     }
 
-    public List<T> getSelectedItems() {
-        return selectedItems;
+    public String getSelectedItem() {
+        return selectedItem;
     }
 }

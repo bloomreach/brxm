@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.components.gui.panel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -28,9 +27,6 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.panels.DoubleSelectBox;
-import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
-import org.onehippo.cms7.essentials.dashboard.panels.SelectBoxPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
