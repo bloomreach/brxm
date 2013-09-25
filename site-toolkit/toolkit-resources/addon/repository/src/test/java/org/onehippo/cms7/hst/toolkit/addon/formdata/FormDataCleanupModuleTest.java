@@ -53,6 +53,11 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
     @After
     public void tearDown() throws Exception {
         HippoServiceRegistry.getService(RepositoryScheduler.class).deleteJob("FormDataCleanup-test", "default");
+        Session session = getSession();
+        if (session.nodeExists("/formdata")) {
+            session.getNode("/formdata").remove();
+            session.save();
+        }
         super.tearDown();
     }
 
