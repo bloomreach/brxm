@@ -43,7 +43,7 @@ public class DoubleSelectBox<T> extends Panel {
     @SuppressWarnings("UnusedDeclaration")
     private List<T> rightItems;
     private List<T> leftItems;
-    private List<T> selectedItems;
+    private List<T> selectedLeftItems;
     private List<T> selectedRightItems;
     private boolean removeFromLeft = true;
 
@@ -69,7 +69,7 @@ public class DoubleSelectBox<T> extends Panel {
         //############################################
         leftItems = new ArrayList<>();
         leftItems.addAll(initialLeftItems);
-        final PropertyModel<List<T>> leftModel = new PropertyModel<>(this, "selectedItems");
+        final PropertyModel<List<T>> leftModel = new PropertyModel<>(this, "selectedLeftItems");
 
         leftBox = new ListMultipleChoice<>("leftBox", leftModel, leftItems);
 
@@ -78,13 +78,14 @@ public class DoubleSelectBox<T> extends Panel {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
-                log.debug("@selected left-box items {}", selectedItems);
+                log.debug("@selected left-box items {}", selectedLeftItems);
                 // notify listeners for changes
                 for (EventListener<T> listener : listeners) {
-                    listener.onSelected(target, selectedItems);
+                    listener.onSelected(target, selectedLeftItems);
                 }
+                final List<T> selectedItems = new ArrayList<>(selectedLeftItems);
                 removeFromLeftBox(target, selectedItems);
-                //addToRightBox(target, selectedItems);
+                addToRightBox(target, selectedItems);
 
             }
         });
@@ -101,10 +102,11 @@ public class DoubleSelectBox<T> extends Panel {
 
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
-                //log.debug("@selected right-box items {}", selectedRightItems);
+                log.debug("@selected right-box items {}", selectedRightItems);
                 // add items to the right box:
-                //addToLeftBox(target, selectedRightItems);
-                //removeFromRightBox(target, selectedRightItems);
+                final Collection<T> selected = new ArrayList<>(selectedRightItems);
+                addToLeftBox(target, selected);
+                removeFromRightBox(target, selected);
             }
         });
 
@@ -127,7 +129,7 @@ public class DoubleSelectBox<T> extends Panel {
             return;
         }
         leftItems.removeAll(selectedItems);
-        target.add(leftBox);
+        target.add(leftBox, rightBox);
     }
 
     public void addToLeftBox(final AjaxRequestTarget target, final T item) {
@@ -151,7 +153,6 @@ public class DoubleSelectBox<T> extends Panel {
     public void removeFromRightBox(final AjaxRequestTarget target, final Collection<T> selected) {
         rightItems.removeAll(selected);
         target.add(rightBox);
-
     }
 
     public void addToRightBox(final AjaxRequestTarget target, final Collection<T> selected) {
