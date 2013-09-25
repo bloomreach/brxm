@@ -37,6 +37,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -227,6 +228,8 @@ public abstract class RepositoryTestCase {
                     added.add(name);
                 }
             }
+
+            Utilities.dump(cleanupSession.getNode("/hippo:configuration"));
 
             throw new Exception("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
                     "Detected changes: added = " + added + ", changed = " + changed + ", removed = " + missing + ".  " +
