@@ -14,6 +14,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,14 +69,18 @@ public class DocumentRegisterPanel extends EssentialsWizardStep {
                 final String prefix = context.getProjectNamespacePrefix();
                 try {
                     final String superType = String.format("%s:basedocument", prefix);
+                    log.debug("registering document: {}", selectedDocument);
                     CndUtils.registerDocumentType(context, prefix, selectedDocument, true, false, superType, "hippostd:relaxed","hippotranslation:translated");
                     parent.addRegisteredDocument(selectedDocument);
+                    context.getSession().save();
                 } catch (NodeTypeExistsException e) {
                     // just add already exiting ones:
+                    GlobalUtils.refreshSession(context.getSession(), false);
                     // TODO check if we have all mixins:
                     parent.addRegisteredDocument(selectedDocument);
                 } catch (RepositoryException e) {
                     log.error(String.format("Error registering document type: %s", selectedDocument), e);
+                    GlobalUtils.refreshSession(context.getSession(), false);
                 }
             }
 
