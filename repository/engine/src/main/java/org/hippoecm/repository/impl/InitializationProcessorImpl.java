@@ -234,6 +234,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         processContentDelete(initializeItem, session, dryRun);
                     }
 
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPDELETE)) {
+                        processContentPropDelete(initializeItem, session, dryRun);
+                    }
+
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
                         processContentFromFile(initializeItem, session, dryRun);
                     }
@@ -424,7 +428,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             if (contextNodeName != null) {
                 final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
                 final int index = getNodeIndex(session, contextNodePath);
-                if (removeNodecontent(session, contextNodePath, false)) {
+                if (removeNode(session, contextNodePath, false)) {
                     initializeNodecontent(session, root, contentStream, contentResource);
                     if (index != -1) {
                         reorderNode(session, contextNodePath, index);
@@ -474,10 +478,19 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private void processContentDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
         final String path = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString());
         final boolean immediateSave = !node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) && !node.hasProperty(HippoNodeType.HIPPO_CONTENT);
-        getLogger().info("Delete content in initialization: " + node.getName() + " " + path);
-        final boolean success = removeNodecontent(session, path, immediateSave && !dryRun);
+        getLogger().info("Delete content in initialization: {} {}", node.getName(), path);
+        final boolean success = removeNode(session, path, immediateSave && !dryRun);
         if (!success) {
-            getLogger().error("Content delete in item " + node.getName() + " failed");
+            getLogger().error("Content delete in item {} failed", node.getName());
+        }
+    }
+
+    private void processContentPropDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
+        final String path = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTPROPDELETE).getString());
+        getLogger().info("Delete content in initialization: {} {}", node.getName(), path);
+        final boolean success = removeProperty(session, path, !dryRun);
+        if (!success) {
+            getLogger().error("Property delete in item {} failed", node.getName());
         }
     }
 
@@ -872,32 +885,60 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    public boolean removeNodecontent(Session session, String absPath, boolean save) {
-        if ("".equals(absPath) || "/".equals(absPath)) {
-            getLogger().warn("Not allowed to delete rootNode from initialization.");
+    public boolean removeNode(Session session, String absPath, boolean save) {
+        if (!absPath.startsWith("/")) {
+            getLogger().warn("Not an absolute path: {}", absPath);
+            return false;
+        }
+        if ("/".equals(absPath)) {
+            getLogger().warn("Not allowed to delete rootNode from initialization");
             return false;
         }
 
-        String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
         try {
-            if (relpath.length() > 0) {
-                if (session.getRootNode().hasNode(relpath)) {
-                    if (session.getRootNode().getNodes(relpath).getSize() > 1) {
-                        getLogger().warn("Removing same name sibling is not supported: not removing " + absPath);
-                        return false;
-                    }
-                    session.getRootNode().getNode(relpath).remove();
-                    if (save) {
-                        session.save();
-                    }
+            if (session.nodeExists(absPath)) {
+                final int offset = absPath.lastIndexOf('/');
+                final String nodeName = absPath.substring(offset+1);
+                final String parentPath = offset == 0 ? "/" : absPath.substring(0, offset);
+                final Node parent = session.getNode(parentPath);
+                if (parent.getNodes(nodeName).getSize() > 1) {
+                    getLogger().warn("Removing same name sibling is not supported: not removing {}", absPath);
+                } else {
+                    session.getNode(absPath).remove();
                 }
-                return true;
+                if (save) {
+                    session.save();
+                }
             }
+            return true;
         } catch (RepositoryException ex) {
             if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error while removing content from '" + absPath + "' : " + ex.getMessage(), ex);
+                getLogger().error("Error while removing node '" + absPath + "' : " + ex.getMessage(), ex);
             } else {
-                getLogger().error("Error while removing content from '" + absPath + "' : " + ex.getMessage());
+                getLogger().error("Error while removing node '" + absPath + "' : " + ex.getMessage());
+            }
+        }
+        return false;
+    }
+
+    private boolean removeProperty(final Session session, final String absPath, final boolean save) {
+        if (!absPath.startsWith("/")) {
+            getLogger().warn("Not an absolute path: {}", absPath);
+            return false;
+        }
+        try {
+            if (session.propertyExists(absPath)) {
+                session.getProperty(absPath).remove();
+                if (save) {
+                    session.save();
+                }
+            }
+            return true;
+        } catch (RepositoryException e) {
+            if (getLogger().isDebugEnabled()) {
+                getLogger().error("Error while removing property '" + absPath + "' : " + e.getMessage(), e);
+            } else {
+                getLogger().error("Error while removing property '" + absPath + "' : " + e.getMessage());
             }
         }
         return false;

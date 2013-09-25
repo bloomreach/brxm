@@ -125,7 +125,8 @@
 - hippo:contentresource (string)
 - hippo:content (string)
 - hippo:contentroot (string)
-- hippo:contentdelete (string) // deprecated
+- hippo:contentdelete (string)
+- hippo:contentpropdelete (string)
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
 - hippo:reloadonstartup (boolean)

@@ -198,6 +198,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTENTDELETE = "hippo:contentdelete";
 
+    public static final String HIPPO_CONTENTPROPDELETE = "hippo:contentpropdelete";
+
     public static final String HIPPO_COUNT = "hippo:count";
 
     public static final String HIPPO_DIRLEVELS = "hipposys:dirlevels";
