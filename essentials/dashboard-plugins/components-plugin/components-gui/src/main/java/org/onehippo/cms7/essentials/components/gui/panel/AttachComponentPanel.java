@@ -150,7 +150,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         final List<String> strings = new ArrayList<>();
         strings.add("test");
         strings.add("test2");
-        final SelectBoxPanel<String> selectBox = new SelectBoxPanel<>("myPanel", form, strings, new EventListener<String>() {
+        final SelectBoxPanel<String> selectBox = new SelectBoxPanel<>("myPanel", "example select box", form, strings, new EventListener<String>() {
             private static final long serialVersionUID = 1L;
             @Override
             public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {

@@ -23,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -43,17 +44,17 @@ public class SelectBoxPanel<T> extends Panel {
     private List<T> selectedItems;
     private List<T> items;
 
-    public SelectBoxPanel(final String id, final Form<?> form, final Collection<T> model, final EventListener<T> listener) {
-        this(id, form, model);
+    public SelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<T> model, final EventListener<T> listener) {
+        this(id, title, form, model);
         addListener(listener);
     }
 
-    public SelectBoxPanel(final String id, final Form<?> form, final Collection<T> model, final Collection<EventListener<T>> listeners) {
-        this(id, form, model);
+    public SelectBoxPanel(final String id, final String title, final Form<?> form, final Collection<T> model, final Collection<EventListener<T>> listeners) {
+        this(id, title, form, model);
         listeners.addAll(listeners);
     }
 
-    public SelectBoxPanel(final String id, final Form<?> form, final Collection<T> model) {
+    public SelectBoxPanel(final String id, final String title,  final Form<?> form, final Collection<T> model) {
 
         super(id);
 
@@ -61,7 +62,7 @@ public class SelectBoxPanel<T> extends Panel {
         items.addAll(model);
         final PropertyModel<List<T>> listModel = new PropertyModel<>(this, "selectedItems");
         final ListMultipleChoice<T> selectBox = new ListMultipleChoice<>("selectBox", listModel, items);
-        selectBox.setOutputMarkupId(true);
+
         selectBox.add(new OnChangeAjaxBehavior() {
             private static final long serialVersionUID = 1L;
 
@@ -74,7 +75,13 @@ public class SelectBoxPanel<T> extends Panel {
                 }
             }
         });
+        //############################################
+        // ADD COMPONENTS
+        //############################################
+
+        selectBox.setOutputMarkupId(true);
         add(selectBox);
+        add(new Label("title", title));
         form.add(this);
     }
 
