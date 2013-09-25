@@ -147,7 +147,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         //############################################
         // NEW SELECT PANEL
         //############################################
-        final ArrayList<String> strings = new ArrayList<>();
+        final List<String> strings = new ArrayList<>();
         strings.add("test");
         strings.add("test2");
         final SelectBoxPanel<String> selectBox = new SelectBoxPanel<>("myPanel", form, strings, new EventListener<String>() {
@@ -160,11 +160,11 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         //############################################
         // DOUBLE
         //############################################
-        final ArrayList<String> doubleModel = new ArrayList<>();
+        final List<String> doubleModel = new ArrayList<>();
         doubleModel.add("test1");
         doubleModel.add("test2");
 
-        doubleBox = new DoubleSelectBox<>("doubleBox", form, doubleModel);
+        doubleBox = new DoubleSelectBox<>("doubleBox", "Example double box", form, doubleModel);
 
 
     }
@@ -176,7 +176,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     @Override
     public void applyState() {
         setComplete(false);
-        final List<String> selectedItems = doubleBox.getSelectedItems();
+        final List<String> selectedItems = doubleBox.getSelectedRightItems();
         for (String selectedItem : selectedItems) {
             log.info("OUR SELECTED ITEMS: {}", selectedItem);
         }
