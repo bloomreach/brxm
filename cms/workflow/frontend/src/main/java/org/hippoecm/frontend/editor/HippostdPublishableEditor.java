@@ -18,7 +18,6 @@ package org.hippoecm.frontend.editor;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -537,12 +536,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 Node frozen = node.getNode("jcr:frozenNode");
                 String uuid = frozen.getProperty("jcr:frozenUuid").getString();
                 try {
-                    Node handle = node.getSession().getNodeByUUID(uuid);
-                    if (handle.hasNode(handle.getName())) {
-                        return Mode.COMPARE;
-                    } else {
-                        throw new EditorException("Cannot display deleted document revision");
-                    }
+                    node.getSession().getNodeByUUID(uuid);
+                    return Mode.COMPARE;
                 } catch (ItemNotFoundException ex) {
                     return Mode.VIEW;
                 }
@@ -575,17 +570,18 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return Mode.VIEW;
     }
 
-    static WorkflowState getWorkflowState(Node handleNode) throws EditorException {
+    static WorkflowState getWorkflowState(Node docNode) throws EditorException {
         WorkflowState wfState = new WorkflowState();
         try {
             String user = UserSession.get().getJcrSession().getUserID();
             wfState.setUser(user);
+            Node handleNode = docNode.getParent();
             if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 throw new EditorException("Invalid node, not of type " + HippoNodeType.NT_HANDLE);
             }
             for (NodeIterator iter = handleNode.getNodes(); iter.hasNext(); ) {
                 Node child = iter.nextNode();
-                if (child.getName().equals(handleNode.getName())) {
+                if (child.getName().equals(docNode.getName())) {
                     wfState.process(child);
                 }
             }
@@ -599,18 +595,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         VersionState vs = new VersionState();
         try {
             WorkflowState baseState = new WorkflowState();
-            Set<Node> variants = EditorHelper.getDocuments(versionNode);
-            for (Node variant : variants) {
-                baseState.process(variant.getNode("jcr:frozenNode"));
-            }
+            baseState.process(versionNode.getNode("jcr:frozenNode"));
             if (baseState.unpublished != null) {
                 vs.version = baseState.unpublished;
             } else {
                 vs.version = baseState.published;
             }
             String uuid = versionNode.getNode("jcr:frozenNode").getProperty("jcr:frozenUuid").getString();
-            Node handle = versionNode.getSession().getNodeByUUID(uuid);
-            WorkflowState currentState = getWorkflowState(handle);
+            Node variant = versionNode.getSession().getNodeByUUID(uuid);
+            WorkflowState currentState = getWorkflowState(variant);
             if (currentState.draft != null) {
                 vs.current = currentState.draft;
             } else if (currentState.unpublished != null) {

@@ -240,6 +240,16 @@ public class EditorFactoryTest extends PluginTest {
         config = new JavaPluginConfig("plugin");
     }
 
+    @Override
+    public void tearDown() throws Exception {
+        String path = "/hippo:configuration/hippo:workflows/default/publishable";
+        if (session.nodeExists(path)) {
+            session.getNode(path).remove();
+            session.save();
+        }
+        super.tearDown();
+    }
+
     protected void createDocument(String name) throws RepositoryException {
         Map<String, String> pars = new MiniMap(1);
         pars.put("name", name);
@@ -296,16 +306,15 @@ public class EditorFactoryTest extends PluginTest {
 
     @Test
     public void testSetMode() throws Exception {
-
         String[] workflowConfig = {
             "/publishable", "hipposys:workflow",
                 "hipposys:nodetype", "hippostd:publishable",
                 "hipposys:classname", org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl.class.getName(),
                 "hipposys:display", "publishable workflow",
-                    "/publishable/hipposys:types/" + PublishableDocument.class.getName(), "hipposys:type",
-                        "hipposys:classname", PublishableDocument.class.getName(),
-                        "hipposys:display", "publisahble document",
-                        "hipposys:nodetype", "hippostd:publishable"
+                "/publishable/hipposys:types/" + PublishableDocument.class.getName(), "hipposys:type",
+                    "hipposys:classname", PublishableDocument.class.getName(),
+                    "hipposys:display", "publisahble document",
+                    "hipposys:nodetype", "hippostd:publishable"
         };
         build(session, mount("/hippo:configuration/hippo:workflows/default", workflowConfig));
         Node category = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
@@ -332,15 +341,13 @@ public class EditorFactoryTest extends PluginTest {
         Node handle = root.getNode("test/content/document");
         Node document = handle.getNode("document");
         Version docVersion = document.checkin();
-        Version handleVersion = handle.checkin();
 
-        handle.checkout();
         Node copy = ((HippoSession) handle.getSession()).copy(handle.getNode("document"), handle.getPath() + "/document");
         copy.setProperty("hippostd:state", "unpublished");
         session.save();
 
         HippostdEditorFactoryPlugin factory = new HippostdEditorFactoryPlugin(context, config);
-        IEditor editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel(handleVersion), Mode.COMPARE, parameters);
+        IEditor editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel(docVersion), Mode.COMPARE, parameters);
         List<IRenderService> comparers = getComparers();
         assertEquals(1, comparers.size());
         Comparer comparer = (Comparer) comparers.get(0);

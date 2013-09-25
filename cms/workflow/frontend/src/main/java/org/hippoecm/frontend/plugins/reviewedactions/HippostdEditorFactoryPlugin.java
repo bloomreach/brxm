@@ -27,6 +27,7 @@ import org.hippoecm.frontend.editor.HippostdPublishableEditor;
 import org.hippoecm.frontend.editor.IEditorContext;
 import org.hippoecm.frontend.editor.IEditorFactory;
 import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -62,10 +63,16 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
                 Node doc = docs.iterator().next();
                 if (JcrHelper.isNodeType(doc, HippoStdNodeType.NT_PUBLISHABLE)) {
                     HippostdPublishableEditor editor = new HippostdPublishableEditor(manager, getPluginContext(),
-                            parameters, nodeModel);
+                            parameters, new JcrNodeModel(doc));
                     editor.start();
                     return editor;
                 }
+            }
+            if (JcrHelper.isNodeType(node, HippoStdNodeType.NT_PUBLISHABLE)) {
+                HippostdPublishableEditor editor = new HippostdPublishableEditor(manager, getPluginContext(),
+                        parameters, nodeModel);
+                editor.start();
+                return editor;
             }
         } catch (RepositoryException ex) {
             log.error("Error creating editor for document");
