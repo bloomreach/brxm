@@ -16,12 +16,15 @@
 package org.hippoecm.repository.translation;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -30,6 +33,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -60,25 +64,38 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
             "hippostd:holder", "admin",
     };
 
+    private Map<String, Value[]> privileges;
+    private Value newDocStatement;
+
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        session.getRootNode().addNode("test");
+        super.setUp(true);
+        Node root = session.getRootNode();
+        if (root.hasNode("test"))
+            root.getNode("test").remove();
+        root = root.addNode("test");
         session.save();
 
         build(session, content);
 
+        privileges = new HashMap<String, Value[]>();
         for (String category : new String[] { "translation", "embedded", "translation-copy", "translation-internal" }) {
             Node workflowsNode = session.getRootNode().getNode("hippo:configuration/hippo:workflows/" + category);
             for (NodeIterator handlers = workflowsNode.getNodes(); handlers.hasNext();) {
                 Node wfNode = handlers.nextNode();
                 if (wfNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
-                    wfNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).remove();
+                    Property property = wfNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES);
+                    privileges.put(wfNode.getPath(), property.getValues());
+                    property.remove();
                 }
             }
         }
-        Node newDocTemplateQuery = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates/new-document");
+        newDocStatement = null;
+        Node newDocTemplateQuery = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/new-document");
+        if (newDocTemplateQuery.hasProperty("jcr:statement")) {
+            newDocStatement = newDocTemplateQuery.getProperty("jcr:statement").getValue();
+        }
         newDocTemplateQuery.setProperty("jcr:statement", "/jcr:root/test/hipposysedit:prototype");
         Node prototype = session.getNode("/test/hipposysedit:prototype");
         prototype.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
@@ -87,13 +104,11 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
 
         Node document = session.getRootNode().getNode("test/folder/document/document");
         document.addMixin("hippo:harddocument");
-        document.addNode(HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.TRANSLATIONS);
 
         Node folder = session.getRootNode().getNode("test/folder");
         folder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         folder.setProperty(HippoTranslationNodeType.LOCALE, "en");
         folder.setProperty(HippoTranslationNodeType.ID, FOLDER_T9N_ID);
-        folder.addNode(HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.TRANSLATIONS);
 
         Node folderNl = session.getRootNode().getNode("test/folder_nl");
         folderNl.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
@@ -102,6 +117,22 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
 
         session.save();
         session.refresh(false);
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        Node root = session.getRootNode();
+        if (root.hasNode("test")) {
+            root.getNode("test").remove();
+        }
+        for (Map.Entry<String, Value[]> entry : privileges.entrySet()) {
+            session.getNode(entry.getKey()).setProperty(HippoNodeType.HIPPO_PRIVILEGES, entry.getValue());
+        }
+        Node newDocTemplateQuery = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/new-document");
+        newDocTemplateQuery.setProperty("jcr:statement", newDocStatement);
+        session.save();
+        super.tearDown();
     }
 
     @Test
