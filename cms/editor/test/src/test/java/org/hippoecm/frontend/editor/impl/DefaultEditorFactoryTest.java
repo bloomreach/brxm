@@ -196,7 +196,7 @@ public class DefaultEditorFactoryTest extends PluginTest {
 
     final static String[] cmstestdocument = new String[] {
             "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "cmstest:document",
                     "jcr:mixinTypes", "hippo:harddocument"
             
@@ -204,7 +204,7 @@ public class DefaultEditorFactoryTest extends PluginTest {
 
     final static String[] plaintestdocument = new String[] {
             "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "hippo:document",
                     "jcr:mixinTypes", "hippo:harddocument",
             

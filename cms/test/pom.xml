@@ -102,6 +102,12 @@
 
     <!-- test -->
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-deprecated-facetsearch</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
       <version>${htmlunit.version}</version>
@@ -167,12 +173,6 @@
         <configuration>
           <forkMode>always</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>rep.home</name>
-              <value>${project.build.directory}</value>
-            </property>
-          </systemProperties>
           <excludes>
             <exclude>**/*$*</exclude>
             <exclude>**/PluginConfigTest.java</exclude>

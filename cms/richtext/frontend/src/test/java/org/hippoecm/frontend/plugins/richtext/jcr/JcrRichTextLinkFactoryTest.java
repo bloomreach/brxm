@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.richtext.jcr;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -25,22 +22,25 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
+import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class JcrRichTextLinkFactoryTest extends PluginTest {
 
     String[] content = {
             "/test", "nt:unstructured",
                 "/test/target", "hippo:handle",
-                    "jcr:mixinTypes", "hippo:hardhandle",
+                    "jcr:mixinTypes", "mix:referenceable",
                     "/test/target/target", "hippo:document",
                         "jcr:mixinTypes", "hippo:harddocument",
                 "/test/source", "hippo:handle",
-                    "jcr:mixinTypes", "hippo:hardhandle",
+                    "jcr:mixinTypes", "mix:referenceable",
                     "/test/source/source", "richtexttest:testdocument",
                         "jcr:mixinTypes", "hippo:harddocument",
                         "/test/source/source/richtexttest:html", "hippostd:html",

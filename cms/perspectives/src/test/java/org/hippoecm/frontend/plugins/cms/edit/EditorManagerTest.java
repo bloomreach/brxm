@@ -119,7 +119,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
 
     final static String[] testdocument = new String[] {
             "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "cmstest:document",
                     "jcr:mixinTypes", "hippo:harddocument"
     };

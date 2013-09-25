@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +22,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.collections.MiniMap;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.IEditorContext;
@@ -37,21 +35,21 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.frontend.plugins.reviewedactions.HippostdEditorFactoryPlugin;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.reviewedactions.PublishableDocument;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class EditorFactoryTest extends PluginTest {
 
@@ -171,12 +169,12 @@ public class EditorFactoryTest extends PluginTest {
                     "jcr:mixinTypes", "mix:referenceable"
     };
     final static String[] content2 = {
-                "/test/facetsearch", "hippo:facetsearch",
-                    "hippo:docbase", "/test/content",
-                    "hippo:queryname", "state",
-                    "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
-                "/test/mirror", "hippo:mirror",
-                    "hippo:docbase", "/test/content",
+            "/test/facetsearch", "hippo:facetsearch",
+                "hippo:docbase", "/test/content",
+                "hippo:queryname", "state",
+                "hippo:facets", HippoStdNodeType.HIPPOSTD_STATE,
+            "/test/mirror", "hippo:mirror",
+                "hippo:docbase", "/test/content",
             "/config/test-app/cms-editor", "frontend:plugincluster",
                 "frontend:references", "wicket.model",
                 "frontend:services", "wicket.id",
@@ -200,7 +198,7 @@ public class EditorFactoryTest extends PluginTest {
 
     final static String[] cmstestdocument = new String[] {
             "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "cmstest:document",
                     "jcr:mixinTypes", "hippo:harddocument",
                     "jcr:mixinTypes", "hippostdpubwf:document",
@@ -216,7 +214,7 @@ public class EditorFactoryTest extends PluginTest {
 
     final static String[] plaintestdocument = new String[] {
             "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "hippo:document",
                     "jcr:mixinTypes", "hippo:harddocument",
             
@@ -356,7 +354,7 @@ public class EditorFactoryTest extends PluginTest {
     public void testOpenCompareForUnpublished() throws RepositoryException, EditorException {
         build(session, new String[] {
             "/test/document", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/test/document/document", "hippo:document",
                     "jcr:mixinTypes", "hippostd:publishable",
                     "hippostd:state", "unpublished",

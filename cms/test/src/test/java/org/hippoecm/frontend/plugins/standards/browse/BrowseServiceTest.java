@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -30,6 +28,8 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class BrowseServiceTest extends PluginTest {
 
     static final String BROWSE_SERVICE = "service.browser";
@@ -40,7 +40,9 @@ public class BrowseServiceTest extends PluginTest {
             "/test", "nt:unstructured",
                 "/test/content", "hippostd:folder",
                     "/test/content/document", "hippo:handle",
+                        "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document/document", "hippo:document",
+                            "jcr:mixinTypes", "hippo:harddocument",
                     "/test/content/folder", "hippostd:folder",
             "/test/config", "frontend:pluginconfig",
                 BrowseService.BROWSER_ID, BROWSE_SERVICE,
@@ -103,8 +105,8 @@ public class BrowseServiceTest extends PluginTest {
             public void visit(Node node) throws RepositoryException {
                 if (node.isNodeType("hippo:document")) {
                     node.addMixin("hippo:harddocument");
-                } else if (node.isNodeType("hippo:handle")) {
-                    node.addMixin("hippo:hardhandle");
+                } else if (node.isNodeType("hippo:document")) {
+                    node.addMixin("mix:referenceable");
                 }
 
                 NodeIterator nodeIter = node.getNodes();
@@ -118,9 +120,9 @@ public class BrowseServiceTest extends PluginTest {
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
                 new JcrNodeModel("/test"));
 
-        Node handle = root.getNode("test/content/document");
-        handle.checkin();
-        Version base = handle.getBaseVersion();
+        Node document = root.getNode("test/content/document/document");
+        document.checkin();
+        Version base = document.getBaseVersion();
         IModelReference<Node> docService = getDocumentService();
         docService.setModel(new JcrNodeModel(base));
         assertEquals(new JcrNodeModel("/test/content"), getFolderService().getModel());

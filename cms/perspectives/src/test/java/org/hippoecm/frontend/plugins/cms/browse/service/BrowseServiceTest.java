@@ -143,7 +143,9 @@ public class BrowseServiceTest extends PluginTest {
             "/test", "nt:unstructured",
                 "/test/content", "hippostd:folder",
                     "/test/content/document", "hippo:handle",
+                        "jcr:mixinTypes", "mix:versionable",
                         "/test/content/document/document", "frontendtest:document",
+                            "jcr:mixinTypes", "hippo:harddocument",
                             "a", "xxx",
                     "/test/content/folder", "hippostd:folder",
             "/test/config", "frontend:pluginconfig",
@@ -228,8 +230,8 @@ public class BrowseServiceTest extends PluginTest {
             public void visit(Node node) throws RepositoryException {
                 if (node.isNodeType("hippo:document")) {
                     node.addMixin("hippo:harddocument");
-                } else if (node.isNodeType("hippo:handle")) {
-                    node.addMixin("hippo:hardhandle");
+                } else if (node.isNodeType("hippo:docNode")) {
+                    node.addMixin("mix:referenceable");
                 }
 
                 NodeIterator nodeIter = node.getNodes();
@@ -243,9 +245,9 @@ public class BrowseServiceTest extends PluginTest {
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
                 new JcrNodeModel("/test"));
 
-        Node handle = root.getNode("test/content/document");
-        handle.checkin();
-        Version base = handle.getBaseVersion();
+        Node docNode = root.getNode("test/content/document/document");
+        docNode.checkin();
+        Version base = docNode.getBaseVersion();
         service.browse(new JcrNodeModel(base));
         assertEquals(new JcrNodeModel("/test/content"), service.getCollectionModel().getObject().getFolder());
     }
@@ -349,7 +351,7 @@ public class BrowseServiceTest extends PluginTest {
     @Test
     public void switchToBrowseWhenDocumentIsNotInSearchResults() throws Exception {
         Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
-        otherHandle.addMixin("hippo:hardhandle");
+        otherHandle.addMixin("mix:referenceable");
         Node otherDoc = otherHandle.addNode("doc", "hippo:document");
         otherDoc.addMixin("hippo:harddocument");
         session.save();
@@ -363,7 +365,7 @@ public class BrowseServiceTest extends PluginTest {
     @Test
     public void keepSearchingWhenDocumentIsInSearchResults() throws Exception {
         Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
-        otherHandle.addMixin("hippo:hardhandle");
+        otherHandle.addMixin("mix:referenceable");
         Node otherDoc = otherHandle.addNode("doc", "hippo:document");
         otherDoc.addMixin("hippo:harddocument");
         session.save();

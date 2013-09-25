@@ -15,10 +15,6 @@
  */
 package org.onehippo.cms7.brokenlinks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +48,10 @@ import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class BrokenLinksTest extends RepositoryTestCase {
 
@@ -95,7 +95,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
         session.save();
         String[] content = new String[] {
             "/test/cfg", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
+                "jcr:mixinTypes", "mix:referenceable",
                 "/test/cfg/cfg", "brokenlinks:config",
                     "jcr:mixinTypes", "hippo:harddocument"
         };
@@ -111,7 +111,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
                 "jcr:statement", "/jcr:root/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/node()",
                 "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates", "hippostd:templates",
                     "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test", "hippo:handle",
-                        "jcr:mixinTypes", "hippo:hardhandle",
+                        "jcr:mixinTypes", "mix:referenceable",
                         "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test/brokenlinks:test", "brokenlinks:test",
                             "jcr:mixinTypes", "hippo:harddocument"
         };
@@ -149,11 +149,11 @@ public class BrokenLinksTest extends RepositoryTestCase {
     public void testBasic() throws RepositoryException, WorkflowException, RemoteException, ClassNotFoundException {
         String[] content = new String[] {
             "/test/doc", "hippo:handle",
-            "jcr:mixinTypes", "hippo:hardhandle",
-            "/test/doc/doc", "hippo:testdocument",
-            "jcr:mixinTypes", "hippo:harddocument",
-            "/test/doc/doc/text", "hippostd:html",
-            "hippostd:content", "<html><body><a href=\""+BAD+"\">link</a></body></html>"
+            "jcr:mixinTypes", "mix:referenceable",
+                "/test/doc/doc", "hippo:testdocument",
+                "jcr:mixinTypes", "hippo:harddocument",
+                    "/test/doc/doc/text", "hippostd:html",
+                    "hippostd:content", "<html><body><a href=\""+BAD+"\">link</a></body></html>"
         };
         build(session, content);
         session.save();
@@ -167,11 +167,11 @@ public class BrokenLinksTest extends RepositoryTestCase {
     public void testImageReference() throws RepositoryException, WorkflowException, RemoteException, ClassNotFoundException {
         build(session, new String[] {
                     "/test/doc", "hippo:handle",
-                    "jcr:mixinTypes", "hippo:hardhandle",
-                    "/test/doc/doc", "hippo:testdocument",
-                    "jcr:mixinTypes", "hippo:harddocument",
-                    "/test/doc/doc/text", "hippostd:html",
-                    "hippostd:content", "<html><body><img src=\""+GOOD+"\"/><img src=\""+BAD+"\"/></body></html>"
+                    "jcr:mixinTypes", "mix:referenceable",
+                        "/test/doc/doc", "hippo:testdocument",
+                        "jcr:mixinTypes", "hippo:harddocument",
+                            "/test/doc/doc/text", "hippostd:html",
+                            "hippostd:content", "<html><body><img src=\""+GOOD+"\"/><img src=\""+BAD+"\"/></body></html>"
                 });
         session.save();
 
@@ -190,11 +190,11 @@ public class BrokenLinksTest extends RepositoryTestCase {
         String malformedUrl = "http://<";
         String[] content = new String[] {
                 "/test/doc", "hippo:handle",
-                "jcr:mixinTypes", "hippo:hardhandle",
-                "/test/doc/doc", "hippo:testdocument",
-                "jcr:mixinTypes", "hippo:harddocument",
-                "/test/doc/doc/text", "hippostd:html",
-                "hippostd:content", "<html><body><a href=\""+malformedUrl+"\">link</a></body></html>"
+                "jcr:mixinTypes", "mix:referenceable",
+                    "/test/doc/doc", "hippo:testdocument",
+                    "jcr:mixinTypes", "hippo:harddocument",
+                        "/test/doc/doc/text", "hippostd:html",
+                        "hippostd:content", "<html><body><a href=\""+malformedUrl+"\">link</a></body></html>"
         };
         build(session, content);
         session.save();
@@ -477,7 +477,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
             } else {
                 String subName = "document" + i;
                 final Node handleNode = folder.addNode(subName, "hippo:handle");
-                handleNode.addMixin("hippo:hardhandle");
+                handleNode.addMixin("mix:referenceable");
                 final Node documentNode = handleNode.addNode(subName, "brokenlinks:test");
                 documentNode.addMixin("hippo:harddocument");
                 docIds.add(documentNode.getIdentifier());
@@ -549,9 +549,9 @@ public class BrokenLinksTest extends RepositoryTestCase {
                 Session session = server.login("admin", "admin".toCharArray());
                 build(session, new String[] {
                             "/test/check", "hippo:handle",
-                            "jcr:mixinTypes", "hippo:hardhandle",
-                            "/test/check/check", "hippo:document",
-                            "jcr:mixinTypes", "hippo:harddocument",});
+                            "jcr:mixinTypes", "mix:referenceable",
+                                "/test/check/check", "hippo:document",
+                                "jcr:mixinTypes", "hippo:harddocument",});
                 Node node = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
                 node = node.addNode("test");
                 node = node.addNode("test", "hipposys:workflow");

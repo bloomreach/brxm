@@ -111,16 +111,6 @@
         <configuration>
           <forkMode>once</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>org.onehippo.repository.test.keepserver</name>
-              <value>true</value>
-            </property>
-            <!-- property>
-              <name>org.onehippo.repository.test.installfixture</name>
-              <value>true</value>
-            </property -->
-          </systemProperties>
         </configuration>
       </plugin>
     </plugins>

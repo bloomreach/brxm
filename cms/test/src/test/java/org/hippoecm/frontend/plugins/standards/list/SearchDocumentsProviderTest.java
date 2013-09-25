@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,6 +35,8 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResultModel;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class SearchDocumentsProviderTest extends PluginTest {
 
     String[] content = new String[] {
@@ -45,7 +44,7 @@ public class SearchDocumentsProviderTest extends PluginTest {
                 "/test/content", "hippostd:folder",
                     "/test/content/folder", "hippostd:folder",
                     "/test/content/document1", "hippo:handle",
-                        "jcr:mixinTypes", "hippo:hardhandle",
+                        "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document1/document1", "frontendtest:document",
                             "jcr:mixinTypes", "hippo:harddocument",
                             "a", "xxx",
@@ -53,17 +52,17 @@ public class SearchDocumentsProviderTest extends PluginTest {
                             "jcr:mixinTypes", "hippo:harddocument",
                             "b", "xxx",
                       "/test/content/document2", "hippo:handle",
-                         "jcr:mixinTypes", "hippo:hardhandle",
+                         "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document2/document2", "frontendtest:document",
                             "jcr:mixinTypes", "hippo:harddocument",
                             "a", "xxx",
                       "/test/content/document3", "hippo:handle",
-                        "jcr:mixinTypes", "hippo:hardhandle",
+                        "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document3/document3", "frontendtest:document",
                             "jcr:mixinTypes", "hippo:harddocument",
                             "a", "xxx",
                       "/test/content/document4", "hippo:handle",
-                         "jcr:mixinTypes", "hippo:hardhandle",
+                         "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document4/document4", "frontendtest:document",
                             "jcr:mixinTypes", "hippo:harddocument",
                             "a", "xxx",
