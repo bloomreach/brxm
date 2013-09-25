@@ -276,7 +276,7 @@ public class DefaultEditorFactoryTest extends PluginTest {
 
         session.save();
 
-        Version version = root.getNode("test/content/document").checkin();
+        Version version = root.getNode("test/content/document/document").checkin();
 
         DefaultEditorFactoryPlugin factory = new DefaultEditorFactoryPlugin(context, config);
         try {
@@ -302,7 +302,7 @@ public class DefaultEditorFactoryTest extends PluginTest {
 
         session.save();
 
-        Version version = root.getNode("test/content/document").checkin();
+        Version version = root.getNode("test/content/document/document").checkin();
 
         DefaultEditorFactoryPlugin factory = new DefaultEditorFactoryPlugin(context, config);
         IEditor editor = factory.newEditor(new TestEditorContext(), new JcrNodeModel(version), Mode.COMPARE, parameters);
