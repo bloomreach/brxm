@@ -16,11 +16,7 @@
 package org.hippoecm.repository;
 
 import java.rmi.RemoteException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.Vector;
 
 import javax.jcr.AccessDeniedException;
@@ -247,14 +243,18 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     @Test
     public void testReorderFolder() throws RepositoryException, WorkflowException, RemoteException {
+        Map<String, String> nodes = new HashMap<String, String>();
+
         Node node = root.addNode("f","hippostd:folder");
         node.addMixin("hippo:harddocument");
-        node.addNode("aap");
-        node.addNode("noot");
-        node.addNode("mies");
-        node.addNode("zorro");
-        node.addNode("foo");
-        node.addNode("bar");
+        nodes.put("aap", node.addNode("aap").getIdentifier());
+        nodes.put("noot", node.addNode("noot").getIdentifier());
+        nodes.put("mies", node.addNode("mies").getIdentifier());
+        nodes.put("zorro", node.addNode("zorro").getIdentifier());
+        nodes.put("foo", node.addNode("foo").getIdentifier());
+        nodes.put("bar", node.addNode("bar").getIdentifier());
+        nodes.put("bar[2]", node.addNode("bar").getIdentifier());
+
         session.save();
 
         NodeIterator it = node.getNodes();
@@ -263,6 +263,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         assertEquals("mies", it.nextNode().getName());
         assertEquals("zorro", it.nextNode().getName());
         assertEquals("foo", it.nextNode().getName());
+        assertEquals("bar", it.nextNode().getName());
         assertEquals("bar", it.nextNode().getName());
 
         WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
@@ -278,22 +279,24 @@ public class FolderWorkflowTest extends RepositoryTestCase {
          */
         List<String> newOrder = new LinkedList<String>();
         newOrder.add("aap");
-        newOrder.add("bar");
+        newOrder.add("bar[2]");
         newOrder.add("foo");
         newOrder.add("mies");
         newOrder.add("noot");
         newOrder.add("zorro");
+        newOrder.add("bar");
 
         workflow.reorder(newOrder);
         node.getSession().refresh(false);
 
         it = node.getNodes();
-        assertEquals("aap", it.nextNode().getName());
-        assertEquals("bar", it.nextNode().getName());
-        assertEquals("foo", it.nextNode().getName());
-        assertEquals("mies", it.nextNode().getName());
-        assertEquals("noot", it.nextNode().getName());
-        assertEquals("zorro", it.nextNode().getName());
+        assertEquals(nodes.get("aap"), it.nextNode().getIdentifier());
+        assertEquals(nodes.get("bar[2]"), it.nextNode().getIdentifier());
+        assertEquals(nodes.get("foo"), it.nextNode().getIdentifier());
+        assertEquals(nodes.get("mies"), it.nextNode().getIdentifier());
+        assertEquals(nodes.get("noot"), it.nextNode().getIdentifier());
+        assertEquals(nodes.get("zorro"), it.nextNode().getIdentifier());
+        assertEquals(nodes.get("bar"), it.nextNode().getIdentifier());
 
     }
 

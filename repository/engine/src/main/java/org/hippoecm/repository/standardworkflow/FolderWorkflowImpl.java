@@ -482,16 +482,26 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-       List<String> list = new ArrayList<String>(newOrder);
-       Collections.reverse(list);
-       Node folder = rootSession.getNodeByUUID(subject.getUUID());
-       for (String item : list) {
-           Node head = folder.getNodes().nextNode();
-           if (!head.isSame(folder.getNode(item))) {
-               folder.orderBefore(item, head.getName());
-           }
-       }
-       folder.save();
+        Node folder = rootSession.getNodeByIdentifier(subject.getIdentifier());
+        Session session = folder.getSession();
+
+        LinkedList<String> list = new LinkedList<String>();
+        for (String nodeName : newOrder) {
+            Node node = folder.getNode(nodeName);
+            list.addFirst(node.getIdentifier());
+        }
+
+        for (String identifier : list) {
+            Node headNode = folder.getNodes().nextNode();
+
+            if (!headNode.getIdentifier().equals(identifier)) {
+                Node srcNode = session.getNodeByIdentifier(identifier);
+                String srcNodeName = srcNode.getName() + (srcNode.getIndex() > 1? "["+srcNode.getIndex()+"]" : "");
+                String headNodeName = headNode.getName() + (headNode.getIndex() > 1 ? "[" + headNode.getIndex() + "]" : "");
+                folder.orderBefore(srcNodeName, headNodeName);
+            }
+        }
+        folder.save();
     }
 
     public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
