@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -78,6 +79,18 @@ public abstract class RepositoryTestCase {
 
     protected static HippoRepository external = null;
     protected static HippoRepository background = null;
+
+    private static final String defaultRepoPath;
+
+    static {
+        final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        final File storage = new File(tmpdir, "repository-" + UUID.randomUUID().toString());
+        if (!storage.exists()) {
+            storage.mkdir();
+        }
+        defaultRepoPath = storage.getAbsolutePath();
+    }
+
     protected HippoRepository server = null;
     protected Session session = null;
 
@@ -94,7 +107,7 @@ public abstract class RepositoryTestCase {
     public static void setUpClass() throws Exception {
         if (background == null && external == null) {
             if (System.getProperty("repo.path") == null) {
-                System.setProperty("repo.path", getDefaultRepoPath());
+                System.setProperty("repo.path", defaultRepoPath);
             }
             clearRepository();
             background = HippoRepositoryFactory.getHippoRepository();
@@ -113,7 +126,7 @@ public abstract class RepositoryTestCase {
             background.close();
             background = null;
         }
-        final File storage = new File(System.getProperty("repo.path", getDefaultRepoPath()));
+        final File storage = new File(System.getProperty("repo.path", defaultRepoPath));
         String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
         for (final String path : paths) {
             FileUtils.deleteQuietly(new File(storage, path));
@@ -265,16 +278,20 @@ public abstract class RepositoryTestCase {
         String name = node.getName();
         String type = node.getPrimaryNodeType().getName();
         int hashCode = name.hashCode() + type.hashCode() * 31;
+
+        int propHash = 0;
         for (Property property : new PropertyIterable(node.getProperties())) {
-            hashCode = 31 * hashCode + hashCode(property);
+            propHash = propHash + hashCode(property);
         }
+        hashCode = 31 * hashCode + propHash;
+
         boolean orderable = node.getPrimaryNodeType().hasOrderableChildNodes();
         for (NodeType mixin : node.getMixinNodeTypes()) {
             if (mixin.hasOrderableChildNodes()) {
                 orderable = true;
             }
         }
-        int hash = 0;
+        int childHash = 0;
         for (Node child : new NodeIterable(node.getNodes())) {
             if (child instanceof HippoNode) {
                 if (((HippoNode) child).isVirtual()) {
@@ -282,12 +299,12 @@ public abstract class RepositoryTestCase {
                 }
             }
             if (orderable) {
-                hash = 31 * hash + hashCode(child);
+                childHash = 31 * childHash + hashCode(child);
             } else {
-                hash = hash + hashCode(child);
+                childHash = childHash + hashCode(child);
             }
         }
-        hashCode = 31 * hashCode + hash;
+        hashCode = 31 * hashCode + childHash;
         return hashCode;
     }
 
@@ -394,12 +411,4 @@ public abstract class RepositoryTestCase {
         return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
 
-    private static String getDefaultRepoPath() {
-        final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-        final File storage = new File(tmpdir, "repository");
-        if (!storage.exists()) {
-            storage.mkdir();
-        }
-        return storage.getAbsolutePath();
-    }
 }
