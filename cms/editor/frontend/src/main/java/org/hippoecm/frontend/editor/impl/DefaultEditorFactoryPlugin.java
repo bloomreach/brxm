@@ -51,32 +51,24 @@ public final class DefaultEditorFactoryPlugin extends Plugin implements IEditorF
     public IEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, IEditor.Mode mode,
             IPluginConfig parameters) throws EditorException {
         Node node = nodeModel.getObject();
-        AbstractCmsEditor<Node> editor;
+        final AbstractCmsEditor<Node> editor;
         try {
-            if (JcrHelper.isNodeType(node, HippoNodeType.NT_HANDLE)) {
-                Set<Node> docs = EditorHelper.getDocuments(node);
-                if (docs.size() == 0) {
-                    throw new EditorException("Document has been deleted");
-                }
-                Node doc = docs.iterator().next();
-                editor = newEditor(manager, nodeModel, mode, doc, parameters);
+            if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
+                editor = new TemplateTypeEditor(manager, getPluginContext(), parameters, nodeModel, mode);
             } else {
-                editor = newEditor(manager, nodeModel, mode, node, parameters);
+                if (JcrHelper.isNodeType(node, HippoNodeType.NT_HANDLE)) {
+                    Set<Node> docs = EditorHelper.getDocuments(node);
+                    if (docs.size() == 0) {
+                        throw new EditorException("Document has been deleted");
+                    }
+                }
+                editor = new DefaultCmsEditor(manager, getPluginContext(), parameters, nodeModel, mode);
             }
         } catch (RepositoryException e) {
             throw new EditorException("Could not determine type of editor required", e);
         }
         editor.start();
         return editor;
-    }
-
-    private AbstractCmsEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, IEditor.Mode mode,
-            Node node, IPluginConfig parameters) throws RepositoryException, EditorException {
-        if (node.isNodeType(HippoNodeType.NT_TEMPLATETYPE)) {
-            return new TemplateTypeEditor(manager, getPluginContext(), parameters, nodeModel, mode);
-        } else {
-            return new DefaultCmsEditor(manager, getPluginContext(), parameters, nodeModel, mode);
-        }
     }
 
 }

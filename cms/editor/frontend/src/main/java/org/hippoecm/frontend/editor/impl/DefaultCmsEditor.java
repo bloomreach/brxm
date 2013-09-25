@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 class DefaultCmsEditor extends AbstractCmsEditor<Node> {
     private static final long serialVersionUID = 1L;
 
-
     private static final Logger log = LoggerFactory.getLogger(DefaultCmsEditor.class);
 
     DefaultCmsEditor(IEditorContext manager, IPluginContext context, IPluginConfig parameters, IModel<Node> model, Mode mode)
@@ -52,7 +51,6 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected IModel<Node> getEditorModel() throws EditorException {
         IModel<Node> model = super.getEditorModel();
@@ -62,12 +60,11 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
                 Node frozen = node.getNode("jcr:frozenNode");
                 String uuid = frozen.getProperty("jcr:frozenUuid").getString();
                 try {
-                    node = frozen.getSession().getNodeByUUID(uuid);
+                    node = frozen.getSession().getNodeByIdentifier(uuid);
                 } catch (ItemNotFoundException ex) {
                     return new JcrNodeModel(frozen);
                 }
-            }
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+            } else if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 if (node.hasNode(node.getName())) {
                     return new JcrNodeModel(node.getNode(node.getName()));
                 } else {

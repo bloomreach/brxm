@@ -108,11 +108,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     }
 
-    private static class VersionState {
-        private IModel<Node> version;
-        private IModel<Node> current;
-    }
-
     private boolean modified = false;
 
     private IModel<Node> editorModel;
@@ -124,22 +119,16 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     protected IModel<Node> getEditorModel() throws EditorException {
-        Node node = super.getEditorModel().getObject();
-        if (getMode() == Mode.COMPARE) {
-            try {
-                if (node.isNodeType("nt:version")) {
-                    VersionState vs = getVersionState(node);
-                    if (vs.current != null) {
-                        return vs.current;
-                    } else if (vs.version != null) {
-                        return vs.version;
-                    } else {
-                        throw new EditorException("No current version found");
-                    }
-                }
-            } catch (RepositoryException ex) {
-                throw new EditorException("Error locating editor model", ex);
+        final IModel<Node> model = super.getEditorModel();
+        Node node = model.getObject();
+        boolean compareToVersion = false;
+        try {
+            if (node.isNodeType("nt:version")) {
+                node = getVersionHandle(node);
+                compareToVersion = true;
             }
+        } catch (RepositoryException ex) {
+            throw new EditorException("Error locating editor model", ex);
         }
         WorkflowState state = getWorkflowState(node);
         switch (getMode()) {
@@ -160,7 +149,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 if (state.draft != null) {
                     return state.draft;
                 }
-                if (state.unpublished == null || state.published == null) {
+                if (!compareToVersion && (state.unpublished == null || state.published == null)) {
                     throw new EditorException("Can only compare when both unpublished and published are present");
                 }
                 return state.unpublished;
@@ -175,12 +164,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         Node node = super.getEditorModel().getObject();
         try {
             if (node.isNodeType("nt:version")) {
-                VersionState vs = getVersionState(node);
-                if (vs.version != null) {
-                    return vs.version;
-                } else {
-                    throw new EditorException("No base version found");
-                }
+                return new JcrNodeModel(node.getNode("jcr:frozenNode"));
             }
         } catch (RepositoryException ex) {
             throw new EditorException("Error locating base revision", ex);
@@ -316,10 +300,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             Node docNode = getEditorModel().getObject();
             Node handleNode = getModel().getObject();
 
-            if (handleNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                handleNode = handleNode.getParent();
-            }
-
             handleNode.refresh(false);
 
             NodeIterator docs = handleNode.getNodes(handleNode.getName());
@@ -405,10 +385,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             WorkflowManager manager = session.getWorkflowManager();
             Node docNode = getEditorModel().getObject();
             Node handleNode = getModel().getObject();
-
-            if (handleNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                handleNode = handleNode.getParent();
-            }
 
             handleNode.refresh(false);
 
@@ -570,18 +546,17 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return Mode.VIEW;
     }
 
-    static WorkflowState getWorkflowState(Node docNode) throws EditorException {
+    static WorkflowState getWorkflowState(Node handleNode) throws EditorException {
         WorkflowState wfState = new WorkflowState();
         try {
             String user = UserSession.get().getJcrSession().getUserID();
             wfState.setUser(user);
-            Node handleNode = docNode.getParent();
             if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 throw new EditorException("Invalid node, not of type " + HippoNodeType.NT_HANDLE);
             }
             for (NodeIterator iter = handleNode.getNodes(); iter.hasNext(); ) {
                 Node child = iter.nextNode();
-                if (child.getName().equals(docNode.getName())) {
+                if (child.getName().equals(handleNode.getName())) {
                     wfState.process(child);
                 }
             }
@@ -591,27 +566,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return wfState;
     }
 
-    static VersionState getVersionState(Node versionNode) throws EditorException {
-        VersionState vs = new VersionState();
+    static Node getVersionHandle(Node versionNode) throws EditorException {
         try {
-            WorkflowState baseState = new WorkflowState();
-            baseState.process(versionNode.getNode("jcr:frozenNode"));
-            if (baseState.unpublished != null) {
-                vs.version = baseState.unpublished;
-            } else {
-                vs.version = baseState.published;
-            }
             String uuid = versionNode.getNode("jcr:frozenNode").getProperty("jcr:frozenUuid").getString();
             Node variant = versionNode.getSession().getNodeByUUID(uuid);
-            WorkflowState currentState = getWorkflowState(variant);
-            if (currentState.draft != null) {
-                vs.current = currentState.draft;
-            } else if (currentState.unpublished != null) {
-                vs.current = currentState.unpublished;
-            } else {
-                vs.current = currentState.published;
-            }
-            return vs;
+            return variant.getParent();
         } catch (RepositoryException ex) {
             throw new EditorException("Failed to build version information", ex);
         }

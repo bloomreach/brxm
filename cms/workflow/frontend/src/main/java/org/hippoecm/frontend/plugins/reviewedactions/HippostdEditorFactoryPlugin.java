@@ -63,14 +63,13 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
                 Node doc = docs.iterator().next();
                 if (JcrHelper.isNodeType(doc, HippoStdNodeType.NT_PUBLISHABLE)) {
                     HippostdPublishableEditor editor = new HippostdPublishableEditor(manager, getPluginContext(),
-                            parameters, new JcrNodeModel(doc));
+                            parameters, nodeModel);
                     editor.start();
                     return editor;
                 }
-            }
-            if (JcrHelper.isNodeType(node, HippoStdNodeType.NT_PUBLISHABLE)) {
+            } else if (node.isNodeType("nt:version") && JcrHelper.isNodeType(node, HippoStdNodeType.NT_PUBLISHABLE)) {
                 HippostdPublishableEditor editor = new HippostdPublishableEditor(manager, getPluginContext(),
-                        parameters, nodeModel);
+                        parameters, new JcrNodeModel(node));
                 editor.start();
                 return editor;
             }
