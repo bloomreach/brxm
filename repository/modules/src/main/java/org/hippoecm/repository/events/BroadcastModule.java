@@ -125,11 +125,7 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         } catch (ItemNotFoundException infExp) {
             log.error("Error in getting last processed item ", infExp);
         } finally {
-
-            if (log.isDebugEnabled()) {
-                log.debug("last item is             " + lastItem);
-            }
-
+            log.debug("last item is {}", lastItem);
             session.refresh(false);
         }
 
