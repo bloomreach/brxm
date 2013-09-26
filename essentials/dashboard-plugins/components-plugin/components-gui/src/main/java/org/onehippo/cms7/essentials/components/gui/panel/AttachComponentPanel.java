@@ -27,6 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 
+import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     private final ComponentsWizard parent;
     private final DropdownPanel sitesChoice;
     private final DropdownPanel componentsChoice;
+    private final DropdownPanel beansDropdown;
 
 
     public AttachComponentPanel(final ComponentsWizard parent, final String id) {
@@ -83,7 +85,6 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         // COMPONENTS SELECT
         //############################################
 
-
         componentsChoice = new DropdownPanel("componentList", "Select a component to configure:", form, Collections.<String>emptyList(), new EventListener<String>() {
             private static final long serialVersionUID = 1L;
 
@@ -95,22 +96,48 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             }
         });
 
+        //############################################
+        // BEANS
+        //############################################
+
+        final List<String> beans = BeanWriterUtils.findExitingBeanNames(context, "java");
+        beansDropdown = new DropdownPanel("beansList", "Select Hippo Bean for detail page:", form, beans, new EventListener<String>() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
+                if (selectedItems.size() > 0) {
+                    onBeanSelected(target, selectedItems.iterator().next());
+                }
+            }
+        });
+
+
 
         //############################################
         // SETUP
         //############################################
-
+        beansDropdown.hide(null);
+        //beansDropdown.setOutputMarkupId(true);
         add(form);
-        form.add(sitesChoice);
-        form.add(componentsChoice);
+        /*form.add(sitesChoice);
+        form.add(componentsChoice);*/
         //############################################
         // NEW SELECT PANEL
         //############################################
 
     }
 
+    private void onBeanSelected(final AjaxRequestTarget target, final String selected) {
+        log.info("selected bean{}", selected);
+
+    }
+
     private void onComponentSelected(final AjaxRequestTarget target, final String selected) {
         log.info("Component selected# {}", selected);
+        if(selected.equals("Document Component")){
+            beansDropdown.show(target);
+        }
+
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListChoice;
@@ -42,6 +43,8 @@ public class DropdownPanel extends Panel {
     private static final Logger log = LoggerFactory.getLogger(DropdownPanel.class);
     private final Collection<EventListener<String>> listeners = new CopyOnWriteArrayList<>();
     private final ListChoice<String> dropDown;
+    private final WebMarkupContainer container;
+    private final Label dropdownTitle;
     @SuppressWarnings("UnusedDeclaration")
     private String selectedItem;
     private List<String> items;
@@ -82,14 +85,36 @@ public class DropdownPanel extends Panel {
                 }
             }
         });
+
+        dropdownTitle = new Label("title", title);
+
+        container = new WebMarkupContainer("myContainer");
         //############################################
         //  ADD COMPONENTS
         //############################################
+        container.setOutputMarkupId(true);
         dropDown.setOutputMarkupId(true);
-        this.setOutputMarkupId(true);
-        add(dropDown);
-        add(new Label("title", title));
+        dropdownTitle.setOutputMarkupId(true);
+        setOutputMarkupId(true);
+        container.add(dropDown);
+        container.add(dropdownTitle);
+        add(container);
         form.add(this);
+        container.setOutputMarkupPlaceholderTag(true);
+    }
+
+    public void show(final AjaxRequestTarget target) {
+        container.setVisible(true);
+        if (target != null) {
+            target.add(container);
+        }
+    }
+
+    public void hide(final AjaxRequestTarget target) {
+        container.setVisible(false);
+        if (target != null) {
+            target.add(container);
+        }
     }
 
     public void changeModel(final AjaxRequestTarget target, final Collection<String> newModel) {
