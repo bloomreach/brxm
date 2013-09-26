@@ -105,6 +105,7 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentTemplatePanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/eventsdocument.xml -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/jsptemplate.ftl -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/newsdocument.xml -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-library/pom.xml -text
@@ -554,6 +555,7 @@ plugin-api/implementation/src/test/resources/test_cnd.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo_gal.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo_sys_edit.cnd -text
+plugin-api/implementation/src/test/resources/test_template.ftl -text
 plugin-api/implementation/src/test/resources/updateplugintest.xml -text
 plugin-api/pom.xml -text
 plugin-dashboard/pom.xml -text

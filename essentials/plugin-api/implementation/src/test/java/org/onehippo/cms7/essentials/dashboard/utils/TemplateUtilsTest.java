@@ -17,7 +17,11 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -70,8 +74,15 @@ public class TemplateUtilsTest extends BaseTest {
     @Test
     public void testInjectTemplate() throws Exception {
 
-        String result = TemplateUtils.injectTemplate(null);
-        assertTrue(result == null);
+        final Map<String, Object> data = new HashMap<>();
+        data.put("beanReference", "com.test.MyBean");
+        final Collection<String> listObject = new ArrayList<>();
+        listObject.add("repeatable item");
+        data.put("repeatable", listObject);
+        String result = TemplateUtils.injectTemplate("test_template.ftl", data, getClass());
+        log.info("result {}", result);
+        assertTrue(result.contains("com.test.MyBean"));
+        assertTrue(result.contains("repeatable item"));
     }
 
     private void populateExistingBeans() {

@@ -16,12 +16,19 @@
 
 package org.onehippo.cms7.essentials.components.gui.panel;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
@@ -29,6 +36,8 @@ import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +57,8 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     private final DropdownPanel sitesChoice;
     private final DropdownPanel componentsChoice;
     private final DropdownPanel beansDropdown;
-
+    private  String templateText;
+    private final TextArea<String> scriptTemplate;
 
     public AttachComponentPanel(final ComponentsWizard parent, final String id) {
         super(id);
@@ -110,17 +120,21 @@ public class AttachComponentPanel extends EssentialsWizardStep {
                 }
             }
         });
+        //############################################
+        // ADD TEXT AREA
+        //############################################
 
-
+        scriptTemplate = new TextArea<>("scriptTemplate", new PropertyModel<String>(this, "templateText"));
 
         //############################################
         // SETUP
         //############################################
         beansDropdown.hide(null);
-        //beansDropdown.setOutputMarkupId(true);
+        scriptTemplate.setOutputMarkupPlaceholderTag(true);
+        scriptTemplate.setOutputMarkupId(true);
+        scriptTemplate.setVisible(false);
+        form.add(scriptTemplate);
         add(form);
-        /*form.add(sitesChoice);
-        form.add(componentsChoice);*/
         //############################################
         // NEW SELECT PANEL
         //############################################
@@ -128,7 +142,36 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     }
 
     private void onBeanSelected(final AjaxRequestTarget target, final String selected) {
-        log.info("selected bean{}", selected);
+        if(Strings.isNullOrEmpty(selected)){
+            log.debug("No bean selected");
+            return;
+        }
+        log.info("selected bean: {}", selected);
+        scriptTemplate.setVisible(true);
+        // update model
+        final Map<String, Path> beans = BeanWriterUtils.mapExitingBeanNames(parent.getContext(), "java");
+        final Path path = beans.get(selected);
+        if(path ==null){
+            log.warn("Path was null for bean name {}", selected);
+            return;
+        }
+        final Map<String, Object> data = new HashMap<>();
+        data.put("beanReference", JavaSourceUtils.getFullQualifiedClassName(path));
+
+        final List<TemplateUtils.PropertyWrapper> properties = TemplateUtils.parseBeanProperties(path);
+        final Collection<String> listObject = new ArrayList<>();
+        for (TemplateUtils.PropertyWrapper property : properties) {
+            final String document = property.getFormattedJspProperty("document");
+            listObject.add(document);
+        }
+        data.put("repeatable", listObject);
+        templateText = TemplateUtils.injectTemplate("jsptemplate.ftl", data, getClass());
+        log.info(templateText);
+        scriptTemplate.modelChanged();
+        target.add(scriptTemplate);
+
+
+
 
     }
 
@@ -143,7 +186,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     @Override
     public void applyState() {
         setComplete(false);
-
+        // TODO finalize
         setComplete(true);
 
     }

@@ -16,10 +16,14 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
@@ -35,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * @version "$Id$"
@@ -117,9 +123,19 @@ public final class TemplateUtils {
         return identifier.startsWith("get") || identifier.startsWith("is");
     }
 
-    public static String injectTemplate(final String template) {
+    public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {
         final Configuration config = new Configuration();
-        //
+        config.setClassForTemplateLoading(clazz, "/");
+        try {
+            final Template template = config.getTemplate(templateName);
+            final StringWriter stringWriter = new StringWriter();
+            template.process(data, stringWriter);
+            return stringWriter.toString();
+        } catch (IOException e) {
+            log.error("Error finding template: " + templateName, e);
+        } catch (TemplateException e) {
+            log.error("Error injecting template: " + templateName, e);
+        }
         return null;
     }
 

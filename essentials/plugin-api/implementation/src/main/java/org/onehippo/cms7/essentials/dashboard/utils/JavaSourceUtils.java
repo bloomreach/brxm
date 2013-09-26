@@ -205,6 +205,22 @@ public class JavaSourceUtils {
     }
 
     /**
+     * Returns name of the class, fully qualified e.g. {@code com.foo.BarBean}
+     *
+     * @param path path to java source file
+     */
+    public static String getFullQualifiedClassName(final Path path) {
+
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+
+        final String fullyQualifiedName = unit.getPackage().getName().getFullyQualifiedName();
+        final String identifier = classType.getName().getIdentifier();
+        return fullyQualifiedName+'.' + identifier;
+    }
+
+    /**
      * Adds {@code HippoEssentialsGenerated} annotation to provided java source file (class level)
      *
      * @param path path to java source file
