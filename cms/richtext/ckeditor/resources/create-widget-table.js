@@ -37,35 +37,83 @@
  */
 
 (function() {
-    function getPluginPerCommand() {
+    // hardcoded list of plugins per widget (the automatic lookup not always works correctly)
+    var pluginNames = {
+        Anchor: 'link',
+        Button: 'button',
+        Checkbox: 'forms',
+        FontSize: 'font',
+        Image: 'image',
+        ImageButton: 'forms',
+        Link: 'link',
+        Radio: 'forms',
+        Source: 'sourcearea, codemirror'
+    }
+
+    function addToUniqueArray(map, key, value) {
+        if (map[key] !== undefined && map[key].indexOf(value) === -1) {
+            map[key].push(value);
+        } else {
+            map[key] = [ value ];
+        }
+    }
+
+    function getPluginPerLangKey() {
         var plugins = CKEDITOR.plugins.registered,
             map = {};
         for (var plugin in plugins) {
             if (plugins[plugin].langEntries) {
                 for (langEntry in plugins[plugin].langEntries.en) {
-                    map[langEntry] = plugin;
+                    addToUniqueArray(map, langEntry, plugin);
                 }
             }
         }
         return map;
     }
 
+    function getPluginPerLangValue() {
+        var plugins = CKEDITOR.plugins.registered,
+            map = {};
+        for (var plugin in plugins) {
+            if (plugins[plugin].langEntries) {
+                for (langEntry in plugins[plugin].langEntries.en) {
+                    addToUniqueArray(map, plugins[plugin].langEntries.en[langEntry], plugin);
+                }
+            }
+        }
+        return map;
+    }
+
+    function getPluginName(button, pluginPerLangKey, pluginPerLangValue) {
+        var keyPlugins = pluginPerLangKey[button.command] || [],
+            valuePlugins = pluginPerLangValue[button.label] || [];
+
+        if (valuePlugins.length === 1) {
+            return valuePlugins[0];
+        } else if (keyPlugins.length === 1) {
+            return keyPlugins[0];
+        }
+        return '???';
+    }
+
     function getWidgets() {
         var widgets = [],
-            commandToPluginMap = getPluginPerCommand(),
+            pluginPerLangKey = getPluginPerLangKey(),
+            pluginPerLangValue = getPluginPerLangValue(),
             buttons = CKEDITOR.instances.editor1.ui.items;
+
         for (buttonName in buttons) {
             var button = buttons[buttonName];
+
             if (button.type !== 'separator') {
-                var groupAndPosition = button.toolbar.split(','),
-                    group = groupAndPosition[0];
+                var groupAndPosition = button.toolbar.split(',');
 
                 widgets.push({
                     name: buttonName,
                     label: button.label,
                     command: button.command || '',
-                    plugin: commandToPluginMap[button.command] || '',
-                    toolbarGroup: group,
+                    plugin: pluginNames[buttonName] || getPluginName(button, pluginPerLangKey, pluginPerLangValue),
+                    toolbarGroup: groupAndPosition[0],
                     position: groupAndPosition.length > 1 ? groupAndPosition[1] : ''
                 });
             }
@@ -77,12 +125,12 @@
         var html = "<style>table { border: 1px solid #000 } th, td { padding: 5px; border-collapse: collapse; text-align: left; }</style>"
             + '<table style="width: 100%; border: 1px solid rgb(0, 0, 0); border-collapse: collapse">'
             + "  <tr>"
-            + "    <th>Widget</th>"
-            + "    <th>Label</th>"
-            + "    <th>Command</th>"
-            + "    <th>Plugin</th>"
-            + "    <th>Toolbar Group</th>"
-            + "    <th>Position</th>"
+            + "    <th style=\"text-align: left\">Widget</th>"
+            + "    <th style=\"text-align: left\">Label</th>"
+            + "    <th style=\"text-align: left\">Command</th>"
+            + "    <th style=\"text-align: left\">Plugin</th>"
+            + "    <th style=\"text-align: left\">Toolbar Group</th>"
+            + "    <th style=\"text-align: left\">Position</th>"
             + "  </tr>";
 
         for (var i = 0; i < widgets.length; i++) {
