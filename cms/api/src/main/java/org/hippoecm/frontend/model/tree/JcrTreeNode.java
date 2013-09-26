@@ -32,6 +32,7 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -175,7 +176,8 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
             }
         }
 
-        if (comparator != null && !parentNode.getPrimaryNodeType().hasOrderableChildNodes()) {
+        if (comparator != null && !parentNode.getPrimaryNodeType().hasOrderableChildNodes()
+                && !parentNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
             Collections.sort(treeNodes,  comparator);
         }
 
