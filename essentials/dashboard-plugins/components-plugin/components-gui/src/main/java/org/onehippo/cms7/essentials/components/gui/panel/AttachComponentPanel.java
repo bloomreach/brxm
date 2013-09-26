@@ -52,6 +52,7 @@ import com.google.common.base.Strings;
 public class AttachComponentPanel extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
+    public static final String JSP_TEMPLATE = "jsptemplate.ftl";
     private static Logger log = LoggerFactory.getLogger(AttachComponentPanel.class);
     private final ComponentsWizard parent;
     private final DropdownPanel sitesChoice;
@@ -165,7 +166,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             listObject.add(document);
         }
         data.put("repeatable", listObject);
-        templateText = TemplateUtils.injectTemplate("jsptemplate.ftl", data, getClass());
+        templateText = TemplateUtils.injectTemplate(JSP_TEMPLATE, data, getClass());
         log.info(templateText);
         scriptTemplate.modelChanged();
         target.add(scriptTemplate);
