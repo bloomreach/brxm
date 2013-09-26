@@ -32,6 +32,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
@@ -69,16 +70,21 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
     /**
      * Filter out event items that are irrelevant.
-     * We only display messages for 'top-level' items.
+     * We only display messages for 'top-level' items and we don't display
+     * actions of system users.
      */
     protected boolean accept(JcrNodeModel nodeModel) {
         final Node node = nodeModel.getNode();
         try {
+            final String userName = JcrUtils.getStringProperty(node, "hippolog:user", null);
+            if (userName == null || !User.userExists(userName) || new User(userName).isSystemUser()) {
+                return false;
+            }
             final String interaction = JcrUtils.getStringProperty(node, "hippolog:interaction", null);
             if (interaction != null) {
-                final String category = JcrUtils.getStringProperty(node, "hippolog:category", null);
+                final String category = JcrUtils.getStringProperty(node, "hippolog:workflowCategory", null);
                 final String workflowName = JcrUtils.getStringProperty(node, "hippolog:workflowName", null);
-                final String methodName = JcrUtils.getStringProperty(node, "hippolog:eventMethod", null);
+                final String methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", null);
                 return interaction.equals(category + ":" + workflowName + ":" + methodName);
             }
         } catch (RepositoryException ignored) {
@@ -166,7 +172,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 String path = documentEvent.getDocumentPath();
                 if (path != null) {
                     BrowseLinkTarget target = new BrowseLinkTarget(path);
-                    if ("rename".equals(label.getEventMethod())) {
+                    if ("rename".equals(label.getMethodName())) {
                         String[] arguments = label.getArguments();
                         if (arguments != null && arguments.length > 1) {
                             target = new BrowseLinkTarget(path+"/"+arguments[1]);

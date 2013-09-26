@@ -26,6 +26,7 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
@@ -52,7 +53,7 @@ public class EventModel implements IComponentAssignedModel<String> {
     private String timeKey;
     private Long time;
     private String method;
-    private String eventMethod;
+    private String methodName;
     private String[] arguments;
     private String user;
     private IModel<String> nameModel;
@@ -73,19 +74,20 @@ public class EventModel implements IComponentAssignedModel<String> {
             this.time = node.getProperty("hippolog:timestamp").getLong();
             this.timeKey = getRelativeTimeKey(time);
 
-            // add eventClass to resolve workflow resource bundle
-            this.method = node.getProperty("hippolog:eventMethod").getString() + ",class="
-                    + node.getProperty("hippolog:eventClass").getString();
-            this.eventMethod = node.getProperty("hippolog:eventMethod").getString();
-            if (node.hasProperty("hippolog:eventArguments")) {
-                final Value[] values = node.getProperty("hippolog:eventArguments").getValues();
+            final String action = JcrUtils.getStringProperty(node, "hippolog:action", "");
+            methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", action);
+            final String className = JcrUtils.getStringProperty(node, "hippolog:className", "");
+            // add className to resolve workflow resource bundle
+            this.method = methodName + ",class=" + className;
+            if (node.hasProperty("hippolog:arguments")) {
+                final Value[] values = node.getProperty("hippolog:arguments").getValues();
 
                 this.arguments = new String[values.length];
                 for (int i=0; i<values.length; i++) {
                     this.arguments[i] = values[i].getString();
                 }
             }
-            this.user = node.getProperty("hippolog:eventUser").getString();
+            this.user = node.getProperty("hippolog:user").getString();
             this.nameModel = nameModel;
         } catch (RepositoryException e) {
             log.error("Could not parse event node", e);
@@ -169,8 +171,8 @@ public class EventModel implements IComponentAssignedModel<String> {
         return null;
     }
 
-    public String getEventMethod() {
-        return this.eventMethod;
+    public String getMethodName() {
+        return this.methodName;
     }
 
     public String[] getArguments() {

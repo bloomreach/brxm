@@ -61,11 +61,11 @@ public class EventLabelTest extends PluginTest {
     private Node createEventNode(Long timestamp, String method, String user, String[] arguments) throws RepositoryException {
         Node node = root.getNode("test").addNode(timestamp.toString(), "hippolog:item");
         node.setProperty("hippolog:timestamp", timestamp);
-        node.setProperty("hippolog:eventClass", EventLabelTest.class.getName());
-        node.setProperty("hippolog:eventMethod", method);
-        node.setProperty("hippolog:eventUser", user);
+        node.setProperty("hippolog:className", EventLabelTest.class.getName());
+        node.setProperty("hippolog:methodName", method);
+        node.setProperty("hippolog:user", user);
         if (arguments != null) {
-            node.setProperty("hippolog:eventArguments", arguments);
+            node.setProperty("hippolog:arguments", arguments);
         }
         return node;
     }
@@ -88,7 +88,7 @@ public class EventLabelTest extends PluginTest {
         Node docNode = root.getNode("test").addNode("testDocument");
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
-        eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
+        eventNode.setProperty("hippolog:documentPath", docNode.getPath());
 
         DocumentEvent parser = new DocumentEvent(eventNode);
         assertEquals("/test/testDocument", parser.getDocumentPath());
@@ -106,7 +106,7 @@ public class EventLabelTest extends PluginTest {
 
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
-        eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + docNode.getUUID() + ",path='"
+        eventNode.setProperty("hippolog:returnValue", "document[uuid=" + docNode.getUUID() + ",path='"
                 + docNode.getPath() + "']");
 
         DocumentEvent parser = new DocumentEvent(eventNode);
@@ -127,7 +127,7 @@ public class EventLabelTest extends PluginTest {
 
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
-        eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + version.getUUID() + ",path='"
+        eventNode.setProperty("hippolog:returnValue", "document[uuid=" + version.getUUID() + ",path='"
                 + version.getPath() + "']");
 
         DocumentEvent parser = new DocumentEvent(eventNode);
@@ -148,7 +148,7 @@ public class EventLabelTest extends PluginTest {
 
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
-        eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + docNode.getUUID() + ",path='"
+        eventNode.setProperty("hippolog:returnValue", "document[uuid=" + docNode.getUUID() + ",path='"
                 + docNode.getPath() + "']");
         docNode.remove();
         session.save();
@@ -167,7 +167,7 @@ public class EventLabelTest extends PluginTest {
         Node docNode = root.getNode("test").addNode("testDocument");
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "delete", "testUser");
-        eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
+        eventNode.setProperty("hippolog:documentPath", docNode.getPath());
 
         DocumentEvent parser = new DocumentEvent(eventNode);
         IModel<String> nameModel = parser.getName();
@@ -179,7 +179,7 @@ public class EventLabelTest extends PluginTest {
         Node docNode = root.getNode("test").addNode("testDocument");
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "delete", "testUser", new String[] { "child" });
-        eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
+        eventNode.setProperty("hippolog:documentPath", docNode.getPath());
 
         DocumentEvent parser = new DocumentEvent(eventNode);
         IModel<String> nameModel = parser.getName();

@@ -55,7 +55,7 @@ public class DocumentEvent {
     }
 
     private void initTargetVariant(final Node node, final Session session) throws RepositoryException {
-        targetVariant = JcrUtils.getStringProperty(node, "hippolog:eventReturnValue", null);
+        targetVariant = JcrUtils.getStringProperty(node, "hippolog:returnValue", null);
         targetVariantExists = false;
         if (targetVariant != null) {
             Matcher matcher = pattern.matcher(targetVariant);
@@ -100,29 +100,29 @@ public class DocumentEvent {
                     }
                 }
             }
-        } else if (sourceVariantExists && node.getProperty("hippolog:eventMethod").getString().equals("delete")
-                && node.hasProperty("hippolog:eventArguments")
-                && node.getProperty("hippolog:eventArguments").getValues().length > 0) {
+        } else if (sourceVariantExists && "delete".equals(JcrUtils.getStringProperty(node, "hippolog:methodName", null))
+                && node.hasProperty("hippolog:arguments")
+                && node.getProperty("hippolog:arguments").getValues().length > 0) {
             targetVariant = sourceVariant + "/"
-                    + node.getProperty("hippolog:eventArguments").getValues()[0].getString();
+                    + node.getProperty("hippolog:arguments").getValues()[0].getString();
             targetVariantExists = false;
         }
     }
 
     private void initSourceVariant(final Node node, final Session session) throws RepositoryException {
-        final String eventDocument = JcrUtils.getStringProperty(node, "hippolog:eventDocument", null);
+        final String eventDocument = JcrUtils.getStringProperty(node, "hippolog:documentPath", null);
         sourceVariant = fixPathForRequests(eventDocument);
         sourceVariantExists = !StringUtils.isEmpty(sourceVariant) && session.itemExists(sourceVariant);
     }
 
     public String getMethod() throws RepositoryException {
-        return JcrUtils.getStringProperty(node, "hippolog:eventMethod", null);
+        return JcrUtils.getStringProperty(node, "hippolog:methodName", null);
     }
 
     private String getArgument(int index) throws RepositoryException {
-        if (node.hasProperty("hippolog:eventArguments")
-                && node.getProperty("hippolog:eventArguments").getValues().length > index) {
-            return node.getProperty("hippolog:eventArguments").getValues()[index].getString();
+        if (node.hasProperty("hippolog:arguments")
+                && node.getProperty("hippolog:arguments").getValues().length > index) {
+            return node.getProperty("hippolog:arguments").getValues()[index].getString();
         }
         return null;
     }

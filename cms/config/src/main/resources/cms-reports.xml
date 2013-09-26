@@ -81,7 +81,7 @@
         <sv:value>sql</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>SELECT * FROM hippolog:item WHERE hippolog:eventUser&lt;&gt;'anonymous' AND hippolog:eventUser&lt;&gt;'workflowuser' AND hippolog:eventUser&lt;&gt;'system' AND hippolog:eventMethod&lt;&gt;'list' AND hippolog:eventMethod&lt;&gt;'getGalleryTypes' AND hippolog:eventMethod&lt;&gt;'archive' AND hippolog:eventMethod&lt;&gt;'logEvent' AND  (hippolog:eventDocument&lt;&gt;'/collections' OR hippolog:eventDocument IS NULL)  ORDER BY hippolog:timestamp DESC</sv:value>
+        <sv:value>SELECT * FROM hippolog:item WHERE (hippolog:application = 'cms' OR hippolog:application='repository') ORDER BY hippolog:timestamp DESC</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

@@ -418,7 +418,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.24.01</sv:value>
+      <sv:value>2.25.03</sv:value>
     </sv:property>
   </sv:node>
   <!-- CMS browser perspective -->
