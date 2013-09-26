@@ -251,18 +251,18 @@ class BroadcastThread extends Thread {
     private HippoWorkflowEvent createEvent(Node logNode) throws RepositoryException {
         HippoWorkflowEvent event = new HippoWorkflowEvent();
         event.timestamp(JcrUtils.getLongProperty(logNode, "hippolog:timestamp", -1l));
-        event.user(JcrUtils.getStringProperty(logNode, "hippolog:eventUser", null));
-        event.className(JcrUtils.getStringProperty(logNode, "hippolog:eventClass", null));
-        event.methodName(JcrUtils.getStringProperty(logNode, "hippolog:eventMethod", null));
-        event.workflowCategory(JcrUtils.getStringProperty(logNode, "hippolog:category", null));
+        event.user(JcrUtils.getStringProperty(logNode, "hippolog:user", null));
+        event.className(JcrUtils.getStringProperty(logNode, "hippolog:className", null));
+        event.methodName(JcrUtils.getStringProperty(logNode, "hippolog:methodName", null));
+        event.workflowCategory(JcrUtils.getStringProperty(logNode, "hippolog:workflowCategory", null));
         event.workflowName(JcrUtils.getStringProperty(logNode, "hippolog:workflowName", null));
         event.interaction(JcrUtils.getStringProperty(logNode, "hippolog:interaction", null));
         event.interactionId(JcrUtils.getStringProperty(logNode, "hippolog:interactionId", null));
-        event.documentPath(JcrUtils.getStringProperty(logNode, "hippolog:eventDocument", null));
+        event.documentPath(JcrUtils.getStringProperty(logNode, "hippolog:documentPath", null));
         event.handleUuid(JcrUtils.getStringProperty(logNode, "hippolog:handleUuid", null));
-        event.returnType(JcrUtils.getStringProperty(logNode, "hippolog:eventReturnType", null));
-        event.returnValue(JcrUtils.getStringProperty(logNode, "hippolog:eventReturnValue", null));
-        final Property argumentsProperty = JcrUtils.getPropertyIfExists(logNode, "hippolog:eventArguments");
+        event.returnType(JcrUtils.getStringProperty(logNode, "hippolog:returnType", null));
+        event.returnValue(JcrUtils.getStringProperty(logNode, "hippolog:returnValue", null));
+        final Property argumentsProperty = JcrUtils.getPropertyIfExists(logNode, "hippolog:argumentså");
         if (argumentsProperty != null) {
             final Value[] values = argumentsProperty.getValues();
             ArrayList<String> arguments = new ArrayList<String>(values.length);
