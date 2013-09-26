@@ -21,19 +21,26 @@
 <hippolog='http://www.onehippo.org/jcr/hippolog/nt/2.0'>
 
 [hippolog:item] > nt:base
-- hippolog:timestamp (long) mandatory
-- hippolog:eventUser (string) mandatory
-- hippolog:eventClass (string) mandatory
-- hippolog:eventMethod (string) mandatory
-- hippolog:eventArguments (string) multiple
-- hippolog:eventReturnType (string)
-- hippolog:eventReturnValue (string)
-- hippolog:eventDocument (string)
-- hippolog:handleUuid (string)
-- hippolog:interactionId (string)
-- hippolog:interaction (string)
+- hippolog:application (string)
 - hippolog:category (string)
-- hippolog:workflowName (string)
+- hippolog:action (string)
+- hippolog:user (string)
+- hippolog:result (string)
+- hippolog:timestamp (long)
+- hippolog:message (string)
+- hippolog:eventUser (string) // deprecated
+- hippolog:eventClass (string) // deprecated
+- hippolog:eventMethod (string) // deprecated
+- hippolog:eventArguments (string) multiple // deprecated
+- hippolog:eventReturnType (string) // deprecated
+- hippolog:eventReturnValue (string) // deprecated
+- hippolog:eventDocument (string) // deprecated
+- hippolog:handleUuid (string) // deprecated
+- hippolog:interactionId (string) // deprecated
+- hippolog:interaction (string) // deprecated
+- hippolog:workflowName (string) // deprecated
+- * (undefined) multiple
+- * (undefined)
 
 [hippolog:folder] > nt:base orderable
 - hippolog:enabled (boolean) // deprecated

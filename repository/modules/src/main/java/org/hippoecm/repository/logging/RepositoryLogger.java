@@ -15,20 +15,22 @@
  */
 package org.hippoecm.repository.logging;
 
-import java.util.List;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Random;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.event.HippoEventConstants;
-import org.onehippo.cms7.event.HippoSecurityEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
-import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,66 +90,17 @@ public class RepositoryLogger implements DaemonModule {
             return;
         }
 
-        long timestamp = event.timestamp();
-        String userName = event.user();
-        String methodName;
-        String returnValue = null;
-        String className = null;
-        String documentPath = null;
-        String handleUuid = null;
-        String returnType = null;
-        List<String> arguments = null;
-        String interactionId = null;
-        String interaction = null;
-        String workflowCategory = null;
-        String workflowName = null;
-        if (HippoEventConstants.CATEGORY_WORKFLOW.equals(event.category())) {
-            HippoWorkflowEvent workflowEvent = new HippoWorkflowEvent(event);
-            returnValue = workflowEvent.result();
-            methodName = workflowEvent.methodName();
-            className = workflowEvent.className();
-            documentPath = workflowEvent.documentPath();
-            handleUuid = workflowEvent.handleUuid();
-            returnType = workflowEvent.returnType();
-            arguments = workflowEvent.arguments();
-            interactionId = workflowEvent.interactionId();
-            interaction = workflowEvent.interaction();
-            workflowCategory = workflowEvent.workflowCategory();
-            workflowName = workflowEvent.workflowName();
-        } else if (HippoEventConstants.CATEGORY_SECURITY.equals(event.category())) {
-            HippoSecurityEvent securityEvent = new HippoSecurityEvent(event);
-            if (!securityEvent.success()) {
-                return;
-            }
-            methodName = event.action();
-        } else {
-            return;
-        }
-
         try {
-            char[] randomChars = generateRandomCharArray(HIERARCHY_DEPTH);
-            Node folder = getOrCreateFolder(charArrayToRelPath(randomChars, HIERARCHY_DEPTH - 1));
-
-            Node logNode = folder.addNode(String.valueOf(randomChars[HIERARCHY_DEPTH - 1]), "hippolog:item");
-            logNode.setProperty("hippolog:timestamp", timestamp);
-            logNode.setProperty("hippolog:eventUser", userName == null ? "null" : userName);
-            logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
-            logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
-            logNode.setProperty("hippolog:interactionId", interactionId);
-            logNode.setProperty("hippolog:interaction", interaction);
-            logNode.setProperty("hippolog:category", workflowCategory);
-            logNode.setProperty("hippolog:workflowName", workflowName);
-            logNode.setProperty("hippolog:eventDocument", documentPath);
-            logNode.setProperty("hippolog:handleUuid", handleUuid);
-            logNode.setProperty("hippolog:eventReturnType", returnType);
-            logNode.setProperty("hippolog:eventReturnValue", returnValue);
-            if (arguments != null) {
-                logNode.setProperty("hippolog:eventArguments", arguments.toArray(new String[arguments.size()]));
+            final char[] randomChars = generateRandomCharArray(HIERARCHY_DEPTH);
+            final Node folder = getOrCreateFolder(charArrayToRelPath(randomChars, HIERARCHY_DEPTH - 1));
+            final Node logNode = folder.addNode(String.valueOf(randomChars[HIERARCHY_DEPTH - 1]), "hippolog:item");
+            for (Object o : event.getValues().entrySet()) {
+                Map.Entry<String, Object> entry = (Map.Entry<String, Object>) o;
+                setProperty(logNode, getPropertyName(entry.getKey()), entry.getValue());
             }
             session.save();
         } catch (RepositoryException e) {
-            String strEvent = "userName: " + userName + "; eventMethod: " + methodName + "; eventClass: " + className;
-            log.warn("Logging of event " + strEvent + " failed: " + e.getMessage(), e);
+            log.warn("Logging of event {} failed", event, e);
             try {
                 session.refresh(false);
             } catch (RepositoryException ex) {
@@ -155,6 +108,76 @@ public class RepositoryLogger implements DaemonModule {
             }
         }
 
+
+    }
+
+    private String getPropertyName(final String key) {
+        return "hippolog:" + key;
+    }
+
+    private void setProperty(final Node logNode, final String key, final Object value) throws RepositoryException {
+        if (value instanceof Collection) {
+            Collection collection = (Collection) value;
+            if (collection.isEmpty()) {
+                return;
+            }
+            final Object item = collection.iterator().next();
+            int propertyType = getPropertyType(item);
+            if (propertyType == PropertyType.UNDEFINED) {
+                log.warn("Unknown property type: {}", item.getClass());
+                return;
+            }
+            logNode.setProperty(key, getValues(collection, propertyType), propertyType);
+        } else {
+            int propertyType = getPropertyType(value);
+            if (propertyType == PropertyType.UNDEFINED) {
+                log.warn("Unknown property type: {}", value.getClass());
+                return;
+            }
+            logNode.setProperty(key, getValue(value, propertyType), propertyType);
+        }
+    }
+
+    private Value getValue(final Object value, final int propertyType) throws RepositoryException {
+        final ValueFactory valueFactory = session.getValueFactory();
+        switch (propertyType) {
+            case PropertyType.STRING : return valueFactory.createValue((String) value);
+            case PropertyType.LONG : return valueFactory.createValue((Long) value);
+            case PropertyType.BOOLEAN : return valueFactory.createValue((Boolean) value);
+            case PropertyType.DATE : return valueFactory.createValue((Calendar) value);
+        }
+        return null;
+    }
+
+    private int getPropertyType(final Object next) {
+        if (next instanceof String) {
+            return PropertyType.STRING;
+        }
+        if (next instanceof Long) {
+            return PropertyType.LONG;
+        }
+        if (next instanceof Calendar) {
+            return PropertyType.DATE;
+        }
+        if (next instanceof Boolean) {
+            return PropertyType.BOOLEAN;
+        }
+        return PropertyType.UNDEFINED;
+    }
+
+    private Value[] getValues(final Collection collection, final int propertyType) throws RepositoryException {
+        Value[] values = new Value[collection.size()];
+        int count = 0;
+        final ValueFactory valueFactory = session.getValueFactory();
+        for (Object o : collection) {
+            switch (propertyType) {
+                case PropertyType.STRING : values[count] = valueFactory.createValue((String) o); break;
+                case PropertyType.BOOLEAN : values[count] = valueFactory.createValue((Boolean) o); break;
+                case PropertyType.DATE : values[count] = valueFactory.createValue((Calendar) o); break;
+                case PropertyType.LONG : values[count] = valueFactory.createValue((Long) o); break;
+            }
+        }
+        return values;
     }
 
     private Node getOrCreateFolder(String itemRelPath) throws RepositoryException {

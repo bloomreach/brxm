@@ -22,10 +22,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.Document;
+import org.onehippo.repository.api.annotation.WorkflowAction;
 
-public interface GalleryWorkflow extends Workflow
-{
+public interface GalleryWorkflow extends Workflow {
 
+    @WorkflowAction(loggable = false)
     public List<String> getGalleryTypes() throws RemoteException, RepositoryException;
+
     public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException;
+
 }

@@ -25,6 +25,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
@@ -54,9 +55,9 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
         final RepositoryLogger repositoryLogger = new RepositoryLogger();
         repositoryLogger.initialize(session);
 
-        HippoEvent event = new HippoEvent("repository");
-        event.user("userName").category("workflow").result("resultValue");
-        event.set("className", "className").set("methodName", "methodName");
+        HippoEvent event = new HippoEvent("application");
+        event.user("user").category("category").result("result").action("action");
+        event.message("message").timestamp(System.currentTimeMillis()).set("residual", true);
         repositoryLogger.logHippoEvent(event);
 
         Node logFolder = session.getNode("/hippo:log/default");
@@ -67,9 +68,13 @@ public class RepositoryLoggerTest extends RepositoryTestCase {
             currentNode = nodes.nextNode();
         }
         Node logEvent = currentNode;
-        assertEquals("userName", logEvent.getProperty("hippolog:eventUser").getString());
-        assertEquals("className", logEvent.getProperty("hippolog:eventClass").getString());
-        assertEquals("methodName", logEvent.getProperty("hippolog:eventMethod").getString());
+        assertEquals("user", logEvent.getProperty("hippolog:user").getString());
+        assertEquals("category", logEvent.getProperty("hippolog:category").getString());
+        assertEquals("application", logEvent.getProperty("hippolog:application").getString());
+        assertEquals("action", logEvent.getProperty("hippolog:action").getString());
+        assertEquals("result", logEvent.getProperty("hippolog:result").getString());
+        assertEquals("message", logEvent.getProperty("hippolog:message").getString());
+        assertEquals(true, logEvent.getProperty("hippolog:residual").getBoolean());
     }
 
 }

@@ -26,6 +26,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * Work-flow interface that is generally available on container documents.  Container documents are documents that contain
@@ -65,6 +66,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      * @deprecated use FolderWorkflow.hints().get("prototypes") instead which can be cast into the same return type.
      */
+    @WorkflowAction(loggable = false)
     public Map<String,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
