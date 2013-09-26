@@ -204,6 +204,14 @@ public class JavaSourceUtils {
 
     }
 
+    public static String getSupertype(final Path path) {
+
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        return classType.getSuperclassType().toString();
+    }
+
     /**
      * Returns name of the class, fully qualified e.g. {@code com.foo.BarBean}
      *
@@ -217,7 +225,7 @@ public class JavaSourceUtils {
 
         final String fullyQualifiedName = unit.getPackage().getName().getFullyQualifiedName();
         final String identifier = classType.getName().getIdentifier();
-        return fullyQualifiedName+'.' + identifier;
+        return fullyQualifiedName + '.' + identifier;
     }
 
     /**
@@ -240,7 +248,6 @@ public class JavaSourceUtils {
 
 
     }
-
 
     public static void annotateMethod(final EssentialsGeneratedMethod method, final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);

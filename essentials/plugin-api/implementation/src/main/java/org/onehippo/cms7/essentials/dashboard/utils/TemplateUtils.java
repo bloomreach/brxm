@@ -190,6 +190,7 @@ public final class TemplateUtils {
         }
 
         public String getFormattedJspProperty(final String baseName) {
+            // get supertype:
             if (primitiveType) {
                 return "${" + baseName + '.' + propertyName + '}';
             } else if (BASE_TYPES.contains(returnType)) {
@@ -204,7 +205,7 @@ public final class TemplateUtils {
             } else if (returnType.equals("HippoGalleryImageSetBean")) {
                 return "<img src=\"<hst:link hippobean=\"${" + baseName + '.' + propertyName + ".original}\"/>\"\" />";
             }
-
+            //TODO check if local bean and fetch supertype
             log.warn("Missing property mapping for: {}", this);
             return "";
         }

@@ -171,9 +171,6 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         scriptTemplate.modelChanged();
         target.add(scriptTemplate);
 
-
-
-
     }
 
     private void onComponentSelected(final AjaxRequestTarget target, final String selected) {
