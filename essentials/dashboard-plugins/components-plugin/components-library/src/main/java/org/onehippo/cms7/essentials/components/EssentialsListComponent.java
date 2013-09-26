@@ -165,7 +165,7 @@ public class EssentialsListComponent extends CommonComponent {
             log.debug("Show pagination not configured, use default value 'true'");
             return true;
         }
-        return showPagination.booleanValue();
+        return showPagination;
     }
 
     /**
