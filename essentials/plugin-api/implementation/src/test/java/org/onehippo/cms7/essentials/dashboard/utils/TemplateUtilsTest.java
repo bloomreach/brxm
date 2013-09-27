@@ -41,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 public class TemplateUtilsTest extends BaseTest {
 
     public static final int EXPECTED_PROPERTY_SIZE = 6;
+    public static final String BEAN_REF = "com.test.MyBean";
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
     private List<MemoryBean> memoryBeans;
 
@@ -63,7 +64,7 @@ public class TemplateUtilsTest extends BaseTest {
                 assertEquals(String.format("Expected %d methods but got, %d", EXPECTED_PROPERTY_SIZE, size), EXPECTED_PROPERTY_SIZE, size);
                 for (TemplateUtils.PropertyWrapper propertyWrapper : propertyWrappers) {
                     final String propertyExpression = propertyWrapper.getFormattedJspProperty("document");
-                    assertNotEquals(String.format("Expected property expression to be populated: %s", propertyWrapper.getPropertyName()),"", propertyExpression);
+                    assertNotEquals(String.format("Expected property expression to be populated: %s", propertyWrapper.getPropertyName()), "", propertyExpression);
                 }
             }
         }
@@ -75,14 +76,18 @@ public class TemplateUtilsTest extends BaseTest {
     public void testInjectTemplate() throws Exception {
 
         final Map<String, Object> data = new HashMap<>();
-        data.put("beanReference", "com.test.MyBean");
+        data.put("beanReference", BEAN_REF);
         final Collection<String> listObject = new ArrayList<>();
         listObject.add("repeatable item");
         data.put("repeatable", listObject);
         String result = TemplateUtils.injectTemplate("test_template.ftl", data, getClass());
         log.info("result {}", result);
-        assertTrue(result.contains("com.test.MyBean"));
+        assertTrue(result.contains(BEAN_REF));
         assertTrue(result.contains("repeatable item"));
+        result = TemplateUtils.injectTemplate("test_template_freemarker.ftl", data, getClass());
+        log.info("result {}", result);
+        assertTrue("Expected "+BEAN_REF,result.contains(BEAN_REF));
+
     }
 
     private void populateExistingBeans() {
