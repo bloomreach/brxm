@@ -102,8 +102,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             assertNotNull(node);
             FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             Document document = workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
+
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertNotNull(node);
             assertNotNull(document);
@@ -116,26 +115,19 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             Document document = workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
+
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertTrue(node.getIdentifier().equals(document.getIdentity()));
             Property prop = node.getProperty("hippostdpubwf:content");
             prop.setValue(prop.getString() + ",");
             session.save();
-            session.refresh(true);
 
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             reviewedWorkflow.commitEditableInstance();
-            session.save();
-            session.refresh(true);
 
             reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
-            session.save();
-            session.refresh(true);
         }
 
         // These steps would be taken by editor:
@@ -144,8 +136,6 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.rejectRequest("comma should be a point");
-            session.save();
-            session.refresh(true);
             assertTrue(getNode("test/myarticle/hippo:request").getProperty("hippostdpubwf:reason").getString().equals("comma should be a point"));
         }
 
@@ -155,8 +145,6 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             workflow.cancelRequest();
-            session.save();
-            session.refresh(true);
         }
 
         // steps taken by an author
@@ -164,23 +152,16 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             Property prop = node.getProperty("hippostdpubwf:content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
 
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             reviewedWorkflow.commitEditableInstance();
-            session.save();
-            session.refresh(true);
 
             reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.requestPublication();
-            session.save();
-            session.refresh(true);
         }
 
         // These steps would be taken by editor:
@@ -188,8 +169,6 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
             FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
             workflow.acceptRequest();
-            session.save();
-            session.refresh(true);
         }
 
         // These steps would be taken by editor:
@@ -198,26 +177,20 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
             Document document = workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
+
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             assertTrue(node.getUUID().equals(document.getIdentity()));
             Property prop = node.getProperty("hippostdpubwf:content");
             prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
             session.save();
-            session.refresh(true);
 
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             reviewedWorkflow.commitEditableInstance();
-            session.save();
-            session.refresh(true);
 
             reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.publish();
-            session.save();
-            session.refresh(true);
+
         }
     }
 
