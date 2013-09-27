@@ -331,6 +331,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 publishedDocument.setAvailability(new String[]{"live"});
             }
             unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
+            if (unpublishedDocument.getNode().isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+                unpublishedDocument.getNode().removeMixin(HippoNodeType.NT_SKIPINDEX);
+            }
             return unpublishedDocument;
         } catch (RepositoryException ex) {
             throw new WorkflowException("failed to commit editable instance", ex);
@@ -359,6 +362,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         Node draftNode = cloneDocumentNode(unpublishedDocument != null ? unpublishedDocument : publishedDocument);
         if (!draftNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
             draftNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+        }
+        // make sure drafts nor their descendant nodes do not get indexed
+        if (!draftNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+            draftNode.addMixin(HippoNodeType.NT_SKIPINDEX);
         }
         draftDocument = new PublishableDocument(draftNode);
         draftDocument.setState(PublishableDocument.DRAFT);
