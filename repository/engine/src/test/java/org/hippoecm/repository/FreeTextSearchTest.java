@@ -29,7 +29,6 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
@@ -40,30 +39,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FreeTextSearchTest extends RepositoryTestCase {
-    public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
-    public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";
-    public static final String NT_HTML = "hippo:testhtml";
-    
 
     public static final String DOCUMENT_TITLE_PART = "foo";
     public static final String COMPOUNDDOCUMENT_TITLE_PART = "bar";
     public static final String  HTML_CONTENT_PART = "lux";
     public static final String  BINARY_CONTENT_PART = "dog";
-
    
-    private static final String TEST_PATH = "test";
-    private Node testPath;
-
     
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        if (session.getRootNode().hasNode(TEST_PATH)) {
-            session.getRootNode().getNode(TEST_PATH).remove();
-        }
-        testPath = session.getRootNode().addNode(TEST_PATH);
-        session.save();
     }
 
     @Override
@@ -71,28 +57,33 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
- 
-    /*
-     * This creates the following structure:
-     * 
-     * - Document1 (hippo:handle)
-     *     ` Document1 (hippo:testsearchdocument)
-     *           ` compoundchild (hippo:testcompoundstructure)
-     *                |- hippo:testhtml  (hippo:testhtml)
-     *                |- hippo:testresource (hippo:resource)
-     *                `- hippo:testpdfresource (hippo:resource) (this one conditional if includePdf = true)
-     *                     
-     */
+
+    String[] defaultContent = new String[] {
+            "/test",                      "nt:unstructured",
+                "/test/Document1",             "hippo:handle",
+                "jcr:mixinTypes",             "mix:referenceable",
+                    "/test/Document1/Document1",        "hippo:testsearchdocument",
+                    "jcr:mixinTypes",                   "mix:referenceable",
+                    "title",                            "This is the title of document 1 containing " + DOCUMENT_TITLE_PART,
+                        "/test/Document1/Document1/compoundchild",    "hippo:testcompoundstructure",
+                        "compoundtitle", "This is the compoundtitle containing " + COMPOUNDDOCUMENT_TITLE_PART,
+                            "/test/Document1/Document1/compoundchild/hippo:testhtml",    "hippo:testhtml",
+                            "hippo:testcontent", "The content property of testhtml node containing " + HTML_CONTENT_PART
+    };
+
+
     
-    private void createCompoundStructure(boolean includePdf) throws Exception {
-        Node handle = testPath.addNode("Document1", HippoNodeType.NT_HANDLE);
-        Node document = handle.addNode("Document1", NT_SEARCHDOCUMENT);
-        document.setProperty("title", "This is the title of document 1 containing " + DOCUMENT_TITLE_PART);
-        Node compound = document.addNode("compoundchild", NT_COMPOUNDSTRUCTURE);
-        compound.setProperty("compoundtitle", "This is the compoundtitle containing " + COMPOUNDDOCUMENT_TITLE_PART);
-        Node html = compound.addNode("hippo:testhtml", NT_HTML);
-        html.setProperty("hippo:testcontent", "The content property of testhtml node containing " + HTML_CONTENT_PART);
-        
+    private void createContent(String[]... contents) throws Exception {
+        if (contents == null) {
+            throw new IllegalArgumentException("no bootstrap content");
+        }
+
+        for (String[] content : contents) {
+            build(session, content);
+        }
+
+        // extra set a binary property
+        Node compound = session.getNode("/test/Document1/Document1/compoundchild");
         Node resource = compound.addNode("hippo:testresource", "hippo:resource");
         resource.setProperty("jcr:encoding", "UTF-8");
         resource.setProperty("jcr:mimeType", "text/plain");
@@ -102,18 +93,17 @@ public class FreeTextSearchTest extends RepositoryTestCase {
         writer.close();
         resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
-    
-        testPath.getSession().save();
-        flushIndex(testPath.getSession().getRepository());
+        session.save();
+        flushIndex(session.getRepository());
     }
     
  
     @Test
     public void testSimpleFreeTextSearch() throws Exception {
+
+        createContent(defaultContent);
         
-        createCompoundStructure(false);
-        
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+DOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+DOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
@@ -133,10 +123,10 @@ public class FreeTextSearchTest extends RepositoryTestCase {
      */
     @Test
     public void testFirstLevelChildNodeFreeTextSearch() throws Exception {
+
+        createContent(defaultContent);
         
-        createCompoundStructure(false);
-        
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
@@ -157,9 +147,9 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     @Test
     public void testSecondLevelChildNodeFreeTextSearch() throws Exception {
         
-        createCompoundStructure(false);
+        createContent(defaultContent);
         
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
@@ -180,8 +170,8 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     @Test
     public void testSecondChildNodeBinaryFreeTextSearch() throws Exception {
         
-        createCompoundStructure(false);
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+BINARY_CONTENT_PART+"')] order by @jcr:score descending";
+        createContent(defaultContent);
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+BINARY_CONTENT_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
@@ -204,9 +194,9 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     @Test
     public void testDeleteFirstLevelChildNode() throws Exception {
         
-        createCompoundStructure(false);
+        createContent(defaultContent);
         
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
@@ -216,13 +206,13 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             assertTrue(doc.getName().equals("Document1"));
         }
         
-        Node n = this.testPath.getNode("Document1/Document1");
+        Node n = session.getNode("/test/Document1/Document1");
         n.getNode("compoundchild").remove();
         n.getSession().save();
         
-        flushIndex(testPath.getSession().getRepository());
+        flushIndex(session.getRepository());
         
-        xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
+        xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+COMPOUNDDOCUMENT_TITLE_PART+"')] order by @jcr:score descending";
         queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         nodes = queryResult.getNodes();
@@ -243,9 +233,9 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     @Test
     public void testDeleteSecondLevelChildNode() throws Exception {
         
-        createCompoundStructure(false);
+        createContent(defaultContent);
         
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
@@ -255,13 +245,13 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             assertTrue(doc.getName().equals("Document1"));
         }
         
-        Node n = this.testPath.getNode("Document1/Document1/compoundchild");
+        Node n = session.getNode("/test/Document1/Document1/compoundchild");
         n.getNode("hippo:testhtml").remove();
         n.getSession().save();
         
-        flushIndex(testPath.getSession().getRepository());
+        flushIndex(session.getRepository());
         
-        xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
+        xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+HTML_CONTENT_PART+"')] order by @jcr:score descending";
         queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         nodes = queryResult.getNodes();
@@ -274,16 +264,15 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     
     @Test
     public void testAddFirstLevelChildNode() throws Exception {
-        createCompoundStructure(false);
-        Node n = this.testPath.getNode("Document1/Document1");
-        Node compound = n.addNode("compoundchild", NT_COMPOUNDSTRUCTURE);
         String word = "addedcompound";
-        compound.setProperty("compoundtitle", "This is the compoundtitle containing " + word);
-        n.getSession().save();
-        
-        flushIndex(testPath.getSession().getRepository());
-        
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
+        String[] extraChildNodeContent = new String[] {
+                "/test/Document1/Document1/compoundchild",  "hippo:testcompoundstructure",
+                "compoundtitle", "This is the compoundtitle containing " + word
+        };
+
+        createContent(defaultContent, extraChildNodeContent);
+
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
@@ -295,16 +284,16 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     
     @Test
     public void testAddSecondLevelChildNode() throws Exception {
-        createCompoundStructure(false);
-        Node n = this.testPath.getNode("Document1/Document1/compoundchild");
-        Node html = n.addNode("hippo:html2", NT_HTML);
-        String word =  "addedhtmlnode";
-        html.setProperty("hippo:testcontent", "The content property of testhtml node containing " + word);
-        n.getSession().save();
+        String word = "addedhtmlnode";
+
+        String[] extraSecondLevelChildNodeContent = new String[] {
+                "/test/Document1/Document1/compoundchild/hippo:html2",  "hippo:testhtml",
+                "hippo:testcontent", "The content property of testhtml node containing " + word
+        };
+
+        createContent(defaultContent, extraSecondLevelChildNodeContent);
         
-        flushIndex(testPath.getSession().getRepository());
-        
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
@@ -316,17 +305,17 @@ public class FreeTextSearchTest extends RepositoryTestCase {
     
     @Test
     public void testModifyFirstLevelChildNode() throws Exception {
-        createCompoundStructure(false);
-        Node n = this.testPath.getNode("Document1/Document1");
+        createContent(defaultContent);
+        Node n = session.getNode("/test/Document1/Document1");
        
-        Node compound = testPath.getNode("Document1/Document1/compoundchild");
+        Node compound = session.getNode("/test/Document1/Document1/compoundchild");
         String word = "changedcompound";
         compound.setProperty("compoundtitle", "This is now the new compoundtitle containing " + word);
         n.getSession().save();
         
-        flushIndex(testPath.getSession().getRepository());
+        flushIndex(session.getRepository());
         
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
@@ -335,22 +324,20 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             assertTrue(doc.getName().equals("Document1"));
         }
     }
-    
-    
+
     @Test
     public void testModifySecondLevelChildNode() throws Exception {
+        createContent(defaultContent);
+        Node n = session.getNode("/test/Document1/Document1");
        
-        createCompoundStructure(false);
-        Node n = this.testPath.getNode("Document1/Document1");
-       
-        Node html = testPath.getNode("Document1/Document1/compoundchild/hippo:testhtml");
+        Node html = session.getNode("/test/Document1/Document1/compoundchild/hippo:testhtml");
         String word = "changedtesthtml";
         html.setProperty("hippo:testcontent", "The content property of testhtml node now containing " + word);
         n.getSession().save();
         
-        flushIndex(testPath.getSession().getRepository());
+        flushIndex(session.getRepository());
         
-        String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
+        String xpath = "//element(*,hippo:testsearchdocument)[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
@@ -359,6 +346,8 @@ public class FreeTextSearchTest extends RepositoryTestCase {
             assertTrue(doc.getName().equals("Document1"));
         }
     }
+
+
 
     public static void flushIndex(Repository repository) {
         try {
