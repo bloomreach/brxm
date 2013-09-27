@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -37,14 +38,15 @@ public class TemplatePanel extends Panel {
 
         container = new WebMarkupContainer("myContainer");
         textArea = new TextArea<>("textArea", new PropertyModel<String>(this, "textModel"));
-        checkBox = new CheckBox("checkBox", new PropertyModel<Boolean>(this, "checkboxModel"));
-        checkBox.add(new AjaxEventBehavior("onchange") {
+        checkBox = new AjaxCheckBox("checkBox", new PropertyModel<Boolean>(this, "checkboxModel")) {
             private static final long serialVersionUID = 1L;
+
             @Override
-            protected void onEvent(final AjaxRequestTarget target) {
+            protected void onUpdate(final AjaxRequestTarget target) {
                 onTemplateTypeChanged(target, checkboxModel);
             }
-        });
+        };
+
 
         final Label label = new Label("title", title);
         //############################################
