@@ -181,10 +181,10 @@ public abstract class RepositoryTestCase {
             session = null;
         }
 
-        checkState();
-
         if (clearRepository) {
             clearRepository();
+        } else {
+            checkState();
         }
     }
 
