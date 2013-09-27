@@ -373,7 +373,20 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     @Override
     public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add) throws RepositoryException, IOException {
-        final NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(add);
+        List<NodeState> includedNodeStates = new ArrayList<>();
+        // since NodeState does not have hashcode/equals impls, we need to use NodeId for caches
+        Set<NodeId> excludedIdsCache = new HashSet<>();
+        Set<NodeId> includedIdsCache = new HashSet<>();
+        while (add.hasNext()) {
+            NodeState next = add.next();
+            if (!skipIndexing(next, excludedIdsCache, includedIdsCache)) {
+                includedNodeStates.add(next);
+            } else {
+                log.debug("Nodestate '{}' is marked to be skipped for indexing.", next.getId());
+            }
+        }
+
+        final NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(includedNodeStates.iterator());
         final NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
         super.updateNodes(removedIt, addedIt);
         updateContainingDocumentNodes(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
@@ -422,7 +435,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         if (node.getId() instanceof HippoNodeId) {
             log.warn("Indexing a virtual node should never happen, and not be possible. Return an empty lucene doc");
-            return new Document();
+            return null;
         }
 
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node, getContext(), nsMappings, getParser());
@@ -449,6 +462,65 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         return doc;
+    }
+
+    private boolean skipIndexing(final  NodeState node,
+                                 final Set<NodeId> excludedIdsCache,
+                                 final Set<NodeId> includedIdsCache) throws RepositoryException {
+        return skipIndexing(node, excludedIdsCache, includedIdsCache, new ArrayList<NodeId>());
+    }
+
+    /*
+     * checks recursively all ancestor states whether non of them is marked to be excluded for indexing
+     * once a state is found to be excluded for indexing, all the states that were checked are added to the
+     * 'excludedIdsCache' to avoid pointless double checking.
+     * The nodeIdHierarchy keeps track of checked
+     */
+    private boolean skipIndexing(final NodeState node,
+                                 final Set<NodeId> excludedIdsCache,
+                                 final Set<NodeId> includedIdsCache,
+                                 final List<NodeId> nodeIdHierarchy) throws RepositoryException {
+
+        if (node.getParentId() == null) {
+            // there was not found a 'skip index' node, this add nodeIdHierarchy list to the include set
+            includedIdsCache.addAll(nodeIdHierarchy);
+            return false;
+        }
+        nodeIdHierarchy.add(node.getNodeId());
+
+        final NodeId nodeId = node.getNodeId();
+
+        if (includedIdsCache.contains(nodeId)) {
+            includedIdsCache.addAll(nodeIdHierarchy);
+            return false;
+        } else if (excludedIdsCache.contains(nodeId)) {
+            // a ancestor was already found to be excluded for indexing
+            excludedIdsCache.addAll(nodeIdHierarchy);
+            return true;
+        }
+
+        try {
+            if (node.getPropertyNames().contains(getIndexingConfig().getJcrMixinPropertyName())) {
+                PropertyId id = new PropertyId(node.getNodeId(), getIndexingConfig().getJcrMixinPropertyName());
+                PropertyState propState =
+                        (PropertyState) getContext().getItemStateManager().getItemState(id);
+                final InternalValue[] values = propState.getValues();
+                for (InternalValue value : values) {
+                    if (value.getName().equals(getIndexingConfig().getSkipIndexName())) {
+                        excludedIdsCache.addAll(nodeIdHierarchy);
+                        return true;
+                    }
+                }
+            }
+
+            final NodeState parent = (NodeState) getContext().getItemStateManager().getItemState(node.getParentId());
+            return skipIndexing(parent, excludedIdsCache, includedIdsCache, nodeIdHierarchy);
+
+        } catch (ItemStateException e) {
+            String msg = "Error while indexing node: " + nodeId + " of "
+                    + "type: " + node.getNodeTypeName();
+            throw new RepositoryException(msg, e);
+        }
     }
 
     /**

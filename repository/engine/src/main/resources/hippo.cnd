@@ -141,3 +141,6 @@
 + * (hippo:initializeitem) = hippo:initializeitem
 
 [hippo:deleted] > hippo:document, mix:versionable
+
+// marker mixin that excludes the node from being indexed
+[hippo:skipindex] mixin

@@ -71,7 +71,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
 
     private Name hippoDocument;
-
     
     /**
      * QName's of all the child node that should be aggregated
@@ -105,6 +104,9 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      */
     private final Map<String, Boolean> isExcludedSingleIndexTerm = new HashMap<String, Boolean>();
 
+    private Name skipIndex;
+
+    private Name jcrMixinProperty;
 
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
@@ -183,7 +185,8 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         hippoText = nameResolver.getQName(HippoNodeType.HIPPO_TEXT);
         hippoHandle = nameResolver.getQName(HippoNodeType.NT_HANDLE);
         hippoDocument = nameResolver.getQName(HippoNodeType.NT_DOCUMENT);
-        
+        skipIndex = nameResolver.getQName(HippoNodeType.NT_SKIPINDEX);
+        jcrMixinProperty = nameResolver.getQName("jcr:mixinTypes");
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
     }
 
@@ -296,5 +299,15 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
     public String getHippoNamespaceURI() {
         // we know the hippo:handle is of namespace hippo, hence we can take the hippo namespace from here.
         return getHippoHandleName().getNamespaceURI();
+    }
+
+    @Override
+    public Name getSkipIndexName() {
+        return skipIndex;
+    }
+
+    @Override
+    public Name getJcrMixinPropertyName() {
+        return jcrMixinProperty;
     }
 }

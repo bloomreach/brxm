@@ -174,6 +174,8 @@ public interface HippoNodeType {
 
     public static final String NT_DELETED = "hippo:deleted";
 
+    public static final String NT_SKIPINDEX = "hippo:skipindex";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_SYSTEM = "hipposys:system";
@@ -416,4 +418,5 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_LOGTAIL = "hipposys:logtail";
 
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
+
 }

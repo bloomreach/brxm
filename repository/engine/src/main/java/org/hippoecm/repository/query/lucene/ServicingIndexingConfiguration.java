@@ -92,4 +92,8 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      */
     String getHippoNamespaceURI();
 
+    Name getSkipIndexName();
+
+    Name getJcrMixinPropertyName();
+
 }
