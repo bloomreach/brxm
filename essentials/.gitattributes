@@ -107,6 +107,7 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/TemplatePanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/eventsdocument.xml -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/freemarkertemplate.ftl -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/jsptemplate.ftl -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/newsdocument.xml -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text

@@ -26,13 +26,10 @@ import java.util.Map;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
-
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ComponentsUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils;
@@ -50,15 +47,17 @@ import com.google.common.base.Strings;
  */
 public class AttachComponentPanel extends EssentialsWizardStep {
 
-    private static final long serialVersionUID = 1L;
     public static final String JSP_TEMPLATE = "jsptemplate.ftl";
+    public static final String FREEMARKER_TEMPLATE = "freemarkertemplate.ftl";
+    private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(AttachComponentPanel.class);
     private final ComponentsWizard parent;
     private final DropdownPanel sitesChoice;
     private final DropdownPanel componentsChoice;
     private final DropdownPanel beansDropdown;
-
     private final TemplatePanel scriptPanel;
+    private String selectedBean;
+    private boolean freemarker;
 
     public AttachComponentPanel(final ComponentsWizard parent, final String id) {
         super(id);
@@ -79,15 +78,8 @@ public class AttachComponentPanel extends EssentialsWizardStep {
                     log.debug("No site selected");
                     return;
                 }
-                // load components:
                 final List<String> addedComponents = ComponentsPanel.Util.getAddedComponents(context, selectedSite);
                 componentsChoice.changeModel(target, addedComponents);
-           /*     // load site containers:
-                final List<String> existingContainers = ComponentsPanel.Util.getExistingContainers(context, selectedSite);
-                containerChoice.setChoices(existingContainers);
-                // render components
-                target.add(componentsChoice, containerChoice);*/
-
             }
         });
 
@@ -113,6 +105,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         final List<String> beans = BeanWriterUtils.findExitingBeanNames(context, "java");
         beansDropdown = new DropdownPanel("beansList", "Select Hippo Bean for detail page:", form, beans, new EventListener<String>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
                 if (selectedItems.size() > 0) {
@@ -124,7 +117,15 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         // ADD TEXT AREA
         //############################################
 
-        scriptPanel = new TemplatePanel("scriptPanel", "JSP/FreemarkerTemplate",form);
+        scriptPanel = new TemplatePanel("scriptPanel", "JSP/FreemarkerTemplate", form){
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onTemplateTypeChanged(final AjaxRequestTarget target, final boolean freemarker) {
+                swapTemplate(target, freemarker);
+            }
+        };
         //############################################
         // SETUP
         //############################################
@@ -137,17 +138,22 @@ public class AttachComponentPanel extends EssentialsWizardStep {
 
     }
 
+    private void swapTemplate(final AjaxRequestTarget target, final boolean model) {
+        freemarker = model;
+        onBeanSelected(target, selectedBean);
+    }
+
     private void onBeanSelected(final AjaxRequestTarget target, final String selected) {
-        if(Strings.isNullOrEmpty(selected)){
+        if (Strings.isNullOrEmpty(selected)) {
             log.debug("No bean selected");
             return;
         }
+        selectedBean = selected;
         log.info("selected bean: {}", selected);
-
         // update model
         final Map<String, Path> beans = BeanWriterUtils.mapExitingBeanNames(parent.getContext(), "java");
         final Path path = beans.get(selected);
-        if(path ==null){
+        if (path == null) {
             log.warn("Path was null for bean name {}", selected);
             return;
         }
@@ -161,7 +167,8 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             listObject.add(document);
         }
         data.put("repeatable", listObject);
-        String templateText = TemplateUtils.injectTemplate(JSP_TEMPLATE, data, getClass());
+        final String myTemplate = freemarker? FREEMARKER_TEMPLATE : JSP_TEMPLATE;
+        String templateText = TemplateUtils.injectTemplate(myTemplate, data, getClass());
         log.info(templateText);
         scriptPanel.setTextModel(target, templateText);
         scriptPanel.show(target);
@@ -170,7 +177,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
 
     private void onComponentSelected(final AjaxRequestTarget target, final String selected) {
         log.info("Component selected# {}", selected);
-        if(selected.equals("Document Component")){
+        if (selected.equals("Document Component")) {
             beansDropdown.show(target);
         }
 

@@ -1,5 +1,10 @@
 package org.onehippo.cms7.essentials.components.gui.panel;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -8,8 +13,11 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
+import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -24,13 +32,20 @@ public class TemplatePanel extends Panel {
     private boolean checkboxModel;
     private String textModel;
     private final WebMarkupContainer container;
-
     public TemplatePanel(final String id, final String title, final Form<?> form) {
         super(id);
 
         container = new WebMarkupContainer("myContainer");
         textArea = new TextArea<>("textArea", new PropertyModel<String>(this, "textModel"));
         checkBox = new CheckBox("checkBox", new PropertyModel<Boolean>(this, "checkboxModel"));
+        checkBox.add(new AjaxEventBehavior("onchange") {
+            private static final long serialVersionUID = 1L;
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+                  onTemplateTypeChanged(target, checkboxModel);
+            }
+        });
+
         final Label label = new Label("title", title);
         //############################################
         // SETUP
@@ -46,6 +61,9 @@ public class TemplatePanel extends Panel {
 
     }
 
+    public void onTemplateTypeChanged(final AjaxRequestTarget target, final boolean checkboxModel) {
+        log.info("Type changed: {}", checkboxModel);
+    }
 
 
     public void setTextModel(final AjaxRequestTarget target, final String model){
