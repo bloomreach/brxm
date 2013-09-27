@@ -78,6 +78,7 @@ public final class TemplateUtils {
                 }
                 // add type:
                 final PropertyWrapper propertyWrapper = new PropertyWrapper(extractPropertyName(identifier), primitiveName);
+                log.info("primitive type {}", identifier);
                 propertyWrapper.setPrimitiveType(true);
                 collection.add(propertyWrapper);
                 continue;

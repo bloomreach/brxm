@@ -40,7 +40,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TemplateUtilsTest extends BaseTest {
 
-    public static final int EXPECTED_PROPERTY_SIZE = 7;
+    public static final int EXPECTED_PROPERTY_SIZE = 6;
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
     private List<MemoryBean> memoryBeans;
 

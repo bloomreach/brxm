@@ -42,7 +42,7 @@ public class TemplatePanel extends Panel {
             private static final long serialVersionUID = 1L;
             @Override
             protected void onEvent(final AjaxRequestTarget target) {
-                  onTemplateTypeChanged(target, checkboxModel);
+                onTemplateTypeChanged(target, checkboxModel);
             }
         });
 
