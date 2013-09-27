@@ -103,6 +103,8 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentRegisterPanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentTemplatePanel.html -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/DocumentTemplatePanel.java -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/TemplatePanel.html -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/TemplatePanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/eventsdocument.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/jsptemplate.ftl -text

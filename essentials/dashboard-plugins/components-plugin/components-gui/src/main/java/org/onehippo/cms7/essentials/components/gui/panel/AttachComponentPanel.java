@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -58,8 +57,8 @@ public class AttachComponentPanel extends EssentialsWizardStep {
     private final DropdownPanel sitesChoice;
     private final DropdownPanel componentsChoice;
     private final DropdownPanel beansDropdown;
-    private  String templateText;
-    private final TextArea<String> scriptTemplate;
+
+    private final TemplatePanel scriptPanel;
 
     public AttachComponentPanel(final ComponentsWizard parent, final String id) {
         super(id);
@@ -125,16 +124,12 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         // ADD TEXT AREA
         //############################################
 
-        scriptTemplate = new TextArea<>("scriptTemplate", new PropertyModel<String>(this, "templateText"));
-
+        scriptPanel = new TemplatePanel("scriptPanel", "JSP/FreemarkerTemplate",form);
         //############################################
         // SETUP
         //############################################
         beansDropdown.hide(null);
-        scriptTemplate.setOutputMarkupPlaceholderTag(true);
-        scriptTemplate.setOutputMarkupId(true);
-        scriptTemplate.setVisible(false);
-        form.add(scriptTemplate);
+        scriptPanel.hide(null);
         add(form);
         //############################################
         // NEW SELECT PANEL
@@ -148,7 +143,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             return;
         }
         log.info("selected bean: {}", selected);
-        scriptTemplate.setVisible(true);
+
         // update model
         final Map<String, Path> beans = BeanWriterUtils.mapExitingBeanNames(parent.getContext(), "java");
         final Path path = beans.get(selected);
@@ -166,10 +161,10 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             listObject.add(document);
         }
         data.put("repeatable", listObject);
-        templateText = TemplateUtils.injectTemplate(JSP_TEMPLATE, data, getClass());
+        String templateText = TemplateUtils.injectTemplate(JSP_TEMPLATE, data, getClass());
         log.info(templateText);
-        scriptTemplate.modelChanged();
-        target.add(scriptTemplate);
+        scriptPanel.setTextModel(target, templateText);
+        scriptPanel.show(target);
 
     }
 
