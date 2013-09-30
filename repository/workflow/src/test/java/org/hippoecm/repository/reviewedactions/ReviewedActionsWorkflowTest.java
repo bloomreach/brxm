@@ -18,8 +18,11 @@ package org.hippoecm.repository.reviewedactions;
 import java.rmi.RemoteException;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -84,14 +87,14 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testBasic() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void testBasic() throws WorkflowException, RepositoryException, RemoteException {
         Node node = getNode("test/myarticle/myarticle");
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         workflow.publish();
     }
 
     @Test
-    public void testReviewedAction() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void testReviewedAction() throws WorkflowException, RepositoryException, RemoteException {
         Node node;
         {
             assertTrue(session.getRootNode().hasNode("test"));
@@ -104,6 +107,9 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             Document document = workflow.obtainEditableInstance();
 
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
+
+            assertDraftNotSearchable(node);
+
             assertNotNull(node);
             assertNotNull(document);
             assertEquals(node.getIdentifier(), document.getIdentity());
@@ -191,6 +197,21 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
             reviewedWorkflow.publish();
 
+        }
+    }
+
+    private void assertDraftNotSearchable(final Node draftDocument) throws RepositoryException {
+        String draftPath = draftDocument.getPath();
+        String xpath = "//*[@hippostd:state='draft']";
+        Query query = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+        QueryResult queryResult = query.execute();
+
+        final NodeIterator nodes = queryResult.getNodes();
+        while (nodes.hasNext()) {
+            // we should not find the added draft as drafts do not get indexed!
+            if (nodes.nextNode().getPath().equals(draftPath)) {
+                fail("Newly created draft document should not be part of search results");
+            }
         }
     }
 
