@@ -26,20 +26,18 @@
     Hippo.showParameterInUrl = function(name, value) {
         if (window.history && window.history.pushState) {
             var nameValuePair = name + '=' + value,
-                urlParameters = document.location.toString().split('?'),
-                urlBase = urlParameters.shift(),
+                query = document.location.search,
+                url = document.location.protocol + '//' + document.location.host + document.location.pathname,
                 hasValue = value.length > 0,
-                url, queryString, parameters, isChanged, i;
+                parameters, isChanged, i;
 
-            if (urlParameters.length === 0) {
-                if (hasValue) {
-                    url = urlBase + '?' + nameValuePair;
-                } else {
-                    url = urlBase;
-                }
+            if (query.length <= 1 && hasValue) {
+                url += '?' + nameValuePair;
             } else {
-                queryString = urlParameters.join('?'); // join remaining parts, so parameters containing ? are handled correctly
-                parameters = queryString.split(/[&;]/g);
+                if (query.charAt(0) === '?') {
+                    query = query.substring(1);
+                }
+                parameters = query.split(/[&;]/g);
                 isChanged = false;
                 for (i = parameters.length - 1; i >= 0; i--) {
                     if (parameters[i].indexOf(name + '=') === 0) {
@@ -51,7 +49,6 @@
                         isChanged = true;
                     }
                 }
-                url = urlBase;
                 if (parameters.length > 0) {
                     url += '?' + parameters.join('&');
                 }
@@ -59,6 +56,7 @@
                     url += '&' + nameValuePair;
                 }
             }
+            url += document.location.hash;
             window.history.pushState(null, null, url);
         }
     };
