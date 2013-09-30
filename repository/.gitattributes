@@ -226,7 +226,7 @@ engine/src/main/resources/org/hippoecm/repository/BootstrapHippoRepository.xml s
 engine/src/main/resources/org/hippoecm/repository/configuration.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/impl/reference-workspace.xml -text
 engine/src/test/fixtures/dump.zip -text
-engine/src/test/java/org/hippoecm/repository/ChildAxisQueryTests.java -text
+engine/src/test/java/org/hippoecm/repository/ChildAxisQueryTest.java -text
 engine/src/test/java/org/hippoecm/repository/DereferencedExportImportTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/DocumentViewExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/ExportCndTest.java svneol=native#text/plain

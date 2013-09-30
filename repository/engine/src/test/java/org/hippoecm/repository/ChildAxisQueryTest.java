@@ -23,7 +23,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 
-public class ChildAxisQueryTests extends RepositoryTestCase
+public class ChildAxisQueryTest extends RepositoryTestCase
 
 {
 
