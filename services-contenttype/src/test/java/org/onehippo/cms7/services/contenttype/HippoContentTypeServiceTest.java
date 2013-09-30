@@ -58,10 +58,17 @@ public class HippoContentTypeServiceTest extends PluginTest {
     @After
     public void tearDown() throws Exception {
         serviceModule.shutdown();
-        if (session != null && session.getRootNode().hasNode("hippo:namespaces/test")) {
-            session.getRootNode().getNode("hippo:namespaces/test").remove();
-            session.save();
-            session.refresh(false);
+        if (session != null ) {
+            if (session.getRootNode().hasNode("hippo:namespaces/test")) {
+                session.getRootNode().getNode("hippo:namespaces/test").remove();
+                session.save();
+                session.refresh(false);
+            }
+            if (session.getRootNode().hasNode("testNode")) {
+                session.getRootNode().getNode("testNode").remove();
+                session.save();
+                session.refresh(false);
+            }
         }
         super.tearDown();
     }
