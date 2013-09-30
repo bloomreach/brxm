@@ -94,6 +94,4 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
 
     Name getSkipIndexName();
 
-    Name getJcrMixinPropertyName();
-
 }

@@ -368,10 +368,8 @@ public class FreeTextSearchTest extends RepositoryTestCase {
 
         NodeIterator nodes = queryResult.getNodes();
         assertEquals(1L, nodes.getSize());
-        while(nodes.hasNext()) {
-            Node doc = nodes.nextNode();
-            assertTrue(doc.getName().equals("Document1"));
-        }
+        Node doc = nodes.nextNode();
+        assertTrue(doc.getName().equals("Document1"));
 
 
         // and we should not find nodes ***BELOW*** Document2 either:

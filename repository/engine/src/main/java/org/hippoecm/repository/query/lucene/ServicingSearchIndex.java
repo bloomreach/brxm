@@ -474,7 +474,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * checks recursively all ancestor states whether non of them is marked to be excluded for indexing
      * once a state is found to be excluded for indexing, all the states that were checked are added to the
      * 'excludedIdsCache' to avoid pointless double checking.
-     * The nodeIdHierarchy keeps track of checked
+     * The nodeIdHierarchy keeps track of checked nodes
      */
     private boolean skipIndexing(final NodeState node,
                                  final Set<NodeId> excludedIdsCache,
@@ -482,13 +482,14 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                                  final List<NodeId> nodeIdHierarchy) throws RepositoryException {
 
         if (node.getParentId() == null) {
-            // there was not found a 'skip index' node, this add nodeIdHierarchy list to the include set
+            // no 'skip index' node was found, add this nodeIdHierarchy list to the include set
             includedIdsCache.addAll(nodeIdHierarchy);
             return false;
         }
-        nodeIdHierarchy.add(node.getNodeId());
 
         final NodeId nodeId = node.getNodeId();
+        nodeIdHierarchy.add(nodeId);
+
 
         if (includedIdsCache.contains(nodeId)) {
             includedIdsCache.addAll(nodeIdHierarchy);
@@ -500,16 +501,10 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         try {
-            if (node.getPropertyNames().contains(getIndexingConfig().getJcrMixinPropertyName())) {
-                PropertyId id = new PropertyId(node.getNodeId(), getIndexingConfig().getJcrMixinPropertyName());
-                PropertyState propState =
-                        (PropertyState) getContext().getItemStateManager().getItemState(id);
-                final InternalValue[] values = propState.getValues();
-                for (InternalValue value : values) {
-                    if (value.getName().equals(getIndexingConfig().getSkipIndexName())) {
-                        excludedIdsCache.addAll(nodeIdHierarchy);
-                        return true;
-                    }
+            for (Name mixinTypeName : node.getMixinTypeNames()) {
+                if (mixinTypeName.equals(getIndexingConfig().getSkipIndexName())) {
+                    excludedIdsCache.addAll(nodeIdHierarchy);
+                    return true;
                 }
             }
 

@@ -106,7 +106,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
 
     private Name skipIndex;
 
-    private Name jcrMixinProperty;
 
     @Override
     public void init(Element config, QueryHandlerContext context, NamespaceMappings nsMappings) throws Exception {
@@ -186,7 +185,6 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         hippoHandle = nameResolver.getQName(HippoNodeType.NT_HANDLE);
         hippoDocument = nameResolver.getQName(HippoNodeType.NT_DOCUMENT);
         skipIndex = nameResolver.getQName(HippoNodeType.NT_SKIPINDEX);
-        jcrMixinProperty = nameResolver.getQName("jcr:mixinTypes");
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
     }
 
@@ -306,8 +304,4 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return skipIndex;
     }
 
-    @Override
-    public Name getJcrMixinPropertyName() {
-        return jcrMixinProperty;
-    }
 }
