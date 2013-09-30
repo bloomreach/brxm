@@ -495,22 +495,19 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             includedIdsCache.addAll(nodeIdHierarchy);
             return false;
         } else if (excludedIdsCache.contains(nodeId)) {
-            // a ancestor was already found to be excluded for indexing
+            // an ancestor was already found to be excluded for indexing
+            excludedIdsCache.addAll(nodeIdHierarchy);
+            return true;
+        }
+
+        if (node.getMixinTypeNames().contains(getIndexingConfig().getSkipIndexName())) {
             excludedIdsCache.addAll(nodeIdHierarchy);
             return true;
         }
 
         try {
-            for (Name mixinTypeName : node.getMixinTypeNames()) {
-                if (mixinTypeName.equals(getIndexingConfig().getSkipIndexName())) {
-                    excludedIdsCache.addAll(nodeIdHierarchy);
-                    return true;
-                }
-            }
-
             final NodeState parent = (NodeState) getContext().getItemStateManager().getItemState(node.getParentId());
             return skipIndexing(parent, excludedIdsCache, includedIdsCache, nodeIdHierarchy);
-
         } catch (ItemStateException e) {
             String msg = "Error while indexing node: " + nodeId + " of "
                     + "type: " + node.getNodeTypeName();
