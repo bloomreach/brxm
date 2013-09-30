@@ -1,4 +1,5 @@
 /*.iml
+/.idea
 api/*.iml
 api/target
 commons/*.iml
