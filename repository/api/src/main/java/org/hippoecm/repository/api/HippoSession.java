@@ -55,7 +55,7 @@ public interface HippoSession extends Session {
      * node which will be a copy of srcNode
      * @return the resulting copy
      * @throws RepositoryException a generic error while accessing the repository
-     * @deprecated Use {@link org.hippoecm.repository.util.JcrUtils.copy()} instead
+     * @deprecated Use {@link org.hippoecm.repository.util.JcrUtils#copy(javax.jcr.Session, String, String)} instead
      */
     public Node copy(Node srcNode, String destAbsNodePath) throws RepositoryException;
 
