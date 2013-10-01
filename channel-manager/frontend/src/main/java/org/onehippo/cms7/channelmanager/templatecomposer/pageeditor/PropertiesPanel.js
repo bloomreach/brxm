@@ -481,9 +481,9 @@
                 url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
                 method: 'POST',
                 success: function() {
-                    this.fireEvent('save');
-                    Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
                     Ext.getCmp('componentPropertiesPanel').load(this.newVariantId, true);
+                    Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.newVariantId);
+                    this.fireEvent('save');
                 }.bind(this),
                 failure: function(form, action) {
                     Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
