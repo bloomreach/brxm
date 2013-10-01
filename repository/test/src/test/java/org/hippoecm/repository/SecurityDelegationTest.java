@@ -19,10 +19,13 @@ import java.util.Arrays;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +33,9 @@ import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class SecurityDelegationTest extends RepositoryTestCase {
 
@@ -117,18 +121,55 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         assertFalse(ion.nodeExists("/test/wonderland"));
     }
 
+    /**
+     * Sanity test that non delegated searches are correct
+     */
+    @Test
+    public void aliceCanSearchWonderlandButBobCannot() throws Exception {
+        final Session alice = session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final Node wonderland = alice.getNode("/test/wonderland");
+        wonderland.setProperty("members", "alice, etc.");
+        alice.save();
+        String xpath = "/jcr:root" + wonderland.getPath();
+        assertEquals(1L, alice.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute().getNodes().getSize());
+
+        final Session bob = session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        assertFalse(bob.nodeExists("/test/wonderland"));
+
+        assertEquals(0L, bob.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute().getNodes().getSize());
+    }
+
+
     @Test
     public void aliceDelegatesWonderlandAccessToBob() throws Exception {
         final HippoSession bob = (HippoSession) session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
-        final Session alice = session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
-        final Session testSession = bob.createSecurityDelegate(alice);
+        assertFalse(bob.nodeExists("/test/wonderland"));
 
+        final Session alice = session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        assertTrue(alice.nodeExists("/test/wonderland"));
+
+        final Session testSession = bob.createSecurityDelegate(alice);
         // bob can get access to wonderland in the new session
         assertTrue(testSession.nodeExists("/test/wonderland"));
         final Node wonderland = testSession.getNode("/test/wonderland");
         wonderland.setProperty("members", "bob, etc.");
         testSession.save();
     }
+
+    @Test
+    public void aliceDelegatesWonderlandSearchAccessToBob() throws Exception {
+        final HippoSession bob = (HippoSession) session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        String xpath = "/jcr:root/test/wonderland";
+        assertEquals(0L, bob.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute().getNodes().getSize());
+
+        final Session alice = session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        assertEquals(1L, alice.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute().getNodes().getSize());
+
+        final Session testSession = bob.createSecurityDelegate(alice);
+        // bob can search wonderland in the new session
+        assertEquals(1L, testSession.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute().getNodes().getSize());
+    }
+
 
     @Test
     public void aliceCanBeRevokedWonderlandAccessByProgrammaticDomainRuleExtension() throws Exception {
@@ -138,9 +179,63 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("alicesdomain", "books", Arrays.asList(facetRule));
 
         final HippoSession alice = (HippoSession) session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
-        final Session bob = session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
-        final Session testSession = alice.createSecurityDelegate(bob, domainRuleExtension);
-
+        final HippoSession bob = (HippoSession)session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        final Session testSession = bob.createSecurityDelegate(alice, domainRuleExtension);
         assertFalse(testSession.nodeExists("/test/wonderland"));
     }
+
+    @Test
+    public void aliceSearchCanBeRevokedWonderlandAccessByProgrammaticDomainRuleExtension() throws Exception {
+        // exclude /test/wonderland from alices domain by adding a facet rule to the existing institutions domain rule
+        // that contradicts the creator property on the wonderland node
+        final FacetRule facetRule = new FacetRule("type", "poem", true, false, PropertyType.STRING);
+        final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("alicesdomain", "books", Arrays.asList(facetRule));
+
+        final HippoSession alice = (HippoSession) session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final Session bob = session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        final Session testSession = alice.createSecurityDelegate(bob, domainRuleExtension);
+        String xpath = "/jcr:root/test/wonderland";
+        assertEquals(0L, testSession.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute().getNodes().getSize());
+    }
+
+    @Test
+    public void sessionDelegationIsSymmetricWrtAccess() throws Exception {
+        final HippoSession alice = (HippoSession) session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final HippoSession bob = (HippoSession)session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        Session delegateOne = alice.createSecurityDelegate(bob);
+        Session delegateTwo = bob.createSecurityDelegate(alice);
+        checkAccess(delegateOne.getRootNode(), delegateTwo);
+        checkAccess(delegateTwo.getRootNode(), delegateOne);
+    }
+
+    private void checkAccess(final Node node, final Session other) throws RepositoryException {
+        assertTrue(other.itemExists(node.getPath()));
+        for (Node child :new NodeIterable(node.getNodes())) {
+            if (!((HippoNode)child).isVirtual()) {
+                checkAccess(child, other);
+            }
+        }
+    }
+
+    @Test
+    public void sessionDelegationUserIdSortedConcatenated() throws Exception {
+        final HippoSession alice = (HippoSession) session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final HippoSession bob = (HippoSession)session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        Session delegateOne = alice.createSecurityDelegate(bob);
+        assertEquals(alice.getUserID()+","+bob.getUserID(), delegateOne.getUserID());
+        Session delegateTwo = bob.createSecurityDelegate(alice);
+        assertTrue(delegateOne.getUserID().equals(delegateTwo.getUserID()));
+    }
+
+    @Test
+    public void domainRuleExtensionNotReflectedInUserId() throws Exception {
+        final FacetRule facetRule = new FacetRule("type", "poem", true, false, PropertyType.STRING);
+        final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("alicesdomain", "books", Arrays.asList(facetRule));
+        final HippoSession alice = (HippoSession) session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final Session bob = session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        final Session testSession = alice.createSecurityDelegate(bob, domainRuleExtension);
+        assertEquals(alice.getUserID()+","+bob.getUserID(), testSession.getUserID());
+    }
+
+
 }
