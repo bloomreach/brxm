@@ -30,6 +30,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.eventbus.HippoAnnotationHandlerFinder;
 import com.google.common.eventbus.HippoSynchronizedEventHandler;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistration;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
@@ -100,9 +101,11 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
                 }
             }
         } catch (PathNotFoundException e) {
-            log.warn("Exception while reading configuration", e);
-        } finally {
             session.refresh(false);
+            log.warn("Exception while reading configuration", e);
+        } catch (Exception e) {
+            session.refresh(false);
+            throw e;
         }
     }
 
@@ -110,7 +113,6 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         long lastItem = -1L;
 
         try {
-            String clusterId = getClusterId();
             if (session.nodeExists(moduleConfigPath)) {
                 Node moduleConfigNode = session.getNode(moduleConfigPath);
 
@@ -124,11 +126,11 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
             }
         } catch (ItemNotFoundException infExp) {
             log.error("Error in getting last processed item ", infExp);
-        } finally {
-            log.debug("last item is {}", lastItem);
+        } catch (Exception e) {
             session.refresh(false);
+            throw e;
         }
-
+        log.debug("last item is {}", lastItem);
         return lastItem;
     }
 
@@ -137,9 +139,7 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
         log.debug("processed item: {}", timeStamp);
 
         try {
-            session.refresh(true);
 
-            String clusterId = getClusterId();
             if (session.nodeExists(moduleConfigPath)) {
                 Node moduleConfigNode = session.getNode(moduleConfigPath);
 
@@ -148,6 +148,11 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
                     clusterNode = moduleConfigNode.getNode(clusterId);
                 } else {
                     clusterNode = moduleConfigNode.addNode(clusterId, BroadcastConstants.NT_CLUSTERNODE);
+                }
+                if (!clusterNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+                    // make sure the frequently updated clusterNode is not indexed as we do not need to search
+                    // for it but it would otherwise pollute the search index
+                    clusterNode.addMixin(HippoNodeType.NT_SKIPINDEX);
                 }
 
                 Node subscriberNode;
@@ -162,13 +167,10 @@ public class BroadcastModule implements ConfigurableDaemonModule, BroadcastServi
             }
         } catch (ItemNotFoundException infExp) {
             log.error("Error in saving last node value ", infExp);
-        } finally {
+        } catch (Exception e) {
             session.refresh(false);
+            throw e;
         }
-    }
-
-    private String getClusterId() {
-        return this.clusterId;
     }
 
     @Override

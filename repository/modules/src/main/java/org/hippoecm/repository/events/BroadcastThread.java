@@ -236,8 +236,9 @@ class BroadcastThread extends Thread {
 
             return nodesSorted;
 
-        } finally {
+        } catch (Exception e) {
             session.refresh(false);
+            throw e;
         }
     }
 
