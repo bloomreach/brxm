@@ -215,6 +215,10 @@ public class MountResource extends AbstractConfigResource {
         Node liveConfiguration = session.getNode(liveConfigurationPath);
         HippoSession hippoSession = HstConfigurationUtils.getNonProxiedSession(session);
         hippoSession.copy(liveConfiguration, newPreviewConfigurationPath);
+        Node previewConfig = hippoSession.getNode(newPreviewConfigurationPath);
+        if (!previewConfig.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+            previewConfig.addMixin(HippoNodeType.NT_SKIPINDEX);
+        }
         setVersionForPreviewSitesWithConfiguration(liveConfigurationPath, requestContext, newVersion);
     }
 
