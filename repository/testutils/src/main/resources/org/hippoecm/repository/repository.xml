@@ -49,14 +49,14 @@
       <param name="mergeFactor" value="5"/>
       <param name="maxFieldLength" value="10000"/>
       <param name="bufferSize" value="1000"/>
-      <param name="cacheSize" value="1000"/>
+      <param name="cacheSize" value="100000"/>
       <param name="forceConsistencyCheck" value="false"/>
       <param name="enableConsistencyCheck" value="false"/>
       <param name="autoRepair" value="true"/>
       <param name="analyzer" value="org.hippoecm.repository.query.lucene.StandardHippoAnalyzer"/>
       <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
       <param name="respectDocumentOrder" value="false"/>
-      <param name="resultFetchSize" value="2147483647"/>
+      <param name="resultFetchSize" value="100"/>
       <param name="extractorPoolSize" value="0"/>
       <param name="extractorTimeout" value="100"/>
       <param name="extractorBackLogSize" value="100"/>
