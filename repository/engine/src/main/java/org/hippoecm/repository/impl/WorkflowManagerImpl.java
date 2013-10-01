@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -76,6 +74,8 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
 import org.onehippo.repository.util.AnnotationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
 
 /** This class is not part of a public accessible API or extensible interface */
 public class WorkflowManagerImpl implements WorkflowManager {
@@ -652,7 +652,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
             workflowSubject = new Document();
             workflowSubject.setIdentity(subjectId);
             this.methodName = methodName;
-            this.parameterTypes = parameterTypes;
+            this.parameterTypes = new Class[parameterTypes.length];
+            for (int index = 0; index < parameterTypes.length; index++) {
+                Class<?> type = parameterTypes[index];
+                if (type.isPrimitive()) {
+                    type = PRIMITIVE_TO_OBJECT_TYPES.get(type);
+                }
+                this.parameterTypes[index] = type;
+            }
             this.arguments = arguments;
             this.interactionId = interactionId;
             this.interaction = interaction;
@@ -661,40 +668,30 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
 
         WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Document workflowSubject, Method method, Object[] args) throws RepositoryException {
+            this(workflowNode.getParent().getName(), workflowNode.getName(), workflowSubject.getIdentity(), method.getName(), method.getParameterTypes(),
+                    (args != null ? args.clone() : null), WorkflowManagerImpl.INTERACTION_ID.get(), WorkflowManagerImpl.INTERACTION.get());
             this.workflowManager = workflowManager;
             this.workflowNode = workflowNode;
             this.workflowSubject = workflowSubject;
             this.method = method;
-            this.arguments = (args!=null ? args.clone() : null);
             this.workflowSubjectNode = null;
             try {
                 String uuid = workflowSubject.getIdentity();
-                if(uuid != null && !"".equals(uuid)) {
+                if (uuid != null && !"".equals(uuid)) {
                     this.workflowSubjectNode = rootSession.getNodeByIdentifier(uuid);
                 }
-            } catch (ItemNotFoundException ignore) {}
-            this.category = workflowNode.getParent().getName();
-            this.workflowName = workflowNode.getName();
-            this.methodName = method.getName();
-            this.parameterTypes = method.getParameterTypes();
-            this.interactionId = WorkflowManagerImpl.INTERACTION_ID.get();
-            this.interaction = WorkflowManagerImpl.INTERACTION.get();
-
+            } catch (ItemNotFoundException ignore) {
+            }
         }
 
         WorkflowInvocationImpl(WorkflowManager workflowManager, Node workflowNode, Session rootSession, Node workflowSubject, Method method, Object[] args) throws RepositoryException {
+            this(workflowNode.getParent().getName(), workflowNode.getName(), workflowSubject.getIdentifier(), method.getName(), method.getParameterTypes(),
+                    (args != null ? args.clone() : null), WorkflowManagerImpl.INTERACTION_ID.get(), WorkflowManagerImpl.INTERACTION.get());
             this.workflowManager = workflowManager;
             this.workflowNode = workflowNode;
             this.workflowSubject = null;
             this.method = method;
-            this.arguments = (args!=null ? args.clone() : null);
             this.workflowSubjectNode = rootSession.getNodeByIdentifier(workflowSubject.getIdentifier());
-            this.category = workflowNode.getParent().getName();
-            this.workflowName = workflowNode.getName();
-            this.methodName = method.getName();
-            this.parameterTypes = method.getParameterTypes();
-            this.interactionId = WorkflowManagerImpl.INTERACTION_ID.get();
-            this.interaction = WorkflowManagerImpl.INTERACTION.get();
         }
 
         @Override
