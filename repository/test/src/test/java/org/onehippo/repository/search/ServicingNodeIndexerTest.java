@@ -22,8 +22,6 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.NodeIterable;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
