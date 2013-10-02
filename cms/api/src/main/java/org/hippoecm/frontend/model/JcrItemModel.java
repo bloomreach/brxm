@@ -71,10 +71,10 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     public JcrItemModel(T item) {
         super(item);
-        TraceMonitor.track(item);
         relPath = null;
         uuid = null;
         if (item != null) {
+            TraceMonitor.track(item);
             property = !item.isNode();
             doSave();
         }
@@ -180,7 +180,9 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     @Override
     protected T load() {
         T object = loadModel();
-        TraceMonitor.track(object);
+        if (object != null) {
+            TraceMonitor.track(object);
+        }
         return object;
     }
 
@@ -256,7 +258,10 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public void detach() {
-        TraceMonitor.release(this.getObject());
+        T object = this.getObject();
+        if (object != null) {
+            TraceMonitor.release(object);
+        }
         detaching = true;
         save();
         super.detach();
@@ -339,7 +344,10 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (isAttached()) {
             log.warn("Undetached JcrItemModel "+getPath());
-            TraceMonitor.trace(this.getObject());
+            T object = this.getObject();
+            if (object != null) {
+                TraceMonitor.trace(object);
+            }
             if (RuntimeConfigurationType.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
                 detach();
             }

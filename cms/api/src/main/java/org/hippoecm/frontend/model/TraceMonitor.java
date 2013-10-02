@@ -30,21 +30,21 @@ public class TraceMonitor {
 
     private static final Map<String, String> initializedAndNotDetached = new HashMap<String, String>();
 
-    protected static final void track(Object object) {
-        if (log.isDebugEnabled() && object instanceof Item) {
-            initializedAndNotDetached.put(object.toString(), getCallee());
+    protected static final void track(Item item) {
+        if (log.isDebugEnabled()) {
+            initializedAndNotDetached.put(item.toString(), getCallee());
         }
     }
 
-    protected static final void release(Object object) {
-        if (log.isDebugEnabled() && object instanceof Item) {
-            initializedAndNotDetached.remove(object.toString());
+    protected static final void release(Item item) {
+        if (log.isDebugEnabled()) {
+            initializedAndNotDetached.remove(item.toString());
         }
     }
 
-    protected static final void trace(Object object) {
-        if (log.isDebugEnabled() && object instanceof Item && initializedAndNotDetached.containsKey(object.toString())) {
-            String stackTrace = initializedAndNotDetached.get(object.toString());
+    protected static final void trace(Item item) {
+        if (log.isDebugEnabled() && initializedAndNotDetached.containsKey(item.toString())) {
+            String stackTrace = initializedAndNotDetached.get(item.toString());
             log.debug(stackTrace);
         }
     }
