@@ -251,8 +251,6 @@ api/src/main/java/org/hippoecm/hst/resourcebundle/internal/MutableResourceBundle
 api/src/main/java/org/hippoecm/hst/resourcebundle/internal/MutableResourceBundleRegistry.java -text
 api/src/main/java/org/hippoecm/hst/resourcebundle/internal/ResourceBundleFamilyFactory.java -text
 api/src/main/java/org/hippoecm/hst/security/AuthenticationProvider.java -text
-api/src/main/java/org/hippoecm/hst/security/Role.java -text
-api/src/main/java/org/hippoecm/hst/security/User.java -text
 api/src/main/java/org/hippoecm/hst/service/Service.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/service/ServiceBeanAccessProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/service/ServiceException.java svneol=native#text/plain
@@ -420,8 +418,6 @@ commons/src/main/java/org/hippoecm/hst/resourcebundle/CompositeResourceBundle.ja
 commons/src/main/java/org/hippoecm/hst/resourcebundle/ResourceBundleUtils.java -text
 commons/src/main/java/org/hippoecm/hst/security/HstSubject.java -text
 commons/src/main/java/org/hippoecm/hst/security/PolicyContextWrapper.java -text
-commons/src/main/java/org/hippoecm/hst/security/TransientRole.java -text
-commons/src/main/java/org/hippoecm/hst/security/TransientUser.java -text
 commons/src/main/java/org/hippoecm/hst/site/HstServices.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/statistics/DefaultCounter.java -text
 commons/src/main/java/org/hippoecm/hst/util/AnnotationsScanner.java -text
