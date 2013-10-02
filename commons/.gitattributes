@@ -2,6 +2,7 @@
 /LICENSE -text
 /NOTICE -text
 /pom.xml -text
+src/main/java/org/hippoecm/hst/security/AuthenticationProvider.java -text
 src/main/java/org/hippoecm/hst/security/Role.java -text
 src/main/java/org/hippoecm/hst/security/TransientRole.java -text
 src/main/java/org/hippoecm/hst/security/TransientUser.java -text
