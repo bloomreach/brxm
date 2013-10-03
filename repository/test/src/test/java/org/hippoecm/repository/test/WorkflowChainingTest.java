@@ -15,15 +15,11 @@
  */
 package org.hippoecm.repository.test;
 
-import java.rmi.RemoteException;
 import java.util.Date;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.WorkflowException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,36 +36,25 @@ public class WorkflowChainingTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        Node node, root = session.getRootNode();
+        final Node root = session.getRootNode();
+        final Node workflows = session.getNode("/hippo:configuration/hippo:workflows");
 
-        node = root.getNode("hippo:configuration/hippo:workflows");
+        final Node category = workflows.addNode("test", "hipposys:workflowcategory");
+        final Node workflow = category.addNode("chaining", "hipposys:workflow");
+        workflow.setProperty("hipposys:nodetype", "hippo:document");
+        workflow.setProperty("hipposys:display", "Test workflow chaining");
+        workflow.setProperty("hipposys:classname", "org.hippoecm.repository.test.ChainingImpl");
+        final Node types = workflow.getNode("hipposys:types");
+        final Node type = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
+        type.setProperty("hipposys:nodetype", "hippo:document");
+        type.setProperty("hipposys:display", "Document");
+        type.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
 
-        if (!node.hasNode("test"))
-            node = node.addNode("test", "hipposys:workflowcategory");
-        else
-            node = node.getNode("test");
-        if (!node.hasNode("chaining")) {
-            node = node.addNode("chaining", "hipposys:workflow");
-            node.setProperty("hipposys:nodetype", "hippo:document");
-            node.setProperty("hipposys:display", "Test workflow chaining");
-            node.setProperty("hipposys:classname", "org.hippoecm.repository.test.ChainingImpl");
-            Node types = node.getNode("hipposys:types");
-            node = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
-            node.setProperty("hipposys:nodetype", "hippo:document");
-            node.setProperty("hipposys:display", "Document");
-            node.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
-        }
-
-        if (!root.hasNode("test")) {
-            root = root.addNode("test");
-        } else {
-            root = root.getNode("test");
-        }
-
-        node = root.addNode("testdocument", "hippo:handle");
-        node.addMixin("hippo:hardhandle");
-        node = node.addNode("testdocument", "hippo:document");
-        node.addMixin("hippo:harddocument");
+        final Node test = root.addNode("test");
+        final Node handle = test.addNode("testdocument", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+        final Node document = handle.addNode("testdocument", "hippo:document");
+        document.addMixin("hippo:harddocument");
 
         session.save();
     }
@@ -77,18 +62,15 @@ public class WorkflowChainingTest extends RepositoryTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-        session.refresh(false);
-        if (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
+        while (session.nodeExists("/hippo:configuration/hippo:workflows/test")) {
+            session.getNode("/hippo:configuration/hippo:workflows/test").remove();
         }
-        if (session.getRootNode().hasNode("hippo:configuration/hippo:workflows/test")) {
-            session.getRootNode().getNode("hippo:configuration/hippo:workflows/test").remove();
-        }
+        session.save();
         super.tearDown();
     }
 
     @Test
-    public void testChaining() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void testChaining() throws Exception {
         Node node = session.getRootNode().getNode("test/testdocument/testdocument");
         assertNotNull(node);
         synchronized(ChainingImpl.result) {
@@ -105,7 +87,7 @@ public class WorkflowChainingTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testScheduled() throws WorkflowException, MappingException, RepositoryException, RemoteException, InterruptedException {
+    public void testScheduled() throws Exception {
         Node node = session.getRootNode().getNode("test/testdocument/testdocument");
         assertNotNull(node);
         ChainingImpl.result.clear();
