@@ -356,7 +356,7 @@
                 this.componentVariants.cleanup().when(function() {
                     this.fireEvent(event);
                 }.createDelegate(this));
-            }.createDelegate(this)).otherwise(function() {
+            }.createDelegate(this)).otherwise(function(response) {
                 Hippo.Msg.alert('Error', 'Failed to reload component configuration: '
                     + response.status + ', ' + response.statusText
                     + '. Please close the component properties window and try again.');
