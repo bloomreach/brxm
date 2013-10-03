@@ -14,25 +14,169 @@
  *  limitations under the License.
  */
 (function() {
+
     "use strict";
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
+    /**
+     * Retrieves all variants for the component specified by the config property 'componentId'.
+     * The REST endpoint for retrieving the global variants is determined by the config property 'variantsUuid'.
+     * When 'variantsUuid' is empty or undefined, a single variant with the ID 'hippo-default' will always be returned.
+     *
+     * The retrieved variants will be cached. Calling 'invalidate()' will invalidate the cache and fire the
+     * 'invalidated' event. The next call to 'get()' will then retrieve the component variants again.
+     *
+     * @type {*}
+     */
+    Hippo.ChannelManager.TemplateComposer.ComponentVariants = Ext.extend(Ext.util.Observable, {
+
+        variantsFuture: null,
+
+        constructor: function(config) {
+            this.variantsUuid = config.variantsUuid;
+            this.componentId = config.componentId;
+            this.lastModifiedTimestamp = config.lastModifiedTimestamp;
+            this.composerRestMountUrl = config.composerRestMountUrl;
+            this.resources = config.resources;
+            this.locale = config.locale;
+
+            Hippo.ChannelManager.TemplateComposer.ComponentVariants.superclass.constructor.call(this, config);
+
+            this.addEvents('invalidated');
+        },
+
+        isMultivariate: function() {
+            return !Ext.isEmpty(this.variantsUuid);
+        },
+
+        get: function() {
+            if (this.variantsFuture === null) {
+                this.variantsFuture = this._loadVariants();
+            }
+            return this.variantsFuture;
+        },
+
+        invalidate: function() {
+            this.variantsFuture = null;
+            this.fireEvent('invalidated');
+        },
+
+        cleanup: function() {
+            var cleanupFuture = this.isMultivariate() ? this._cleanupVariants() : Hippo.Future.constant();
+            return cleanupFuture;
+        },
+
+        _loadVariants: function() {
+            if (!this.isMultivariate()) {
+                return Hippo.Future.constant([
+                    {id: 'hippo-default', name: this.resources['properties-panel-variant-default']}
+                ]);
+            } else {
+                var self = this;
+                return new Hippo.Future(function(success, fail) {
+                    if (self.componentId) {
+                        Ext.Ajax.request({
+                            url: self.composerRestMountUrl + '/' + self.componentId + './?FORCE_CLIENT_HOST=true',
+                            success: function(result) {
+                                var jsonData = Ext.util.JSON.decode(result.responseText),
+                                    variantIds = jsonData.data;
+
+                                self._loadComponentVariants(variantIds).when(function(variants) {
+                                    variants.push({id: 'plus', name: self.resources['properties-panel-variant-plus']});
+                                    success(variants);
+                                }).otherwise(function(response) {
+                                    fail(response);
+                                });
+                            },
+                            failure: function(result) {
+                                fail(result.response);
+                            }
+                        });
+                    } else {
+                        success([
+                            {id: 'hippo-default', name: self.resources['properties-panel-variant-default']}
+                        ]);
+                    }
+                });
+            }
+        },
+
+        _loadComponentVariants: function(variantIds) {
+            return new Hippo.Future(function(success, fail) {
+                Ext.Ajax.request({
+                    url: this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?locale=' + this.locale + '&FORCE_CLIENT_HOST=true',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    params: Ext.util.JSON.encode(variantIds),
+                    success: function(result) {
+                        var jsonData = Ext.util.JSON.decode(result.responseText),
+                            variants = jsonData.data;
+                        success(variants);
+                    },
+                    failure: function(result) {
+                        fail(result.response);
+                    },
+                    scope: this
+                });
+            }.createDelegate(this));
+        },
+
+        _cleanupVariants: function() {
+            return new Hippo.Future(function(success) {
+                this.get().when(function(variants) {
+                    var variantIds = [];
+                    Ext.each(variants, function(variant) {
+                        if (variant.id !== 'hippo-default' && variant.id !== 'plus') {
+                            variantIds.push(variant.id);
+                        }
+                    });
+                    Ext.Ajax.request({
+                        method: 'POST',
+                        url: this.composerRestMountUrl + '/' + this.componentId + './' + '?FORCE_CLIENT_HOST=true',
+                        headers: {
+                            'FORCE_CLIENT_HOST': 'true',
+                            'Content-Type': 'application/json',
+                            'lastModifiedTimestamp': this.lastModifiedTimestamp
+                        },
+                        params: Ext.util.JSON.encode(variantIds),
+                        scope: this,
+                        success: success,
+                        failure: success  // ignore failures silently, try cleanup next time
+                    });
+                }.createDelegate(this));
+            }.createDelegate(this));
+        }
+    });
+
+    /**
+     * Renders the properties of all variants of a component in separate tabs. When the config property
+     * 'variantsUuid' is not defined, no tabs will be shown and only a single variant 'hippo-default' will be used.
+     *
+     * @type {*}
+     */
     Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2ivn.VrTabPanel, {
 
+        // set in constructor
         composerRestMountUrl: null,
         mountId: null,
         resources: null,
         variants: null,
         variantsUuid: null,
-        pageRequestVariants: [],
         locale: null,
-        componentId: null,
-        silent: true,
-        globalVariantsStore: null,
-        globalVariantsStoreFuture: null,
+        fireVariantChangeEvents: false,
         variantAdderXType: null,
         propertiesEditorXType: null,
+
+        // set in functions
+        componentId: null,
+        forcedVariantId: null,
+        initialForcedVariantId: null,
+        pageRequestVariants: [],
+        componentVariants: null,
+        lastModifiedTimestamp: null,
 
         constructor: function(config) {
             this.composerRestMountUrl = config.composerRestMountUrl;
@@ -41,9 +185,6 @@
             this.mountId = config.mountId;
             this.resources = config.resources;
             this.locale = config.locale;
-
-            this.globalVariantsStore = config.globalVariantsStore;
-            this.globalVariantsStoreFuture = config.globalVariantsStoreFuture;
 
             this.variantAdderXType = config.variantAdderXType;
             this.propertiesEditorXType = config.propertiesEditorXType;
@@ -67,157 +208,112 @@
             }, this);
 
             this.on('tabchange', function(panel, tab) {
-                if (!this.silent && tab) {
+                if (this.fireVariantChangeEvents && tab) {
                     this.fireEvent('variantChange', tab.componentId, tab.variant ? tab.variant.id : undefined);
                 }
             }, this);
+
         },
 
-        setComponentId: function(componentId) {
+        /**
+         * Load and show all variant tabs for the given component. The initially selected tab is determined by the
+         * 'forced variant' (the variant the component has been forced to render, e.g. because that variant
+         * has been selected in this properties window before) and the available page request variants (e.g. the
+         * possible variants for which this page can be rendered).
+         *
+         * @param componentId the UUID of the component
+         * @param forcedVariantId the variant that has been forced upon this component, or undefined if no specific
+         *        variant has been forced.
+         * @param pageRequestVariants the possible page request variants
+         * @param lastModifiedTimestamp the time this component has last been modified
+         */
+        load: function(componentId, forcedVariantId, pageRequestVariants, lastModifiedTimestamp) {
+            if (this.componentVariants !== null) {
+                this.componentVariants.un('invalidated', this.updateUI, this);
+            }
+
             this.componentId = componentId;
-        },
-
-        setLastModifiedTimestamp: function(lastModifiedTimestamp) {
-            this.lastModifiedTimestamp = lastModifiedTimestamp;
-        },
-
-        setPageRequestVariants: function(pageRequestVariants) {
+            this.forcedVariantId = forcedVariantId;
+            this.initialForcedVariantId = forcedVariantId;
             this.pageRequestVariants = pageRequestVariants;
+            this.lastModifiedTimestamp = lastModifiedTimestamp;
+
+            this.componentVariants = new Hippo.ChannelManager.TemplateComposer.ComponentVariants({
+                componentId: componentId,
+                lastModifiedTimestamp: lastModifiedTimestamp,
+                composerRestMountUrl: this.composerRestMountUrl,
+                variantsUuid: this.variantsUuid,
+                resources: this.resources,
+                locale: this.locale
+            });
+
+            this.componentVariants.on('invalidated', this.updateUI, this);
+
+            this.updateUI();
         },
 
-        load: function(hstInternalVariant, rememberInitialActiveTab) {
-            this.silent = true;
+        reload: function(variantId) {
+            this.forcedVariantId = variantId;
+            this.componentVariants.invalidate();
+            return this.componentVariants.get();
+        },
+
+        updateUI: function() {
+            this.fireVariantChangeEvents = false;
             this.beginUpdate();
             this.removeAll();
 
-            var loadVariantTabs = function() {
-                var futures, activeTab, callback;
+            if (this.componentVariants.isMultivariate()) {
+                this._showTabs();
+            } else {
+                this._hideTabs();
+            }
 
-                this._initTabs();
+            this.componentVariants.get().when(function(variants) {
+                var endUpdate;
+
+                this._initTabs(variants);
                 this.adjustBodyWidth(this.tabWidth);
 
-                this._selectInitialActiveTab(hstInternalVariant);
-                if (rememberInitialActiveTab !== true) {
-                    this.initialActiveTab = this.getActiveTab();
-                }
+                this.fireVariantChangeEvents = true;
+                this._selectBestMatchingTab(this.forcedVariantId, variants);
 
-                activeTab = this.getActiveTab();
-                this.fireEvent('variantChange', activeTab.componentId, activeTab.variant.id);
-                this.silent = false;
+                endUpdate = this.endUpdate.createDelegate(this);
+                this._loadAllTabs().when(endUpdate).otherwise(endUpdate);
+            }.createDelegate(this)).otherwise(function(response) {
+                Hippo.Msg.alert('Failed to get variants.', 'Only the default variant will be available: ' + response.status + ':' + response.statusText);
+                this.endUpdate();
+            }.createDelegate(this));
+        },
 
-                futures = [];
-                this.items.each(function(item) {
-                    futures.push(item.load());
-                }, this);
+        _loadAllTabs: function() {
+            var futures = [];
 
-                Hippo.Future.join(futures).when(this.endUpdate.createDelegate(this)).otherwise(this.endUpdate.createDelegate(this));
-            }.createDelegate(this);
+            this.items.each(function(item) {
+                futures.push(item.load());
+            }, this);
 
-            if (typeof(this.variantsUuid) === 'undefined' || this.variantsUuid === null) {
-                this.variants = [
-                    {id: 'hippo-default', name: this.resources['properties-panel-variant-default']}
-                ];
-                this._hideTabs();
-                loadVariantTabs();
-            } else {
-                this._showTabs();
-                this.globalVariantsStoreFuture.when(function() {
-                    this._loadVariants().when(function() {
-                        this._showTabs();
-                        loadVariantTabs();
-                    }.createDelegate(this)).otherwise(function() {
-                        this.endUpdate();
-                        this.silent = false;
-                    }.createDelegate(this));
-                }.createDelegate(this)).otherwise(function() {
-                    this.endUpdate();
-                    this.silent = false;
+            return Hippo.Future.join(futures);
+        },
+
+        selectInitialVariant: function() {
+            if (this.fireVariantChangeEvents) {
+                this.componentVariants.get().when(function(variants) {
+                    var initialVariantId = this._getBestMatchingVariantId(this.initialForcedVariantId, variants),
+                        currentVariantId = this._getCurrentVariantId();
+                    if (initialVariantId !== currentVariantId) {
+                        this.fireEvent('variantChange', this.componentId, initialVariantId);
+                    }
                 }.createDelegate(this));
             }
         },
 
-        selectInitialVariant: function() {
-            if (!this.silent) {
-                var initialVariant = this.initialActiveTab.variant ? this.initialActiveTab.variant.id : undefined,
-                    currentVariant = this.getActiveTab().variant ? this.getActiveTab().variant.id : undefined;
-                if (initialVariant !== currentVariant) {
-                    this.fireEvent('variantChange', this.initialActiveTab.componentId, initialVariant);
-                }
-            }
-        },
-
-        _loadVariants: function() {
-            return new Hippo.Future(function(success, fail) {
-                if (this.componentId) {
-                    Ext.Ajax.request({
-                        url: this.composerRestMountUrl + '/' + this.componentId + './?FORCE_CLIENT_HOST=true',
-                        success: function(result) {
-                            var jsonData = Ext.util.JSON.decode(result.responseText);
-                            this._loadComponentVariants(jsonData.data).when(function() {
-                                success();
-                            }.createDelegate(this)).otherwise(function() {
-                                fail();
-                            }.createDelegate(this));
-                        },
-                        failure: function(result) {
-                            this._loadException(result.response);
-                            fail();
-                        },
-                        scope: this
-                    });
-                } else {
-                    this.variants = [
-                        {id: 'hippo-default', name: this.resources['properties-panel-variant-default']}
-                    ];
-                    success();
-                }
-            }.createDelegate(this));
-        },
-
-        _loadComponentVariants: function(variants) {
-            return new Hippo.Future(function(success, fail) {
-                Ext.Ajax.request({
-                    url: this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?locale=' + this.locale + '&FORCE_CLIENT_HOST=true',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    params: Ext.util.JSON.encode(variants),
-                    success: function(result) {
-                        var jsonData = Ext.util.JSON.decode(result.responseText);
-                        this._initVariants(jsonData.data);
-                        success();
-                    },
-                    failure: function(result) {
-                        this._loadException(result.response);
-                        fail();
-                    },
-                    scope: this
-                });
-            }.createDelegate(this));
-        },
-
-        _initVariants: function(records) {
-            this.variants = [];
-            Ext.each(records, function(record) {
-                this.variants.push(record);
-            }, this);
-            this.variants.push({id: 'plus', name: this.resources['properties-panel-variant-plus']});
-        },
-
-        _loadException: function(response) {
-            Hippo.Msg.alert('Failed to get variants.', 'Only default variant will be available: ' + response.status + ':' + response.statusText);
-            this.variants = [
-                {id: 'hippo-default', name: this.resources['properties-panel-variant-default']}
-            ];
-        },
-
-        _initTabs: function() {
+        _initTabs: function(variants) {
             var propertiesEditorCount, i, tabComponent, propertiesForm;
-            propertiesEditorCount = this.variants.length - 1;
-            Ext.each(this.variants, function(variant) {
+            propertiesEditorCount = variants.length - 1;
+            Ext.each(variants, function(variant) {
                 if ('plus' === variant.id) {
-                    tabComponent = this._createVariantAdder(variant);
+                    tabComponent = this._createVariantAdder(variant, Ext.pluck(variants, 'id'));
                 } else {
                     propertiesForm = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
                         variant: variant,
@@ -234,36 +330,50 @@
                             left: 0
                         },
                         listeners: {
-                            'save': function() {
-                                this._cleanupVariants();
-                            },
-                            'delete': function() {
-                                this._cleanupVariants();
-                                this.load();
-                            },
+                            propertiesSaved: this._onPropertiesSaved,
+                            propertiesDeleted: this._onPropertiesDeleted,
                             scope: this
                         }
                     });
                     tabComponent = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
                 }
                 this.relayEvents(tabComponent, ['cancel']);
-                this.relayEvents(propertiesForm, ['save', 'delete']);
                 this.add(tabComponent);
             }, this);
         },
 
-        _createVariantAdder: function(variant) {
+        _onPropertiesSaved: function(savedVariantId) {
+            Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, savedVariantId);
+            this._reloadCleanupAndFireEvent(savedVariantId, 'save');
+        },
+
+        _onPropertiesDeleted: function() {
+            this._reloadCleanupAndFireEvent(this.initialForcedVariantId, 'delete');
+        },
+
+        _reloadCleanupAndFireEvent: function(variantId, event) {
+            this.reload(variantId).when(function() {
+                this.componentVariants.cleanup().when(function() {
+                    this.fireEvent(event);
+                }.createDelegate(this));
+            }.createDelegate(this)).otherwise(function() {
+                Hippo.Msg.alert('Error', 'Failed to reload component configuration: '
+                    + response.status + ', ' + response.statusText
+                    + '. Please close the component properties window and try again.');
+            });
+        },
+
+        _createVariantAdder: function(variant, skipVariantIds) {
             return Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.VariantAdder', {
                 composerRestMountUrl: this.composerRestMountUrl,
                 componentId: this.componentId,
                 locale: this.locale,
-                skipVariantIds: Ext.pluck(this.variants, 'id'),
+                skipVariantIds: skipVariantIds,
                 title: variant.name,
                 variantsUuid: this.variantsUuid,
                 listeners: {
                     'save': function(tab, variant) {
-                        this._cleanupVariants();
-                        this.load(variant);
+                        this._onPropertiesSaved(variant);
                     },
                     'copy': this._copyVariant,
                     scope: this
@@ -291,34 +401,52 @@
             this.tabWidth = 130;
         },
 
-        _selectInitialActiveTab: function(hstInternalVariant) {
-            var i, len;
-
-            // first try to select the tab that matches the HST internal variant
-            if (Ext.isDefined(hstInternalVariant) && this._selectTabByVariant(hstInternalVariant)) {
-                return;
-            }
-
-            // second, try to select the tab with the best-matching page request variant
-            for (i = 0, len = this.pageRequestVariants.length; i < len; i++) {
-                if (this._selectTabByVariant(this.pageRequestVariants[i])) {
-                    return;
-                }
-            }
-
-            // third, select the first tab
-            this.setActiveTab(0);
+        _getCurrentVariantId: function() {
+            return this.getActiveTab().variant ? this.getActiveTab().variant.id : null;
         },
 
-        _selectTabByVariant: function(variant) {
-            var i, len;
-            for (i = 0, len = this.variants.length; i < len; i++) {
-                if (this.variants[i].id === variant) {
-                    this.setActiveTab(i);
-                    return true;
+        _getBestMatchingVariantId: function(forcedVariantId, variants) {
+            var tabIndex = this._getBestMatchingTabIndex(forcedVariantId, variants),
+                variant = this.getItem(tabIndex).variant;
+            return variant ? variant.id : undefined;
+        },
+
+        _selectBestMatchingTab: function(forcedVariantId, variants) {
+            var tabIndex = this._getBestMatchingTabIndex(forcedVariantId, variants);
+            this.setActiveTab(tabIndex);
+        },
+
+        _getBestMatchingTabIndex: function(forcedVariantId, variants) {
+            var tabIndex, i, len;
+
+            // first check if any tab matches the forced variant
+            tabIndex = this._getTabIndexByVariant(forcedVariantId, variants);
+            if (tabIndex >= 0) {
+                return tabIndex;
+            }
+
+            // second, find tab with the best-matching page request variant
+            for (i = 0, len = this.pageRequestVariants.length; i < len; i++) {
+                tabIndex = this._getTabIndexByVariant(this.pageRequestVariants[i], variants);
+                if (tabIndex >= 0) {
+                    return tabIndex;
                 }
             }
-            return false;
+
+            // third, return the first tab
+            return 0;
+        },
+
+        _getTabIndexByVariant: function(variantId, variants) {
+            var i, len;
+            if (!Ext.isEmpty(variantId)) {
+                for (i = 0, len = variants.length; i < len; i++) {
+                    if (variants[i].id === variantId) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
         },
 
         _copyVariant: function(existingVariant, newVariant) {
@@ -346,28 +474,6 @@
                 }
             });
             return tab;
-        },
-
-        _cleanupVariants: function() {
-            if (this.variants) {
-                var variantIds = [];
-                Ext.each(this.variants, function(variant) {
-                    if (variant.id !== 'hippo-default' && variant.id !== 'plus') {
-                        variantIds.push(variant.id);
-                    }
-                });
-                Ext.Ajax.request({
-                    method: 'POST',
-                    url: this.composerRestMountUrl + '/' + this.componentId + './' + '?FORCE_CLIENT_HOST=true',
-                    headers: {
-                        'FORCE_CLIENT_HOST': 'true',
-                        'Content-Type': 'application/json',
-                        'lastModifiedTimestamp': this.lastModifiedTimestamp
-                    },
-                    params: Ext.util.JSON.encode(variantIds),
-                    scope: this
-                });
-            }
         }
 
     });
@@ -413,7 +519,7 @@
                             url: this.composerRestMountUrl + '/' + this.componentId + './' +
                                     encodeURIComponent(this.variant.id) + '?FORCE_CLIENT_HOST=true',
                             success: function() {
-                                this.fireEvent('delete', this, this.variant.id);
+                                this.fireEvent('propertiesDeleted', this, this.variant.id);
                             },
                             scope: this
                         });
@@ -454,7 +560,7 @@
 
             Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.initComponent.apply(this, arguments);
 
-            this.addEvents('save', 'cancel', 'delete');
+            this.addEvents('propertiesSaved', 'cancel', 'propertiesDeleted');
         },
 
         setNewVariant: function(newVariantId) {
@@ -481,9 +587,7 @@
                 url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
                 method: 'POST',
                 success: function() {
-                    Ext.getCmp('componentPropertiesPanel').load(this.newVariantId, true);
-                    Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.newVariantId);
-                    this.fireEvent('save');
+                    this.fireEvent('propertiesSaved', this.newVariantId);
                 }.bind(this),
                 failure: function(form, action) {
                     Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],

@@ -838,16 +838,16 @@
         },
 
         onClick : function() {
-            var id, variant, containerDisabled;
+            var id, forcedVariant, containerDisabled;
             if (this.isTemporary) {
                 iframeToHost.publish('refresh');
             } else {
                 id = this.element.getAttribute('id');
-                variant = this.el.attr(HST.ATTR.VARIANT);
+                forcedVariant = this.el.attr(HST.ATTR.VARIANT);
                 containerDisabled = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.HST_CONTAINER_DISABLED));
                 iframeToHost.publish('onclick', {
                     elementId: id,
-                    variant: variant,
+                    forcedVariant: forcedVariant,
                     containerDisabled: containerDisabled
                 });
             }

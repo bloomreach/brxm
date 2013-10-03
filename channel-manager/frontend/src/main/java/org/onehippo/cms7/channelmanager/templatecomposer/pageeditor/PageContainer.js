@@ -521,9 +521,9 @@
         },
 
         _onClick: function(data) {
-            var id, variant, containerDisabled, record;
+            var id, forcedVariant, containerDisabled, record;
             id = data.elementId;
-            variant = data.variant;
+            forcedVariant = data.forcedVariant;
             containerDisabled = data.containerDisabled;
             record = this.pageContext.stores.pageModel.getById(id);
 
@@ -535,7 +535,7 @@
             if (this.selectedRecord !== record) {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
-                this.fireEvent('selectItem', record, variant, containerDisabled);
+                this.fireEvent('selectItem', record, forcedVariant, containerDisabled);
             }
         },
 

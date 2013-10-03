@@ -819,9 +819,9 @@
                 this.enableUI(pageContext);
             }, this);
 
-            this.on('selectItem', function(record, variant, containerDisabled) {
+            this.on('selectItem', function(record, forcedVariant, containerDisabled) {
                 if (record.get('type') === HST.CONTAINERITEM && containerDisabled !== true) {
-                    this.showProperties(record, variant);
+                    this.showProperties(record, forcedVariant);
                 }
             }, this);
 
@@ -929,12 +929,12 @@
             return window;
         },
 
-        showProperties: function(record, variant) {
-            var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
-            componentPropertiesPanel.setComponentId(record.get('id'));
-            componentPropertiesPanel.setLastModifiedTimestamp(record.get('lastModifiedTimestamp'));
-            componentPropertiesPanel.setPageRequestVariants(this.pageContainer.pageContext.pageRequestVariants);
-            componentPropertiesPanel.load(variant);
+        showProperties: function(record, forcedVariant) {
+            var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel'),
+                componentId = record.get('id'),
+                pageRequestVariants = this.pageContainer.pageContext.pageRequestVariants,
+                lastModifiedTimestamp = record.get('lastModifiedTimestamp');
+            componentPropertiesPanel.load(componentId, forcedVariant, pageRequestVariants, lastModifiedTimestamp);
             if (this.propertiesWindow) {
                 this.propertiesWindow.setTitle(record.get('name'));
                 this.propertiesWindow.show();
