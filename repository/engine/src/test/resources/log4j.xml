@@ -23,7 +23,7 @@
 
   <!-- console -->
   <appender name="console" class="org.apache.log4j.ConsoleAppender">
-    <param name="threshold" value="DEBUG"/>
+    <param name="threshold" value="ERROR"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </layout>
@@ -59,9 +59,6 @@
 -->
   <category name="org.hippoecm.repository">
     <level value="warn"/>
-  </category>
-  <category name="org.onehippo.repository.modules.ModuleManager">
-    <level value="debug"/>
   </category>
 
   <root>
