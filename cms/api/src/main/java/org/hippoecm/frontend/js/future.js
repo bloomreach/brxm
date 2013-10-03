@@ -118,7 +118,7 @@
          * <p>
          *     Example:
          * <code>
-         * future.next(function(value) {
+         * future.chain(function(value) {
          *   return new Future(function(onSuccess, onFail) {
          *     onSuccess('Hello ' + value);
          *   });
