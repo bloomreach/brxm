@@ -28,7 +28,7 @@
   <url>http://www.onehippo.com/</url>
 
   <artifactId>hippo-search-service</artifactId>
-  <version>1.01.02-SNAPSHOT</version>
+  <version>1.02.00-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2012</inceptionYear>
 
