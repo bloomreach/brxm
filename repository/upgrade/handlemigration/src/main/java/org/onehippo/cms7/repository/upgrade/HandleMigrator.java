@@ -26,12 +26,15 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
@@ -40,7 +43,6 @@ import javax.jcr.version.VersionIterator;
 import javax.jcr.version.VersionManager;
 
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
-import org.apache.jackrabbit.core.VersionManagerImpl;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -334,29 +336,73 @@ class HandleMigrator {
     }
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
+        final NodeTypeManager nodeTypeManager = srcNode.getSession().getWorkspace().getNodeTypeManager();
 
-        for (String mixinType : getMixinTypesToCopy(srcNode)) {
+        final List<String> mixins = getMixinTypesToCopy(srcNode);
+        NodeType[] nodeTypes = new NodeType[mixins.size() + 1];
+        nodeTypes[0] = destNode.getPrimaryNodeType();
+        int i = 1;
+        for (String mixinType : mixins) {
             destNode.addMixin(mixinType);
+            nodeTypes[i++] = nodeTypeManager.getNodeType(mixinType);
         }
 
-        for (Property property : new PropertyIterable(srcNode.getProperties())) {
-            if (!excludeProperty(property.getName())) {
-                try {
-                    if (property.isMultiple()) {
-                        destNode.setProperty(property.getName(), property.getValues(), property.getType());
-                    } else {
-                        destNode.setProperty(property.getName(), property.getValue(), property.getType());
+        for (PropertyIterator iter = srcNode.getProperties(); iter.hasNext();) {
+            Property prop = iter.nextProperty();
+            if (prop.getName().startsWith("jcr:frozen") || prop.getName().startsWith("jcr:uuid") ||
+                    prop.getName().equals(HippoNodeType.HIPPO_RELATED) ||
+                    prop.getName().equals(HippoNodeType.HIPPO_COMPUTE) ||
+                    prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
+                continue;
+            }
+            if (destNode.hasProperty(prop.getName())) {
+                continue;
+            }
+
+            if (prop.getDefinition().isMultiple()) {
+                boolean isProtected = true;
+                for (NodeType nodeType : nodeTypes) {
+                    if (nodeType.canSetProperty(prop.getName(), prop.getValues())) {
+                        isProtected = false;
+                        break;
                     }
-                } catch (ConstraintViolationException e) {
-                    log.debug("Property {} not applicable to node {}", property.getName(), destNode.getPath());
+                }
+                for (NodeType nodeType : nodeTypes) {
+                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
+                    for (PropertyDefinition propDef : propDefs) {
+                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
+                            isProtected = true;
+                    }
+                }
+                if (!isProtected) {
+                    destNode.setProperty(prop.getName(), prop.getValues(), prop.getType());
+                }
+            } else {
+                boolean isProtected = true;
+                for (NodeType nodeType : nodeTypes) {
+                    if (nodeType.canSetProperty(prop.getName(), prop.getValue())) {
+                        isProtected = false;
+                        break;
+                    }
+                }
+                for (NodeType nodeType : nodeTypes) {
+                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
+                    for (PropertyDefinition propDef : propDefs) {
+                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
+                            isProtected = true;
+                    }
+                }
+                if (!isProtected) {
+                    destNode.setProperty(prop.getName(), prop.getValue());
                 }
             }
         }
 
         for (Node srcChild : new NodeIterable(srcNode.getNodes())) {
             Node destChild = null;
-            if (destNode.hasNode(srcChild.getName())) {
-                destChild = destNode.getNode(srcChild.getName());
+            final String relPath = srcChild.getName() + '[' + srcChild.getIndex() + ']';
+            if (destNode.hasNode(relPath)) {
+                destChild = destNode.getNode(relPath);
             } else {
                 final String primaryNodeType = getPrimaryTypeToCopy(srcChild);
                 try {
@@ -372,7 +418,7 @@ class HandleMigrator {
 
     }
 
-    private Iterable<String> getMixinTypesToCopy(final Node node) throws RepositoryException {
+    private List<String> getMixinTypesToCopy(final Node node) throws RepositoryException {
         final List<String> result = new ArrayList<String>();
         if (node.isNodeType(NT_FROZEN_NODE)) {
             if (node.hasProperty(JCR_FROZEN_MIXIN_TYPES)) {
@@ -397,10 +443,6 @@ class HandleMigrator {
         } else {
             return node.getPrimaryNodeType().getName();
         }
-    }
-
-    private boolean excludeProperty(final String propertyName) {
-        return propertyName.startsWith("jcr:") || propertyName.equals("hippo:related");
     }
 
     private List<Version> getVersions(final Node handle) throws RepositoryException {
