@@ -1,8 +1,5 @@
 package org.onehippo.cms7.essentials.components.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.onehippo.cms7.essentials.components.gui.panel.AttachComponentPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.ComponentsPanel;
 import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
@@ -19,11 +16,13 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ComponentsWizard.class);
-    private final List<String> registeredDocuments = new ArrayList<>();
+
 
     public ComponentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
         final AjaxWizardPanel panel = new AjaxWizardPanel("wizard") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onFinish() {
                 info("Finished installing components. You might need to re-deploy you site.war due to new templates on disk.");
@@ -44,15 +43,4 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
         return new ComponentsInstaller();
     }
 
-    public List<String> getRegisteredDocuments() {
-        return registeredDocuments;
-    }
-
-    public void addRegisteredDocument(final String documentName) {
-        registeredDocuments.add(documentName);
-    }
-
-    public void clearRegistered() {
-        registeredDocuments.clear();
-    }
 }
