@@ -73,7 +73,7 @@ public class DocumentsTemplateStep extends EssentialsWizardStep {
 
     @Override
     public void applyState() {
-        final List<String> selectedDocuments = selectBox.getSelectedLeftItems();
+        final List<String> selectedDocuments = selectBox.getSelectedRightItems();
         if (selectedDocuments != null) {
             for (String selectedDocument : selectedDocuments) {
                 final String resourceName = String.format("%s%s.xml", '/', selectedDocument);

@@ -304,6 +304,8 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/template.xml
 dashboard-plugins/dashboard-documents-plugin/pom.xml -text
 dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/DocumentsWizard.html -text
 dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/DocumentsWizard.java -text
+dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/panels/BeansWriterStep.html -text
+dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/panels/BeansWriterStep.java -text
 dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/panels/DocumentsCndStep.html -text
 dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/panels/DocumentsCndStep.java -text
 dashboard-plugins/dashboard-documents-plugin/src/main/java/org/onehippo/cms7/essentials/documents/panels/DocumentsTemplateStep.html -text

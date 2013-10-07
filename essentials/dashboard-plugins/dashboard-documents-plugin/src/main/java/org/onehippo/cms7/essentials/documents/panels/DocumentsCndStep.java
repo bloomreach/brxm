@@ -62,7 +62,7 @@ public class DocumentsCndStep extends EssentialsWizardStep {
     @Override
     public void applyState() {
         setComplete(false);
-        final List<String> selectedDocuments = selectBox.getSelectedLeftItems();
+        final List<String> selectedDocuments = selectBox.getSelectedRightItems();
         log.info("@INSTALLING DOCUMENTS", selectedDocuments);
         if (selectedDocuments != null && selectedDocuments.size() > 0) {
             final PluginContext context = parent.getContext();

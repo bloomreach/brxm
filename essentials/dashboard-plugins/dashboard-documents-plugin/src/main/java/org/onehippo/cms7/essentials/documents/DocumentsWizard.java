@@ -20,6 +20,7 @@ import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
+import org.onehippo.cms7.essentials.documents.panels.BeansWriterStep;
 import org.onehippo.cms7.essentials.documents.panels.DocumentsCndStep;
 import org.onehippo.cms7.essentials.documents.panels.DocumentsTemplateStep;
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ public class DocumentsWizard extends DashboardPlugin {
         final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
         panel.addWizard(new DocumentsCndStep(this, "Register document types"));
         panel.addWizard(new DocumentsTemplateStep(this, "Register document templates"));
+        panel.addWizard(new BeansWriterStep(this, "Write HST beans"));
         add(panel);
     }
 }
