@@ -29,7 +29,6 @@
   <description>Hippo Essentials Documents Plugin</description>
   <artifactId>hippo-dashboard-documents-plugin</artifactId>
   <version>1.01.00-SNAPSHOT</version>
-  <packaging>pom</packaging>
 
   <dependencies>
     <dependency>
