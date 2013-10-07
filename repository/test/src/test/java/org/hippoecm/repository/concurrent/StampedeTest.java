@@ -88,7 +88,7 @@ public class StampedeTest extends AbstractRandomActionTest {
         actionSet.add(new DepublishAction());
         actionSet.add(new DeleteDocumentAction());
         actionSet.add(new LoadDocumentAction());
-//        actionSet.add(new AddDocumentLinkAction(context));
+        actionSet.add(new AddDocumentLinkAction(context));
         actionSet.add(new EditDocumentAction());
         actionSet.add(new AddAssetAction(context));
         actionSet.add(new DeleteAssetAction());
