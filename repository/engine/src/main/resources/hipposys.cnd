@@ -249,6 +249,10 @@
 [hipposys:modulefolder] > nt:base
 + * (hipposys:module) = hipposys:module
 
+[hipposys:moduleconfig] > nt:base
+- * (undefined) multiple
+- * (undefined)
+
 // autoexport nodetype def is deprecated
 [hipposys:autoexport] > nt:base
 - hipposys:enabled (boolean) = 'true' mandatory autocreated
