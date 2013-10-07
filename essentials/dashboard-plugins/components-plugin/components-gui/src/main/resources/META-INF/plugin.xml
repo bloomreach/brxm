@@ -18,7 +18,5 @@
     <asset id="Document list component" type="image/png" url="essentials-component-list.png"/>
     <asset id="essentials-component-document.jsp" type="text/plain" url="essentials-component-document.jsp" />
     <asset id="essentials-component-list.jsp" type="text/plain" url="essentials-component-list.jsp"/>
-
-
   </assets>
 </plugin>
