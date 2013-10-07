@@ -27,6 +27,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * Work-flow interface that is always available on all documents within the work-flow category "version" passed to methods like
@@ -115,6 +116,7 @@ public interface VersionWorkflow extends Workflow {
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
+    @WorkflowAction(loggable = false)
     public SortedMap<Calendar,Set<String>> list()
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
@@ -127,6 +129,7 @@ public interface VersionWorkflow extends Workflow {
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
+    @WorkflowAction(loggable = false)
     public Document retrieve(Calendar historic)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

@@ -453,7 +453,6 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationReques
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocument.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
-workflow/src/main/resources/META-INF/persistence.xml svneol=native#text/plain
 workflow/src/main/resources/date-derivatives.xml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/gallery-namespace.xml -text

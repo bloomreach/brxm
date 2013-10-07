@@ -54,30 +54,6 @@ import org.onehippo.repository.util.JcrConstants;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
 
-
-    private static Node findSubject(Node version) throws RepositoryException {
-        Session session = version.getSession();
-        // use hippo:paths to find handle; then use the matching variant 
-        if (version.hasProperty(HippoNodeType.HIPPO_PATHS)) {
-            Value[] paths = version.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
-            if (paths.length > 1) {
-                String handleUuid = paths[1].getString();
-                Node handle = session.getNodeByUUID(handleUuid);
-
-                Map<String, String> criteria = getCriteria(version, handle);
-                for (NodeIterator variants = handle.getNodes(handle.getName()); variants.hasNext();) {
-                    Node variant = variants.nextNode();
-                    if (matches(variant, criteria)) {
-                        return variant;
-                    }
-                }
-            }
-        }
-
-        String uuid = version.getProperty("jcr:frozenUuid").getString();
-        return session.getNodeByUUID(uuid);
-    }
-
     private static Map<String, String> getCriteria(Node subject, Node handle) throws RepositoryException {
         Map<String, String> criteria = new TreeMap<String, String>();
         try {
@@ -147,8 +123,9 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             if ("rep:root".equals(childType)) {
                 continue;
             }
-            if (target.hasNode(child.getName() + "[" + child.getIndex() + "]")) {
-                Node childTarget = target.getNode(child.getName() + "[" + child.getIndex() + "]");
+            final String relPath = child.getName() + "[" + child.getIndex() + "]";
+            if (target.hasNode(relPath)) {
+                Node childTarget = target.getNode(relPath);
                 restore(childTarget, child);
             } else {
                 for (NodeType nt : nodeTypes) {
@@ -275,15 +252,15 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     public VersionWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException,
             RepositoryException {
         if (subject.isNodeType("nt:frozenNode")) {
-            this.subject = findSubject(rootSession.getRootNode().getNode(subject.getPath().substring(1)));
-            this.version = (Version) rootSession.getRootNode().getNode(subject.getParent().getPath().substring(1));
+            this.subject = rootSession.getNodeByIdentifier(subject.getProperty("jcr:frozenUuid").getString());
+            this.version = (Version) rootSession.getNode(subject.getParent().getPath());
         } else {
-            this.subject = rootSession.getRootNode().getNode(subject.getPath().substring(1));
+            this.subject = rootSession.getNode(subject.getPath());
         }
     }
 
     public Map<String, Serializable> hints() {
-        return new TreeMap<String, Serializable>();
+        return new TreeMap<>();
     }
 
     private Version lookup(Calendar historic, boolean returnHandle) throws WorkflowException, RepositoryException {
