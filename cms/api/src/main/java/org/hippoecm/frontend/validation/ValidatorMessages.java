@@ -15,6 +15,23 @@
  */
 package org.hippoecm.frontend.validation;
 
+import java.lang.String;
+
+import org.apache.wicket.model.IModel;
+
+/**
+ * Violation messages that are available for validators.
+ * They can be used to create a message model:
+ * <code>
+ *   IModel&lt;String&gt; message = new ClassResourceModel(key, ValidatorMessages.class);
+ * </code>
+ * or as keys to pass to the method {@link IFieldValidator#newValueViolation(IModel, String)}.
+ * (note that such use is deprecated though, as validators should provide their own messages)
+ * <p>
+ * Use of these messages is deprecated.  Validators should provide their own translations.
+ * e.g. using resource bundles.
+ */
+@Deprecated
 public interface ValidatorMessages {
 
     String INVALID_XML = "invalid-xml";

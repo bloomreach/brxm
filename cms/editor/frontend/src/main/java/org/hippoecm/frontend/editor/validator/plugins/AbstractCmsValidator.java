@@ -38,9 +38,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version $Id$
- */
 abstract public class AbstractCmsValidator extends Plugin implements ICmsValidator, IStringResourceProvider {
     @SuppressWarnings({"UnusedDeclaration"})
     private static Logger log = LoggerFactory.getLogger(AbstractCmsValidator.class);
@@ -69,8 +66,9 @@ abstract public class AbstractCmsValidator extends Plugin implements ICmsValidat
 
     /**
      * Return translations of the default messages (those in {@link ValidatorMessages})
-     * @param key
-     * @return
+     *
+     * @param key the key for a default message
+     * @return a model of the translation of the default mmessage
      */
     protected IModel<String> getDefaultMessage(String key) {
         return new ClassResourceModel(key, ValidatorMessages.class);

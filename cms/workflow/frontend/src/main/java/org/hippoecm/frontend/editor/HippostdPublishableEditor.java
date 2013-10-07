@@ -226,15 +226,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         if (this.modified) {
             return true;
         }
+        String path = "<unknown>";
         final Node node;
         try {
             node = getEditorModel().getObject();
+            path = node.getPath();
             HippoSession session = (HippoSession) node.getSession();
             return session.pendingChanges(node, "nt:base", true).hasNext();
-        } catch (EditorException e) {
-            log.error("Could not determine whether there are pending changes", e);
-        } catch (RepositoryException e) {
-            log.error("Could not determine whether there are pending changes", e);
+        } catch (EditorException | RepositoryException e) {
+            log.error("Could not determine whether there are pending changes for '" + path + "'", e);
         }
         return false;
     }

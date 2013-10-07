@@ -46,8 +46,8 @@ public interface IFieldValidator extends IClusterable {
     /**
      * Create a Violation object with field information.
      *
-     * @param childModel
-     * @param message
+     * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
+     * @param message model containing the message to be shown to the user
      * @return
      * @throws ValidationException
      */

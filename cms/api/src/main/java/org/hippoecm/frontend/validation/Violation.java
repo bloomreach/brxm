@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.validation;
 
+import java.lang.Class;
+import java.lang.Object;
+import java.lang.String;
 import java.util.Set;
 
 import org.apache.wicket.model.IDetachable;
@@ -32,31 +35,11 @@ public final class Violation implements IDetachable {
     private static final long serialVersionUID = 1L;
 
     private Set<ModelPath> fieldPaths;
-    private String messageKey;
-    private Object[] parameters;
-    private Class<?> resourceBundleClass;
     private IModel<String> message;
 
     /**
-     * Create a new violation whose resource bundle is looked up relative to the class that uses the
-     * violation instead of the class that creates the violation. Since this can easily lead to various bugs and
-     * difficult extensibility this constructor has been deprecated in favor of
-     * {@code Violation(Set<ModelPath> fieldPaths, Class<?> resourceBundleClass, String messageKey, Object[] parameters)}
-     *
-     * @param fieldPaths  List of {@link ModelPath}s that led up to the violation
-     * @param messageKey  The key used for translation
-     * @param parameters  Optional parameters for value substitution in translations
-     */
-    @Deprecated
-    public Violation(Set<ModelPath> fieldPaths, String messageKey, Object[] parameters) {
-        this.fieldPaths = fieldPaths;
-        this.messageKey = messageKey;
-        this.parameters = parameters;
-        this.message = new ClassResourceModel(messageKey, ValidatorMessages.class, parameters);
-    }
-
-    /**
      * Create a new violation whose resource bundle is looked up relative to the {@code resourceBundleClass} parameter.
+     * This constructor has been deprecated.  Validators should provide their own message translation.
      *
      * @param resourceBundleClass Resource bundle will be looked up relative to this class
      * @param messageKey  The key used for translation
@@ -66,12 +49,15 @@ public final class Violation implements IDetachable {
     @Deprecated
     public Violation(Class<?> resourceBundleClass, String messageKey, Object[] parameters, Set<ModelPath> fieldPaths) {
         this.fieldPaths = fieldPaths;
-        this.messageKey = messageKey;
-        this.parameters = parameters;
-        this.resourceBundleClass = resourceBundleClass;
         this.message = new ClassResourceModel(messageKey, resourceBundleClass, parameters);
     }
 
+    /**
+     * Create a new violation with the specified message.
+     *
+     * @param paths  list of {@link ModelPath}s that led up to the violation
+     * @param messageModel a model of the message to be shown to the user
+     */
     public Violation(final Set<ModelPath> paths, final IModel<String> messageModel) {
         this.fieldPaths = paths;
         this.message = messageModel;
@@ -79,12 +65,12 @@ public final class Violation implements IDetachable {
 
     @Deprecated
     public String getMessageKey() {
-        return messageKey;
+        throw new UnsupportedOperationException();
     }
 
     @Deprecated
     public Object[] getParameters() {
-        return parameters;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -93,7 +79,7 @@ public final class Violation implements IDetachable {
      */
     @Deprecated
     public Class<?> getResourceBundleClass() {
-        return resourceBundleClass;
+        throw new UnsupportedOperationException();
     }
 
     public IModel<String> getMessage() {

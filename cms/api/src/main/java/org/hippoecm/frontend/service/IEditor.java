@@ -69,6 +69,10 @@ public interface IEditor<T> extends IClusterable {
 
     boolean isValid() throws EditorException;
 
+    /**
+     * The {@link Form} that wraps the editor.
+     * @return
+     */
     Form getForm();
 
 
