@@ -24,13 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.version.Version;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -107,13 +104,13 @@ public class RevisionHistory extends JcrObject {
 
     private void load() {
         if (list == null) {
-            list = new LinkedList<Revision>();
+            list = new LinkedList<>();
 
             try {
                 Node subject = getNode();
                 Node handle = null;
                 if (subject.isNodeType("nt:frozenNode")) {
-                    // use hippo:paths to find handle; then use the matching variant 
+                    // use hippo:paths to find handle
                     if (subject.hasProperty(HippoNodeType.HIPPO_PATHS)) {
                         Value[] paths = subject.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
                         if (paths.length > 1) {
@@ -125,66 +122,16 @@ public class RevisionHistory extends JcrObject {
                     handle = subject.getParent();
                 }
 
-                if (handle == null) {
-                    log.warn("Unable to find handle");
-                    return;
-                }
-
-                if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    class RevisionEntry {
-                        Version document;
-                        Version handle;
-
-                        RevisionEntry(Version document, Version handle) {
-                            this.document = document;
-                            this.handle = handle;
+                VersionWorkflow workflow = getWorkflow();
+                if (workflow != null) {
+                    try {
+                        SortedMap<Calendar, Set<String>> versions = workflow.list();
+                        int index = 0;
+                        for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
+                            list.add(new Revision(this, entry.getKey(), entry.getValue(), index++, new JcrNodeModel(handle)));
                         }
-                    }
-                    SortedMap<Calendar, RevisionEntry> versions = new TreeMap<Calendar, RevisionEntry>();
-                    VariantHistoryIterator iter = new VariantHistoryIterator(handle, Collections.EMPTY_MAP);
-                    while (iter.hasNext()) {
-                        Version variant = iter.next();
-
-                        // ignore drafts, they are not a part of versioning but could be
-                        // around at the time of (de)publication.
-                        Node content = variant.getNode("jcr:frozenNode");
-                        if (content.hasProperty("hippostd:state")
-                                && "draft".equals(content.getProperty("hippostd:state").getString())) {
-                            continue;
-                        }
-
-                        versions.put(variant.getCreated(), new RevisionEntry(variant, iter.getHandleVersion()));
-                    }
-                    int index = 0;
-                    for (Map.Entry<Calendar, RevisionEntry> entry : versions.entrySet()) {
-                        Set<String> labels = new TreeSet<String>();
-                        Version variant = entry.getValue().document;
-                        String[] versionLabels = variant.getContainingHistory().getVersionLabels(variant);
-                        for (String label : versionLabels) {
-                            labels.add(label);
-                        }
-                        list.add(new Revision(this, entry.getKey(), labels, index++, new JcrNodeModel(variant),
-                                new JcrNodeModel(entry.getValue().handle)));
-                    }
-                } else {
-                    VersionWorkflow workflow = getWorkflow();
-                    if (workflow != null) {
-                        try {
-                            SortedMap<Calendar, Set<String>> versions = null;
-                            versions = workflow.list();
-                            int index = 0;
-                            for (Map.Entry<Calendar, Set<String>> entry : versions.entrySet()) {
-                                list.add(new Revision(this, entry.getKey(), entry.getValue(), index++));
-                            }
-                        } catch (RemoteException ex) {
-                            log.error(ex.getMessage(), ex);
-                        } catch (WorkflowException ex) {
-                            log.error(ex.getMessage(), ex);
-                        } catch (MappingException ex) {
-                            log.error(ex.getMessage(), ex);
-                        } catch (RepositoryException ex) {
-                            log.error(ex.getMessage(), ex);
-                        }
+                    } catch (RemoteException | WorkflowException | MappingException ex) {
+                        log.error(ex.getMessage(), ex);
                     }
                 }
                 Collections.reverse(list);

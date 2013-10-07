@@ -25,7 +25,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -51,13 +50,14 @@ public class Revision extends JcrObject {
     Set<String> labels;
     int index;
 
-    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index) {
+    public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel handleModel) {
         super(history.getNodeModel());
 
         this.history = history;
         this.date = date;
         this.labels = labels;
         this.index = index;
+        this.handleModel = handleModel;
     }
 
     public Revision(RevisionHistory history, Calendar date, Set<String> labels, int index, JcrNodeModel versionModel,

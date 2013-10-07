@@ -24,7 +24,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
-import javax.jcr.version.Version;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -34,7 +33,6 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
-import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -116,10 +114,9 @@ public class VersionWorkflowPlugin extends RenderPlugin {
             protected String execute(Workflow wf) throws Exception {
                 Node frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                 Session session = frozenNode.getSession();
-                Version versionNode = (Version) frozenNode.getParent();
-                Version handleVersion = JcrHelper.getVersionParent(versionNode);
-                Node handle = session.getNodeByIdentifier(
-                        handleVersion.getContainingHistory().getVersionableIdentifier());
+
+                Node currentNode = session.getNodeByIdentifier(frozenNode.getProperty("jcr:frozenUuid").getString());
+                Node handle = currentNode.getParent();
 
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
                         .getWorkflowManager();
@@ -132,6 +129,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                     if (document.hasProperty("hippostd:state")
                             && "unpublished".equals(document.getProperty("hippostd:state").getString())) {
                         unpublished = document;
+                        break;
                     }
                 }
 

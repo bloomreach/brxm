@@ -508,6 +508,20 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
         add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this, null), context, getModel()) {
 
             @Override
+            public boolean isEnabled() {
+                try {
+                    final Node node = getModel().getNode();
+                    final Node parent = node.getParent();
+                    if (parent.isNodeType("hippo:handle")) {
+                        return !parent.isNodeType("mix:versionable");
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Unable to determine whether version history is available", e);
+                }
+                return false;
+            }
+
+            @Override
             protected ResourceReference getIcon() {
                 return new PackageResourceReference(getClass(), "revision-16.png");
             }

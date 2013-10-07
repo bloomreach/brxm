@@ -3144,7 +3144,6 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/li
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/list/style.css -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/Revision.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/RevisionHistory.java svneol=native#text/plain
-workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/model/VariantHistoryIterator.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/move-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/move-disabled-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/publish-16.png -text

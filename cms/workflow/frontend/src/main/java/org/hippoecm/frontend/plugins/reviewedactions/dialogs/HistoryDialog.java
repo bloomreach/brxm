@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.WicketRuntimeException;
@@ -55,13 +56,13 @@ public class HistoryDialog extends AbstractDialog {
                 @Override
                 public void onSelect(IModel model) {
                     Revision revision = (Revision) model.getObject();
-                    JcrNodeModel handleModel = revision.getHandle();
-                    IEditor editor = editorMgr.getEditor(handleModel);
+                    IModel<Node> docModel = revision.getDocument();
+                    IEditor editor = editorMgr.getEditor(docModel);
                     if (editor == null) {
                         try {
-                            editorMgr.openPreview(handleModel);
+                            editorMgr.openPreview(docModel);
                         } catch (ServiceException ex) {
-                            log.error("Could not open editor for " + handleModel.getItemModel().getPath(), ex);
+                            log.error("Could not open editor for " + docModel, ex);
                             error("Could not open editor");
                             return;  // don't close dialog
                         }
