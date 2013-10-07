@@ -94,6 +94,7 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-document.png -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-events.png -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-list.png -text
+dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/essentials-component-news.png -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/AttachComponentPanel.html -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/AttachComponentPanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/ComponentsPanel.html -text
@@ -108,6 +109,7 @@ dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/p
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-document.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-events.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-list.jsp -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-news.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/eventsdocument.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/freemarkertemplate.ftl -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/jsptemplate.ftl -text

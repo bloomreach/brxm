@@ -19,7 +19,6 @@
     <asset id="essentials-component-document.jsp" type="text/plain" url="essentials-component-document.jsp" />
     <asset id="essentials-component-list.jsp" type="text/plain" url="essentials-component-list.jsp"/>
     <asset id="essentials-component-events.jsp" type="text/plain" url="essentials-component-events.jsp"/>
-
-
+    <asset id="essentials-component-news.jsp" type="text/plain" url="essentials-component-news.jsp"/>
   </assets>
 </plugin>

@@ -19,6 +19,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableBiMap;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -41,9 +44,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableBiMap;
 
 /**
  * @version "$Id$"
@@ -72,6 +72,13 @@ public class ComponentsPanel extends EssentialsWizardStep {
                             .setIconPath("images/essentials/essentials-component-list.png")
                             .setType("HST.Item")
                             .setTemplate("essentials-component-list.jsp")
+
+            ).put("News Component",
+                    new CatalogObject("essentials-component-news", "Essentials News Component")
+                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsNewsComponent")
+                            .setIconPath("images/essentials/essentials-component-news.png")
+                            .setType("HST.Item")
+                            .setTemplate("essentials-component-news.jsp")
 
             )
             .build();
@@ -229,7 +236,6 @@ public class ComponentsPanel extends EssentialsWizardStep {
             copyAsset(file, asset);
         }
         final HstTemplate template = new HstTemplate(catalogObject.getTemplate());
-        template.setNamed(true);
         try {
             template.setRenderPath("jsp/essentials/components/" + templateName);
             final Session session = context.getSession();

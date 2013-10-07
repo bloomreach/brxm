@@ -6,6 +6,10 @@ package org.onehippo.cms7.essentials.components;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -19,13 +23,8 @@ import org.onehippo.cms7.essentials.components.info.EssentialsDocumentListCompon
 import org.onehippo.cms7.essentials.components.paging.IterablePagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 /**
  * HST component used for listing of documents.
@@ -63,7 +62,7 @@ public class EssentialsListComponent extends CommonComponent {
         request.setAttribute(REQUEST_ATTR_PAGEABLE, pageable);
     }
 
-    protected Pageable<HippoBean> doSearch(final HstRequest request, final EssentialsDocumentListComponentInfo paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> doSearch(final HstRequest request, final T paramInfo, final HippoBean scope) {
         try {
             final HstQuery build = buildQuery(request, paramInfo, scope);
             if (build != null) {
@@ -76,7 +75,7 @@ public class EssentialsListComponent extends CommonComponent {
         return null;
     }
 
-    private void handleInvalidScope(final HstRequest request, final HstResponse response) {
+    protected void handleInvalidScope(final HstRequest request, final HstResponse response) {
         // TODO determine what to do with invalid scope
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         if (log.isDebugEnabled()) {
@@ -92,7 +91,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param scope the scope of the query
      * @return the HST query to execute
      */
-    protected HstQuery buildQuery(final HstRequest request, final EssentialsDocumentListComponentInfo paramInfo, final HippoBean scope) {
+    protected <T extends EssentialsDocumentListComponentInfo> HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
         final HstQueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = parseDocumentTypes(documentTypes);
@@ -108,7 +107,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @return the pageable result
      * @throws QueryException query exception when query fails
      */
-    protected Pageable<HippoBean> executeQuery(final HstRequest request, final EssentialsDocumentListComponentInfo paramInfo, final HstQuery query) throws QueryException {
+    protected <T extends EssentialsDocumentListComponentInfo> Pageable<HippoBean> executeQuery(final HstRequest request, final T paramInfo, final HstQuery query) throws QueryException {
         final HstQueryResult execute = query.execute();
         final Pageable<HippoBean> pageable = new IterablePagination<>(
                 execute.getHippoBeans(),
@@ -174,7 +173,7 @@ public class EssentialsListComponent extends CommonComponent {
      * @param documentTypes comma separated document types
      * @return empty array if empty
      */
-    private String[] parseDocumentTypes(final String documentTypes) {
+    protected String[] parseDocumentTypes(final String documentTypes) {
         if (Strings.isNullOrEmpty(documentTypes)) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
