@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.util.Calendar;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
@@ -32,8 +34,11 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
+import org.apache.jackrabbit.core.VersionManagerImpl;
+import org.hippoecm.repository.api.HippoVersionManager;
 
-public class VersionManagerDecorator implements VersionManager {
+
+public class VersionManagerDecorator implements HippoVersionManager {
 
     private final VersionManager versionManager;
     private final WorkspaceDecorator workspace;
@@ -211,5 +216,10 @@ public class VersionManagerDecorator implements VersionManager {
         } finally {
             workspace.postMountEnabled(true);
         }
+    }
+
+    @Override
+    public Version checkin(final String absPath, final Calendar created) throws RepositoryException {
+        return ((VersionManagerImpl) versionManager).checkin(absPath, created);
     }
 }

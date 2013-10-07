@@ -5,6 +5,7 @@ api/src/main/java/org/hippoecm/repository/api/CronExpression.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoNode.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoQuery.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoSession.java -text
+api/src/main/java/org/hippoecm/repository/api/HippoVersionManager.java -text
 api/src/main/java/org/hippoecm/repository/api/HippoWorkspace.java -text
 api/src/main/java/org/hippoecm/repository/api/ImportMergeBehavior.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/repository/api/ImportReferenceBehavior.java svneol=native#text/plain

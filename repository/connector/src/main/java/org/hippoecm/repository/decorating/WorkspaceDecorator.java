@@ -39,6 +39,7 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.xml.sax.ContentHandler;
 
@@ -184,10 +185,6 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
 
     public LockManager getLockManager() throws UnsupportedRepositoryOperationException, RepositoryException {
         return workspace.getLockManager();
-    }
-
-    public VersionManager getVersionManager() throws UnsupportedRepositoryOperationException, RepositoryException {
-        return workspace.getVersionManager();
     }
 
     public void createWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, RepositoryException {

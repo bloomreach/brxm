@@ -49,4 +49,5 @@ public interface HippoWorkspace extends Workspace {
      * @throws RepositoryException
      */
     public SecurityService getSecurityService() throws RepositoryException;
+
 }

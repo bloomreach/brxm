@@ -44,6 +44,7 @@ import org.apache.jackrabbit.core.VersionManagerImpl;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
@@ -136,7 +137,7 @@ class HandleMigrator {
                         log.error("Failed to migrate " + JcrUtils.getNodePathQuietly(handle), e);
                     }
                 }
-                log.info("Migrated {} handles to new model", count);
+                log.info("Finished migrating {} handles to new model", count);
             } finally {
                 if (migrationSession != null) {
                     migrationSession.logout();
@@ -222,22 +223,15 @@ class HandleMigrator {
     }
 
     private List<Reference> removeReferences(final Node handle) throws RepositoryException {
-        final String handleId = handle.getIdentifier();
         final List<Reference> references = new LinkedList<>();
         for (Property property : new PropertyIterable(handle.getReferences())) {
             final Node node = property.getParent();
             JcrUtils.ensureIsCheckedOut(node, true);
             final String propertyName = property.getName();
-            final boolean multiple = property.isMultiple();
             if (!HippoNodeType.HIPPO_RELATED.equals(propertyName)) {
                 references.add(new Reference(property));
             }
-            if (!multiple) {
-                property.remove();
-            } else {
-                Value[] values = property.getValues();
-                property.setValue(removeIdFromValues(handleId, values));
-            }
+            property.remove();
         }
         return references;
     }
@@ -295,7 +289,7 @@ class HandleMigrator {
     }
 
     private void replayHistory(final Node tmp, final List<Version> versions) throws RepositoryException {
-        final VersionManagerImpl versionManager = (VersionManagerImpl)
+        final HippoVersionManager versionManager = (HippoVersionManager)
                 migrationSession.getWorkspace().getVersionManager();
         int count = 0;
         while (versions.size() > VERSIONS_RETAIN_COUNT) {
