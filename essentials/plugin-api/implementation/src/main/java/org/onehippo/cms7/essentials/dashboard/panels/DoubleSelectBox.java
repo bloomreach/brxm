@@ -143,8 +143,6 @@ public class DoubleSelectBox extends Panel {
         target.add(leftBox, rightBox);
     }
 
-
-
     public void addToLeftBox(final AjaxRequestTarget target, final Iterable<String> selected) {
         for (String item : selected) {
             if (!leftItems.contains(item)) {
@@ -197,5 +195,26 @@ public class DoubleSelectBox extends Panel {
 
     public void setRemoveFromLeft(final boolean removeFromLeft) {
         this.removeFromLeft = removeFromLeft;
+    }
+
+    public void setRightBoxModel(final Collection<String> documents, final AjaxRequestTarget target) {
+
+        if (rightItems != null) {
+            rightItems.clear();
+            rightItems.addAll(documents);
+            rightBox.modelChanged();
+            target.add(rightBox);
+        }
+
+    }
+
+    public void setLeftBoxModel(final Collection<String> documents, final AjaxRequestTarget target) {
+        if (leftItems != null) {
+            leftItems.clear();
+            leftItems.addAll(documents);
+            leftBox.modelChanged();
+            target.add(leftBox);
+        }
+
     }
 }

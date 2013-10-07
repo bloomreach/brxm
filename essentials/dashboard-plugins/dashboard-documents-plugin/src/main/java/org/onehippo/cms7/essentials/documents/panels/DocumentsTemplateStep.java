@@ -18,18 +18,25 @@ package org.onehippo.cms7.essentials.documents.panels;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeTypeExistsException;
+import javax.jcr.Session;
+import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.panels.DoubleSelectBox;
-import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
@@ -47,13 +54,15 @@ public class DocumentsTemplateStep extends EssentialsWizardStep {
     private static Logger log = LoggerFactory.getLogger(DocumentsTemplateStep.class);
     final DoubleSelectBox selectBox;
     final DashboardPlugin parent;
+    final List<String> items;// TODO populate
     private boolean overwrite;
 
     public DocumentsTemplateStep(final DashboardPlugin owner, final String title) {
         super(title);
         parent = owner;
         final Form<?> form = new Form<>("form");
-        final List<String> items = new ArrayList<>();// TODO populate
+
+        items = new ArrayList<>();
         items.add("newsdocument");
         items.add("eventsdocument");
         selectBox = new DoubleSelectBox("documentTypes", "Select document type(s)", form, items);
@@ -69,6 +78,35 @@ public class DocumentsTemplateStep extends EssentialsWizardStep {
 
     public DoubleSelectBox getSelectBox() {
         return selectBox;
+    }
+
+    @Override
+    public void refresh(final AjaxRequestTarget target) {
+        try {
+            // check which types are registered:
+            final PluginContext context = parent.getContext();
+            final Session session = context.getSession();
+            final Workspace workspace = session.getWorkspace();
+            final NodeTypeManager manager = workspace.getNodeTypeManager();
+            final NodeTypeIterator nodeTypes = manager.getAllNodeTypes();
+            final String prefix = context.getProjectNamespacePrefix() + ':';
+            final Collection<String> documents = new HashSet<>();
+            final int prefixSize = prefix.length();
+            while (nodeTypes.hasNext()) {
+                final NodeType nodeType = nodeTypes.nextNodeType();
+                final String name = nodeType.getName();
+                if (name.startsWith(prefix)) {
+                    final String documentName = name.substring(prefixSize);
+                    if (items.contains(documentName)) {
+                        documents.add(documentName);
+                    }
+                }
+            }
+            selectBox.setLeftBoxModel(documents, target);
+        } catch (RepositoryException e) {
+            log.error("Error fetching registered document types", e);
+        }
+
     }
 
     @Override
