@@ -23,7 +23,12 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
 
     public ComponentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
-        final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
+        final AjaxWizardPanel panel = new AjaxWizardPanel("wizard") {
+            @Override
+            public void onFinish() {
+                info("Finished installing components. You might need to re-deploy you site.war due to new templates on disk.");
+            }
+        };
         // TODO move attach to last
         panel.addWizard(new ComponentsPanel(this, "Component installer"));
         panel.addWizard(new AttachComponentPanel(this, "Attach components"));
