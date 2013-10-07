@@ -15,14 +15,20 @@
  */
 package org.hippoecm.hst.cache;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheContentEventListener extends GenericEventListener implements EventListenersContainerListener {
+
+    private static final Logger log = LoggerFactory.getLogger(CacheContentEventListener.class);
 
     private HstCache pageCache;
 
@@ -33,7 +39,16 @@ public class CacheContentEventListener extends GenericEventListener implements E
     @Override
     public void onEvent(EventIterator events) {
         // we cannot do better than flush entire cache on content changes.
-        pageCache.clear();
+        while (events.hasNext()) {
+            try {
+                if (!HippoNodeType.HIPPO_IGNORABLE.equals(events.nextEvent().getUserData())) {
+                    pageCache.clear();
+                    return;
+                }
+            } catch (RepositoryException e) {
+               log.error("Error processing event");
+            }
+        }
     }
 
     @Override
