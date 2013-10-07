@@ -236,17 +236,6 @@ class HandleMigrator {
         return references;
     }
 
-    private Value[] removeIdFromValues(final String handleId, final Value[] values) throws RepositoryException {
-        List<Value> newValues = new ArrayList<>(values.length);
-        for (Value value : values) {
-            if (value.getString().equals(handleId)) {
-                continue;
-            }
-            newValues.add(value);
-        }
-        return newValues.toArray(new Value[newValues.size()]);
-    }
-
     private void migrateVersionHistory(final Node handle, final List<Version> versions) throws RepositoryException {
         log.debug("Migrating version history of {}", handle.getPath());
         try {
