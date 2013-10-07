@@ -288,9 +288,9 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             unregisterEventListener : function (evt, target, obj) {
                 var oid = obj['SubcribeId' + evt],
-                    set = target[evt + 'CustomEventSubscribers'];
-                if (set !== null && set.containsKey(oid)) {
-                    set.remove(oid);
+                    subscribers = target[evt + 'CustomEventSubscribers'];
+                if (subscribers !== undefined && subscribers.containsKey(oid)) {
+                    subscribers.remove(oid);
                     return true;
                 }
                 return false;
