@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.onehippo.cms7.essentials.components.gui.panel.AttachComponentPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.ComponentsPanel;
-import org.onehippo.cms7.essentials.components.gui.panel.DocumentRegisterPanel;
-import org.onehippo.cms7.essentials.components.gui.panel.DocumentTemplatePanel;
 import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -21,15 +19,13 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ComponentsWizard.class);
-
     private final List<String> registeredDocuments = new ArrayList<>();
+
     public ComponentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
         final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
         // TODO move attach to last
         panel.addWizard(new ComponentsPanel(this, "Component installer"));
-        panel.addWizard(new DocumentRegisterPanel(this, "Register document types"));
-        panel.addWizard(new DocumentTemplatePanel(this, "Import document templates"));
         panel.addWizard(new AttachComponentPanel(this, "Attach components"));
         //
         // panel.addWizard(new DocumentRegisterPanel("installer2"));
@@ -37,7 +33,6 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
         add(panel);
 
     }
-
 
     @Override
     public ComponentsInstaller getInstaller() {

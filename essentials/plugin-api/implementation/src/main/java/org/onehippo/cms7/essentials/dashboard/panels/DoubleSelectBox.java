@@ -34,43 +34,45 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class DoubleSelectBox<T> extends Panel {
+public class DoubleSelectBox extends Panel {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DoubleSelectBox.class);
-    private final Collection<EventListener<T>> listeners = new CopyOnWriteArrayList<>();
-    private final ListMultipleChoice<T> rightBox;
-    private final ListMultipleChoice<T> leftBox;
+    private final Collection<EventListener<String>> listeners = new CopyOnWriteArrayList<>();
+    private final ListMultipleChoice<String> rightBox;
+    private final ListMultipleChoice<String> leftBox;
     @SuppressWarnings("UnusedDeclaration")
-    private List<T> rightItems;
-    private List<T> leftItems;
-    private List<T> selectedLeftItems;
-    private List<T> selectedRightItems;
+    private List<String> rightItems;
+    private List<String> leftItems;
+    @SuppressWarnings("UnusedDeclaration")
+    private List<String> selectedLeftItems;
+    @SuppressWarnings("UnusedDeclaration")
+    private List<String> selectedRightItems;
     private boolean removeFromLeft = true;
 
-    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<T> initialLeftItems, final Collection<T> initialRightItems, final EventListener<T> listener) {
+    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<String> initialLeftItems, final Collection<String> initialRightItems, final EventListener<String> listener) {
         this(id, title, form, initialLeftItems, initialRightItems);
         listeners.add(listener);
     }
 
-    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<T> initialLeftItems, final Collection<T> initialRightItems, final Collection<EventListener<T>> listeners) {
+    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<String> initialLeftItems, final Collection<String> initialRightItems, final Collection<EventListener<String>> listeners) {
         this(id, title, form, initialLeftItems, initialRightItems);
         listeners.addAll(listeners);
     }
 
 
-    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<T> initialLeftItems) {
-        this(id, title, form, initialLeftItems, new ArrayList<T>());
+    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<String> initialLeftItems) {
+        this(id, title, form, initialLeftItems, new ArrayList<String>());
     }
 
-    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<T> initialLeftItems, final Collection<T> initialRightItems) {
+    public DoubleSelectBox(final String id, final String title, final Form<?> form, final Collection<String> initialLeftItems, final Collection<String> initialRightItems) {
         super(id);
         //############################################
         // LEFT BOX
         //############################################
         leftItems = new ArrayList<>();
         leftItems.addAll(initialLeftItems);
-        final PropertyModel<List<T>> leftModel = new PropertyModel<>(this, "selectedLeftItems");
+        final PropertyModel<List<String>> leftModel = new PropertyModel<>(this, "selectedLeftItems");
 
         leftBox = new ListMultipleChoice<>("leftBox", leftModel, leftItems);
 
@@ -81,14 +83,14 @@ public class DoubleSelectBox<T> extends Panel {
             protected void onUpdate(final AjaxRequestTarget target) {
                 log.debug("@selected left-box items {}", selectedLeftItems);
                 // notify listeners for changes
-                for (EventListener<T> listener : listeners) {
+                for (EventListener<String> listener : listeners) {
                     listener.onSelected(target, selectedLeftItems);
                 }
                 if (!removeFromLeft) {
                     log.info("@remove form left box not enabled");
                     return;
                 }
-                final Collection<T> selectedItems = new ArrayList<>(selectedLeftItems);
+                final Collection<String> selectedItems = new ArrayList<>(selectedLeftItems);
                 removeFromLeftBox(target, selectedItems);
                 addToRightBox(target, selectedItems);
 
@@ -98,7 +100,7 @@ public class DoubleSelectBox<T> extends Panel {
         //############################################
         // RIGHT BOX
         //############################################
-        final PropertyModel<List<T>> rightModel = new PropertyModel<>(this, "selectedRightItems");
+        final PropertyModel<List<String>> rightModel = new PropertyModel<>(this, "selectedRightItems");
         rightItems = new ArrayList<>();
         rightItems.addAll(initialRightItems);
         rightBox = new ListMultipleChoice<>("rightBox", rightModel, rightItems);
@@ -113,7 +115,7 @@ public class DoubleSelectBox<T> extends Panel {
                     log.info("@remove form right box not enabled");
                     return;
                 }
-                final Collection<T> selected = new ArrayList<>(selectedRightItems);
+                final Collection<String> selected = new ArrayList<>(selectedRightItems);
                 addToLeftBox(target, selected);
                 removeFromRightBox(target, selected);
             }
@@ -128,12 +130,14 @@ public class DoubleSelectBox<T> extends Panel {
         add(new Label("title", title));
         add(rightBox);
         add(leftBox);
+        this.setOutputMarkupId(true);
+        this.setOutputMarkupPlaceholderTag(true);
         form.add(this);
 
 
     }
 
-    private void removeFromLeftBox(final AjaxRequestTarget target, final Collection<T> selected) {
+    private void removeFromLeftBox(final AjaxRequestTarget target, final Collection<String> selected) {
         log.debug("@left removing {}", selected);
         leftItems.removeAll(selected);
         target.add(leftBox, rightBox);
@@ -141,8 +145,8 @@ public class DoubleSelectBox<T> extends Panel {
 
 
 
-    public void addToLeftBox(final AjaxRequestTarget target, final Iterable<T> selected) {
-        for (T item : selected) {
+    public void addToLeftBox(final AjaxRequestTarget target, final Iterable<String> selected) {
+        for (String item : selected) {
             if (!leftItems.contains(item)) {
                 log.debug("@left adding {}", item);
                 leftItems.add(item);
@@ -151,15 +155,15 @@ public class DoubleSelectBox<T> extends Panel {
         target.add(leftBox);
     }
 
-    public void removeFromRightBox(final AjaxRequestTarget target, final Collection<T> selected) {
+    public void removeFromRightBox(final AjaxRequestTarget target, final Collection<String> selected) {
         log.debug("@right removing {}", selected);
         rightItems.removeAll(selected);
         target.add(rightBox);
     }
 
-    public void addToRightBox(final AjaxRequestTarget target, final Iterable<T> selected) {
+    public void addToRightBox(final AjaxRequestTarget target, final Iterable<String> selected) {
         log.info("@right selected {}", selected);
-        for (T item : selected) {
+        for (String item : selected) {
             if (!rightItems.contains(item)) {
                 log.debug("@right adding {}", item);
                 rightItems.add(item);
@@ -171,19 +175,19 @@ public class DoubleSelectBox<T> extends Panel {
 
     }
 
-    public List<T> getSelectedRightItems() {
+    public List<String> getSelectedRightItems() {
         return selectedRightItems;
     }
 
-    public List<T> getSelectedLeftItems() {
+    public List<String> getSelectedLeftItems() {
         return selectedLeftItems;
     }
 
-    public ListMultipleChoice<T> getRightBox() {
+    public ListMultipleChoice<String> getRightBox() {
         return rightBox;
     }
 
-    public ListMultipleChoice<T> getLeftBox() {
+    public ListMultipleChoice<String> getLeftBox() {
         return leftBox;
     }
 

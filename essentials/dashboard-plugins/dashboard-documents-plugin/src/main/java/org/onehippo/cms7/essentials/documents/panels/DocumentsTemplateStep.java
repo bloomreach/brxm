@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.components.gui.panel;
+package org.onehippo.cms7.essentials.documents.panels;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeExistsException;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.ListMultipleChoice;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
-import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
+import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.panels.DoubleSelectBox;
+import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.DocumentTemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
@@ -39,58 +37,43 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Registers document types in CND
+ *
  * @version "$Id$"
  */
-public class DocumentTemplatePanel extends EssentialsWizardStep {
-
+public class DocumentsTemplateStep extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(DocumentTemplatePanel.class);
-    private final ListMultipleChoice<String> availableDocuments;
-    private final ComponentsWizard parent;
-    private List<String> selectedDocuments;
-    private List<String> items;
+    private static Logger log = LoggerFactory.getLogger(DocumentsTemplateStep.class);
+    final DoubleSelectBox selectBox;
+    final DashboardPlugin parent;
     private boolean overwrite;
 
-    public DocumentTemplatePanel(final ComponentsWizard parent, final String title) {
+    public DocumentsTemplateStep(final DashboardPlugin owner, final String title) {
         super(title);
-        this.parent = parent;
-
-        final Form<?> form = new Form("form");
-
-        items = new ArrayList<>(parent.getRegisteredDocuments());
-
-        final PropertyModel<List<String>> listModel = new PropertyModel<>(this, "selectedDocuments");
-        availableDocuments = new ListMultipleChoice<>("documentTypes", listModel, items);
-        availableDocuments.setOutputMarkupId(true);
-        availableDocuments.add(new OnChangeAjaxBehavior() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onUpdate(final AjaxRequestTarget target) {
-                log.debug("selectedDocuments {}", selectedDocuments);
-            }
-        });
+        parent = owner;
+        final Form<?> form = new Form<>("form");
+        final List<String> items = new ArrayList<>();// TODO populate
+        items.add("newsdocument");
+        items.add("eventsdocument");
+        selectBox = new DoubleSelectBox("documentTypes", "Select document type(s)", form, items);
+        //############################################
+        // OVERWRITE
+        //############################################
         final CheckBox overwriteCheckbox = new CheckBox("overwrite", new PropertyModel<Boolean>(this, "overwrite"));
         form.add(overwriteCheckbox);
-        form.add(availableDocuments);
-        add(form);
 
+
+        add(form);
     }
 
-    @Override
-    public void refresh(final AjaxRequestTarget target) {
-        items.clear();
-        items.addAll(parent.getRegisteredDocuments());
-        final IModel<Collection<String>> model = availableDocuments.getModel();
-        model.setObject(items);
-        availableDocuments.modelChanged();
-        target.add(availableDocuments);
+    public DoubleSelectBox getSelectBox() {
+        return selectBox;
     }
 
     @Override
     public void applyState() {
-        log.info("selectedDocuments {}", selectedDocuments);
+        final List<String> selectedDocuments = selectBox.getSelectedLeftItems();
         if (selectedDocuments != null) {
             for (String selectedDocument : selectedDocuments) {
                 final String resourceName = String.format("%s%s.xml", '/', selectedDocument);
