@@ -23,8 +23,14 @@ import org.hippoecm.hst.core.parameters.Parameter;
  */
 public interface EssentialsNewsComponentInfo extends EssentialsDocumentListComponentInfo {
 
-    // TODO better description
+    /**
+     * Boolean flag which indicates if news items in that lay in the future will not be shown.
+     * @return {@code true} if items should be hidden, {@code false} otherwise
+     */
     @Parameter(name = "hideFutureItems", defaultValue = "true", required = false, displayName = "Hide future documents")
     Boolean isHideFutureItems();
+
+    @Parameter(name = "documentDateField", required = false, displayName = "Field that contains document date (for hiding)")
+    String getDocumentDateField();
 
 }
