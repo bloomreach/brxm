@@ -19,9 +19,8 @@ package org.onehippo.cms7.repository.upgrade;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
@@ -200,36 +199,58 @@ class HandleMigrator {
     private void removeMixin(final Node node, final String mixin) throws RepositoryException {
         if (node.isNodeType(mixin)) {
             JcrUtils.ensureIsCheckedOut(node, false);
-            final Map<Node, String> references = removeReferences(node);
+            final List<Reference> references = removeReferences(node);
             try {
                 node.removeMixin(mixin);
                 node.addMixin(JcrConstants.MIX_REFERENCEABLE);
             } finally {
-                addReferences(node, references);
+                restoreReferences(references);
             }
         }
     }
 
-    private void addReferences(final Node handle, final Map<Node, String> references) throws RepositoryException {
-        for (Map.Entry<Node, String> entry : references.entrySet()) {
-            final Node node = entry.getKey();
-            final String property = entry.getValue();
-            node.setProperty(property, handle);
+    private void restoreReferences(final List<Reference> references) throws RepositoryException {
+        for (Reference reference : references) {
+            Node node = reference.getNode();
+            String property = reference.getPropertyName();
+            if (reference.getValue() != null) {
+                node.setProperty(property, reference.getValue());
+            } else {
+                node.setProperty(property, reference.getValues());
+            }
         }
     }
 
-    private Map<Node, String> removeReferences(final Node handle) throws RepositoryException {
-        final Map<Node, String> references = new HashMap<Node, String>();
+    private List<Reference> removeReferences(final Node handle) throws RepositoryException {
+        final String handleId = handle.getIdentifier();
+        final List<Reference> references = new LinkedList<>();
         for (Property property : new PropertyIterable(handle.getReferences())) {
             final Node node = property.getParent();
             JcrUtils.ensureIsCheckedOut(node, true);
             final String propertyName = property.getName();
+            final boolean multiple = property.isMultiple();
             if (!HippoNodeType.HIPPO_RELATED.equals(propertyName)) {
-                references.put(node, propertyName);
+                references.add(new Reference(property));
             }
-            property.remove();
+            if (!multiple) {
+                property.remove();
+            } else {
+                Value[] values = property.getValues();
+                property.setValue(removeIdFromValues(handleId, values));
+            }
         }
         return references;
+    }
+
+    private Value[] removeIdFromValues(final String handleId, final Value[] values) throws RepositoryException {
+        List<Value> newValues = new ArrayList<>(values.length);
+        for (Value value : values) {
+            if (value.getString().equals(handleId)) {
+                continue;
+            }
+            newValues.add(value);
+        }
+        return newValues.toArray(new Value[newValues.size()]);
     }
 
     private void migrateVersionHistory(final Node handle, final List<Version> versions) throws RepositoryException {
@@ -456,6 +477,41 @@ class HandleMigrator {
         RepositoryImpl repositoryImpl = (RepositoryImpl) RepositoryDecorator.unwrap(defaultSession.getRepository());
         final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
         return DecoratorFactoryImpl.getSessionDecorator(repositoryImpl.getRootSession(HANDLE_MIGRATION_WORKSPACE).impersonate(credentials), credentials);
+    }
+
+    static class Reference {
+        private final Node node;
+        private final String propertyName;
+        private final Value value;
+        private final Value[] values;
+
+        Reference(Property property) throws RepositoryException {
+            this.node = property.getParent();
+            this.propertyName = property.getName();
+            if (property.isMultiple()) {
+                this.value = property.getValue();
+                this.values = null;
+            } else {
+                this.value = null;
+                this.values = property.getValues();
+            }
+        }
+
+        Node getNode() {
+            return node;
+        }
+
+        String getPropertyName() {
+            return propertyName;
+        }
+
+        Value getValue() {
+            return value;
+        }
+
+        Value[] getValues() {
+            return values;
+        }
     }
 
 }
