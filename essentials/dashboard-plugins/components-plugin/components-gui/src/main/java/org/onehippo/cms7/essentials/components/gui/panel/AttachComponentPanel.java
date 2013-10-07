@@ -117,7 +117,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         // ADD TEXT AREA
         //############################################
 
-        scriptPanel = new TemplatePanel("scriptPanel", "JSP/FreemarkerTemplate", form){
+        scriptPanel = new TemplatePanel("scriptPanel", "JSP/FreemarkerTemplate", form) {
 
             private static final long serialVersionUID = 1L;
 
@@ -167,7 +167,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             listObject.add(document);
         }
         data.put("repeatable", listObject);
-        final String myTemplate = freemarker? FREEMARKER_TEMPLATE : JSP_TEMPLATE;
+        final String myTemplate = freemarker ? FREEMARKER_TEMPLATE : JSP_TEMPLATE;
         String templateText = TemplateUtils.injectTemplate(myTemplate, data, getClass());
         log.info(templateText);
         scriptPanel.setTextModel(target, templateText);
@@ -180,6 +180,17 @@ public class AttachComponentPanel extends EssentialsWizardStep {
         if (selected.equals("Document Component")) {
             beansDropdown.show(target);
         }
+
+    }
+
+    @Override
+    public void refresh(final AjaxRequestTarget target) {
+        // hide if needed:
+        if (beansDropdown.isShown()) {
+            sitesChoice.changeModel(target, ComponentsUtils.getAllAvailableSites(parent.getContext()));
+            beansDropdown.hide(target);
+        }
+
 
     }
 

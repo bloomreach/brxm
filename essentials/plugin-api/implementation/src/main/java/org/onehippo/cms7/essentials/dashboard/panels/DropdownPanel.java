@@ -48,6 +48,8 @@ public class DropdownPanel extends Panel {
     @SuppressWarnings("UnusedDeclaration")
     private String selectedItem;
     private List<String> items;
+    private boolean shown = true;
+
 
     public DropdownPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener) {
         this(id, title, form, model);
@@ -101,6 +103,8 @@ public class DropdownPanel extends Panel {
         add(container);
         form.add(this);
         container.setOutputMarkupPlaceholderTag(true);
+        dropDown.setOutputMarkupPlaceholderTag(true);
+        dropdownTitle.setOutputMarkupPlaceholderTag(true);
     }
 
     public void show(final AjaxRequestTarget target) {
@@ -108,6 +112,7 @@ public class DropdownPanel extends Panel {
         if (target != null) {
             target.add(container);
         }
+        setShown(true);
     }
 
     public void hide(final AjaxRequestTarget target) {
@@ -115,6 +120,7 @@ public class DropdownPanel extends Panel {
         if (target != null) {
             target.add(container);
         }
+        setShown(false);
     }
 
     public void changeModel(final AjaxRequestTarget target, final Collection<String> newModel) {
@@ -137,5 +143,14 @@ public class DropdownPanel extends Panel {
 
     public String getSelectedItem() {
         return selectedItem;
+    }
+
+
+    public void setShown(final boolean shown) {
+        this.shown = shown;
+    }
+
+    public boolean isShown() {
+        return shown;
     }
 }

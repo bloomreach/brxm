@@ -6,9 +6,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -46,6 +48,14 @@ public class TemplatePanel extends Panel {
                 onTemplateTypeChanged(target, checkboxModel);
             }
         };
+        final Button button = new AjaxButton("addScriptButton") {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+            }
+        };
 
 
         final Label label = new Label("title", title);
@@ -58,6 +68,7 @@ public class TemplatePanel extends Panel {
         container.add(textArea);
         container.add(checkBox);
         container.add(label);
+        container.add(button);
         add(container);
         form.add(this);
 

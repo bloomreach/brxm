@@ -1,16 +1,21 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstTemplate;
 import org.onehippo.cms7.essentials.dashboard.model.hst.TemplateExistsException;
 import org.slf4j.Logger;
@@ -20,6 +25,7 @@ import org.slf4j.LoggerFactory;
  * @version "$Id: HstUtils.java 169724 2013-07-05 08:32:08Z dvandiepen $"
  */
 public final class HstUtils {
+
 
     private static Logger log = LoggerFactory.getLogger(HstUtils.class);
 
@@ -130,4 +136,37 @@ public final class HstUtils {
         return configurations;
     }
 
+    public static List<String> getExistingContainers(final PluginContext context, final String selectedSite) {
+        final Node siteNode = getSiteNode(context, selectedSite);
+        final List<String> containers = new ArrayList<>();
+        if (siteNode != null) {
+            try {
+                final Session session = context.getSession();
+                final String replacePart = "//hst:hst/hst:configurations/" + selectedSite + "/hst:pages/";
+                final String queryPath = replacePart + "/element(*, hst:containercomponent)";
+                final Query query = session.getWorkspace().getQueryManager().createQuery(queryPath, "xpath");
+                final QueryResult queryResult = query.execute();
+                final NodeIterator nodes = queryResult.getNodes();
+                final int splitAt = replacePart.length() - 1;
+                while (nodes.hasNext()) {
+                    final Node containerNode = nodes.nextNode();
+                    containers.add(containerNode.getPath().substring(splitAt));
+                }
+            } catch (RepositoryException e) {
+                log.error("Error fetching site nodes", e);
+            }
+        }
+        return containers;
+    }
+
+    public static Node getSiteNode(final PluginContext context, final String siteName) {
+        final Session session = context.getSession();
+        try {
+            return session.getNode(HST_CONFIGURATIONS_PATH + '/' + siteName);
+        } catch (RepositoryException e) {
+            log.error("Error fetching components", e);
+        }
+        return null;
+
+    }
 }
