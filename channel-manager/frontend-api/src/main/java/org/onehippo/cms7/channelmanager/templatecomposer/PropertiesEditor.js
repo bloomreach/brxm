@@ -29,10 +29,21 @@
             this.componentId = config.componentId;
             this.variant = config.variant;
             this.propertiesForm = config.propertiesForm;
+
+            this.addEvents('visibleHeightChanged');
         },
 
         load: function() {
             return this.propertiesForm.load();
+        },
+
+        /**
+         * The visible height is the height that should be visible to the user.
+         * Subclasses should override this method to calculate their visible height and
+         * fire a 'visibleHeightChanged' event whenever their visible height has changed.
+         */
+        syncVisibleHeight: function() {
+            // empty base method
         }
 
     });

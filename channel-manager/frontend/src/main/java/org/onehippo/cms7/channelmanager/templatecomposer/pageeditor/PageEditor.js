@@ -148,7 +148,6 @@
 
         // height of the toolbar (in pixels)
         TOOLBAR_HEIGHT: 28,
-        PROPERTIES_PANEL_BUTTONS_HEIGHT: 70,
         variantsUuid: null,
         locale: null,
         fullscreen: false,
@@ -638,13 +637,6 @@
                     this.propertiesWindow.destroy();
                 }
                 this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
-                this.propertiesWindow.on('propertiesLoaded', function(propertiesPanel) {
-                    propertiesPanel.on('afterlayout', function () {
-                        this.propertiesWindow.setHeight(propertiesPanel.getHeight() + this.PROPERTIES_PANEL_BUTTONS_HEIGHT);
-                    }, this, {single: true});
-                    propertiesPanel.doLayout(false, true);
-                }, this);
-
                 this.propertiesWindow.hide();
 
                 toolkitGrid = Ext.getCmp('ToolkitGrid');
@@ -915,6 +907,17 @@
                 items: [ propertiesPanel ]
             });
 
+            // Adapt the size of the window to the visible height of the properties panel.
+            propertiesPanel.on('visibleHeightChanged', function(visibleHeight) {
+                var currentWindowHeight = window.getHeight(),
+                    visibleWindowHeight = visibleHeight + window.getFrameHeight(),
+                    maxWindowHeight = Hippo.ChannelManager.TemplateComposer.Instance.getHeight(),
+                    newWindowHeight = Math.min(visibleWindowHeight, maxWindowHeight);
+                if (currentWindowHeight !== newWindowHeight) {
+                    window.setHeight(newWindowHeight);
+                }
+            });
+
             // Enable mouse events in the iframe while the properties window is dragged. When the mouse pointer is moved
             // quickly it can end up outside the window above the iframe. The iframe should then send mouse events back
             // to the host in order to update the position of the dragged window.
@@ -924,7 +927,6 @@
             window.on('enddrag', function() {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
             });
-            window.relayEvents(propertiesPanel, ['propertiesLoaded']);
 
             return window;
         },

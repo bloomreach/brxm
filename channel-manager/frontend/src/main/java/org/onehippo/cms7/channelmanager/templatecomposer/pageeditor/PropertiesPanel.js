@@ -199,6 +199,8 @@
         initComponent: function() {
             Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
 
+            this.addEvents('visibleHeightChanged');
+
             this.on('beforetabchange', function(panel, newTab) {
                 if (!Ext.isDefined(newTab)) {
                     return true;
@@ -337,7 +339,6 @@
                     });
                     tabComponent = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
                 }
-                this.relayEvents(tabComponent, ['cancel']);
                 this.add(tabComponent);
             }, this);
         },
@@ -382,7 +383,7 @@
         },
 
         _createPropertiesEditor: function(variant, variantCount, propertiesForm) {
-            return Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
+            var editor = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
                 cls: 'component-properties-editor',
                 autoScroll: true,
                 componentId: this.componentId,
@@ -391,6 +392,17 @@
                 title: variant.name,
                 propertiesForm: propertiesForm
             });
+            editor.on('visibleHeightChanged', function(editor, visibleHeight) {
+                this._syncVisibleHeight(visibleHeight);
+            }, this);
+            this.relayEvents(editor, ['cancel']);
+            return editor;
+        },
+
+        _syncVisibleHeight: function(editorVisibleHeight) {
+            var tabsHeight = this.stripWrap.getHeight(),
+                visibleHeight = Math.max(tabsHeight, editorVisibleHeight);
+            this.fireEvent('visibleHeightChanged', visibleHeight);
         },
 
         _hideTabs: function() {
@@ -460,6 +472,7 @@
                 this.insert(newTabIndex, newTab);
                 this.setActiveTab(newTabIndex);
                 this.syncSize();
+                newTab.syncVisibleHeight();
             } else {
                 console.log("Cannot find tab for variant '" + existingVariant + "', copy to '" + newVariant + "' failed");
             }
@@ -486,6 +499,8 @@
         composerRestMountUrl: null,
         componentId: null,
         locale: null,
+
+        PADDING: 10,
 
         constructor: function(config) {
             this.variant = config.variant;
@@ -546,7 +561,7 @@
             Ext.apply(this, {
                 autoHeight: true,
                 border: false,
-                padding: 10,
+                padding: this.PADDING,
                 autoScroll: true,
                 labelWidth: 100,
                 labelSeparator: '',
@@ -565,6 +580,13 @@
 
         setNewVariant: function(newVariantId) {
             this.newVariantId = newVariantId;
+        },
+
+        getVisibleHeight: function() {
+            if (this.rendered) {
+                return this.getHeight() + (2 * this.PADDING);
+            }
+            return 0;
         },
 
         _submitForm: function() {
@@ -723,6 +745,9 @@
                 }
                 this.saveButton.show();
             }
+
+            // do a shallow layout of the form to ensure our visible height is correct
+            this.doLayout(true);
 
             this.fireEvent('propertiesLoaded', this);
         },

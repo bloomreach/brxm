@@ -25,6 +25,19 @@
                 items: [ config.propertiesForm ],
                 layout: 'fit'
             }));
+        },
+
+        initComponent: function() {
+            Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.initComponent.apply(this, arguments);
+
+            this.propertiesForm.on('propertiesLoaded', function() {
+                this.syncVisibleHeight();
+            }, this);
+        },
+
+        syncVisibleHeight: function() {
+            var visibleHeight = this.propertiesForm.getVisibleHeight();
+            this.fireEvent('visibleHeightChanged', this, visibleHeight);
         }
 
     });
