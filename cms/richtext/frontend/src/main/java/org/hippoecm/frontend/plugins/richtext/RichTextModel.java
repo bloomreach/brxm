@@ -48,7 +48,10 @@ public class RichTextModel implements IModel<String> {
             if (cleanedValue != null) {
                 removeLinks(cleanedValue);
             }
-            valueModel.setObject(cleanedValue);
+            String oldValue = valueModel.getObject();
+            if (oldValue == null || !oldValue.equals(cleanedValue)) {
+                valueModel.setObject(cleanedValue);
+            }
         } catch (Exception e) {
             if(log.isDebugEnabled()) {
                 log.error("Value not set because html cleaning failed", e);   
