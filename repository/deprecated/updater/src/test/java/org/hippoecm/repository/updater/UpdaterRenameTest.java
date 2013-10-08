@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.ext.UpdaterContext;
@@ -79,6 +80,7 @@ public class UpdaterRenameTest extends RepositoryTestCase {
         };
         List<UpdaterModule> list = new LinkedList<UpdaterModule>();
         list.add(module);
+        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         UpdaterEngine.migrate(session, new Modules<UpdaterModule>(list));
         session.logout();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);

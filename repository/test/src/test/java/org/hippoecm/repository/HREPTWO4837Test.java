@@ -39,15 +39,6 @@ public class HREPTWO4837Test extends RepositoryTestCase {
         session.getRootNode().addNode("test", "nt:unstructured");
     }
 
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        while (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        super.tearDown();
-    }
-
     @Test
     public void testRecursiveOverride() throws Exception {
         session.importXML("/test", getClass().getResourceAsStream("HREPTWO4837Test.xml"), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);

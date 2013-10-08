@@ -68,8 +68,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         } catch(RepositoryException ex) {
             fail(ex.getMessage());
         } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
     }
@@ -104,9 +102,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         } catch(RepositoryException ex) {
             System.out.println(ex);
             fail(ex.getMessage());
-        } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         }
     }
 
@@ -138,8 +133,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         } catch(RepositoryException ex) {
             assertNotNull("Exception allowed: item needs to be refetched", ex);
         } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
     }
@@ -177,8 +170,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         } catch(RepositoryException ex) {
             assertNotNull("Exception allowed: item needs to be refetched", ex);
         } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
     }
@@ -200,8 +191,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         } catch(RepositoryException ex) {
             fail(ex.getMessage());
         }  finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
 
@@ -227,8 +216,6 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
         } catch(RepositoryException ex) {
             assertNotNull("Exception allowed: item needs to be refetched", ex);
         } finally {
-            session.logout();
-            session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
             commonEnd();
         }
     }

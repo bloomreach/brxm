@@ -15,34 +15,26 @@
  */
 package org.onehippo.repository.testutils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.PropertyIterable;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -102,11 +94,8 @@ public abstract class RepositoryTestCase {
     /**
      * Check whether repository content & configuration are the same before & after the test.
      */
-    private int configurationHashcode;
     private Set<String> topLevelNodes;
-    private String debugPath = "/hippo:configuration";
-    private Map<String, Integer> hashes;
-    private ByteArrayOutputStream debugStream;
+    private Collection<JcrState> jcrStates;
 
 
     @BeforeClass
@@ -161,10 +150,7 @@ public abstract class RepositoryTestCase {
             server = background;
         }
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        while (session.nodeExists("/test")) {
-            session.getNode("/test").remove();
-            session.save();
-        }
+        removeNode("/test");
 
         saveState();
     }
@@ -175,28 +161,37 @@ public abstract class RepositoryTestCase {
     }
 
     protected void tearDown(boolean clearRepository) throws Exception {
-        if (session != null) {
-            session.refresh(false);
-            session.logout();
-            session = null;
-        }
+        removeNode("/test");
+        checkState();
+
+        session.refresh(false);
+        session.logout();
+        session = null;
 
         if (clearRepository) {
             clearRepository();
-        } else {
-            checkState();
         }
     }
 
-    /**
-     * Sets the configuration change debugger path.
-     * Retains
-     * @param path
-     */
-    protected final void setConfigurationChangeDebugPath(String path) {
-        this.debugPath = path;
+    protected void removeNode(final String path) throws RepositoryException {
+        while (session != null && session.nodeExists(path)) {
+            session.getNode(path).remove();
+            session.save();
+        }
     }
 
+    protected Collection<String> getPathsToCheck() {
+        return Arrays.asList(
+                "/hippo:configuration/hippo:derivatives",
+                "/hippo:configuration/hippo:domains",
+                "/hippo:configuration/hippo:frontend",
+                "/hippo:configuration/hippo:groups",
+                "/hippo:configuration/hippo:queries",
+                "/hippo:configuration/hippo:security",
+                "/hippo:configuration/hippo:workflows",
+                "/hippo:configuration/hippo:users",
+                "/hippo:configuration/hippo:roles");
+    }
 
     private void saveState() throws RepositoryException {
         // save top-level nodes for tearDown validation
@@ -205,72 +200,16 @@ public abstract class RepositoryTestCase {
             topLevelNodes.add(node.getName() + "[" + node.getIndex() + "]");
         }
 
-        configurationHashcode = hashCode(session.getNode("/hippo:configuration"));
-
-        hashes = new HashMap<String, Integer>();
-        final Node configChangeDebugNode = session.getNode(debugPath);
-        for (Node configChild : new NodeIterable(configChangeDebugNode.getNodes())) {
-            hashes.put(configChild.getName(), hashCode(configChild));
-        }
-        for (Property configProp : new PropertyIterable(configChangeDebugNode.getProperties())) {
-            hashes.put(configProp.getName(), hashCode(configProp));
+        jcrStates = new ArrayList<>();
+        for (String pathToCheck : getPathsToCheck()) {
+            jcrStates.add(new JcrState(pathToCheck, session, log));
         }
 
-        if (log.isDebugEnabled()) {
-            debugStream = new ByteArrayOutputStream();
-            Utilities.dump(new PrintStream(debugStream), configChangeDebugNode);
-        }
     }
 
     private void checkState() throws Exception {
-        Session cleanupSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        while (cleanupSession.nodeExists("/test")) {
-            cleanupSession.getNode("/test").remove();
-            cleanupSession.save();
-        }
-
-        int configHashcode = hashCode(cleanupSession.getNode("/hippo:configuration"));
-        if (configHashcode != configurationHashcode) {
-            Map<String, Integer> afterHash = new HashMap<String, Integer>();
-            final Node configChangeDebugNode = cleanupSession.getNode(debugPath);
-            for (Node configChild : new NodeIterable(configChangeDebugNode.getNodes())) {
-                afterHash.put(configChild.getName(), hashCode(configChild));
-            }
-            for (Property configProp : new PropertyIterable(configChangeDebugNode.getProperties())) {
-                afterHash.put(configProp.getName(), hashCode(configProp));
-            }
-
-            Set<String> missing = new HashSet<String>();
-            Set<String> changed = new HashSet<String>();
-            Set<String> added = new HashSet<String>();
-            for (Map.Entry<String, Integer> oldHashEntry : hashes.entrySet()) {
-                final String name = oldHashEntry.getKey();
-                if (!afterHash.containsKey(name)) {
-                    missing.add(name);
-                } else if (!afterHash.get(name).equals(oldHashEntry.getValue())) {
-                    changed.add(name);
-                }
-            }
-            for (String name : afterHash.keySet()) {
-                if (!hashes.containsKey(name)) {
-                    added.add(name);
-                }
-            }
-
-            if (log.isDebugEnabled()) {
-                System.out.println("Before:");
-                System.out.write(debugStream.toByteArray());
-
-                System.out.println("After:");
-                Utilities.dump(cleanupSession.getNode(debugPath));
-            }
-
-            throw new Exception("Configuration has been changed, but not reverted; make sure changes in tearDown overrides are saved.  " +
-                    "Detected changes: added = " + added + ", changed = " + changed + ", removed = " + missing + ".  " +
-                    "Use RepositoryTestCase#setConfigurationChangeDebugPath to narrow down.");
-        }
-
-        for (Node node : new NodeIterable(cleanupSession.getRootNode().getNodes())) {
+        session.refresh(false);
+        for (Node node : new NodeIterable(session.getRootNode().getNodes())) {
             final boolean removed = topLevelNodes.remove(node.getName() + "[" + node.getIndex() + "]");
             if (!removed) {
                 throw new Exception("tearDown found node with name '" + node.getName() + "' in session; this node should be removed in subclass");
@@ -279,69 +218,10 @@ public abstract class RepositoryTestCase {
         if (topLevelNodes.size() > 0) {
             throw new Exception("tearDown found nodes " + topLevelNodes + " missing");
         }
-
-        cleanupSession.logout();
-    }
-
-    protected int hashCode(Node node) throws RepositoryException {
-        if (excludeFromHashCode(node)) {
-            return 0;
+        for (JcrState jcrState : jcrStates) {
+            jcrState.check();
         }
-        String name = node.getName();
-        String type = node.getPrimaryNodeType().getName();
-        int hashCode = name.hashCode() + type.hashCode() * 31;
 
-        int propHash = 0;
-        for (Property property : new PropertyIterable(node.getProperties())) {
-            propHash = propHash + hashCode(property);
-        }
-        hashCode = 31 * hashCode + propHash;
-
-        boolean orderable = node.getPrimaryNodeType().hasOrderableChildNodes();
-        for (NodeType mixin : node.getMixinNodeTypes()) {
-            if (mixin.hasOrderableChildNodes()) {
-                orderable = true;
-            }
-        }
-        int childHash = 0;
-        for (Node child : new NodeIterable(node.getNodes())) {
-            if (child instanceof HippoNode) {
-                if (((HippoNode) child).isVirtual()) {
-                    continue;
-                }
-            }
-            if (orderable) {
-                childHash = 31 * childHash + hashCode(child);
-            } else {
-                childHash = childHash + hashCode(child);
-            }
-        }
-        hashCode = 31 * hashCode + childHash;
-        return hashCode;
-    }
-
-    protected int hashCode(Property property) throws RepositoryException {
-        int hashCode = property.getName().hashCode();
-        if (property.isMultiple()) {
-            for (Value value : property.getValues()) {
-                hashCode = hashCode(value) + (hashCode * 31);
-            }
-        } else {
-            hashCode = hashCode(property.getValue()) + (hashCode * 31);
-        }
-        return hashCode;
-    }
-
-    protected int hashCode(Value value) throws RepositoryException {
-        return value.getString().hashCode();
-    }
-
-    private boolean excludeFromHashCode(final Node node) throws RepositoryException {
-        return getExcludedFromHashCodePaths().contains(node.getPath());
-    }
-
-    protected Collection<String> getExcludedFromHashCodePaths() {
-        return Collections.emptySet();
     }
 
     protected void build(Session session, String[] contents) throws RepositoryException {

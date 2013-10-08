@@ -82,7 +82,6 @@ public class FolderWorkflowTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
-        setConfigurationChangeDebugPath("/hippo:configuration/hippo:initialize");
 
         super.setUp();
 

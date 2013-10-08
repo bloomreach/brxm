@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.junit.Test;
@@ -95,6 +96,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
 
     @Test
     public void testModifyPropertyAfterBrowsingVirtual() throws RepositoryException {
+        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node;
         build(session, content1);
         session.save();

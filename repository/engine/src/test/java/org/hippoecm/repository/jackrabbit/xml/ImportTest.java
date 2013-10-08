@@ -55,15 +55,6 @@ public class ImportTest extends RepositoryTestCase {
         session.getRootNode().addNode("test", "nt:unstructured");
     }
 
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        while (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        super.tearDown();
-    }
-
     private void testWhiteSpacesInBinary(byte[] data) throws Exception {
         if(data.length > 255) {
             for (int i = 0; i < data.length; i++) {

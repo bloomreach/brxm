@@ -106,8 +106,6 @@ public class ConcurrentLinkModificationTest extends RepositoryTestCase {
             userSession.logout();
             userSession = null;
         }
-        //session.refresh(false);
-        session.getRootNode().getNode("test").remove();
         super.tearDown();
     }
 

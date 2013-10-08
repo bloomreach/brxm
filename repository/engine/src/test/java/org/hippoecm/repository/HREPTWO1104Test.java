@@ -36,12 +36,6 @@ public class HREPTWO1104Test extends RepositoryTestCase {
     final private static int numiters = 3000;
 
 
-    public void setUp() throws Exception {
-        super.setUp();
-        session.logout();
-        session = null;
-    }
-
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
 
