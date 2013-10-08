@@ -37,10 +37,10 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         add(main);
 
         final InstallState pluginInstalled = getInstallState();
-        if (!pluginInstalled.equals(InstallState.INSTALLED_AND_RESTARTED)) {
+        if (pluginInstalled != InstallState.INSTALLED_AND_RESTARTED) {
             main.add(new AttributeModifier("style", "display:none;"));
         }
-        add(createInstaller());
+        add(createInstaller(pluginInstalled));
     }
 
     public InstallState getInstallState() {
@@ -64,8 +64,9 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
      * Create an installer ui.
      *
      * @return
+     * @param pluginInstalled
      */
-    public Fragment createInstaller() {
+    public Fragment createInstaller(final InstallState pluginInstalled) {
         final Fragment fragment = new Fragment("install-fragment", "default-installer", InstallablePlugin.this);
         final InstallState currentInstallState = getInstallState();
         final Label label = new Label("install-message", new StringResourceModel(currentInstallState.getMessage(), this, null));
@@ -90,6 +91,8 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         form.add(button);
         fragment.add(form);
         fragment.add(label);
+        // hide "installed"
+        fragment.setVisible(pluginInstalled != InstallState.INSTALLED_AND_RESTARTED);
         return fragment;
     }
 

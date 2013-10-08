@@ -204,6 +204,30 @@ public class JavaSourceUtils {
 
     }
 
+    public static String getSupertype(final Path path) {
+
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+        return classType.getSuperclassType().toString();
+    }
+
+    /**
+     * Returns name of the class, fully qualified e.g. {@code com.foo.BarBean}
+     *
+     * @param path path to java source file
+     */
+    public static String getFullQualifiedClassName(final Path path) {
+
+        final CompilationUnit unit = getCompilationUnit(path);
+        unit.recordModifications();
+        final TypeDeclaration classType = (TypeDeclaration) unit.types().get(0);
+
+        final String fullyQualifiedName = unit.getPackage().getName().getFullyQualifiedName();
+        final String identifier = classType.getName().getIdentifier();
+        return fullyQualifiedName + '.' + identifier;
+    }
+
     /**
      * Adds {@code HippoEssentialsGenerated} annotation to provided java source file (class level)
      *
@@ -225,9 +249,7 @@ public class JavaSourceUtils {
 
     }
 
-    public static void annotateMethod(final EssentialsGeneratedMethod method, final MemoryBean bean) {
-
-        final Path path = bean.getBeanPath();
+    public static void annotateMethod(final EssentialsGeneratedMethod method, final Path path) {
         final CompilationUnit unit = getCompilationUnit(path);
         unit.recordModifications();
         final AST ast = unit.getAST();
@@ -241,13 +263,9 @@ public class JavaSourceUtils {
                     log.debug("skipping {}", method.getMethodName());
                     return super.visit(node);
                 }
-
                 // TODO improve this check: we need to check if all parameters are equal / same type
-
                 if (parameters != null && myParams != null && myParams.size() == parameters.size()) {
                     // check method id:
-
-
                     addHippoGeneratedAnnotation(method.getInternalName(), unit, node, ast);
                     // rewrite file:
                     replaceFile(path, unit, ast);
@@ -256,7 +274,11 @@ public class JavaSourceUtils {
             }
         });
 
+    }
 
+    public static void annotateMethod(final EssentialsGeneratedMethod method, final MemoryBean bean) {
+        final Path path = bean.getBeanPath();
+        annotateMethod(method, path);
     }
 
     /**

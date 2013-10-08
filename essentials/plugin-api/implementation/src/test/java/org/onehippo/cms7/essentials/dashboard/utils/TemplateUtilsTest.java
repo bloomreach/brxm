@@ -16,23 +16,83 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
  */
-public class TemplateUtilsTest {
+public class TemplateUtilsTest extends BaseTest {
 
+    public static final int EXPECTED_PROPERTY_SIZE = 7;
+    public static final String BEAN_REF = "com.test.MyBean";
     private static Logger log = LoggerFactory.getLogger(TemplateUtilsTest.class);
+    private List<MemoryBean> memoryBeans;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        populateExistingBeans();
+
+    }
+
+    @Test
+    public void testParseBeanProperties() throws Exception {
+        assertTrue(memoryBeans != null);
+        for (MemoryBean memoryBean : memoryBeans) {
+            final Path beanPath = memoryBean.getBeanPath();
+            if (beanPath != null && memoryBean.getName().equals("newsdocument")) {
+                final List<TemplateUtils.PropertyWrapper> propertyWrappers = TemplateUtils.parseBeanProperties(beanPath);
+                final int size = propertyWrappers.size();
+                assertEquals(String.format("Expected %d methods but got, %d", EXPECTED_PROPERTY_SIZE, size), EXPECTED_PROPERTY_SIZE, size);
+                for (TemplateUtils.PropertyWrapper propertyWrapper : propertyWrappers) {
+                    final String propertyExpression = propertyWrapper.getFormattedJspProperty("document");
+                    assertNotEquals(String.format("Expected property expression to be populated: %s", propertyWrapper.getPropertyName()), "", propertyExpression);
+                }
+            }
+        }
+    }
 
     @Test
     public void testInjectTemplate() throws Exception {
 
-        String result = TemplateUtils.injectTemplate(null);
-        assertTrue(result == null);
+        final Map<String, Object> data = new HashMap<>();
+        data.put("beanReference", BEAN_REF);
+        final Collection<String> listObject = new ArrayList<>();
+        listObject.add("repeatable item");
+        data.put("repeatable", listObject);
+        String result = TemplateUtils.injectTemplate("test_template.ftl", data, getClass());
+        log.info("result {}", result);
+        assertTrue(result.contains(BEAN_REF));
+        assertTrue(result.contains("repeatable item"));
+        result = TemplateUtils.injectTemplate("test_template_freemarker.ftl", data, getClass());
+        log.info("result {}", result);
+        assertTrue("Expected "+BEAN_REF,result.contains(BEAN_REF));
+
     }
+
+    private void populateExistingBeans() {
+        final PluginContext context = getContext();
+        context.setProjectNamespacePrefix(HIPPOPLUGINS_NAMESPACE);
+        memoryBeans = BeanWriterUtils.buildBeansGraph(getProjectRoot(), context, "txt");
+
+    }
+
 }

@@ -7,8 +7,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
@@ -244,6 +246,33 @@ public class BeanWriterUtils {
      * @param sourceFileExtension file extension, e.g. {@code "java"}
      * @return a list of beans or an empty list if nothing was found
      */
+    public static List<String> findExitingBeanNames(final PluginContext context, final String sourceFileExtension) {
+        final List<String> retVal = new ArrayList<>();
+        final List<Path> exitingBeans = findExitingBeans(context, sourceFileExtension);
+        for (Path exitingBean : exitingBeans) {
+            retVal.add(exitingBean.toFile().getName());
+        }
+        // TODO improve
+        return retVal;
+    }
+
+    public static Map<String, Path> mapExitingBeanNames(final PluginContext context, final String sourceFileExtension) {
+        final Map<String, Path> retVal = new HashMap<>();
+        final List<Path> exitingBeans = findExitingBeans(context, sourceFileExtension);
+        for (Path exitingBean : exitingBeans) {
+            retVal.put(exitingBean.toFile().getName(), exitingBean);
+        }
+        // TODO improve
+        return retVal;
+    }
+
+        /**
+         * Find all existing HST beans (which annotated with {@code @Node})
+         *
+         * @param context             plugin context instance
+         * @param sourceFileExtension file extension, e.g. {@code "java"}
+         * @return a list of beans or an empty list if nothing was found
+         */
     public static List<Path> findExitingBeans(final PluginContext context, final String sourceFileExtension) {
         final Path startDir = context.getBeansPackagePath();
         final List<Path> existingBeans = new ArrayList<>();
@@ -283,6 +312,22 @@ public class BeanWriterUtils {
         }
 
     }
+
+
+    /**
+     * Add HippoGenerated annotation to an existing bean
+     * @param context plugin context instance
+     * @param path path to source file
+     */
+    public static void annotateExistingMethods(final PluginContext context, final Path path){
+
+        final NoAnnotationMethodVisitor methodCollection = JavaSourceUtils.getAnnotateMethods(context, path);
+        final List<EssentialsGeneratedMethod> methodsNames = methodCollection.getModifiableMethods();
+        for (EssentialsGeneratedMethod method : methodsNames) {
+            JavaSourceUtils.annotateMethod(method, path);
+        }
+    }
+
 
     /**
      * Adds (missing) methods to a HippoBean

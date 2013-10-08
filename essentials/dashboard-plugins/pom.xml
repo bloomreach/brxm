@@ -47,6 +47,7 @@
   </properties>
 
   <modules>
+    <module>dashboard-documents-plugin</module>
     <module>dashboard-setup-plugin</module>
     <module>dashboard-gallery-plugin</module>
     <module>dashboard-xinha-plugin</module>

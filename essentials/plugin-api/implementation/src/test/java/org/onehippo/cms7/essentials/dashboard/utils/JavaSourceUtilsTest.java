@@ -113,6 +113,15 @@ public class JavaSourceUtilsTest extends BaseTest {
 
     }
 
+    @Test
+    public void testGetName() throws Exception {
+
+        final String fullQualifiedClassName = JavaSourceUtils.getFullQualifiedClassName(path);
+        assertEquals(fullQualifiedClassName, "com.foo.bar.TestExampleClass");
+
+
+    }
+
     @After
     public void tearDown() throws Exception {
         super.tearDown();

@@ -73,6 +73,13 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/resources</directory>
         <includes>
+          <include>**/*.html</include>
+          <include>**/*.css</include>
+          <include>**/*.png</include>
+          <include>**/*.gif</include>
+          <include>**/*.js</include>
+          <include>**/*.jsp</include>
+          <include>**/*.ftl</include>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
           <include>**/*.MF</include>

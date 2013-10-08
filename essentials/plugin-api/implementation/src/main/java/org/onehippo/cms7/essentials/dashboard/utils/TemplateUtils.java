@@ -16,11 +16,31 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.WordUtils;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.PrimitiveType;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.Type;
+import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * @version "$Id$"
@@ -32,9 +52,172 @@ public final class TemplateUtils {
     private TemplateUtils() {
     }
 
-    public static String injectTemplate(final String template) {
-        final Configuration config = new Configuration();
-        //
+    public static List<PropertyWrapper> parseBeanProperties(final Path beanPath) {
+        // TODO implement
+
+        List<PropertyWrapper> collection = new ArrayList<>();
+        final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
+        final List<MethodDeclaration> methods = methodCollection.getMethods();
+        for (MethodDeclaration method : methods) {
+            final SimpleName name = method.getName();
+            final String identifier = name.getIdentifier();
+            // skip all not getter methods:
+            if (!validGetter(identifier)) {
+                log.info("@Skipping method (not starting with get/is): {}", identifier);
+                continue;
+            }
+            final Type returnType2 = method.getReturnType2();
+            final boolean primitiveType = returnType2.isPrimitiveType();
+            if (primitiveType) {
+                // check if void:
+                final String primitiveName = ((PrimitiveType) returnType2).getPrimitiveTypeCode().toString();
+                if (primitiveName.equals("void")) {
+                    // skip void types
+                    log.info("@Skipping *void* method: {}", identifier);
+                    continue;
+                }
+                // add type:
+                final PropertyWrapper propertyWrapper = new PropertyWrapper(extractPropertyName(identifier), primitiveName);
+                log.info("primitive type {}", identifier);
+                propertyWrapper.setPrimitiveType(true);
+                collection.add(propertyWrapper);
+                continue;
+            }
+
+            //############################################
+            // SIMPLE OBJECT TYPES
+            //############################################
+            if (returnType2.isSimpleType()) {
+
+                final SimpleType myType = (SimpleType) returnType2;
+                log.info("myType {}", myType);
+                final String fullyQualifiedName = myType.getName().getFullyQualifiedName();
+                collection.add(new PropertyWrapper(extractPropertyName(identifier), fullyQualifiedName));
+                continue;
+            }
+            //############################################
+            // ARRAY/COLLECTION  TYPES
+            //############################################
+
+            // TODO implement
+            log.info("returnType2 {}", returnType2);
+            log.info("name {}", name);
+        }
+        return collection;
+
+
+    }
+
+    private static String extractPropertyName(final String identifier) {
+        if (identifier.startsWith("get")) {
+            final String methodName = identifier.substring(3);
+            if (methodName.length() > 0) {
+                return WordUtils.uncapitalize(methodName);
+            }
+        }
+
+
         return null;
+    }
+
+    private static boolean validGetter(final String identifier) {
+        return identifier.startsWith("get") || identifier.startsWith("is");
+    }
+
+    public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {
+        final Configuration config = new Configuration();
+        config.setClassForTemplateLoading(clazz, "/");
+        try {
+            final Template template = config.getTemplate(templateName);
+            final StringWriter stringWriter = new StringWriter();
+            template.process(data, stringWriter);
+            return stringWriter.toString();
+        } catch (IOException e) {
+            log.error("Error finding template: " + templateName, e);
+        } catch (TemplateException e) {
+            log.error("Error injecting template: " + templateName, e);
+        }
+        return null;
+    }
+
+    public static class PropertyWrapper implements Serializable {
+
+        private static final Set<String> BASE_TYPES = new ImmutableSet.Builder<String>()
+                .add("String")
+                .add("Double")
+                .add("Long")
+                .add("Float")
+                .build();
+        /*  private static final Set<String> HIPPO_TYPES = new ImmutableSet.Builder<String>()
+                  .add("HippoHtml")
+                  .build();*/
+        private static final long serialVersionUID = 1L;
+        private final String propertyName;
+        private final String returnType;
+        private boolean collectionType;
+        private boolean primitiveType;
+
+        public PropertyWrapper(final String propertyName, final String returnType) {
+            this.propertyName = propertyName;
+            this.returnType = returnType;
+        }
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public String getReturnType() {
+            return returnType;
+        }
+
+        public boolean isPrimitiveType() {
+            return primitiveType;
+        }
+
+        public void setPrimitiveType(final boolean primitiveType) {
+            this.primitiveType = primitiveType;
+        }
+
+        public boolean isCollectionType() {
+            return collectionType;
+        }
+
+        public void setCollectionType(final boolean collectionType) {
+            this.collectionType = collectionType;
+        }
+
+        public boolean isDateCalendarType() {
+            return returnType.equals("Calendar") || returnType.equals("Date");
+        }
+
+        public String getFormattedJspProperty(final String baseName) {
+            // get supertype:
+            if (primitiveType) {
+                return "${" + baseName + '.' + propertyName + '}';
+            } else if (BASE_TYPES.contains(returnType)) {
+                return "${" + baseName + '.' + propertyName + '}';
+            } else if (isDateCalendarType()) {
+                if (returnType.equals("Calendar")) {
+                    return "<fmt:formatDate value=\"${" + baseName + '.' + propertyName + ".time}\" type=\"both\" dateStyle=\"medium\" timeStyle=\"short\"/>";
+                }
+                return "<fmt:formatDate value=\"${" + baseName + '.' + propertyName + "}\" type=\"both\" dateStyle=\"medium\" timeStyle=\"short\"/>";
+            } else if (returnType.equals("HippoHtml")) {
+                return " <hst:html hippohtml=\"${" + baseName + '.' + propertyName + "}\"/>";
+            } else if (returnType.equals("HippoGalleryImageSetBean")) {
+                return "<img src=\"<hst:link hippobean=\"${" + baseName + '.' + propertyName + ".original}\"/>\"\" />";
+            }
+            //TODO check if local bean and fetch supertype
+            log.warn("Missing property mapping for: {}", this);
+            return "";
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder("PropertyWrapper{");
+            sb.append("propertyName='").append(propertyName).append('\'');
+            sb.append(", returnType='").append(returnType).append('\'');
+            sb.append('}');
+            return sb.toString();
+        }
     }
 }

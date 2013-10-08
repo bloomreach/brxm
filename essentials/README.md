@@ -1,17 +1,30 @@
 #Hippo Essentials
 
 
-Hippo Essentials is a project aimed at speeding up [Hippo CMS](http://www.onehippo.org) project implementations. It allows developers to easily install and configure Hippo CMS functionalities.
+Hippo Essentials is a project aimed at speeding up [Hippo CMS](http://www.onehippo.org) project implementations.
+It allows developers to easily install and configure Hippo CMS functionalities.
 
 # Getting Started
 
-To get started with the Hippo Essentials checkout the current master branch.
+## Git checkout
+
+To get started with the Hippo Essentials checkout the current master branch. You have two options to check out
+the project.
+
+
+### Clone project *
+
+One option is to use HTTPS* (see NOTES below).
+The second option is to use a SSH clone. By using the SSH clone, you don't have to provide your username
+and password. You just have to create a SSH key and configure the key in your GIT account. There are
+[instructions on how to create your SSH key](https://help.github.com/articles/generating-ssh-keys) on Git
+Hub. In order to make use of your SSH key, you have to make sure you use the following clone command:
 
 ```
-$ git clone https://github.com/onehippo/essentials.git
+$ git clone git@github.com:onehippo/essentials.git
 ```
 
-
+## Working with Git
 
 Create local working branch to work on:
 ```
@@ -118,3 +131,16 @@ as the default for your project edit the file
 ##Copyright and license
 
 Copyright 2013 Hippo B.V under the [Apache 2.0 license](https://github.com/onehippo/essentials/blob/master/LICENSE).
+
+
+
+## NOTES:
+
+### Cloning project using HTTPS clone
+
+The first option is to use a HTTPS clone. You have to provide your GIT username and password to be able
+to perform GIT operations. The clone can be created by the following command:
+
+```
+$ git clone https://github.com/onehippo/essentials.git
+```
