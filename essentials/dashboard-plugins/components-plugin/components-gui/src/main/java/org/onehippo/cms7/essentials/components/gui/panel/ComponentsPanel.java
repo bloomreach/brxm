@@ -12,6 +12,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -26,12 +27,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.wizard.IWizardStep;
+import org.apache.wicket.extensions.wizard.WizardModel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.ListChoice;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
+import org.onehippo.cms7.essentials.components.gui.panel.provider.ComponentProvider;
 import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.CatalogObject;
@@ -50,38 +54,39 @@ import org.slf4j.LoggerFactory;
  */
 public class ComponentsPanel extends EssentialsWizardStep {
 
-    public static final ImmutableBiMap<String, CatalogObject> COMPONENTS_MAPPING = new ImmutableBiMap.Builder<String, CatalogObject>()
-            .put("Document Component",
-                    new CatalogObject("essentials-component-document", "Essentials Document Component")
-                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsDocumentComponent")
-                            .setIconPath("images/essentials/essentials-component-document.png")
-                            .setType("HST.Item")
-                            .setTemplate("essentials-component-document.jsp")
-
-            )
-            .put("Events Component",
-                    new CatalogObject("essentials-component-events", "Essentials Events Component")
-                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsEventsComponent")
-                            .setIconPath("images/essentials/essentials-component-events.png")
-                            .setType("HST.Item")
-                            .setTemplate("essentials-component-events.jsp")
-
-            ).put("List Component",
-                    new CatalogObject("essentials-component-list", "Essentials List Component")
-                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsListComponent")
-                            .setIconPath("images/essentials/essentials-component-list.png")
-                            .setType("HST.Item")
-                            .setTemplate("essentials-component-list.jsp")
-
-            ).put("News Component",
-                    new CatalogObject("essentials-component-news", "Essentials News Component")
-                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsNewsComponent")
-                            .setIconPath("images/essentials/essentials-component-news.png")
-                            .setType("HST.Item")
-                            .setTemplate("essentials-component-news.jsp")
-
-            )
-            .build();
+//    public static final ImmutableBiMap<String, CatalogObject> COMPONENTS_MAPPING = new ImmutableBiMap.Builder<String, CatalogObject>()
+//            .put("Document Component",
+//                    new CatalogObject("essentials-component-document", "Essentials Document Component")
+//                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsDocumentComponent")
+//                            .setIconPath("images/essentials/essentials-component-document.png")
+//                            .setType("HST.Item")
+//                            .setTemplate("essentials-component-document.jsp")
+//                            .setDetail(true)
+//
+//            )
+//            .put("Events Component",
+//                    new CatalogObject("essentials-component-events", "Essentials Events Component")
+//                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsEventsComponent")
+//                            .setIconPath("images/essentials/essentials-component-events.png")
+//                            .setType("HST.Item")
+//                            .setTemplate("essentials-component-events.jsp")
+//
+//            ).put("List Component",
+//                    new CatalogObject("essentials-component-list", "Essentials List Component")
+//                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsListComponent")
+//                            .setIconPath("images/essentials/essentials-component-list.png")
+//                            .setType("HST.Item")
+//                            .setTemplate("essentials-component-list.jsp")
+//
+//            ).put("News Component",
+//                    new CatalogObject("essentials-component-news", "Essentials News Component")
+//                            .setComponentClassName("org.onehippo.cms7.essentials.components.EssentialsNewsComponent")
+//                            .setIconPath("images/essentials/essentials-component-news.png")
+//                            .setType("HST.Item")
+//                            .setTemplate("essentials-component-news.jsp")
+//
+//            )
+//            .build();
     // TODO refactor / make dynamic
     public static final String JSP_FOLDER = File.separator + "essentials" + File.separator + "components" + File.separator;
     private static final long serialVersionUID = 1L;
@@ -93,9 +98,11 @@ public class ComponentsPanel extends EssentialsWizardStep {
     private final List<String> available;
     private final List<String> toAdd;
     private String selectedSite;
+    private final ComponentsWizard parent;
 
     public ComponentsPanel(final ComponentsWizard parent, final String id) {
         super(id);
+        this.parent = parent;
         context = parent.getContext();
         final FeedbackPanel feedbackPanel = new EssentialsFeedbackPanel("feedback");
         feedbackPanel.setOutputMarkupId(true);
@@ -122,10 +129,11 @@ public class ComponentsPanel extends EssentialsWizardStep {
                 if (StringUtils.isNotEmpty(input) && StringUtils.isNumeric(input)) {
                     final String site = sitesChoice.getChoices().get(Integer.parseInt(input));
                     selectedSite = site;
-                    final List<String> addedComponents = Util.getAddedComponents(context, site);
+                    final List<String> addedComponents = Util.getAddedComponents(parent.getProvider(), context, site);
 
                     addToTypesListChoice.setChoices(addedComponents);
-                    availableTypesListChoice.setChoices(Util.getAvailableComponents(COMPONENTS_MAPPING.keySet(), addedComponents));
+
+                    availableTypesListChoice.setChoices(Util.getAvailableComponents(parent.getProvider().keys(), addedComponents));
 
                     target.add(addToTypesListChoice, availableTypesListChoice);
 
@@ -165,11 +173,10 @@ public class ComponentsPanel extends EssentialsWizardStep {
                     @SuppressWarnings("unchecked")
                     final List<String> availableChoices = (List<String>) availableTypesListChoice.getChoices();
                     final String input = availableChoices.get(Integer.parseInt(availableTypesListChoice.getInput()));
-                    final boolean b = addCatalogToSite(context, input, selectedSite);
-                    final List<String> addedComponents = Util.getAddedComponents(context, selectedSite);
+                    final boolean isAdded = addCatalogToSite(context, input, selectedSite);
+                    final List<String> addedComponents = Util.getAddedComponents(parent.getProvider(), context, selectedSite);
                     addToTypesListChoice.setChoices(addedComponents);
-                    availableTypesListChoice.setChoices(Util.getAvailableComponents(COMPONENTS_MAPPING.keySet(), addedComponents));
-
+                    availableTypesListChoice.setChoices(Util.getAvailableComponents(parent.getProvider().keys(), addedComponents));
                     target.add(availableTypesListChoice, addToTypesListChoice);
                 } else {
                     log.error("Please add and/or select a site");
@@ -187,15 +194,11 @@ public class ComponentsPanel extends EssentialsWizardStep {
             protected void onEvent(final AjaxRequestTarget target) {
                 if (selectedSite != null) {
                     final String input = addToTypesListChoice.getChoices().get(Integer.parseInt(addToTypesListChoice.getInput()));
-
                     //todo some magic;
-                    final boolean b = removeCatalogFromSite(context, input, selectedSite);
-
-                    List<String> addedComponents = Util.getAddedComponents(context, selectedSite);
-
-
+                    final boolean isRemoved = removeCatalogFromSite(context, input, selectedSite);
+                    List<String> addedComponents = Util.getAddedComponents(parent.getProvider(), context, selectedSite);
                     addToTypesListChoice.setChoices(addedComponents);
-                    availableTypesListChoice.setChoices(Util.getAvailableComponents(COMPONENTS_MAPPING.keySet(), addedComponents));
+                    availableTypesListChoice.setChoices(Util.getAvailableComponents(parent.getProvider().keys(), addedComponents));
 
                     target.add(availableTypesListChoice, addToTypesListChoice);
                 } else {
@@ -211,7 +214,7 @@ public class ComponentsPanel extends EssentialsWizardStep {
     }
 
     private boolean addCatalogToSite(final PluginContext context, final String input, final String selectedSite) {
-        final CatalogObject catalogObject = COMPONENTS_MAPPING.get(input);
+        final CatalogObject catalogObject = parent.getProvider().get(input);
         catalogObject.setSiteName(selectedSite);
         ComponentsUtils.addToCatalog(catalogObject, context);
 
@@ -252,7 +255,7 @@ public class ComponentsPanel extends EssentialsWizardStep {
     }
 
     private boolean removeCatalogFromSite(final PluginContext context, final String input, final String selectedSite) {
-        final CatalogObject catalogObject = COMPONENTS_MAPPING.get(input);
+        final CatalogObject catalogObject = parent.getProvider().get(input);
         catalogObject.setSiteName(selectedSite);
         ComponentsUtils.removeFromCatalog(catalogObject, context);
         return true;
@@ -289,7 +292,7 @@ public class ComponentsPanel extends EssentialsWizardStep {
         private Util() {
         }
 
-        public static List<String> getAddedComponents(PluginContext context, String siteName) {
+        public static List<String> getAddedComponents(ComponentProvider provider, PluginContext context, String siteName) {
             final List<String> addedComponents = new ArrayList<>();
             final Session session = context.getSession();
             try {
@@ -304,7 +307,7 @@ public class ComponentsPanel extends EssentialsWizardStep {
                         final Node essentialContainerItem = it.nextNode();
                         final String label = essentialContainerItem.getProperty("hst:label").getString();
                         final String key = label.replace(HIPPOESSENTIALS_PREFIX, "");
-                        if (COMPONENTS_MAPPING.containsKey(key)) {
+                        if (provider.containsKey(key)) {
                             addedComponents.add(key);
                         }
                     }
@@ -320,6 +323,9 @@ public class ComponentsPanel extends EssentialsWizardStep {
             abv.removeAll(added);
             return abv;
         }
+
+
+
 
     }
 }

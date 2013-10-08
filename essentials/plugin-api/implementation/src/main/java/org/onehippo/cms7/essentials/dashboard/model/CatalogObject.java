@@ -1,5 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * TODO: move to API?
  * @version "$Id: CatalogObject.java 174059 2013-08-16 13:51:28Z mmilicevic $"
  */
-public class CatalogObject {
+public class CatalogObject implements Serializable {
 
     public static final String PRIMARY_TYPE = "hst:containeritemcomponent";
     private static Logger log = LoggerFactory.getLogger(CatalogObject.class);
@@ -22,6 +23,7 @@ public class CatalogObject {
     private String label;
     private String template;
     private String xType;
+    private boolean detail;
     private Map<String, String> parameters = new HashMap<>();
 
 
@@ -39,6 +41,14 @@ public class CatalogObject {
 
     }
 
+    public boolean isDetail() {
+        return detail;
+    }
+
+    public CatalogObject setDetail(final boolean detail) {
+        this.detail = detail;
+        return this;
+    }
 
     public String getSiteName() {
         return siteName;

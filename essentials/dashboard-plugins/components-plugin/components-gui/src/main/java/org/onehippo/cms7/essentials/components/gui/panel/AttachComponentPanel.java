@@ -24,10 +24,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.onehippo.cms7.essentials.components.gui.ComponentsWizard;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.CatalogObject;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
@@ -37,8 +40,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * Attach component to a component container.
@@ -78,7 +79,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
                     log.debug("No site selected");
                     return;
                 }
-                final List<String> addedComponents = ComponentsPanel.Util.getAddedComponents(context, selectedSite);
+                final List<String> addedComponents = ComponentsPanel.Util.getAddedComponents(parent.getProvider(), context, selectedSite);
                 componentsChoice.changeModel(target, addedComponents);
             }
         });
@@ -93,7 +94,9 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             @Override
             public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
                 if (selectedItems.size() > 0) {
-                    onComponentSelected(target, selectedItems.iterator().next());
+                    final CatalogObject catalogObject = parent.getProvider().get(selectedItems.iterator().next());
+                    //final CatalogObject catalogObject = choiceRenderer.getCatalogObject(selectedItems.iterator().next());
+                    onComponentSelected(target, catalogObject);
                 }
             }
         });
@@ -175,12 +178,14 @@ public class AttachComponentPanel extends EssentialsWizardStep {
 
     }
 
-    private void onComponentSelected(final AjaxRequestTarget target, final String selected) {
+    //todo
+    private void onComponentSelected(final AjaxRequestTarget target, final CatalogObject selected) {
         log.info("Component selected# {}", selected);
-        if (selected.equals("Document Component")) {
+        if (selected.isDetail()) {
             beansDropdown.show(target);
+        } else {
+            beansDropdown.hide(target);
         }
-
     }
 
     @Override

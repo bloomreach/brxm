@@ -21,18 +21,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.google.common.base.Strings;
+
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.ListChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -50,6 +51,12 @@ public class DropdownPanel extends Panel {
     private List<String> items;
     private boolean shown = true;
 
+
+    public DropdownPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener, final IChoiceRenderer iChoiceRenderer) {
+        this(id, title, form, model);
+        addListener(listener);
+        dropDown.setChoiceRenderer(iChoiceRenderer);
+    }
 
     public DropdownPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener) {
         this(id, title, form, model);
@@ -107,6 +114,7 @@ public class DropdownPanel extends Panel {
         dropdownTitle.setOutputMarkupPlaceholderTag(true);
     }
 
+
     public void show(final AjaxRequestTarget target) {
         container.setVisible(true);
         if (target != null) {
@@ -152,5 +160,13 @@ public class DropdownPanel extends Panel {
 
     public boolean isShown() {
         return shown;
+    }
+
+    public ListChoice<String> getDropDown() {
+        return dropDown;
+    }
+
+    public IChoiceRenderer getChoiceRenderer() {
+        return dropDown.getChoiceRenderer();
     }
 }
