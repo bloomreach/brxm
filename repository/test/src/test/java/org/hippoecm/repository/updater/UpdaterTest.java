@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.api.WorkflowException;
@@ -113,9 +114,9 @@ public class UpdaterTest extends RepositoryTestCase {
         List list = new LinkedList();
         list.add(module);
         Modules modules = new Modules(list);
+        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         UpdaterEngine.migrate(session, modules);
         session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
     }
 
     @Test
@@ -164,10 +165,11 @@ public class UpdaterTest extends RepositoryTestCase {
         List list = new LinkedList();
         list.add(module);
         Modules modules = new Modules(list);
+        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         UpdaterEngine.migrate(session, modules);
         session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
 
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         // verify back references
         
         refA = session.getRootNode().getNode("test/refA");
