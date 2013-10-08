@@ -52,7 +52,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             HippoNodeType.NT_HARDDOCUMENT,
             HippoStdNodeType.NT_PUBLISHABLE,
             HippoStdNodeType.NT_PUBLISHABLESUMMARY,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT,
+            HippoNodeType.NT_SKIPINDEX
     };
     private static final String[] PROTECTED_PROPERTIES = new String[]{
             HippoNodeType.HIPPO_AVAILABILITY,
@@ -306,6 +307,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 }
             }
             draftDocument.setOwner(getWorkflowContext().getUserIdentity());
+            // make sure drafts nor their descendant nodes do not get indexed
+            if (!draftDocument.getNode().isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+                draftDocument.getNode().addMixin(HippoNodeType.NT_SKIPINDEX);
+            }
         } catch (RepositoryException ex) {
             throw new WorkflowException("Failed to obtain an editable instance", ex);
         }
@@ -331,9 +336,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 publishedDocument.setAvailability(new String[]{"live"});
             }
             unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
-            if (unpublishedDocument.getNode().isNodeType(HippoNodeType.NT_SKIPINDEX)) {
-                unpublishedDocument.getNode().removeMixin(HippoNodeType.NT_SKIPINDEX);
-            }
             return unpublishedDocument;
         } catch (RepositoryException ex) {
             throw new WorkflowException("failed to commit editable instance", ex);
@@ -362,10 +364,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         Node draftNode = cloneDocumentNode(unpublishedDocument != null ? unpublishedDocument : publishedDocument);
         if (!draftNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
             draftNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
-        }
-        // make sure drafts nor their descendant nodes do not get indexed
-        if (!draftNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
-            draftNode.addMixin(HippoNodeType.NT_SKIPINDEX);
         }
         draftDocument = new PublishableDocument(draftNode);
         draftDocument.setState(PublishableDocument.DRAFT);
