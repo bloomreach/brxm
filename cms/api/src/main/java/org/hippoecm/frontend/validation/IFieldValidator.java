@@ -35,7 +35,6 @@ public interface IFieldValidator extends IClusterable {
      *
      * @param childModel
      * @param key
-     * @return
      * @throws ValidationException
      *
      * @deprecated : use the {@link #newValueViolation(IModel, IModel)} signature instead
@@ -48,7 +47,6 @@ public interface IFieldValidator extends IClusterable {
      *
      * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
      * @param message model containing the message to be shown to the user
-     * @return
      * @throws ValidationException
      */
     Violation newValueViolation(IModel childModel, IModel<String> message) throws ValidationException;

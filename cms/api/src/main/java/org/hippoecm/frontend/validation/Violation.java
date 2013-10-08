@@ -45,6 +45,8 @@ public final class Violation implements IDetachable {
      * @param messageKey  The key used for translation
      * @param parameters  Optional parameters for value substitution in translations
      * @param fieldPaths  List of {@link ModelPath}s that led up to the violation
+     *
+     * @deprecated use the {@link #Violation(Set, IModel)} constructor instead.
      */
     @Deprecated
     public Violation(Class<?> resourceBundleClass, String messageKey, Object[] parameters, Set<ModelPath> fieldPaths) {
@@ -61,25 +63,6 @@ public final class Violation implements IDetachable {
     public Violation(final Set<ModelPath> paths, final IModel<String> messageModel) {
         this.fieldPaths = paths;
         this.message = messageModel;
-    }
-
-    @Deprecated
-    public String getMessageKey() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    public Object[] getParameters() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns the class of the resource bundle that contains the translation of the message.
-     * Deprecated; use the {@link #getMessage()} method to get a (resolved) message.
-     */
-    @Deprecated
-    public Class<?> getResourceBundleClass() {
-        throw new UnsupportedOperationException();
     }
 
     public IModel<String> getMessage() {
