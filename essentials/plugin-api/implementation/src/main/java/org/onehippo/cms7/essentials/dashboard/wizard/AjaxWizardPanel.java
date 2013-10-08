@@ -86,7 +86,8 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 final boolean nextAvailable = wizardModel.isNextAvailable();
-                final IWizardStep activeStep = wizardModel.getActiveStep();
+                final EssentialsWizardStep activeStep = (EssentialsWizardStep) wizardModel.getActiveStep();
+                activeStep.setProcessed(true);
                 activeStep.applyState();
                 final boolean complete = activeStep.isComplete();
                 if(!complete){
