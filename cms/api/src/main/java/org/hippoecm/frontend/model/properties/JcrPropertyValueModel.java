@@ -33,7 +33,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -182,11 +181,19 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     public void setValue(Value value) {
         load();
-        this.value = value;
-        this.type = getType();
 
-        PropertyDefinition propDef = getPropertyDefinition();
         try {
+            if (this.value != null && value != null) {
+                String oldValue = this.value.getString();
+                String newValue = value.getString();
+                if (oldValue.equals(newValue)) {
+                    return;
+                }
+            }
+            this.value = value;
+            this.type = getType();
+
+            PropertyDefinition propDef = getPropertyDefinition();
             if (propertyModel.getItemModel().exists()) {
                 Property prop = propertyModel.getProperty();
                 if (index != NO_INDEX) {
@@ -276,6 +283,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             }
             return;
         }
+        Value value;
         try {
             ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
             int type = getType();
