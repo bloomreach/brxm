@@ -35,6 +35,7 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
                     editor.start();
                     return editor;
                 }
-            } else if (node.isNodeType("nt:version") && JcrHelper.isNodeType(node, HippoStdNodeType.NT_PUBLISHABLE)) {
+            } else if (node.isNodeType(JcrConstants.NT_VERSION) && JcrHelper.isNodeType(node, HippoStdNodeType.NT_PUBLISHABLE)) {
                 HippostdPublishableEditor editor = new HippostdPublishableEditor(manager, getPluginContext(),
                         parameters, new JcrNodeModel(node));
                 editor.start();

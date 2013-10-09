@@ -75,6 +75,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
@@ -83,6 +84,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -512,8 +514,8 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 try {
                     final Node node = getModel().getNode();
                     final Node parent = node.getParent();
-                    if (parent.isNodeType("hippo:handle")) {
-                        return !parent.isNodeType("mix:versionable");
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        return !parent.isNodeType(JcrConstants.MIX_VERSIONABLE);
                     }
                 } catch (RepositoryException e) {
                     log.warn("Unable to determine whether version history is available", e);

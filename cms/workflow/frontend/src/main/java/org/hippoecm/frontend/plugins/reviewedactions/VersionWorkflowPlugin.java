@@ -41,12 +41,14 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +101,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 Node frozenNode;
                 try {
                     frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
-                    String primaryType = frozenNode.getProperty("jcr:frozenPrimaryType").getString();
+                    String primaryType = frozenNode.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
                     String prefix = primaryType.substring(0, primaryType.indexOf(':'));
                     if (prefix.contains("_")) {
                         return false;
@@ -115,7 +117,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 Node frozenNode = ((WorkflowDescriptorModel) getDefaultModel()).getNode();
                 Session session = frozenNode.getSession();
 
-                Node currentNode = session.getNodeByIdentifier(frozenNode.getProperty("jcr:frozenUuid").getString());
+                Node currentNode = session.getNodeByIdentifier(frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
                 Node handle = currentNode.getParent();
 
                 WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
@@ -126,8 +128,8 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 NodeIterator docs = handle.getNodes(handle.getName());
                 while (docs.hasNext()) {
                     document = docs.nextNode();
-                    if (document.hasProperty("hippostd:state")
-                            && "unpublished".equals(document.getProperty("hippostd:state").getString())) {
+                    if (document.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
+                            && "unpublished".equals(document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
                         unpublished = document;
                         break;
                     }

@@ -78,7 +78,6 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
 
             @Override
             public void detach() {
-                // TODO Auto-generated method stub
             }
 
             @Override

@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         Node node = model.getObject();
         if (node != null) {
             try {
-                if (node.isNodeType("nt:version") && (Mode.EDIT == mode || Mode.VIEW == mode)) {
+                if (node.isNodeType(JcrConstants.NT_VERSION) && (Mode.EDIT == mode || Mode.VIEW == mode)) {
                     throw new EditorException("Invalid mode " + mode + " for version node");
                 }
             } catch (RepositoryException e) {
@@ -56,9 +57,9 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         IModel<Node> model = super.getEditorModel();
         try {
             Node node = model.getObject();
-            if (node.isNodeType("nt:version")) {
-                Node frozen = node.getNode("jcr:frozenNode");
-                String uuid = frozen.getProperty("jcr:frozenUuid").getString();
+            if (node.isNodeType(JcrConstants.NT_VERSION)) {
+                Node frozen = node.getNode(JcrConstants.JCR_FROZEN_NODE);
+                String uuid = frozen.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
                 try {
                     node = frozen.getSession().getNodeByIdentifier(uuid);
                 } catch (ItemNotFoundException ex) {
@@ -82,8 +83,8 @@ class DefaultCmsEditor extends AbstractCmsEditor<Node> {
         IModel<Node> model = super.getEditorModel();
         try {
             Node node = model.getObject();
-            if (node.isNodeType("nt:version")) {
-                return new JcrNodeModel(node.getNode("jcr:frozenNode"));
+            if (node.isNodeType(JcrConstants.NT_VERSION)) {
+                return new JcrNodeModel(node.getNode(JcrConstants.JCR_FROZEN_NODE));
             }
         } catch (RepositoryException ex) {
             throw new EditorException("cannot obtain proper editable document from handle", ex);

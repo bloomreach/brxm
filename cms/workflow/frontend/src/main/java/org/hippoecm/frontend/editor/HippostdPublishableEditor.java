@@ -48,6 +48,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         Node node = model.getObject();
         boolean compareToVersion = false;
         try {
-            if (node.isNodeType("nt:version")) {
+            if (node.isNodeType(JcrConstants.NT_VERSION)) {
                 node = getVersionHandle(node);
                 compareToVersion = true;
             }
@@ -163,8 +164,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         }
         Node node = super.getEditorModel().getObject();
         try {
-            if (node.isNodeType("nt:version")) {
-                return new JcrNodeModel(node.getNode("jcr:frozenNode"));
+            if (node.isNodeType(JcrConstants.NT_VERSION)) {
+                return new JcrNodeModel(node.getNode(JcrConstants.JCR_FROZEN_NODE));
             }
         } catch (RepositoryException ex) {
             throw new EditorException("Error locating base revision", ex);
@@ -232,7 +233,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             node = getEditorModel().getObject();
             path = node.getPath();
             HippoSession session = (HippoSession) node.getSession();
-            return session.pendingChanges(node, "nt:base", true).hasNext();
+            return session.pendingChanges(node, JcrConstants.NT_BASE, true).hasNext();
         } catch (EditorException | RepositoryException e) {
             log.error("Could not determine whether there are pending changes for '" + path + "'", e);
         }
@@ -508,11 +509,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     static Mode getMode(IModel<Node> nodeModel) throws EditorException {
         Node node = nodeModel.getObject();
         try {
-            if (node.isNodeType("nt:version")) {
-                Node frozen = node.getNode("jcr:frozenNode");
-                String uuid = frozen.getProperty("jcr:frozenUuid").getString();
+            if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+                Node frozen = node.getNode(JcrConstants.JCR_FROZEN_NODE);
+                String uuid = frozen.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
                 try {
-                    node.getSession().getNodeByUUID(uuid);
+                    node.getSession().getNodeByIdentifier(uuid);
                     return Mode.COMPARE;
                 } catch (ItemNotFoundException ex) {
                     return Mode.VIEW;
@@ -568,8 +569,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     static Node getVersionHandle(Node versionNode) throws EditorException {
         try {
-            String uuid = versionNode.getNode("jcr:frozenNode").getProperty("jcr:frozenUuid").getString();
-            Node variant = versionNode.getSession().getNodeByUUID(uuid);
+            String uuid = versionNode.getNode(JcrConstants.JCR_FROZEN_NODE).getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
+            Node variant = versionNode.getSession().getNodeByIdentifier(uuid);
             return variant.getParent();
         } catch (RepositoryException ex) {
             throw new EditorException("Failed to build version information", ex);
