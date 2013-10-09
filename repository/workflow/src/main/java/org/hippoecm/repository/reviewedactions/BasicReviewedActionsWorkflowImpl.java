@@ -310,7 +310,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 }
             }
             draftDocument.setOwner(getWorkflowContext().getUserIdentity());
-            // make sure drafts nor their descendant nodes do not get indexed
+            // make sure drafts nor their descendant nodes get indexed
             final Node draftNode = draftDocument.getNode();
             if (!draftNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
                 draftNode.addMixin(HippoNodeType.NT_SKIPINDEX);
