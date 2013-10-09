@@ -509,7 +509,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     static Mode getMode(IModel<Node> nodeModel) throws EditorException {
         Node node = nodeModel.getObject();
         try {
-            if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+            if (node.isNodeType(JcrConstants.NT_VERSION)) {
                 Node frozen = node.getNode(JcrConstants.JCR_FROZEN_NODE);
                 String uuid = frozen.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
                 try {
