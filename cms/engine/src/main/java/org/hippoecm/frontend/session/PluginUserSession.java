@@ -238,8 +238,14 @@ public class PluginUserSession extends UserSession {
 
     public void login() {
         try {
-            login(null, null);
+            login((UserCredentials)null, null);
         } catch (LoginException ignore) {}
+    }
+
+    @Override
+    public void login(final String username, final String password) throws LoginException {
+        UserCredentials credentials = new UserCredentials(username, password);
+        this.login(credentials);
     }
 
     public void login(UserCredentials credentials) throws LoginException {

@@ -57,7 +57,9 @@ public abstract class UserSession extends WebSession {
     public abstract IFacetRootsObserver getFacetRootsObserver();
 
     public abstract HippoNode getRootNode();
-    
+
+    public abstract void login(String username, String password) throws LoginException;
+
     public abstract void logout();
 
     public abstract Session getJcrSession();

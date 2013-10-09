@@ -45,6 +45,7 @@ import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValid
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -57,7 +58,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     private static final long ONEDAYMS = 1000 * 3600 * 24;
-    
+
     private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=400,height=380").makeImmutable();
 
     private final long notificationPeriod;
@@ -319,7 +320,14 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                     .getString());
                     log.warn("Setting the password by user '" + username + "' failed.");
                 } else {
-                    log.info("Password changed by user '" + username + "'.");
+                    log.info("Password changed by user '" + username + "'. Logging in again to update the CMS session credentials.");
+                    try {
+                        UserSession.get().login(username, newPassword);
+                        // create a new user, otherwise it will use the session of the previous login
+                        user = new User(username);
+                    } catch (LoginException e) {
+                        log.warn("User '{}' changed its password but failed to automatically login again.", username, e);
+                    }
                 }
             }
 
@@ -341,8 +349,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         public IValueMap getProperties() {
             return DIALOG_PROPERTIES;
         }
-        
-        
+
     }
 
     private class CannotChangePasswordDialog extends AbstractDialog {
