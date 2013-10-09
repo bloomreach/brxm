@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
@@ -30,8 +31,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.sso.CredentialCipher;
 
 /**
@@ -79,97 +80,24 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             return;
         }
 
-        log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
+        log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", servletRequest.getRequestURL());
         HttpSession httpSession = servletRequest.getSession(true);
 
         // Verify that cms user in request header is same as the one associated
         // with the credentials on the HttpSession
         String cmsUser = servletRequest.getHeader("CMS-User");
         if (cmsUser != null) {
-            String currentCmsUser = (String) httpSession.getAttribute(CMS_USER_ID_ATTR);
+            final String currentCmsUser = getCurrentCmsUser(httpSession);
             if (currentCmsUser != null && !currentCmsUser.equals(cmsUser)) {
-                httpSession.removeAttribute(CMS_USER_ID_ATTR);
-                httpSession.removeAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
-                httpSession.removeAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED);
+                resetAuthentication(httpSession);
             }
         }
 
-        if (httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {
-            String key = httpSession.getId();
-            String credentialParam = servletRequest.getParameter("cred");
-  
-            //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
-            if (credentialParam == null) {
-                
-                if(!(requestContext.getResolvedMount().getMount() instanceof MutableMount)) {
-                    throw new ContainerException("CmsSecurityValve is only available for mounts that are of type MutableMount.");
-                }
-
-                final String method = servletRequest.getMethod();
-                if (!"GET".equals(method) && !"HEAD".equals(method)) {
-                    try {
-                        servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                    } catch (IOException e) {
-                        log.error("Unable to send unauthorized (404) response to client", e);
-                    }
-                    return;
-                }
-
-                String cmsUrl = servletRequest.getHeader("Referer");
-                if (cmsUrl == null) {
-                    throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
-                }
-                if (cmsUrl.indexOf("?") > -1) {
-                    // we do not need the query String for the cms url.
-                    cmsUrl = cmsUrl.substring(0, cmsUrl.indexOf("?"));
-                }
-                if (!cmsUrl.endsWith("/")) {
-                    cmsUrl += "/";
-                }
-
-                StringBuilder destinationURL = new StringBuilder();
-                String cmsBaseUrl = getBaseUrl(cmsUrl);
-                destinationURL.append(cmsBaseUrl);
-
-                // we append the request uri including the context path (normally this is /site/...)
-                destinationURL.append(servletRequest.getRequestURI());
-
-                if(requestContext.getPathSuffix() != null) {
-                    String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
-                    destinationURL.append(subPathDelimeter).append(requestContext.getPathSuffix());
-                }
-
-                String qString =  servletRequest.getQueryString();
-                if(qString != null) {
-                    destinationURL.append("?").append(qString);
-                }
-                // generate key; redirect to cms
-                try {
-                    String cmsAuthUrl = cmsUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
-                    servletResponse.sendRedirect(cmsAuthUrl);
-                } catch (UnsupportedEncodingException e) {
-                    log.error("Unable to encode the destination url with utf8 encoding " + e.getMessage(), e);
-                } catch (IOException e) {
-                    log.error("Something gone wrong so stopping valve invocation fall through: " + e.getMessage(), e);
-                }
-
-                return;
-            } else {
-                CredentialCipher credentialCipher = CredentialCipher.getInstance();
-                try {
-                    Credentials cred = credentialCipher.decryptFromString(key, credentialParam);
-                    httpSession.setAttribute(CMS_USER_ID_ATTR, ((SimpleCredentials) cred).getUserID());
-                    httpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
-                    httpSession.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
-                } catch (SignatureException se) {
-                    throw new ContainerException(se);
-                }
-            } 
+        if (!authenticate(servletRequest, servletResponse, requestContext, httpSession)) {
+            return;
         }
 
         updateHstSessionCookie(servletRequest, servletResponse, httpSession);
-
-
 
         // we are in a request for the REST template composer
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
@@ -192,6 +120,11 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     ((HstMutableRequestContext) requestContext).setSession(jcrSession);
                 }
                 context.invokeNext();
+            } catch (LoginException e) {
+                // the credentials of the current CMS user have changed, so reset the current authentication
+                log.info("Credentials of CMS user '{}' are no longer valid, resetting its HTTP session and starting the SSO handshake again.", getCurrentCmsUser(httpSession));
+                resetAuthentication(httpSession);
+                authenticate(servletRequest, servletResponse, requestContext, httpSession);
             } finally {
                 if (jcrSession != null) {
                     jcrSession.logout();
@@ -200,7 +133,108 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
+    private static String getCurrentCmsUser(final HttpSession httpSession) {
+        return (String) httpSession.getAttribute(CMS_USER_ID_ATTR);
+    }
+
+    private static boolean authenticate(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HstRequestContext requestContext, final HttpSession httpSession) throws ContainerException {
+        if (!isAuthenticated(httpSession)) {
+            final String key = httpSession.getId();
+            final String encryptedCredentials = servletRequest.getParameter("cred");
+
+            if (encryptedCredentials == null) {
+                // no secret or credentials; if possible, add the secret and request the
+                // encrypted credentials by redirecting back to CMS
+
+                if(!(requestContext.getResolvedMount().getMount() instanceof MutableMount)) {
+                    throw new ContainerException("CmsSecurityValve is only available for mounts that are of type MutableMount.");
+                }
+
+                final String method = servletRequest.getMethod();
+                if (!"GET".equals(method) && !"HEAD".equals(method)) {
+                    try {
+                        servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    } catch (IOException e) {
+                        log.error("Unable to send unauthorized (404) response to client", e);
+                    }
+                } else {
+                    redirectToCms(servletRequest, servletResponse, requestContext, key);
+                }
+                return false;
+            } else {
+                storeAuthentication(httpSession, key, encryptedCredentials);
+            }
+        }
+        return true;
+    }
+
+    private static boolean isAuthenticated(final HttpSession httpSession) {
+        return httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) != null;
+    }
+
+    private static void storeAuthentication(final HttpSession httpSession, final String key, final String credentialParam) throws ContainerException {
+        final CredentialCipher credentialCipher = CredentialCipher.getInstance();
+        try {
+            final Credentials cred = credentialCipher.decryptFromString(key, credentialParam);
+            httpSession.setAttribute(CMS_USER_ID_ATTR, ((SimpleCredentials) cred).getUserID());
+            httpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
+            httpSession.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
+        } catch (SignatureException se) {
+            throw new ContainerException(se);
+        }
+    }
+
+    private static void resetAuthentication(final HttpSession httpSession) {
+        httpSession.removeAttribute(CMS_USER_ID_ATTR);
+        httpSession.removeAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+        httpSession.removeAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED);
+    }
+
+    private static void redirectToCms(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HstRequestContext requestContext, final String key) throws ContainerException {
+        try {
+            final String cmsAuthUrl = createCmsAuthenticationUrl(servletRequest, requestContext, key);
+            servletResponse.sendRedirect(cmsAuthUrl);
+        } catch (UnsupportedEncodingException e) {
+            log.error("Unable to encode the destination url with UTF8 encoding " + e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("Something gone wrong so stopping valve invocation fall through: " + e.getMessage(), e);
+        }
+    }
+
+    private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String key) throws ContainerException {
+        String cmsUrl = servletRequest.getHeader("Referer");
+        if (cmsUrl == null) {
+            throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
+        }
+        if (cmsUrl.indexOf("?") > -1) {
+            // we do not need the query String for the cms url.
+            cmsUrl = cmsUrl.substring(0, cmsUrl.indexOf("?"));
+        }
+        if (!cmsUrl.endsWith("/")) {
+            cmsUrl += "/";
+        }
+
+        final StringBuilder destinationURL = new StringBuilder();
+        final String cmsBaseUrl = getBaseUrl(cmsUrl);
+        destinationURL.append(cmsBaseUrl);
+
+        // we append the request uri including the context path (normally this is /site/...)
+        destinationURL.append(servletRequest.getRequestURI());
+
+        if(requestContext.getPathSuffix() != null) {
+            String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
+            destinationURL.append(subPathDelimeter).append(requestContext.getPathSuffix());
+        }
+
+        String qString =  servletRequest.getQueryString();
+        if(qString != null) {
+            destinationURL.append("?").append(qString);
+        }
+
+        return cmsUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
+    }
+
+    private static void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
         final Cookie[] cookies = servletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -217,7 +251,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         servletResponse.addCookie(sessionIdCookie);
     }
 
-    private boolean isCmsRestRequestContext(final HttpServletRequest servletRequest) {
+    private static boolean isCmsRestRequestContext(final HttpServletRequest servletRequest) {
         return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_REST_REQUEST_CONTEXT));
     }
 
@@ -228,7 +262,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
      * @return the scheme + host + port without trailing / at the end
      * @throws ContainerException if the URL does not contain // after the scheme or does not contain a / after the host (+port)
      */
-    private String getBaseUrl(final String url) throws ContainerException {
+    private static String getBaseUrl(final String url) throws ContainerException {
         int indexOfDoubleSlash = url.indexOf("//");
         if (indexOfDoubleSlash == -1) {
             throw new ContainerException("Could not establish a SSO between CMS & site application because cannot get a cms url from the referer '"+url+"'");
@@ -240,25 +274,29 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         return url.substring(0, indexOfRequestURI);
     }
 
-    private Session createCmsRestSession(final HttpSession httpSession) throws ContainerException {
+    private Session createCmsRestSession(final HttpSession httpSession) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
         try {
             final Credentials credentials = (Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
             Session session = sessionSecurityDelegation.getDelegatedSession(credentials);
             log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
+        } catch (LoginException e) {
+            throw e;
         } catch (Exception e) {
             throw new ContainerException("Failed to create session based on SSO.", e);
         }
     }
 
-    private Session createCmsPreviewSession(final HttpSession httpSession) throws ContainerException {
+    private Session createCmsPreviewSession(final HttpSession httpSession) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
         Credentials cmsUserCred = (Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
         try {
             Session session = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsUserCred, false);
             log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
             return session;
+        } catch (LoginException e) {
+            throw e;
         } catch (Exception e) {
             throw new ContainerException("Failed to create Session based on SSO.", e);
         }
