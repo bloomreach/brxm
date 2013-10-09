@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.widgets;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +96,11 @@ public class ExtLinkPicker extends ExtObservable {
 
                 String rootPath = DEFAULT_PICKER_ROOT_PATH;
                 if (pickerConfigObject != null) {
-                    rootPath = pickerConfigObject.optString("rootPath", DEFAULT_PICKER_ROOT_PATH);
+                    try {
+                        rootPath = URLDecoder.decode(pickerConfigObject.optString("rootPath", DEFAULT_PICKER_ROOT_PATH), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        log.debug("Error decoding the root path for the dialog picker.", e);
+                    }
                 }
 
                 IPluginConfig pickerConfig = parsePickerConfig(pickerConfigObject, current, isRelativePath, rootPath);
@@ -127,7 +133,12 @@ public class ExtLinkPicker extends ExtObservable {
             String configuration = json.optString("configuration", DEFAULT_PICKER_CONFIGURATION);
             boolean remembersLastVisited = json.optBoolean("remembersLastVisited", DEFAULT_PICKER_REMEMBERS_LAST_VISITED);
 
-            String initialPath = json.optString("initialPath", DEFAULT_PICKER_INITIAL_PATH);
+            String initialPath = DEFAULT_PICKER_INITIAL_PATH;
+            try {
+                initialPath = URLDecoder.decode(json.optString("initialPath", DEFAULT_PICKER_INITIAL_PATH), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                log.error("Error decoding the initialPath property of the link picker config.", e);
+            }
             if (isRelativePath) {
                 initialPath = rootPath + (initialPath.startsWith("/") ? "" : "/") + initialPath;
             }

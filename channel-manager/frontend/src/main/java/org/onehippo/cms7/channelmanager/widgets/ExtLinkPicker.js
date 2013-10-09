@@ -31,6 +31,8 @@
         },
 
         openPicker: function(currentValue, pickerConfig, cb) {
+            pickerConfig.rootPath = encodeURI(pickerConfig.rootPath);
+            pickerConfig.initialPath = encodeURI(pickerConfig.initialPath);
             this.on('picked', cb, this, {single: true});
             this.fireEvent('pick', currentValue, Ext.util.JSON.encode(pickerConfig));
         }
