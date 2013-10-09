@@ -27,6 +27,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
@@ -112,7 +113,7 @@ public class RepositoryLogger implements DaemonModule {
     }
 
     private String getPropertyName(final String key) {
-        return "hippolog:" + key;
+        return "hippolog:" + NodeNameCodec.encode(key);
     }
 
     private void setProperty(final Node logNode, final String key, final Object value) throws RepositoryException {
