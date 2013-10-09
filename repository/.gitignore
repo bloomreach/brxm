@@ -58,7 +58,7 @@ deprecated/facetselectmirror/target
 deprecated/target
 deprecated/translation/hippo-repository-deprecated-translation.iml
 deprecated/translation/target
-deprecated/updater/hippo-repository-updater-module.iml
+deprecated/updater/hippo-repository-deprecated-updater-module.iml
 deprecated/updater/target
 engine/*.tmp
 engine/.classpath
@@ -189,7 +189,7 @@ upgrade/*.tmp
 upgrade/.classpath
 upgrade/.project
 upgrade/.settings
-upgrade/handlemigration/hippo-repository-version-history-migration.iml
+upgrade/handlemigration/hippo-repository-handle-migration.iml
 upgrade/handlemigration/target
 upgrade/local.properties
 upgrade/nbproject
