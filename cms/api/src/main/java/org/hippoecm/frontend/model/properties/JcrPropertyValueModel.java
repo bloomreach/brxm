@@ -186,7 +186,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             if (this.value != null && value != null) {
                 String oldValue = this.value.getString();
                 String newValue = value.getString();
-                if (oldValue.equals(newValue)) {
+                if (this.value.getType() == value.getType() && oldValue.equals(newValue)) {
                     return;
                 }
             }

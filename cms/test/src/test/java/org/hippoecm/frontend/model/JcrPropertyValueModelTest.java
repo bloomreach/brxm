@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Iterator;
 
 import javax.jcr.Node;
@@ -32,6 +27,11 @@ import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class JcrPropertyValueModelTest extends PluginTest {
 
@@ -158,6 +158,21 @@ public class JcrPropertyValueModelTest extends PluginTest {
         }
         valueModel.detach();
         assertEquals(null, valueModel.getObject());
+    }
+
+    @Test
+    public void testSameValueLeavesSessionClean() throws Exception {
+        Node test = this.root.addNode("test", "frontendtest:model");
+        test.setProperty("frontendtest:mandatory", "y"); // yuk
+
+        JcrPropertyModel propModel = new JcrPropertyModel(test.getPath() + "/frontendtest:string");
+        JcrPropertyValueModel valueModel = new JcrPropertyValueModel(propModel);
+        valueModel.setObject("a");
+        valueModel.detach();
+        session.save();
+
+        valueModel.setObject("a");
+        assertEquals(false, session.hasPendingChanges());
     }
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {
