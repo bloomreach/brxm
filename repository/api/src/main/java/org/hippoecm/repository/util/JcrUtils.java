@@ -580,7 +580,7 @@ public class JcrUtils {
 
         final Node srcNode = session.getNode(srcAbsPath);
         final int idx = destAbsPath.lastIndexOf('/');
-        final String parentDestAbsPath = idx == 0 ? destAbsPath : destAbsPath.substring(0, idx);
+        final String parentDestAbsPath = idx == 0 ? "/" : destAbsPath.substring(0, idx);
         final String destNodeName = destAbsPath.substring(idx + 1);
         final Node destParentNode = session.getNode(parentDestAbsPath);
 
