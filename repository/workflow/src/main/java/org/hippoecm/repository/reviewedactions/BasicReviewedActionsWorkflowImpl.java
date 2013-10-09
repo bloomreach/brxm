@@ -56,6 +56,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             HippoNodeType.NT_SKIPINDEX
     };
     private static final String[] PROTECTED_PROPERTIES = new String[]{
+            JcrConstants.JCR_BASE_VERSION,
+            JcrConstants.JCR_PREDECESSORS,
+            JcrConstants.JCR_VERSION_HISTORY,
             HippoNodeType.HIPPO_AVAILABILITY,
             HippoNodeType.HIPPO_RELATED,
             HippoNodeType.HIPPO_PATHS,
@@ -308,8 +311,12 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
             draftDocument.setOwner(getWorkflowContext().getUserIdentity());
             // make sure drafts nor their descendant nodes do not get indexed
-            if (!draftDocument.getNode().isNodeType(HippoNodeType.NT_SKIPINDEX)) {
-                draftDocument.getNode().addMixin(HippoNodeType.NT_SKIPINDEX);
+            final Node draftNode = draftDocument.getNode();
+            if (!draftNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
+                draftNode.addMixin(HippoNodeType.NT_SKIPINDEX);
+            }
+            if (draftNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
+                draftNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
             }
         } catch (RepositoryException ex) {
             throw new WorkflowException("Failed to obtain an editable instance", ex);
