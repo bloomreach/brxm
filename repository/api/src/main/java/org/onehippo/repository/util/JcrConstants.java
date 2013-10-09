@@ -51,5 +51,7 @@ public final class JcrConstants {
     public static final String JCR_VERSION_HISTORY = "jcr:versionHistory";
     public static final String JCR_FROZEN_PRIMARY_TYPE = "jcr:frozenPrimaryType";
     public static final String JCR_FROZEN_MIXIN_TYPES = "jcr:frozenMixinTypes";
+    public static final String JCR_FROZEN_NODE = "jcr:frozenNode";
+    public static final String JCR_FROZEN_UUID = "jcr:frozenUuid";
 
 }
