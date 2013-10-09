@@ -32,6 +32,8 @@ public final class JcrConstants {
 
     public static final String NT_BASE = "nt:base";
     public static final String NT_UNSTRUCTURED = "nt:unstructured";
+    public static final String NT_VERSION = "nt:version";
+    public static final String NT_FROZEN_NODE = "nt:frozenNode";
 
     // ------------------------------------------ properties
 
@@ -47,5 +49,7 @@ public final class JcrConstants {
     public static final String JCR_IS_CHECKED_OUT = "jcr:isCheckedOut";
     public static final String JCR_PREDECESSORS = "jcr:predecessors";
     public static final String JCR_VERSION_HISTORY = "jcr:versionHistory";
+    public static final String JCR_FROZEN_PRIMARY_TYPE = "jcr:frozenPrimaryType";
+    public static final String JCR_FROZEN_MIXIN_TYPES = "jcr:frozenMixinTypes";
 
 }

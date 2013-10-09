@@ -198,11 +198,11 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         copyTo(source.getNode(), target.getNode());
     }
 
-    protected void clearDocument(Document target) throws RepositoryException {
-        final Node targetNode = target.getNode();
-        JcrUtils.ensureIsCheckedOut(targetNode, true);
+    protected void clearDocument(Document document) throws RepositoryException {
+        final Node node = document.getNode();
+        JcrUtils.ensureIsCheckedOut(node, true);
 
-        for (Property property : new PropertyIterable(targetNode.getProperties())) {
+        for (Property property : new PropertyIterable(node.getProperties())) {
             if (property.getDefinition().isProtected()) {
                 continue;
             }
@@ -213,20 +213,20 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             property.remove();
         }
 
-        for (Node child : new NodeIterable(targetNode.getNodes())) {
+        for (Node child : new NodeIterable(node.getNodes())) {
             if (child.getDefinition().isProtected()) {
                 continue;
             }
             child.remove();
         }
 
-        final NodeType[] mixins = targetNode.getMixinNodeTypes();
+        final NodeType[] mixins = node.getMixinNodeTypes();
         for (NodeType mixin : mixins) {
             String name = mixin.getName();
             if (Arrays.binarySearch(PROTECTED_MIXINS, name) >= 0) {
                 continue;
             }
-            targetNode.removeMixin(mixin.getName());
+            node.removeMixin(mixin.getName());
         }
 
     }

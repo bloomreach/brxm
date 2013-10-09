@@ -43,6 +43,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.onehippo.repository.util.JcrConstants;
 
 /**
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
@@ -691,8 +692,9 @@ public class JcrUtils {
      * @throws RepositoryException
      */
     public static NodeType getPrimaryNodeType(Node node) throws RepositoryException {
-        if (node.isNodeType("nt:frozenNode")) {
-            return node.getSession().getWorkspace().getNodeTypeManager().getNodeType(node.getProperty("jcr:frozenPrimaryType").getString());
+        if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+            return node.getSession().getWorkspace().getNodeTypeManager().getNodeType(
+                    node.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString());
         } else {
             return node.getPrimaryNodeType();
         }
@@ -706,10 +708,10 @@ public class JcrUtils {
      * @throws RepositoryException
      */
     public static NodeType[] getMixinNodeTypes(Node node) throws RepositoryException {
-        if (node.isNodeType("nt:frozenNode")) {
+        if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
             Session session = node.getSession();
             final NodeTypeManager nodeTypeManager = session.getWorkspace().getNodeTypeManager();
-            Value[] mixins = node.getProperty("jcr:frozenMixinTypes").getValues();
+            Value[] mixins = node.getProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES).getValues();
             NodeType[] mixinTypes = new NodeType[mixins.length];
             int i = 0;
             for (Value mixin : mixins) {
@@ -785,7 +787,7 @@ public class JcrUtils {
      */
     public static void ensureIsCheckedOut(Node node, boolean traverseAncestors) throws RepositoryException {
         if (!node.isCheckedOut()) {
-            if (node.isNodeType("mix:versionable")) {
+            if (node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
                 final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
                 versionManager.checkout(node.getPath());
             } else if (traverseAncestors) {
