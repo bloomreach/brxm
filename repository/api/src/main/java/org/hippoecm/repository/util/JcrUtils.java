@@ -575,7 +575,7 @@ public class JcrUtils {
             throw new IllegalArgumentException("Root cannot be the destination of a copy");
         }
 
-        if (destAbsPath.startsWith(srcAbsPath)) {
+        if (destAbsPath.startsWith(srcAbsPath) && destAbsPath.substring(srcAbsPath.length()).startsWith("/")) {
             throw new IllegalArgumentException("Destination cannot be child of source node");
         }
 
