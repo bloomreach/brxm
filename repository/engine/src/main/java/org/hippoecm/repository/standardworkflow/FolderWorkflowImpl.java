@@ -63,6 +63,7 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -306,8 +307,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         // create handle ourselves, if not already exists
                         if (!target.hasNode(name) || !target.getNode(name).isNodeType(HippoNodeType.NT_HANDLE)
                                 || target.getNode(name).hasNode(name)) {
-                            result = target.addNode(name, "hippo:handle");
-                            result.addMixin(HippoNodeType.NT_HARDHANDLE);
+                            result = target.addNode(name, HippoNodeType.NT_HANDLE);
+                            result.addMixin(JcrConstants.MIX_REFERENCEABLE);
                         } else {
                             result = target.getNode(name);
                         }
@@ -849,7 +850,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Node handle = subject.addNode(targetName, HippoNodeType.NT_HANDLE);
-            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
+            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
             Node document = copyDocument(targetName, Collections.EMPTY_MAP, source, handle);
 
@@ -954,7 +955,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
-            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
+            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
