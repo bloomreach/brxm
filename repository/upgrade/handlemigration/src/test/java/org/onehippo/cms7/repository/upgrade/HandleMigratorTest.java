@@ -180,7 +180,9 @@ public class HandleMigratorTest extends RepositoryTestCase {
 
     private void createTestDocuments(final int count) throws Exception {
         for (int i = 0; i < count; i++) {
-            createTestDocument(i);
+            String path = createTestDocument(i);
+            Node node = session.getNode(path).getParent();
+            node.addMixin("hippo:hardhandle");
         }
     }
 
