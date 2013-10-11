@@ -79,9 +79,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FolderWorkflowPlugin extends RenderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
@@ -320,12 +317,12 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
                                 UserSession.get().getJcrSession().refresh(true);
                                 JcrNodeModel nodeModel = new JcrNodeModel(path);
-                                select(nodeModel);
                                 if (!nodeName.equals(localName)) {
                                     WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();
                                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
                                     defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
                                 }
+                                select(nodeModel);
                             } else {
                                 log.error("no workflow defined on model for selected node");
                             }
