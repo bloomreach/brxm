@@ -185,6 +185,7 @@ public class AttachComponentPanel extends EssentialsWizardStep {
             beansDropdown.show(target);
         } else {
             beansDropdown.hide(target);
+            scriptPanel.hide(target);
         }
     }
 

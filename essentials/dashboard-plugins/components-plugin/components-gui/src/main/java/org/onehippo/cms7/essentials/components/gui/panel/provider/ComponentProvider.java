@@ -1,16 +1,12 @@
 package org.onehippo.cms7.essentials.components.gui.panel.provider;
 
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableBiMap;
 
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.onehippo.cms7.essentials.dashboard.model.CatalogObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class ComponentProvider implements IDataProvider<CatalogObject> {
+public class ComponentProvider extends ListDataProvider<CatalogObject> { //implements IDataProvider<CatalogObject> {
 
     private static Logger log = LoggerFactory.getLogger(ComponentProvider.class);
 
@@ -56,12 +52,9 @@ public class ComponentProvider implements IDataProvider<CatalogObject> {
             )
             .build();
 
-
-    @Override
-    public Iterator<? extends CatalogObject> iterator(final long first, final long count) {
-        return COMPONENTS_MAPPING.values().iterator();
+    public ComponentProvider() {
+        super(COMPONENTS_MAPPING.values().asList());
     }
-
 
     //keyset
     public Collection<CatalogObject> values() {
@@ -69,7 +62,7 @@ public class ComponentProvider implements IDataProvider<CatalogObject> {
     }
 
     //values
-    public Collection< String> keys() {
+    public Collection<String> keys() {
         return COMPONENTS_MAPPING.keySet();
     }
 
@@ -81,18 +74,5 @@ public class ComponentProvider implements IDataProvider<CatalogObject> {
         return COMPONENTS_MAPPING.containsKey(key);
     }
 
-    @Override
-    public long size() {
-        return COMPONENTS_MAPPING.size();
-    }
 
-    @Override
-    public IModel<CatalogObject> model(final CatalogObject object) {
-        return new Model(object);
-    }
-
-    @Override
-    public void detach() {
-
-    }
 }

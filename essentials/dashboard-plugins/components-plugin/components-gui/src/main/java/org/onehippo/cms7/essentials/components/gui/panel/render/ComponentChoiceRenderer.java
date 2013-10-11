@@ -39,10 +39,4 @@ public class ComponentChoiceRenderer implements IChoiceRenderer<CatalogObject> {
         return object.getName();
     }
 
-    public CatalogObject getCatalogObject(final String type) {
-        if (!map.isEmpty() && map.containsKey(type)) {
-            return map.get(type);
-        }
-        return null;
-    }
 }
