@@ -36,19 +36,20 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.CopyHandler;
+import org.hippoecm.repository.util.CopyHandlerChain;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
 
@@ -90,104 +91,20 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     private static void restore(Node target, Node source) throws RepositoryException {
-        if (!target.getPrimaryNodeType().getName().equals(source.getProperty("jcr:frozenPrimaryType").getString())) {
-            throw new RepositoryException("Cannot restore across different node types");
-        }
+        JcrUtils.copyTo(source, target, new CopyHandler() {
 
-        if (source.hasProperty("jcr:frozenMixinTypes")) {
-            Value[] mixins = source.getProperty("jcr:frozenMixinTypes").getValues();
-            for (Value mixin : mixins) {
-                target.addMixin(mixin.getString());
+            @Override
+            public void setProperty(final PropInfo prop, CopyHandlerChain chain) throws RepositoryException {
+                final String name = prop.getName();
+                if (name.startsWith("jcr:frozen") || name.startsWith("jcr:uuid") ||
+                        name.equals(HippoNodeType.HIPPO_RELATED) ||
+                        name.equals(HippoNodeType.HIPPO_COMPUTE) ||
+                        name.equals(HippoNodeType.HIPPO_PATHS)) {
+                    return;
+                }
+                super.setProperty(prop, chain);
             }
-        }
-
-        NodeType[] mixinNodeTypes = target.getMixinNodeTypes();
-        NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
-        nodeTypes[0] = target.getPrimaryNodeType();
-        if (mixinNodeTypes.length > 0) {
-            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
-        }
-
-        for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            // ignore virtual nodes
-            if (child instanceof HippoNode) {
-                Node canonical = ((HippoNode) child).getCanonicalNode();
-                if (canonical == null || !canonical.isSame(child)) {
-                    continue;
-                }
-            }
-
-            String childType = child.getProperty("jcr:frozenPrimaryType").getString();
-            // virtual nodes are checked with rep:root type
-            if ("rep:root".equals(childType)) {
-                continue;
-            }
-            final String relPath = child.getName() + "[" + child.getIndex() + "]";
-            if (target.hasNode(relPath)) {
-                Node childTarget = target.getNode(relPath);
-                restore(childTarget, child);
-            } else {
-                for (NodeType nt : nodeTypes) {
-                    if (nt.canAddChildNode(child.getName(), childType)) {
-                        Node childTarget = target.addNode(child.getName(), childType);
-                        restore(childTarget, child);
-                        break;
-                    }
-                }
-            }
-        }
-
-        for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
-            Property prop = iter.nextProperty();
-            if (prop.getName().startsWith("jcr:frozen") || prop.getName().startsWith("jcr:uuid") ||
-                prop.getName().equals(HippoNodeType.HIPPO_RELATED) ||
-                prop.getName().equals(HippoNodeType.HIPPO_COMPUTE) ||
-                prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
-                continue;
-            }
-            if (target.hasProperty(prop.getName())) {
-                continue;
-            }
-            
-            if (prop.getDefinition().isMultiple()) {
-                boolean isProtected = true;
-                for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(prop.getName(), prop.getValues())) {
-                        isProtected = false;
-                        break;
-                    }
-                }
-                for (NodeType nodeType : nodeTypes) {
-                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
-                    for (PropertyDefinition propDef : propDefs) {
-                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
-                            isProtected = true;
-                    }
-                }
-                if (!isProtected) {
-                    target.setProperty(prop.getName(), prop.getValues(), prop.getType());
-                }
-            } else {
-                boolean isProtected = true;
-                for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(prop.getName(), prop.getValue())) {
-                        isProtected = false;
-                        break;
-                    }
-                }
-                for (NodeType nodeType : nodeTypes) {
-                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
-                    for (PropertyDefinition propDef : propDefs) {
-                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
-                            isProtected = true;
-                    }
-                }
-                if (!isProtected) {
-                    target.setProperty(prop.getName(), prop.getValue());
-                }
-            }
-        }
+        });
     }
 
     private static Node getVersionableHandle(Node subject) throws RepositoryException {
@@ -433,8 +350,9 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
         JcrUtils.copyTo(frozenNode, subject);
 
-        subject.getSession().save();
-        subject.checkin();
+        final Session session = subject.getSession();
+        session.save();
+        session.getWorkspace().getVersionManager().checkpoint(subject.getPath());
 
         return new Document(subject);
     }

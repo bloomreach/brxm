@@ -17,82 +17,19 @@ package org.hippoecm.repository.reviewedactions;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.junit.After;
-import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public abstract class ReviewedActionsWorkflowAbstractTest {
-
-    private static final String SYSTEMUSER_ID = "admin";
-    private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
+public abstract class ReviewedActionsWorkflowAbstractTest extends RepositoryTestCase {
 
     protected static final String LOREM = "Lorem ipsum dolor sit amet";
 
-    protected HippoRepository server;
-    protected Session session;
     protected WorkflowManager workflowMgr = null;
-
-    @Before
-    public void setUp() throws Exception {
-        server = HippoRepositoryFactory.getHippoRepository();
-
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Node node, root = session.getRootNode();
-
-        // set up the workflow specification as a node "/hippo:configuration/hippo:workflows/default/reviewedactions"
-        node = root.getNode("hippo:configuration");
-        if (node.hasNode("hippo:workflows"))
-            node.getNode("hippo:workflows").remove();
-        node = node.addNode("hippo:workflows", "hipposys:workflowfolder");
-        node.addMixin("mix:referenceable");
-        Node wfs = node.addNode("default", "hipposys:workflowcategory");
-
-        node = wfs.addNode("reviewedactions", "hipposys:workflow");
-        node.setProperty("hipposys:nodetype", "hippostd:publishable");
-        node.setProperty("hipposys:display", "Reviewed actions workflow");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl");
-        Node types = node.getNode("hipposys:types");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hipposys:type");
-        node.setProperty("hipposys:nodetype", "hippostd:publishable");
-        node.setProperty("hipposys:display", "PublishableDocument");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hipposys:type");
-        node.setProperty("hipposys:nodetype", "hipposys:request");
-        node.setProperty("hipposys:display", "PublicationRequest");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
-
-        node = wfs.addNode("reviewedrequests", "hipposys:workflow");
-        node.setProperty("hipposys:nodetype", "hipposys:request");
-        node.setProperty("hipposys:display", "Reviewed requests workflow");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl");
-        types = node.getNode("hipposys:types");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublishableDocument", "hipposys:type");
-        node.setProperty("hipposys:nodetype", "hippo:publishable");
-        node.setProperty("hipposys:display", "PublishableDocument");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublishableDocument");
-        node = types.addNode("org.hippoecm.repository.reviewedactions.PublicationRequest", "hipposys:type");
-        node.setProperty("hipposys:nodetype", "hipposys:request");
-        node.setProperty("hipposys:display", "PublicationRequest");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.reviewedactions.PublicationRequest");
-
-        session.save();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if(session.getRootNode().hasNode("documents"))
-            session.getRootNode().getNode("documents").remove();
-        session.save();
-        server.close();
-    }
 
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {
         if (workflowMgr == null) {

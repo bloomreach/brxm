@@ -19,22 +19,20 @@ package org.onehippo.cms7.repository.upgrade;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.version.Version;
@@ -50,8 +48,12 @@ import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.util.CopyHandler;
+import org.hippoecm.repository.util.CopyHandlerChain;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -287,7 +289,6 @@ class HandleMigrator {
             versions.remove(0);
         }
         for (Version version : versions) {
-            clear(tmp);
             copy(version.getFrozenNode(), tmp);
             tmp.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED);
             migrationSession.save();
@@ -336,113 +337,37 @@ class HandleMigrator {
     }
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
-        final NodeTypeManager nodeTypeManager = srcNode.getSession().getWorkspace().getNodeTypeManager();
+        JcrUtils.copyTo(srcNode, destNode, new CopyHandler() {
 
-        final List<String> mixins = getMixinTypesToCopy(srcNode);
-        NodeType[] nodeTypes = new NodeType[mixins.size() + 1];
-        nodeTypes[0] = destNode.getPrimaryNodeType();
-        int i = 1;
-        for (String mixinType : mixins) {
-            destNode.addMixin(mixinType);
-            nodeTypes[i++] = nodeTypeManager.getNodeType(mixinType);
-        }
-
-        for (PropertyIterator iter = srcNode.getProperties(); iter.hasNext();) {
-            Property prop = iter.nextProperty();
-            if (prop.getName().startsWith("jcr:frozen") || prop.getName().startsWith("jcr:uuid") ||
-                    prop.getName().equals(HippoNodeType.HIPPO_RELATED) ||
-                    prop.getName().equals(HippoNodeType.HIPPO_COMPUTE) ||
-                    prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
-                continue;
-            }
-            if (destNode.hasProperty(prop.getName())) {
-                continue;
-            }
-
-            if (prop.getDefinition().isMultiple()) {
-                boolean isProtected = true;
-                for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(prop.getName(), prop.getValues())) {
-                        isProtected = false;
-                        break;
+            @Override
+            public void startNode(final NodeInfo nodeInfo, final CopyHandlerChain chain) throws RepositoryException {
+                String[] oldMixins = nodeInfo.getMixinNames();
+                Set<String> mixins = new HashSet<>();
+                for (String mixin : oldMixins) {
+                    if (!HippoNodeType.NT_HARDDOCUMENT.equals(mixin)) {
+                        mixins.add(mixin);
+                    } else {
+                        mixins.add(JcrConstants.MIX_VERSIONABLE);
                     }
                 }
-                for (NodeType nodeType : nodeTypes) {
-                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
-                    for (PropertyDefinition propDef : propDefs) {
-                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
-                            isProtected = true;
-                    }
-                }
-                if (!isProtected) {
-                    destNode.setProperty(prop.getName(), prop.getValues(), prop.getType());
-                }
-            } else {
-                boolean isProtected = true;
-                for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(prop.getName(), prop.getValue())) {
-                        isProtected = false;
-                        break;
-                    }
-                }
-                for (NodeType nodeType : nodeTypes) {
-                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
-                    for (PropertyDefinition propDef : propDefs) {
-                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
-                            isProtected = true;
-                    }
-                }
-                if (!isProtected) {
-                    destNode.setProperty(prop.getName(), prop.getValue());
-                }
+                String[] newMixins = mixins.toArray(new String[mixins.size()]);
+                NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
+                super.startNode(newInfo, chain);
             }
-        }
 
-        for (Node srcChild : new NodeIterable(srcNode.getNodes())) {
-            Node destChild = null;
-            final String relPath = srcChild.getName() + '[' + srcChild.getIndex() + ']';
-            if (destNode.hasNode(relPath)) {
-                destChild = destNode.getNode(relPath);
-            } else {
-                final String primaryNodeType = getPrimaryTypeToCopy(srcChild);
-                try {
-                    destChild = destNode.addNode(srcChild.getName(), primaryNodeType);
-                } catch (ConstraintViolationException e) {
-                    log.debug("Cannot add child {} of type {} to {}", new String[] { srcChild.getName(), primaryNodeType, destNode.getPath() });
+            @Override
+            public void setProperty(final PropInfo prop, CopyHandlerChain chain) throws RepositoryException {
+                final String name = prop.getName();
+                if (name.startsWith("jcr:frozen") || name.startsWith("jcr:uuid") ||
+                        name.equals(HippoNodeType.HIPPO_RELATED) ||
+                        name.equals(HippoNodeType.HIPPO_COMPUTE) ||
+                        name.equals(HippoNodeType.HIPPO_PATHS)) {
+                    return;
                 }
+                super.setProperty(prop, chain);
             }
-            if (destChild != null) {
-                copy(srcChild, destChild);
-            }
-        }
+        });
 
-    }
-
-    private List<String> getMixinTypesToCopy(final Node node) throws RepositoryException {
-        final List<String> result = new ArrayList<String>();
-        if (node.isNodeType(NT_FROZEN_NODE)) {
-            if (node.hasProperty(JCR_FROZEN_MIXIN_TYPES)) {
-                for (Value value : node.getProperty(JCR_FROZEN_MIXIN_TYPES).getValues()) {
-                    if (value.getString().equals(HippoNodeType.NT_HARDDOCUMENT)) {
-                        continue;
-                    }
-                    result.add(value.getString());
-                }
-            }
-        } else {
-            for (NodeType nodeType : node.getMixinNodeTypes()) {
-                result.add(nodeType.getName());
-            }
-        }
-        return result;
-    }
-
-    private String getPrimaryTypeToCopy(final Node node) throws RepositoryException {
-        if (node.isNodeType(NT_FROZEN_NODE)) {
-            return node.getProperty(JCR_FROZEN_PRIMARY_TYPE).getString();
-        } else {
-            return node.getPrimaryNodeType().getName();
-        }
     }
 
     private List<Version> getVersions(final Node handle) throws RepositoryException {

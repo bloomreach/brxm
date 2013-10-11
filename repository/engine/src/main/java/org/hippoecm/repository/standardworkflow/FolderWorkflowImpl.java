@@ -17,7 +17,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -34,15 +34,13 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -52,7 +50,6 @@ import javax.jcr.version.VersionManager;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
@@ -60,8 +57,12 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.CopyHandler;
+import org.hippoecm.repository.util.CopyHandlerChain;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -80,7 +81,7 @@ import org.slf4j.LoggerFactory;
  *   <li>$now: the current time
  *   <li>$holder: the user of the session that invoked the workflow
  *   <li>$inherit: the value under the same path in the parent document.
- *     Can be overridden by providing the property name as an argument. 
+ *     Can be overridden by providing the property name as an argument.
  *   <li>$&lt;other&gt;: value specified as an argument
  * </ul>
  */
@@ -314,11 +315,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         }
                         handleNode = result;
                         renames.put("./_name", new String[] {name});
-                        result = copy(prototypeNode, result, renames, ".");
+                        final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
+                        result = JcrUtils.copyNodeAsChild(prototypeNode, handleNode, handler);
                         break;
                     }
                 } else if (prototypeNode.getName().equals(template)) {
-                    result = copy(prototypeNode, target, renames, ".");
+                    final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
+                    result = JcrUtils.copyNodeAsChild(prototypeNode, target, handler);
                     if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
                         handleNode = result;
                         if (result.hasNode(result.getName())) {
@@ -628,197 +631,6 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return null;
     }
 
-    static Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
-        String[] renamed;
-        String name = source.getName();
-        if (renames.containsKey(path+"/_name")) {
-            renamed = renames.get(path+"/_name");
-            if (renamed.length > 0) {
-                name = renamed[0];
-            }
-        }
-
-        String primaryType = source.getPrimaryNodeType().getName();
-        if (renames.containsKey(path+"/jcr:primaryType")) {
-            renamed = renames.get(path+"/jcr:primaryType");
-            if (renamed.length > 0) {
-                primaryType = expand(renamed, source, PropertyType.NAME)[0].getString();
-                if (primaryType.equals("")) {
-                    primaryType = null;
-                }
-            } else {
-                primaryType = null;
-            }
-        }
-
-        boolean found = false;
-        if (target.hasNode(name)) {
-            Node candidate = target.getNode(name);
-            if (candidate.getDefinition().isAutoCreated()) {
-                target = candidate;
-                found = true;
-            }
-        }
-        if (!found) {
-            if (primaryType != null) {
-                target = target.addNode(name, primaryType);
-            } else {
-                target = target.addNode(name);
-            }
-        }
-
-        if(source.hasProperty("jcr:mixinTypes")) {
-            Value[] mixins = source.getProperty("jcr:mixinTypes").getValues();
-            for(int i=0; i<mixins.length; i++) {
-                target.addMixin(mixins[i].getString());
-            }
-        }
-
-        if (renames.containsKey(path+"/jcr:mixinTypes")) {
-            Value[] values = expand(renames.get(path+"/jcr:mixinTypes"), source, PropertyType.NAME);
-            for (int i = 0; i < values.length; i++) {
-                if (!target.isNodeType(values[i].getString())) {
-                    target.addMixin(values[i].getString());
-                }
-            }
-        }
-
-        NodeType[] mixinNodeTypes = target.getMixinNodeTypes();
-        NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
-        nodeTypes[0] = target.getPrimaryNodeType();
-        if(mixinNodeTypes.length > 0) {
-            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
-        }
-
-        for (NodeIterator iter = source.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            if(child instanceof HippoNode && !((HippoNode)child).isSame(((HippoNode)child).getCanonicalNode())) {
-                continue;
-            }
-            String childPath;
-            if (renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/" + child.getName())) {
-                childPath = path + "/_node";
-            } else {
-                childPath = path + "/" + child.getName();
-            }
-            copy(child, target, renames, childPath);
-        }
-
-        for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
-            Property prop = iter.nextProperty();
-            if (prop.getDefinition().isMultiple()) {
-                boolean isProtected = true;
-                for (int i = 0; i < nodeTypes.length; i++) {
-                    PropertyDefinition matchingDefinition = null;
-                    for (PropertyDefinition def : nodeTypes[i].getPropertyDefinitions()) {
-                        if (def.getRequiredType() == PropertyType.UNDEFINED || def.getRequiredType() == prop.getType()) {
-                            if (def.getName().equals("*")) {
-                                if (!def.isProtected()) {
-                                    matchingDefinition = def;
-                                }
-                                // now continue because there may be a more limiting definition
-                            } else if (def.getName().equals(prop.getName())) {
-                                matchingDefinition = def;
-                                break;
-                            }
-                        }
-                    }
-                    if (matchingDefinition != null && !matchingDefinition.isProtected()) {
-                        isProtected = false;
-                    }
-                }
-                for(int i=0; i<nodeTypes.length; i++) {
-                    PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
-                    for(int j=0; j<propDefs.length; j++) {
-                        if (propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected()) {
-                            isProtected = true;
-                        }
-                    }
-                }
-                if (!isProtected) {
-                    if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
-                        target.setProperty(prop.getName(), expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType()), prop.getType());
-                    } else {
-                        Value[] values = prop.getValues();
-                        List<Value> newValues = new LinkedList<Value>();
-                        for (int i = 0; i < values.length; i++) {
-                            String key = path+"/"+prop.getName()+"["+i+"]";
-                            if (renames.containsKey(key)) {
-                                for (Value substitute : expand(renames.get(key), source, prop.getDefinition().getRequiredType())) {
-                                    newValues.add(substitute);
-                                }
-                            } else {
-                                newValues.add(values[i]);
-                            }
-                        }
-                        target.setProperty(prop.getName(), newValues.toArray(new Value[newValues.size()]), prop.getType());
-                    }
-                }
-            } else {
-                boolean isProtected = true;
-                for(int i=0; i<nodeTypes.length; i++) {
-                    if(nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
-                        isProtected = false;
-                        break;
-                    }
-                }
-                for(int i=0; i<nodeTypes.length; i++) {
-                    PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
-                    for(int j=0; j<propDefs.length; j++) {
-                        if (propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected()) {
-                            isProtected = true;
-                        }
-                    }
-                }
-                if (!isProtected) {
-                    if(renames.containsKey(path+"/"+prop.getName()) && renames.get(path+"/"+prop.getName()) != null) {
-                        Value[] newValues = expand(renames.get(path+"/"+prop.getName()), source, prop.getDefinition().getRequiredType());
-                        if(newValues.length >= 1) {
-                            target.setProperty(prop.getName(), newValues[0]);
-                        } else {
-                            target.setProperty(prop.getName(), (String)null);
-                        }
-                    } else {
-                        target.setProperty(prop.getName(), prop.getValue());
-                    }
-                }
-            }
-        }
-
-        return target;
-    }
-
-    static private Value[] expand(String[] values, Node source, int propertyType) throws RepositoryException {
-        Vector<Value> newValues = new Vector<Value>();
-        for(int i=0; i<values.length; i++) {
-            String value = values[i];
-            if(value == null) {
-                continue;
-            }
-            if(value.startsWith("${") && value.endsWith("}")) {
-                value = value.substring(2,value.length()-1);
-                Property p = source.getProperty(value);
-                if(p.getDefinition().isMultiple()) {
-                    Value[] referencedValues = p.getValues();
-                    for (int j = 0; j < referencedValues.length; j++) {
-                        newValues.add(referencedValues[j]);
-                    }
-                } else {
-                    newValues.add(p.getValue());
-                }
-            } else {
-                switch(propertyType) {
-                    case PropertyType.DATE:
-                        newValues.add(source.getSession().getValueFactory().createValue(value, propertyType));
-                        break;
-                    default:
-                        newValues.add(source.getSession().getValueFactory().createValue(value));
-                }
-            }
-        }
-        return newValues.toArray(new Value[newValues.size()]);
-    }
-
     public Document duplicate(String relPath)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Node source = subject.getNode(relPath);
@@ -850,7 +662,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Node handle = subject.addNode(targetName, HippoNodeType.NT_HANDLE);
-            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
+            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
             Node document = copyDocument(targetName, Collections.EMPTY_MAP, source, handle);
 
@@ -955,7 +767,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
-            handle.addMixin(JcrConstants.MIX_REFERENCEABLE);
+            handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
             Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
@@ -989,7 +801,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             }
             populateRenames(renames, params, handle, arguments);
         }
-        return copy(source, handle, renames, ".");
+
+        final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
+        return JcrUtils.copyNodeAsChild(source, handle, handler);
     }
 
     public Document copyOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
@@ -1036,5 +850,107 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     public Document moveOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
         return result;
+    }
+
+    static class ExpandingCopyHandler extends CopyHandler {
+
+        private final Map<String, String[]> renames;
+        private final ValueFactory factory;
+        private String path;
+
+        ExpandingCopyHandler(final Map<String, String[]> renames, final ValueFactory factory) {
+            this.renames = renames;
+            this.factory = factory;
+            this.path = ".";
+        }
+
+        @Override
+        public void startNode(final NodeInfo nodeInfo, CopyHandlerChain chain) throws RepositoryException {
+            String[] renamed;
+            String name = nodeInfo.getName();
+            final String nameKey = path + "/_name";
+            if (renames.containsKey(nameKey)) {
+                renamed = renames.get(nameKey);
+                if (renamed.length > 0) {
+                    name = renamed[0];
+                }
+            }
+
+            String primaryType = nodeInfo.getNodeTypeName();
+            final String primaryTypeKey = path + "/jcr:primaryType";
+            if (renames.containsKey(primaryTypeKey)) {
+                renamed = renames.get(primaryTypeKey);
+                if (renamed.length > 0) {
+                    primaryType = renamed[0];
+                }
+            }
+
+            List<String> mixins = Arrays.asList(nodeInfo.getMixinNames());
+            final String mixinTypesKey = path + "/jcr:mixinTypes";
+            if (renames.containsKey(mixinTypesKey)) {
+                String[] values = renames.get(mixinTypesKey);
+                for (int i = 0; i < values.length; i++) {
+                    mixins.add(values[i]);
+                }
+            }
+
+            if (renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/" + name)) {
+                path = path + "/_node";
+            } else if (renames.containsKey(path + "/_name")) {
+                path = path + "/_name";
+            } else {
+                path = path + "/" + name;
+            }
+            final NodeInfo childInfo = new NodeInfo(name, nodeInfo.getIndex(), primaryType, mixins.toArray(new String[mixins.size()]));
+            super.startNode(childInfo, chain);
+        }
+
+        @Override
+        public void endNode(final CopyHandlerChain chain) throws RepositoryException {
+            super.endNode(chain);
+            path = path.substring(0, path.lastIndexOf('/'));
+        }
+
+        @Override
+        public void setProperty(final PropInfo prop, CopyHandlerChain chain) throws RepositoryException {
+            String name = prop.getName();
+            PropInfo result;
+            // back off one level; not logically correct, but backwards compatible
+            final String propPath = path.substring(0, path.lastIndexOf('/')) + "/" + name;
+            if (prop.isMultiple()) {
+                if (renames.containsKey(propPath) && renames.get(propPath) != null) {
+                    String[] strValues = renames.get(propPath);
+                    Value[] values = new Value[strValues.length];
+                    int i = 0;
+                    for (String strValue : strValues) {
+                        values[i++] = factory.createValue(strValue, prop.getType());
+                    }
+                    result = new PropInfo(name, prop.getType(), values);
+                } else {
+                    Value[] values = prop.getValues();
+                    List<Value> newValues = new LinkedList<>();
+                    for (int i = 0; i < values.length; i++) {
+                        String valueKey = propPath + "[" + i + "]";
+                        if (renames.containsKey(valueKey)) {
+                            for (String substitute : renames.get(valueKey)) {
+                                newValues.add(factory.createValue(substitute, prop.getType()));
+                            }
+                        } else {
+                            newValues.add(values[i]);
+                        }
+                    }
+                    result = new PropInfo(name, prop.getType(), newValues.toArray(new Value[newValues.size()]));
+                }
+            } else {
+                if (renames.containsKey(propPath) && renames.get(propPath) != null && renames.get(propPath).length == 1) {
+                    String strValue = renames.get(propPath)[0];
+                    result = new PropInfo(name, prop.getType(), factory.createValue(strValue, prop.getType()));
+                } else {
+                    result = prop;
+                }
+            }
+
+            super.setProperty(result, chain);
+        }
     }
 }

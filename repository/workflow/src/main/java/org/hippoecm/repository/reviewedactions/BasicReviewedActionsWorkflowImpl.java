@@ -19,14 +19,13 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
@@ -34,7 +33,10 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.OverwritingCopyHandlerChain;
+import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -56,20 +58,12 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             HippoNodeType.NT_SKIPINDEX
     };
     private static final String[] PROTECTED_PROPERTIES = new String[]{
-            JcrConstants.JCR_BASE_VERSION,
-            JcrConstants.JCR_PREDECESSORS,
-            JcrConstants.JCR_VERSION_HISTORY,
             HippoNodeType.HIPPO_AVAILABILITY,
             HippoNodeType.HIPPO_RELATED,
             HippoNodeType.HIPPO_PATHS,
             HippoStdNodeType.HIPPOSTD_STATE,
             HippoStdNodeType.HIPPOSTD_HOLDER,
-            HippoStdNodeType.HIPPOSTD_STATESUMMARY,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE
+            HippoStdNodeType.HIPPOSTD_STATESUMMARY
     };
     static {
         Arrays.sort(PROTECTED_PROPERTIES);
@@ -197,41 +191,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     }
 
     protected void copyDocumentTo(Document source, Document target) throws RepositoryException {
-        clearDocument(target);
         copyTo(source.getNode(), target.getNode());
-    }
-
-    protected void clearDocument(Document document) throws RepositoryException {
-        final Node node = document.getNode();
-        JcrUtils.ensureIsCheckedOut(node, true);
-
-        for (Property property : new PropertyIterable(node.getProperties())) {
-            if (property.getDefinition().isProtected()) {
-                continue;
-            }
-            String name = property.getName();
-            if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
-                continue;
-            }
-            property.remove();
-        }
-
-        for (Node child : new NodeIterable(node.getNodes())) {
-            if (child.getDefinition().isProtected()) {
-                continue;
-            }
-            child.remove();
-        }
-
-        final NodeType[] mixins = node.getMixinNodeTypes();
-        for (NodeType mixin : mixins) {
-            String name = mixin.getName();
-            if (Arrays.binarySearch(PROTECTED_MIXINS, name) >= 0) {
-                continue;
-            }
-            node.removeMixin(mixin.getName());
-        }
-
     }
 
     /**
@@ -244,56 +204,48 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
      * @throws RepositoryException
      */
     protected Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
-        for (NodeType mixin : srcNode.getMixinNodeTypes()) {
-            String name = mixin.getName();
-            if (Arrays.binarySearch(PROTECTED_MIXINS, name) >= 0) {
-                continue;
-            }
-            destNode.addMixin(mixin.getName());
-        }
+        JcrUtils.copyToChain(srcNode, new OverwritingCopyHandlerChain(destNode) {
 
-        final PropertyIterator properties = srcNode.getProperties();
-        while (properties.hasNext()) {
-            final Property property = properties.nextProperty();
-            if (!property.getDefinition().isProtected()) {
-                String name = property.getName();
+            @Override
+            public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
+                String[] oldMixins = nodeInfo.getMixinNames();
+                Set<String> mixins = new HashSet<>();
+                for (String mixin : oldMixins) {
+                    if (Arrays.binarySearch(PROTECTED_MIXINS, mixin) >= 0) {
+                        continue;
+                    }
+                    mixins.add(mixin);
+                }
+                String[] newMixins = mixins.toArray(new String[mixins.size()]);
+                final NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
+                super.startNode(newInfo);
+            }
+
+            @Override
+            protected void removeProperties(final Node node) throws RepositoryException {
+                for (Property property : new PropertyIterable(node.getProperties())) {
+                    if (property.getDefinition().isProtected()) {
+                        continue;
+                    }
+                    String name = property.getName();
+                    if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
+                        continue;
+                    }
+                    property.remove();
+                }
+            }
+
+            @Override
+            public void setProperty(final PropInfo propInfo) throws RepositoryException {
+                String name = propInfo.getName();
                 if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
-                    continue;
+                    return;
                 }
-                if (property.isMultiple()) {
-                    destNode.setProperty(property.getName(), property.getValues(), property.getType());
-                } else {
-                    destNode.setProperty(property.getName(), property.getValue());
-                }
+                super.setProperty(propInfo);
             }
-        }
+        });
 
-        copyMetaData(srcNode, destNode);
-
-        final NodeIterator nodes = srcNode.getNodes();
-        while (nodes.hasNext()) {
-            final Node child = nodes.nextNode();
-            JcrUtils.copy(child, child.getName(), destNode);
-        }
         return destNode;
-    }
-
-    private void copyMetaData(final Node srcNode, final Node destNode) throws RepositoryException {
-        if (srcNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)
-                && destNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
-            for (String propertyName : new String[] {
-                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE,
-                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY,
-                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE,
-                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY,
-                    HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE }) {
-                if (srcNode.hasProperty(propertyName)) {
-                    destNode.setProperty(propertyName, srcNode.getProperty(propertyName).getValue());
-                } else if (destNode.hasProperty(propertyName)) {
-                    destNode.getProperty(propertyName).remove();
-                }
-            }
-        }
     }
 
     public Document obtainEditableInstance() throws WorkflowException {
@@ -304,9 +256,12 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                     throw new WorkflowException("unable to edit document with pending operation");
                 }
                 createDraft();
-            } else if (draftDocument.getOwner() != null) {
-                if (!getWorkflowContext().getUserIdentity().equals(draftDocument.getOwner())) {
+            } else {
+                if (draftDocument.getOwner() != null && !getWorkflowContext().getUserIdentity().equals(draftDocument.getOwner())) {
                     throw new WorkflowException("document already being edited");
+                }
+                if (unpublishedDocument != null) {
+                    copyDocumentTo(unpublishedDocument, draftDocument);
                 }
             }
             draftDocument.setOwner(getWorkflowContext().getUserIdentity());
@@ -318,10 +273,14 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             if (draftNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                 draftNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
             }
+            return toUserDocument(draftDocument);
         } catch (RepositoryException ex) {
             throw new WorkflowException("Failed to obtain an editable instance", ex);
         }
-        return draftDocument;
+    }
+
+    protected Document toUserDocument(Document document) throws RepositoryException {
+        return new Document(getWorkflowContext().getUserSession().getNodeByIdentifier(document.getIdentity()));
     }
 
     public Document commitEditableInstance() throws WorkflowException {
@@ -343,7 +302,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 publishedDocument.setAvailability(new String[]{"live"});
             }
             unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
-            return unpublishedDocument;
+            return toUserDocument(unpublishedDocument);
         } catch (RepositoryException ex) {
             throw new WorkflowException("failed to commit editable instance", ex);
         }
@@ -356,9 +315,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 draftDocument.setOwner(null);
             }
             if (unpublishedDocument != null && unpublishedDocument.isAvailable("preview")) {
-                return unpublishedDocument;
+                return toUserDocument(unpublishedDocument);
             } else if (publishedDocument != null) {
-                return publishedDocument;
+                return toUserDocument(publishedDocument);
             } else {
                 return null;
             }
@@ -376,13 +335,15 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         draftDocument.setState(PublishableDocument.DRAFT);
         draftDocument.setAvailability(null);
         draftDocument.setModified(getWorkflowContext().getUserIdentity());
+        draftNode.getSession().save();
     }
 
     protected void createUnpublished(Document from) throws RepositoryException {
         final Node node = cloneDocumentNode(from);
         unpublishedDocument = new PublishableDocument(node);
         unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
-        node.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        node.addMixin(JcrConstants.MIX_VERSIONABLE);
+        node.getSession().save();
     }
 
     protected void createPublished() throws RepositoryException {
@@ -392,6 +353,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         }
         publishedDocument = new PublishableDocument(node);
         publishedDocument.setState(PublishableDocument.PUBLISHED);
+        node.getSession().save();
     }
 
     public void requestDeletion() throws WorkflowException {

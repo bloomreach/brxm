@@ -21,15 +21,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -38,7 +35,6 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.Event;
 import javax.jcr.version.VersionManager;
 
@@ -49,6 +45,9 @@ import org.onehippo.repository.util.JcrConstants;
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
  */
 public class JcrUtils {
+
+
+
 
     public static final int ALL_EVENTS = Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED
             | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
@@ -601,87 +600,126 @@ public class JcrUtils {
         if (isVirtual(srcNode)) {
             return null;
         }
-        final Node destNode;
-        if (isAutoCreatedNode(srcNode.getName(), destParentNode) && destParentNode.hasNode(srcNode.getName())) {
-            destNode = destParentNode.getNode(destNodeName);
-        } else {
-            destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
-        }
 
-        return copyTo(srcNode, destNode);
+        final DefaultCopyHandlerChain chain = newHandlerChain(destParentNode);
+        final NodeInfo nodeInfo = new NodeInfo(srcNode);
+        NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
+        chain.startNode(newInfo);
+        Node destNode = chain.getCurrent();
+        copyToChain(srcNode, chain);
+        chain.endNode();
+        return destNode;
     }
 
     /**
-     * Copies {@link Node} {@code srcNode} to {@code destParentNode} with name {@code destNodeName}.
+     * Copies {@link Node} {@code srcNode} to {@code destNode}.
      *
      * @param srcNode  the node to copy
      * @param destNode the node that the contents of srcNode will be copied to
-     * @return destNode
      * @throws RepositoryException
      */
-    public static Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
-        for (NodeType nodeType : getMixinNodeTypes(srcNode)) {
-            destNode.addMixin(nodeType.getName());
-        }
+    public static void copyTo(final Node srcNode, Node destNode) throws RepositoryException {
+        copyToChain(srcNode, new OverwritingCopyHandlerChain(destNode));
+    }
 
-        for (Property property : getNonProtectedProperties(srcNode)) {
+    /**
+     * Copies {@link Node} {@code srcNode} to {@code destNode} with a {@code handler} to rewrite content if necessary.
+     *
+     * @param srcNode  the node to copy
+     * @param destNode the node that the contents of srcNode will be copied to
+     * @param handler the handler that intercepts node and property creation
+     * @throws RepositoryException
+     */
+    public static void copyTo(Node srcNode, Node destNode, final CopyHandler handler) throws RepositoryException {
+        final CopyHandlerChain contentWritingChain = new OverwritingCopyHandlerChain(destNode);
+        final CopyHandlerChain chain;
+        if (handler != null) {
+            chain = new CopyHandlerChain() {
+
+                @Override
+                public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
+                    handler.startNode(nodeInfo, contentWritingChain);
+                }
+
+                @Override
+                public void endNode() throws RepositoryException {
+                    handler.endNode(contentWritingChain);
+                }
+
+                @Override
+                public void setProperty(final PropInfo property) throws RepositoryException {
+                    handler.setProperty(property, contentWritingChain);
+                }
+            };
+        } else {
+            chain = contentWritingChain;
+        }
+        chain.startNode(new NodeInfo(srcNode));
+        copyToChain(srcNode, chain);
+        chain.endNode();
+    }
+
+    private static DefaultCopyHandlerChain newHandlerChain(Node destNode) throws RepositoryException {
+        return new DefaultCopyHandlerChain(destNode);
+    }
+
+    public static Node copyNodeAsChild(final Node node, Node destParent, final CopyHandler handler) throws RepositoryException {
+        final DefaultCopyHandlerChain chain = newHandlerChain(destParent);
+        Node result;
+        if (handler != null) {
+            handler.startNode(new NodeInfo(node), chain);
+            result = chain.getCurrent();
+            copyToChain(node, new CopyHandlerChain() {
+                @Override
+                public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
+                    handler.startNode(nodeInfo, chain);
+                }
+
+                @Override
+                public void endNode() throws RepositoryException {
+                    handler.endNode(chain);
+                }
+
+                @Override
+                public void setProperty(final PropInfo property) throws RepositoryException {
+                    handler.setProperty(property, chain);
+                }
+            });
+        } else {
+            chain.startNode(new NodeInfo(node));
+            result = chain.getCurrent();
+            copyToChain(node, chain);
+        }
+        chain.endNode();
+        return result;
+    }
+
+    public static void copyToChain(final Node srcNode, CopyHandlerChain chain) throws RepositoryException {
+        for (Property property : new PropertyIterable(srcNode.getProperties())) {
+            PropInfo propInfo;
             if (property.isMultiple()) {
-                destNode.setProperty(property.getName(), property.getValues(), property.getType());
+                propInfo = new PropInfo(property.getName(), property.getType(), property.getValues());
             } else {
-                destNode.setProperty(property.getName(), property.getValue());
+                propInfo = new PropInfo(property.getName(), property.getType(), property.getValue());
             }
+            chain.setProperty(propInfo);
         }
 
         final NodeIterator nodes = srcNode.getNodes();
         while (nodes.hasNext()) {
             final Node child = nodes.nextNode();
-            copy(child, child.getName(), destNode);
-        }
-        return destNode;
-    }
-
-    /**
-     * Retrieve the list of properties that can be copied from the source node.
-     * The node types checked are those that are present or inherited on the source node.
-     *
-     * @param source
-     * @return
-     * @throws RepositoryException
-     */
-    private static List<Property> getNonProtectedProperties(Node source) throws RepositoryException {
-        NodeType[] mixinNodeTypes = getMixinNodeTypes(source);
-        NodeType[] nodeTypes = new NodeType[mixinNodeTypes.length + 1];
-        nodeTypes[0] = getPrimaryNodeType(source);
-        if (mixinNodeTypes.length > 0) {
-            System.arraycopy(mixinNodeTypes, 0, nodeTypes, 1, mixinNodeTypes.length);
-        }
-        List<Property> properties = new LinkedList<Property>();
-        for (PropertyIterator iter = source.getProperties(); iter.hasNext(); ) {
-            Property property = iter.nextProperty();
-            final String propertyName = property.getName();
-            if (propertyName.startsWith("jcr:")) {
+            if (isVirtual(child)) {
                 continue;
             }
-
-            final PropertyDefinition definition = property.getDefinition();
-            if (definition.isMultiple()) {
-                for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(propertyName, property.getValues())) {
-                        properties.add(property);
-                        break;
-                    }
-                }
-            } else {
-                for (NodeType nodeType : nodeTypes) {
-                    if (nodeType.canSetProperty(propertyName, property.getValue())) {
-                        properties.add(property);
-                        break;
-                    }
-                }
+            // virtual nodes are checked in with rep:root type
+            if ("rep:root".equals(getPrimaryNodeType(child).getName())) {
+                continue;
             }
+            NodeInfo info = new NodeInfo(child);
+            chain.startNode(info);
+            copyToChain(child, chain);
+            chain.endNode();
         }
-
-        return properties;
     }
 
     /**
@@ -710,6 +748,9 @@ public class JcrUtils {
     public static NodeType[] getMixinNodeTypes(Node node) throws RepositoryException {
         if (node.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
             Session session = node.getSession();
+            if (!node.hasProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES)) {
+                return new NodeType[0];
+            }
             final NodeTypeManager nodeTypeManager = session.getWorkspace().getNodeTypeManager();
             Value[] mixins = node.getProperty(JcrConstants.JCR_FROZEN_MIXIN_TYPES).getValues();
             NodeType[] mixinTypes = new NodeType[mixins.length];
@@ -853,5 +894,6 @@ public class JcrUtils {
             throw new ValueFormatException(ex);
         }
     }
+
 
 }

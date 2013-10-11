@@ -15,7 +15,9 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,13 +33,16 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -62,7 +67,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippostdpubwf:test");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("hippostdpubwf:content", LOREM);
         node.setProperty("hippostd:holder", "admin");
         node.setProperty("hippostd:state", "unpublished");
@@ -79,6 +84,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
     @After
     public void tearDown() throws Exception {
         Node root = session.getRootNode();
+        session.refresh(false);
         while(root.hasNode("test")) {
             root.getNode("test").remove();
         }
@@ -94,114 +100,25 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testReviewedAction() throws WorkflowException, RepositoryException, RemoteException {
-        Node node;
-        {
-            assertTrue(session.getRootNode().hasNode("test"));
-            assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
-            assertTrue(session.getRootNode().getNode("test").getNode("myarticle").hasNode("myarticle"));
-            assertTrue(session.getRootNode().getNode("test/myarticle").hasNode("myarticle"));
-            node = getNode("test/myarticle/myarticle");
-            assertNotNull(node);
-            FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
-            Document document = workflow.obtainEditableInstance();
+    public void testObtainEditableInstanceReturnsDraft() throws RepositoryException, WorkflowException, RemoteException {
+        Node node = getNode("test/myarticle/myarticle");
+        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        Document document = workflow.obtainEditableInstance();
 
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
+        node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
 
-            assertDraftNotSearchable(node);
-
-            assertNotNull(node);
-            assertNotNull(document);
-            assertEquals(node.getIdentifier(), document.getIdentity());
-        }
-
-        // steps taken by an author
-        {
-            node = getNode("test/myarticle/myarticle");
-            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", workflow);
-            Document document = workflow.obtainEditableInstance();
-
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
-            assertTrue(node.getIdentifier().equals(document.getIdentity()));
-            Property prop = node.getProperty("hippostdpubwf:content");
-            prop.setValue(prop.getString() + ",");
-            session.save();
-
-            BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            reviewedWorkflow.commitEditableInstance();
-
-            reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
-            reviewedWorkflow.requestPublication();
-        }
-
-        // These steps would be taken by editor:
-        {
-            node = getNode("test/myarticle/hippo:request");
-            FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", workflow);
-            workflow.rejectRequest("comma should be a point");
-            assertTrue(getNode("test/myarticle/hippo:request").getProperty("hippostdpubwf:reason").getString().equals("comma should be a point"));
-        }
-
-        // steps taken by an author
-        {
-            node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='rejected']");
-            BasicRequestWorkflow workflow = (BasicRequestWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", workflow);
-            workflow.cancelRequest();
-        }
-
-        // steps taken by an author
-        {
-            node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
-            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            workflow.obtainEditableInstance();
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
-            Property prop = node.getProperty("hippostdpubwf:content");
-            prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + "!");
-
-            BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            reviewedWorkflow.commitEditableInstance();
-
-            reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
-            reviewedWorkflow.requestPublication();
-        }
-
-        // These steps would be taken by editor:
-        {
-            node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
-            FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
-            workflow.acceptRequest();
-        }
-
-        // These steps would be taken by editor:
-        {
-            node = getNode("test/myarticle/myarticle");
-            BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", workflow);
-            Document document = workflow.obtainEditableInstance();
-
-            node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
-            assertTrue(node.getUUID().equals(document.getIdentity()));
-            Property prop = node.getProperty("hippostdpubwf:content");
-            prop.setValue(prop.getString().substring(0, prop.getString().length() - 1) + ".");
-            session.save();
-
-            FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
-            reviewedWorkflow.commitEditableInstance();
-
-            reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
-            assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
-            reviewedWorkflow.publish();
-
-        }
+        assertNotNull(node);
+        assertNotNull(document);
+        assertEquals(node.getIdentifier(), document.getIdentity());
     }
 
-    private void assertDraftNotSearchable(final Node draftDocument) throws RepositoryException {
-        String draftPath = draftDocument.getPath();
+    @Test
+    public void testDraftNotSearchable() throws RepositoryException, WorkflowException, RemoteException {
+        Node node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        workflow.obtainEditableInstance();
+
+        String draftPath = node.getPath();
         String xpath = "//*[@hippostd:state='draft']";
         Query query = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
         QueryResult queryResult = query.execute();
@@ -215,45 +132,151 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         }
     }
 
+    @Test
+    public void editedContentEndsUpInUnpublished() throws RepositoryException, WorkflowException, RemoteException {
+        // steps taken by an author
+        Node node = getNode("test/myarticle/myarticle");
+        BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+        Document document = workflow.obtainEditableInstance();
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
+        assertEquals(node.getIdentifier(), document.getIdentity());
+
+        Property prop = node.getProperty("hippostdpubwf:content");
+        prop.setValue("edited content");
+        session.save();
+
+        BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+        reviewedWorkflow.commitEditableInstance();
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        assertEquals("edited content", node.getProperty("hippostdpubwf:content").getString());
+    }
+
+    @Test
+    public void publishPublishesDocument() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        // steps taken by an author
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        reviewedWorkflow.publish();
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+        PublishableDocument document = new PublishableDocument(node);
+        assertTrue("Published variant is not available live after publication", document.isAvailable("live"));
+        assertTrue("Published variant is not available in preview after publication", document.isAvailable("preview"));
+    }
+
+    @Test
+    public void cannotEditWithPendingRequest() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        reviewedWorkflow.publish(); // make sure 'published' variant exists
+        reviewedWorkflow.requestPublication();
+
+        for (Node docNode : new NodeIterable(getNode("test/myarticle").getNodes("myarticle"))) {
+            FullReviewedActionsWorkflow frw = (FullReviewedActionsWorkflow) getWorkflow(docNode, "default");
+            Map<String,Serializable> hints = frw.hints();
+            Serializable editable = hints.get("obtainEditableInstance");
+            assertEquals(false, editable);
+        }
+    }
+
+    @Test
+    public void acceptedPublicationRequestPublishesDocument() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        // steps taken by an author
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        reviewedWorkflow.requestPublication();
+
+        // These steps would be taken by editor:
+        node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
+        FullRequestWorkflow frw = (FullRequestWorkflow) getWorkflow(node, "default");
+        frw.acceptRequest();
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+        PublishableDocument document = new PublishableDocument(node);
+        assertTrue("Published variant is not available live after publication", document.isAvailable("live"));
+        assertTrue("Published variant is not available in preview after publication", document.isAvailable("preview"));
+    }
+
+    @Test
+    public void rejectedRequestDoesNotPublishDocument() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        // steps taken by an author
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        reviewedWorkflow.requestPublication();
+
+        // These steps would be taken by editor:
+        node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
+        FullRequestWorkflow frw = (FullRequestWorkflow) getWorkflow(node, "default");
+        frw.rejectRequest("rejected");
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+        if (node != null) {
+            PublishableDocument document = new PublishableDocument(node);
+            assertFalse("Published variant is available live after publication", document.isAvailable("live"));
+            assertFalse("Published variant is available in preview after publication", document.isAvailable("preview"));
+        }
+    }
+
+    @Test
+    public void cancelledRequestIsRemoved() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        // steps taken by an author
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        reviewedWorkflow.requestPublication();
+
+        // These steps would be taken by editor:
+        node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
+        BasicRequestWorkflow requestWorkflow = (BasicRequestWorkflow) getWorkflow(node, "default");
+        requestWorkflow.cancelRequest();
+
+        node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='publish']");
+        assertNull("Request was not removed after cancellation", node);
+    }
+
     /**
      * https://issues.onehippo.com/browse/CMS7-688
      * When the request for publication is removed, it should be possible the request a deletion for a published
      * document. Currently, this sometimes works, and sometimes not
      */
     @Test
-    public void testHREPTWO688() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        testReviewedAction();
-
+    public void canRequestDeletionAfterEarlierRequestIsCancelled() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         // These steps would be taken by author
         {
-            Node node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+            Node node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            // cannot delete published document when request is present
-            try {
-                workflow.requestDeletion();
-            } catch (WorkflowException e) {
-                assertTrue("cannot request deletion when there is already a request", true );
-            }
+            workflow.requestDeletion();
         }
 
         {
             Node node = getNode("test/myarticle/hippo:request[@hippostdpubwf:type='delete']");
             FullRequestWorkflow requestWorkflow = (FullRequestWorkflow) getWorkflow(node, "default");
             requestWorkflow.cancelRequest();
-            session.save();
-            session.refresh(false);
 
             // now it should be possible
-            node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+            node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-
             try {
                 workflow.requestDeletion();
             } catch (WorkflowException e) {
-                fail("Issue HREPTWO-688 has resurfaced: "+e.getClass().getName()+": "+e.getMessage());
+                fail("Unable to request deletion after an earlier request was cancelled");
             }
-            session.save();
-            session.refresh(true);
         }
     }
 
@@ -262,17 +285,13 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
      * Reviewed actions workflow object is invalid after disposing the editable instance
      */
     @Test
-    public void testHREPTWO2318() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        testReviewedAction();
-
+    public void workflowObjectIsValidAfterEditableInstanceIsDisposed() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         {
             // preparation: create draft
-            Node node = getNode("test/myarticle/myarticle");
+            Node node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", workflow);
-            Document document = workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
+            workflow.obtainEditableInstance();
 
             // "save" as commit/edit combo
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
@@ -280,20 +299,16 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             workflow.commitEditableInstance();
             node = getNode("test/myarticle/myarticle");
             workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
-            document = workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
+            workflow.obtainEditableInstance();
 
             // "revert" as dispose/edit combo
             node = getNode("test/myarticle/myarticle[@hippostd:state='draft']");
             workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.disposeEditableInstance();
-            session.refresh(false);
+
             node = getNode("test/myarticle/myarticle");
             workflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             workflow.obtainEditableInstance();
-            session.save();
-            session.refresh(true);
 
             // cleanup
             node = getNode("test/myarticle/myarticle");

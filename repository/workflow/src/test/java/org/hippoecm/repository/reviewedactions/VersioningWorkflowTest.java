@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
-import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -24,14 +23,15 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,95 +41,43 @@ import static org.junit.Assert.assertNotNull;
 public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest {
 
 
-    static final String[] languages = new String[] { "aa", "ab", "ae", "af", "ak", "am", "an", "ar", "as", "av", "ay", "az", "ba", "be", "bg", "bh", "bi", "bm", "bn", "bo", "br", "bs", "ca", "ce", "ch", "co", "cr", "cs", "cu", "cv", "cy", "da", "de", "dv", "dz", "ee", "el", "en", "eo", "es", "et", "eu", "fa", "ff", "fi", "fj", "fo", "fr", "fy", "ga", "gd", "gl", "gn", "gu", "gv", "ha", "he", "hi", "ho", "hr", "ht", "hu", "hy", "hz", "ia", "id", "ie", "ig", "ii", "ik", "io", "is", "it", "iu", "ja", "jv", "ka", "kg", "ki", "kj", "kk", "kl", "km", "kn", "kr", "ks", "ku", "kv", "kw", "ky", "la", "lb", "lg", "li", "ln", "lo", "lt", "lu", "lv", "mg", "mh", "mi", "mk", "ml", "mn", "mo", "mr", "ms", "mt", "my", "na", "nb", "nd", "ne", "ng", "nl", "nn", "no", "nr", "nv", "ny", "oc", "oj", "om", "or", "os", "pa", "pi", "pl", "ps", "pt", "qu", "rm", "rn", "ro", "ru", "rw", "sa", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr", "ss", "st", "su", "sv", "sw", "ta", "te", "tg", "th", "ti", "tk", "tl", "tn", "to", "tr", "ts", "tt", "tw", "ty", "ug", "uk", "ur", "uz", "ve", "vi", "vo", "wa", "wo", "xh", "yi", "yo", "za", "zh", "zu" };
-
-    private static boolean delete(File path) {
-        if(path.exists()) {
-            if(path.isDirectory()) {
-                for (File file : path.listFiles()) {
-                    delete(file);
-                }
-            }
-            return path.delete();
-        }
-        return false;
-    }
-
-    private static void clear() {
-        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
-        for (String file : files) {
-            delete(new File(file));
-        }
-    }
-
     @Override
     @Before
     public void setUp() throws Exception {
-        clear();
         super.setUp();
 
         Node node, root = session.getRootNode();
 
-        node = root.getNode("hippo:configuration/hippo:workflows");
-        
-        if (node.hasNode("versioning")) {
-            node.getNode("versioning").remove();
-        }
-        node = node.addNode("versioning", "hipposys:workflowcategory");
-        node = node.addNode("version", "hipposys:workflow");
-        node.setProperty("hipposys:nodetype", "hippo:document");
-        node.setProperty("hipposys:display", "Versioning workflow");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.standardworkflow.VersionWorkflowImpl");
-        Node types = node.getNode("hipposys:types");
-        node = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
-        node.setProperty("hipposys:nodetype", "hippo:document");
-        node.setProperty("hipposys:display", "Document");
-        node.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
-
-        if (root.hasNode("test")) {
-            root.getNode("test").remove();
-        }
         root = root.addNode("test");
         node = root.addNode("versiondocument", "hippo:handle");
         node.addMixin("mix:referenceable");
-        node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[]{session.getValueFactory().createValue("hippostd:state")});
-        node = node.addNode("versiondocument", "hippo:document");
+        final ValueFactory valueFactory = session.getValueFactory();
+        node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[]{valueFactory.createValue("hippostd:state")});
+        node = node.addNode("versiondocument", "hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.addMixin("hippostdpubwf:document");
-        node.addMixin("hippostd:languageable");
         node.addMixin("hippostd:publishableSummary");
         node.setProperty("hippo:availability", new String[]{"preview"});
         node.setProperty("hippostd:state", "unpublished");
         node.setProperty("hippostd:holder", "admin");
-        node.setProperty("hippostd:language", "aa");
         node.setProperty("hippostdpubwf:createdBy", "admin");
-        node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:creationDate", valueFactory.createValue("2010-02-04T16:32:28.068+02:00", PropertyType.DATE));
         node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
-        node.setProperty("hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:lastModificationDate", valueFactory.createValue("2010-02-04T16:32:28.068+02:00", PropertyType.DATE));
+        node.setProperty("counter", 0);
 
-        node = root.addNode("baredocument", "hippo:document");
+        node = root.addNode("baredocument", "hippo:testdocument");
         node.addMixin("hippo:harddocument");
         node.addMixin("hippostdpubwf:document");
-        node.addMixin("hippostd:languageable");
         node.setProperty("hippostd:state", "unpublished");
         node.setProperty("hippostd:holder", "admin");
-        node.setProperty("hippostd:language", "aa");
         node.setProperty("hippostdpubwf:createdBy", "admin");
-        node.setProperty("hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:creationDate", valueFactory.createValue("2010-02-04T16:32:28.068+02:00", PropertyType.DATE));
         node.setProperty("hippostdpubwf:lastModifiedBy", "admin");
-        node.setProperty("hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00");
+        node.setProperty("hippostdpubwf:lastModificationDate", valueFactory.createValue("2010-02-04T16:32:28.068+02:00", PropertyType.DATE));
+        node.setProperty("counter", 0);
 
         session.save();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        session.refresh(false);
-        if (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        super.tearDown();
     }
 
     @Test
@@ -138,17 +86,17 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         Document document;
 
         class DocVersion {
-            final String language;
+            final Long counter;
             final String state;
 
             DocVersion(Node node) throws RepositoryException {
-                this.language = node.getProperty("hippostd:language").getString();
+                this.counter = node.getProperty("counter").getLong();
                 this.state = node.getProperty("hippostd:stateSummary").getString();
             }
 
             @Override
             public String toString() {
-                return "DocVersion[language='" + language + "', state='" + state + "']";
+                return "DocVersion[count='" + counter + "', state='" + state + "']";
             }
 
             @Override
@@ -160,7 +108,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
                     return false;
                 }
                 DocVersion that = (DocVersion) obj;
-                return that.language.equals(language) && that.state.equals(state);
+                return that.counter.equals(counter) && that.state.equals(state);
             }
         }
 
@@ -254,14 +202,8 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
 
         // edit
         node = session.getNodeByUUID(document.getIdentity());
-        String language = node.getProperty("hippostd:language").getString();
-        for (int i = 0; i < languages.length - 1; i++) {
-            if (languages[i].equals(language)) {
-                language = languages[i + 1];
-                break;
-            }
-        }
-        node.setProperty("hippostd:language", language);
+        Long counter = node.getProperty("counter").getLong();
+        node.setProperty("counter", counter + 1);
         session.save();
         session.refresh(false);
 
