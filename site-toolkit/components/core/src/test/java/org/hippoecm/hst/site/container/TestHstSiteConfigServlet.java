@@ -78,8 +78,8 @@ public class TestHstSiteConfigServlet {
         FileUtils.deleteQuietly(new File("target/test-hst-config-3.properties"));
         FileUtils.deleteQuietly(new File("target/conf/hst.properties"));
         FileUtils.deleteQuietly(new File("target/test-hst-config-1.xml"));
-        System.setProperty("currentWorkingDirectory", "");
-        System.setProperty("test.xml.config.foo", "");
+        System.clearProperty("currentWorkingDirectory");
+        System.clearProperty("test.xml.config.foo");
     }
 
     @Test
@@ -206,6 +206,7 @@ public class TestHstSiteConfigServlet {
         assertEquals("test-hst-config-project-env", configuration.getString("default.site.name"));
         assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
         assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
+        System.clearProperty("catalina.base");
     }
 
     @Test
@@ -231,6 +232,7 @@ public class TestHstSiteConfigServlet {
         assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
         assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
         assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
+        System.clearProperty("catalina.base");
     }
 
     @Test
@@ -246,6 +248,8 @@ public class TestHstSiteConfigServlet {
         assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
         assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
         assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
+        System.clearProperty("catalina.base");
+        System.clearProperty("default.site.name");
     }
 
     @Test
