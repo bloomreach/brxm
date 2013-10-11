@@ -20,6 +20,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -45,18 +46,18 @@ class HstReferenceEditor extends Panel {
     private static final String NODE_HST_CONFIGURATIONS = "hst:configurations";
     private static final String NODE_HST_DEFAULT = "hst:default";
     private static final String NODE_HST_TEMPLATES = "hst:templates";
+    private static final String NODE_HST_CONTAINERCOMPONENTREFERENCE = "hst:containercomponentreference";
     private static final String PROPERY_HST_INHERITSFROM = "hst:inheritsfrom";
     private static final String PROPERTY_HST_RENDERPATH = "hst:renderpath";
     private static final String PROPERTY_HST_SCRIPT = "hst:script";
     private static final String PROPERTY_HST_COMPONENTCLASSNAME = "hst:componentclassname";
+    private static final String PROPERTY_HST_XTYPE = "hst:xtype";
+    private static final String PATH_PREFIX_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers/";
 
     HstReferenceEditor(String id, JcrPropertyModel propertyModel, JcrPropertyValueModel valueModel) {
         super(id);
         try {
-            final boolean isHstTemplate = propertyModel.getProperty().getName().equals(PROPERTY_HST_TEMPLATE);
-
-            String stringValue = valueModel.getValue().getString();
-            Node targetNode = getHstReferencedNode(propertyModel, stringValue, isHstTemplate);
+            Node targetNode = getHstReferencedNode(propertyModel, valueModel);
 
             // link to referenced node
             AjaxLink link = new AjaxLink("reference-link", new JcrNodeModel(targetNode)) {
@@ -92,33 +93,50 @@ class HstReferenceEditor extends Panel {
         }
     }
 
+    /**
+     * Inspect the target node to see if some info from that node can be added as link title
+     *
+     * @param link the link to add the title to
+     * @param targetNode node that the link points to
+     * @param propertyName name of the property shown
+     * @throws RepositoryException for any unexpected repository problem
+     */
     private void addLinkTitle(final AjaxLink link, final Node targetNode, final String propertyName) throws RepositoryException {
+        String title = null;
         if (propertyName.equals(PROPERTY_HST_TEMPLATE)) {
             if(targetNode.hasProperty(PROPERTY_HST_RENDERPATH)) {
-                link.add(new AttributeModifier("title", targetNode.getProperty(PROPERTY_HST_RENDERPATH).getString()));
+                title = targetNode.getProperty(PROPERTY_HST_RENDERPATH).getString();
             } else if (targetNode.hasProperty(PROPERTY_HST_SCRIPT)) {
-                link.add(new AttributeModifier("title", getString("template-has-script")));
+                title = getString("template-has-script");
+
             }
         } else if(propertyName.equals(PROPERTY_HST_COMPONENTCONFIGURATIONID) || propertyName.equals(PROPERTY_HST_REFERENCECOMPONENT)) {
             if(targetNode.hasProperty(PROPERTY_HST_COMPONENTCLASSNAME)) {
-                link.add(new AttributeModifier("title", targetNode.getProperty(PROPERTY_HST_COMPONENTCLASSNAME).getString()));
+                title = targetNode.getProperty(PROPERTY_HST_COMPONENTCLASSNAME).getString();
+            } else if (targetNode.hasProperty(PROPERTY_HST_XTYPE)) {
+                title = targetNode.getProperty(PROPERTY_HST_XTYPE).getString();
             }
+        }
+        if(StringUtils.isNotBlank(title)) {
+            link.add(new AttributeModifier("title", title));
         }
     }
 
     /**
-     * Get the hst:template node that a hst:template property refers to
+     * Get the hst configuration node that a hst property refers to
      *
-     * @param propertyModel model representing the hst:template property
-     * @param templateName the value of the property i.e. the name of the template node
-     * @param isHstTemplate true if the reference is to a hst:template node
+     *
+     *
+     * @param propertyModel model representing the property
+     * @param valueModel model representing the value of the property
      * @return the requested node or null
      * @throws javax.jcr.RepositoryException for any unexpected repository problem
      */
-    private Node getHstReferencedNode(final JcrPropertyModel propertyModel, final String templateName, final boolean isHstTemplate) throws RepositoryException {
+    private Node getHstReferencedNode(final JcrPropertyModel propertyModel, final JcrPropertyValueModel valueModel) throws RepositoryException {
+        String propertyValue = valueModel.getValue().getString();
         final Node rootNode = UserSession.get().getJcrSession().getRootNode();
 
-        // first try: hst:templates in the current hst:configuration group
+        // first try: hst configuration nodes in the current hst:configuration group
         Node currentHstConfiguration = propertyModel.getProperty().getParent();
         do {
             if(currentHstConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATION)) {
@@ -127,24 +145,24 @@ class HstReferenceEditor extends Panel {
             currentHstConfiguration = currentHstConfiguration.getParent();
         } while (!currentHstConfiguration.equals(rootNode));
 
-        Node templateNode = getTemplateNode(currentHstConfiguration, templateName, isHstTemplate);
+        Node templateNode = getConfigurationNode(currentHstConfiguration, propertyValue, propertyModel);
         if(templateNode != null) {
             return templateNode;
         }
 
-        // second try: hst:templates in any inheritsfrom hst:configuration group
+        // second try: hst configuration nodes in any inheritsfrom hst:configuration group
         if(currentHstConfiguration.hasProperty(PROPERY_HST_INHERITSFROM)) {
             final Value[] inheritFromPaths = currentHstConfiguration.getProperty(PROPERY_HST_INHERITSFROM).getValues();
             for(Value inheritsFromPath : inheritFromPaths) {
                 Node inheritedHstConfiguration = currentHstConfiguration.getNode(inheritsFromPath.getString());
-                templateNode = getTemplateNode(inheritedHstConfiguration, templateName, isHstTemplate);
+                templateNode = getConfigurationNode(inheritedHstConfiguration, propertyValue, propertyModel);
                 if(templateNode != null) {
                     return templateNode;
                 }
             }
         }
 
-        // third try: hst:templates from hst:default group
+        // third try: hst configuration nodes from hst:default group
         Node hstDefaultConfiguration = currentHstConfiguration.getParent();
         do {
             if(hstDefaultConfiguration.getPrimaryNodeType().isNodeType(NODE_HST_CONFIGURATIONS)) {
@@ -155,7 +173,7 @@ class HstReferenceEditor extends Panel {
         } while (!hstDefaultConfiguration.equals(rootNode));
 
         if(hstDefaultConfiguration.hasNode(NODE_HST_TEMPLATES)) {
-            templateNode = getTemplateNode(hstDefaultConfiguration, templateName, isHstTemplate);
+            templateNode = getConfigurationNode(hstDefaultConfiguration, propertyValue, propertyModel);
             if(templateNode != null) {
                 return templateNode;
             }
@@ -165,25 +183,45 @@ class HstReferenceEditor extends Panel {
     }
 
     /**
-     * Get a hst:template subnode of the hst:templates node
+     * Get a hst configuration node
      *
-     * @param hstConfiguration a hst:configuration node that may have a named hst:template node
-     * @param templateName the name of the template node to be retrieved
-     * @param isHstTemplate true if the reference is to a hst:template node
+     * @param hstConfiguration a hst:configuration node that may have a named hst configuration node
+     * @param nodeName the name of the configuration node to be retrieved
+     * @param propertyModel model representing the property
      * @return the requested node or null
      * @throws javax.jcr.RepositoryException for any unexpected repository problem
      */
-    private Node getTemplateNode(final Node hstConfiguration, String templateName, final boolean isHstTemplate) throws RepositoryException {
+    private Node getConfigurationNode(final Node hstConfiguration, String nodeName, final JcrPropertyModel propertyModel) throws RepositoryException {
         StringBuilder relPath = new StringBuilder();
-        if(isHstTemplate) {
-            relPath.append(NODE_HST_TEMPLATES);
-            relPath.append("/");
-        }
-        relPath.append(templateName);
+        addPathPrefix(relPath, propertyModel);
+        relPath.append(nodeName);
         if(hstConfiguration.hasNode(relPath.toString())) {
            return hstConfiguration.getNode(relPath.toString());
         }
         return null;
+    }
+
+    /**
+     * Add a default path prefix if necessary
+     *
+     * @param relPath path to append the prexif to
+     * @param propertyModel model representing the property
+     * @throws RepositoryException for any unexpected repository problem
+     */
+    private void addPathPrefix(final StringBuilder relPath, final JcrPropertyModel propertyModel) throws RepositoryException {
+        // references from hst:template properties are always to hst:templates nodes
+        final boolean isHstTemplate = propertyModel.getProperty().getName().equals(PROPERTY_HST_TEMPLATE);
+        if(isHstTemplate) {
+            relPath.append(NODE_HST_TEMPLATES);
+            relPath.append("/");
+            return;
+        }
+
+        // references from hst:containercomponentreference nodes are always to hst:workspace/hst:container nodes
+        final boolean isContainerComponentReference = propertyModel.getProperty().getParent().getPrimaryNodeType().isNodeType(NODE_HST_CONTAINERCOMPONENTREFERENCE);
+        if(isContainerComponentReference) {
+            relPath.append(PATH_PREFIX_WORKSPACE_CONTAINERS);
+        }
     }
 
     private class DisabledLink extends AjaxLink {
@@ -198,7 +236,6 @@ class HstReferenceEditor extends Panel {
         @Override
         public void onClick(AjaxRequestTarget target) {
         }
-
     }
 
 }

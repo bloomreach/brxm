@@ -45,9 +45,9 @@ public class HstReferenceEditorPlugin extends Plugin implements ValueEditorFacto
     }
 
     /**
-     * Determines if a JcrPropertyValueModel represents a hst:template reference.
+     * Determines if a JcrPropertyValueModel represents a hst reference property.
      * @param valueModel the model to inspect
-     * @return true if the property is of type hst:template
+     * @return true if the property references another hst configuration node
      */
     @Override
     public boolean canEdit(final JcrPropertyValueModel valueModel) {
