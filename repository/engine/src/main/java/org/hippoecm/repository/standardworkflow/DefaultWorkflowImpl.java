@@ -50,7 +50,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     public DefaultWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject) throws RepositoryException {
         this.context = context;
         this.document = new Document(subject);
-        this.subject = userSession.getNodeByIdentifier(subject.getIdentifier());
+        this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());
     }
 
     private WorkflowContext getWorkflowContext() {
@@ -195,7 +195,7 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
             JcrUtils.ensureIsCheckedOut(node, true);
         }
         translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, newName);
-        node.save();
+        translationNode.getSession().save();
     }
 
     public void copy(Document destination, String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {

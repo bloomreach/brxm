@@ -827,7 +827,7 @@ public class JcrUtils {
      * @throws RepositoryException
      */
     public static void ensureIsCheckedOut(Node node, boolean traverseAncestors) throws RepositoryException {
-        if (!node.isCheckedOut()) {
+        if (!node.isModified() && !node.isNew() && !node.isCheckedOut()) {
             if (node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
                 final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
                 versionManager.checkout(node.getPath());
