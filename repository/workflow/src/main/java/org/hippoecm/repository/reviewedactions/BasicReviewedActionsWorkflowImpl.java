@@ -18,20 +18,24 @@ package org.hippoecm.repository.reviewedactions;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.hippoecm.repository.util.CopyHandlerChain;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
@@ -109,11 +113,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
-        boolean editable = false;
-        boolean publishable = false;
-        boolean depublishable = false;
-        Boolean deleteable = false;
-        boolean status = false;
         boolean pendingRequest;
         if (current != null) {
             pendingRequest = true;
@@ -128,11 +127,11 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("preview");
             boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
 
-            status = !draftInUse;
-            editable = !draftInUse && !pendingRequest;
-            publishable = unpublishedDirty && !pendingRequest;
-            depublishable = publishedLive && !pendingRequest;
-            deleteable = !publishedLive;
+            boolean status = !draftInUse;
+            boolean editable = !draftInUse && !pendingRequest;
+            boolean publishable = unpublishedDirty && !pendingRequest;
+            boolean depublishable = publishedLive && !pendingRequest;
+            Boolean deleteable = !publishedLive;
 
             // put everything on the unpublished; unless it doesn't exist
             if (unpublishedDocument != null && !PublishableDocument.UNPUBLISHED.equals(state)) {
@@ -204,7 +203,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
      * @throws RepositoryException
      */
     protected Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
-        JcrUtils.copyToChain(srcNode, new OverwritingCopyHandlerChain(destNode) {
+        final CopyHandlerChain chain = new OverwritingCopyHandlerChain(destNode) {
 
             @Override
             public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
@@ -236,6 +235,25 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
 
             @Override
+            protected void replaceMixins(final Node node, final NodeInfo nodeInfo) throws RepositoryException {
+                Set<String> mixinSet = new TreeSet<>();
+                Collections.addAll(mixinSet, nodeInfo.getMixinNames());
+                for (NodeType nodeType : node.getMixinNodeTypes()) {
+                    final String mixinName = nodeType.getName();
+                    if (!mixinSet.contains(mixinName)) {
+                        if (Arrays.binarySearch(PROTECTED_MIXINS, mixinName) < 0) {
+                            node.removeMixin(mixinName);
+                        }
+                    } else {
+                        mixinSet.remove(mixinName);
+                    }
+                }
+                for (String mixinName : mixinSet) {
+                    node.addMixin(mixinName);
+                }
+            }
+
+            @Override
             public void setProperty(final PropInfo propInfo) throws RepositoryException {
                 String name = propInfo.getName();
                 if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
@@ -243,7 +261,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 }
                 super.setProperty(propInfo);
             }
-        });
+        };
+        chain.startNode(new NodeInfo(srcNode));
+        JcrUtils.copyToChain(srcNode, chain);
+        chain.endNode();
 
         return destNode;
     }
@@ -272,6 +293,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
             if (draftNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                 draftNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
+                draftNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
             }
             return toUserDocument(draftDocument);
         } catch (RepositoryException ex) {

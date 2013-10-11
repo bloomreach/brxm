@@ -619,7 +619,7 @@ public class JcrUtils {
      * @throws RepositoryException
      */
     public static void copyTo(final Node srcNode, Node destNode) throws RepositoryException {
-        copyToChain(srcNode, new OverwritingCopyHandlerChain(destNode));
+        copyTo(srcNode, destNode, null);
     }
 
     /**
@@ -627,7 +627,7 @@ public class JcrUtils {
      *
      * @param srcNode  the node to copy
      * @param destNode the node that the contents of srcNode will be copied to
-     * @param handler the handler that intercepts node and property creation
+     * @param handler the handler that intercepts node and property creation, can be null
      * @throws RepositoryException
      */
     public static void copyTo(Node srcNode, Node destNode, final CopyHandler handler) throws RepositoryException {

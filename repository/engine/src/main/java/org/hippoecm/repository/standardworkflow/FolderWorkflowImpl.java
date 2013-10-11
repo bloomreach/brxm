@@ -317,6 +317,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         renames.put("./_name", new String[] {name});
                         final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
                         result = JcrUtils.copyNodeAsChild(prototypeNode, handleNode, handler);
+                        if (!result.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                            result.addMixin(JcrConstants.MIX_REFERENCEABLE);
+                        }
                         break;
                     }
                 } else if (prototypeNode.getName().equals(template)) {
@@ -324,8 +327,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     result = JcrUtils.copyNodeAsChild(prototypeNode, target, handler);
                     if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
                         handleNode = result;
+                        if (!handleNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                            handleNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
+                        }
                         if (result.hasNode(result.getName())) {
                             result = result.getNode(result.getName());
+                            if (!result.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
+                                result.addMixin(JcrConstants.MIX_REFERENCEABLE);
+                            }
                         } else {
                             result = null;
                         }

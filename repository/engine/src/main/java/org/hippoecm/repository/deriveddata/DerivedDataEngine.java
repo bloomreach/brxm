@@ -29,7 +29,6 @@ import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -46,6 +45,7 @@ import org.hippoecm.repository.ext.DerivedDataFunction;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,7 +181,7 @@ public class DerivedDataEngine {
     }
 
     private boolean compute(Node derivatesFolder, Node modified) throws RepositoryException {
-        ensureNodeIsCheckedOut(modified);
+        JcrUtils.ensureIsCheckedOut(modified, true);
         final Collection<String> dependencies = new TreeSet<String>();
 
         boolean changed = applyFunctions(derivatesFolder, modified, dependencies);
@@ -206,16 +206,6 @@ public class DerivedDataEngine {
             changed |= applyFunction(modified, functionDescription, dependencies);
         }
         return changed;
-    }
-
-    private void ensureNodeIsCheckedOut(final Node modified) throws RepositoryException {
-        if (!modified.isCheckedOut()) {
-            Node ancestor = modified;
-            while (!ancestor.isNodeType("mix:versionable")) {
-                ancestor = ancestor.getParent();
-            }
-            ancestor.checkout();
-        }
     }
 
     private boolean applyFunction(final Node modified, final FunctionDescription function, final Collection<String> dependencies) throws RepositoryException {
@@ -260,7 +250,7 @@ public class DerivedDataEngine {
     }
 
     private boolean updateRelatedProperty(final Node modified, final Collection<String> dependencies) throws RepositoryException {
-        if (modified.isNodeType("mix:referenceable")) {
+        if (modified.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
             dependencies.remove(modified.getIdentifier());
         }
         Value[] dependenciesValues = new Value[dependencies.size()];
@@ -283,7 +273,7 @@ public class DerivedDataEngine {
     }
 
     public static void removal(Node removed) throws RepositoryException {
-        if (removed.isNodeType("mix:referenceable")) {
+        if (removed.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
             final String removedId= removed.getIdentifier();
             for (Property refProp : new PropertyIterable(removed.getReferences())) {
                 if (refProp.getName().equals(HippoNodeType.HIPPO_RELATED)) {
