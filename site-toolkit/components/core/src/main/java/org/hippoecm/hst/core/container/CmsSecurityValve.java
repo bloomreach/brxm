@@ -125,6 +125,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 log.info("Credentials of CMS user '{}' are no longer valid, resetting its HTTP session and starting the SSO handshake again.", getCurrentCmsUser(httpSession));
                 resetAuthentication(httpSession);
                 authenticate(servletRequest, servletResponse, requestContext, httpSession);
+                return;
             } finally {
                 if (jcrSession != null) {
                     jcrSession.logout();
