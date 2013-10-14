@@ -15,17 +15,6 @@
  * limitations under the License.
  *
  *
- * Implements a combination of {@link java.util.WeakHashMap} and
- * {@link java.util.IdentityHashMap}.
- * Useful for caches that need to key off of a {@code ==} comparison
- * instead of a {@code .equals}.
- *
- * <p>This class is not a general-purpose {@link java.util.Map}
- * implementation! It intentionally violates
- * Map's general contract, which mandates the use of the equals method
- * when comparing objects. This class is designed for use only in the
- * rare cases wherein reference-equality semantics are required.
- *
  * <p>This implementation is forked AS-IS from <a href="http://lucene.apache.org/">Apache Lucene</a> which in
  * turn copied it from <a href="http://cxf.apache.org/">Apache CXF</a>
  * but modified to <b>not</b> implement the {@link java.util.Map} interface and
@@ -43,6 +32,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implements a combination of {@link java.util.WeakHashMap} and
+ * {@link java.util.IdentityHashMap}.
+ * Useful for caches that need to key off of a {@code ==} comparison
+ * instead of a {@code .equals}.
+ *
+ * <p>This class is not a general-purpose {@link java.util.Map}
+ * implementation! It intentionally violates
+ * Map's general contract, which mandates the use of the equals method
+ * when comparing objects. This class is designed for use only in the
+ * rare cases wherein reference-equality semantics are required.
+ */
 public final class WeakIdentityMap<K,V> {
     private final ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
     private final Map<IdentityWeakReference, V> backingStore;
