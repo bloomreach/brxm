@@ -73,4 +73,26 @@
     </repository>
   </repositories>
 
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- forked AS-IS from Apache Lucene retaining its original AS2.0 license header
+                -->
+                <exclude>src/main/java/org/onehippo/cms7/util/WeakIdentityMap.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
