@@ -25,13 +25,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
 /**
- * CopyHandlerChain that overwrites the initially passed-in node.
+ * CopyHandler that overwrites the first started node.
  */
-public class OverwritingCopyHandlerChain extends DefaultCopyHandlerChain {
+public class OverwritingCopyHandler extends DefaultCopyHandler {
 
     private int depth;
 
-    public OverwritingCopyHandlerChain(final Node destNode) throws RepositoryException {
+    public OverwritingCopyHandler(final Node destNode) throws RepositoryException {
         super(destNode);
     }
 

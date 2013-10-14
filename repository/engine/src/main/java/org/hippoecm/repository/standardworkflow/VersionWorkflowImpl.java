@@ -45,8 +45,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.util.CopyHandler;
-import org.hippoecm.repository.util.CopyHandlerChain;
+import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropInfo;
@@ -91,10 +90,10 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     private static void restore(Node target, Node source) throws RepositoryException {
-        JcrUtils.copyTo(source, target, new CopyHandler() {
+        JcrUtils.copyTo(source, new DefaultCopyHandler(target) {
 
             @Override
-            public void setProperty(final PropInfo prop, CopyHandlerChain chain) throws RepositoryException {
+            public void setProperty(final PropInfo prop) throws RepositoryException {
                 final String name = prop.getName();
                 if (name.startsWith("jcr:frozen") || name.startsWith("jcr:uuid") ||
                         name.equals(HippoNodeType.HIPPO_RELATED) ||
@@ -102,7 +101,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                         name.equals(HippoNodeType.HIPPO_PATHS)) {
                     return;
                 }
-                super.setProperty(prop, chain);
+                super.setProperty(prop);
             }
         });
     }

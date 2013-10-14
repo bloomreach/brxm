@@ -48,8 +48,7 @@ import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.util.CopyHandler;
-import org.hippoecm.repository.util.CopyHandlerChain;
+import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
@@ -337,10 +336,10 @@ class HandleMigrator {
     }
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
-        JcrUtils.copyTo(srcNode, destNode, new CopyHandler() {
+        JcrUtils.copyTo(srcNode, new DefaultCopyHandler(destNode) {
 
             @Override
-            public void startNode(final NodeInfo nodeInfo, final CopyHandlerChain chain) throws RepositoryException {
+            public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
                 String[] oldMixins = nodeInfo.getMixinNames();
                 Set<String> mixins = new HashSet<>();
                 for (String mixin : oldMixins) {
@@ -352,11 +351,11 @@ class HandleMigrator {
                 }
                 String[] newMixins = mixins.toArray(new String[mixins.size()]);
                 NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
-                super.startNode(newInfo, chain);
+                super.startNode(newInfo);
             }
 
             @Override
-            public void setProperty(final PropInfo prop, CopyHandlerChain chain) throws RepositoryException {
+            public void setProperty(final PropInfo prop) throws RepositoryException {
                 final String name = prop.getName();
                 if (name.startsWith("jcr:frozen") || name.startsWith("jcr:uuid") ||
                         name.equals(HippoNodeType.HIPPO_RELATED) ||
@@ -364,7 +363,7 @@ class HandleMigrator {
                         name.equals(HippoNodeType.HIPPO_PATHS)) {
                     return;
                 }
-                super.setProperty(prop, chain);
+                super.setProperty(prop);
             }
         });
 

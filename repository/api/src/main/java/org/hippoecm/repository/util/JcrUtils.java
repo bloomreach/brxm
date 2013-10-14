@@ -601,7 +601,7 @@ public class JcrUtils {
             return null;
         }
 
-        final DefaultCopyHandlerChain chain = newHandlerChain(destParentNode);
+        final DefaultCopyHandler chain = new DefaultCopyHandler(destParentNode);
         final NodeInfo nodeInfo = new NodeInfo(srcNode);
         NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
         chain.startNode(newInfo);
@@ -619,82 +619,25 @@ public class JcrUtils {
      * @throws RepositoryException
      */
     public static void copyTo(final Node srcNode, Node destNode) throws RepositoryException {
-        copyTo(srcNode, destNode, null);
+        copyTo(srcNode, new OverwritingCopyHandler(destNode));
     }
 
     /**
      * Copies {@link Node} {@code srcNode} to {@code destNode} with a {@code handler} to rewrite content if necessary.
      *
      * @param srcNode  the node to copy
-     * @param destNode the node that the contents of srcNode will be copied to
-     * @param handler the handler that intercepts node and property creation, can be null
+     * @param chain the handler that intercepts node and property creation, can be null
      * @throws RepositoryException
      */
-    public static void copyTo(Node srcNode, Node destNode, final CopyHandler handler) throws RepositoryException {
-        final CopyHandlerChain contentWritingChain = new OverwritingCopyHandlerChain(destNode);
-        final CopyHandlerChain chain;
-        if (handler != null) {
-            chain = new CopyHandlerChain() {
-
-                @Override
-                public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
-                    handler.startNode(nodeInfo, contentWritingChain);
-                }
-
-                @Override
-                public void endNode() throws RepositoryException {
-                    handler.endNode(contentWritingChain);
-                }
-
-                @Override
-                public void setProperty(final PropInfo property) throws RepositoryException {
-                    handler.setProperty(property, contentWritingChain);
-                }
-            };
-        } else {
-            chain = contentWritingChain;
-        }
+    public static Node copyTo(Node srcNode, final CopyHandler chain) throws RepositoryException {
         chain.startNode(new NodeInfo(srcNode));
+        Node result = chain.getCurrent();
         copyToChain(srcNode, chain);
-        chain.endNode();
-    }
-
-    private static DefaultCopyHandlerChain newHandlerChain(Node destNode) throws RepositoryException {
-        return new DefaultCopyHandlerChain(destNode);
-    }
-
-    public static Node copyNodeAsChild(final Node node, Node destParent, final CopyHandler handler) throws RepositoryException {
-        final DefaultCopyHandlerChain chain = newHandlerChain(destParent);
-        Node result;
-        if (handler != null) {
-            handler.startNode(new NodeInfo(node), chain);
-            result = chain.getCurrent();
-            copyToChain(node, new CopyHandlerChain() {
-                @Override
-                public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
-                    handler.startNode(nodeInfo, chain);
-                }
-
-                @Override
-                public void endNode() throws RepositoryException {
-                    handler.endNode(chain);
-                }
-
-                @Override
-                public void setProperty(final PropInfo property) throws RepositoryException {
-                    handler.setProperty(property, chain);
-                }
-            });
-        } else {
-            chain.startNode(new NodeInfo(node));
-            result = chain.getCurrent();
-            copyToChain(node, chain);
-        }
         chain.endNode();
         return result;
     }
 
-    public static void copyToChain(final Node srcNode, CopyHandlerChain chain) throws RepositoryException {
+    public static void copyToChain(final Node srcNode, CopyHandler chain) throws RepositoryException {
         for (Property property : new PropertyIterable(srcNode.getProperties())) {
             PropInfo propInfo;
             if (property.isMultiple()) {

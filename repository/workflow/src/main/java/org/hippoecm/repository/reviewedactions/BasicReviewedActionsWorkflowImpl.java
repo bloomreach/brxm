@@ -39,11 +39,11 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.hippoecm.repository.util.CopyHandlerChain;
+import org.hippoecm.repository.util.CopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.OverwritingCopyHandlerChain;
+import org.hippoecm.repository.util.OverwritingCopyHandler;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
@@ -297,7 +297,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
      * @throws RepositoryException
      */
     protected Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
-        final CopyHandlerChain chain = new OverwritingCopyHandlerChain(destNode) {
+        final CopyHandler chain = new OverwritingCopyHandler(destNode) {
 
             @Override
             public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
@@ -356,9 +356,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 super.setProperty(propInfo);
             }
         };
-        chain.startNode(new NodeInfo(srcNode));
-        JcrUtils.copyToChain(srcNode, chain);
-        chain.endNode();
+        JcrUtils.copyTo(srcNode, chain);
 
         return destNode;
     }

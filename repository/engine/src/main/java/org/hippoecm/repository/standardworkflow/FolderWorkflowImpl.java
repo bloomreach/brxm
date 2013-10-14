@@ -57,8 +57,8 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.util.CopyHandler;
-import org.hippoecm.repository.util.CopyHandlerChain;
+import org.hippoecm.repository.util.DefaultCopyHandler;
+import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
@@ -315,16 +315,16 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         }
                         handleNode = result;
                         renames.put("./_name", new String[] {name});
-                        final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
-                        result = JcrUtils.copyNodeAsChild(prototypeNode, handleNode, handler);
+                        final ExpandingCopyHandler handler = new ExpandingCopyHandler(handleNode, renames, rootSession.getValueFactory());
+                        result = JcrUtils.copyTo(prototypeNode, handler);
                         if (!result.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                             result.addMixin(JcrConstants.MIX_REFERENCEABLE);
                         }
                         break;
                     }
                 } else if (prototypeNode.getName().equals(template)) {
-                    final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
-                    result = JcrUtils.copyNodeAsChild(prototypeNode, target, handler);
+                    final ExpandingCopyHandler handler = new ExpandingCopyHandler(target, renames, rootSession.getValueFactory());
+                    result = JcrUtils.copyTo(prototypeNode, handler);
                     if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
                         handleNode = result;
                         if (!handleNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
@@ -805,8 +805,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             populateRenames(renames, params, handle, arguments);
         }
 
-        final ExpandingCopyHandler handler = new ExpandingCopyHandler(renames, rootSession.getValueFactory());
-        return JcrUtils.copyNodeAsChild(source, handle, handler);
+        final ExpandingCopyHandler handler = new ExpandingCopyHandler(handle, renames, rootSession.getValueFactory());
+        return JcrUtils.copyTo(source, handler);
     }
 
     public Document copyOver(Node destination, Document offspring, Document result, Map<String,String> arguments) {
@@ -855,20 +855,21 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         return result;
     }
 
-    static class ExpandingCopyHandler extends CopyHandler {
+    static class ExpandingCopyHandler extends DefaultCopyHandler {
 
         private final Map<String, String[]> renames;
         private final ValueFactory factory;
         private String path;
 
-        ExpandingCopyHandler(final Map<String, String[]> renames, final ValueFactory factory) {
+        ExpandingCopyHandler(final Node handle, final Map<String, String[]> renames, final ValueFactory factory) throws RepositoryException {
+            super(handle);
             this.renames = renames;
             this.factory = factory;
             this.path = ".";
         }
 
         @Override
-        public void startNode(final NodeInfo nodeInfo, CopyHandlerChain chain) throws RepositoryException {
+        public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
             String[] renamed;
             String name = nodeInfo.getName();
             final String nameKey = path + "/_name";
@@ -905,17 +906,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 path = path + "/" + name;
             }
             final NodeInfo childInfo = new NodeInfo(name, nodeInfo.getIndex(), primaryType, mixins.toArray(new String[mixins.size()]));
-            super.startNode(childInfo, chain);
+            super.startNode(childInfo);
         }
 
         @Override
-        public void endNode(final CopyHandlerChain chain) throws RepositoryException {
-            super.endNode(chain);
+        public void endNode() throws RepositoryException {
+            super.endNode();
             path = path.substring(0, path.lastIndexOf('/'));
         }
 
         @Override
-        public void setProperty(final PropInfo prop, CopyHandlerChain chain) throws RepositoryException {
+        public void setProperty(final PropInfo prop) throws RepositoryException {
             String name = prop.getName();
             PropInfo result;
             // back off one level; not logically correct, but backwards compatible
@@ -953,7 +954,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 }
             }
 
-            super.setProperty(result, chain);
+            super.setProperty(result);
         }
     }
 }

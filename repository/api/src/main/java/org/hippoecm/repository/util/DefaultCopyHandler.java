@@ -28,7 +28,10 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultCopyHandlerChain implements CopyHandlerChain {
+/**
+ * CopyHandler that adds the first node as a child.
+ */
+public class DefaultCopyHandler implements CopyHandler {
 
     private final static String[] PROTECTED = new String[] {
             JcrConstants.JCR_UUID,
@@ -47,17 +50,17 @@ public class DefaultCopyHandlerChain implements CopyHandlerChain {
         Arrays.sort(PROTECTED);
     }
 
-    static final Logger log = LoggerFactory.getLogger(DefaultCopyHandlerChain.class);
+    static final Logger log = LoggerFactory.getLogger(DefaultCopyHandler.class);
 
     private Node current;
     private NodeType[] nodeTypes;
 
-    public DefaultCopyHandlerChain(Node node) throws RepositoryException {
+    public DefaultCopyHandler(Node node) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(node, true);
         setCurrent(node);
     }
 
-    protected DefaultCopyHandlerChain setCurrent(Node node) throws RepositoryException {
+    protected DefaultCopyHandler setCurrent(Node node) throws RepositoryException {
         this.current = node;
         NodeType[] mixinNodeTypes = JcrUtils.getMixinNodeTypes(current);
         nodeTypes = new NodeType[mixinNodeTypes.length + 1];
@@ -112,6 +115,7 @@ public class DefaultCopyHandlerChain implements CopyHandlerChain {
         }
     }
 
+    @Override
     public Node getCurrent() {
         return current;
     }
