@@ -15,13 +15,13 @@
  */
 
 /**
- * Creates an HTML table with information about all CKEditor widgets (buttons, combo boxes, etc.) that are
- * available in a CKEditor distribution. The table lists for each widget:
+ * Creates an HTML table with information about all CKEditor toolbar items (buttons, combo boxes, etc.) that are
+ * available in a CKEditor distribution. The table lists for each toolbar item:
  * - name
  * - label in the UI (the 'tool tip')
  * - associated CKEditor command
- * - CKEditor plugin the widget came from
- * - toolbar group in which the widget is placed by default
+ * - CKEditor plugin the toolbar item came from
+ * - toolbar group in which the item is placed by default
  * - position in the toolbar group
  *
  * Execute this script in the example page 'samples/replacebyclass.html' that is part of the CKEditor sources:
@@ -37,7 +37,7 @@
  */
 
 (function() {
-    // hardcoded list of plugins per widget (the automatic lookup not always works correctly)
+    // hardcoded list of plugins per toolbar item (the automatic lookup not always works correctly)
     var pluginNames = {
         Anchor: 'link',
         Button: 'button',
@@ -96,8 +96,8 @@
         return '???';
     }
 
-    function getWidgets() {
-        var widgets = [],
+    function getToolbarItems() {
+        var toolbarItems = [],
             pluginPerLangKey = getPluginPerLangKey(),
             pluginPerLangValue = getPluginPerLangValue(),
             buttons = CKEDITOR.instances.editor1.ui.items;
@@ -108,7 +108,7 @@
             if (button.type !== 'separator') {
                 var groupAndPosition = button.toolbar.split(',');
 
-                widgets.push({
+                toolbarItems.push({
                     name: buttonName,
                     label: button.label,
                     command: button.command || '',
@@ -118,14 +118,14 @@
                 });
             }
         }
-        return widgets;
+        return toolbarItems;
     }
 
-    function createHtmlTable(widgets) {
+    function createHtmlTable(toolbarItems) {
         var html = "<style>table { border: 1px solid #000 } th, td { padding: 5px; border-collapse: collapse; text-align: left; }</style>"
             + '<table style="width: 100%; border: 1px solid rgb(0, 0, 0); border-collapse: collapse">'
             + "  <tr>"
-            + "    <th style=\"text-align: left\">Widget</th>"
+            + "    <th style=\"text-align: left\">Toolbar Item</th>"
             + "    <th style=\"text-align: left\">Label</th>"
             + "    <th style=\"text-align: left\">Command</th>"
             + "    <th style=\"text-align: left\">Plugin</th>"
@@ -133,14 +133,14 @@
             + "    <th style=\"text-align: left\">Position</th>"
             + "  </tr>";
 
-        for (var i = 0; i < widgets.length; i++) {
+        for (var i = 0; i < toolbarItems.length; i++) {
             html += "  <tr>"
-                + "    <td>" + widgets[i].name + "</td>"
-                + "    <td>" + widgets[i].label + "</td>"
-                + "    <td>" + widgets[i].command + "</td>"
-                + "    <td>" + widgets[i].plugin + "</td>"
-                + "    <td>" + widgets[i].toolbarGroup + "</td>"
-                + "    <td>" + widgets[i].position + "</td>"
+                + "    <td>" + toolbarItems[i].name + "</td>"
+                + "    <td>" + toolbarItems[i].label + "</td>"
+                + "    <td>" + toolbarItems[i].command + "</td>"
+                + "    <td>" + toolbarItems[i].plugin + "</td>"
+                + "    <td>" + toolbarItems[i].toolbarGroup + "</td>"
+                + "    <td>" + toolbarItems[i].position + "</td>"
                 + "  </tr>";
         }
 
@@ -149,11 +149,11 @@
         return html;
     }
 
-    var widgets = getWidgets();
+    var toolbarItems = getToolbarItems();
 
-    widgets.sort(function(a, b) {
+    toolbarItems.sort(function(a, b) {
         return a.name.localeCompare(b.name);
     });
 
-    new CKEDITOR.dom.element($("div.description")).appendHtml(createHtmlTable(widgets));
+    new CKEDITOR.dom.element($("div.description")).appendHtml(createHtmlTable(toolbarItems));
 }());
