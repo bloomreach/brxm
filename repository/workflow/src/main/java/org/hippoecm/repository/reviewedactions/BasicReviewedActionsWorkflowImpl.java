@@ -20,14 +20,18 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.HippoStdNodeType;
@@ -113,12 +117,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
-        boolean pendingRequest;
-        if (current != null) {
-            pendingRequest = true;
-        } else {
-            pendingRequest = false;
-        }
         try {
             final String userIdentity = super.getWorkflowContext().getUserIdentity();
             final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
@@ -126,6 +124,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
             boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("preview");
             boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
+            boolean pendingRequest = current != null;
 
             boolean status = !draftInUse;
             boolean editable = !draftInUse && !pendingRequest;
@@ -150,6 +149,12 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                         editable = publishable = false;
                     }
                 }
+            }
+
+            if (PublishableDocument.DRAFT.equals(state) && unpublishedDocument != null) {
+                Node draftNode = getWorkflowContext().getUserSession().getNodeByIdentifier(draftDocument.getIdentity());
+                Node unpublishedNode = unpublishedDocument.getNode();
+                info.put("modified", !equals(draftNode, unpublishedNode));
             }
 
             if (!editable && PublishableDocument.DRAFT.equals(state) && draftInUse) {
@@ -191,6 +196,95 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
     protected void copyDocumentTo(Document source, Document target) throws RepositoryException {
         copyTo(source.getNode(), target.getNode());
+    }
+
+    protected boolean equals(Node a, Node b) throws RepositoryException {
+        final boolean virtualA = JcrUtils.isVirtual(a);
+        if (virtualA != JcrUtils.isVirtual(b)) {
+            return false;
+        } else if (virtualA) {
+            return true;
+        }
+
+        final PropertyIterator aProperties = a.getProperties();
+        final PropertyIterator bProperties = b.getProperties();
+
+        Map<String, Property> properties = new HashMap<>();
+        for (Property property : new PropertyIterable(aProperties)) {
+            final String name = property.getName();
+            if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
+                continue;
+            }
+            if (property.getDefinition().isProtected()) {
+                continue;
+            }
+            if (!b.hasProperty(name)) {
+                return false;
+            }
+
+            properties.put(name, property);
+        }
+        for (Property bProp : new PropertyIterable(bProperties)) {
+            final String name = bProp.getName();
+            if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
+                continue;
+            }
+            if (bProp.getDefinition().isProtected()) {
+                continue;
+            }
+            if (!properties.containsKey(name)) {
+                return false;
+            }
+
+            Property aProp = properties.get(name);
+            if (!equals(bProp, aProp)) {
+                return false;
+            }
+        }
+
+        NodeIterator aIter = a.getNodes();
+        NodeIterator bIter = b.getNodes();
+        if (aIter.getSize() != bIter.getSize()) {
+            return false;
+        }
+        while (aIter.hasNext()) {
+            Node aChild = aIter.nextNode();
+            Node bChild = bIter.nextNode();
+            if (!equals(aChild, bChild)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean equals(final Property bProp, final Property aProp) throws RepositoryException {
+        if (aProp.isMultiple() != bProp.isMultiple() || aProp.getType() != bProp.getType()) {
+            return false;
+        }
+
+        if (aProp.isMultiple()) {
+            Value[] aValues = aProp.getValues();
+            Value[] bValues = bProp.getValues();
+            if (aValues.length != bValues.length) {
+                return false;
+            }
+            for (int i = 0; i < aValues.length; i++) {
+                if (!equals(aValues[i], bValues[i])) {
+                    return false;
+                }
+            }
+        } else {
+            Value aValue = aProp.getValue();
+            Value bValue = bProp.getValue();
+            if (!equals(aValue, bValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean equals(final Value aValue, final Value bValue) throws RepositoryException {
+        return aValue.getString().equals(bValue.getString());
     }
 
     /**
