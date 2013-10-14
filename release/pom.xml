@@ -51,7 +51,7 @@
     <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>1.03.04-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.contenttype.version>1.03.02-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.utilities.version>1.02.00-SNAPSHOT</hippo.utilities.version>
+    <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.10.00-SNAPSHOT</forge.content-blocks.version>
     <forge.dashboard-document-wizard.version>1.04.00-SNAPSHOT</forge.dashboard-document-wizard.version>
