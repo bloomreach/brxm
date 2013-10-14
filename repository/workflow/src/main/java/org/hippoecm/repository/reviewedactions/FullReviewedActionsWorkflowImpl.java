@@ -97,35 +97,28 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
     }
 
     public void doDelete() throws WorkflowException {
-        boolean fallbackDelete = false;
+        try {
+            if (draftDocument != null) {
+                deleteDocument(draftDocument);
+            }
+            if (publishedDocument != null) {
+                deleteDocument(publishedDocument);
+            }
+            publishedDocument = draftDocument = null;
+        } catch (RepositoryException ex) {
+            throw new WorkflowException("exception trying to delete document", ex);
+        }
         try {
             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", unpublishedDocument);
             defaultWorkflow.archive();
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);
-            fallbackDelete = true;
         } catch (WorkflowException ex) {
             log.warn("no default workflow for published documents, falling back in behaviour", ex);
-            fallbackDelete = true;
         } catch (RepositoryException ex) {
             log.warn("exception trying to archive document, falling back in behaviour", ex);
-            fallbackDelete = true;
         } catch (RemoteException ex) {
             log.warn("exception trying to archive document, falling back in behaviour", ex);
-            fallbackDelete = true;
-        }
-        if (fallbackDelete) {
-            try {
-                if (draftDocument != null) {
-                    deleteDocument(draftDocument);
-                }
-                if (unpublishedDocument != null) {
-                    deleteDocument(unpublishedDocument);
-                }
-                unpublishedDocument = draftDocument = null;
-            } catch (RepositoryException ex) {
-                throw new WorkflowException("exception trying to delete document", ex);
-            }
         }
     }
 

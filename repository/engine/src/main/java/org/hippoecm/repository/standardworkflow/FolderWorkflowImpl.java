@@ -369,21 +369,15 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             try {
                 if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
                     JcrUtils.ensureIsCheckedOut(target, false);
-                    Node unpublished = null;
                     for (final Node child : new NodeIterable(target.getNodes(target.getName()))) {
-                        final String state = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_STATE, null);
-                        if (HippoStdNodeType.UNPUBLISHED.equals(state)) {
-                            unpublished = child;
+                        if (child.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                            final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
+                            versionManager.checkpoint(child.getPath());
+                            clear(child);
+                            child.setPrimaryType(HippoNodeType.NT_DELETED);
                         } else {
                             child.remove();
                         }
-                    }
-                    rootSession.save();
-                    if (unpublished != null) {
-                        final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
-                        versionManager.checkpoint(unpublished.getPath());
-                        clear(unpublished);
-                        unpublished.setPrimaryType(HippoNodeType.NT_DELETED);
                         rootSession.save();
                     }
                 }
