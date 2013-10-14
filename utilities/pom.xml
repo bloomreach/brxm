@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24-iteration-3</version>
+    <version>24.1-SNAPSHOT</version>
   </parent>
 
   <name>Hippo CMS7 Utilities</name>
@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-utilities</artifactId>
-  <version>1.02.00-iteration-4-SNAPSHOT</version>
+  <version>1.02.01-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
