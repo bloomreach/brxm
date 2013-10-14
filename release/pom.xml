@@ -53,19 +53,19 @@
     <hippo.services.contenttype.version>1.03.02-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
 
-    <forge.content-blocks.version>1.10.00-SNAPSHOT</forge.content-blocks.version>
-    <forge.dashboard-document-wizard.version>1.04.00-SNAPSHOT</forge.dashboard-document-wizard.version>
-    <forge.easy-forms.version>2.13.00-SNAPSHOT</forge.easy-forms.version>
-    <forge.ecm-tagging.version>4.06.00-SNAPSHOT</forge.ecm-tagging.version>
-    <forge.gallerypicker.version>1.12.00-SNAPSHOT</forge.gallerypicker.version>
-    <forge.poll.version>1.07.00-SNAPSHOT</forge.poll.version>
-    <forge.properties.version>2.09.00-SNAPSHOT</forge.properties.version>
-    <forge.relateddocs.version>2.09.00-SNAPSHOT</forge.relateddocs.version>
-    <forge.robotstxt.version>1.07.00-SNAPSHOT</forge.robotstxt.version>
-    <forge.selection.version>2.07.00-SNAPSHOT</forge.selection.version>
-    <forge.sitemap.version>1.05.00-SNAPSHOT</forge.sitemap.version>
-    <forge.taxonomy.version>1.10.00-SNAPSHOT</forge.taxonomy.version>
-    <forge.tcmp.version>1.08.00-SNAPSHOT</forge.tcmp.version>
+    <forge.content-blocks.version>1.10.01-SNAPSHOT</forge.content-blocks.version>
+    <forge.dashboard-document-wizard.version>1.04.01-SNAPSHOT</forge.dashboard-document-wizard.version>
+    <forge.easy-forms.version>2.13.01-SNAPSHOT</forge.easy-forms.version>
+    <forge.ecm-tagging.version>4.06.01-SNAPSHOT</forge.ecm-tagging.version>
+    <forge.gallerypicker.version>1.12.01-SNAPSHOT</forge.gallerypicker.version>
+    <forge.poll.version>1.07.01-SNAPSHOT</forge.poll.version>
+    <forge.properties.version>2.09.01-SNAPSHOT</forge.properties.version>
+    <forge.relateddocs.version>2.09.01-SNAPSHOT</forge.relateddocs.version>
+    <forge.robotstxt.version>1.07.01-SNAPSHOT</forge.robotstxt.version>
+    <forge.selection.version>2.07.01-SNAPSHOT</forge.selection.version>
+    <forge.sitemap.version>1.05.01-SNAPSHOT</forge.sitemap.version>
+    <forge.taxonomy.version>1.10.01-SNAPSHOT</forge.taxonomy.version>
+    <forge.tcmp.version>1.08.01-SNAPSHOT</forge.tcmp.version>
 
   </properties>
 
