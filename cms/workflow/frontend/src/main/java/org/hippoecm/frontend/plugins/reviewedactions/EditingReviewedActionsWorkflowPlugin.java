@@ -19,6 +19,8 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -30,18 +32,17 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
 public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
@@ -76,27 +77,14 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                workflow.commitEditableInstance();
+                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.save();
 
                 DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
                 new FeedbackLogger().info(new StringResourceModel("saved", EditingReviewedActionsWorkflowPlugin.this,
                         null, null, df.format(new Date())).getString());
                 showFeedback();
-
-                UserSession session = UserSession.get();
-                session.getJcrSession().refresh(false);
-
-                // get new instance of the workflow, previous one may have invalidated itself
-                EditingReviewedActionsWorkflowPlugin.this.getDefaultModel().detach();
-                WorkflowDescriptor descriptor = (WorkflowDescriptor) (EditingReviewedActionsWorkflowPlugin.this
-                        .getDefaultModel().getObject());
-                session.getJcrSession().refresh(true);
-                WorkflowManager manager = session.getWorkflowManager();
-                workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow(descriptor);
-
-                /* Document draft = */
-                workflow.obtainEditableInstance();
                 return null;
             }
         });
@@ -111,9 +99,9 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             public String execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
-                workflow.commitEditableInstance();
-                UserSession.get().getJcrSession().refresh(true);
+                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.done();
                 return null;
             }
         });

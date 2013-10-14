@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -224,17 +226,24 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     public boolean isModified() {
-        if (this.modified) {
-            return true;
-        }
         String path = "<unknown>";
-        final Node node;
         try {
+            final Node node;
             node = getEditorModel().getObject();
             path = node.getPath();
             HippoSession session = (HippoSession) node.getSession();
-            return session.pendingChanges(node, JcrConstants.NT_BASE, true).hasNext();
-        } catch (EditorException | RepositoryException e) {
+            if (!this.modified) {
+                return session.pendingChanges(node, JcrConstants.NT_BASE, true).hasNext();
+            } else {
+                WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+                EditableWorkflow workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", node);
+                Map<String,Serializable> hints = workflow.hints();
+                if (hints.containsKey("modified")) {
+                    modified = (Boolean) hints.get("modified");
+                    return modified;
+                }
+            }
+        } catch (EditorException | RepositoryException |RemoteException | WorkflowException e) {
             log.error("Could not determine whether there are pending changes for '" + path + "'", e);
         }
         return false;
@@ -274,6 +283,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 session.getJcrSession().refresh(true);
                 workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", documentNode);
                 workflow.obtainEditableInstance();
+                modified = false;
             } else {
                 throw new EditorException("The document is not valid");
             }
@@ -340,7 +350,6 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     public void done() throws EditorException {
-
         UserSession session = UserSession.get();
         String docPath = null;
         try {

@@ -77,8 +77,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
 
     @Override
     protected void onBeforeRender() {
-        Set<Node> nodeSet = new LinkedHashSet<Node>();
-        MenuHierarchy menu = null;
+        Set<Node> nodeSet = new LinkedHashSet<>();
         if (handleObserver != null) {
             getPluginContext().unregisterService(handleObserver, IObserver.class.getName());
             handleObserver = null;
@@ -115,7 +114,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
         } catch (RepositoryException ex) {
             log.error(ex.getMessage(), ex);
         }
-        menu = buildMenu(nodeSet);
+        MenuHierarchy menu = buildMenu(nodeSet);
         menu.restructure();
         addOrReplace(new MenuBar("menu", menu));
 
