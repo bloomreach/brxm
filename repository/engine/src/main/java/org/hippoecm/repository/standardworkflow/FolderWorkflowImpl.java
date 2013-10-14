@@ -399,7 +399,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             }
         }
         for (NodeType nodeType : node.getMixinNodeTypes()) {
-            if (!nodeType.getName().equals(HippoNodeType.NT_HARDDOCUMENT)) {
+            if (!nodeType.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
                 node.removeMixin(nodeType.getName());
             }
         }
