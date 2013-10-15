@@ -65,12 +65,10 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     protected long getTotal() {
         List<Blueprint> blueprintList = getBlueprints();
         if (this.total == null) {
-            if(blueprintList != null){
+            if (blueprintList != null){
                 this.total = (long) blueprintList.size();
-            }
-            else{
-                log.error("Unable to retrieve blueprints. This could be because the url patterns 'site/_rp/' and '/site/_cmsrest/'" +
-                        "are blocked");
+            } else {
+                log.warn("Unable to retrieve blueprints.");
                 this.total = 0l;
             }
         }
