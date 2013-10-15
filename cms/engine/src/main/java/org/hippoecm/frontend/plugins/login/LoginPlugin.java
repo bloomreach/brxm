@@ -100,7 +100,6 @@ public class LoginPlugin extends RenderPlugin {
         public String selectedLocale;
         protected final RequiredTextField<String> usernameTextField;
         protected final PasswordTextField passwordTextField;
-        private Label userLabel;
         private PageParameters parameters;
 
         public SignInForm(final String id) {
@@ -186,16 +185,6 @@ public class LoginPlugin extends RenderPlugin {
                     String username = this.getComponent().getDefaultModelObjectAsString();
                     HttpSession session = ((ServletWebRequest) SignInForm.this.getRequest()).getContainerRequest()
                             .getSession(true);
-
-                    if (ConcurrentLoginFilter.isConcurrentSession(session, username)) {
-                        userLabel.setDefaultModel(new StringResourceModel("alreadylogin", LoginPlugin.this, null,
-                                null, username));
-
-                    } else {
-                        userLabel.setDefaultModel(new Model<String>(""));
-                    }
-
-                    target.add(userLabel);
                     LoginPlugin.this.username = username;
                 }
             });
@@ -207,9 +196,6 @@ public class LoginPlugin extends RenderPlugin {
                     LoginPlugin.this.password = password;
                 }
             });
-
-            add(userLabel = new Label("infouserlogin", ""));
-            userLabel.setOutputMarkupId(true);
         }
 
         @Override
