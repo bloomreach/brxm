@@ -386,7 +386,11 @@ public class HippoContentTypeServiceTest extends PluginTest {
                 fail("ContentTypes cache should have been reloaded.");
             }
             if (ctCache1.getEffectiveNodeTypes().version() != ctCache2.getEffectiveNodeTypes().version()) {
-                fail("EffectiveNodeTypes cache should not have been reloaded.");
+                // disabled failure: this normally won't fail, but without exact control over or blocking of possible other
+                // background processes within the repository, it cannot be guaranteed no other change might have triggered an event
+                // on /jcr:system/jcr:nodeTypes, which thus can result in (also) the effectiveNodeTypes been reloaded.
+
+                // fail("EffectiveNodeTypes cache should not have been reloaded.");
             }
         }
     }
