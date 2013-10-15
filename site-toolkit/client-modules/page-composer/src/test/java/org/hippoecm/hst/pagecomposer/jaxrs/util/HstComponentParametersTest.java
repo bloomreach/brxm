@@ -38,7 +38,7 @@ public class HstComponentParametersTest {
     @Test
     public void emptyNode() throws RepositoryException, JAXBException, IOException {
         MockNode emptyNode = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-empty.xml");
-        HstComponentParameters parameters = new HstComponentParameters(emptyNode, null);
+        HstComponentParameters parameters = new HstComponentParameters(emptyNode);
 
         assertFalse(parameters.hasPrefix(null));
         assertFalse(parameters.hasPrefix(""));
@@ -49,7 +49,7 @@ public class HstComponentParametersTest {
     @Test
     public void onlyParameterNamesAndValuesHaveDefaultPrefix() throws RepositoryException, JAXBException, IOException {
         MockNode nodeWithoutPrefixes = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-two-parameters.xml");
-        HstComponentParameters parameters = new HstComponentParameters(nodeWithoutPrefixes, null);
+        HstComponentParameters parameters = new HstComponentParameters(nodeWithoutPrefixes);
 
         assertTrue(parameters.hasPrefix(null));
         assertTrue(parameters.hasPrefix(""));
@@ -67,7 +67,7 @@ public class HstComponentParametersTest {
     @Test
     public void prefixesAreRead() throws RepositoryException, JAXBException, IOException {
         MockNode nodeWithPrefixes = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-default-and-prefix-one-parameter.xml");
-        HstComponentParameters parameters = new HstComponentParameters(nodeWithPrefixes, null);
+        HstComponentParameters parameters = new HstComponentParameters(nodeWithPrefixes);
 
         assertTrue(parameters.hasPrefix(null));
         assertTrue(parameters.hasPrefix(""));
@@ -84,7 +84,7 @@ public class HstComponentParametersTest {
     public void noPrefixesSaveWithoutChangesKeepsOldValuesAsIs() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.save(0);
 
         assertHasPrefixesNamesValues(node, false, true, true);
@@ -102,7 +102,7 @@ public class HstComponentParametersTest {
     public void noPrefixesAddFirstParameter() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-empty.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.setValue("hippo-default", "parameterOne", "bar");
         parameters.save(0);
 
@@ -119,7 +119,7 @@ public class HstComponentParametersTest {
     public void noPrefixesAddSecondParameter() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.setValue("", "parameterTwo", "valueTwo");
         parameters.save(0);
 
@@ -138,7 +138,7 @@ public class HstComponentParametersTest {
     public void prefixesAddFirstParameter() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-empty.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.setValue("prefix", "parameterOne", "valueOne");
         parameters.save(0);
 
@@ -158,7 +158,7 @@ public class HstComponentParametersTest {
     public void removingOnlyPrefixedParameterClearsNode() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-one-prefix-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.removePrefix("prefix");
         parameters.save(0);
 
@@ -169,7 +169,7 @@ public class HstComponentParametersTest {
     public void addPrefixedParameterIdenticalToDefaultValue() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-default-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.setValue("prefix", "parameterOne", "valueOne");
         parameters.save(0);
 
@@ -189,7 +189,7 @@ public class HstComponentParametersTest {
     public void addingDifferentPrefixedParameter() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.setValue("prefix", "parameterTwo", "valueTwo");
         parameters.save(0);
 
@@ -209,7 +209,7 @@ public class HstComponentParametersTest {
     public void renamePrefix() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-one-prefix-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.renamePrefix("prefix", "foo");
         parameters.save(0);
 
@@ -229,7 +229,7 @@ public class HstComponentParametersTest {
     public void cannotRenameDefaultPrefix() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-default-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.renamePrefix("", "foo");
     }
 
@@ -237,7 +237,7 @@ public class HstComponentParametersTest {
     public void cannotRenamePrefixToDefault() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-one-prefix-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.renamePrefix("prefix", "");
     }
 
@@ -245,7 +245,7 @@ public class HstComponentParametersTest {
     public void renamePrefixDoesNotChangeDefault() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-default-and-prefix-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         parameters.renamePrefix("prefix", "foo");
         parameters.save(0);
 
@@ -265,7 +265,7 @@ public class HstComponentParametersTest {
     public void iteratedPrefixesCanBeRemoved() throws RepositoryException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-two-prefixes-one-parameter.xml");
 
-        HstComponentParameters parameters = new HstComponentParameters(node, null);
+        HstComponentParameters parameters = new HstComponentParameters(node);
         for (String prefix : parameters.getPrefixes()) {
             if (prefix.equals("prefixOne")) {
                 parameters.removePrefix(prefix);

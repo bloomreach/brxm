@@ -18,7 +18,10 @@ package org.hippoecm.hst.core.container;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstComponentMetadataReader;
@@ -27,15 +30,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  * HstComponentRegistryImpl
- * 
- * @version $Id$
+ *
  */
 public class HstComponentRegistryImpl implements HstComponentRegistry {
     
     static Logger log = LoggerFactory.getLogger(HstComponentRegistryImpl.class);
-    
-    protected Map<HstContainerConfig, Map<String, HstComponentHolder>> servletConfigComponentsMap = 
-        Collections.synchronizedMap(new HashMap<HstContainerConfig, Map<String, HstComponentHolder>>());
+
+    protected Map<HstContainerConfig, Map<String, HstComponentHolder>> servletConfigComponentsMap =
+            new ConcurrentHashMap<HstContainerConfig, Map<String, HstComponentHolder>>(128);
+
+    // TODO use
+    protected Map<HstComponentConfiguration, Set<HstComponentHolder>> componentsByHstConfiguration =
+            new ConcurrentHashMap<HstComponentConfiguration, Set<HstComponentHolder>>(128);
     
     public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId) {
         HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
@@ -119,7 +125,7 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
         Map<String, HstComponentHolder> componentsMap = this.servletConfigComponentsMap.get(requestContainerConfig);
         
         if (componentsMap == null && create) {
-            componentsMap = Collections.synchronizedMap(new HashMap<String, HstComponentHolder>());
+            componentsMap = new ConcurrentHashMap<String, HstComponentHolder>();
             this.servletConfigComponentsMap.put(requestContainerConfig, componentsMap);
         }
         

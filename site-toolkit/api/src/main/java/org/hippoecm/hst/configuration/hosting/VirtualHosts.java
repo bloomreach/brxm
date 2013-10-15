@@ -35,7 +35,10 @@ public interface VirtualHosts {
 
     /**
      * @return the {@link HstManager} for this VirtualHosts object
+     * @deprecated since 7.9.0 : Use the {@link org.hippoecm.hst.core.container.ComponentManager} instead to access the
+     * {@link HstManager}
      */
+    @Deprecated
     HstManager getHstManager();
 
     /**

@@ -26,9 +26,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
@@ -37,6 +37,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstComponentsConfigurationService.class);
 
+    private final String id;
+
     /*
      * canonicalComponentConfigurations are component configurations that are retrievable through getComponentConfiguration(String id),
      * They are the HstComponentConfiguration items that are not the result of enhancing but present without enhancing
@@ -44,7 +46,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Map<String, HstComponentConfiguration> canonicalComponentConfigurations = new LinkedHashMap<String, HstComponentConfiguration>();
 
     /*
-     * Components that are direct childs of the hst:components node. A child component only is a root component when it has a non null
+     * Components that artoStringe direct childs of the hst:components node. A child component only is a root component when it has a non null
      * id.
      */
     private List<HstComponentConfiguration> childComponents  = new ArrayList<HstComponentConfiguration>();
@@ -57,7 +59,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
 
-    public HstComponentsConfigurationService(HstNode configurationNode, HstManagerImpl hstManager) throws ServiceException {
+    public HstComponentsConfigurationService(final HstNode configurationNode,
+                                             final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+
+        id = configurationNode.getValueProvider().getPath();
 
         HstNode modifiableContainers = configurationNode.getNode(HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS);
         HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
@@ -81,11 +86,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             log.debug("Initializing the catalog");
             initCatalog(catalog);
         }
-        
-        if(hstManager.getCommonCatalog() != null) {
+
+        HstNode commonCatalog = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath() +"/hst:configurations/hst:catalog");
+        if(commonCatalog != null) {
             // now also load the COMMON catalog
             log.debug("Initializing the common catalog");
-            initCatalog(hstManager.getCommonCatalog());
+            initCatalog(commonCatalog);
         }
      
         for (HstComponentConfiguration child : childComponents) {
@@ -289,6 +295,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                templateResourceMap.put(valueProvider.getName(), template);
            }
         return templateResourceMap;
+    }
+
+    @Override
+    public String toString() {
+        return "HstComponentsConfigurationService [id='"+id+"', hashcode = '"+hashCode()+"']";
     }
 
 }

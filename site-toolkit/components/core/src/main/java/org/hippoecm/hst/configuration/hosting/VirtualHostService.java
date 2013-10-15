@@ -26,7 +26,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.service.ServiceException;
@@ -90,7 +90,13 @@ public class VirtualHostService implements MutableVirtualHost {
     private final boolean cacheable;
     private String [] defaultResourceBundleIds;
 
-    public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, int defaultPort, HstManagerImpl hstManager) throws ServiceException {
+    public VirtualHostService(final VirtualHostsService virtualHosts,
+                              final HstNode virtualHostNode,
+                              final VirtualHostService parentHost,
+                              final String hostGroupName,
+                              final String cmsLocation,
+                              final int defaultPort,
+                              final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
 
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
@@ -244,7 +250,7 @@ public class VirtualHostService implements MutableVirtualHost {
             // add child host services
             int depth = nameSegments.length - 2;
             if(depth > -1 ) {
-                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocation, defaultPort, hstManager);
+                VirtualHostService childHost = new VirtualHostService(this, nameSegments, depth, hostGroupName, cmsLocation, defaultPort);
                 this.childVirtualHosts.put(childHost.name, childHost);
                 // we need to switch the attachPortMountToHost to the last host
             }
@@ -269,7 +275,7 @@ public class VirtualHostService implements MutableVirtualHost {
             HstNode mountNode = virtualHostNode.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
                 try {
-                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstManager, defaultPort);
+                    Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstNodeLoadingCache, defaultPort);
                     MutablePortMount portMount = new PortMountService(mount, this);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
@@ -288,7 +294,7 @@ public class VirtualHostService implements MutableVirtualHost {
         for(HstNode child : virtualHostNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_VIRTUALHOST.equals(child.getNodeTypeName())) {
                 try {
-                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, defaultPort, hstManager);
+                    VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, defaultPort, hstNodeLoadingCache);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -296,7 +302,7 @@ public class VirtualHostService implements MutableVirtualHost {
 
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
                 try {
-                MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstManager);
+                MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstNodeLoadingCache);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
@@ -306,7 +312,12 @@ public class VirtualHostService implements MutableVirtualHost {
 
     }
 
-    public VirtualHostService(VirtualHostService parent, String[] nameSegments, int position, String hostGroupName, String cmsLocation, Integer defaultPort, HstManagerImpl hstManager) {
+    public VirtualHostService(final VirtualHostService parent,
+                              final String[] nameSegments,
+                              final int position,
+                              final String hostGroupName,
+                              final String cmsLocation,
+                              final Integer defaultPort) {
         this.parentHost = parent;
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroupName;
@@ -326,8 +337,9 @@ public class VirtualHostService implements MutableVirtualHost {
         this.defaultResourceBundleIds = parent.defaultResourceBundleIds;
         this.name = nameSegments[position];
         // add child host services
-        if(--position > -1 ) {
-            VirtualHostService childHost = new VirtualHostService(this,nameSegments, position, hostGroupName, cmsLocation, defaultPort, hstManager);
+        int nextPosition = position - 1;
+        if(nextPosition > -1 ) {
+            VirtualHostService childHost = new VirtualHostService(this,nameSegments, nextPosition, hostGroupName, cmsLocation, defaultPort);
             this.childVirtualHosts.put(childHost.name, childHost);
         }
         hostName = StringPool.get(buildHostName());

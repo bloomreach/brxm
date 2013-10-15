@@ -17,7 +17,6 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.List;
 
-import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -30,7 +29,7 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 public interface HstManager {
 
     /**
-     * @return the <code>VirtualHosts</code> 
+     * @return the <code>VirtualHosts</code>, aka the HST model.
      */
     VirtualHosts getVirtualHosts() throws ContainerException;
 
@@ -63,24 +62,18 @@ public interface HstManager {
      * Invalidates this HstSitesManager with EventIterator events. Typically this invalidate is called after a received event indicating that for example
      * the backing hosts configuration has been changed.
      * @param events
-     */
-    void invalidate(EventIterator events);
-
-    /**
-     * Invalidate the {@link HstManager} for all pending hst config of this JCR {@link Session} directly. This is very
-     * useful when the changes must be reflected directly upon next reload. The {@link #invalidate(javax.jcr.observation.EventIterator)}
-     * is asynchronous by jcr event listeners.
-     * @param session the jcr Session to fire the events for
-     * @deprecated deprecated since 7.8.4. Use {@link #invalidate(String...)} instead
+     * @deprecated deprecated since 7.9.0 Use {@link xxx} object instead
      */
     @Deprecated
-    void invalidatePendingHstConfigChanges(Session session);
-    
+    void invalidate(EventIterator events);
+
     /**
      * Invalidates this HstSitesManager with all the varargs absEventPaths. This is useful in cases where you directly want to
      * invalidate the hst model and cannot wait for asynchronous jcr events to be dispatched.
      * @param absEventPaths the varargs abs paths of the event that should be invalidated
+     * @deprecated deprecated since 7.9.0 Use {@link xxx} object instead
      */
+    @Deprecated
     void invalidate(String... absEventPaths);
     
     /**
@@ -112,4 +105,8 @@ public interface HstManager {
      */
     List<HstConfigurationAugmenter> getHstConfigurationAugmenters();
 
+    /**
+     * marks that the hst model is dirty
+     */
+    void markStale();
 }

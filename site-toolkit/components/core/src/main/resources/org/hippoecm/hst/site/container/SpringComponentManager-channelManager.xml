@@ -19,9 +19,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <bean id="org.hippoecm.hst.configuration.channel.ChannelManager" class="org.hippoecm.hst.configuration.channel.ChannelManagerImpl">
+    <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
     <property name="contentRoot" value="${channel.manager.contentRoot}"/>
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+    <property name="eventPathsInvalidator" ref="org.hippoecm.hst.configuration.model.EventPathsInvalidator"/>
     <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />
   </bean>
 

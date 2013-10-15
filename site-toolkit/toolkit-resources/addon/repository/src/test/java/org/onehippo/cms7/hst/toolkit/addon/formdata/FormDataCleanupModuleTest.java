@@ -20,26 +20,24 @@ import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 
-public class FormDataCleanupModuleTest extends AbstractHstTestCase {
+public class FormDataCleanupModuleTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        Session session = getSession();
         NodeIterator nodes = getFormdataNodes();
         while(nodes.hasNext()) {
             nodes.nextNode().remove();
@@ -53,7 +51,6 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
     @After
     public void tearDown() throws Exception {
         HippoServiceRegistry.getService(RepositoryScheduler.class).deleteJob("FormDataCleanup-test", "default");
-        Session session = getSession();
         if (session.nodeExists("/formdata")) {
             session.getNode("/formdata").remove();
             session.save();
@@ -62,7 +59,6 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
     }
 
     private void createFormDataNode(String subPath, long creationTimeMillis) throws Exception {
-        Session session = getSession();
         Node rootNode = session.getRootNode();
         Node formData = rootNode.getNode("formdata");
         if (subPath != null) {
@@ -81,7 +77,6 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
     }
 
     private HippoNodeIterator getFormdataNodes() throws Exception {
-        Session session = getSession();
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // need to order by, otherwise total size returned is always -1
         NodeIterator nodes = queryManager.createQuery("SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC", Query.SQL).execute().getNodes();

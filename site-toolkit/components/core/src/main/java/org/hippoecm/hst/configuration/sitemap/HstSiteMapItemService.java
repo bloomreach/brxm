@@ -34,6 +34,7 @@ import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
@@ -135,7 +136,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private int schemeNotMatchingResponseCode = -1;
     private final String [] resourceBundleIds;
 
-    HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
+    HstSiteMapItemService(HstNode node, MountSiteMapConfiguration mountSiteMapConfiguration, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap;
         this.depth = depth;
@@ -144,7 +145,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.qualifiedId = nodePath;
 
         // the id is the relative path below the root sitemap node. You cannot do a substring on the value provider getPath because due to inheritance
-        // there can be completely different paths for the root sitemap node that for the inherited sitemap items.
+        // there can be completely different paths for the root sitemap node than for the inherited sitemap items.
         HstNode crNode = node;
         StringBuilder idBuilder = new StringBuilder("/").append(crNode.getValueProvider().getName());
         while(crNode.getParent().getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITEMAPITEM)) {
@@ -217,7 +218,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.extension = StringPool.get(this.extension);
 
         Properties mountParameters = new Properties();
-        for (Map.Entry<String, String> entry : mount.getParameters().entrySet()) {
+        for (Map.Entry<String, String> entry : mountSiteMapConfiguration.getParameters().entrySet()) {
             mountParameters.setProperty(entry.getKey(), entry.getValue());
         }
         PropertyParser mountParameterParser = new PropertyParser(mountParameters,
@@ -234,7 +235,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
         if(componentConfigurationNames != null && componentConfigurationValues != null){
             if(componentConfigurationNames.length != componentConfigurationValues.length) {
-                log.warn("Skipping componentConfigurationMappings for sitemapitem '{}' because they only make sense if there are equal number of names and values", id);
+                log.warn("Skipping componentConfigurationMappings for sitemapitem '{}' because they only make sense if there are equal number of names and values", qualifiedId);
             }  else {
                 componentConfigurationIdMappings = new HashMap<String, String>();
                 for(int i = 0; i < componentConfigurationNames.length ; i++) {
@@ -245,15 +246,15 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
         if(parameterNames != null && parameterValues != null){
            if(parameterNames.length != parameterValues.length) {
-               log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values", id);
+               log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values", qualifiedId);
            }  else {
                for (int i = 0; i < parameterNames.length ; i++) {
                    if (parameterValues[i] != null && parameterValues[i].contains("${")) {
                        String resolved = (String) mountParameterParser.resolveProperty(parameterNames[i], parameterValues[i]);
                        if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
                            log.warn("Invalid irreplaceable property placeholder found for parameter name '{}' with value '{}' for " +
-                                   "sitemap item '{}' for mount '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
-                                    id, mount.toString(), parameterNames[i]});
+                                   "sitemap item '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
+                                    id, parameterNames[i]});
                            parameterValues[i] = null;
                        } else {
                            parameterValues[i] = resolved;
@@ -286,8 +287,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         if(relativeContentPath != null && relativeContentPath.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("relativeContentPath", relativeContentPath);
             if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
-                log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}' for mount '{}'." +
-                        "Setting relativeContentPath to null", new String[]{relativeContentPath, id, mount.toString()});
+                log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}'." +
+                        "Setting relativeContentPath to null", new String[]{relativeContentPath, qualifiedId});
                 relativeContentPath = null;
             } else {
                 relativeContentPath = resolved;
@@ -299,8 +300,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         if (componentConfigurationId != null && componentConfigurationId.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("componentConfigurationId", componentConfigurationId);
             if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
-                log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}' for mount '{}'. " +
-                        "Setting relativeContentPath to null", new String[]{relativeContentPath, id, mount.toString()});
+                log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}'. " +
+                        "Setting relativeContentPath to null", new String[]{relativeContentPath, qualifiedId});
                 componentConfigurationId = null;
             } else {
                 componentConfigurationId = resolved;
@@ -310,7 +311,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {
-            siteMapItemHandlerIds = mount.getDefaultSiteMapItemHandlerIds();
+            siteMapItemHandlerIds = mountSiteMapConfiguration.getDefaultSiteMapItemHandlerIds();
         }
         if(siteMapItemHandlerIds != null && siteMapItemHandlersConfiguration != null) {
             for(String handlerId : siteMapItemHandlerIds) {
@@ -328,7 +329,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else if(this.parentItem != null){
             this.locale = parentItem.getLocale();
         } else {
-            this.locale = mount.getLocale();
+            this.locale = mountSiteMapConfiguration.getLocale();
         }
         locale = StringPool.get(locale);
 
@@ -368,7 +369,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.namedPipeline = parentItem.getNamedPipeline();
         } else {
             // inherit the namedPipeline from the mount (can be null)
-            this.namedPipeline = mount.getNamedPipeline();
+            this.namedPipeline = mountSiteMapConfiguration.getNamedPipeline();
         }
 
         namedPipeline = StringPool.get(namedPipeline);
@@ -378,7 +379,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else if(this.parentItem != null) {
             this.cacheable = parentItem.isCacheable();
         } else {
-            this.cacheable = mount.isCacheable();
+            this.cacheable = mountSiteMapConfiguration.isCacheable();
         }
 
         scheme = null;
@@ -386,13 +387,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             scheme = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME));
         }
         if (StringUtils.isBlank(scheme)) {
-            scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
+            scheme = parentItem != null ? parentItem.getScheme() : mountSiteMapConfiguration.getScheme();
         }
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
             schemeAgnostic = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
         } else {
-            schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mount.isSchemeAgnostic();
+            schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mountSiteMapConfiguration.isSchemeAgnostic();
         }
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
@@ -405,19 +406,19 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         }
         if (schemeNotMatchingResponseCode == -1) {
             schemeNotMatchingResponseCode = parentItem != null ?
-                    parentItem.getSchemeNotMatchingResponseCode() : mount.getSchemeNotMatchingResponseCode();
+                    parentItem.getSchemeNotMatchingResponseCode() : mountSiteMapConfiguration.getSchemeNotMatchingResponseCode();
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
             this.resourceBundleIds = StringUtils.split(StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)), " ,\t\f\r\n");
         } else {
-            this.resourceBundleIds = parentItem != null ? parentItem.getResourceBundleIds() : mount.getDefaultResourceBundleIds();
+            this.resourceBundleIds = parentItem != null ? parentItem.getResourceBundleIds() : mountSiteMapConfiguration.getDefaultResourceBundleIds();
         }
 
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mount,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
                     childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {

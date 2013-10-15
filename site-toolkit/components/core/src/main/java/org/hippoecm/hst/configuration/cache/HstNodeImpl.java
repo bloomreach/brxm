@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.model;
+package org.hippoecm.hst.configuration.cache;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,15 @@ import java.util.Map.Entry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -51,7 +56,7 @@ public class HstNodeImpl implements HstNode {
     /**
      * We use a LinkedHashMap because insertion order does matter. 
      */
-    private Map<String, HstNode> children = null; 
+    private LinkedHashMap<String, HstNode> children = null;
     
     /**
      * The primary node type name
@@ -62,6 +67,8 @@ public class HstNodeImpl implements HstNode {
      * When true, this JCRValueProvider is out of date and needs to be reloaded
      */
     private boolean stale = false;
+    private boolean staleChildren = false;
+    private boolean childOrderedReload = false;
     
     /**
      * when <code>true</code>, is means this HstNode is inherited from some other structure
@@ -131,22 +138,29 @@ public class HstNodeImpl implements HstNode {
             if(children == null) {
                 children = new LinkedHashMap<String, HstNode>((int)iteratorSizeBeforeLoop * 4 / 3);
             }
-            HstNodeImpl existing = (HstNodeImpl) children.get(childRepositoryNode.getValueProvider().getName());
+            HstNodeImpl existing = (HstNodeImpl) children.get(childRepositoryNode.getName());
             if (existing != null) {
                 log.warn("Ignoring node configuration at '{}' for '{}' because it is duplicate. This is not allowed",
                             provider.getPath(), childRepositoryNode.getValueProvider().getPath());
             } else {
                 // does not exist yet
-                children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
+                children.put(childRepositoryNode.getName(), childRepositoryNode);
             }
 
         }
         long iteratorSizeAfterLoop = nodes.getSize();
-        HstManagerImpl.throwModelChangedExceptionIfCountsAreNotEqual(iteratorSizeBeforeLoop, iteratorSizeAfterLoop);
+        if (iteratorSizeBeforeLoop != iteratorSizeAfterLoop) {
+            throw new ModelLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
+        }
     }
     
     protected HstNode createNew(Node jcrNode,  HstNode parent, boolean loadChilds) throws RepositoryException{
         return new HstNodeImpl(jcrNode, parent, loadChilds);
+    }
+    
+    @Override
+    public String getName() {
+        return provider.getName();
     }
     
     /* (non-Javadoc)
@@ -179,9 +193,10 @@ public class HstNodeImpl implements HstNode {
         relPath = StringUtils.stripEnd(relPath, "/");
         String[] args = relPath.split("/");
         HstNode child = children.get(args[0]);
-        if(args.length > 1 && child != null) {
-            relPath = relPath.substring(relPath.indexOf("/") + 1);
-            return child.getNode(relPath);
+        int i = 1;
+        while(i < args.length && child != null) {
+            child = ((HstNodeImpl)child).children.get(args[i]);
+            i++;
         }
         
         if(child == null) {
@@ -193,7 +208,7 @@ public class HstNodeImpl implements HstNode {
     @Override
     public void addNode(String name, HstNode hstNode)  {
         if(children == null) {
-            children = new LinkedHashMap<String, HstNode>();
+            children = new LinkedHashMap<>();
         }
         // if the child already exists, it is just replaced
         children.put(name, hstNode);
@@ -204,7 +219,10 @@ public class HstNodeImpl implements HstNode {
         if(children == null) {
             return;
         }
-        children.remove(name);
+        HstNode removed = children.remove(name);
+        if (removed == null) {
+            log.debug("Could not remove child '{}' from {} because does not exist.", name, this);
+        }
     }
 
     /* (non-Javadoc)
@@ -260,15 +278,108 @@ public class HstNodeImpl implements HstNode {
     }
 
     @Override
+    public void markStaleByPropertyEvent() {
+        stale = true;
+    }
+
+    @Override
+    public void markStaleByNodeEvent(boolean childOrderedReload) {
+        stale = true;
+        staleChildren = true;
+        this.childOrderedReload = childOrderedReload;
+    }
+
+    @Override
     public boolean isStale() {
         return stale;
+    }
+
+    public void update(final Session session) throws RepositoryException {
+        if (!stale) {
+            if (children == null) {
+                return;
+            }
+
+            final LinkedHashMap<String, HstNode> clone = (LinkedHashMap<String, HstNode>)children.clone();
+            // because below 'parent.removeNode(getName());' modifies the children, we first
+            // need to clone them
+            for (HstNode hstNode : clone.values()) {
+                hstNode.update(session);
+            }
+            return;
+        }
+
+        if (!session.nodeExists(getValueProvider().getPath())) {
+            if (parent != null) {
+                log.debug("Removing path '{}' from HstNode tree.", getValueProvider().getPath());
+                parent.removeNode(getName());
+            }
+            return;
+        }
+
+        log.debug("Reload provider for : "  + getValueProvider().getPath());
+        Node jcrNode = session.getNode(getValueProvider().getPath());
+        setJCRValueProvider(new JCRValueProviderImpl(jcrNode, false, true));
+
+        if (staleChildren) {
+            if (childOrderedReload) {
+                log.debug("Ordered children reload for '{}'", getValueProvider().getPath());
+                orderedChildrenReload(jcrNode);
+            } else {
+                log.debug("Unordered children reload for '{}'", getValueProvider().getPath());
+                unorderedChildrenReload(jcrNode);
+            }
+        } else {
+            if (children != null) {
+                for (HstNode hstNode : children.values()) {
+                    hstNode.update(session);
+                }
+            }
+        }
+
+        stale = false;
+        staleChildren = false;
+    }
+
+    private void unorderedChildrenReload(final Node jcrNode) throws RepositoryException {
+        Map<String, HstNode> newChildren = new HashMap<>();
+        for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
+            String childName = jcrChildNode.getName();
+            final HstNode existing = getNode(childName);
+            if (existing == null) {
+                newChildren.put(childName, new HstNodeImpl(jcrChildNode, this, true));
+            } else {
+                newChildren.put(childName, existing);
+                // one of its descendants might still be stale, hence continue updating the child node
+                existing.update(jcrNode.getSession());
+            }
+        }
+        if (children == null ) {
+            children = new LinkedHashMap<>(newChildren);
+        } else {
+            children.clear();
+            children.putAll(newChildren);
+        }
+
+    }
+
+    private void orderedChildrenReload(Node jcrNode) throws RepositoryException {
+        if (children != null ) {
+            children.clear();
+        }
+        log.debug("Reloading all children for '{}'.", getValueProvider().getPath());
+        for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
+            HstNode hstChildNode = new HstNodeImpl(jcrChildNode, this, true);
+            addNode(hstChildNode.getName(), hstChildNode);
+        }
+
     }
 
     @Override
     public boolean isInherited() {
         return inherited;
     }
-    
+
     @Override
     public void setJCRValueProvider(JCRValueProvider valueProvider) {
         this.provider = valueProvider;
@@ -281,10 +392,10 @@ public class HstNodeImpl implements HstNode {
         // the path of the HstNode's can be different than the backing JcrValueProvider due to inheritance: Multiple HstNode's 
         // can reuse the same JcrValueProvider instance
         HstNode cr = this;
-        StringBuilder pathBuilder = new StringBuilder("/").append(cr.getValueProvider().getName());
+        StringBuilder pathBuilder = new StringBuilder("/").append(cr.getName());
         while(cr.getParent() != null ) {
             cr = cr.getParent();
-            pathBuilder.insert(0, cr.getValueProvider().getName()).insert(0, "/");
+            pathBuilder.insert(0, cr.getName()).insert(0, "/");
         }
         return this.getClass().getSimpleName() + "[path=" + pathBuilder.toString() + ", nodeTypeName=" + nodeTypeName +
                 ", JcrValueProvider path=" + getValueProvider().getPath() + ", stale=" + stale + ", inherited=" + inherited + "]";

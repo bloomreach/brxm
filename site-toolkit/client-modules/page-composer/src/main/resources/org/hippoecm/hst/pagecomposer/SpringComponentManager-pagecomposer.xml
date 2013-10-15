@@ -25,7 +25,6 @@
   </bean>
 
   <bean id="abstractConfigResource" abstract="true" >
-    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager" />
     <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />
   </bean>
 

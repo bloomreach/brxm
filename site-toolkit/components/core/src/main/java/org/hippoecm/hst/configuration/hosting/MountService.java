@@ -17,7 +17,6 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,14 +30,14 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstSiteRootNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
+import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
@@ -245,7 +244,11 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private Map<String, String> parameters;
 
-    public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
+    public MountService(final HstNode mount,
+                        final Mount parent,
+                        final VirtualHost virtualHost,
+                        final HstNodeLoadingCache hstNodeLoadingCache,
+                        final int port) throws ServiceException {
         this.virtualHost = virtualHost;
         this.parent = parent;
         this.port = port;
@@ -548,36 +551,36 @@ public class MountService implements ContextualizableMount, MutableMount {
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured to not use a HstSiteMap because isMapped() is false", getName(), mount.getValueProvider().getPath());
 
             // check if the mountpoint points to a hst:site node:
-            HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
-            if(hstSiteNodeForMount == null) {
+            HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
+            if(hstSiteNodeForMount == null || !hstSiteNodeForMount.getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITE)) {
                 // for non Mounts, the contentPath is just the mountpoint when the mountpoint does not point to a hst:site
                 this.contentPath = mountPoint;
                 // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
                 this.canonicalContentPath = mountPoint;
             } else {
                 // the mountpoint does point to a hst:site. Since we do not need the HstSiteMap because isMapped = false, we only use the content mapping
-                canonicalContentPath = hstSiteNodeForMount.getContentPath();
-                //contentPath = hstSiteNodeForMount.getContentPath();
-                contentPath = hstSiteNodeForMount.getContentPath();
+                canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+                contentPath = canonicalContentPath;
             }
         } else {
 
-            HstSiteRootNode hstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(mountPoint);
+            HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
             if(hstSiteNodeForMount == null) {
                 throw new ServiceException("mountPoint '" + mountPoint
                         + "' does not point to a hst:site node for Mount '" + mount.getValueProvider().getPath()
                         + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
             }
 
-            hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
-            canonicalContentPath = hstSiteNodeForMount.getContentPath();
-            contentPath = hstSiteNodeForMount.getContentPath();
+            MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
+            hstSite = new HstSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+            canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+            contentPath = canonicalContentPath;
             containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
 
             // now also try to get hold of the previewHstSite. If we cannot load it, we log an info:
-            HstSiteRootNode previewHstSiteNodeForMount = hstManager.getHstSiteRootNodes().get(previewMountPoint);
+            HstNode previewHstSiteNodeForMount = hstNodeLoadingCache.getNode(previewMountPoint);
             if(previewHstSiteNodeForMount == null || isPreview()) {
                 if (!isPreview()) {
                     log.warn("There is no preview version '{}-preview' for mount '{}'. Cannot create automatic PREVIEW HstSite " +
@@ -587,18 +590,16 @@ public class MountService implements ContextualizableMount, MutableMount {
                 previewCanonicalContentPath = canonicalContentPath;
                 previewContentPath = contentPath;
             } else {
-                previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
-                previewCanonicalContentPath = previewHstSiteNodeForMount.getContentPath();
-                //previewContentPath = previewHstSiteNodeForMount.getContentPath();
-                previewContentPath = previewHstSiteNodeForMount.getContentPath();
-                // we assume containsMultipleSchemes is for preview site same as for live site hence no check here for preview site
+                previewHstSite = new HstSiteService(previewHstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                previewCanonicalContentPath = previewHstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+                previewContentPath = previewCanonicalContentPath;
             }
         }
 
         for (HstNode childMount : mount.getNodes()) {
             if (HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
                 try {
-                    MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
+                    MountService childMountService = new MountService(childMount, this, virtualHost, hstNodeLoadingCache, port);
                     MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
                     if (prevValue != null) {
                         log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());

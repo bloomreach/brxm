@@ -35,7 +35,9 @@ public interface MutableChannelManager extends ChannelManager {
 
     /**
      * discard cached channel information; there have been external changes to the backend storage.
+     * @deprecated since 7.9.0 : not used any more
      */
+    @Deprecated
     void invalidate();
 
 }

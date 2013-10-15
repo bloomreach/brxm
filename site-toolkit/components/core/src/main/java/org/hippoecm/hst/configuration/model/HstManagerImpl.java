@@ -16,65 +16,46 @@
 package org.hippoecm.hst.configuration.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import javax.jcr.LoginException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
+import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.cache.HstCache;
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
-import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This class handles the loading of {@link HstNodeImpl}'s. 
- */
 public class HstManagerImpl implements MutableHstManager {
     
     private static final Logger log = LoggerFactory.getLogger(HstManagerImpl.class);
 
-    /**
-     * general mutex on which implementation can synchronize with the HstManagerImpl
-     */
-    public static final Object MUTEX = new Object();
+    private Object hstModelMutex;
 
-    private Repository repository;
-
-    private volatile VirtualHosts prevVirtualHosts;
-    private volatile VirtualHosts virtualHosts;
-    private String username;
-    private String password;
+    private volatile VirtualHosts prevHstModel;
+    private volatile VirtualHosts hstModel;
 
 
     private volatile BuilderState state = BuilderState.UNDEFINED;
+
     enum BuilderState {
         UNDEFINED,
         UP2DATE,
@@ -95,77 +76,17 @@ public class HstManagerImpl implements MutableHstManager {
     private HstComponentRegistry componentRegistry;
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
     private HstCache pageCache;
-    private HstLinkCreator hstLinkCreator;
-    
+
+    private HstNodeLoadingCache hstNodeLoadingCache;
+    private HstEventsDispatcher hstEventsDispatcher;
+
     /**
-     * This is a {@link HstComponentsConfigurationService} instance cache : When all the backing HstNode's for 
-     * hst:pages, hst:components, hst:catalog and hst:templates, then, the HstComponentsConfiguration object can be shared between different Mounts. 
-     * The key is the Set of all HstNode path's directly below the components, pages, catalog and templates : The path uniquely defines the HstNode
-     * and there is only inheritance on the nodes directly below components, pages, catalog and templates: Since no fine-grained inheritance, these
-     * HstNode's identify uniqueness 
-     * Also this cache is reused when a configuration change did not impact HstComponentsConfiguration's at all
-     */
-    private Map<Set<String>, HstComponentsConfigurationService> hstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();;
-    
-    
-    /**
-     * The root path of all the hst configuations nodes, by default /hst:hst
-     */
-    private String rootPath;
-    
-    /**
+     *
      * the default cms preview prefix : The prefix all URLs when accessed through the CMS 
      */
     private String cmsPreviewPrefix;
-   
-    /**
-     * The depth, or length of the rootPath splitted on slash. Thus for example /hst:hst returns 2 
-     */
-    private int rootPathDepth;
-   
-    /**
-     * The root of the virtual hosts node. There should always be exactly one.
-     */
-    private HstNode virtualHostsNode; 
-    
-    /**
-     * The common catalog node and <code>null</code> if there is no common catalog (hst:configurations/hst:catalog)
-     */
-    private HstNode commonCatalog;
 
     /**
-     * The map of all configurationRootNodes where the key is the path to the configuration: This is the non enhanced map: in other words,
-     * no hstconfiguration inheritance is accounted for. This is the plain hierarchical jcr tree translation to HstNode tree
-     */
-    private Map<String, HstNode> configurationRootNodes = new HashMap<String, HstNode>();
-    
-    /**
-     * The enhanced version of configurationRootNodes : During enhancing, the inheritance (hst:inheritsfrom) is resolved. Note
-     * that the original HstNode's in configurationRootNodes are not changed. Thus, all HstNode's in configurationRootNodes are 
-     * first copied to new instances. The backing provider is allowed to be the same instance still.
-     */
-    private Map<String, HstNode> inheritanceResolvedConfigurationRootNodes = new HashMap<String, HstNode>();
-
-    /**
-     * The map of all site nodes where the key is the path
-     */
-    private Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
-
-    /**
-     * Contains the map of all siteRootNodes of the previously loaded model : This can be used to validate the
-     * newly loaded set of siteRootNodes against the previously loaded ones: Due to jcr changes during finegrained
-     * reloading of the model, it can sometimes happen that a siteRootNode cannot load its configuration path because
-     * the configuration node has been moved after the siteNode was loaded. When this happens, it can have two causes:
-     * 1) The hst configuration is really broken
-     * 2) In a clustered repository, the repository pulled in some changes during reloading of the model
-     * Now, case (1) cannot be fixed of course. Case (2) we try to identify through this previousCorrectLoadedSiteRootNodePaths :
-     * if some siteRoot node has a broken configuration path, but was correctly loaded before because it was part of
-     * previousCorrectLoadedSiteRootNodePaths, then we do a fullblown rebuild
-     */
-    private Set<String> previousCorrectLoadedSiteRootNodePaths = new HashSet<String>();
-
-    /**
-
      * Request path suffix delimiter
      */
     private String pathSuffixDelimiter = "./";
@@ -179,35 +100,20 @@ public class HstManagerImpl implements MutableHstManager {
      */
     List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
 
-    // this member is only accessed in synchronized blocks so does not need to be volatile
-    private boolean clearAll = false;
-
-    private RelevantEventsHolder relevantEventsHolder;
-    
     private MutableChannelManager channelManager;
 
-    public synchronized void setRepository(Repository repository) {
-        this.repository = repository;
+    public void setHstModelMutex(Object hstModelMutex) {
+        this.hstModelMutex = hstModelMutex;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
+        this.hstNodeLoadingCache = hstNodeLoadingCache;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setHstEventsDispatcher(final HstEventsDispatcher hstEventsDispatcher) {
+        this.hstEventsDispatcher = hstEventsDispatcher;
     }
 
-    public synchronized void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
-        rootPathDepth = rootPath.split("/").length;
-        relevantEventsHolder = new RelevantEventsHolder(rootPath);
-    }
-
-    public synchronized String getRootPath() {
-        return rootPath;
-    }
-    
     public void setComponentRegistry(HstComponentRegistry componentRegistry) {
         this.componentRegistry = componentRegistry;
     }
@@ -277,10 +183,6 @@ public class HstManagerImpl implements MutableHstManager {
         this.channelManager = channelManager;
     }
 
-    public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
-        this.hstLinkCreator = hstLinkCreator;
-    }
-
     public void setHstFilterPrefixExclusions(final String[] hstFilterPrefixExclusions) {
         this.hstFilterPrefixExclusions = hstFilterPrefixExclusions;
     }
@@ -315,7 +217,7 @@ public class HstManagerImpl implements MutableHstManager {
     }
 
     private void asynchronousBuild() {
-        synchronized (MUTEX) {
+        synchronized (hstModelMutex) {
             if (state == BuilderState.UP2DATE) {
                 // other thread already built the model
                 return;
@@ -360,14 +262,14 @@ public class HstManagerImpl implements MutableHstManager {
     @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
         if (state == BuilderState.UP2DATE) {
-            return virtualHosts;
+            return hstModel;
         }
         if (state == BuilderState.UNDEFINED) {
             return synchronousBuild();
         }
         if (allowStale && staleConfigurationSupported) {
             asynchronousBuild();
-            return prevVirtualHosts;
+            return prevHstModel;
         }
         return synchronousBuild();
     }
@@ -375,35 +277,26 @@ public class HstManagerImpl implements MutableHstManager {
     @Override
     public VirtualHosts getVirtualHosts() throws ContainerException {
         return getVirtualHosts(false);
-
     }
 
     private VirtualHosts synchronousBuild() throws ContainerException {
         if (state != BuilderState.UP2DATE) {
-            synchronized (MUTEX) {
+            synchronized (hstModelMutex) {
                 if (state == BuilderState.UP2DATE) {
-                    return virtualHosts;
+                    return hstModel;
                 } else {
                     try {
                         state = BuilderState.RUNNING;
                         try {
                             buildSites();
                             state = BuilderState.UP2DATE;
-                        } catch (ModelLoadingException e) {
-                            logModelFailedToLoad(e);
+                        } catch (ModelLoadingException | ContainerException e) {
+                            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
                             invalidateAll();
                             state = BuilderState.FAILED;
                             consecutiveBuildFailCounter++;
-                            return prevVirtualHosts;
-                        } catch (ContainerException e) {
-                            logModelFailedToLoad(e);
-                            invalidateAll();
-                            state = BuilderState.FAILED;
-                            consecutiveBuildFailCounter++;
-                            return prevVirtualHosts;
+                            return prevHstModel;
                         }
-                    } catch (LoginException e) {
-                        throw new ContainerException("Could not build hst model because user '"+username+"' could not login to the repository.");
                     } finally {
                         if (state == BuilderState.RUNNING) {
                             log.warn("Model failed to built. Serve old virtualHosts model.");
@@ -413,19 +306,19 @@ public class HstManagerImpl implements MutableHstManager {
                     }
                     if (state == BuilderState.FAILED) {
                         // do not flush pageCache but return old prev virtual host instance instead
-                        return prevVirtualHosts;
+                        return prevHstModel;
                     }
                     log.info("Flushing page cache after new model is loaded");
                     pageCache.clear();
                 }
                 if (state == BuilderState.UP2DATE) {
                     consecutiveBuildFailCounter = 0;
-                    prevVirtualHosts = virtualHosts;
+                    prevHstModel = hstModel;
                 }
-                return virtualHosts;
+                return hstModel;
             }
         }
-        return virtualHosts;
+        return hstModel;
     }
 
     private long computeReloadDelay(final int consecutiveBuildFailCounter) {
@@ -440,351 +333,92 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
-    private void buildSites() throws ContainerException, LoginException {
-        log.info("Start building in memory hst configuration model");
-        long start = System.currentTimeMillis();
-        
-        if (clearAll) {
-            virtualHostsNode = null;
-            commonCatalog = null;
-            configurationRootNodes.clear();
-            siteRootNodes.clear();
-            previousCorrectLoadedSiteRootNodePaths.clear();
-            relevantEventsHolder.clear();
-        }
+    private void buildSites() throws ContainerException {
 
-        Session session = null;
+        hstEventsDispatcher.dispatchHstEvents();
+
+        log.info("Start building in memory hst configuration model");
+
 
         try {
-            session = this.repository.login(new SimpleCredentials(username, password.toCharArray()));
-            // get all the root hst virtualhosts node: there is only allowed to be exactly ONE
 
-            if(virtualHostsNode == null) {
-                Node virtualHostsJcrNode = session.getNode(rootPath + "/hst:hosts");
-                virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
-            } else if (relevantEventsHolder.hasHostEvents()){
-                Node virtualHostsJcrNode = session.getNode(rootPath + "/hst:hosts");
-                virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
-            }
-
-            // if there is a common catalog that is not yet loaded, we load this one:
-            if(relevantEventsHolder.hasCommonCatalogEvents()) {
-                commonCatalog = null;
-                if (session.itemExists(rootPath +"/hst:configurations/hst:catalog")) {
-                    // we have a common catalog. Load this catalog. It is available for every (sub)site
-                    Node catalog = (Node)session.getItem(rootPath +"/hst:configurations/hst:catalog");
-                    commonCatalog = new HstNodeImpl(catalog, null, true);
-                }
-            } 
-
-            if(configurationRootNodes.isEmpty()) {
-                loadAllConfigurationNodes(session);
-                hstComponentsConfigurationInstanceCache.clear();
-                componentRegistry.unregisterAllComponents();
-            } else if (relevantEventsHolder.hasHstRootConfigurationEvents()) {
-                hstComponentsConfigurationInstanceCache.clear();
-                componentRegistry.unregisterAllComponents();
-                Iterator<String> hstConfigurationPathEvents = relevantEventsHolder.getHstRootConfigurationPathEvents();
-                while(hstConfigurationPathEvents.hasNext()) {
-                    String path = hstConfigurationPathEvents.next();
-                    configurationRootNodes.remove(path);
-                    if(session.nodeExists(path)) {
-                         HstNode configurationRootNode = new HstNodeImpl(session.getNode(path), null, true);
-                        configurationRootNodes.put(path, configurationRootNode);
-                    }
-                }
-
-            }
-
-            // get all the hst:site's 
-            if (siteRootNodes.isEmpty()) {
-                loadAllSiteNodes(session);
-            } else if (relevantEventsHolder.hasSiteEvents()) {
-                Iterator<String> siteRootPathEvents = relevantEventsHolder.getRootSitePathEvents();
-                while(siteRootPathEvents.hasNext()) {
-                    String path = siteRootPathEvents.next();
-                    String[] elems = path.split("/");
-                    // check if it is a node of types hst:sites : in this case, we'll reload all sites
-                    if (elems.length == rootPathDepth + 1) {
-                        // change in hst:sites. clear all siteRootNodes
-                        siteRootNodes.clear();
-                        loadAllSiteNodes(session);
-                        break;
-                    } else {
-                        siteRootNodes.remove(path);
-                        if(session.nodeExists(path)) {
-                            Node rootSiteNode = session.getNode(path);
-                            if(rootSiteNode.isNodeType(HstNodeTypes.NODETYPE_HST_SITE)) {
-                                HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null, getRootHstConfigurationsPath());
-                                siteRootNodes.put(path, hstSiteRootNode);
-                            } else {
-                                throw new IllegalStateException(String.format("Unexpected nodetype '%s' for '%s'. Can only load nodes" +
-                                        " of type '%s' for sites.", rootSiteNode.getPrimaryNodeType().getName(), rootSiteNode.getPath(), HstNodeTypes.NODETYPE_HST_SITE));
-                            }
-                        }
-                    }
-                }
-            }
-
-            removeInvalidSiteRootNodes(session);
-            populatePreviousCorrectLoadedSiteRootNodePaths();
-
+            // TODO only when needed
+            componentRegistry.unregisterAllComponents();
             try {
 
+                // TODO only when needed
                 siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-                inheritanceResolvedConfigurationRootNodes = resolveInheritanceHstConfigurationNodes(configurationRootNodes);
 
-                virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+                long start = System.currentTimeMillis();
+                hstModel = new VirtualHostsService(this, hstNodeLoadingCache);
+                log.info("Loading VirtualHostsService took '{}' ms.", (System.currentTimeMillis() - start));
+
                 for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
-                    configurationAugmenter.augment((MutableVirtualHosts)virtualHosts);
+                    configurationAugmenter.augment((MutableVirtualHosts)hstModel);
                 }
-                log.info("Finished build in memory hst configuration model in " + (System.currentTimeMillis() - start) + " ms.");
+
+                // TODO remove session usage here and load channel manager with HstNode only
+                Session session = null;
+                try {
+                    session = getSession();
+                    this.channelManager.load(hstModel, session);
+                } finally {
+                    if (session != null) {
+                        session.logout();
+                    }
+                }
+
+                log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
             } catch (ServiceException e) {
                 throw new ContainerException("Exception during building HST model", e);
+            } catch (Exception e) {
+                throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
             }
-
-            this.channelManager.load(virtualHosts, session);
-        } catch (LoginException e) {
-            throw e;
-        } catch (PathNotFoundException e) {
-            throw new ContainerException("PathNotFoundException during building HST model", e);
-        } catch (RepositoryException e) {
-            if (e.getCause() instanceof LoginException) {
-                // because LazyMultipleRepositoryImpl#login wraps any exception during login in a RepositoryException,
-                // we need to inspect the cause
-                throw (LoginException)e.getCause();
-            }
-            throw new ContainerException("RepositoryException during building HST model", e);
         } catch (RuntimeRepositoryException e) {
             throw new ContainerException("RepositoryException during building HST model", e);
         } finally {
             // clear the StringPool as it is not needed any more
+            // TODO After lazy loading is implemented, we should StringPool clear smarter...
             StringPool.clear();
-            inheritanceResolvedConfigurationRootNodes.clear();
-            relevantEventsHolder.clear();
-            hstLinkCreator.clear();
-            clearAll = false;
-
-            if (session != null) {
-                try { 
-                    session.logout(); 
-                } catch (Exception e) {
-                    log.warn("Exception during loggin out jcr session", e);
-                }
-            }
-        }
-
-    }
-
-
-    private void logModelFailedToLoad(final Exception e) {
-        log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
-    }
-
-
-    private void populatePreviousCorrectLoadedSiteRootNodePaths() {
-        previousCorrectLoadedSiteRootNodePaths.clear();
-        for (String siteRootNodePath : siteRootNodes.keySet()) {
-            previousCorrectLoadedSiteRootNodePaths.add(siteRootNodePath);
         }
     }
 
-    private void removeInvalidSiteRootNodes(final Session session) throws RepositoryException {
-        List<String> invalidSiteRootNodePaths = new ArrayList<String>();
-        for (HstSiteRootNode hstSiteRootNode : siteRootNodes.values()) {
-            if (!containsConfigurationRootNode(session, hstSiteRootNode)) {
-                HstNode configurationRootNode = tryLoadConfigurationForSite(session, hstSiteRootNode);
-                if (configurationRootNode == null || hstSiteRootNode.getConfigurationPath() == null) {
-                    // the site really can't be loaded correctly. If it was loaded correctly before, then most
-                    // likely we had jcr node changes in a clustered environment during model loading
-                    String siteRootNodePath = hstSiteRootNode.getValueProvider().getPath();
-                    failIfLoadedCorrectlyBefore(siteRootNodePath);
-                    invalidSiteRootNodePaths.add(hstSiteRootNode.getValueProvider().getPath());
-                } else {
-                    configurationRootNodes.put(hstSiteRootNode.getConfigurationPath(), configurationRootNode);
-                }
-            }
-        }
-        for (String invalidSiteRootNodePath : invalidSiteRootNodePaths) {
-            log.warn("Discarding invalid HST SITE for '{}'.", invalidSiteRootNodePath);
-            siteRootNodes.remove(invalidSiteRootNodePath);
-        }
-    }
+    private Session getSession() throws RepositoryException {
+        Credentials defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
 
-    private void failIfLoadedCorrectlyBefore(final String siteRootNodePath) {
-        if (previousCorrectLoadedSiteRootNodePaths.isEmpty()) {
-           return;
-        }
-        if (previousCorrectLoadedSiteRootNodePaths.contains(siteRootNodePath)) {
-            throw new ModelLoadingException("Found HST SITE '"+siteRootNodePath+"' that does not have a " +
-                    "configuration node. However, it was loaded correctly before. ");
-        }
-    }
+        Session session = null;
+        if (repository != null) {
+             session = repository.login(defaultCredentials);
 
-    private HstNode tryLoadConfigurationForSite(final Session session, final HstSiteRootNode hstSiteRootNode) throws RepositoryException {
-        session.refresh(false);
-        String configurationPath = hstSiteRootNode.getConfigurationPath();
-        if(configurationPath != null && session.nodeExists(configurationPath)) {
-            Node jcrNode = session.getNode(configurationPath);
-            if (!jcrNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                log.warn("Hst configuration node at '{}' for site '{}' is not of correct type. Discarding this hst:site from the model now.", configurationPath, hstSiteRootNode.getValueProvider().getPath());
-                return null;
-            }
-            return new HstNodeImpl(jcrNode, null, true);
-        } else {
-            return null;
         }
-    }
-
-    private boolean containsConfigurationRootNode(final Session session, final HstSiteRootNode hstSiteRootNode) throws RepositoryException {
-        String configurationPath = hstSiteRootNode.getConfigurationPath();
-        if (configurationRootNodes.containsKey(configurationPath)) {
-            return true;
-        } else {
-            log.debug("Configuration path '{}' not yet loaded. This might happen because jcr event not yet arrived to indicate that " +
-                    "a new config node is present. Try loading it now.");
-            return false;
-        }
-    }
-
-    private Map<String, HstNode> resolveInheritanceHstConfigurationNodes(Map<String, HstNode> configurationRootNodes) {
-        Map<String, HstNode> inheritanceResolvedMap = new HashMap<String, HstNode>();
-        for(HstNode configurationRootNode : configurationRootNodes.values()) {
-            HstNode enhancedNode = new HstSiteConfigurationRootNodeImpl((HstNodeImpl)configurationRootNode, configurationRootNodes, rootPath);
-            inheritanceResolvedMap.put(enhancedNode.getValueProvider().getPath(), enhancedNode);
-        }
-        return inheritanceResolvedMap;
-    }
-
-    private void loadAllConfigurationNodes(Session session) throws RepositoryException {
-        Node configurationsNode = session.getNode(rootPath + "/hst:configurations");
-        NodeIterator configurationRootJcrNodes = configurationsNode.getNodes();
-        long iteratorSizeBeforeLoop = configurationRootJcrNodes.getSize();
-        while(configurationRootJcrNodes.hasNext()) {
-            Node configurationRootNode = configurationRootJcrNodes.nextNode();
-            if(configurationRootNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                HstNode hstNode = new HstNodeImpl(configurationRootNode, null, true);
-                configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
-            }
-        }
-        long iteratorSizeAfterLoop = configurationRootJcrNodes.getSize();
-        throwModelChangedExceptionIfCountsAreNotEqual(iteratorSizeBeforeLoop, iteratorSizeAfterLoop);
-    }
-
-    private void loadAllSiteNodes(Session session) throws RepositoryException {
-        NodeIterator nodes = session.getNode(rootPath).getNodes();
-        long iteratorSizeBeforeLoop = nodes.getSize();
-        while(nodes.hasNext()) {
-            Node node = nodes.nextNode();
-            if(node.isNodeType(HstNodeTypes.NODETYPE_HST_SITES)) {
-                NodeIterator siteRootJcrNodes = node.getNodes();
-                while(siteRootJcrNodes.hasNext()) {
-                    Node rootSiteNode = siteRootJcrNodes.nextNode();
-                    HstSiteRootNode hstSiteRootNode = new HstSiteRootNodeImpl(rootSiteNode, null, getRootHstConfigurationsPath());
-                    siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
-                }
-            }
-        }
-        long iteratorSizeAfterLoop = nodes.getSize();
-        throwModelChangedExceptionIfCountsAreNotEqual(iteratorSizeBeforeLoop, iteratorSizeAfterLoop);
-    }
-
-    private String getRootHstConfigurationsPath() {
-        return rootPath +"/hst:configurations";
-    }
-
-    public static void throwModelChangedExceptionIfCountsAreNotEqual(final long iteratorSizeBeforeLoop, final long iteratorSizeAfterLoop) {
-        // typically, in jackrabbit (clustering) it is not uncommon that a jcr iterator at initialization contains nodes that
-        // get deleted before actually fetched through the LazyItemIterator. This can be detected by a different size after
-        // the iteration than before the iteration
-        if (iteratorSizeBeforeLoop != iteratorSizeAfterLoop) {
-            throw new ModelLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
-        }
-    }
-
-    private void throwContainerExceptionAfterFailedRetry() throws ContainerException{
-        throw new ContainerException("Retry of building HST model due to jcr config changes during the previous build failed again " +
-                "because the jcr config changed again. No retry done until next request.");
-    }
-
-    @Override
-    public void invalidate(EventIterator events) {
-        synchronized(MUTEX) {
-            try {
-                while (events.hasNext()) {
-                    relevantEventsHolder.addEvent(events.nextEvent());
-                }
-            } catch (RepositoryException e) {
-                log.error("RepositoryException happened during processing events. Invalidate hst model completely", e);
-                invalidateAll();
-                return;
-            }
-            invalidateVirtualHosts();
-        }
+        return session;
     }
 
     @Deprecated
     @Override
-    public void invalidatePendingHstConfigChanges(final Session session) {
-        log.warn("invalidatePendingHstConfigChanges is deprecated. Use invalidate(final String... absEventPaths) instead");
-        try {
-            String[] eventPaths = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
-            invalidate(eventPaths);
-        } catch (RepositoryException e) {
-            log.error("RepositoryException happened during processing pending events. Invalidate hst model completely", e);
-            invalidateAll();
-            return;
-        }
+    public void invalidate(EventIterator events) {
+        log.warn("deprecated. Not used any more ");
     }
 
+    @Deprecated
     @Override
     public void invalidate(final String... absEventPaths) {
-        if (absEventPaths == null) {
-            return;
-        }
-        synchronized(MUTEX) {
-            for (String eventPath : absEventPaths) {
-                relevantEventsHolder.addEvent(eventPath);
-            }
-            invalidateVirtualHosts();
-        }
+        log.warn("deprecated. Not used any more ");
     }
 
     @Override
     public void invalidateAll() {
-        synchronized(MUTEX) {
-            invalidateVirtualHosts();
-            clearAll = true;
+        log.warn("deprecated. Not used any more ");
+    }
+
+    @Override
+    public void markStale() {
+        synchronized (hstModelMutex) {
+            if (state != BuilderState.UNDEFINED) {
+                state = BuilderState.STALE;
+            }
         }
-    }
-
-    private final void invalidateVirtualHosts() {
-        log.info("In memory hst configuration model is marked as stale due to changes.");
-        if (channelManager != null) {
-            channelManager.invalidate();
-        }
-        if (state != BuilderState.UNDEFINED) {
-            state = BuilderState.STALE;
-        }
-    }
-
-    public Map<String, HstSiteRootNode> getHstSiteRootNodes(){
-        return siteRootNodes;
-    }
-
-    public Map<String, HstNode> getInheritanceResolvedConfigurationRootNodes() {
-        return inheritanceResolvedConfigurationRootNodes;
-    }
-    
-    public HstNode getCommonCatalog(){
-        return commonCatalog;
-    }
-
-    /**
-     * @return the hstComponentsConfigurationInstanceCache. This {@link Map} is never <code>null</code> 
-     */
-    public Map<Set<String>, HstComponentsConfigurationService> getHstComponentsConfigurationInstanceCache() {
-        return hstComponentsConfigurationInstanceCache;
     }
 
 }

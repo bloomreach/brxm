@@ -95,7 +95,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     protected Set<String> doGetVariants(final Node containerItem) throws RepositoryException {
-        HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
+        HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
         return componentParameters.getPrefixes();
     }
 
@@ -138,7 +138,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         final Set<String> keepVariants = new HashSet<String>();
         keepVariants.addAll(Arrays.asList(variants));
 
-        final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
+        final HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
         final Set<String> removed = new HashSet<String>();
 
         for (String variant : componentParameters.getPrefixes()) {
@@ -207,7 +207,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     private ContainerItemComponentRepresentation represent(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
         List<ContainerItemComponentPropertyRepresentation> properties= new ArrayList<ContainerItemComponentPropertyRepresentation>();
 
-        HstComponentParameters componentParameters = new HstComponentParameters(node, getHstManager());
+        HstComponentParameters componentParameters = new HstComponentParameters(node);
 
         //Get the properties via annotation on the component class
         String componentClassName = null;
@@ -254,7 +254,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                             MultivaluedMap<String, String> params) {
         try {
             final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             doSetParameters(componentParameters, variant, params, lastModifiedTimestamp);
             return ok("Parameters for '" + variant + "' saved successfully.", null);
         } catch (IllegalStateException e) {
@@ -287,7 +287,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                   MultivaluedMap<String, String> params) {
         try {
             final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             componentParameters.removePrefix(oldVariant);
             doSetParameters(componentParameters, newVariant, params, lastModifiedTimestamp);
             return ok("Parameters renamed from '" + oldVariant + "' to '" + newVariant + "' and saved successfully.", null);
@@ -350,7 +350,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                   @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             if (componentParameters.hasPrefix(variant)) {
                 return conflict("Cannot create variant '" + variant + "' because it already exists");
             }
@@ -397,7 +397,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                                   @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             if (!componentParameters.hasPrefix(variant)) {
                 return conflict("Cannot delete variant '" + variant + "' because it does not exist");
             }

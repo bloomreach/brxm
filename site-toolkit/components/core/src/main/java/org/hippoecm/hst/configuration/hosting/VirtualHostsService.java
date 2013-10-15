@@ -31,10 +31,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -140,10 +142,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
      */
     private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<String, ResolvedVirtualHost>();
 
-    public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
+    public VirtualHostsService(final HstManagerImpl hstManager, final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+        HstNode vhostsNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath()+"/hst:hosts");
+        if (vhostsNode == null) {
+            throw new ModelLoadingException("No hst node found for '"+hstNodeLoadingCache.getRootPath()+"/hst:hosts'. Cannot load model.'");
+        }
         this.hstManager = hstManager;
         virtualHostsConfigured = true;
-        ValueProvider vHostConfValueProvider = virtualHostsConfigurationNode.getValueProvider();
+        ValueProvider vHostConfValueProvider = vhostsNode.getValueProvider();
         contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
         cmsPreviewPrefix = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
@@ -220,7 +226,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         defaultResourceBundleIds = StringUtils.split(vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID), " ,\t\f\r\n");
 
         // now we loop through the hst:hostgroup nodes first:
-        for(HstNode hostGroupNode : virtualHostsConfigurationNode.getNodes()) {
+        for(HstNode hostGroupNode : vhostsNode.getNodes()) {
             // assert node is of type virtualhostgroup
             if(!HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP.equals(hostGroupNode.getNodeTypeName())) {
                 throw new ServiceException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
@@ -257,7 +263,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             for(HstNode virtualHostNode : hostGroupNode.getNodes()) {
 
                 try {
-                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), cmsLocation , defaultPort, hstManager);
+                    VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), cmsLocation , defaultPort, hstNodeLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ServiceException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);

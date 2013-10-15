@@ -476,6 +476,14 @@ components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIVarsPlaceholderResol
 components/core/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCache.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEvent.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventConsumer.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventsCollector.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventsDispatcher.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstNodeImpl.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstNodeLoadingCache.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstSiteConfigurationRootNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassProcessor.java -text
@@ -488,14 +496,12 @@ components/core/src/main/java/org/hippoecm/hst/configuration/components/HstCompo
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/PortMountService.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/model/EventPathsInvalidator.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationEventListener.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstManagerImpl.java -text svneol=unset#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/model/HstNodeImpl.java -text svneol=unset#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/model/HstSiteConfigurationRootNodeImpl.java -text svneol=unset#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/model/HstSiteRootNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/ModelLoadingException.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/model/RelevantEventsHolder.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/site/HstSiteService.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/site/MountSiteMapConfiguration.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemap/HstSiteMapItemService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemap/HstSiteMapService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemapitemhandler/HstSiteMapItemHandlerConfigurationService.java -text svneol=unset#text/plain
@@ -654,6 +660,9 @@ components/core/src/test/java/org/hippoecm/hst/configuration/TestContainerCompon
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSharedHstComponentsConfigurationModels.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/AbstractHstLoadingCacheTestCase.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstConfigurationLoadingCache.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstNodeLoadingCache.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintHandlerTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperTest.java -text

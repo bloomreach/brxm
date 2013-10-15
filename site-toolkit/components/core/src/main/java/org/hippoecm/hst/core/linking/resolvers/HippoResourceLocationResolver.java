@@ -40,9 +40,14 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
     private List<ResourceContainer> resourceContainers;
     
     private final static String NODE_TYPE = HippoNodeType.NT_RESOURCE;
-    
+
+    /**
+     * @deprecated unused since 7.9.0 : Use {@link #resolve(javax.jcr.Node, org.hippoecm.hst.configuration.hosting.Mount,
+     *             LocationMapTree)} instead
+     */
+    @Deprecated
     public void setLocationMapTree(LocationMapTree locationMapTree) {
-       // we do not need a locationMapTree one for binary data 
+        // we do not need a locationMapTree one for binary data
     }
     
     public void setBinariesPrefix(String binariesPrefix){
@@ -70,7 +75,17 @@ public class HippoResourceLocationResolver implements ResourceLocationResolver {
         return NODE_TYPE;
     }
 
-    public HstLink resolve(Node node, Mount mount) {
+    /**
+     * @deprecated unused since 7.9.0 : Use {@link #resolve(javax.jcr.Node, org.hippoecm.hst.configuration.hosting.Mount,
+     *             LocationMapTree)} instead
+     */
+    @Deprecated
+    public HstLink resolve(final Node node, final Mount mount) {
+        log.warn("This method is deprecated. Use resolve(Node, Mount, LocationMapTree) instead");
+        return resolve(node, mount, null);
+    }
+
+    public HstLink resolve(Node node, final Mount mount, final LocationMapTree tree) {
         try {
             Node canonicalNode = null;
             if(node instanceof HippoNode) {

@@ -26,6 +26,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -254,9 +255,9 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
         String highestAncestorNewNode = createHstWorkspaceAndReferenceableContainer("foo/bar/myReferenceableContainer");
         addComponentReference(testComponent, "containerReferencePreserveMyName", "foo/bar/myReferenceableContainer");
 
-        // trigger jcr events as during tests the jcr event listeners are not enabled
-        hstSitesManager.invalidate("/hst:hst/hst:configurations/unittestcommon/" + HstNodeTypes.NODENAME_HST_WORKSPACE);
-        hstSitesManager.invalidate(testComponent.getPath());
+        // trigger events as during tests the jcr event listeners are not enabled
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/" + HstNodeTypes.NODENAME_HST_WORKSPACE, testComponent.getPath());
 
         {
             // reload model after changes
@@ -281,7 +282,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
             session.save();
 
             // trigger reload
-            hstSitesManager.invalidate(canonicalJcrPath);
+            invalidator.eventPaths(canonicalJcrPath);
             mount = hstSitesManager.getVirtualHosts().getMountByIdentifier(getLocalhostRootMountId());
             component = mount.getHstSite().getComponentsConfiguration().getComponentConfiguration("hst:pages/homepage").
                     getChildByName(TEST_COMPONENT_NODE_NAME).getChildByName("containerReferencePreserveMyName");
@@ -291,7 +292,6 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
             assertEquals(child.getParameter("name2"), "value2");
 
         }
-
 
         session.getNode(highestAncestorNewNode).remove();
         session.save();

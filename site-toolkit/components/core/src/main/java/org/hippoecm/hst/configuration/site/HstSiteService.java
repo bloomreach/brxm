@@ -15,19 +15,14 @@
  */
 package org.hippoecm.hst.configuration.site;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.cache.HstSiteConfigurationRootNodeImpl;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.HstSiteRootNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -39,6 +34,7 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,65 +46,55 @@ public class HstSiteService implements HstSite {
     private HstComponentsConfigurationService componentsConfigurationService;
     private HstSiteMenusConfiguration siteMenusConfigurations;
     private String name;
-    private long version;
     private boolean hasPreviewConfiguration;
     private String canonicalIdentifier;
     private String configurationPath;
     private LocationMapTree locationMapTree;
 
     
-    public HstSiteService(HstSiteRootNode site, ContextualizableMount mount, HstManagerImpl hstManager) throws ServiceException {
+    public HstSiteService(HstNode site, MountSiteMapConfiguration mountSiteMapConfiguration, HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
-        version = site.getVersion();
-        configurationPath = site.getConfigurationPath();
-        HstNode configurationNode = getConfigurationNode(configurationPath, hstManager);
-        String hstSiteNodePath = site.getValueProvider().getPath();
 
-        if (version > -1 && hstSiteNodePath.endsWith("-preview")) {
-            // check whether the live has the same version : If smaller, then this hst:site has a preview configuration
-            String livePath = site.getValueProvider().getPath().substring(0, hstSiteNodePath.length() - "-preview".length());
-            final HstSiteRootNode liveSiteRootNode = hstManager.getHstSiteRootNodes().get(livePath);
-            if (liveSiteRootNode == null) {
-                throw new ServiceException("There is no live hst:site for '"+hstSiteNodePath+"'. Cannot create correct hst site for only preview.");
-            }
-            if (version > liveSiteRootNode.getVersion()) {
-                hasPreviewConfiguration = true;
-            }
-        }
-        init(configurationNode, mount, hstManager);
+        findAndSetConfigurationPath(site, hstNodeLoadingCache);
+
+        init(mountSiteMapConfiguration, hstNodeLoadingCache);
     }
 
-    private HstNode getConfigurationNode(final String configurationPath, final HstManagerImpl hstManager) throws ServiceException {
-        HstNode configurationNode = hstManager.getInheritanceResolvedConfigurationRootNodes().get(configurationPath);
-        if (configurationNode == null) {
+    private void findAndSetConfigurationPath(final HstNode site, HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+        boolean isPreviewSite = site.getValueProvider().getName().endsWith("-preview");
+        if (site.getValueProvider().hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
+            configurationPath = site.getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+            if (isPreviewSite) {
+                configurationPath = configurationPath + "-preview";
+            }
+        } else {
+            configurationPath = hstNodeLoadingCache.getRootPath() + "/" +
+                    HstNodeTypes.NODENAME_HST_CONFIGURATIONS + "/" +site.getValueProvider().getName();
+        }
+        if (isPreviewSite) {
+            HstNode previewConfig = hstNodeLoadingCache.getNode(configurationPath);
+            if (previewConfig != null) {
+                hasPreviewConfiguration = true;
+            } else {
+                configurationPath = configurationPath.substring(0, configurationPath.length() - "-preview".length());
+            }
+        }
+    }
+
+    private void init(MountSiteMapConfiguration mountSiteMapConfiguration, HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+
+        HstConfigurationLoadingCache loadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
+        HstSiteConfigurationRootNodeImpl node = loadingCache.getInheritanceResolvedNode(configurationPath);
+        if (node == null) {
             throw new ModelLoadingException(
                     "There is no configuration found at '"+configurationPath+"'. Cannot load a configuration for it. This can only" +
                             " happen if the jcr model changed during loading.");
         }
-        return configurationNode;
 
-    }
-
-    private void init(HstNode configurationNode, Mount mount, HstManagerImpl hstManager) throws ServiceException {
-       // check wether we already a an instance that would reulst in the very same HstComponentsConfiguration instance. If so, set that value
-      
-       // the cachekey is the set of all HstNode identifiers that make a HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
-       Set<String> cachekey = computeCacheKey(configurationNode);
-       Map<Set<String>, HstComponentsConfigurationService> hstComponentsConfigurationInstanceCache = hstManager.getHstComponentsConfigurationInstanceCache();
-       
-       HstComponentsConfigurationService prevLoaded =  hstComponentsConfigurationInstanceCache.get(cachekey);
-       if(prevLoaded == null) {
-           componentsConfigurationService = new HstComponentsConfigurationService(configurationNode, hstManager); 
-           hstComponentsConfigurationInstanceCache.put(cachekey, componentsConfigurationService);
-       } else {
-           log.debug("Reusing existing HstComponentsConfiguration because exact same configuration. We do not build HstComponentsConfiguration for '{}' but use existing version.", configurationNode.getValueProvider().getPath());
-           componentsConfigurationService = prevLoaded; 
-       }
-       
+       componentsConfigurationService =  loadingCache.get(node);
        // sitemapitem handlers
-       
-       HstNode sitemapItemHandlersNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
+       HstNode sitemapItemHandlersNode = node.getNode(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
        if(sitemapItemHandlersNode != null) {
            log.info("Found a '{}' configuration. Initialize sitemap item handlers service now", HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
            try {
@@ -121,17 +107,17 @@ public class HstSiteService implements HstSite {
        }
        
        // sitemap
-       HstNode siteMapNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
+       HstNode siteMapNode = node.getNode(HstNodeTypes.NODENAME_HST_SITEMAP);
        if(siteMapNode == null) {
            throw new ServiceException("There is no sitemap configured");
        }
-       siteMapService = new HstSiteMapService(this, siteMapNode, mount, siteMapItemHandlersConfigurationService); 
+       siteMapService = new HstSiteMapService(this, siteMapNode, mountSiteMapConfiguration, siteMapItemHandlersConfigurationService);
        
        checkAndLogAccessibleRootComponents();
        
        locationMapTree = new LocationMapTreeImpl(this.getSiteMap().getSiteMapItems());
        
-       HstNode siteMenusNode = configurationNode.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
+       HstNode siteMenusNode = node.getNode(HstNodeTypes.NODENAME_HST_SITEMENUS);
        if(siteMenusNode != null) {
            try {
                siteMenusConfigurations = new HstSiteMenusConfigurationService(this, siteMenusNode);
@@ -143,6 +129,7 @@ public class HstSiteService implements HstSite {
        }
        
     }
+
 
     /*
      * meant to check all accessible root components from the sitemap space, and check whether every component has at least a template 
@@ -197,7 +184,7 @@ public class HstSiteService implements HstSite {
     }
 
     public long getVersion() {
-        return version;
+        return -1;
     }
     
     public boolean hasPreviewConfiguration() {
@@ -214,25 +201,6 @@ public class HstSiteService implements HstSite {
 
     public HstSiteMenusConfiguration getSiteMenusConfiguration() {
         return siteMenusConfigurations;
-    }
-    
-    private Set<String> computeCacheKey(HstNode configurationNode) {
-        Set<String> key = new HashSet<String>();
-        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS));
-        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES));
-        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_CATALOG));
-        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES));
-        augmentKey(key,configurationNode.getNode(HstNodeTypes.NODENAME_HST_WORKSPACE));
-        return key;
-    }
-
-
-    private void augmentKey(Set<String> key, HstNode node) {
-        if(node != null) {
-            for(HstNode n :node.getNodes()) {
-                key.add(n.getValueProvider().getIdentifier());
-            }
-        }
     }
 
 }

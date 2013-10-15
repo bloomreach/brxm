@@ -17,10 +17,18 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 
 public interface HstNode {
+
+    /**
+     * @return name of the hst node
+     */
+    String getName();
 
     /**
      * @return the value provider for this {@link HstNode}
@@ -28,7 +36,7 @@ public interface HstNode {
     ValueProvider getValueProvider();
 
     /**
-     * @param relPath a path that does not start with a slash, for example 'foo' or 'foo/bar'
+     * @param relPath a path that does not start with a slash, for example 'foo' or 'foo/bar'.
      * @return the descendant node at <code>relPath</code> or <code>null</code> if it does not exist
      * @throws IllegalArgumentException if <code>relPath</code> is not a valid relPath
      */
@@ -74,11 +82,25 @@ public interface HstNode {
      * @param valueProvider
      */
     void setJCRValueProvider(JCRValueProvider valueProvider);
-    
+
     /**
      * marks the HstNode as stale: The JCRValueProvider is out-of-date
+     * @deprecated  since 7.9.0 : use {@link #markStaleByPropertyEvent()} or {@link #markStaleByNodeEvent(boolean)}
      */
     void markStale();
+
+    /**
+     * marks the HstNode as stale due to property event: The JCRValueProvider is out-of-date.
+     */
+    void markStaleByPropertyEvent();
+
+    /**
+     * marks the HstNode as stale due to node event: The JCRValueProvider might be out-of-date and/or the child nodes. If the
+     * children's order matter, use childOrderedReload = true
+     * @param childOrderedReload when the children's order is not of any meaning, orderAgnostic = true : This can result in
+     *                      much more efficient reload
+     */
+    void markStaleByNodeEvent(boolean childOrderedReload);
     
     /**
      * @return <code>true</code> when this HstNode is stale
@@ -86,7 +108,14 @@ public interface HstNode {
     boolean isStale();
 
     /**
+     * updates all the HstNode's that need reloading.
+     * @param session
+     */
+    void update(Session session) throws RepositoryException;
+
+    /**
      * @return <code>true</code> when this HstNode is inherited
      */
     boolean isInherited();
+
 }

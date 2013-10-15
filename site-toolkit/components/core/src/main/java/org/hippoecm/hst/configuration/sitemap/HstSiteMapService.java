@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -55,7 +55,7 @@ public class HstSiteMapService implements HstSiteMap {
      */
     private Map<String, HstSiteMapItem> siteMapDescendantsByRefId = new HashMap<String, HstSiteMapItem>();
     
-    public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
+    public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, MountSiteMapConfiguration mountSiteMapConfiguration, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
         this.hstSite = hstSite;
        
         if(!HstNodeTypes.NODETYPE_HST_SITEMAP.equals(siteMapNode.getNodeTypeName())) {
@@ -66,7 +66,7 @@ public class HstSiteMapService implements HstSiteMap {
         for(HstNode child : siteMapNode.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mount, siteMapItemHandlersConfiguration , null, this, 1);
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration, siteMapItemHandlersConfiguration , null, this, 1);
                     rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
                 } catch (ServiceException e) {
                     if (log.isDebugEnabled()) {

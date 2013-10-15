@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.Map;
 
@@ -28,19 +27,16 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.security.auth.Subject;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.channel.ChannelException.Type;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
-import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
-import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +45,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
 import static org.junit.Assert.assertNull;
 
 public class ChannelManagerImplTest extends AbstractTestConfigurations {
@@ -59,10 +54,6 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         @Parameter(name = "title", defaultValue = "default")
         String getTitle();
 
-    }
-
-    public void setComponentManager(ComponentManager componentManager) {
-        HstServices.setComponentManager(componentManager);
     }
 
     @Override
@@ -144,16 +135,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         final Channel channel = channels.values().iterator().next();
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
-
-        HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<Void>() {
-            @Override
-            public Void run() throws ChannelException {
-                manager.save(channel);
-                return null;
-            }
-        }, null);
-
-
+        manager.save(channel);
         channels = manager.getChannels();
         assertEquals(1, channels.size());
         Channel savedChannel = channels.values().iterator().next();
@@ -179,15 +161,8 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         final Channel channel = channels.values().iterator().next();
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
-        HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<Void>() {
-            @Override
-            public Void run() throws ChannelException {
-                manager.save(channel);
-                return null;
-            }
-        }, null);
+        manager.save(channel);
         Map<String, Channel> channelsAgain = manager.getChannels();
-
         assertTrue("After a change, getChannels should return different instance for the Map",channelsAgain != channels);
     }
 
@@ -206,12 +181,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         channel.setContentRoot("/unittestcontent/documents");
         channel.setLocale("nl_NL");
 
-        String channelId = HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<String>() {
-            @Override
-            public String run() throws ChannelException {
-                return manager.persist(blueprint.getId(), channel);
-            }
-        }, null);
+        String channelId = manager.persist(blueprint.getId(), channel);
         final String encodedChannelName = "cmit-test-channel-with-special-and-or-specific-characters";
         assertEquals(encodedChannelName, channelId);
 
@@ -246,10 +216,11 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         mountForNewChannel.setProperty("hst:channelpath", newChannel.getPath());
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        HstManager hstMngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        hstMngr.invalidate(newChannel.getPath(), mountForNewChannel.getPath());
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(getSession(), getSession().getNode("/hst:hst"), true);
 
         getSession().save();
+        invalidator.eventPaths(pathsToBeChanged);
 
         // manager should reload
 
@@ -282,10 +253,11 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         getSession().save();
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
-        HstManager hstMngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        hstMngr.invalidate(newChannel.getPath());
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(getSession(), getSession().getNode("/hst:hst"), true);
 
         getSession().save();
+        invalidator.eventPaths(pathsToBeChanged);
 
         Map<String, Channel> channels = manager.getChannels();
 
@@ -294,7 +266,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
     }
 
-    @Test
+    @Test(expected = ChannelException.class)
     public void ancestorMountsMustExist() throws ChannelException, RepositoryException, PrivilegedActionException {
         final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
@@ -305,18 +277,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         final Channel channel = blueprint.getPrototypeChannel();
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost/newmount");
-
-        try {
-            HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<String>() {
-                @Override
-                public String run() throws ChannelException {
-                    return manager.persist(blueprint.getId(), channel);
-                }
-            }, null);
-            fail("Expected a ChannelException with type " + ChannelException.Type.MOUNT_NOT_FOUND);
-        } catch (PrivilegedActionException e) {
-            assertEquals(ChannelException.Type.MOUNT_NOT_FOUND, ((ChannelException)e.getCause()).getType());
-        }
+        manager.persist(blueprint.getId(), channel);
     }
 
     public static interface TestInfoClass extends ChannelInfo {
@@ -346,13 +307,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
-
-        HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<String>() {
-            @Override
-            public String run() throws ChannelException {
-                return manager.persist("cmit-test-bp", channel);
-            }
-        }, null);
+        manager.persist("cmit-test-bp", channel);
         TestInfoClass channelInfo = manager.getChannelInfo(channel);
         assertEquals("noot", channelInfo.getGetme());
     }
@@ -388,16 +343,10 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         
         manager.addChannelManagerEventListeners(listener1, listener2, listener3);
 
-        Subject subject = createSubject();
         final Channel channelToPersist = channel;
         
-        String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
-            @Override
-            public String run() throws ChannelException {
-                return manager.persist("cmit-test-bp2", channelToPersist);
-            }
-        }, null);
-        
+        String channelId =  manager.persist("cmit-test-bp2", channelToPersist);
+
         assertEquals(1, listener1.getCreatedCount());
         assertEquals(1, listener2.getCreatedCount());
         assertEquals(1, listener3.getCreatedCount());
@@ -411,14 +360,8 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
         final Channel channelToSave = channel;
-        
-        HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Object>() {
-            @Override
-            public Object run() throws ChannelException {
-                manager.save(channelToSave);
-                return null;
-            }
-        }, null);
+
+        manager.save(channelToSave);
 
         assertEquals(1, listener1.getCreatedCount());
         assertEquals(1, listener2.getCreatedCount());
@@ -436,14 +379,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
         final Channel channelToSave2 = channel;
-        
-        HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<Object>() {
-            @Override
-            public Object run() throws ChannelException {
-                manager.save(channelToSave2);
-                return null;
-            }
-        }, null);
+        manager.save(channelToSave2);
 
         assertEquals(1, listener1.getCreatedCount());
         assertEquals(1, listener2.getCreatedCount());
@@ -453,7 +389,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertEquals(1, listener3.getUpdatedCount());
     }
 
-    @Test
+    @Test(expected = ChannelException.class)
     public void testChannelManagerShortCircuitingEventListeners() throws RepositoryException, ChannelException, PrivilegedActionException {
         Node configNode = getSession().getRootNode().getNode("hst:hst");
         Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
@@ -480,34 +416,9 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         
         manager.addChannelManagerEventListeners(shortCircuitingListener);
 
-        Subject subject = createSubject();
         final Channel channelToPersist = channel;
-        
-        String channelId = HstSubject.doAsPrivileged(subject, new PrivilegedExceptionAction<String>() {
-            @Override
-            public String run() {
-                try {
-                    String s = manager.persist("cmit-test-bp2", channelToPersist);
-                    fail("The persist should fail");
-                    return s;
-                } catch (ChannelException e) {
-                    // we should get here because of MyShortCircuitingEventListener
-                    assertTrue("Type of the ChannelException should be  STOPPED_BY_LISTENER ",e.getType() == Type.STOPPED_BY_LISTENER);
-                    return null;
-                }
-            }
-        }, null);
-       
-        assertTrue("channelId should be null ",channelId == null);
+        manager.persist("cmit-test-bp2", channelToPersist);
     }
-    
-    private Subject createSubject() {
-        Subject subject = new Subject();
-        subject.getPrivateCredentials().add(new SimpleCredentials("admin", "admin".toCharArray()));
-        subject.setReadOnly();
-        return subject;
-    }
-
 
     private void propagateJcrSession(Credentials credentials) throws LoginException, RepositoryException {
         Session session;

@@ -41,12 +41,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -191,7 +188,7 @@ public class MountResource extends AbstractConfigResource {
             }
 
             createPreviewConfigurationNode(requestContext);
-            HstConfigurationUtils.persistChanges(session, getHstManager());
+            HstConfigurationUtils.persistChanges(session);
         } catch (IllegalStateException e) {
             return error("Cannot start editing : " + e);
         } catch (LoginException e) {
@@ -205,17 +202,10 @@ public class MountResource extends AbstractConfigResource {
 
     private void createPreviewConfigurationNode(final HstRequestContext requestContext) throws RepositoryException {
         HstSite ctxEditingLiveMountSite = getEditingLiveMount(requestContext).getHstSite();
-        long liveVersion = ctxEditingLiveMountSite.getVersion();
-        long newVersion = liveVersion + 1;
         String liveConfigurationPath = ctxEditingLiveMountSite.getConfigurationPath();
-        String newPreviewConfigurationPath = getNewPreviewConfigurationPath(newVersion, liveConfigurationPath);
+        String previewConfigurationPath = liveConfigurationPath + "-preview";
         Session session = requestContext.getSession();
-
-        // cannot cast session from request context to HippoSession, hence, get it from jcr node first
-        Node liveConfiguration = session.getNode(liveConfigurationPath);
-        HippoSession hippoSession = HstConfigurationUtils.getNonProxiedSession(session);
-        hippoSession.copy(liveConfiguration, newPreviewConfigurationPath);
-        setVersionForPreviewSitesWithConfiguration(liveConfigurationPath, requestContext, newVersion);
+        JcrUtils.copy(session, liveConfigurationPath, previewConfigurationPath);
     }
 
     /**
@@ -297,86 +287,13 @@ public class MountResource extends AbstractConfigResource {
             pushContainerChildrenNodes(session, previewConfigurationPath, liveConfigurationPath, relativeContainerPathsToPublish);
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
 
-            HstConfigurationUtils.persistChanges(session, getHstManager());
+            HstConfigurationUtils.persistChanges(session);
             return ok("Site is published");
         } catch (RepositoryException e) {
             return error("Could not publish preview configuration : " + e);
         }
     }
 
-    private String getNewPreviewConfigurationPath(final long newVersion, final String liveConfigurationPath) {
-        StringBuilder newPreviewConfigurationPathBuilder = new StringBuilder();
-        newPreviewConfigurationPathBuilder.append(StringUtils.substringBeforeLast(liveConfigurationPath, "/"));
-        final String liveConfigurationNodeName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
-        final String previewConfigurationNodeName;
-        if (newVersion == 0) {
-            // liveConfiguration name does not contain a version yet
-            previewConfigurationNodeName = liveConfigurationNodeName + "-v0";
-        } else {
-            String oldVersionPostfix = "-v"+(newVersion - 1);
-            if (liveConfigurationNodeName.indexOf(oldVersionPostfix) == -1) {
-                throw new IllegalStateException("Live configuration node '"+liveConfigurationNodeName+"' contains unexpected version.");
-            }
-            previewConfigurationNodeName = StringUtils.substringBefore(liveConfigurationNodeName, oldVersionPostfix) + "-v"+newVersion;
-        }
-        newPreviewConfigurationPathBuilder.append("/").append(previewConfigurationNodeName);
-        return newPreviewConfigurationPathBuilder.toString();
-    }
-
-    private void setVersionForPreviewSitesWithConfiguration(final String configurationPath,
-                                                               final HstRequestContext requestContext,
-                                                               final long newVersion) throws RepositoryException {
-        setVersionForSitesWithConfiguration(configurationPath, requestContext, newVersion, false);
-    }
-
-    private void setVersionForSitesWithConfiguration(final String configurationPath,
-                                                        final HstRequestContext requestContext,
-                                                        final long newVersion,
-                                                        final boolean liveSites) throws RepositoryException {
-        Set<HstSite> sitesWithSameConfigurationPath = new HashSet<HstSite>();
-        final VirtualHosts virtualHosts = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts();
-        for (String hostGroupName : virtualHosts.getHostGroupNames()) {
-            for (Mount mount : virtualHosts.getMountsByHostGroup(hostGroupName)) {
-                HstSite site;
-                if (liveSites) {
-                    if (mount.isPreview()) {
-                        continue;
-                    }
-                    site = mount.getHstSite();
-                } else {
-                    if (mount instanceof ContextualizableMount) {
-                        site = ((ContextualizableMount)mount).getPreviewHstSite();
-                    } else {
-                        continue;
-                    }
-                }
-                
-                if (site == null) {
-                    continue;
-                }
-                if (configurationPath.equals(site.getConfigurationPath())) {
-                    sitesWithSameConfigurationPath.add(site);
-                }
-            }
-        }
-
-        for (HstSite siteWithSameConfigurationPath : sitesWithSameConfigurationPath) {
-            Node siteNode = requestContext.getSession().getNodeByIdentifier(siteWithSameConfigurationPath.getCanonicalIdentifier());
-            if (liveSites) {
-                // double check whether siteNode is really NOT a preview
-                if (!siteNode.getName().endsWith("-preview")) {
-                    siteNode.setProperty(HstNodeTypes.SITE_VERSION, newVersion);
-                }
-            } else {
-                // double check whether siteNode is really a preview
-                if (siteNode.getName().endsWith("-preview")) {
-                    siteNode.setProperty(HstNodeTypes.SITE_VERSION, newVersion);
-                }
-            }
-
-        }
-    }
-    
     /**
      * Creates a document in the repository using the WorkFlowManager
      * The post parameters should contain the 'path', 'docType' and 'name' of the document.
@@ -491,7 +408,7 @@ public class MountResource extends AbstractConfigResource {
             pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
 
-            HstConfigurationUtils.persistChanges(session, getHstManager());
+            HstConfigurationUtils.persistChanges(session);
             return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
         } catch (RepositoryException e) {
             return error("Could not discard preview configuration: " + e);

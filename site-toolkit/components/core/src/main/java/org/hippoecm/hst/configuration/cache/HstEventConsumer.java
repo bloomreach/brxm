@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,18 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.configuration.model;
+package org.hippoecm.hst.configuration.cache;
 
+import java.util.Set;
 
-public class ModelLoadingException extends RuntimeException {
+public interface HstEventConsumer {
 
-    public ModelLoadingException(String message) {
-        super(message);
-    }
-
-    public ModelLoadingException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
+    /**
+     * @param hstEvents an immutable Set of events
+     */
+    void handleEvents(Set<HstEvent> hstEvents);
 }
-

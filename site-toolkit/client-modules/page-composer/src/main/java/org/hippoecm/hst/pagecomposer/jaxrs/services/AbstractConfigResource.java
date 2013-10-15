@@ -24,7 +24,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -38,23 +37,12 @@ import org.slf4j.LoggerFactory;
 public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
-
-    private ObjectConverter objectConverter;
-    private HstManager hstManager;
     private MountDecorator mountDecorator;
 
     private static final String CURRENT_MOUNT_CANONICAL_CONTENT_PATH = AbstractConfigResource.class.getName() + "-CurrentMountCanonicalContentPath";
 
-    public void setHstManager(final HstManager hstManager) {
-        this.hstManager = hstManager;
-    }
-
     public void setMountDecorator(MountDecorator mountDecorator) {
         this.mountDecorator = mountDecorator;
-    }
-
-    public HstManager getHstManager() {
-        return hstManager;
     }
 
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,17 +15,13 @@
  */
 package org.hippoecm.hst.configuration.model;
 
-import javax.jcr.observation.EventIterator;
-
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
-import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
-import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class HstConfigurationEventListener extends GenericEventListener implements EventListenersContainerListener {
-
-    private static final Logger log = LoggerFactory.getLogger(HstConfigurationEventListener.class);
+/**
+ * To dispatch events (for example from a HippoSession) directly, for example without having persisted the changes yet. This is important
+ * in case the changes MUST be reflected in the model, and can't wait for the *asynchronous* jcr events to arrive
+ */
+public class EventPathsInvalidator {
 
     private Object hstModelMutex;
     private HstEventsCollector hstEventsCollector;
@@ -44,25 +40,13 @@ public class HstConfigurationEventListener extends GenericEventListener implemen
         this.hstEventsCollector = hstEventsCollector;
     }
 
-    @Override
-    public void onEvent(EventIterator events) {
+    public void eventPaths(final String... absEventPaths) {
         synchronized(hstModelMutex) {
-            hstEventsCollector.collect(events);
+            hstEventsCollector.collect(absEventPaths);
             if (hstEventsCollector.hasEvents()) {
                 hstManager.markStale();
             }
         }
     }
-    
-    public void onEventListenersContainerStarted() {
-        // do nothing
-    }
-    
-    public void onEventListenersContainerRefreshed() {
-        // do nothing
-    }
-    
-    public void onEventListenersContainerStopped() {
-        // do nothing
-    }
+
 }

@@ -28,7 +28,6 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.slf4j.Logger;
@@ -43,12 +42,10 @@ public class HstComponentParameters {
     private static final Logger log = LoggerFactory.getLogger(HstComponentParameters.class);
 
     private final Node node;
-    private final HstManager hstManager;
     private final Map<String, Map<String, String>> prefixedParameters;
 
-    public HstComponentParameters(Node node, HstManager hstManager) throws RepositoryException {
+    public HstComponentParameters(Node node) throws RepositoryException {
         this.node = node;
-        this.hstManager = hstManager;
         prefixedParameters = new HashMap<String, Map<String, String>>();
         initialize();
     }
@@ -177,7 +174,7 @@ public class HstComponentParameters {
 
     public void save(long validateLastModifiedTimestampAgainst) throws RepositoryException, IllegalStateException {
         setNodeChanges();
-        if (hstManager == null || RequestContextProvider.get() == null) {
+        if (RequestContextProvider.get() == null) {
             node.getSession().save();
         } else {
             if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
@@ -186,7 +183,7 @@ public class HstComponentParameters {
             }
             HstConfigurationUtils.tryLockIfNeeded(node, validateLastModifiedTimestampAgainst);
             HstConfigurationUtils.setLastModifiedTimestampForContainer(node);
-            HstConfigurationUtils.persistChanges(node.getSession(), hstManager);
+            HstConfigurationUtils.persistChanges(node.getSession());
         }
     }
 

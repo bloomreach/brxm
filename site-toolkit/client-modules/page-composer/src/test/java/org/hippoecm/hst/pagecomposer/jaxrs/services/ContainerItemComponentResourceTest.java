@@ -102,7 +102,7 @@ public class ContainerItemComponentResourceTest {
         params.add("parameterOne", "bar");
         params.add("someNonAnnotatedParameter", "lux");
 
-        HstComponentParameters componentParameters = new HstComponentParameters(node, null);
+        HstComponentParameters componentParameters = new HstComponentParameters(node);
         containerItemComponentResource.doSetParameters(componentParameters, null, params, 0);
 
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
@@ -125,7 +125,7 @@ public class ContainerItemComponentResourceTest {
         // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
         // the implicit parameters from the DummyInfo (parameterTwo but not parameterOne because already from 'default')
 
-        containerItemComponentResource.doCreateVariant(node, new HstComponentParameters(node, null), "newvar", 0);
+        containerItemComponentResource.doCreateVariant(node, new HstComponentParameters(node), "newvar", 0);
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
         // now it must contain HST_PARAMETERNAMEPREFIXES
@@ -136,7 +136,7 @@ public class ContainerItemComponentResourceTest {
         assertTrue(variants.contains("hippo-default"));
         assertTrue(variants.contains("newvar"));
 
-        componentParameters = new HstComponentParameters(node, null);
+        componentParameters = new HstComponentParameters(node);
         assertTrue(componentParameters.hasParameter("newvar", "parameterOne"));
         assertEquals("bar", componentParameters.getValue("newvar", "parameterOne"));
         assertTrue(componentParameters.hasParameter("newvar", "parameterTwo"));
@@ -145,7 +145,7 @@ public class ContainerItemComponentResourceTest {
         assertFalse(componentParameters.hasParameter("newvar", "someNonAnnotatedParameter"));
 
         // 3. try to remove the new variant
-        containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node, null), "newvar", 0);
+        containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node), "newvar", 0);
         variants = new ContainerItemComponentResource().doGetVariants(node);
         assertTrue(variants.size() == 1);
         assertTrue(variants.contains("hippo-default"));
@@ -153,7 +153,7 @@ public class ContainerItemComponentResourceTest {
         // 4. try to remove the 'default' variant : this should not be allowed
         boolean removeSucceeded = true;
         try {
-            containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node, null), "hippo-default", 0);
+            containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node), "hippo-default", 0);
             fail("Default variant should not be possible to be removed");
         } catch (IllegalStateException e) {
             removeSucceeded = false;

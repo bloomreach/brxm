@@ -95,7 +95,7 @@
         </property>
       </bean>
     </property>
-  </bean> 
+  </bean>
 
   <!-- Default jcr observation event listener items. -->
   <bean id="defaultJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
@@ -118,8 +118,11 @@
             <null/>
           </property>
           <property name="noLocal" value="false"/>
+
           <property name="eventListener">
-            <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
+            <bean id="hstConfigurationEventListener" parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
+              <property name="hstModelMutex" ref="hstModelMutex"/>
+              <property name="hstEventsCollector" ref="hstEventsCollector"/>
               <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
             </bean>
           </property>

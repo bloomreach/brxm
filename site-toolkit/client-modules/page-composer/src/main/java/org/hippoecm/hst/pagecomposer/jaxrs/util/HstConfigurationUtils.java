@@ -27,7 +27,8 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.event.HippoEvent;
@@ -48,22 +49,24 @@ public class HstConfigurationUtils {
      * Persists pending changes. logs events to the HippoEventBus and if <code>hstManager</code> is not <code>null</code>
      * also invalidates the hstMananger
      * @param session
-     * @param hstManager
      * @throws RepositoryException
      */
-    public synchronized static void persistChanges(final Session session, HstManager hstManager) throws RepositoryException {
+    public synchronized static void persistChanges(final Session session) throws RepositoryException {
         if (!session.hasPendingChanges()) {
             return;
         }
         String[] pathsToBeChanged = null;
-        if (hstManager != null) {
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        if (invalidator != null) {
             pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, true);
         }
         StringBuilder buffer = new StringBuilder("User made changes at (and possibly below): ");
         appendPendingChangesFromNodeToBuffer(session, buffer,",");
         session.save();
-        if (pathsToBeChanged != null) {
-             hstManager.invalidate(pathsToBeChanged);
+
+        // after the save the paths need to be send, not before!
+        if (invalidator != null && pathsToBeChanged != null) {
+            invalidator.eventPaths(pathsToBeChanged);
         }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),buffer.toString());

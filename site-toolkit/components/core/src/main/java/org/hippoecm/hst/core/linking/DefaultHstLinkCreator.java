@@ -18,9 +18,7 @@ package org.hippoecm.hst.core.linking;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -28,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -37,19 +34,19 @@ import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.util.WeakIdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultHstLinkCreator implements HstLinkCreator {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultHstLinkCreator.class);
-    private static final String FQCN = HstSiteService.class.getName();
-    
+
     private final static String DEFAULT_PAGE_NOT_FOUND_PATH = "pagenotfound";
     private String[] binaryLocations;
     private String binariesPrefix;
     private String pageNotFoundPath = DEFAULT_PAGE_NOT_FOUND_PATH;
-    private Map<HstSiteMapItem, LocationMapTree> loadedSubLocationMapTree = Collections.synchronizedMap(new HashMap<HstSiteMapItem, LocationMapTree>());
+    private WeakIdentityMap<HstSiteMapItem, LocationMapTree> loadedSubLocationMapTree = WeakIdentityMap.newConcurrentHashMap();
     private HstLinkProcessor linkProcessor;
     
     private List<LocationResolver> locationResolvers;
@@ -84,8 +81,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     public void clear() {
-        loadedSubLocationMapTree.clear();
-        // TODO HSTTWO-1874 also clear the locationResolvers the LocationMap
+        // nothing to clear for now
     }
     
     /**
@@ -266,7 +262,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
     
     private LocationMapResolver getSubLocationMapResolver(HstSiteMapItem preferredItem) {
-        LocationMapTree subLocationMapTree = loadedSubLocationMapTree.get(preferredItem);;
+        LocationMapTree subLocationMapTree = loadedSubLocationMapTree.get(preferredItem);
         if(subLocationMapTree == null) {
             List<HstSiteMapItem> subRootItems = new ArrayList<HstSiteMapItem>();
             subRootItems.add(preferredItem);
@@ -338,10 +334,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                      */
                     for(LocationResolver resolver : DefaultHstLinkCreator.this.locationResolvers) {
                         if(node.isNodeType(resolver.getNodeType())) {
-                            if(mount.getHstSite() != null) {
-                                resolver.setLocationMapTree(mount.getHstSite().getLocationMapTree());
-                            }
-                            HstLink link = resolver.resolve(node, mount);
+                            HstLink link = resolver.resolve(node, mount, mount.getHstSite().getLocationMapTree());
                             if(link != null) {
                                return link; 
                             } else {

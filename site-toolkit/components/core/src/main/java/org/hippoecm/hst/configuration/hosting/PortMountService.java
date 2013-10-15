@@ -16,7 +16,7 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class PortMountService implements MutablePortMount {
      */
     private Mount rootMount;
     
-    public PortMountService(HstNode portMount, VirtualHost virtualHost, HstManagerImpl hstManager) throws ServiceException {
+    public PortMountService(final HstNode portMount, final VirtualHost virtualHost, final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
         String nodeName = portMount.getValueProvider().getName();
         try {
             portNumber = Integer.parseInt(nodeName);
@@ -50,7 +50,7 @@ public class PortMountService implements MutablePortMount {
         HstNode mount = portMount.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(mount != null && HstNodeTypes.NODETYPE_HST_MOUNT.equals(mount.getNodeTypeName())) {
             try {
-                rootMount = new MountService(mount, null, virtualHost, hstManager, portNumber);
+                rootMount = new MountService(mount, null, virtualHost, hstNodeLoadingCache, portNumber);
             } catch (ServiceException e) {
                 log.error("The host '"+virtualHost.getHostName()+"' for port '"+portNumber+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing", e);
             } 
@@ -63,6 +63,7 @@ public class PortMountService implements MutablePortMount {
         // the default portnumber is 0 by definition, which means port agnostic
         this.portNumber = 0;
     }
+
 
     public int getPortNumber() {
         return portNumber;

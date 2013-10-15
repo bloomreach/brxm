@@ -49,11 +49,12 @@ import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -95,10 +96,21 @@ public class ChannelManagerImpl implements MutableChannelManager {
             new ArrayList<ChannelManagerEventListener>());
 
     private HstManager hstManager;
+    private EventPathsInvalidator eventPathsInvalidator;
     private MountDecorator mountDecorator;
 
+    private Object hstModelMutex;
+    
+    public void setHstModelMutex(Object hstModelMutex) {
+        this.hstModelMutex = hstModelMutex;
+    }
+    
     public void setHstManager(HstManager hstManager) {
         this.hstManager = hstManager;
+    }
+
+    public void setEventPathsInvalidator(final EventPathsInvalidator eventPathsInvalidator) {
+        this.eventPathsInvalidator = eventPathsInvalidator;
     }
 
     public void setMountDecorator(MountDecorator mountDecorator) {
@@ -293,7 +305,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
      * @throws ChannelException when initializing the HST manager failed
      */
     void load() throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             try {
                 hstManager.getVirtualHosts();
             } catch (ContainerException e) {
@@ -306,7 +318,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     public void load(VirtualHosts virtualHosts, Session session) throws RepositoryException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
+            long loadStart = System.currentTimeMillis();
             Node configNode = session.getNode(rootPath);
 
             blueprints = new HashMap<String, Blueprint>();
@@ -368,6 +381,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
             }
             discardChannelsWithoutMountForCurrentHostGroup();
+            log.info("Channel manager load took '{}' ms.", (System.currentTimeMillis() - loadStart));
         }
     }
 
@@ -396,7 +410,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     public Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             load();
             if (StringUtils.isBlank(jcrPath) || !jcrPath.startsWith(channelsRoot)) {
                 throw new ChannelException("Expected a valid channel JCR path which should start with '" + channelsRoot + "', but got '" + jcrPath + "' instead");
@@ -408,7 +422,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     public Channel getChannelById(String id) throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             load();
             if (StringUtils.isBlank(id)) {
                 throw new ChannelException("Expected a channel id, but got '" + id + "' instead");
@@ -422,7 +436,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public Map<String, Channel> getChannels() throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             load();
             return channels;
         }
@@ -430,7 +444,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public String persist(final String blueprintId, Channel channel) throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             if (!blueprints.containsKey(blueprintId)) {
                 throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
             }
@@ -466,7 +480,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 channels = null;
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
                 session.save();
-                hstManager.invalidate(pathsToBeChanged);
+                eventPathsInvalidator.eventPaths(pathsToBeChanged);
                 return channelId;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
@@ -512,7 +526,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public void save(final Channel channel) throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             load();
             if (!channels.containsKey(channel.getId())) {
                 throw new ChannelException("No channel with id " + channel.getId() + " was found");
@@ -544,7 +558,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
                 String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
                 session.save();
-                hstManager.invalidate(pathsToBeChanged);
+                eventPathsInvalidator.eventPaths(pathsToBeChanged);
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }
@@ -553,7 +567,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public List<Blueprint> getBlueprints() throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             load();
             return new ArrayList<Blueprint>(blueprints.values());
         }
@@ -561,7 +575,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public Blueprint getBlueprint(final String id) throws ChannelException {
-        synchronized (HstManagerImpl.MUTEX) {
+        synchronized (hstModelMutex) {
             load();
             if (!blueprints.containsKey(id)) {
                 throw new ChannelException("Blueprint " + id + " does not exist");
@@ -649,11 +663,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return getChannelInfoClass(getChannelById(id));
     }
 
+
+    @Deprecated
     public void invalidate() {
-        synchronized (HstManagerImpl.MUTEX) {
-            channels = null;
-            blueprints = null;
-        }
+        log.warn("Deprecated : do nothing");
     }
 
     // private - internal - methods

@@ -31,13 +31,52 @@
   
   <bean id="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry"
         class="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistryImpl"/>
-  
-  <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
+
+
+  <bean id="hstModelMutex" class="java.lang.Object"/>
+
+  <bean id="hstEventsCollector" class="org.hippoecm.hst.configuration.cache.HstEventsCollector">
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
-    <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/> 
+  </bean>
+
+
+  <bean id="hstEventsDispatcher" class="org.hippoecm.hst.configuration.cache.HstEventsDispatcher">
+    <property name="hstEventsCollector" ref="hstEventsCollector"/>
+    <property name="hstEventConsumers">
+      <list>
+        <ref bean="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"/>
+        <ref bean="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"/>
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache">
     <property name="repository" ref="javax.jcr.Repository.delegating" />
     <property name="username" value="${hstconfigreader.repository.user.name}" />
     <property name="password" value="${hstconfigreader.repository.password}" />
+    <property name="rootPath" value="${hst.configuration.rootPath}"/>
+  </bean>
+
+  <bean id="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache"  class="org.hippoecm.hst.configuration.cache.HstConfigurationLoadingCache">
+    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
+    <property name="rootConfigurationsPrefix" value="${hst.configuration.rootPath}/hst:configurations/"/>
+  </bean>
+
+
+  <bean id="org.hippoecm.hst.configuration.model.EventPathsInvalidator" class="org.hippoecm.hst.configuration.model.EventPathsInvalidator">
+    <property name="hstModelMutex" ref="hstModelMutex"/>
+    <property name="hstEventsCollector" ref="hstEventsCollector"/>
+    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+  </bean>
+
+
+
+  <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
+    <property name="hstModelMutex" ref="hstModelMutex"/>
+    <property name="hstEventsDispatcher" ref="hstEventsDispatcher"/>
+    <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
+    <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/>
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />
@@ -46,7 +85,6 @@
     <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
     <property name="pageCache" ref="pageCache"/>
     <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />
-    <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
     <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
   </bean>
   

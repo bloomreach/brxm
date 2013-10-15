@@ -103,7 +103,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             session.copy(containerItem, containerNode.getPath() + "/" + newItemNodeName);
             Node newItem = containerNode.getNode(newItemNodeName);
             long newLastModifiedTimestamp = HstConfigurationUtils.setLastModifiedTimestampForContainer(containerNode);
-            HstConfigurationUtils.persistChanges(session, getHstManager());
+            HstConfigurationUtils.persistChanges(session);
 
             ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem, newLastModifiedTimestamp);
             return ok("Successfully created item " + newItem.getName() + " with path " + newItem.getPath(), item);
@@ -174,7 +174,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 }
             }
             HstConfigurationUtils.setLastModifiedTimestampForContainer(containerNode);
-            HstConfigurationUtils.persistChanges(session, getHstManager());
+            HstConfigurationUtils.persistChanges(session);
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
         } catch (RepositoryException e) {
@@ -217,7 +217,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             }
             HstConfigurationUtils.setLastModifiedTimestampForContainer(containerItem);
             containerItem.remove();
-            HstConfigurationUtils.persistChanges(session, getHstManager());
+            HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
             if(log.isDebugEnabled()) {
                 log.warn("Exception during delete container item: {}", e);

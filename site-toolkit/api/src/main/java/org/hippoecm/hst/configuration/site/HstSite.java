@@ -82,7 +82,9 @@ public interface HstSite {
     /**
      * @return The version of hst configuration this {@link HstSite} uses. When no explicit version present, <code>-1</code>
      * is returned
+     * @deprecated since 7.9.0 ; now always returns -1
      */
+    @Deprecated
     long getVersion();
 
     /**
