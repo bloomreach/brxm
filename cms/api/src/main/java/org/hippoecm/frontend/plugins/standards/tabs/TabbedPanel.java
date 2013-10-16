@@ -56,6 +56,7 @@ import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
@@ -78,11 +79,13 @@ public class TabbedPanel extends WebMarkupContainer {
 
                     @Override
                     protected void onSubmit(final AjaxRequestTarget target) {
+                        collapseMenu(target);
                         onClick(target);
                     }
 
                     @Override
                     protected void onError(final AjaxRequestTarget target) {
+                        collapseMenu(target);
                         onClick(target);
                     }
                 });
@@ -91,9 +94,22 @@ public class TabbedPanel extends WebMarkupContainer {
 
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
+                        collapseMenu(target);
                         onClick(target);
                     }
                 });
+            }
+        }
+
+        private void collapseMenu(final AjaxRequestTarget target) {
+            IContextMenu parent = findParent(IContextMenu.class);
+            if (parent != null) {
+                parent.collapse(target);
+            } else {
+                IContextMenuManager manager = findParent(IContextMenuManager.class);
+                if (manager != null) {
+                    manager.collapseAllContextMenus();
+                }
             }
         }
 
