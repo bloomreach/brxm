@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -40,6 +41,7 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
 
     private JcrNodeModel handleModel;
     private IObserver handleObserver = null;
+    private boolean updateMenu = false;
 
     public WorkflowsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -72,53 +74,59 @@ public class WorkflowsPlugin extends AbstractWorkflowPlugin {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
-        redraw();
+        updateMenu = true;
     }
 
     @Override
-    protected void onBeforeRender() {
-        Set<Node> nodeSet = new LinkedHashSet<>();
-        if (handleObserver != null) {
-            getPluginContext().unregisterService(handleObserver, IObserver.class.getName());
-            handleObserver = null;
-            handleModel = null;
-        }
-        try {
-            if (getDefaultModel() instanceof JcrNodeModel) {
-                Node node = ((JcrNodeModel) getDefaultModel()).getNode();
-                if (node != null) {
-                    if (node.isNodeType(HippoNodeType.NT_DOCUMENT)
-                            && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                        Node handle = node.getParent();
-                        for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
-                            node = iter.nextNode();
-                            if (node != null) {
-                                nodeSet.add(node);
+    public void render(final PluginRequestTarget target) {
+        if (updateMenu && isActive()) {
+            updateMenu = false;
+            Set<Node> nodeSet = new LinkedHashSet<>();
+            if (handleObserver != null) {
+                getPluginContext().unregisterService(handleObserver, IObserver.class.getName());
+                handleObserver = null;
+                handleModel = null;
+            }
+            try {
+                if (getDefaultModel() instanceof JcrNodeModel) {
+                    Node node = ((JcrNodeModel) getDefaultModel()).getNode();
+                    if (node != null) {
+                        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)
+                                && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                            Node handle = node.getParent();
+                            for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
+                                node = iter.nextNode();
+                                if (node != null) {
+                                    nodeSet.add(node);
+                                }
                             }
-                        }
-                        handleModel = new JcrNodeModel(handle);
-                        getPluginContext().registerService(handleObserver = new IObserver<JcrNodeModel>() {
-                            public JcrNodeModel getObservable() {
-                                return handleModel;
-                            }
+                            handleModel = new JcrNodeModel(handle);
+                            getPluginContext().registerService(handleObserver = new IObserver<JcrNodeModel>() {
+                                public JcrNodeModel getObservable() {
+                                    return handleModel;
+                                }
 
-                            public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> event) {
-                                onModelChanged();
-                            }
-                        }, IObserver.class.getName());
-                    } else {
-                        nodeSet.add(node);
+                                public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> event) {
+                                    onModelChanged();
+                                }
+                            }, IObserver.class.getName());
+                        } else {
+                            nodeSet.add(node);
+                        }
                     }
                 }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage(), ex);
             }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage(), ex);
-        }
-        MenuHierarchy menu = buildMenu(nodeSet);
-        menu.restructure();
-        addOrReplace(new MenuBar("menu", menu));
+            MenuHierarchy menu = buildMenu(nodeSet);
+            menu.restructure();
+            addOrReplace(new MenuBar("menu", menu));
 
-        super.onBeforeRender();
+            if (target != null) {
+                target.add(this);
+            }
+        }
+        super.render(target);
     }
 
     @Override
