@@ -131,6 +131,7 @@ public class MockNodeTest {
 
         PropertyIterator iterator = node.getProperties();
 
+        assertEquals(1, iterator.getSize());
         assertTrue(iterator.hasNext());
 
         Property property = iterator.nextProperty();
@@ -147,6 +148,8 @@ public class MockNodeTest {
         node.setProperty("prop2", "value2");
 
         PropertyIterator iterator = node.getProperties();
+
+        assertEquals(2, iterator.getSize());
 
         Map<String, String> expected = new HashMap<String, String>();
         expected.put("prop1", "value1");

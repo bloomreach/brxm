@@ -23,9 +23,11 @@ import javax.jcr.RangeIterator;
 public class MockItemIterator<T> implements RangeIterator {
 
     private final Iterator<T> iterator;
+    private final int size;
 
     public MockItemIterator(Collection<T> collection) {
         iterator = collection.iterator();
+        size = collection.size();
     }
 
     @Override
@@ -37,7 +39,7 @@ public class MockItemIterator<T> implements RangeIterator {
 
     @Override
     public long getSize() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
     @Override
