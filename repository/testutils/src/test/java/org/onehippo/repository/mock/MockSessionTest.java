@@ -15,12 +15,14 @@
  */
 package org.onehippo.repository.mock;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class MockSessionTest {
@@ -53,6 +55,25 @@ public class MockSessionTest {
     public void testNodeExistsDescendant() throws RepositoryException {
         MockSession session = new MockSession(createRootFooBarMockNode());
         assertNotNull(session.getNode("/foo/bar"));
+    }
+
+    @Test(expected = ItemNotFoundException.class)
+    public void getUnknownNodeByIdentifier() throws RepositoryException {
+        new MockSession(createRootFooBarMockNode()).getNodeByIdentifier("no-such-node");
+    }
+
+    @Test
+    public void getKnownNodeByIdentifier() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode child = new MockNode("child");
+        root.addNode(child);
+        MockNode grandchild = new MockNode("grandchild");
+        child.addNode(grandchild);
+
+        MockSession session = new MockSession(root);
+        assertSame(root, session.getNodeByIdentifier(root.getIdentifier()));
+        assertSame(child, session.getNodeByIdentifier(child.getIdentifier()));
+        assertSame(grandchild, session.getNodeByIdentifier(grandchild.getIdentifier()));
     }
 
     private MockNode createRootFooBarMockNode() throws RepositoryException {

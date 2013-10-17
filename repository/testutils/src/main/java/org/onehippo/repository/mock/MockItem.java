@@ -43,7 +43,7 @@ public abstract class MockItem implements Item {
         return isRootNode() ? "" : name;
     }
 
-    private boolean isRootNode() {
+    protected boolean isRootNode() {
         return parent == null;
     }
 

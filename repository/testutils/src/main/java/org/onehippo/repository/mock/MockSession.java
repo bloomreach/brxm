@@ -20,7 +20,9 @@ import java.io.OutputStream;
 
 import javax.jcr.Credentials;
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.Repository;
@@ -109,6 +111,31 @@ public class MockSession implements Session {
         return true;
     }
 
+    @Override
+    public Node getNodeByIdentifier(final String id) throws RepositoryException {
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
+        final Node result = getNodeOrDecendantByIdentifier(id, this.root);
+        if (result == null) {
+            throw new ItemNotFoundException("Node with identifier '" + id + "' does not exist");
+        }
+        return result;
+    }
+
+    private static Node getNodeOrDecendantByIdentifier(final String id, final Node node) throws RepositoryException {
+        Node result = null;
+        if (node.getIdentifier().equals(id)) {
+            result = node;
+        } else {
+            final NodeIterator children = node.getNodes();
+            while (result == null && children.hasNext()) {
+                result = getNodeOrDecendantByIdentifier(id, children.nextNode());
+            }
+        }
+        return result;
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
@@ -143,11 +170,6 @@ public class MockSession implements Session {
 
     @Override
     public Node getNodeByUUID(final String uuid) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Node getNodeByIdentifier(final String id) {
         throw new UnsupportedOperationException();
     }
 

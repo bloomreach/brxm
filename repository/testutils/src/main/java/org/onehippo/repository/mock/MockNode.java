@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.Binary;
 import javax.jcr.Item;
@@ -50,13 +51,16 @@ import javax.jcr.version.VersionHistory;
 public class MockNode extends MockItem implements Node {
 
     static final String NAMESPACE_JCR_SV = "http://www.jcp.org/jcr/sv/1.0";
+    static final String ROOT_IDENTIFIER = "cafebabe-cafe-babe-cafe-babecafebabe";
 
     private MockNodeType primaryType;
-    private Map<String, MockProperty> properties;
-    private Map<String, MockNode> children;
+    private String identifier;
+    private final Map<String, MockProperty> properties;
+    private final Map<String, MockNode> children;
 
     public MockNode(String name) {
         super(name);
+        this.identifier = UUID.randomUUID().toString();
         this.properties = new HashMap<String, MockProperty>();
         this.children = new HashMap<String, MockNode>();
     }
@@ -207,6 +211,11 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
+    public String getIdentifier() {
+        return isRootNode() ? ROOT_IDENTIFIER : identifier;
+    }
+
+    @Override
     public String toString() {
         return "MockNode[path=" + getPath() + "]";
     }
@@ -305,11 +314,6 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public String getUUID() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getIdentifier() {
         throw new UnsupportedOperationException();
     }
 

@@ -208,4 +208,28 @@ public class MockNodeTest {
         session.save();
     }
 
+    @Test
+    public void hasIdentifier() {
+        MockNode node = new MockNode("foo");
+        assertNotNull("A mock node should have an identifier", node.getIdentifier());
+    }
+
+    @Test
+    public void rootHasSpecificIdentifier() throws RepositoryException {
+        assertEquals("cafebabe-cafe-babe-cafe-babecafebabe", MockNode.root().getIdentifier());
+    }
+
+    @Test
+    public void identifierOfNodesInSameTreeIsUnique() throws RepositoryException {
+        MockNode root = MockNode.root();
+
+        MockNode node1 = new MockNode("one");
+        root.addNode(node1);
+
+        MockNode node2 = new MockNode("two");
+        root.addNode(node2);
+
+        assertFalse("A mock node should have a identifier that is unique in the tree it is part of", node1.getIdentifier().equals(node2.getIdentifier()));
+    }
+
 }
