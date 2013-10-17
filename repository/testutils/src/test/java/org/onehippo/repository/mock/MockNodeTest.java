@@ -18,6 +18,7 @@ package org.onehippo.repository.mock;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class MockNodeTest {
@@ -206,6 +208,50 @@ public class MockNodeTest {
         Session session = root.getSession();
         assertNotNull(session);
         session.save();
+    }
+
+    @Test
+    public void nodeCanBeAdded() throws RepositoryException {
+        MockNode root = MockNode.root();
+        assertEquals(0, root.getNodes().getSize());
+
+        MockNode child = new MockNode("child");
+        root.addNode(child);
+
+        assertEquals(1, root.getNodes().getSize());
+        assertSame(child, root.getNode("child"));
+    }
+
+    @Test
+    public void nodeCanBeAddedWithPrimaryType() throws RepositoryException {
+        MockNode root = MockNode.root();
+        assertEquals(0, root.getNodes().getSize());
+
+        Node child = root.addNode("child", "nt:unstructured");
+        assertEquals("nt:unstructured", child.getPrimaryNodeType().getName());
+
+        assertEquals(1, root.getNodes().getSize());
+        assertSame(child, root.getNode("child"));
+    }
+
+    @Test
+    public void nodeCanAddedBeWithRelativePath() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode child = new MockNode("child");
+        root.addNode(child);
+
+        Node grandchild = root.addNode("child/grandchild", "nt:unstructured");
+        assertEquals("nt:unstructured", grandchild.getPrimaryNodeType().getName());
+
+        assertEquals("Root node should still have only one child", 1, root.getNodes().getSize());
+        assertEquals("Child node should have one child", 1, child.getNodes().getSize());
+        assertSame(grandchild, child.getNode("grandchild"));
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void nodeAddedWithRelativePathButMissingIntermediateNodeThrowsException() throws RepositoryException {
+        MockNode root = MockNode.root();
+        Node grandchild = root.addNode("child/grandchild", "nt:unstructured");
     }
 
     @Test

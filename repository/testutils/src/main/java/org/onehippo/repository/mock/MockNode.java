@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,7 +43,8 @@ import javax.jcr.version.VersionHistory;
  * Mock version of a {@link Node}. Limitations:
  * <ul>
  *     <li>Only string properties can be retrieved and modified</li>
- *     <li>Child nodes can only be retrieved by their name, but not added or reordered</li>
+ *     <li>Child nodes can only be retrieved by their name, but not added by name</li>
+ *     <li>Child nodes cannot be reordered</li>
  *     <li>Relative paths and patterns are not supported</li>
  *     <li>Saving changes is ignored</li>
  * </ul>
@@ -78,6 +80,22 @@ public class MockNode extends MockItem implements Node {
             throw new UnsupportedOperationException("Cannot add node '" + childName + "': MockNode does not support same-name siblings");
         }
         children.put(childName, child);
+    }
+
+    @Override
+    public Node addNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException {
+        final String[] pathElements = relPath.split("/");
+        MockNode parent = this;
+
+        for (int i = 0; i < pathElements.length - 1; i++) {
+            parent = parent.getMockNode(pathElements[i]);
+        }
+
+        final MockNode child = new MockNode(pathElements[pathElements.length - 1]);
+        child.setPrimaryType(primaryNodeTypeName);
+        parent.addNode(child);
+
+        return child;
     }
 
     @Override
@@ -198,6 +216,10 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public Node getNode(final String relPath) throws PathNotFoundException {
+        return getMockNode(relPath);
+    }
+
+    MockNode getMockNode(final String relPath) throws PathNotFoundException {
         checkRelativePathIsName(relPath);
         if (!children.containsKey(relPath)) {
             throw new PathNotFoundException("Node does not exist: '" + relPath + "'");
@@ -224,12 +246,7 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public Node addNode(final String relPath)  {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Node addNode(final String relPath, final String primaryNodeTypeName) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Try using #addNode(String relPath, String primaryNodeTypeName) instead");
     }
 
     @Override
