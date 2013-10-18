@@ -34,6 +34,7 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.onehippo.cms7.util.HttpRequestUtils;
 
 /**
  * HST Request Utils 
@@ -189,56 +190,26 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRequestHosts(HttpServletRequest request, boolean checkRenderHost) {
-        String host = null;
-
-        if (checkRenderHost) {
-            host = getRenderingHost(request);
-        }
-
-        if (host == null) {
-            host = request.getHeader("X-Forwarded-Host");
-        }
-
-        if (host != null) {
-            String [] hosts = host.split(",");
-            
-            for (int i = 0; i < hosts.length; i++) {
-                hosts[i] = hosts[i].trim();
-            }
-            
-            return hosts;
-        }
-
-        host = request.getHeader("Host");
-
-        if (host != null && !"".equals(host)) {
-            return new String [] { host };
-        }
-
-        // fallback to request server name for HTTP/1.0 clients.
-        // e.g., HTTP/1.0 based browser clients or load balancer not providing 'Host' header.
-
-        int serverPort = request.getServerPort();
-
+        int serverPort;
         // in case this utility method is invoked by a component, for some reason, ...
         HstRequest hstRequest = getHstRequest(request);
         if (hstRequest != null) {
             Mount mount = hstRequest.getRequestContext().getResolvedMount().getMount();
-
             if (mount.isPortInUrl()) {
                 serverPort = mount.getPort();
             } else {
                 serverPort = 0;
             }
-        }
-
-        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
-            host = request.getServerName();
         } else {
-            host = request.getServerName() + ":" + serverPort;
+            serverPort = HttpRequestUtils.getRequestServerPort(request);
         }
 
-        return new String[] { host };
+        if (checkRenderHost) {
+            String host = getRenderingHost(request);
+            return HttpRequestUtils.getRequestHosts(request, host, serverPort);
+        } else {
+            return HttpRequestUtils.getRequestHosts(request, serverPort);
+        }
     }
 
     /**
@@ -303,9 +274,10 @@ public class HstRequestUtils {
      * Returns the original host information requested by the client.
      * @param request
      * @return
+     * @deprecated Use org.onehippo.cms7.util.HttpRequestUtils#getFarthestRequestHost(request) instead.
      */
     public static String getFarthestRequestHost(HttpServletRequest request) {
-        return getRequestHosts(request)[0];
+        return HttpRequestUtils.getFarthestRequestHost(request);
     }
     
     /**
