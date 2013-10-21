@@ -124,7 +124,10 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public void remove() {
-        throw new UnsupportedOperationException();
+        final MockNode parent = getMockParent();
+        if (parent != null) {
+            parent.children.remove(getName());
+        }
     }
 
     @Override

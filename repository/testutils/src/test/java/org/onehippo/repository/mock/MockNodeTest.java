@@ -296,4 +296,20 @@ public class MockNodeTest {
         assertFalse(node.isNodeType("some:type"));
     }
 
+    @Test
+    public void childNodeCanBeRemoved() throws RepositoryException {
+        final MockNode root = MockNode.root();
+
+        Node child = root.addNode("child", "nt:unstructured");
+        assertEquals("Child node should have been added", 1, root.getNodes().getSize());
+
+        child.remove();
+        assertEquals("Removed child should no longer exist", 0, root.getNodes().getSize());
+    }
+
+    @Test
+    public void rootCanBeRemoved() throws RepositoryException {
+        MockNode.root().remove();
+    }
+
 }
