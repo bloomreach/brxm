@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.console.menu.content;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,9 +33,11 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
@@ -42,6 +45,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
@@ -80,6 +84,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     private final JcrNodeModel nodeModel;
     private FileUploadField fileUploadField;
+    private String xmlInput;
 
     // hard coded defaults
     private String uuidBehavior = "Create new uuids on import";
@@ -110,7 +115,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         this.modelReference = modelReference;
         InitMaps();
         this.nodeModel = (JcrNodeModel) modelReference.getModel();
-        
+
         DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
         DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
         DropDownChoice reference = new DropDownChoice("derefBehaviors", new PropertyModel(this, "derefBehavior"), new ArrayList<String>(derefOpts.values()));
@@ -125,6 +130,9 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         setMultiPart(true);
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
+
+        //xml import
+        add(new TextArea("xmlInput", new PropertyModel(this, "xmlInput")));
 
         setOkLabel("import");
         setFocus(uuid);
@@ -141,7 +149,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     }
 
     public IModel getTitle() {
-        return new Model("Import content from file");
+        return new Model("Import content");
     }
 
     @Override
@@ -152,67 +160,82 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         int mergeOpt = mergeOpts.getFirstKey(mergeBehavior).intValue();
         int derefOpt = derefOpts.getFirstKey(derefBehavior).intValue();
 
-        if (upload != null) {
-            info("File uploaded. Start import..");
+        // do import
+        try {
+            InputStream contentStream = null;
 
-            // do import
+            if (upload != null) {
+                info("File uploaded. Start import..");
+                contentStream = new BufferedInputStream(upload.getInputStream());
+            } else if (StringUtils.isNotEmpty(xmlInput)) {
+                info("Xml dump uploaded. Start import..");
+                contentStream = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
+            } else {
+                warn("No file was uploaded and no xml input provided. Nothing to import");
+                return;
+            }
+
+            String absPath = nodeModel.getNode().getPath();
+            log.info("Starting import: importDereferencedXML({}, {}, {}, {}, {})", new Object[]{
+                    absPath,
+                    (upload != null ? upload.getClientFileName() : "from xml input"),
+                    uuidBehavior,
+                    mergeBehavior,
+                    derefBehavior
+            });
+
+
+            // If save-after-import is enabled and the import fails, we do a Session.refresh(false) to revert any
+            // changes done by the import. However, any changes done *before* the import will then also be lost.
+            // We therefore have to save before importing, so all changes before the import are persisted regardless
+            // of what happens during the import.
+            if (saveBehavior) {
+                nodeModel.getNode().getSession().save();
+            }
+
             try {
-                InputStream contentStream = new BufferedInputStream(upload.getInputStream());
-                String absPath = nodeModel.getNode().getPath();
-                log.info("Starting import: importDereferencedXML(" + absPath + "," + upload.getClientFileName() + "," + uuidBehavior + "," + mergeBehavior + "," + derefBehavior);
+                ((HippoSession)UserSession.get().getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
 
-                // If save-after-import is enabled and the import fails, we do a Session.refresh(false) to revert any
-                // changes done by the import. However, any changes done *before* the import will then also be lost.
-                // We therefore have to save before importing, so all changes before the import are persisted regardless
-                // of what happens during the import.
+                // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
+                // modelReference.setModel(newNodeModel);
+                info("Import done.");
+
                 if (saveBehavior) {
                     nodeModel.getNode().getSession().save();
                 }
-
-                try {
-                    ((HippoSession)UserSession.get().getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
-
-                    // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
-                    // modelReference.setModel(newNodeModel);
-                    info("Import done.");
-                
-                    if (saveBehavior) {
-                        nodeModel.getNode().getSession().save();
-                    }
-                } finally {
-                    if (saveBehavior) {
-                        nodeModel.getNode().getSession().refresh(false);
-                    }
+            } finally {
+                if (saveBehavior) {
+                    nodeModel.getNode().getSession().refresh(false);
                 }
-
-            } catch (PathNotFoundException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (ItemExistsException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (ConstraintViolationException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (VersionException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (InvalidSerializedDataException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (LockException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (RepositoryException ex) {
-                log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
-            } catch (IOException ex) {
-                log.error("IOException initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-                error("Import failed: " + ex.getMessage());
             }
+
+        } catch (PathNotFoundException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (ItemExistsException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (ConstraintViolationException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (VersionException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (InvalidSerializedDataException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (LockException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (RepositoryException ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
+        } catch (IOException ex) {
+            log.error("IOException initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
         }
     }
-    
+
     public void setMergeBehavior(String mergeBehavior) {
         this.mergeBehavior = mergeBehavior;
     }
@@ -241,9 +264,17 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         return saveBehavior;
     }
 
+    public String getXmlInput() {
+        return xmlInput;
+    }
+
+    public void setXmlInput(String xmlInput) {
+        this.xmlInput = xmlInput;
+    }
+
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.MEDIUM;
+        return new ValueMap("width=625,height=475").makeImmutable();
     }
 
 }

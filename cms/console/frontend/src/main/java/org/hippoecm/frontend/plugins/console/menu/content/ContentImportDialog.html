@@ -49,13 +49,21 @@
           <input type="checkbox" wicket:id="saveBehavior"/>
         </fieldset>
       </p>
-      <p>
+      <p style="margin-top: 20px">
         <legend>
           <strong>Select file: </strong>
         </legend>
         <fieldset>
           <input wicket:id="fileInput" id="upload" type="file"/>
         </fieldset>
+      </p>
+      <p>
+        <legend>
+          <strong>Or paste your xml dump here: </strong>
+        </legend>
+        <div class="xml-input">
+          <textarea wicket:id="xmlInput" />
+        </div>
       </p>
     </div>
   </wicket:extend>
