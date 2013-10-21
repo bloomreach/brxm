@@ -60,7 +60,6 @@ import org.slf4j.LoggerFactory;
 public class ContentImportDialog  extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
-    private final IModelReference modelReference;
 
     public class LookupHashMap<K,V> extends HashMap<K,V> {
         private static final long serialVersionUID = 9065806784464553409L;
@@ -92,34 +91,33 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
     private String derefBehavior = "Throw error when not found";
     private boolean saveBehavior = false;
 
-    private final void InitMaps() {
-        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING), "Remove existing node with same uuid");
-        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING), "Replace existing node with same uuid");
-        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW), "Throw error on uuid collision");
-        uuidOpts.put(Integer.valueOf(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW), "Create new uuids on import");
+    private void InitMaps() {
+        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REMOVE_EXISTING, "Remove existing node with same uuid");
+        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING, "Replace existing node with same uuid");
+        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW, "Throw error on uuid collision");
+        uuidOpts.put(ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW, "Create new uuids on import");
 
-        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_DISABLE), "Disable merging");
-        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE), "Try to add, else overwrite same name nodes");
-        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP), "Try to add, else skip same name nodes");
-        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE), "Overwrite same name nodes");
-        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_SKIP), "Skip same name nodes");
-        mergeOpts.put(Integer.valueOf(ImportMergeBehavior.IMPORT_MERGE_THROW), "Throw error on naming conflict");
+        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_DISABLE, "Disable merging");
+        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE, "Try to add, else overwrite same name nodes");
+        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP, "Try to add, else skip same name nodes");
+        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_OVERWRITE, "Overwrite same name nodes");
+        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_SKIP, "Skip same name nodes");
+        mergeOpts.put(ImportMergeBehavior.IMPORT_MERGE_THROW, "Throw error on naming conflict");
 
-        derefOpts.put(Integer.valueOf(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE), "Remove reference when not found");
-        derefOpts.put(Integer.valueOf(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW), "Throw error when not found");
-        derefOpts.put(Integer.valueOf(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT), "Add reference to root node when not found");
+        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, "Remove reference when not found");
+        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW, "Throw error when not found");
+        derefOpts.put(ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_TO_ROOT, "Add reference to root node when not found");
 
     }
 
     public ContentImportDialog(IModelReference modelReference) {
-        this.modelReference = modelReference;
         InitMaps();
         this.nodeModel = (JcrNodeModel) modelReference.getModel();
 
-        DropDownChoice uuid = new DropDownChoice("uuidBehaviors", new PropertyModel(this, "uuidBehavior"), new ArrayList<String>(uuidOpts.values()));
-        DropDownChoice merge = new DropDownChoice("mergeBehaviors", new PropertyModel(this, "mergeBehavior"), new ArrayList<String>(mergeOpts.values()));
-        DropDownChoice reference = new DropDownChoice("derefBehaviors", new PropertyModel(this, "derefBehavior"), new ArrayList<String>(derefOpts.values()));
-        CheckBox save = new CheckBox("saveBehavior", new PropertyModel(this, "saveBehavior"));
+        DropDownChoice<String> uuid = new DropDownChoice<>("uuidBehaviors", new PropertyModel<String>(this, "uuidBehavior"), new ArrayList<>(uuidOpts.values()));
+        DropDownChoice<String> merge = new DropDownChoice<>("mergeBehaviors", new PropertyModel<String>(this, "mergeBehavior"), new ArrayList<>(mergeOpts.values()));
+        DropDownChoice<String> reference = new DropDownChoice<>("derefBehaviors", new PropertyModel<String>(this, "derefBehavior"), new ArrayList<>(derefOpts.values()));
+        CheckBox save = new CheckBox("saveBehavior", new PropertyModel<Boolean>(this, "saveBehavior"));
 
         add(uuid.setNullValid(false).setRequired(true));
         add(merge.setNullValid(false).setRequired(true));
@@ -132,7 +130,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         add(fileUploadField = new FileUploadField("fileInput"));
 
         //xml import
-        add(new TextArea("xmlInput", new PropertyModel(this, "xmlInput")));
+        add(new TextArea<String>("xmlInput", new PropertyModel<String>(this, "xmlInput")));
 
         setOkLabel("import");
         setFocus(uuid);
@@ -148,17 +146,17 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         }
     }
 
-    public IModel getTitle() {
-        return new Model("Import content");
+    public IModel<String> getTitle() {
+        return new Model<>("Import content");
     }
 
     @Override
     protected void onOk() {
         final FileUpload upload = fileUploadField.getFileUpload();
 
-        int uuidOpt = uuidOpts.getFirstKey(uuidBehavior).intValue();
-        int mergeOpt = mergeOpts.getFirstKey(mergeBehavior).intValue();
-        int derefOpt = derefOpts.getFirstKey(derefBehavior).intValue();
+        int uuidOpt = uuidOpts.getFirstKey(uuidBehavior);
+        int mergeOpt = mergeOpts.getFirstKey(mergeBehavior);
+        int derefOpt = derefOpts.getFirstKey(derefBehavior);
 
         // do import
         try {
@@ -196,8 +194,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
             try {
                 ((HippoSession)UserSession.get().getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
 
-                // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
-                // modelReference.setModel(newNodeModel);
                 info("Import done.");
 
                 if (saveBehavior) {
@@ -209,24 +205,6 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 }
             }
 
-        } catch (PathNotFoundException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
-        } catch (ItemExistsException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
-        } catch (ConstraintViolationException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
-        } catch (VersionException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
-        } catch (InvalidSerializedDataException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
-        } catch (LockException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
         } catch (RepositoryException ex) {
             log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
             error("Import failed: " + ex.getMessage());
@@ -274,7 +252,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return new ValueMap("width=625,height=475").makeImmutable();
+        return new ValueMap("width=855,height=460").makeImmutable();
     }
 
 }
