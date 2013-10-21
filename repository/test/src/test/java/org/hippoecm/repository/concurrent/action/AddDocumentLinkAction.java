@@ -24,6 +24,9 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeIterator;
+
 /**
  * Adds a facet select node to a document node.
  */
@@ -68,10 +71,10 @@ public class AddDocumentLinkAction extends Action {
     }
 
     private Node selectRandomHandleNode(Session session) throws RepositoryException {
-        NodeIterator documents = findAllHandleNodes(session);
+        HippoNodeIterator documents = findAllHandleNodes(session);
         Node target = null;
         if (documents.hasNext()) {
-            int index = random.nextInt((int)documents.getSize());
+            int index = random.nextInt((int)documents.getTotalSize());
             if (index > 0) {
                 documents.skip(index);
             }
@@ -80,11 +83,11 @@ public class AddDocumentLinkAction extends Action {
         return target;
     }
     
-    private NodeIterator findAllHandleNodes(Session session) throws RepositoryException {
+    private HippoNodeIterator findAllHandleNodes(Session session) throws RepositoryException {
         // order by clause forces result.getSize() != -1 (we need the size)
         String stmt = "/jcr:root" + context.getDocumentBasePath() + "//element(*,hippo:handle) order by @jcr:score descending";
         Query query = session.getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
-        return query.execute().getNodes();
+        return (HippoNodeIterator) query.execute().getNodes();
     }
 
 }
