@@ -21,7 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.dom4j.DocumentException;
-import org.hippoecm.repository.ext.DaemonModule;
+import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,12 +50,12 @@ public final class AutoExportModule implements DaemonModule {
             log.warn("Auto export doesn't recognize system property {} anymore. " +
                     "Use {} instead to point to your project base directory.", new Object[] { OLD_EXPORT_DIR_PROPERTY, PROJECT_BASEDIR_PROPERTY});
         }
-        
+
         File baseDir;
         if (System.getProperty(PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(PROJECT_BASEDIR_PROPERTY).isEmpty()) {
             baseDir = new File(System.getProperty(PROJECT_BASEDIR_PROPERTY));
         } else {
-            log.info("No {} property set. Automatic export will not be available.", PROJECT_BASEDIR_PROPERTY);
+            log.info("System property {} not set. Automatic export will not be available.", PROJECT_BASEDIR_PROPERTY);
             return;
         }
         

@@ -113,6 +113,9 @@ public class EventProcessor implements EventListener {
     EventProcessor(File baseDir, Session session) throws RepositoryException, DocumentException {
         this.session = session;
         configuration = new Configuration(session);
+
+        log.info("Automatic export is {}", configuration.isExportEnabled() ? "enabled" : "disabled");
+
         registry = new InitializeItemRegistry();
         modules = new ArrayList<Module>();
         for (Map.Entry<String, Collection<String>> entry: configuration.getModules().entrySet()) {
@@ -123,9 +126,6 @@ public class EventProcessor implements EventListener {
                 defaultModule = module;
             } else {
                 modules.add(module);
-            }
-            for (String repositoryPath : repositoryPaths) {
-                log.info("Automatically exporting changes to repository path " + repositoryPath + " to directory " + module.getExportDir().getPath());
             }
         }
 

@@ -130,9 +130,6 @@ public class Configuration {
             try {
                 Node node = session.getNode(CONFIG_NODE_PATH);
                 enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME).getBoolean();
-                if (!enabled) {
-                    log.info("Automatic export is disabled. Changes will be lost.");
-                }
             } catch (PathNotFoundException e) {
                 enabled = true;
                 log.debug("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
@@ -197,6 +194,9 @@ public class Configuration {
         if (repositoryPaths == null) {
             repositoryPaths = new ArrayList<String>();
             modules.put(modulePath, repositoryPaths);
+        }
+        if (isExportEnabled()) {
+            log.info("Changes to repository path {} are configured to be exported to directory {}", repositoryPath, modulePath);
         }
         repositoryPaths.add(repositoryPath);
     }
