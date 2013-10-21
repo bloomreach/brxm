@@ -129,5 +129,6 @@ public interface ValueProvider extends Serializable {
     /**
      * Returns all combined properties that are of type String, boolean, int, long, double or Calendar in a Map. 
      */
-    public Map<String, Object> getProperties();
+    Map<String, Object> getProperties();
+
 }
