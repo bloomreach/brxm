@@ -22,8 +22,12 @@ import javax.jcr.RepositoryException;
  * delegate a {@link RepositoryException} that cannot be handled into a {@link RuntimeException}
  */
 public class RuntimeRepositoryException extends RuntimeException {
-    
+
     public RuntimeRepositoryException (RepositoryException e) {
         super(e);
+    }
+
+    public RuntimeRepositoryException (String message, RepositoryException e) {
+        super(message, e);
     }
 }
