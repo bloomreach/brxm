@@ -278,4 +278,22 @@ public class MockNodeTest {
         assertFalse("A mock node should have a identifier that is unique in the tree it is part of", node1.getIdentifier().equals(node2.getIdentifier()));
     }
 
+    @Test
+    public void rootIsOfTypeRepRoot() throws RepositoryException {
+        assertTrue("Root node should be of type 'rep:root'", MockNode.root().isNodeType("rep:root"));
+    }
+
+    @Test
+    public void nodeTypeMatchesPrimaryType() {
+        MockNode node = new MockNode("test");
+        node.setPrimaryType("my:type");
+        assertTrue("Node should be of type equal to its primary type", node.isNodeType("my:type"));
+    }
+
+    @Test
+    public void nodeWithoutPrimaryTypeIsNoType() {
+        MockNode node = new MockNode("test");
+        assertFalse(node.isNodeType("some:type"));
+    }
+
 }

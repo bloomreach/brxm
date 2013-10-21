@@ -47,6 +47,8 @@ import javax.jcr.version.VersionHistory;
  *     <li>Child nodes cannot be reordered</li>
  *     <li>Relative paths and patterns are not supported</li>
  *     <li>Saving changes is ignored</li>
+ *     <li>Only primary node types are supported, without any inheritance (i.e. a type is of another type iff both
+ *         types have the exact same name)</li>
  * </ul>
  * All methods that are not implemented throw an {@link UnsupportedOperationException}.
  */
@@ -238,6 +240,11 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
+    public boolean isNodeType(final String nodeTypeName) {
+        return primaryType != null && primaryType.isNodeType(nodeTypeName);
+    }
+
+    @Override
     public String toString() {
         return "MockNode[path=" + getPath() + "]";
     }
@@ -366,11 +373,6 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public NodeType[] getMixinNodeTypes() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isNodeType(final String nodeTypeName) {
         throw new UnsupportedOperationException();
     }
 

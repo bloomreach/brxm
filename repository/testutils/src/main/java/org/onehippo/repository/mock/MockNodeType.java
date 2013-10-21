@@ -22,8 +22,8 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.PropertyDefinition;
 
 /**
- * Mock version of a {@link NodeType}. It only returns the name of the type. All other methods throw an
- * {@link UnsupportedOperationException}.
+ * Mock version of a {@link NodeType}. It only returns the name of the type, and is only equal to types with the exact
+ * same name. All other methods throw an {@link UnsupportedOperationException}.
  */
 public class MockNodeType implements NodeType {
 
@@ -36,6 +36,11 @@ public class MockNodeType implements NodeType {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean isNodeType(final String nodeTypeName) {
+        return name.equals(nodeTypeName);
     }
 
     // REMAINING METHODS ARE NOT IMPLEMENTED
@@ -57,11 +62,6 @@ public class MockNodeType implements NodeType {
 
     @Override
     public NodeTypeIterator getDeclaredSubtypes() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isNodeType(final String nodeTypeName) {
         throw new UnsupportedOperationException();
     }
 
