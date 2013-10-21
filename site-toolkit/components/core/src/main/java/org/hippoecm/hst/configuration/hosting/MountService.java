@@ -551,30 +551,35 @@ public class MountService implements ContextualizableMount, MutableMount {
             log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured to not use a HstSiteMap because isMapped() is false", getName(), mount.getValueProvider().getPath());
 
             // check if the mountpoint points to a hst:site node:
-            HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
-            if(hstSiteNodeForMount == null || !hstSiteNodeForMount.getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITE)) {
-                // for non Mounts, the contentPath is just the mountpoint when the mountpoint does not point to a hst:site
-                this.contentPath = mountPoint;
-                // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
-                this.canonicalContentPath = mountPoint;
+            if (mountPoint.startsWith(hstNodeLoadingCache.getRootPath())) {
+                HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
+                if (hstSiteNodeForMount != null && hstSiteNodeForMount.getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITE)) {
+                    canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+                    contentPath = canonicalContentPath;
+                } else {
+                    this.contentPath = mountPoint;
+                    this.canonicalContentPath = mountPoint;
+                }
             } else {
-                // the mountpoint does point to a hst:site. Since we do not need the HstSiteMap because isMapped = false, we only use the content mapping
-                canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
-                contentPath = canonicalContentPath;
+                // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
+                this.contentPath = mountPoint;
+                this.canonicalContentPath = mountPoint;
             }
         } else {
+            if (!mountPoint.startsWith(hstNodeLoadingCache.getRootPath())) {
+                mountException(mount);
+            }
 
             HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
             if(hstSiteNodeForMount == null) {
-                throw new ServiceException("mountPoint '" + mountPoint
-                        + "' does not point to a hst:site node for Mount '" + mount.getValueProvider().getPath()
-                        + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
+                mountException(mount);
             }
 
             MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
             hstSite = new HstSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
             canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
             contentPath = canonicalContentPath;
+            // TODO make LAZY!!!
             containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
@@ -618,6 +623,12 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         // add this Mount to the maps in the VirtualHostsService
                 ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
+    }
+
+    private void mountException(final HstNode mount) throws ServiceException {
+        throw new ServiceException("mountPoint '" + mountPoint
+                + "' does not point to a hst:site node for Mount '" + mount.getValueProvider().getPath()
+                + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
     }
 
     /**
