@@ -36,3 +36,5 @@
 
 [demosite:textdocument] > demosite:basedocument, hippostd:relaxed
   orderable
+
+[demosite:secure] mixin

@@ -74,6 +74,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhost</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
       <sv:node sv:name="hst:root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:mount</sv:value>
@@ -455,6 +458,9 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhost</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+        <sv:value>true</sv:value>
+      </sv:property>
       <sv:node sv:name="hst:root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hst:mount</sv:value>
@@ -478,6 +484,9 @@
     <sv:node sv:name="localhost">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhost</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:schemeagnostic" sv:type="Boolean">
+        <sv:value>true</sv:value>
       </sv:property>
       <sv:node sv:name="com">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

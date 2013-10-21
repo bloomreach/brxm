@@ -55,6 +55,7 @@ components/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=n
 components/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchParams.java -text
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
 components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/container/HttpsSchemeExampleValve.java -text
 components/src/main/java/org/hippoecm/hst/demo/integration/spring/NewsController.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
 components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text
@@ -93,6 +94,7 @@ components/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resou
 components/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
+components/src/main/resources/META-INF/hst-assembly/overrides/httpsSchemeExample-valve.xml -text svneol=unset#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
 components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
