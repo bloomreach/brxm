@@ -27,6 +27,7 @@ import javax.jcr.Session;
 public abstract class Action {
 
     private final AtomicInteger count = new AtomicInteger(0);
+    private final AtomicInteger missed = new AtomicInteger(0);
     private final AtomicInteger timeSpent = new AtomicInteger(0);
 
     protected final ActionContext context;
@@ -56,6 +57,14 @@ public abstract class Action {
     
     public int getCount() {
         return count.get();
+    }
+
+    public void addMissed() {
+        missed.incrementAndGet();
+    }
+
+    public int getMissed() {
+        return missed.get();
     }
 
     public int getTimeSpent() {

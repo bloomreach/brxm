@@ -285,6 +285,7 @@ abstract class AbstractRandomActionTest {
                         log.debug("Recoverable exception in action " + action.getClass().getSimpleName(), t);
                     }
                     misses++;
+                    action.addMissed();
                     return;
                 }
             }
@@ -336,7 +337,7 @@ abstract class AbstractRandomActionTest {
             }
             int averageTime = (action.getCount() == 0 || action.getTimeSpent() == 0) ? 0 : (action.getTimeSpent() / action.getCount());
             System.err.println(action.getClass().getSimpleName() + " executed " + action.getCount() + " times; " +
-                    "failed " + actionFailures + " times; " +
+                    "missed "+ action.getMissed() + " failed " + actionFailures + " times; " +
                     "total time spent " + action.getTimeSpent() + " ms; " +
                     "average time " + averageTime);
         }
