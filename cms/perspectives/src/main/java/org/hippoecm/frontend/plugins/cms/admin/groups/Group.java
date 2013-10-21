@@ -230,13 +230,17 @@ public class Group implements Comparable<Group>, IClusterable {
      * @throws RepositoryException
      */
     public List<String> getMembers() throws RepositoryException {
-        List<String> members = new ArrayList<String>();
+        return getMembers(false);
+    }
+
+    private List<String> getMembers(boolean includeSystemUsers) throws RepositoryException {
+        final List<String> members = new ArrayList<String>();
         if (node.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
-            Value[] vals = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
+            final Value[] vals = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
             for (Value val : vals) {
-                String username = val.getString();
-                if (User.userExists(username)) {
-                    User user = new User(username);
+                final String username = val.getString();
+                if (!includeSystemUsers && User.userExists(username)) {
+                    final User user = new User(username);
                     if (user.isSystemUser()) {
                         continue;
                     }
@@ -246,6 +250,11 @@ public class Group implements Comparable<Group>, IClusterable {
         }
         Collections.sort(members);
         return members;
+
+    }
+
+    private List<String> getAllMembers() throws RepositoryException {
+        return getMembers(true);
     }
 
     public List<DetachableUser> getMembersAsDetachableUsers() {
@@ -362,14 +371,14 @@ public class Group implements Comparable<Group>, IClusterable {
     }
 
     public void removeMembership(String user) throws RepositoryException {
-        List<String> members = getMembers();
+        List<String> members = getAllMembers();
         members.remove(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
     }
 
     public void addMembership(String user) throws RepositoryException {
-        List<String> members = getMembers();
+        List<String> members = getAllMembers();
         members.add(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
