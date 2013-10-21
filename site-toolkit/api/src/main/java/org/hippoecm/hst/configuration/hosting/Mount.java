@@ -169,8 +169,8 @@ public interface Mount {
 
     /**
      * <p>
-     * Returns the mount path for this {@link Mount} object. The root {@link Mount} has an empty {@link String} ("") as mount path. A mountPath for a
-     * {@link Mount} is its own {@link #getName()} plus all ancestors up to the root and always starts with a "/" (unless for the root, this one is empty).
+     * Returns the mount path for this {@link Mount} object. The root {@link Mount} (mount with no parent mount) has an empty {@link String} ("") as mount path. A mountPath for a
+     * {@link Mount} that is not a root {@link Mount} is its own {@link #getName()} plus all ancestors until the root and always starts with a "/" (except for the root, this one is empty).
      * It can contain wildcards, for example /preview/*. Typically, these wildcards are replaced by their request specific values in the {@link ResolvedMount}.
      * </p>
      *
