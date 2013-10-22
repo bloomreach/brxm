@@ -10,6 +10,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
+ * Ripped from org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel to make it work without a wicket/jcr Usersession.
+ * The Essentials dashboard does not support Session retrieval through this way.
  * @version "$Id$"
  */
 public class JcrNodeTypeModel extends org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel {

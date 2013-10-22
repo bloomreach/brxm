@@ -293,6 +293,16 @@ public final class HippoNodeUtils {
         return types;
     }
 
+    /**
+     * Partially ripped from org.hippoecm.repository.standardworkflow.FolderWorkflowImpl#prototypes() to retrieve a list of all used hippo document.
+     * Which match to the rule according to the specified implementation of the org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher
+     *
+     * @param session
+     * @param matcher
+     * @param templates
+     * @return
+     * @throws RepositoryException
+     */
     private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates) throws RepositoryException {
         Map<String, Set<String>> types = new LinkedHashMap<>();
         try {
@@ -335,10 +345,23 @@ public final class HippoNodeUtils {
         return types;
     }
 
+    /**
+     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session, java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     * @param session
+     * @return
+     * @throws RepositoryException
+     */
     public static Set<String> getCompounds(final Session session) throws RepositoryException {
         return getCompounds(session, null);
     }
 
+    /**
+     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session, java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     * @param session
+     * @param matcher
+     * @return
+     * @throws RepositoryException
+     */
     public static Set<String> getCompounds(final Session session, final JcrMatcher matcher) throws RepositoryException {
         String query = "//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:compound)";
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -360,6 +383,13 @@ public final class HippoNodeUtils {
         return prototypes;
     }
 
+    /**
+     * Retrieves a list of available primary types which are retrieved with the #prototype method
+     * @param session
+     * @param templates
+     * @return
+     * @throws RepositoryException
+     */
     public static List<String> getPrimaryTypes(final Session session, final String... templates) throws RepositoryException {
         final Map<String, Set<String>> prototypes = prototypes(session, null, templates);
         final List<String> set = new ArrayList<>();
@@ -370,6 +400,13 @@ public final class HippoNodeUtils {
         return set;
     }
 
+    /**
+     * Retrieves a list of available primary types which are retrieved with the #prototype method  and filtererd with the org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher implementation
+     * @param session
+     * @param templates
+     * @return
+     * @throws RepositoryException
+     */
     public static List<String> getPrimaryTypes(final Session session, final JcrMatcher matcher, final String... templates) throws RepositoryException {
         final Map<String, Set<String>> prototypes = prototypes(session, matcher, templates);
         final List<String> set = new ArrayList<>();

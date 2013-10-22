@@ -17,15 +17,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This abstract class will install cms and site pom dependencies to your plugin.
+ * Implement the #getCmsDependencies and #getSiteDependencies method to retrieve the dependencies in your plugin
+ *
  * @version "$Id: AbstractDependencyInstaller.java 174582 2013-08-21 16:56:23Z mmilicevic $"
  */
 public abstract class AbstractDependencyInstaller implements Installer {
 
     private static Logger log = LoggerFactory.getLogger(AbstractDependencyInstaller.class);
 
-
+    /**
+     * Implement CMS dependencies
+     * @return a list of CMS dependencies according to the apache maven model
+     */
     public abstract List<Dependency> getCmsDependencies();
 
+    /**
+     * Implement SITE dependencies
+     * @return a list of Site dependencies according to the apache maven model
+     */
     public abstract List<Dependency> getSiteDependencies();
 
     FileReader fileReader = null;

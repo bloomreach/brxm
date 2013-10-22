@@ -16,8 +16,8 @@ public class HasNotTaxonomyMatcher implements JcrMatcher {
     private static Logger log = LoggerFactory.getLogger(HasNotTaxonomyMatcher.class);
 
     @Override
-    public boolean matches(final Node typeNode) throws RepositoryException {
-       return !new HasTaxonomyMatcher().matches(typeNode);
+    public boolean matches(final Node node) throws RepositoryException {
+       return !new HasTaxonomyMatcher().matches(node);
     }
 
 }

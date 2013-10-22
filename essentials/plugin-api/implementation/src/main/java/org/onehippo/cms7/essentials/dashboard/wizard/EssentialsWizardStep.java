@@ -4,9 +4,10 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.wizard.WizardStep;
 
 /**
+ * Abstract class for a wizard panel, which is a wizard step.
  * @version "$Id$"
  */
-public class EssentialsWizardStep extends WizardStep {
+public abstract class EssentialsWizardStep extends WizardStep {
 
     private static final long serialVersionUID = 1L;
     private boolean processed;

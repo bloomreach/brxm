@@ -5,6 +5,7 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
 /**
+ * The official Essentials Feedback panel which incorporates the correct css classes onto the list items
  *
  * @version "$Id: EssentialsFeedbackPanel.java 171192 2013-07-22 10:03:46Z mmilicevic $"
  */

@@ -18,6 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Util to add entries to the new updater engine API (from 7.8 and upwards). In this util you can easily create updater scrips and add them with code.
+ * Almost every plug-in will need some DTAP integration.
+ * There is a distinction between addToQueue (immediately add and run on startup) and addToRegistry (add to the updater engine registry for manual startup)
+ *
  * @version "$Id$"
  */
 public class UpdateUtils {
@@ -26,6 +30,11 @@ public class UpdateUtils {
 
     public static final String UPDATE_UTIL_PATH = "/hippo:configuration/hippo:update/";
 
+    /**
+     * Copies an entry from registry directly to the queue so it can immediately be executed.
+     * @param context
+     * @param name
+     */
     public static void copyFromRegistryToQueue(final PluginContext context, final String name) {
         final Session session = context.getSession();
         try {
@@ -40,7 +49,7 @@ public class UpdateUtils {
         }
     }
 
-    public static void addToQuery(final PluginContext context, final InputStream in) {
+    public static void addToQueue(final PluginContext context, final InputStream in) {
         addToUpdaterInfo(context, UpdateType.QUEUE, in);
     }
 
@@ -68,6 +77,12 @@ public class UpdateUtils {
         addToUpdaterInfo(context, type, new UpdateConfig().setQuery(query).setScript(script).setBatchSize(batchSize).setDryRun(dryRun).setThrottle(throttle));
     }
 
+    /**
+     * Uses the updater model to create a new queue or registry entry in the updater engine api
+     * @param context
+     * @param type
+     * @param config
+     */
     private static void addToUpdaterInfo(PluginContext context, UpdateType type, UpdateConfig config) {
         final Session session = context.getSession();
         try {
@@ -88,6 +103,12 @@ public class UpdateUtils {
 
     }
 
+    /**
+     * uses an inputstream to create a new queue or registry entry in the updater engine api. the inpustream is the jcr s:node xml
+     * @param context
+     * @param type
+     * @param in
+     */
     private static void addToUpdaterInfo(final PluginContext context, final UpdateType type, final InputStream in) {
         final Session session = context.getSession();
         try {
@@ -112,7 +133,9 @@ public class UpdateUtils {
         }
     }
 
-
+    /**
+     * Updater engine types; queue or registry (see class information for difference)
+     */
     public enum UpdateType {
         QUEUE("hippo:queue"), REGISTRY("hippo:registry");
 
@@ -127,6 +150,9 @@ public class UpdateUtils {
         }
     }
 
+    /**
+     * Model for an updater.
+     */
     public static class UpdateConfig {
 
         private String name;

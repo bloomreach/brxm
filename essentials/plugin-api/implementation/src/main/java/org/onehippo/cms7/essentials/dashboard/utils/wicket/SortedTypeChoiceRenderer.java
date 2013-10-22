@@ -33,6 +33,11 @@ import org.apache.wicket.model.StringResourceModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
+ *
+
+ * Ripped from org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer to make it work without a wicket/jcr Usersession.
+ * The Essentials dashboard does not support Session retrieval through this way.
+
  * Type choice renderer that sorts the types alphabetically by the translated value of the type using the default {@link
  * java.text.Collator} for the current CMS locale. This renderer is also the (sorted) list of types to render. To use it
  * in (for example) a DropDownChoice, use the following code:
