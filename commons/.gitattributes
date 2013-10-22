@@ -15,7 +15,6 @@ src/main/java/org/onehippo/cms7/logging/log4j/AbstractPropertyFilter.java -text
 src/main/java/org/onehippo/cms7/logging/log4j/JndiPropertyFilter.java -text
 src/main/java/org/onehippo/cms7/logging/log4j/MdcOrJndiPropertyFilter.java -text
 src/main/java/org/onehippo/cms7/logging/log4j/MdcPropertyFilter.java -text
-src/main/java/org/onehippo/cms7/util/HttpRequestUtils.java -text
 src/main/java/org/onehippo/cms7/util/WeakIdentityMap.java -text
 src/main/java/org/onehippo/sso/UrlSafeBase64.java -text
 src/test/java/org/onehippo/cms7/event/HippoEventTest.java -text
