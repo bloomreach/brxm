@@ -196,7 +196,7 @@ public class Configuration {
             modules.put(modulePath, repositoryPaths);
         }
         if (isExportEnabled()) {
-            log.info("Changes to repository path {} are configured to be exported to directory {}", repositoryPath, modulePath);
+            log.info("Changes to repository path '{}' will be exported to directory '{}'", repositoryPath, modulePath);
         }
         repositoryPaths.add(repositoryPath);
     }
