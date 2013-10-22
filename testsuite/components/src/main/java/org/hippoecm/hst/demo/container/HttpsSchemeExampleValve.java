@@ -36,5 +36,9 @@ public class HttpsSchemeExampleValve extends AbstractHttpsSchemeValve {
             throw new RuntimeRepositoryException(e);
         }
     }
-    
+
+    @Override
+    protected int getRedirectStatusCode() {
+        return 302;
+    }
 }
