@@ -16,6 +16,7 @@
 package org.onehippo.repository.mock;
 
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -52,7 +53,10 @@ public abstract class MockItem implements Item {
     }
 
     @Override
-    public Node getParent() {
+    public Node getParent() throws ItemNotFoundException {
+        if (isRootNode()) {
+            throw new ItemNotFoundException("A root node does not have a parent");
+        }
         return parent;
     }
 

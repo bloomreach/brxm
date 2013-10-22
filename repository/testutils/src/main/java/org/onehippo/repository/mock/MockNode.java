@@ -128,6 +128,7 @@ public class MockNode extends MockItem implements Node {
         if (parent != null) {
             parent.children.remove(getName());
         }
+        setParent(null);
     }
 
     @Override

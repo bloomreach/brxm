@@ -18,6 +18,9 @@ package org.onehippo.repository.mock;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.AccessDeniedException;
+import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
@@ -34,6 +37,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class MockNodeTest {
 
@@ -193,7 +197,7 @@ public class MockNodeTest {
         prop.remove();
 
         assertFalse(node.hasProperty("prop"));
-        assertNull(prop.getParent());
+        assertNoParent("Removed property should not have a parent", prop);
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -305,11 +309,21 @@ public class MockNodeTest {
 
         child.remove();
         assertEquals("Removed child should no longer exist", 0, root.getNodes().getSize());
+        assertNoParent("Removed child should not have a parent", child);
     }
 
     @Test
     public void rootCanBeRemoved() throws RepositoryException {
         MockNode.root().remove();
+    }
+
+    private static void assertNoParent(String message, Item item) throws RepositoryException {
+        try {
+            item.getParent();
+            fail(message);
+        } catch (ItemNotFoundException expected) {
+            // everything is fine
+        }
     }
 
 }
