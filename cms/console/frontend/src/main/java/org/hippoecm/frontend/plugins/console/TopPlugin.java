@@ -23,13 +23,12 @@ import org.apache.wicket.markup.html.WebComponent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.onehippo.cms7.util.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TopPlugin extends RenderPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(TopPlugin.class);
+    static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
 
     public TopPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -57,15 +56,12 @@ public class TopPlugin extends RenderPlugin {
             return null;
         }
 
-        String requestUrl = getRequestURL();
+        String requestUrl = getRequestUrl();
         if(requestUrl != null) {
             for (int i = 0 ; i < urlParts.length; i++) {
                 if (StringUtils.isNotEmpty(urlParts[i])) {
                     String urlPart = urlParts[i];
                     if(requestUrl.contains(urlPart) && StringUtils.isNotBlank(barStyles[i])) {
-                        if(log.isDebugEnabled()) {
-                            log.debug("Style [" + i + "] choosen: " + barStyles[i]);
-                        }
                         return barStyles[i];
                     }
                 }
@@ -75,22 +71,11 @@ public class TopPlugin extends RenderPlugin {
         return null;
     }
 
-    private String getRequestURL() {
-        String requestURL = null;
+    private String getRequestUrl() {
         final Object request = getRequest().getContainerRequest();
         if(request instanceof HttpServletRequest) {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-            String host = HttpRequestUtils.getFarthestRequestHost(httpServletRequest);
-            if(StringUtils.isBlank(host)) {
-                host = httpServletRequest.getRequestURL().toString();
-            }
-            requestURL = host + httpServletRequest.getRequestURI();
-            if(log.isDebugEnabled()) {
-                log.debug("Request URL found: " + requestURL);
-            }
-        } else {
-            log.debug("Request is not a HttpServletRequest but " + request.getClass());
+            return ((HttpServletRequest) request).getRequestURL().toString();
         }
-        return requestURL;
+        return null;
     }
 }
