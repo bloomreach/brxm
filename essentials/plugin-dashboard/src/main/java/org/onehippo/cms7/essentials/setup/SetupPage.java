@@ -16,8 +16,11 @@
 
 package org.onehippo.cms7.essentials.setup;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +28,25 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class SetupPage extends WebPage implements IHeaderContributor  {
+public class SetupPage extends WebPage implements IHeaderContributor {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SetupPage.class);
 
     public SetupPage(final PageParameters parameters) {
         super(parameters);
+        Form<?> form = new Form<>("form");
+        form.add(new AjaxButton("setupButton") {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                log.info("STARTING POWERPACKS WIZARD");
+            }
+        });
+
+        add(form);
 
     }
 }
