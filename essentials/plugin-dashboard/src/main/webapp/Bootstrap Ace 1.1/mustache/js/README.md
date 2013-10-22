@@ -1,1 +1,0 @@
-This folder contains the js files to create raw html output.Use like this:  node index.jsIt uses Hogan.js. To use Mustache.js:  node index.js mustache

@@ -32,5 +32,6 @@ public class SetupPage extends WebPage implements IHeaderContributor  {
 
     public SetupPage(final PageParameters parameters) {
         super(parameters);
+
     }
 }

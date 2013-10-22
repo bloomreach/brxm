@@ -47,6 +47,7 @@
   </properties>
 
   <modules>
+    <module>essentials-powerpacks</module>
     <module>dashboard-documents-plugin</module>
     <module>dashboard-setup-plugin</module>
     <module>dashboard-gallery-plugin</module>
