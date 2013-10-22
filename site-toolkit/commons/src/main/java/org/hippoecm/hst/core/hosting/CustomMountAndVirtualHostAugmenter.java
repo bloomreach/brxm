@@ -340,6 +340,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public boolean isHttpsApproved() {
+            return true;
+        }
+
+        @Override
         public String toString() {
             return "CustomVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + getHostGroupName() + "]";
         }

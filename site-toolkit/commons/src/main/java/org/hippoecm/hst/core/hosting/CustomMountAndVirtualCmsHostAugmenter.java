@@ -431,6 +431,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        public boolean isHttpsApproved() {
+            return true;
+        }
+
+        @Override
         public String getCmsLocation() {
             return cmsLocation;
         }

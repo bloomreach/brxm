@@ -24,10 +24,12 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,6 +188,11 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
      *      </pre>
      *
      * </p>
+     * <p>
+     *     Note that this method only gets conditionally invoked: For example if the request is already over
+     *     <code>https</code> there is no pointing in checking this method. Same goes in case the request is for
+     *     example a cms request. See {@link #invoke(ValveContext)} javadoc for more.
+     * </p>
      * @return <code>true</code> when the request should be secure
      */
     public abstract boolean shouldBeSecure(ValveContext context);
@@ -226,33 +233,54 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
             context.invokeNext();
             return;
         }
-        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        if (resolvedSiteMapItem != null && resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
+        final HstSiteMapItem siteMapItem = (requestContext.getResolvedSiteMapItem() == null) ? null : requestContext.getResolvedSiteMapItem().getHstSiteMapItem();
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        if (siteMapItem != null && siteMapItem.isSchemeAgnostic()) {
             context.invokeNext();
             return;
-        } else if (requestContext.getResolvedMount().getMount().isSchemeAgnostic()){
-            context.invokeNext();
-            return;
+        } else {
+            if (mount.isSchemeAgnostic()){
+                context.invokeNext();
+                return;
+            }
         }
 
-        final String scheme = HstRequestUtils.getFarthestRequestScheme(context.getServletRequest());
-        if (HTTPS_SCHEME.equalsIgnoreCase(scheme)) {
+        final String currentScheme = HstRequestUtils.getFarthestRequestScheme(context.getServletRequest());
+        if (HTTPS_SCHEME.equalsIgnoreCase(currentScheme)) {
             // already https, nothing to do
             context.invokeNext();
             return;
         }
-
+        log.debug("Invoking #shouldBeSecure to find out whether request should be over https.");
         boolean secure = shouldBeSecure(context);
         if (!secure) {
             context.invokeNext();
             return;
         }
 
+        String currentUrl = HstRequestUtils.createURLWithExplicitSchemeForRequest(HTTP_SCHEME, mount, context.getServletRequest());
+
+        String defaultSupportedScheme = (siteMapItem == null) ? mount.getScheme() : siteMapItem.getScheme();
+        if (!HTTPS_SCHEME.equalsIgnoreCase(defaultSupportedScheme)) {
+            // check if hst by default supports https requests even if the current request is http and hst:scheme is 'http':
+            // If hst does not support https requests a redirect to https would result in a redirect loop.
+            // Instead of redirect to https we then serve request over http and log a warning
+            if(!mount.getVirtualHost().isHttpsApproved()) {
+                log.warn("Current URL '{}' is over http but '{}' indicated preference over 'https' but virtualhost '{}' does not have" +
+                        "'{}' = true. Set this property to true support url over https. Request will now be " +
+                        "rendered over http.",
+                        new String[]{currentUrl, this.getClass().getName()+"#shouldBeSecure", mount.getVirtualHost().getHostName(), HstNodeTypes.VIRTUALHOST_PROPERTY_HTTPS_APPROVED});
+                context.invokeNext();
+                return;
+            }
+        }
+
+        // since the request is preferred over https, and the hst has https approved OR the defaultSupportedScheme is https, we can do a redirect
+
         final HttpServletResponse response = context.getServletResponse();
         // scheme is not https but request must be secure.
-        final String redirect = HstRequestUtils.createURLWithExplicitSchemeForRequest(HTTPS_SCHEME,
-                resolvedSiteMapItem.getResolvedMount().getMount(), context.getServletRequest());
-        log.info("Client side redirect request '{}' to '{}'", HTTP_SCHEME +redirect.substring(HTTPS_SCHEME.length()), redirect);
+        final String redirect = HstRequestUtils.createURLWithExplicitSchemeForRequest(HTTPS_SCHEME, mount, context.getServletRequest());
+        log.info("Client side redirect request '{}' to '{}'", currentUrl, redirect);
         if (getRedirectStatusCode() == HttpServletResponse.SC_MOVED_PERMANENTLY) {
             response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
             // create fully qualified redirect to scheme https

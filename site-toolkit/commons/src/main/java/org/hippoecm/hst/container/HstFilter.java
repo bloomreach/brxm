@@ -398,6 +398,7 @@ public class HstFilter implements Filter {
 
                 HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstManager, requestContext, resolvedMount, res);
 
+                final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(req);
                 if (resolvedMount.getMount().isMapped()) {
                     ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
                     boolean processSiteMapItemHandlers = false;
@@ -414,10 +415,8 @@ public class HstFilter implements Filter {
                         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                     }
 
-                    final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                    if (!requestContext.isCmsRequest() && !hstSiteMapItem.isSchemeAgnostic() &&
-                            !hstSiteMapItem.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
-
+                    if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
+                       final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
                        switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
                            case HttpServletResponse.SC_OK:
                                 // just continue;
@@ -446,16 +445,14 @@ public class HstFilter implements Filter {
 
                     processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers);
 
-                }
-                else {
+                } else {
                     if(resolvedMount.getNamedPipeline() == null) {
                         log.warn(hostName + "' and '" + containerRequest.getRequestURI() + "' could not be processed by the HST: No hstSite and no custom namedPipeline for Mount");
                         sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                     }
                     else {
-                        Mount mount = resolvedMount.getMount();
-                        if (!requestContext.isCmsRequest() && !mount.isSchemeAgnostic() &&
-                                !mount.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
+                        if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
+                            final Mount mount = resolvedMount.getMount();
                             switch (mount.getSchemeNotMatchingResponseCode()) {
                                 case HttpServletResponse.SC_OK:
                                     // just continue;
@@ -519,6 +516,48 @@ public class HstFilter implements Filter {
                 HDC.cleanUp();
             }
     	}
+    }
+
+    private boolean isSupportedScheme(final HstMutableRequestContext requestContext,
+                                      final ResolvedSiteMapItem resolvedSiteMapItem,
+                                      final String farthestRequestScheme) {
+        if (requestContext.isCmsRequest()) {
+            // cms request always supported as piggybacking on cms host
+            return true;
+        }
+
+        final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+        if (hstSiteMapItem.isSchemeAgnostic()) {
+            return true;
+        }
+        if (hstSiteMapItem.getScheme().equals(farthestRequestScheme)) {
+            return true;
+        }
+        if ("https".equals(farthestRequestScheme) && resolvedSiteMapItem.getResolvedMount().getMount().getVirtualHost().isHttpsApproved()) {
+            // although sitemap item indicates http, https is approved by default to be rendered
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isSupportedScheme(final HstMutableRequestContext requestContext,
+                                      final ResolvedMount resolvedMount,
+                                      final String farthestRequestScheme) {
+        if (requestContext.isCmsRequest()) {
+            // cms request always supported as piggybacking on cms host
+            return true;
+        }
+
+        final Mount mount = resolvedMount.getMount();
+
+        if (mount.getScheme().equals(farthestRequestScheme)) {
+            return true;
+        }
+        if ("https".equals(farthestRequestScheme) && mount.getVirtualHost().isHttpsApproved()) {
+            // although mount indicates http, https is approved by default to be rendered
+            return true;
+        }
+        return false;
     }
 
 
