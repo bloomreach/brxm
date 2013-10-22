@@ -15,7 +15,7 @@ public class HasProviderMatcher implements JcrMatcher {
     private static Logger log = LoggerFactory.getLogger(HasProviderMatcher.class);
 
     @Override
-    public boolean matches(final Node typeNode) throws RepositoryException {
+    public boolean matches(final Node node) throws RepositoryException {
         return true;
     }
 }

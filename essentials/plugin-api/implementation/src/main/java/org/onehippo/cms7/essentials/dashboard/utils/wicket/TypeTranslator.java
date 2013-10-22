@@ -16,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Ripped from org.hippoecm.frontend.i18n.types.TypeTranslator to make it work without a wicket/jcr Usersession.
+ * The Essentials dashboard does not support Session retrieval through this way.
+ *
  * @version "$Id$"
  */
 public class TypeTranslator extends NodeTypeModelWrapper {

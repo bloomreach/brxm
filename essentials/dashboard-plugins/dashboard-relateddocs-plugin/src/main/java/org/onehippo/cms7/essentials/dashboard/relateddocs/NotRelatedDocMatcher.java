@@ -16,7 +16,7 @@ public class NotRelatedDocMatcher implements JcrMatcher {
 
 
     @Override
-    public boolean matches(final Node typeNode) throws RepositoryException {
-        return !new HasRelatedDocMatcher().matches(typeNode);
+    public boolean matches(final Node node) throws RepositoryException {
+        return !new HasRelatedDocMatcher().matches(node);
     }
 }

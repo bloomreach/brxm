@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Common Utils for multi valued JCR properties.
  * @version "$Id$"
  */
 public class MultiValueJcrUtils {

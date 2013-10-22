@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This Panel is used to create Wizards. It implements the apache Wicket wizard model interfaces.
  * @version "$Id$"
  */
 public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWizard {
@@ -56,6 +57,7 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
         final Label nextorfinishLabel = new Label("nextorfinish", nextorfinish);
         nextorfinishLabel.setOutputMarkupId(true);
 
+        // preview button
         prev = new AjaxButton("prev") {
             private static final long serialVersionUID = 1L;
 
@@ -81,6 +83,7 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
         final Label previousLabel = new Label("previouslabel", getPreviousButtonLabel());
         prev.add(previousLabel);
 
+        //next button
         next = new AjaxButton("next") {
             private static final long serialVersionUID = 1L;
             @Override
@@ -122,6 +125,7 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
         add(form);
     }
 
+
     private void onFinish(final AjaxRequestTarget target) {
         onFinish();
     }
@@ -136,15 +140,18 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
         if(newStep.isComplete()){
             form.replace(newStep.getView("view", this, this));
         }
-
     }
 
-
-
+    /**
+     * Gets triggered whenever somebody clicks on the cancel button
+     */
     @Override
     public void onCancel() {
     }
 
+    /**
+     * Gets triggered whenever the wizard is finished, after the last page
+     */
     @Override
     public void onFinish() {
         info("Form Finished");
@@ -162,6 +169,9 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
         return new StringResourceModel("finish", this, null);
     }
 
+    /**
+     * An overview of every wizard panel and it marks the panels which have already been processed. It also shows how many steps still remain.
+     */
     private static class Overview extends RefreshingView<IWizardStep> {
 
         private static final long serialVersionUID = 1L;
@@ -205,6 +215,10 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
 
     }
 
+    /**
+     * Add a new wizard step (panel) with the following method.
+     * @param step
+     */
     public void addWizard(IWizardStep step) {
         wizardModel.add(step);
     }
