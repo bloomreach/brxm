@@ -227,6 +227,11 @@ public interface HippoSession extends Session {
     void localRefresh();
 
     /**
+     * Disable virtual layers.
+     */
+    void disableVirtualLayers();
+
+    /**
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * The interface of the callback handler that is called when the session is
      * logged out.

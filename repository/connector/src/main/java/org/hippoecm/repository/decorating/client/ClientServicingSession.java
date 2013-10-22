@@ -185,4 +185,9 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     public void localRefresh() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void disableVirtualLayers() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -486,6 +486,11 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         getInternalHippoSession().localRefresh();
     }
 
+    @Override
+    public void disableVirtualLayers() {
+        postMountEnabled(false);
+    }
+
     private InternalHippoSession getInternalHippoSession() {
         return ((InternalHippoSession) session);
     }

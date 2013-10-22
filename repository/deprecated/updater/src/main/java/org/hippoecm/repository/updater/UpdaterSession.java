@@ -617,4 +617,9 @@ final public class UpdaterSession implements HippoSession {
     public void localRefresh() {
         throw new UpdaterException("illegal method");
     }
+
+    @Override
+    public void disableVirtualLayers() {
+        throw new UpdaterException("illegal method");
+    }
 }
