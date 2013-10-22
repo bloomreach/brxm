@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,21 +34,20 @@ import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.onehippo.cms7.util.HttpRequestUtils;
 
 /**
- * HST Request Utils 
- * 
+ * HST Request Utils
+ *
  * @version $Id$
  */
 public class HstRequestUtils {
-    
+
     private static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
-    
+
     private HstRequestUtils() {
-        
+
     }
-    
+
     /**
      * Returns <CODE>HstRequest</CODE> object found in the servletRequest.
      * @param servletRequest
@@ -56,14 +55,14 @@ public class HstRequestUtils {
      */
     public static HstRequest getHstRequest(HttpServletRequest servletRequest) {
         HstRequest hstRequest = (HstRequest) servletRequest.getAttribute(ContainerConstants.HST_REQUEST);
-        
+
         if (hstRequest == null && servletRequest instanceof HstRequest) {
             hstRequest = (HstRequest) servletRequest;
         }
-        
+
         return hstRequest;
     }
-    
+
     /**
      * Returns <CODE>HstResponse</CODE> object found in the servletRequest or servletResponse.
      * @param servletRequest
@@ -72,23 +71,23 @@ public class HstRequestUtils {
      */
     public static HstResponse getHstResponse(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         HstResponse hstResponse = (HstResponse) servletRequest.getAttribute(ContainerConstants.HST_RESPONSE);
-        
+
         if (hstResponse == null && servletResponse instanceof HstResponse) {
             hstResponse = (HstResponse) servletResponse;
         }
-        
+
         return hstResponse;
     }
-    
+
     /**
      * Returns <CODE>HstRequestContext</CODE> object found in the servletRequest.
      * @param servletRequest
      * @return
      */
     public static HstRequestContext getHstRequestContext(HttpServletRequest servletRequest) {
-    	return (HstRequestContext)servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
+        return (HstRequestContext)servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
-    
+
     /**
      * @param request
      * @param excludeMatrixParameters
@@ -96,14 +95,14 @@ public class HstRequestUtils {
      */
     public static String getRequestURI(HttpServletRequest request, boolean excludeMatrixParameters) {
         String requestURI = request.getRequestURI();
-        
+
         if (excludeMatrixParameters) {
             return removeAllMatrixParams(requestURI);
         }
-        
+
         return requestURI;
     }
-    
+
     /**
      * @param request
      * @return the decoded getRequestURI after the context path but before the matrix parameters or the query string in the request URL
@@ -111,7 +110,7 @@ public class HstRequestUtils {
     public static String getRequestPath(HttpServletRequest request) {
         return getDecodedPath(null, request, null, false);
     }
-    
+
     /**
      * @param request
      * @param characterEncoding
@@ -120,7 +119,7 @@ public class HstRequestUtils {
     public static String getRequestPath(HttpServletRequest request, String characterEncoding) {
         return getDecodedPath(null, request, characterEncoding, false);
     }
-    
+
     /**
      * Returns any extra path information associated with the URL the client sent when it made this request.
      * The  extra path information that comes after the context path and after the (resolved) mountpath but before the query string in the request URL
@@ -133,7 +132,7 @@ public class HstRequestUtils {
     public static String getPathInfo(ResolvedMount mount, HttpServletRequest request) {
         return getDecodedPath(mount, request, null, true);
     }
-    
+
     /**
      * <p>
      * Returns any extra path information associated with the URL the client sent when it made this request.
@@ -150,12 +149,12 @@ public class HstRequestUtils {
         // TODO Make sure, the ./suffix gets removed from getPathInfo
         return getDecodedPath(mount, request, characterEncoding, true);
     }
-    
-    
+
+
     private static String getDecodedPath(ResolvedMount mount, HttpServletRequest request, String characterEncoding, boolean stripMountPath) {
         String requestURI = getRequestURI(request, true);
         String encodePathInfo = requestURI.substring(request.getContextPath().length());
-        
+
         if(stripMountPath) {
             if(mount == null) {
                 throw new IllegalArgumentException("Cannot strip the mountPath when the resolved Mount is null");
@@ -166,23 +165,23 @@ public class HstRequestUtils {
             }
             encodePathInfo = encodePathInfo.substring(mount.getResolvedMountPath().length());
         }
-        
+
         if (characterEncoding == null) {
             characterEncoding = request.getCharacterEncoding();
-            
+
             if (characterEncoding == null) {
                 characterEncoding = "ISO-8859-1";
             }
         }
-        
+
         try {
             return URLDecoder.decode(encodePathInfo, characterEncoding);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException("Invalid character encoding: " + characterEncoding, e);
         }
-        
+
     }
-    
+
     /**
      * Returns HTTP/1.1 compatible 'Host' header value.
      * @param request
@@ -190,26 +189,56 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRequestHosts(HttpServletRequest request, boolean checkRenderHost) {
-        int serverPort;
+        String host = null;
+
+        if (checkRenderHost) {
+            host = getRenderingHost(request);
+        }
+
+        if (host == null) {
+            host = request.getHeader("X-Forwarded-Host");
+        }
+
+        if (host != null) {
+            String [] hosts = host.split(",");
+
+            for (int i = 0; i < hosts.length; i++) {
+                hosts[i] = hosts[i].trim();
+            }
+
+            return hosts;
+        }
+
+        host = request.getHeader("Host");
+
+        if (host != null && !"".equals(host)) {
+            return new String [] { host };
+        }
+
+        // fallback to request server name for HTTP/1.0 clients.
+        // e.g., HTTP/1.0 based browser clients or load balancer not providing 'Host' header.
+
+        int serverPort = request.getServerPort();
+
         // in case this utility method is invoked by a component, for some reason, ...
         HstRequest hstRequest = getHstRequest(request);
         if (hstRequest != null) {
             Mount mount = hstRequest.getRequestContext().getResolvedMount().getMount();
+
             if (mount.isPortInUrl()) {
                 serverPort = mount.getPort();
             } else {
                 serverPort = 0;
             }
-        } else {
-            serverPort = HttpRequestUtils.getRequestServerPort(request);
         }
 
-        if (checkRenderHost) {
-            String host = getRenderingHost(request);
-            return HttpRequestUtils.getRequestHosts(request, host, serverPort);
+        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
+            host = request.getServerName();
         } else {
-            return HttpRequestUtils.getRequestHosts(request, serverPort);
+            host = request.getServerName() + ":" + serverPort;
         }
+
+        return new String[] { host };
     }
 
     /**
@@ -226,7 +255,7 @@ public class HstRequestUtils {
             return null;
         }
         if (!hostName.contains(":")) {
-            // the rendering host does not contain a portnumber. Use the portnumber of the hostname 
+            // the rendering host does not contain a portnumber. Use the portnumber of the hostname
             // that the request was done with
             String farthestHostName = getFarthestRequestHost(request, false);
             if (farthestHostName.contains(":")) {
@@ -261,7 +290,7 @@ public class HstRequestUtils {
     }
 
     /**
-     * Returns the original host informations requested by the client or the proxies 
+     * Returns the original host informations requested by the client or the proxies
      * in the Host HTTP request headers.
      * @param request
      * @return
@@ -269,24 +298,23 @@ public class HstRequestUtils {
     public static String [] getRequestHosts(HttpServletRequest request) {
         return getRequestHosts(request, true);
     }
-    
+
     /**
      * Returns the original host information requested by the client.
      * @param request
      * @return
-     * @deprecated Use org.onehippo.cms7.util.HttpRequestUtils#getFarthestRequestHost(request) instead.
      */
     public static String getFarthestRequestHost(HttpServletRequest request) {
-        return HttpRequestUtils.getFarthestRequestHost(request);
+        return getRequestHosts(request)[0];
     }
-    
+
     /**
-     * Returns the original host information requested by the client and do check optional 
+     * Returns the original host information requested by the client and do check optional
      * injected render host information only when <code>checkRenderHost</code> is <code>true</code>
      * @param request
-     * @param checkRenderHost when <code>true</code> the optional render host is used when present. 
+     * @param checkRenderHost when <code>true</code> the optional render host is used when present.
      * @return the farthest request host or option render host when <code>checkRenderHost</code> is <code>true</code>
-     */ 
+     */
     public static String getFarthestRequestHost(HttpServletRequest request, boolean checkRenderHost) {
         return getRequestHosts(request, checkRenderHost)[0];
     }
@@ -312,7 +340,7 @@ public class HstRequestUtils {
         }
         return request.getScheme();
     }
-    
+
     /**
      * Returns the original host's server name requested by the client.
      * @param request
@@ -320,20 +348,20 @@ public class HstRequestUtils {
      */
     public static String getRequestServerName(HttpServletRequest request) {
         String requestHost = getFarthestRequestHost(request);
-        
+
         if (requestHost == null) {
             return request.getServerName();
         }
-        
+
         int offset = requestHost.indexOf(':');
-        
+
         if (offset != -1) {
             return requestHost.substring(0, offset);
         } else {
             return requestHost;
         }
     }
-    
+
     /**
      * Returns the original host' port number requested by the client.
      * @param request
@@ -341,45 +369,45 @@ public class HstRequestUtils {
      */
     public static int getRequestServerPort(HttpServletRequest request) {
         String requestHost = getFarthestRequestHost(request);
-        
+
         if (requestHost == null) {
             return request.getServerPort();
         }
-        
+
         int offset = requestHost.indexOf(':');
-        
+
         if (offset != -1) {
             return Integer.parseInt(requestHost.substring(offset + 1));
         } else {
             return ("https".equals(request.getScheme()) ? 443 : 80);
         }
     }
-    
+
     /**
      * Returns the remote host addresses related to this request.
      * If there's any proxy server between the client and the server,
      * then the proxy addresses are contained in the returned array.
      * The lowest indexed element is the farthest downstream client and
-     * each successive proxy addresses are the next elements. 
+     * each successive proxy addresses are the next elements.
      * @param request
      * @return
      */
     public static String [] getRemoteAddrs(HttpServletRequest request) {
         String xff = request.getHeader("X-Forwarded-For");
-        
+
         if (xff != null) {
             String [] addrs = xff.split(",");
-            
+
             for (int i = 0; i < addrs.length; i++) {
                 addrs[i] = addrs[i].trim();
             }
-            
+
             return addrs;
         } else {
             return new String [] { request.getRemoteAddr() };
         }
     }
-    
+
     /**
      * Returns the remote client address.
      * @param request
@@ -399,19 +427,19 @@ public class HstRequestUtils {
         } else {
             // keep insertion ordered map to maintain the order of the querystring when re-constructing it from a map
             queryParamMap = new LinkedHashMap<String, String []>();
-            
+
             String[] paramPairs = queryString.split("&");
             String paramName = null;
-            
+
             for (String paramPair : paramPairs) {
                 String[] paramNameAndValue = paramPair.split("=");
-                
+
                 if (paramNameAndValue.length > 0) {
                     paramName = paramNameAndValue[0];
                     queryParamMap.put(paramName, null);
                 }
             }
-            
+
             for (Map.Entry<String, String []> entry : queryParamMap.entrySet()) {
                 entry.setValue(request.getParameterValues(entry.getKey()));
             }
@@ -419,7 +447,7 @@ public class HstRequestUtils {
 
         return queryParamMap;
     }
-    
+
     public static String removeAllMatrixParams(String uri) {
         Matcher matcher = MATRIX_PARAMS_PATTERN.matcher(uri);
         return matcher.replaceAll("");
@@ -476,7 +504,7 @@ public class HstRequestUtils {
      */
     public static String escapeXml(String str) {
         if((str == null) || (str.length() == 0)) {
-           return str;
+            return str;
         }
         str = str.replaceAll("&", "&amp;");
         str = str.replaceAll("<", "&lt;");
