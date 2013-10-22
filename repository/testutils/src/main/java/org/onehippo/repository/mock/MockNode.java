@@ -17,7 +17,9 @@ package org.onehippo.repository.mock;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,7 +237,8 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public NodeIterator getNodes() {
-        return new MockNodeIterator(children.values());
+        Collection<MockNode> childrenCopy = new ArrayList<>(children.values());
+        return new MockNodeIterator(childrenCopy);
     }
 
     @Override

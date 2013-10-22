@@ -22,6 +22,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -315,6 +316,20 @@ public class MockNodeTest {
     @Test
     public void rootCanBeRemoved() throws RepositoryException {
         MockNode.root().remove();
+    }
+
+    @Test
+    public void iteratedChildrenCanBeRemoved() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        root.addNode("child1", "nt:unstructured");
+        root.addNode("child2", "nt:unstructured");
+
+        NodeIterator children = root.getNodes();
+        while (children.hasNext()) {
+            children.nextNode().remove();
+        }
+
+        assertEquals(0, root.getNodes().getSize());
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {
