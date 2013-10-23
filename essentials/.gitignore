@@ -2308,6 +2308,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/.DS_Store
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/.idea
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/hippo-plugins.iws
@@ -3584,6 +3590,12 @@ plugin-dashboard/src/main/webapp/bootstrap-3.0.0/nbproject
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/node_modules
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/target
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/validation-staus.json
+plugin-dashboard/src/main/webapp/css/*.iml
+plugin-dashboard/src/main/webapp/css/.DS_Store
+plugin-dashboard/src/main/webapp/css/.idea
+plugin-dashboard/src/main/webapp/css/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/css/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/css/target
 plugin-dashboard/src/main/webapp/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/images/*.iml
 plugin-dashboard/src/main/webapp/images/.DS_Store

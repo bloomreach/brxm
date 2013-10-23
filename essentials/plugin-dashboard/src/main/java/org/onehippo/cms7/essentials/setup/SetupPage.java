@@ -22,6 +22,9 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
+import org.onehippo.cms7.essentials.documents.panels.DocumentsCndStep;
+import org.onehippo.cms7.essentials.setup.panels.WelcomeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,18 +38,14 @@ public class SetupPage extends WebPage implements IHeaderContributor {
 
     public SetupPage(final PageParameters parameters) {
         super(parameters);
-        Form<?> form = new Form<>("form");
-        form.add(new AjaxButton("setupButton") {
-
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
-                log.info("STARTING POWERPACKS WIZARD");
-            }
-        });
-
-        add(form);
-
+        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
+        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        add(wizard);
     }
+
+
+
 }

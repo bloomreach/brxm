@@ -1,51 +1,17 @@
-@import "variables.less";
-
-@brand-primary: #428bca;
-@brand-success: #5cb85c;
-@brand-warning: #f0ad4e;
-@brand-danger: #E7484C;
-@brand-info: #45B3E3;
-@brand-steel: #4F5E67;
-
-@body-bg: #fff;
-@font-size-base: 16px;
-
-// Links
-// -------------------------
-
-@link-color: @brand-primary;
-@link-hover-color: darken(@link-color, 15%);
-
-// Typography
-// -------------------------
-
-@font-family-sans-serif: "ralewaymedium", Helvetica, Arial, sans-serif;
-@font-family-serif: Georgia, "Times New Roman", Times, serif;
-@font-family-monospace: Monaco, Menlo, Consolas, "Courier New", monospace;
-@font-family-base: @font-family-sans-serif;
-
 /*
 //############################################
 // HIPPO SPECIFIC  CSS
 //############################################
 */
-
-@footer-border: #eee;
-
-//
-//
-//
 .footer {
-  border-top: 1px solid @footer-border;
+  border-top: 1px solid #eeeeee;
   margin-top: 40px;
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: #4F5E67;
   text-align: center;
   color: #fff;
-
 }
-
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   /* Remove the padding we set earlier */
@@ -56,42 +22,34 @@
     padding-right: 0;
   }
 }
-
 .masthead {
   margin-bottom: 30px;
   text-align: center;
-  min-width: @screen-sm;
+  min-width: 768px;
   margin-left: auto;
   margin-right: auto;
 }
-
 @font-face {
   font-family: 'ralewaybold';
   src: url('../fonts/raleway-bold-webfont.eot');
   src: url('../fonts/raleway-bold-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/raleway-bold-webfont.woff') format('woff'), url('../fonts/raleway-bold-webfont.ttf') format('truetype'), url('../fonts/raleway-bold-webfont.svg#ralewaybold') format('svg');
   font-weight: normal;
   font-style: normal;
-
 }
-
 @font-face {
   font-family: 'ralewaymedium';
   src: url('../fonts/raleway-medium-webfont.eot');
   src: url('../fonts/raleway-medium-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/raleway-medium-webfont.woff') format('woff'), url('../fonts/raleway-medium-webfont.ttf') format('truetype'), url('../fonts/raleway-medium-webfont.svg#ralewaymedium') format('svg');
   font-weight: normal;
   font-style: normal;
-
 }
-
 @font-face {
   font-family: 'ralewayregular';
   src: url('../fonts/raleway-regular-webfont.eot');
   src: url('../fonts/raleway-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../fonts/raleway-regular-webfont.woff') format('woff'), url('../fonts/raleway-regular-webfont.ttf') format('truetype'), url('../fonts/raleway-regular-webfont.svg#ralewayregular') format('svg');
   font-weight: normal;
   font-style: normal;
-
 }
-
 /*
 //############################################
 // WIZARD STEPS
@@ -107,13 +65,11 @@
   margin: 12px 0 0;
   position: relative;
 }
-
 .wizard-steps li {
   display: block;
   text-align: center;
   float: left;
 }
-
 .wizard-steps li .step {
   text-align: center;
   border: 5px solid #CED1D6;
@@ -127,7 +83,6 @@
   z-index: 2;
   display: inline;
 }
-
 .wizard-steps li:before {
   /* the line running through each step*/
 
@@ -142,24 +97,20 @@
   top: 12px;
   z-index: 1;
 }
-
 .wizard-steps li:last-child:before {
   max-width: 50%;
   width: 50%;
 }
-
 .wizard-steps li:first-child:before {
   max-width: 50%;
   left: 50%;
 }
-
 .wizard-steps li.active:before,
 .wizard-steps li.complete:before,
 .wizard-steps li.active .step,
 .wizard-steps li.complete .step {
-  border-color: @brand-primary;
+  border-color: #428bca;
 }
-
 .wizard-steps li.complete .step:before {
   display: block;
   position: absolute;
@@ -173,36 +124,31 @@
   background-color: #FFF;
   z-index: 103;
   font-size: 18px;
-  color: @brand-success;
+  color: #5cb85c;
 }
-
 .wizard-steps li .title {
   display: block;
   margin-top: 12px;
   max-width: 100%;
-  color: @brand-steel;
+  color: #4f5e67;
   font-size: 14px;
   z-index: 104;
   text-align: center;
   table-layout: fixed;
   word-wrap: break-word;
 }
-
 .wizard-steps li.complete .title,
 .wizard-steps li.active .title {
-  color: @brand-steel;
+  color: #4f5e67;
 }
-
 .step-content .step-pane {
   display: none;
   min-height: 200px;
   padding: 4px 8px 12px;
 }
-
 .step-content .active {
   display: block;
 }
-
 .wizard-actions {
   text-align: right;
 }
