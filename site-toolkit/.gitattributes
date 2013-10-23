@@ -663,6 +663,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHand
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/AbstractHstLoadingCacheTestCase.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstConfigurationLoadingCache.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestHstNodeLoadingCache.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestPendingChangesHippoSession.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/BlueprintHandlerTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapperTest.java -text

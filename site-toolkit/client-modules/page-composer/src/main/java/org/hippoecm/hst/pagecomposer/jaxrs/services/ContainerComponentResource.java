@@ -148,10 +148,11 @@ public class ContainerComponentResource extends AbstractConfigResource {
             }
             List<String> children = container.getChildren();
             int childCount = (children != null ? children.size() : 0);
+            boolean nodeMoved = false;
             if (childCount > 0) {
                 try {
                     for (String childId : children) {
-                        checkIfMoveIntended(containerNode, childId, session);
+                        nodeMoved = moveIfNeeded(containerNode, childId, session);
                     }
                     int index = childCount - 1;
 
@@ -174,7 +175,13 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 }
             }
             HstConfigurationUtils.setLastModifiedTimestampForContainer(containerNode);
-            HstConfigurationUtils.persistChanges(session);
+            if (nodeMoved) {
+                // HippoSession#pendingChanges has a bug in case of node moves between different parents. In that
+                // case we should not dispatch events from HippoSession#pendingChanges
+                HstConfigurationUtils.persistChanges(session, false);
+            } else {
+                HstConfigurationUtils.persistChanges(session);
+            }
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
         } catch (RepositoryException e) {
@@ -240,7 +247,10 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
 
-    private void checkIfMoveIntended(Node parent, String childId, Session session) throws RepositoryException, NotFoundException {
+    /**
+     * @return <code>true</code> is node got moved
+     */
+    private boolean moveIfNeeded(Node parent, String childId, Session session) throws RepositoryException, NotFoundException {
         String parentPath = parent.getPath();
         Node childNode = session.getNodeByIdentifier(childId);
         String childPath = childNode.getPath();
@@ -250,7 +260,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
             name = findNewName(name, parent);
             String newChildPath = parentPath + "/" + name;
             session.move(childPath, newChildPath);
+            return true;
         }
+        return false;
     }
 
 }

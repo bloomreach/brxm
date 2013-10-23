@@ -49,8 +49,4 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
-    public static String testIt() {
-        return "Test";
-    }
-
 }
