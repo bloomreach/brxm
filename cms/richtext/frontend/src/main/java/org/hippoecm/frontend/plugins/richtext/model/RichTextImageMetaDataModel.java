@@ -52,7 +52,9 @@ public class RichTextImageMetaDataModel implements IModel<String> {
     }
 
     public void detach() {
-        delegate.detach();
+        if (delegate != null) {
+            delegate.detach();
+        }
     }
 
 }
