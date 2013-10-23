@@ -38,6 +38,14 @@
 
   </properties>
 
+
+  <modules>
+    <module>plugin-api</module>
+    <module>dashboard-plugins</module>
+    <module>plugin-dashboard</module>
+  </modules>
+
+
   <repositories>
     <repository>
       <id>hippo</id>
@@ -130,11 +138,5 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <modules>
-    <module>plugin-api</module>
-    <module>dashboard-plugins</module>
-    <module>plugin-dashboard</module>
-  </modules>
 
 </project>
