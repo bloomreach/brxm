@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <title>Hippo Essentials</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.css" rel="stylesheet"/>
+</head>
+<body>
+<style type="text/css">
+    body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #eee;
+    }
+
+    form {
+        max-width: 330px;
+        padding: 15px;
+        margin: 0 auto;
+    }
+
+    form form-control {
+        position: relative;
+        font-size: 16px;
+        height: auto;
+        padding: 10px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+</style>
+<div class="container">
+
+    <form wicket:id="form">
+        <button wicket:id="setupButton" class="btn btn-lg btn-primary btn-block" type="submit">Setup</button>
+    </form>
+</div>
+
+</body>
+</html>
