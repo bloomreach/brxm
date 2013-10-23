@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.concurrent.action;
 
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import javax.jcr.Node;
@@ -64,22 +65,26 @@ public class MoveDocumentAction extends AbstractFullReviewedActionsWorkflowActio
         Query query = node.getSession().getWorkspace().getQueryManager().createQuery(stmt, Query.XPATH);
         NodeIterator folders = query.execute().getNodes();
         Node result = null;
-        if (folders.getSize() > 1) {
-            int index = random.nextInt((int)folders.getSize());
-            if (index > 0) {
-                folders.skip(index);
-            }
-            result = folders.nextNode();
-            if (result.isSame(node.getParent().getParent())) {
-                if (folders.hasNext()) {
-                    result = folders.nextNode();
+        try {
+            if (folders.getSize() > 1) {
+                int index = random.nextInt((int)folders.getSize());
+                if (index > 0) {
+                    folders.skip(index);
                 }
-                else {
-                    result = null;
+                result = folders.nextNode();
+                if (result.isSame(node.getParent().getParent())) {
+                    if (folders.hasNext()) {
+                        result = folders.nextNode();
+                    }
+                    else {
+                        result = null;
+                    }
                 }
             }
         }
-
+        catch (NoSuchElementException e) {
+            // guard against and ignore possibly no longer existing folders
+        }
         return result;
     }
 
