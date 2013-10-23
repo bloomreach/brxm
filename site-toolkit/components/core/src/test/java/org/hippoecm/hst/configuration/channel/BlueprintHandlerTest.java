@@ -22,6 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +33,8 @@ import org.junit.Test;
  */
 public class BlueprintHandlerTest extends AbstractHstTestCase {
 
+    private HstNodeLoadingCache hstNodeLoadingCache;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -39,6 +43,12 @@ public class BlueprintHandlerTest extends AbstractHstTestCase {
                 "/test", "nt:unstructured",
                     "/test/hst:blueprints", HstNodeTypes.NODENAME_HST_BLUEPRINTS
         });
+
+        hstNodeLoadingCache = new HstNodeLoadingCache();
+        hstNodeLoadingCache.setRepository(getRepository());
+        hstNodeLoadingCache.setRootPath("/test");
+        hstNodeLoadingCache.setPassword("admin");
+        hstNodeLoadingCache.setUsername("admin");
     }
 
     /**
@@ -54,7 +64,7 @@ public class BlueprintHandlerTest extends AbstractHstTestCase {
         });
         getSession().save();
 
-        Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
+        HstNode blueprintNode = hstNodeLoadingCache.getNode("/test/hst:blueprints/test");
         Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
 
         assertEquals("test", blueprint.getId());
@@ -78,7 +88,7 @@ public class BlueprintHandlerTest extends AbstractHstTestCase {
         });
         getSession().save();
 
-        Node blueprintNode = getSession().getNode("/test/hst:blueprints/test");
+        HstNode blueprintNode = hstNodeLoadingCache.getNode("/test/hst:blueprints/test");
         Blueprint blueprint = BlueprintHandler.buildBlueprint(blueprintNode);
 
         Channel channel = blueprint.getPrototypeChannel();

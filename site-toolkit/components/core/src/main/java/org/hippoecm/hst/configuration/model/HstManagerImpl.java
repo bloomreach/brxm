@@ -361,7 +361,7 @@ public class HstManagerImpl implements MutableHstManager {
                 Session session = null;
                 try {
                     session = getSession();
-                    this.channelManager.load(hstModel, session);
+                    this.channelManager.load(hstModel);
                 } finally {
                     if (session != null) {
                         session.logout();

@@ -96,7 +96,7 @@ public class HstNodeLoadingCache implements HstEventConsumer {
             throw new IllegalArgumentException("Path for getting node from hst node cache must start with rootPath " +
                     "'"+rootPath+"' but was '"+absPath+"'.");
         }
-        try (LazyCloseableSession lazyCloseableSession = new LazyCloseableSession()) {
+        try (LazyCloseableSession lazyCloseableSession = createLazyCloseableSession()) {
             if (rootNode == null) {
                 rootNode = new HstNodeImpl(lazyCloseableSession.getSession().getNode(rootPath), null, true);
                 events = null;
@@ -192,11 +192,15 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         return getFirstNonNullAncestor(absParentPath);
     }
 
-    private class LazyCloseableSession implements AutoCloseable {
+    public LazyCloseableSession createLazyCloseableSession() {
+        return new LazyCloseableSession();
+    }
+
+    public class LazyCloseableSession implements AutoCloseable {
 
         Session session;
 
-        Session getSession() {
+        public Session getSession() {
             try {
                 session = repository.login(new SimpleCredentials(username, password.toCharArray()));
             } catch (RepositoryException e) {

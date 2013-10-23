@@ -39,8 +39,6 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 	@Override
 	public List<Blueprint> getBlueprints() {
 		try {
-			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// We should use a proper validation framework!
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Blueprint>(channelManager.getBlueprints()));
 		} catch (ResourceRequestValidationException rrve) {

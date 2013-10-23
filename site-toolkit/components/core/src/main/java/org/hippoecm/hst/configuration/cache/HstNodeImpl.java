@@ -77,7 +77,7 @@ public class HstNodeImpl implements HstNode {
     
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChildren) throws RepositoryException {
         this.parent = parent;
-        provider = new JCRValueProviderImpl(jcrNode, false, true);
+        provider = new JCRValueProviderImpl(jcrNode, false, true, false);
         nodeTypeName = jcrNode.getPrimaryNodeType().getName();
         if(loadChildren) {
             loadChildren(jcrNode);
@@ -319,7 +319,7 @@ public class HstNodeImpl implements HstNode {
 
         log.debug("Reload provider for : "  + getValueProvider().getPath());
         Node jcrNode = session.getNode(getValueProvider().getPath());
-        setJCRValueProvider(new JCRValueProviderImpl(jcrNode, false, true));
+        setJCRValueProvider(new JCRValueProviderImpl(jcrNode, false, true, false));
 
         if (staleChildren) {
             if (childOrderedReload) {

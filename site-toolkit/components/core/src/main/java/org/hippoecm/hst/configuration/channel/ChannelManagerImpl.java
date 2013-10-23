@@ -41,6 +41,7 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelException.Type;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -51,10 +52,10 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.MountDecorator;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -65,8 +66,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +82,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private String sites = DEFAULT_HST_SITES;
 
     private Map<String, Blueprint> blueprints;
+    private boolean bluePrintsPrototypeChecked;
+
     private Map<String, Channel> channels;
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     private String contentRoot = DEFAULT_CONTENT_ROOT;
@@ -100,11 +101,16 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private MountDecorator mountDecorator;
 
     private Object hstModelMutex;
-    
+    private HstNodeLoadingCache hstNodeLoadingCache;
+
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
     }
-    
+
+    public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
+        this.hstNodeLoadingCache = hstNodeLoadingCache;
+    }
+
     public void setHstManager(HstManager hstManager) {
         this.hstManager = hstManager;
     }
@@ -149,37 +155,33 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    private void loadBlueprints(final Node configNode) throws RepositoryException {
-        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS)) {
-            Node blueprintsNode = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
-            NodeIterator blueprintIterator = blueprintsNode.getNodes();
-            while (blueprintIterator.hasNext()) {
-                Node blueprintNode = blueprintIterator.nextNode();
+    private void loadBlueprints(final HstNode rootConfigNode) {
+        HstNode blueprintsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
+        if (blueprintsNode != null) {
+            for (HstNode blueprintNode : blueprintsNode.getNodes()) {
                 blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode));
             }
         }
     }
 
-    private void loadChannels(final Node configNode) throws RepositoryException {
-        if (configNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
-            Node channelsFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELS);
-            NodeIterator rootChannelNodes = channelsFolder.getNodes();
-            while (rootChannelNodes.hasNext()) {
-                Node hgNode = rootChannelNodes.nextNode();
-                loadChannel(hgNode);
+    private void loadChannels(final HstNode rootConfigNode) {
+        HstNode channelsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELS);
+        if (channelsNode != null) {
+            for (HstNode channelNode : channelsNode.getNodes()) {
+                loadChannel(channelNode);
             }
         } else {
             log.warn("Cannot load channels because node '{}' does not exist",
-                    configNode.getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS);
+                    rootConfigNode.getValueProvider().getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS);
         }
     }
 
-    private void loadChannel(Node currNode) throws RepositoryException {
+    private void loadChannel(HstNode currNode) {
         Channel channel = ChannelPropertyMapper.readChannel(currNode);
         channels.put(channel.getId(), channel);
     }
 
-    private void populateChannelForMount(ContextualizableMount mount, final Session session) {
+    private void populateChannelForMount(ContextualizableMount mount) {
         // we are only interested in Mount's that have isMapped = true and that 
         // are live mounts: We do not display 'preview' Mounts in cms: instead, a 
         // live mount decorated as preview are shown
@@ -232,17 +234,19 @@ public class ChannelManagerImpl implements MutableChannelManager {
         Set<String> s = new HashSet<String>();
 
         Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
-        try {
-            Node channelRootConfigNode = session.getNode(previewMount.getHstSite().getConfigurationPath());
-            for (Node mainConfigNode : new NodeIterable(channelRootConfigNode.getNodes())) {
-                final String lockedBy = JcrUtils.getStringProperty(mainConfigNode, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null);
+
+        HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewMount.getHstSite().getConfigurationPath());
+        if (channelRootConfigNode != null) {
+            for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
+                final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
                 if (lockedBy != null) {
                     mainConfigNodesLockedBySet.add(lockedBy);
                 }
             }
-        } catch (RepositoryException e) {
-            log.error("Expected configuration node at '"+previewMount.getHstSite().getConfigurationPath()+"' but not found.");
+        } else {
+            log.error("Expected configuration node at '" + previewMount.getHstSite().getConfigurationPath() + "' but not found.");
         }
+
         Set<String> changedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
         changedBySet.addAll(mainConfigNodesLockedBySet);
         channel.setChangedBySet(changedBySet);
@@ -317,15 +321,17 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    public void load(VirtualHosts virtualHosts, Session session) throws RepositoryException {
+    public void load(VirtualHosts virtualHosts) {
         synchronized (hstModelMutex) {
             long loadStart = System.currentTimeMillis();
-            Node configNode = session.getNode(rootPath);
 
-            blueprints = new HashMap<String, Blueprint>();
-            loadBlueprints(configNode);
+            final HstNode rootConfigNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
 
-            channels = new HashMap<String, Channel>();
+            bluePrintsPrototypeChecked = false;
+            blueprints = new HashMap<>();
+            loadBlueprints(rootConfigNode);
+
+            channels = new HashMap<>();
 
             hostGroup = virtualHosts.getChannelManagerHostGroupName();
             sites = virtualHosts.getChannelManagerSitesName();
@@ -344,11 +350,11 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
 
             // load all the channels, even if they are not used by the current hostGroup
-            loadChannels(configNode);
+            loadChannels(rootConfigNode);
 
             for (Mount mountForCurrentHostGroup : mountsForCurrentHostGroup) {
                 if (mountForCurrentHostGroup instanceof ContextualizableMount) {
-                    populateChannelForMount((ContextualizableMount) mountForCurrentHostGroup, configNode.getSession());
+                    populateChannelForMount((ContextualizableMount) mountForCurrentHostGroup);
                 }
             }
 
@@ -449,6 +455,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
             }
 
+            if (!bluePrintsPrototypeChecked) {
+                setBluePrintsPrototypes();
+            }
+
             Blueprint blueprint = blueprints.get(blueprintId);
 
             try {
@@ -478,7 +488,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
 
                 channels = null;
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
                 return channelId;
@@ -556,7 +566,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                                 listenerEx);
                     }
                 }
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
             } catch (RepositoryException e) {
@@ -565,11 +575,34 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
+    private void setBluePrintsPrototypes() throws ChannelException {
+        synchronized (hstModelMutex) {
+            if (bluePrintsPrototypeChecked) {
+                return;
+            }
+            try (HstNodeLoadingCache.LazyCloseableSession session = hstNodeLoadingCache.createLazyCloseableSession()) {
+                for (Blueprint blueprint : blueprints.values()) {
+                    String prototypePath = BlueprintHandler.SUBSITE_TEMPLATES_PATH + blueprint.getId();
+                    if (session.getSession().nodeExists(prototypePath)) {
+                        blueprint.setHasContentPrototype(true);
+                    }
+                }
+            } catch (RepositoryException e) {
+                throw new ChannelException("Could not check blueprint prototypes to RepositoryException : ", e);
+            }
+            bluePrintsPrototypeChecked = true;
+        }
+    }
+
     @Override
     public List<Blueprint> getBlueprints() throws ChannelException {
         synchronized (hstModelMutex) {
             load();
-            return new ArrayList<Blueprint>(blueprints.values());
+            if (!bluePrintsPrototypeChecked) {
+                setBluePrintsPrototypes();
+            }
+
+            return new ArrayList<>(blueprints.values());
         }
     }
 
@@ -577,6 +610,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
     public Blueprint getBlueprint(final String id) throws ChannelException {
         synchronized (hstModelMutex) {
             load();
+            if (!bluePrintsPrototypeChecked) {
+                setBluePrintsPrototypes();
+            }
             if (!blueprints.containsKey(id)) {
                 throw new ChannelException("Blueprint " + id + " does not exist");
             }
@@ -663,12 +699,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return getChannelInfoClass(getChannelById(id));
     }
 
-
-    @Deprecated
-    public void invalidate() {
-        log.warn("Deprecated : do nothing");
-    }
-
     // private - internal - methods
 
     private void createChannel(Node configRoot, Blueprint blueprint, Session session, final String channelId, final Channel channel) throws ChannelException, RepositoryException {
@@ -683,7 +713,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             copyOrCreateChannelNode(configRoot, channelId, channel);
 
             // Create or reuse HST configuration
-            final Node blueprintNode = BlueprintHandler.getNode(session, blueprint);
+            final Node blueprintNode =  session.getNode(blueprint.getPath());
             final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
             channel.setHstConfigPath(hstConfigPath);
 
@@ -1028,7 +1058,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return new ChannelException("Could not create content at '" + contentRoot + "'", cause,
                 ChannelException.Type.CANNOT_CREATE_CONTENT, contentRoot);
     }
-
 
     private static class ChannelManagerEventImpl implements ChannelManagerEvent {
 

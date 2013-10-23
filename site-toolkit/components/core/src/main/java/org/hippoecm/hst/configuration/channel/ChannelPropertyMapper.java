@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -25,16 +25,12 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,36 +42,32 @@ public class ChannelPropertyMapper {
     private ChannelPropertyMapper() {
     }
 
-    public static Channel readChannel(Node channelNode) throws RepositoryException {
+    public static Channel readChannel(HstNode channelNode) {
         return readChannel(channelNode, channelNode.getName());
     }
 
-    static Channel readChannel(Node channelNode, String channelId) throws RepositoryException {
+    static Channel readChannel(HstNode channelNode, String channelId) {
         Channel channel = new Channel(channelId);
         channel.setName(channelNode.getName());
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
-            channel.setName(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).getString());
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
+            channel.setName(channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_NAME));
         }
 
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE)) {
-            channel.setType(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE).getString());
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE)) {
+            channel.setType(channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_TYPE));
         }
 
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE)) {
-            channel.setDefaultDevice(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE).getString());
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE)) {
+            channel.setDefaultDevice(channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE));
         }
 
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES)) {
-            Value[] values = channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES).getValues();
-            List<String> devices = new ArrayList<String>(values.length);
-            for (Value value : values) {
-                devices.add(value.getString());
-            }
-            channel.setDevices(devices);
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES)) {
+            final String[] devices = channelNode.getValueProvider().getStrings(HstNodeTypes.CHANNEL_PROPERTY_DEVICES);
+            channel.setDevices(Arrays.asList(devices));
         }
 
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
-            String className = channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS).getString();
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
+            String className = channelNode.getValueProvider().getString(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS);
             try {
                 Class clazz = ChannelPropertyMapper.class.getClassLoader().loadClass(className);
                 if (!ChannelInfo.class.isAssignableFrom(clazz)) {
@@ -83,10 +75,11 @@ public class ChannelPropertyMapper {
                     return channel;
                 }
                 channel.setChannelInfoClassName(className);
-                if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+                HstNode channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+                if (channelInfoNode != null) {
                     Map<String, Object> properties = channel.getProperties();
                     List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor.getProperties(clazz);
-                    Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO), propertyDefinitions);
+                    Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelInfoNode, propertyDefinitions);
                     for (HstPropertyDefinition def : propertyDefinitions) {
                         if (values.get(def) != null) {
                             properties.put(def.getName(), values.get(def));
@@ -142,35 +135,30 @@ public class ChannelPropertyMapper {
                 channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
             }
         }
-
     }
 
-    static Map<HstPropertyDefinition, Object> loadProperties(Node channelInfoNode, List<HstPropertyDefinition> propertyDefinitions) throws RepositoryException {
-        Map<HstPropertyDefinition, Object> properties = new HashMap<HstPropertyDefinition, Object>();
+    static Map<HstPropertyDefinition, Object> loadProperties(HstNode channelInfoNode, List<HstPropertyDefinition> propertyDefinitions) {
+        Map<HstPropertyDefinition, Object> properties = new HashMap<>();
         if (propertyDefinitions != null) {
             for (HstPropertyDefinition pd : propertyDefinitions) {
                 Object value = null;
-                if (channelInfoNode.hasProperty(pd.getName())) {
-                    Property property = channelInfoNode.getProperty(pd.getName());
-                    value = getHstValueFromJcr(pd, property);
+                if (channelInfoNode.getValueProvider().hasProperty(pd.getName())) {
+                    Object property = channelInfoNode.getValueProvider().getProperties().get(pd.getName());
+                    value = getHstValueFromObject(pd, property);
                 }
                 properties.put(pd, value);
             }
         } else {
-            for (PropertyIterator propertyIterator = channelInfoNode.getProperties(); propertyIterator.hasNext(); ) {
-                Property prop = propertyIterator.nextProperty();
-                if (prop.getDefinition().isProtected()) {
-                    continue;
-                }
-                HstPropertyDefinition hpd = new JcrHstPropertyDefinition(prop, false);
-                properties.put(hpd, getHstValueFromJcr(hpd, prop));
+            for (Map.Entry<String, Object> property : channelInfoNode.getValueProvider().getProperties().entrySet()) {
+                AbstractHstPropertyDefinition hpd = new AbstractHstPropertyDefinition(property.getKey()) {};
+                properties.put(hpd, getHstValueFromObject(hpd, property));
             }
         }
         return properties;
     }
 
-    static void saveProperties(Node mountNode, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
-        for (PropertyIterator propertyIterator = mountNode.getProperties(); propertyIterator.hasNext(); ) {
+    static void saveProperties(Node node, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
+        for (PropertyIterator propertyIterator = node.getProperties(); propertyIterator.hasNext(); ) {
             Property prop = propertyIterator.nextProperty();
             if (prop.getDefinition().isProtected()) {
                 continue;
@@ -179,65 +167,50 @@ public class ChannelPropertyMapper {
         }
         for (HstPropertyDefinition definition : definitions) {
             if (properties.containsKey(definition.getName()) && properties.get(definition.getName()) != null) {
-                setHstValueToJcr(mountNode, definition, properties.get(definition.getName()));
+                setHstValueToJcr(node, definition, properties.get(definition.getName()));
             }
         }
     }
 
-    private static Object getHstValueFromJcr(final HstPropertyDefinition pd, final Property property) throws RepositoryException {
+    private static Object getHstValueFromObject(final HstPropertyDefinition pd, final Object property) {
         Object value;
-        if (property.isMultiple()) {
-            List values = (List) (value = new LinkedList());
-            for (Value jcrValue : property.getValues()) {
-                try {
-                    values.add(jcrToJava(jcrValue, pd.getValueType()));
-                } catch (ValueFormatException e) {
-                    log.warn("Invalid channel property value '{}' found for property '{}'. Using default value", value.toString(), pd.getName());
-                    values.add(pd.getDefaultValue());
+        if (property.getClass().isArray()) {
+            List<Object> valueList = (List<Object>)(value =  new LinkedList());
+            for (Object propVal : (Object[])property) {
+                if (correctType(propVal, pd.getValueType())) {
+                    valueList.add(propVal);
+                } else {
+                    valueList.add(pd.getDefaultValue());
                 }
             }
         } else {
-            try {
-                value = jcrToJava(property.getValue(), pd.getValueType());
-            } catch (ValueFormatException e) {
-                log.warn("Invalid channel property value '{}' found for property '{}'. Using default value", property.getValue().toString(), pd.getName());
+            if (correctType(property, pd.getValueType())) {
+                value = property;
+            } else {
                 value = pd.getDefaultValue();
             }
         }
         return value;
+
     }
 
-    public static Object jcrToJava(final Value value, final HstValueType type) throws ValueFormatException, RepositoryException {
-        if (type == null) {
-            switch (value.getType()) {
-                case PropertyType.STRING:
-                    return value.getString();
-                case PropertyType.BOOLEAN:
-                    return value.getBoolean();
-                case PropertyType.DATE:
-                    return value.getDate();
-                case PropertyType.LONG:
-                    return value.getLong();
-                case PropertyType.DOUBLE:
-                    return value.getDouble();
-            }
-            return null;
-        }
-        switch (type) {
+    private static boolean correctType(final Object property, final HstValueType valueType) {
+        switch (valueType) {
             case STRING:
-                return value.getString();
+                return property instanceof String;
             case BOOLEAN:
-                return value.getBoolean();
+                return property instanceof Boolean;
             case DATE:
-                return value.getDate();
+                return property instanceof Calendar;
             case DOUBLE:
-                return value.getDouble();
+                return property instanceof Double;
             case INTEGER:
                 // fall through: JCR does not support int but long, so return a long
+                 return property instanceof Long;
             case LONG:
-                return value.getLong();
+                return property instanceof Long;
             default:
-                return null;
+                return false;
         }
     }
 

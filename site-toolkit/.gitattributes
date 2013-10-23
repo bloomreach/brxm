@@ -490,7 +490,6 @@ components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationH
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassProcessor.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapper.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelUtils.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/channel/JcrHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/MutableChannelManager.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/components/DelegatingHstComponentInfo.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain

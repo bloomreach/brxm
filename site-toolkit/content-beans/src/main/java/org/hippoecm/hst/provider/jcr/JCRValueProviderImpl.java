@@ -18,7 +18,6 @@ package org.hippoecm.hst.provider.jcr;
 import java.util.Calendar;
 import java.util.Map;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -51,19 +50,34 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private String identifier;
     private String nodeName;
     private String localizedName;
+    private Map<String, Object> allProperties;
     
     private boolean detached = false;
     private boolean isLoaded = false;
     private boolean useStringPool = false;
+    private boolean includeProtectedProperties = true;
 
     private PropertyMapImpl propertyMap = new PropertyMapImpl();
-    
+
+    /**
+     * Creates a lazy loading jcr value provider instance without useStringPool and with protected jcr properties included
+     */
     public JCRValueProviderImpl(Node jcrNode) {
-        this(jcrNode, true, false);
+        this(jcrNode, true);
     }
 
+    /**
+     * Creates a jcr value provider instance without useStringPool and with protected jcr properties included
+     */
     public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading) {
         this(jcrNode, lazyLoading, false);
+    }
+
+    /**
+     * Creates a jcr value provider instance with protected jcr properties included
+     */
+    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading, boolean useStringPool) {
+        this(jcrNode, lazyLoading, useStringPool, true);
     }
 
     /**
@@ -71,10 +85,13 @@ public class JCRValueProviderImpl implements JCRValueProvider{
      * and fetch the canonical path
      * @param jcrNode
      * @param lazyLoading
+     * @param useStringPool whether String properties should be fetched from string pool to reduce memory usage
+     * @param includeProtectedProperties when <code>false</code>, protected jcr properties won't be included
      */
-    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading, boolean useStringPool) {
+    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading, boolean useStringPool, boolean includeProtectedProperties) {
         this.jcrNode = jcrNode;
         this.useStringPool = useStringPool;
+        this.includeProtectedProperties = includeProtectedProperties;
         if(jcrNode == null) {
             return;
         }
@@ -393,8 +410,12 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     }
 
     public Map<String, Object> getProperties() {
+        if (allProperties != null) {
+            return allProperties;
+        }
         PropertyMap p = getPropertyMap();
-        return p.getAllMapsCombined();
+        allProperties = p.getAllMapsCombined();
+        return allProperties;
     }
     
     public PropertyMap getPropertyMap() {
@@ -446,6 +467,12 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     private void loadProperty(Property p, PropertyDefinition propDef, String propertyName) {
 
         propertyName = stringPool(propertyName);
+
+        if (propDef.isProtected() && !includeProtectedProperties) {
+            log.debug("Skip protected property {} because protected properties must be skipped.", propDef.getName());
+            propertyMap.addUnAvailableProperty(stringPool(propertyName));
+            return;
+        }
 
         try {
             switch (p.getType()) {

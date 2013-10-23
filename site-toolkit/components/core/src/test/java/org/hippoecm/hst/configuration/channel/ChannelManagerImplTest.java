@@ -217,7 +217,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
         EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(getSession(), getSession().getNode("/hst:hst"), true);
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(getSession(), getSession().getNode("/hst:hst"), false);
 
         getSession().save();
         invalidator.eventPaths(pathsToBeChanged);
@@ -254,7 +254,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
         // for direct jcr node changes, we need to trigger an invalidation event ourselves
         EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(getSession(), getSession().getNode("/hst:hst"), true);
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(getSession(), getSession().getNode("/hst:hst"), false);
 
         getSession().save();
         invalidator.eventPaths(pathsToBeChanged);

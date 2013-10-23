@@ -260,13 +260,12 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		try {
 			final int synchronousJobCount = 1000;
 			for (int i = 0; i < synchronousJobCount; i++) {
-                System.out.println(i);
                 String prevVal = "testVal"+counter;
 				counter++;
 				String nextVal = "testVal"+counter;
 				mountNode.setProperty(TEST_PROP, nextVal);
 				// Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(mountNode.getSession(), mountNode.getSession().getNode("/hst:hst"), true);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(mountNode.getSession(), mountNode.getSession().getNode("/hst:hst"), false);
                 mountNode.getSession().save();
                 invalidator.eventPaths(pathsToBeChanged);
 
@@ -421,7 +420,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 									Node node = getSession1().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
 									node.setProperty(TEST_PROP, nextVal);
 									// Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
-                                    String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(node.getSession(), node.getSession().getNode("/hst:hst"), true);
+                                    String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(node.getSession(), node.getSession().getNode("/hst:hst"), false);
                                     node.getSession().save();
                                     invalidator.eventPaths(pathsToBeChanged);
 

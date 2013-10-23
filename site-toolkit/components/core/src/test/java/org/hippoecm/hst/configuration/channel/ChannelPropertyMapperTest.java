@@ -26,6 +26,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Before;
@@ -93,12 +94,19 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     }
 
 
+    private HstNodeLoadingCache hstNodeLoadingCache;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
         Node root = getSession().getRootNode();
         root.addNode("test", "nt:unstructured");
         getSession().save();
+        hstNodeLoadingCache = new HstNodeLoadingCache();
+        hstNodeLoadingCache.setRepository(getRepository());
+        hstNodeLoadingCache.setRootPath("/test");
+        hstNodeLoadingCache.setPassword("admin");
+        hstNodeLoadingCache.setUsername("admin");
     }
 
     @Test
@@ -107,7 +115,9 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
 
         HstPropertyDefinition nameDef = definitions.get(0);
         getSession().getNode("/test").setProperty("test-name", "aap");
-        Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(getSession().getNode("/test"), definitions);
+        getSession().save();
+
+        Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(hstNodeLoadingCache.getNode("/test"), definitions);
         assertTrue(values.containsKey(nameDef));
         Object value = values.get(nameDef);
         assertEquals("aap", value);
@@ -118,7 +128,7 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class);
 
         HstPropertyDefinition nameDef = definitions.get(0);
-        Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(getSession().getNode("/test"), definitions);
+        Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(hstNodeLoadingCache.getNode("/test"), definitions);
         assertTrue(values.containsKey(nameDef));
         assertNull(values.get(nameDef));
     }

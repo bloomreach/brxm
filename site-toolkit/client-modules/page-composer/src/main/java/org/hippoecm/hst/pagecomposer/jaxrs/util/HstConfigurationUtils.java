@@ -58,28 +58,31 @@ public class HstConfigurationUtils {
         String[] pathsToBeChanged = null;
         EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
         if (invalidator != null) {
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, true);
+            // never prune for getting changes since needed for hstNode model reloading
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         }
-        StringBuilder buffer = new StringBuilder("User made changes at (and possibly below): ");
-        appendPendingChangesFromNodeToBuffer(session, buffer,",");
         session.save();
-
         // after the save the paths need to be send, not before!
         if (invalidator != null && pathsToBeChanged != null) {
             invalidator.eventPaths(pathsToBeChanged);
         }
         //only log when the save is successful
-        logEvent("write-changes",session.getUserID(),buffer.toString());
+        logEvent("write-changes",session.getUserID(),StringUtils.join(pathsToBeChanged, ","));
     }
 
+    /**
+     * @deprecated since 7.9.0 not used any more
+     */
+    @Deprecated
     public static void appendPendingChangesFromNodeToBuffer(final Session session, final StringBuilder buf,
                                                         final String delimiter) throws RepositoryException {
         HippoSession hippoSession = getNonProxiedSession(session);
         if (hippoSession == null) {
             throw new IllegalStateException("Session cannot be un-proxied to HippoSession");
         }
-        // we prune the pending changes as for hst configuration it can be very large in case of
-        // coarse grained publication as then an entire hst configuration gets copied
+
+
+
         final NodeIterator it = hippoSession.pendingChanges(session.getRootNode(), "nt:base", false);
         while (it.hasNext()) {
             Node node = it.nextNode();

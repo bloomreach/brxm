@@ -27,17 +27,7 @@ public interface MutableChannelManager extends ChannelManager {
 
     /**
      * Populate the mounts under the virtual hosts with channel information.
-     *
-     * @param hosts
-     * @throws RepositoryException
      */
-    void load(VirtualHosts hosts, Session session) throws RepositoryException;
-
-    /**
-     * discard cached channel information; there have been external changes to the backend storage.
-     * @deprecated since 7.9.0 : not used any more
-     */
-    @Deprecated
-    void invalidate();
+    void load(VirtualHosts hosts);
 
 }
