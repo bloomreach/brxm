@@ -40,6 +40,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -55,7 +56,8 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         }
     };
     private static Logger log = LoggerFactory.getLogger(SetupPage.class);
-    private final transient EventBus eventBus = new EventBus();
+    @Inject
+    private  transient EventBus eventBus;
     private final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
 

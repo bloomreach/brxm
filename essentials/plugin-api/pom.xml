@@ -28,8 +28,9 @@
     <hippo.addon-channel-manager.version>2.24.06</hippo.addon-channel-manager.version>
     <!-- ***END temporary override of versions*** -->
 
+    <guice.version>3.0</guice.version>
     <junit.version>4.11</junit.version>
-    <wicket.version>6.9.0</wicket.version>
+    <wicket.version>6.11.0</wicket.version>
     <maven-model.version>3.0.5</maven-model.version>
     <commons-io.version>2.3</commons-io.version>
     <tika-parsers.version>0.9</tika-parsers.version>
@@ -56,6 +57,11 @@
       </dependency>
 
       <dependency>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>${guice.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-modules</artifactId>
         <version>${hippo.repository.version}</version>
@@ -71,6 +77,12 @@
         <artifactId>maven-model</artifactId>
         <version>${maven-model.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.wicket</groupId>
+        <artifactId>wicket-guice</artifactId>
+        <version>${wicket.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.apache.wicket</groupId>
         <artifactId>wicket-core</artifactId>

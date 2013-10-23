@@ -17,6 +17,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
@@ -61,7 +62,8 @@ public class HomePage extends WebPage implements IHeaderContributor {
     };
     final ImmutableList<Plugin> mainPlugins;
     // cannot serialize:
-    private final transient EventBus eventBus = new EventBus();
+    @Inject
+    private transient EventBus eventBus;
     private final BodyPanel body;
     private final Panel globalToolbarPanel;
     private final ImmutableList<Plugin> pluginList;

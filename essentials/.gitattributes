@@ -494,6 +494,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/NoAnnotationMethodVisitor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/exc/EssentialsCodeCreationException.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitor.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/inject/EventBusModule.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/update/UpdateUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/wicket/JcrNodeTypeModel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/wicket/SortedTypeChoiceRenderer.java -text
@@ -895,8 +896,6 @@ plugin-dashboard/src/main/webapp/images/sort_desc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
-plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/installer/Start.java -text
-plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/installer/TestHomePage.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/resources/keystore -text
 /pom.xml -text
