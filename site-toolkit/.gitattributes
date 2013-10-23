@@ -476,7 +476,6 @@ components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageScanner.java -te
 components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIVarsPlaceholderResolver.java -text
 components/core/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCache.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEvent.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventConsumer.java -text
