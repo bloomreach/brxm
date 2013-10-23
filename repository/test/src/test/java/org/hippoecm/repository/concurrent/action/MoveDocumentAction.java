@@ -84,6 +84,7 @@ public class MoveDocumentAction extends AbstractFullReviewedActionsWorkflowActio
         }
         catch (NoSuchElementException e) {
             // guard against and ignore possibly no longer existing folders
+            result = null;
         }
         return result;
     }
