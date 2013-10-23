@@ -352,6 +352,11 @@ public class HippoTester extends WicketTester {
         public void localRefresh() {
             // TODO Auto-generated method stub
         }
+
+        @Override
+        public void disableVirtualLayers() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public HippoTester() {
