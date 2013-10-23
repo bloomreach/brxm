@@ -44,11 +44,11 @@ public class HstEventsCollector {
         this.rootPath = rootPath;
     }
 
-    public boolean hasEvents() {
+    public synchronized boolean hasEvents() {
         return !hstEvents.isEmpty();
     }
 
-    public void collect(EventIterator events) {
+    public synchronized void collect(EventIterator events) {
         while (events.hasNext()) {
             try {
                 addEvent(events.nextEvent());
@@ -58,7 +58,7 @@ public class HstEventsCollector {
         }
     }
 
-    public void collect(final String... absEventPaths) {
+    public synchronized void collect(final String... absEventPaths) {
         if (absEventPaths == null) {
             return;
         }
@@ -68,12 +68,12 @@ public class HstEventsCollector {
 
     }
 
-    public void clear() {
+    public synchronized void clear() {
         hstEvents.clear();
 
     }
 
-    public Set<HstEvent> getAndClearEvents() {
+    public synchronized Set<HstEvent> getAndClearEvents() {
         if (hstEvents.isEmpty()) {
             return Collections.emptySet();
         }
