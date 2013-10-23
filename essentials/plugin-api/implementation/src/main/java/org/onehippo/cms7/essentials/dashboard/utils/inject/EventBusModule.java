@@ -30,7 +30,7 @@ import com.google.inject.spi.TypeListener;
  * @version "$Id$"
  */
 public class EventBusModule extends AbstractModule {
-    private final EventBus eventBus = new EventBus("Essentials Event Bus");
+    private final transient EventBus eventBus = new EventBus("Essentials Event Bus");
 
     @Override
     protected void configure() {

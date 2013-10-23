@@ -1695,6 +1695,12 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/common/hippo-plugins.iws
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/common/target
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/hippo-plugins.iws
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/*.iml
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/.DS_Store
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/.idea
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/atlassian-ide-plugin.xml
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/hippo-plugins.iws
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/target
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/target
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/hippo-plugins.iws
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/target

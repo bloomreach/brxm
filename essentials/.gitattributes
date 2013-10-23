@@ -451,6 +451,10 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitorTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/EventBusModuleTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEvent.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsApplication.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsListener.java -text
 plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
 plugin-api/implementation/src/test/resources/log4j.xml -text
