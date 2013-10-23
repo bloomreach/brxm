@@ -290,11 +290,14 @@ public class HstManagerImpl implements MutableHstManager {
                         try {
                             buildSites();
                             state = BuilderState.UP2DATE;
-                        } catch (ModelLoadingException | ContainerException e) {
-                            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
-                            invalidateAll();
+                        } catch (ModelLoadingException e) {
                             state = BuilderState.FAILED;
                             consecutiveBuildFailCounter++;
+                            if (prevHstModel == null) {
+                                throw new ContainerException("HST model failed to load", e);
+                            } else {
+                                log.warn("Exception during model loading happened. Return previous stale model. Reason: ", e);
+                            }
                             return prevHstModel;
                         }
                     } finally {
@@ -333,54 +336,51 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
-    private void buildSites() throws ContainerException {
+    private void buildSites() {
 
         hstEventsDispatcher.dispatchHstEvents();
 
         log.info("Start building in memory hst configuration model");
 
-
+        // TODO only when needed
+        componentRegistry.unregisterAllComponents();
         try {
 
             // TODO only when needed
-            componentRegistry.unregisterAllComponents();
-            try {
+            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
 
-                // TODO only when needed
-                siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
+            long start = System.currentTimeMillis();
+            hstModel = new VirtualHostsService(this, hstNodeLoadingCache);
+            log.info("Loading VirtualHostsService took '{}' ms.", (System.currentTimeMillis() - start));
 
-                long start = System.currentTimeMillis();
-                hstModel = new VirtualHostsService(this, hstNodeLoadingCache);
-                log.info("Loading VirtualHostsService took '{}' ms.", (System.currentTimeMillis() - start));
-
-                for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
-                    configurationAugmenter.augment((MutableVirtualHosts)hstModel);
-                }
-
-                // TODO remove session usage here and load channel manager with HstNode only
-                Session session = null;
-                try {
-                    session = getSession();
-                    this.channelManager.load(hstModel);
-                } finally {
-                    if (session != null) {
-                        session.logout();
-                    }
-                }
-
-                log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
-            } catch (ServiceException e) {
-                throw new ContainerException("Exception during building HST model", e);
-            } catch (Exception e) {
-                throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
+            for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
+                configurationAugmenter.augment((MutableVirtualHosts) hstModel);
             }
-        } catch (RuntimeRepositoryException e) {
-            throw new ContainerException("RepositoryException during building HST model", e);
+
+            // TODO remove session usage here and load channel manager with HstNode only
+            Session session = null;
+            try {
+                session = getSession();
+                this.channelManager.load(hstModel);
+            } finally {
+                if (session != null) {
+                    session.logout();
+                }
+            }
+
+            log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
+        } catch (ServiceException e) {
+            throw new ModelLoadingException("Exception during building HST model", e);
+        } catch (ModelLoadingException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
         } finally {
             // clear the StringPool as it is not needed any more
             // TODO After lazy loading is implemented, we should StringPool clear smarter...
             StringPool.clear();
         }
+
     }
 
     private Session getSession() throws RepositoryException {
