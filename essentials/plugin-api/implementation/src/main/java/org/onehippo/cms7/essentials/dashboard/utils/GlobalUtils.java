@@ -14,6 +14,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,5 +181,16 @@ public class GlobalUtils {
         } catch (RepositoryException e) {
             log.error("Error refreshing session", e);
         }
+    }
+
+    public static Session createSession() {
+        try {
+            final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("vm://");
+            // TODO: use login name/password ??
+            return repository.login("admin", "admin".toCharArray());
+        } catch (RepositoryException e) {
+            log.error("Error creating repository connection", e);
+        }
+        return null;
     }
 }

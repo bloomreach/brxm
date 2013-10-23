@@ -2313,6 +2313,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/.DS_Sto
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/.idea
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/target

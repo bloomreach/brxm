@@ -27,8 +27,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.onehippo.cms7.essentials.dashboard.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
@@ -36,6 +34,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PanelPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.installer.panels.BodyPanel;
 import org.onehippo.cms7.essentials.installer.panels.DashboardPanel;
@@ -88,7 +87,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
 
         menu = new MenuPanel("menu", this, pluginList, mainPlugins);
 
-        globalToolbarPanel = new GlobalToolbarPanel("globalToolbar", new PanelPluginContext(createSession(), eventBus));
+        globalToolbarPanel = new GlobalToolbarPanel("globalToolbar", new PanelPluginContext(GlobalUtils.createSession(), eventBus));
         add(globalToolbarPanel);
         add(menu);
         add(body);
@@ -129,7 +128,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
     public void onPluginSelected(final Plugin plugin, final AjaxRequestTarget target) {
         log.info("Plugin selected:  {}", plugin);
 
-        final PluginContext context = new DashboardPluginContext(createSession(), plugin, eventBus);
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin, eventBus);
         // inject project settings:
         final ConfigDocument document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
         if (document != null) {
@@ -166,7 +165,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
         if(plugin==null) {
             log.info("Settings plugin not found");
         }
-        final PluginContext context = new DashboardPluginContext(createSession(), plugin, eventBus);
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin, eventBus);
         body.replace(new SetupPanel("plugin", plugin, context));
         target.add(body);
     }
@@ -196,7 +195,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
         InputStream stream = null;
         Session session = null;
         try {
-            session = createSession();
+            session = GlobalUtils.createSession();
             if (session == null) {
                 log.error("Session was null, is Hippo Repository up and running?");
                 return;
@@ -205,7 +204,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
             if (root.hasNode(PATH_HIPPO_DASHBOARD)) {
 
                 log.info("Dashboard already registered, skipping");
-                projectSetup();
 
                 return;
             }
@@ -228,20 +226,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
 
     }
 
-    private void projectSetup() {
-
-    }
-
-    public static Session createSession() {
-        try {
-            final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("vm://");
-            // TODO: use login name/password ??
-            return repository.login("admin", "admin".toCharArray());
-        } catch (RepositoryException e) {
-            log.error("Error creating repository connection", e);
-        }
-        return null;
-    }
 
     public Plugin getSelectedPlugin() {
         return selectedPlugin;
