@@ -3,9 +3,9 @@ package org.onehippo.cms7.essentials.dashboard.event;
 /**
  * Enum which indicates where message should be shown
  *
- * @version "$Id: MessageLocation.java 174583 2013-08-21 17:05:38Z mmilicevic $"
+ * @version "$Id$"
  */
-public enum MessageLocation {
+public enum DisplayLocation {
     /**
      * Indicates message should be shown in global toolbar
      */

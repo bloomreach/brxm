@@ -45,12 +45,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ProjectSetupStep extends EssentialsWizardStep {
 
-    private static final long serialVersionUID = 1L;
     public static final String PROPERTY_NAMESPACE = "project-namespace";
     public static final String PROPERTY_COMPONENTS_PACKAGE = "components-package";
     public static final String PROPERTY_REST_PACKAGE = "rest-package";
     public static final String PROPERTY_BEANS_PACKAGE = "beans-package";
     public static final String CONFIG_NAME = "projectSettings";
+    private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ProjectSetupPlugin.class);
     final DropDownChoice<String> dropdownNamespace;
     final DropDownChoice<String> dropdownRest;
@@ -60,6 +60,8 @@ public class ProjectSetupStep extends EssentialsWizardStep {
     final TextField<String> inputRestPackage;
     final TextField<String> inputComponentsPackage;
     final TextField<String> inputNamespace;
+    final Plugin descriptor;
+    final PluginContext context;
     private String beansPackage;
     private String restPackage;
     private String componentsPackage;
@@ -71,8 +73,6 @@ public class ProjectSetupStep extends EssentialsWizardStep {
     private List<String> projectNamespaces;
     private List<String> sitePackages;
     private List<String> restPackages;
-    final Plugin descriptor;
-    final PluginContext context;
 
     public ProjectSetupStep(final String id, final Plugin descriptor, final PluginContext context) {
         super(id);
@@ -149,7 +149,7 @@ public class ProjectSetupStep extends EssentialsWizardStep {
     }
 
     private void loadModel() {
-        if (context == null) {
+        if (context == null || context.getSession() == null) {
             log.error("@@@ Cannot setup project, context was null");
             return;
         }

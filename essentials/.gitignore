@@ -1507,6 +1507,12 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/atlassian-ide-plugin.xml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/target
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/*.iml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/.DS_Store
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/.idea
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/*.iml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/.DS_Store

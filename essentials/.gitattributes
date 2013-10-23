@@ -336,8 +336,9 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/PluginConfig
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/Screenshot.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/HippoEssentialsGenerated.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginContext.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/MessageLocation.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayLocation.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/InstallerInstruction.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/Instruction.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/InstructionType.java -text
@@ -355,6 +356,13 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginConfigProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DashboardPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PanelPluginContext.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/BaseEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/LogEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/LoggingPluginEventListener.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/MessageEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/NodeCreatedEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/NodeDeletedEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/NodeEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/HstConfigWriter.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/ConfigComponent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/ConfigNode.java -text
