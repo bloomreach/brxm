@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.richtext.jcr;
 
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,8 +33,10 @@ import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,58 +53,55 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         this.nodeModel = nodeModel;
     }
 
-    public RichTextLink loadLink(String relPath) throws RichTextException {
-        if (Strings.isEmpty(relPath)) {
+    public RichTextLink loadLink(String uuid) throws RichTextException {
+        if (Strings.isEmpty(uuid)) {
             throw new IllegalArgumentException("Link path is empty");
         }
-        relPath = RichTextUtil.decode(relPath);
+        final Node node = nodeModel.getObject();
         try {
-            Node node = nodeModel.getObject();
-            Node linkNode = node.getNode(relPath);
-            if (linkNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                String uuid = linkNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getValue().getString();
-                Item item = node.getSession().getNodeByUUID(uuid);
-                if (item != null) {
-                    JcrNodeModel model = new JcrNodeModel(item.getPath());
-                    return new RichTextLink(model, relPath);
-                } else {
-                    throw new RichTextException("Facetselect points to non-existing uuid" + uuid);
-                }
-            } else {
-                throw new RichTextException("Found node is not a facetselect");
-            }
-        } catch (PathNotFoundException e) {
-            throw new RichTextException("Error finding facet node for relative path " + relPath, e);
+            final Item item = node.getSession().getNodeByIdentifier(uuid);
+            final JcrNodeModel model = new JcrNodeModel(item.getPath());
+            return new RichTextLink(model, uuid);
         } catch (RepositoryException e) {
-            throw new RichTextException("Error finding facet node for relative path " + relPath, e);
+            throw new RichTextException("Rich text link factory for node '" + JcrUtils.getNodePathQuietly(node) + "'"
+                    + " cannot find linked node with UUID '" + uuid + "'", e);
         }
     }
 
-    public RichTextLink createLink(IDetachable targetId) throws RichTextException {
-        JcrNodeModel targetModel = (JcrNodeModel) targetId;
+    public RichTextLink createLink(final IModel<Node> targetModel) throws RichTextException {
         if (targetModel == null) {
             throw new IllegalArgumentException("Target is null");
         }
         try {
-            Node targetNode = targetModel.getNode();
+            final Node targetNode = targetModel.getObject();
             if (targetNode == null) {
-                throw new RichTextException("Node does not exist at " + targetModel.getItemModel().getPath());
+                final String error = createTargetNodeDoesNotExistError(targetModel);
+                throw new RichTextException(error);
             }
-            String name = NodeNameCodec.encode(targetNode.getName());
-            Node node = nodeModel.getObject();
-            name = RichTextFacetHelper.createFacet(node, name, targetNode);
-            return new RichTextLink(targetModel, name);
+            final String name = NodeNameCodec.encode(targetNode.getName());
+            final Node node = nodeModel.getObject();
+            RichTextFacetHelper.createFacet(node, name, targetNode);
+            final String targetUuid = targetNode.getIdentifier();
+            return new RichTextLink(targetModel, targetUuid);
         } catch (RepositoryException e) {
             throw new RichTextException("could not create link", e);
         }
     }
 
-    public boolean isValid(IDetachable targetId) {
-        if (!(targetId instanceof JcrNodeModel)) {
+    private static String createTargetNodeDoesNotExistError(final IModel<Node> targetModel) {
+        String error = "Link target node does not exist";
+        if (targetModel instanceof JcrNodeModel) {
+            String path = ((JcrNodeModel)targetModel).getItemModel().getPath();
+            error += ": '" + path + "'";
+        }
+        return error;
+    }
+
+    public boolean isValid(IModel<Node> targetModel) {
+        if (targetModel == null) {
             return false;
         }
-        JcrNodeModel selectedModel = (JcrNodeModel) targetId;
-        Node node = selectedModel.getObject();
+        Node node = targetModel.getObject();
         if (node == null) {
             return false;
         }
@@ -113,16 +113,16 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
         }
     }
 
-    public Set<String> getLinks() {
+    public Set<String> getLinkUuids() {
         if (links == null) {
             links = new TreeSet<String>();
             try {
-                NodeIterator iter = nodeModel.getObject().getNodes();
+                final NodeIterator iter = nodeModel.getObject().getNodes();
                 while (iter.hasNext()) {
-                    Node child = iter.nextNode();
+                    final Node child = iter.nextNode();
                     if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                        String name = child.getName();
-                        links.add(name);
+                        final String uuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                        links.add(uuid);
                     }
                 }
             } catch (RepositoryException ex) {
@@ -135,17 +135,20 @@ public class JcrRichTextLinkFactory implements IRichTextLinkFactory {
     /**
      * Remove any facetselects that are no longer used.
      * 
-     * @param references the current list of link names 
+     * @param uuids the current list of link UUIDs
      */
-    public void cleanup(Set<String> references) {
+    public void cleanup(Set<String> uuids) {
         try {
-            NodeIterator iter = nodeModel.getObject().getNodes();
+            final Set<String> uuidsWithChildFacet = new TreeSet<String>();
+            final NodeIterator iter = nodeModel.getObject().getNodes();
             while (iter.hasNext()) {
                 Node child = iter.nextNode();
                 if (child.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String name = child.getName();
-                    if (!references.contains(name)) {
+                    String uuid = child.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    if (!uuids.contains(uuid) || uuidsWithChildFacet.contains(uuid)) {
                         child.remove();
+                    } else {
+                        uuidsWithChildFacet.add(uuid);
                     }
                 }
             }

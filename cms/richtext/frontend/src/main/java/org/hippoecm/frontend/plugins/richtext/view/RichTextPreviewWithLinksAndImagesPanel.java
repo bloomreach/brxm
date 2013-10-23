@@ -15,22 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.richtext.view;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.panel.Panel;
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
-import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.service.IBrowseService;
 
 /**
@@ -39,7 +35,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextViewPanel {
 
     public RichTextPreviewWithLinksAndImagesPanel(final String id,
-                                                  final JcrNodeModel nodeModel,
+                                                  final IModel<Node> nodeModel,
                                                   final IModel<String> htmlModel,
                                                   final IBrowseService browser) {
         super(id);
@@ -51,13 +47,13 @@ public class RichTextPreviewWithLinksAndImagesPanel extends AbstractRichTextView
         addView(viewModel);
     }
 
-    private IModel<String> createViewModel(final JcrNodeModel nodeModel, final IModel<String> htmlModel, final PreviewLinksBehavior previewLinksBehavior) {
+    private IModel<String> createViewModel(final IModel<Node> nodeModel, final IModel<String> htmlModel, final PreviewLinksBehavior previewLinksBehavior) {
         final IRichTextImageFactory imageFactory = new JcrRichTextImageFactory(nodeModel);
         final IRichTextLinkFactory linkFactory = new JcrRichTextLinkFactory(nodeModel);
-        final IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory);
+        final IImageURLProvider urlProvider = new RichTextImageURLProvider(imageFactory, linkFactory, nodeModel);
 
         final StripScriptModel stripScriptModel = new StripScriptModel(htmlModel);
-        final PrefixingModel prefixingModel = new PrefixingModel(stripScriptModel, urlProvider);
+        final RichTextImageMetaDataModel prefixingModel = new RichTextImageMetaDataModel(stripScriptModel, urlProvider);
         final BrowsableModel browsableModel = new BrowsableModel(prefixingModel, previewLinksBehavior);
 
         return browsableModel;

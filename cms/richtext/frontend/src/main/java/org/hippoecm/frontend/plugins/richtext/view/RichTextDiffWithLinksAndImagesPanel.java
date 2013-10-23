@@ -23,20 +23,19 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
-import org.hippoecm.frontend.plugins.richtext.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.model.BrowsableModel;
-import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.plugins.standards.diff.HtmlDiffModel;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -89,10 +88,10 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         // links that are in both: set to current
         // otherwise: set to respective prefix
 
-        final IImageURLProvider baseDecorator = new RichTextImageURLProvider(baseImageFactory, baseLinkFactory);
-        final IImageURLProvider currentDecorator = new RichTextImageURLProvider(currentImageFactory, currentLinkFactory);
+        final IImageURLProvider baseDecorator = new RichTextImageURLProvider(baseImageFactory, baseLinkFactory, baseNodeModel);
+        final IImageURLProvider currentDecorator = new RichTextImageURLProvider(currentImageFactory, currentLinkFactory, currentNodeModel);
 
-        final IModel<String> decoratedBase = new PrefixingModel(baseModel, new IImageURLProvider() {
+        final IModel<String> decoratedBase = new RichTextImageMetaDataModel(baseModel, new IImageURLProvider() {
             private static final long serialVersionUID = 1L;
 
             public String getURL(String link) throws RichTextException {
@@ -100,15 +99,15 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
                 if (link.indexOf('/') > 0) {
                     facetName = link.substring(0, link.indexOf('/'));
                 }
-                if (baseLinkFactory.getLinks().contains(facetName) && currentLinkFactory.getLinks().contains(facetName)) {
+                if (baseLinkFactory.getLinkUuids().contains(facetName) && currentLinkFactory.getLinkUuids().contains(facetName)) {
                     RichTextLink baseRtl = baseLinkFactory.loadLink(facetName);
                     RichTextLink currentRtl = currentLinkFactory.loadLink(facetName);
-                    if (currentRtl.getTargetId().equals(baseRtl.getTargetId())) {
+                    if (currentRtl.getTargetModel().equals(baseRtl.getTargetModel())) {
                         return currentDecorator.getURL(link);
                     }
-                } else if (baseLinkFactory.getLinks().contains(facetName)) {
+                } else if (baseLinkFactory.getLinkUuids().contains(facetName)) {
                     return baseDecorator.getURL(link);
-                } else if (currentLinkFactory.getLinks().contains(facetName)) {
+                } else if (currentLinkFactory.getLinkUuids().contains(facetName)) {
                     return currentDecorator.getURL(link);
                 }
                 return facetName;
@@ -125,7 +124,7 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
             }
         };
 
-        final IModel<String> decoratedCurrent = new PrefixingModel(currentModel, currentDecorator);
+        final IModel<String> decoratedCurrent = new RichTextImageMetaDataModel(currentModel, currentDecorator);
         final HtmlDiffModel diffModel = new HtmlDiffModel(new StripScriptModel(decoratedBase), new StripScriptModel(decoratedCurrent));
 
         return new BrowsableModel(diffModel, previewLinksBehavior);

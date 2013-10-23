@@ -18,6 +18,9 @@ package org.hippoecm.frontend.plugins.richtext;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
+
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.model.IDetachable;
@@ -33,6 +36,7 @@ public class RichTextImage implements IClusterable {
 
     private String path;
     private String name;
+    private String uuid;
     private List<String> resourceDefinitions;
     private String selectedResourceDefinition;
 
@@ -63,12 +67,20 @@ public class RichTextImage implements IClusterable {
         this.selectedResourceDefinition = selectedResourceDefinition;
     }
 
-    public void setName(String facet) {
-        this.name = facet;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setUuid(final String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public String getFacetSelectPath() {
@@ -88,14 +100,20 @@ public class RichTextImage implements IClusterable {
         } else {
             url = RichTextUtil.encode(docUrl);
         }
-        return RequestCycle.get().getResponse().encodeURL(url).toString();
+
+        return encodeUrl(url);
+    }
+
+    private String encodeUrl(final String url) {
+        RequestCycle requestCycle = RequestCycle.get();
+        return requestCycle != null ? requestCycle.getResponse().encodeURL(url).toString() : url;
     }
 
     public boolean isValid() {
         return path != null && !(getResourceDefinitions().size() > 1 && selectedResourceDefinition == null);
     }
 
-    public IDetachable getTarget() {
+    public IModel<Node> getTarget() {
         return new JcrNodeModel(path).getParentModel();
     }
 

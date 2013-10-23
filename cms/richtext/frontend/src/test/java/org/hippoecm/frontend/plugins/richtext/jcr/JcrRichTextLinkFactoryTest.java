@@ -27,47 +27,28 @@ import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class JcrRichTextLinkFactoryTest extends PluginTest {
-
-    String[] content = {
-            "/test", "nt:unstructured",
-                "/test/target", "hippo:handle",
-                    "jcr:mixinTypes", "mix:referenceable",
-                    "/test/target/target", "hippo:document",
-                        "jcr:mixinTypes", "hippo:harddocument",
-                "/test/source", "hippo:handle",
-                    "jcr:mixinTypes", "mix:referenceable",
-                    "/test/source/source", "richtexttest:testdocument",
-                        "jcr:mixinTypes", "hippo:harddocument",
-                        "/test/source/source/richtexttest:html", "hippostd:html",
-                            "hippostd:content", "testing 1 2 3"
-    };
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        build(session, content);
-        session.save();
-    }
+public class JcrRichTextLinkFactoryTest {
 
     @Test
-    public void linkLifecycleTest() throws RichTextException, RepositoryException {
-        Node html = root.getNode("test/source/source/richtexttest:html");
+    public void createLink() throws RichTextException, RepositoryException {
+        final MockNode root = MockNode.root();
+
+        final Node targetHandle = root.addNode("target", "hippo:handle");
+        targetHandle.addNode("target", "hippo:document");
+
+        final Node sourceHandle = root.addNode("source", "hippo:handle");
+        final Node html = sourceHandle.addNode("source", "richtexttest:testdocument").addNode("richtexttest:html", "hippostd:html");
+        html.setProperty("hippostd:content", "testing 1 2 3");
+
         JcrRichTextLinkFactory factory = new JcrRichTextLinkFactory(new JcrNodeModel(html));
-        Node target = root.getNode("test/target");
-        RichTextLink link = factory.createLink(new JcrNodeModel(target));
+        RichTextLink link = factory.createLink(new JcrNodeModel(targetHandle));
 
-        assertTrue(root.hasNode("test/source/source/richtexttest:html/target"));
-
-        RichTextModel model = new RichTextModel(new JcrPropertyValueModel(new JcrPropertyModel(html.getProperty("hippostd:content"))));
-        model.setLinkFactory(factory);
-        model.setObject(model.getObject());
-        assertFalse(root.hasNode("test/source/source/richtexttest:html/target"));
+        assertTrue(html.hasNode("target"));
     }
 
 }

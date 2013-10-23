@@ -17,18 +17,22 @@ package org.hippoecm.frontend.plugins.richtext;
 
 import java.util.Set;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
 
 public interface IRichTextLinkFactory extends IDetachable {
 
-    Set<String> getLinks();
+    Set<String> getLinkUuids();
 
-    void cleanup(Set<String> references);
+    void cleanup(Set<String> uuids);
 
-    boolean isValid(IDetachable targetId);
+    boolean isValid(IModel<Node> targetModel);
     
-    RichTextLink createLink(IDetachable targetId) throws RichTextException;
+    RichTextLink createLink(IModel<Node> targetModel) throws RichTextException;
 
-    RichTextLink loadLink(String relPath) throws RichTextException;
+    RichTextLink loadLink(String uuid) throws RichTextException;
 
 }

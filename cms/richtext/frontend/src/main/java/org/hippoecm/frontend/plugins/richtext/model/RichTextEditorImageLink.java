@@ -17,10 +17,19 @@ package org.hippoecm.frontend.plugins.richtext.model;
 
 import java.util.Map;
 
-import org.apache.wicket.model.IDetachable;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.repository.util.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink {
+
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(RichTextEditorImageLink.class);
 
     public static final String URL = "f_url";
     public static final String FACET_SELECT = "f_facetselect";
@@ -30,8 +39,8 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
     public static final String HEIGHT = "f_height";
     public static final String TYPE = "f_type";
 
-    public RichTextEditorImageLink(Map<String, String> values, IDetachable targetId) {
-        super(values, targetId);
+    public RichTextEditorImageLink(Map<String, String> values, IModel<Node> targetModel) {
+        super(values, targetModel);
     }
 
     public void setUrl(String url) {
@@ -59,11 +68,21 @@ public abstract class RichTextEditorImageLink extends RichTextEditorDocumentLink
     }
 
     @Override
-    public void setLinkTarget(IDetachable model) {
+    public void setLinkTarget(IModel<Node> model) {
         super.setLinkTarget(model);
+        trySetUuid(model);
         if(model != null && !model.equals(getInitialModel())) {
             put(WIDTH, "");
             put(HEIGHT, "");
+        }
+    }
+
+    private void trySetUuid(final IModel<Node> model) {
+        final Node targetNode = model.getObject();
+        try {
+            setUuid(targetNode.getIdentifier());
+        } catch (RepositoryException e) {
+            log.warn("Cannot get the identifier of linked image '{}'", JcrUtils.getNodePathQuietly(targetNode));
         }
     }
 }

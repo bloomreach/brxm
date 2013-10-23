@@ -34,11 +34,12 @@ import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.RichTextImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.model.PrefixingModel;
+import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettings;
@@ -161,17 +162,17 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     protected IModel<String> createEditModel() {
-        final IRichTextLinkFactory linkFactory = createLinkFactory();
-
         final IModel<String> htmlModel = getHtmlModel();
-        final RichTextModel model = new RichTextModel(htmlModel);
-        model.setCleaner(getHtmlCleanerOrNull());
-        model.setLinkFactory(linkFactory);
+        final RichTextModel richTextModel = new RichTextModel(htmlModel);
+        richTextModel.setCleaner(getHtmlCleanerOrNull());
+
+        final IRichTextLinkFactory linkFactory = createLinkFactory();
+        final ChildFacetUuidsModel facetNodeNamesToUuidsModel = new ChildFacetUuidsModel(richTextModel, getNodeModel(), linkFactory);
 
         final IRichTextImageFactory imageFactory = createImageFactory();
         final IImageURLProvider urlProvider = createImageUrlProvider(imageFactory, linkFactory);
 
-        return new PrefixingModel(model, urlProvider);
+        return new RichTextImageMetaDataModel(facetNodeNamesToUuidsModel, urlProvider);
     }
 
     protected IRichTextLinkFactory createLinkFactory() {
@@ -183,7 +184,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     }
 
     protected IImageURLProvider createImageUrlProvider(final IRichTextImageFactory imageFactory, final IRichTextLinkFactory linkFactory) {
-        return new RichTextImageURLProvider(imageFactory, linkFactory);
+        return new RichTextImageURLProvider(imageFactory, linkFactory, getNodeModel());
     }
 
     @Override
@@ -222,8 +223,8 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         return getPluginContext().getService(browserId, IBrowseService.class);
     }
 
-    private JcrNodeModel getNodeModel() {
-        return (JcrNodeModel) getDefaultModel();
+    private IModel<Node> getNodeModel() {
+        return (IModel<Node>) getDefaultModel();
     }
 
     private static IPluginConfig createNodePickerSettings(final String clusterName, final String lastVisitedKey, final String lastVisitedNodeTypes) {

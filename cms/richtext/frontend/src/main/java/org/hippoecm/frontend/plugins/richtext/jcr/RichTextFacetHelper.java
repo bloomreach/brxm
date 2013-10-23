@@ -15,43 +15,98 @@
  */
 package org.hippoecm.frontend.plugins.richtext.jcr;
 
+import java.util.Set;
+
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RichTextFacetHelper {
 
-
     static final Logger log = LoggerFactory.getLogger(RichTextFacetHelper.class);
 
     private RichTextFacetHelper() {
     }
-    
-    static String createFacet(Node node, String link, Node target) throws ItemExistsException, PathNotFoundException,
-            NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
-        if (target == null || !target.isNodeType("mix:referenceable")) {
-            log.error("uuid is null. Should never be possible for facet");
-            return "";
+
+    static void createFacets(final Node node, final Set<String> uuids) throws RepositoryException {
+        final Session session = node.getSession();
+        for (String uuid : uuids) {
+            try {
+                final Node target = session.getNodeByIdentifier(uuid);
+                createFacet(node, target.getName(), uuid);
+            } catch (ItemNotFoundException e) {
+                log.warn("Cannot create facet node below '{}', target UUID does not exist: '{}'", JcrUtils.getNodePathQuietly(node), uuid);
+            }
         }
+    }
+
+    static String createFacet(final Node node, final String link, final Node target) throws RepositoryException {
+        return createFacet(node, link, target.getIdentifier());
+    }
+
+    static String createFacet(final Node node, final String link, final String targetUuid) throws RepositoryException {
 
         String linkName = newLinkName(node, link);
 
         Node facetselect = node.addNode(linkName, HippoNodeType.NT_FACETSELECT);
-        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, target.getUUID());
+        facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, targetUuid);
         facetselect.setProperty(HippoNodeType.HIPPO_FACETS, new String[] {});
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
         facetselect.setProperty(HippoNodeType.HIPPO_VALUES, new String[] {});
 
         return linkName;
+    }
+
+    static String getChildDocBaseOrNull(final Node node, final String childNodeName) {
+        String result = null;
+        try {
+            if (node.hasNode(childNodeName)) {
+                final Node child = node.getNode(childNodeName);
+                return getDocBaseOrNull(child);
+            }
+        } catch (RepositoryException e) {
+            final String parentNodePath = JcrUtils.getNodePathQuietly(node);
+            final String childNodePath = parentNodePath != null ? parentNodePath + "/" + childNodeName : childNodeName;
+            log.warn("Cannot get child node '{}'", childNodePath, e);
+        }
+        return result;
+    }
+
+    private static String getDocBaseOrNull(final Node node) throws RepositoryException {
+        if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+            return JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DOCBASE, null);
+        }
+        return null;
+    }
+
+    static String getChildFacetNameOrNull(final Node node, final String uuid) {
+        try {
+            final NodeIterator children = node.getNodes();
+            while (children.hasNext()) {
+                final Node child = children.nextNode();
+                final String docBaseOrNull = getDocBaseOrNull(child);
+                if (uuid.equals(docBaseOrNull)) {
+                    return child.getName();
+                }
+            }
+        } catch (RepositoryException e) {
+            log.warn("Node '{}' does not have a child facet node for UUID '{}'",
+                    JcrUtils.getNodePathQuietly(node), uuid);
+        }
+        return null;
     }
 
     private static String newLinkName(Node node, String link) throws RepositoryException {

@@ -37,7 +37,7 @@ public class BrowsableModel implements IModel<String> {
     public String getObject() {
         String text = bare.getObject();
         if (text != null) {
-            return RichTextProcessor.decorateLinks(text, linkDecorator);
+            return RichTextProcessor.decorateLinkHrefs(text, linkDecorator);
         }
         return null;
     }

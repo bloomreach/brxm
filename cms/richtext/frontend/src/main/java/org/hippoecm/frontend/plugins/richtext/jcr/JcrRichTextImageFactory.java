@@ -101,19 +101,18 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
         return createImageItem(node, null, null);
     }
 
-    public boolean save(RichTextImage image) throws RichTextException {
-        Node node = nodeModel.getObject();
+    public void save(RichTextImage image) throws RichTextException {
+        final Node node = this.nodeModel.getObject();
+        final String imageName = image.getName();
         try {
-            Node target = ((JcrNodeModel) image.getTarget()).getNode();
-            String facet = RichTextFacetHelper.createFacet(node, image.getName(), target);
-            if (facet != null && !facet.equals("")) {
-                image.setName(facet);
-                return true;
-            }
+            final Node target = image.getTarget().getObject();
+            final String uuid = target.getIdentifier();
+            final String facetName = RichTextFacetHelper.createFacet(node, imageName, uuid);
+            image.setName(facetName);
+            image.setUuid(uuid);
         } catch (RepositoryException e) {
-            throw new RichTextException("Failed to create facet for " + image.getName(), e);
+            throw new RichTextException("Failed to create facet for image '" + imageName + "'", e);
         }
-        return false;
     }
 
     public boolean isValid(IDetachable targetId, String facetSelectPath) {

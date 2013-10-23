@@ -21,38 +21,38 @@ import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PrefixingModel implements IModel<String> {
+public class RichTextImageMetaDataModel implements IModel<String> {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(PrefixingModel.class);
+    static final Logger log = LoggerFactory.getLogger(RichTextImageMetaDataModel.class);
 
     private IImageURLProvider decorator;
-    private IModel<String> bare;
+    private IModel<String> delegate;
 
-    public PrefixingModel(IModel<String> bare, IImageURLProvider decorator) {
-        this.bare = bare;
+    public RichTextImageMetaDataModel(IModel<String> delegate, IImageURLProvider decorator) {
+        this.delegate = delegate;
         this.decorator = decorator;
     }
 
     public String getObject() {
-        String text = bare.getObject();
+        String text = delegate.getObject();
         if (text != null) {
-            return RichTextProcessor.prefixImageLinks(text, decorator);
+            return RichTextProcessor.prefixInternalImageLinks(text, decorator);
         }
         return null;
     }
 
     public void setObject(String object) {
         if (object != null) {
-            bare.setObject(RichTextProcessor.restoreFacets(object));
+            delegate.setObject(RichTextProcessor.restoreFacets(object));
         } else {
-            bare.setObject(null);
+            delegate.setObject(null);
         }
     }
 
     public void detach() {
-        bare.detach();
+        delegate.detach();
     }
 
 }

@@ -18,7 +18,10 @@ package org.hippoecm.frontend.plugins.richtext.model;
 
 import java.util.Map;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +30,11 @@ public abstract class RichTextEditorDocumentLink extends RichTextEditorLink {
 
     protected static final Logger log = LoggerFactory.getLogger(RichTextEditorDocumentLink.class);
     
-    private IDetachable initialModel;
-    private IDetachable selectedModel;
+    private IModel<Node> initialModel;
+    private IModel<Node> selectedModel;
     private String initType;
 
-    public RichTextEditorDocumentLink(Map<String, String> values, IDetachable model) {
+    public RichTextEditorDocumentLink(Map<String, String> values, IModel<Node> model) {
         super(values);
 
         initialModel = selectedModel = model;
@@ -62,11 +65,11 @@ public abstract class RichTextEditorDocumentLink extends RichTextEditorLink {
         return initialModel == null || isReplacing();
     }
 
-    public IDetachable getLinkTarget() {
+    public IModel<Node> getLinkTarget() {
         return selectedModel;
     }
 
-    public void setLinkTarget(IDetachable model) {
+    public void setLinkTarget(IModel<Node> model) {
         this.selectedModel = model;
     }
 

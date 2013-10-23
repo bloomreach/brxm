@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
+import javax.jcr.Node;
+
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IDetachable;
 
@@ -22,24 +25,24 @@ public class RichTextLink implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
-    private IDetachable model;
+    private IModel<Node> model;
+    private String uuid;
 
-    public RichTextLink(IDetachable model, String name) {
+    public RichTextLink(IModel<Node> model, String uuid) {
         this.model = model;
-        this.name = name;
+        this.uuid = uuid;
     }
 
-    public IDetachable getTargetId() {
+    public IModel<Node> getTargetModel() {
         return model;
     }
 
-    public String getName() {
-        return name;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setName(String nodeName) {
-        this.name = nodeName;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
 }

@@ -56,6 +56,7 @@
 
         var LINK_ATTRIBUTES_PARAMETER_MAP = {
                 href: 'f_href',
+                uuid: 'f_uuid',
                 title: 'f_title',
                 target: 'f_target'
             },
@@ -129,8 +130,8 @@
             label: LANG.internalLinkTooltip,
             command: 'pickInternalLink',
             toolbar: 'links,5',
-            allowedContent: 'a[!href,title,target]',
-            requiredContent: 'a[!href]'
+            allowedContent: 'a[!uuid,title,target]',
+            requiredContent: 'a[!uuid]'
         });
 
         editor.addCommand('pickInternalLink', {
@@ -185,6 +186,7 @@
                 src: 'f_url',
                 type: 'f_type',
                 facetselect: 'f_facetselect',
+                uuid: 'f_uuid',
                 alt: 'f_alt',
                 align: 'f_align',
                 width: 'f_width',
@@ -196,8 +198,8 @@
             label: LANG.imageTooltip,
             command: 'pickImage',
             toolbar: 'insert,5',
-            allowedContent: 'img[!src,alt,align,width,height,facetselect,type]',
-            requiredContent: 'img[!src]'
+            allowedContent: 'img[!src,!facetselect,!type,!uuid,alt,align,width,height]',
+            requiredContent: 'img[!src,!facetselect,!type,!uuid]'
         });
 
         editor.addCommand('pickImage', {

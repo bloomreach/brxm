@@ -18,13 +18,15 @@ package org.hippoecm.frontend.plugins.richtext.dialog.links;
 
 import java.util.Map;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorInternalLink;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorLink;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
-import org.hippoecm.frontend.plugins.richtext.RichTextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,15 +43,14 @@ public class RichTextEditorLinkService implements IDetachable {
     }
 
     public RichTextEditorInternalLink create(Map<String, String> p) {
-        final String path = p.get(RichTextEditorLink.HREF);
-        if (path != null) {
-            final String decodedPath = RichTextUtil.decode(path);
-            if (factory.getLinks().contains(decodedPath)) {
+        final String uuid = p.get(RichTextEditorLink.UUID);
+        if (uuid != null) {
+            if (factory.getLinkUuids().contains(uuid)) {
                 try {
-                    final org.hippoecm.frontend.plugins.richtext.RichTextLink link = factory.loadLink(decodedPath);
-                    return new InternalLink(p, link.getTargetId());
+                    final org.hippoecm.frontend.plugins.richtext.RichTextLink link = factory.loadLink(uuid);
+                    return new InternalLink(p, link.getTargetModel());
                 } catch (RichTextException e) {
-                    log.error("Could not load link '" + path + "'", e);
+                    log.error("Could not load link '" + uuid + "'", e);
                 }
             }
         }
@@ -63,8 +64,8 @@ public class RichTextEditorLinkService implements IDetachable {
     private class InternalLink extends RichTextEditorInternalLink {
         private static final long serialVersionUID = 1L;
 
-        public InternalLink(Map<String, String> values, IDetachable targetId) {
-            super(values, targetId);
+        public InternalLink(Map<String, String> values, IModel<Node> targetModel) {
+            super(values, targetModel);
         }
 
         @Override
@@ -76,7 +77,8 @@ public class RichTextEditorLinkService implements IDetachable {
             if (isAttacheable()) {
                 try {
                     final RichTextLink link = factory.createLink(getLinkTarget());
-                    setHref(RichTextUtil.encode(link.getName()));
+                    final String uuid = link.getUuid();
+                    setUuid(uuid);
                 } catch (RichTextException e) {
                     log.error("Error creating link", e);
                 }
@@ -84,7 +86,7 @@ public class RichTextEditorLinkService implements IDetachable {
         }
 
         public void delete() {
-            setHref(null);
+            setUuid(null);
         }
 
     }

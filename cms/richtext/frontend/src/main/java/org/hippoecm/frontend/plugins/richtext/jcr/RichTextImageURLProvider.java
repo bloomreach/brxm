@@ -13,8 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.richtext;
+package org.hippoecm.frontend.plugins.richtext.jcr;
 
+import javax.jcr.Node;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
+import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
+import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.RichTextException;
+import org.hippoecm.frontend.plugins.richtext.RichTextImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,18 +35,19 @@ public class RichTextImageURLProvider implements IImageURLProvider {
 
     private final IRichTextImageFactory imageFactory;
     private final IRichTextLinkFactory linkFactory;
+    private final IModel<Node> nodeModel;
 
-    public RichTextImageURLProvider(IRichTextImageFactory factory, IRichTextLinkFactory linkFactory) {
+    public RichTextImageURLProvider(IRichTextImageFactory factory, IRichTextLinkFactory linkFactory, IModel<Node> nodeModel) {
         this.imageFactory = factory;
         this.linkFactory = linkFactory;
+        this.nodeModel = nodeModel;
     }
 
     public String getURL(String link) throws RichTextException {
-        String facetName = link;
-        if (link.indexOf('/') > 0) {
-            facetName = link.substring(0, link.indexOf('/'));
-        }
-        if (linkFactory.getLinks().contains(facetName)) {
+        final String facetName = StringUtils.substringBefore(link, "/");
+        final Node node = this.nodeModel.getObject();
+        final String uuidOrNull = RichTextFacetHelper.getChildDocBaseOrNull(node, facetName);
+        if (linkFactory.getLinkUuids().contains(uuidOrNull)) {
             RichTextImage rti = imageFactory.loadImageItem(link);
             return rti.getUrl();
         }

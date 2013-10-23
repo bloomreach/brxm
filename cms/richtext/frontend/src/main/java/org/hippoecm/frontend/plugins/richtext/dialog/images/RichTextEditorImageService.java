@@ -17,7 +17,10 @@ package org.hippoecm.frontend.plugins.richtext.dialog.images;
 
 import java.util.Map;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextEditorImageLink;
@@ -51,7 +54,7 @@ public class RichTextEditorImageService implements IDetachable {
             }
 
             @Override
-            public void setLinkTarget(IDetachable model) {
+            public void setLinkTarget(IModel<Node> model) {
                 super.setLinkTarget(model);
                 setFacetSelectPath(factory.getDefaultFacetSelectPath(model));
                 setInitType(getType());

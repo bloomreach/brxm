@@ -29,7 +29,6 @@ public class RichTextModel implements IModel<String> {
 
     private IModel<String> valueModel;
     private IHtmlCleanerService cleaner;
-    private IRichTextLinkFactory linkFactory;
 
     public RichTextModel(IModel<String> valueModel) {
         this.valueModel = valueModel;
@@ -44,10 +43,7 @@ public class RichTextModel implements IModel<String> {
             log.debug("Cleaning value {}", value);
         }
         try {
-            String cleanedValue = clean(value);
-            if (cleanedValue != null) {
-                removeLinks(cleanedValue);
-            }
+            final String cleanedValue = clean(value);
             valueModel.setObject(cleanedValue);
         } catch (Exception e) {
             if(log.isDebugEnabled()) {
@@ -60,9 +56,6 @@ public class RichTextModel implements IModel<String> {
 
     public void detach() {
         valueModel.detach();
-        if (linkFactory != null) {
-            linkFactory.detach();
-        }
     }
 
     public void setCleaner(IHtmlCleanerService cleaner) {
@@ -73,27 +66,12 @@ public class RichTextModel implements IModel<String> {
         return cleaner;
     }
 
-    public void setLinkFactory(IRichTextLinkFactory linkService) {
-        this.linkFactory = linkService;
-    }
-
-    public IRichTextLinkFactory getLinkFactory() {
-        return linkFactory;
-    }
-
     private String clean(final String value) throws Exception {
         if (cleaner != null) {
             return cleaner.clean(value);
 
         }
         return value;
-    }
-
-    private void removeLinks(String text) {
-        if (linkFactory != null) {
-            Set<String> linkNames = RichTextProcessor.getInternalLinks(text);
-            linkFactory.cleanup(linkNames);
-        }
     }
 
 }

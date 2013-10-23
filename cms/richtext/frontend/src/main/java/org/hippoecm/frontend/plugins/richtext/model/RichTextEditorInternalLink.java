@@ -18,12 +18,14 @@ package org.hippoecm.frontend.plugins.richtext.model;
 
 import java.util.Map;
 
-import org.apache.wicket.model.IDetachable;
+import javax.jcr.Node;
+
+import org.apache.wicket.model.IModel;
 
 public abstract class RichTextEditorInternalLink extends RichTextEditorDocumentLink {
     private static final long serialVersionUID = 1L;
 
-    public RichTextEditorInternalLink(Map<String, String> values, IDetachable parentModel) {
+    public RichTextEditorInternalLink(Map<String, String> values, IModel<Node> parentModel) {
         super(values, parentModel);
     }
 }

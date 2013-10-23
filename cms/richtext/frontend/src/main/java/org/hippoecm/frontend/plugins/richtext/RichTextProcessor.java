@@ -21,6 +21,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -28,17 +29,18 @@ import org.apache.wicket.util.encoding.UrlDecoder;
 
 public class RichTextProcessor {
 
-    private static Pattern LINK_AND_IMAGES_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(src|href)=\"(.*?)\"(.*?)>",
+    private static Pattern LINK_AND_IMAGES_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(uuid)=\"(.*?)\"(.*?)>",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern SRC_PATTERN = Pattern.compile("src=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
-    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
-    private static Pattern FACET_SELECT_OR_SRC_PATTERN = Pattern.compile("(facetselect|type|src)=\"([^\"]+)\"",
+    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
+    private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(facetselect|type|src)=\"([^\"]+)\"\\s*",
             Pattern.CASE_INSENSITIVE);
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("^[a-z]+:/", Pattern.CASE_INSENSITIVE);
-    private static Pattern HREF_PATTERN = Pattern.compile("href=\"[^\"]+\"", Pattern.CASE_INSENSITIVE);
+    private static Pattern HREF_PATTERN = Pattern.compile("href=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
+    private static Pattern UUID_PATTERN = Pattern.compile("uuid=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
     private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
 
     private static ResourceReference BROKEN_IMAGE = new PackageResourceReference(RichTextProcessor.class, "broken-image-32.png");
@@ -47,7 +49,7 @@ public class RichTextProcessor {
      * Decorate the targets of relative image links in a text.  Text and decorator may
      * neither be null.
      */
-    public static String prefixImageLinks(String text, IImageURLProvider decorator) {
+    public static String prefixInternalImageLinks(String text, IImageURLProvider decorator) {
 
         StringBuffer processed = new StringBuffer();
         Matcher imageMatcher = IMG_PATTERN.matcher(text);
@@ -61,32 +63,32 @@ public class RichTextProcessor {
                 String src = sourceMatcher.group();
                 String link = sourceMatcher.group(1);
 
-                if (!link.startsWith("http:") && !link.startsWith("https:")) {
+                if (!isExternalLink(link)) {
                     String url;
                     try {
                         url = decorator.getURL(link);
                     } catch (RichTextException ex) {
                         url = RequestCycle.get().urlFor(BROKEN_IMAGE, null).toString();
                     }
-                    sourceMatcher.appendReplacement(newImg, ("src=\"" + url + "\"").replace("\\", "\\\\").replace("$", "\\$"));
+                    appendEscapedReplacement(sourceMatcher, newImg, "src=\"" + url + "\"");
                     newImg.append(' ');
                     newImg.append("facetselect=\"");
                     newImg.append(link);
-                    newImg.append("\" ");
+                    newImg.append("\"");
                     Matcher resourceDefinitionMatcher = RESOURCE_DEFINITION_PATTERN.matcher(link);
                     if (resourceDefinitionMatcher.find()) {
                         String type = resourceDefinitionMatcher.group(1);
-                        newImg.append("type=\"");
+                        newImg.append(" type=\"");
                         newImg.append(type);
-                        newImg.append("\" ");
+                        newImg.append("\"");
                     }
                 } else {
-                    sourceMatcher.appendReplacement(newImg, src.replace("\\", "\\\\").replace("$", "\\$"));
+                    appendEscapedReplacement(sourceMatcher, newImg, src);
                 }
             }
 
             sourceMatcher.appendTail(newImg);
-            imageMatcher.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
+            appendEscapedReplacement(imageMatcher, processed, removeSpacesBeforeEndTag(newImg.toString()));
         }
 
         imageMatcher.appendTail(processed);
@@ -101,24 +103,23 @@ public class RichTextProcessor {
         while (m.find()) {
             String img = m.group();
             StringBuffer newImg = new StringBuffer();
-            Matcher s = FACET_SELECT_OR_SRC_PATTERN.matcher(img);
+            Matcher s = FACET_SELECT_OR_TYPE_OR_SRC_PATTERN.matcher(img);
 
             String src = null;
             String facet = null;
             while (s.find()) {
-                String srcOrFacet = s.group();
-                if (srcOrFacet.startsWith("src")) {
-                    src = srcOrFacet;
-                } else if (srcOrFacet.startsWith("facetselect")) {
-                    facet = srcOrFacet;
+                String facetOrTypeOrSrc = s.group();
+                if (facetOrTypeOrSrc.startsWith("src")) {
+                    src = facetOrTypeOrSrc;
+                } else if (facetOrTypeOrSrc.startsWith("facetselect")) {
+                    facet = facetOrTypeOrSrc;
                 }
                 s.appendReplacement(newImg, "");
             }
             if (src != null && facet != null) {
                 Matcher fs = FACET_SELECT_PATTERN.matcher(facet);
                 if (fs.find()) {
-                    fs.appendReplacement(newImg, ("src=\"" + fs.group(1) + "\"").replace("\\", "\\\\").replace("$",
-                            "\\$"));
+                    appendEscapedReplacement(fs, newImg, "src=\"" + fs.group(1) + "\" ");
                 }
                 fs.appendTail(newImg);
             } else if (src != null) {
@@ -127,7 +128,7 @@ public class RichTextProcessor {
                 newImg.append(facet);
             }
             s.appendTail(newImg);
-            m.appendReplacement(processed, newImg.toString().replace("\\", "\\\\").replace("$", "\\$"));
+            appendEscapedReplacement(m, processed, removeSpacesBeforeEndTag(newImg.toString()));
         }
 
         m.appendTail(processed);
@@ -135,10 +136,10 @@ public class RichTextProcessor {
     }
 
     /**
-     * Return the internal links, i.e. the links to other documents / images / assets
+     * Return the UUIDs of internal links, i.e. the UUIDs of the linked documents / images / assets
      * in the text.  The text may not be null.
      */
-    public static Set<String> getInternalLinks(String text) {
+    public static Set<String> getInternalLinkUuids(String text) {
         Set<String> links = new TreeSet<String>();
         Matcher m = LINK_AND_IMAGES_PATTERN.matcher(text);
         while (m.find()) {
@@ -152,45 +153,73 @@ public class RichTextProcessor {
             } else {
                 linkName = link;
             }
-            final Charset charset = RequestCycle.get().getRequest().getCharset();
+            final Charset charset = getCharset();
             linkName = UrlDecoder.PATH_INSTANCE.decode(linkName, charset);
             links.add(linkName);
         }
         return links;
     }
 
-    public static String decorateLinks(String text, ILinkDecorator decorator) {
-        StringBuffer processed = new StringBuffer();
-        Matcher m = LINK_PATTERN.matcher(text);
+    private static Charset getCharset() {
+        final RequestCycle requestCycle = RequestCycle.get();
+        if (requestCycle != null) {
+            return requestCycle.getRequest().getCharset();
+        }
+        return Charset.forName("UTF-8");
+    }
+
+    public static String decorateLinkHrefs(final String text, final ILinkDecorator decorator) {
+        String decorated = decorateLinkAttributes(text, decorator, HREF_PATTERN);
+        return decorated.replaceAll("<a target=\"_blank\"", "<a ");
+    }
+
+    public static String decorateLinkUuids(final String text, final ILinkDecorator decorator) {
+        return decorateLinkAttributes(text, decorator, UUID_PATTERN);
+    }
+
+    private static String decorateLinkAttributes(final String text, final ILinkDecorator decorator, final Pattern attributePattern) {
+        return decorateTagAttributes(text, decorator, LINK_PATTERN, attributePattern);
+    }
+
+    public static String decorateImgSrcs(final String text, final ILinkDecorator decorator) {
+        return decorateTagAttributes(text, decorator, IMG_PATTERN, SRC_PATTERN);
+    }
+
+    public static String decorateImgUuids(final String text, final ILinkDecorator decorator) {
+        return decorateTagAttributes(text, decorator, IMG_PATTERN, UUID_PATTERN);
+    }
+
+    private static String decorateTagAttributes(final String text, final ILinkDecorator decorator, final Pattern tagPattern, final Pattern attributePattern) {
+        final StringBuffer processed = new StringBuffer();
+        final Matcher m = tagPattern.matcher(text);
         while (m.find()) {
-            String anchor = m.group();
-            StringBuffer newAnchor = new StringBuffer();
-            Matcher s = HREF_PATTERN.matcher(anchor);
+            final String tag = m.group();
+            final StringBuffer newTag = new StringBuffer();
+            final Matcher s = attributePattern.matcher(tag);
             if (s.find()) {
-                String href = s.group();
-                // skip href=
-                String link = href.substring(5);
-
-                if (link.charAt(0) == '"') {
-                    link = link.substring(1);
-                }
-                if (link.charAt(link.length() - 1) == '"') {
-                    link = link.substring(0, link.length() - 1);
-                }
-
-                link = isExternalLink(link) ? decorator.externalLink(link) : decorator.internalLink(link);
-                s.appendReplacement(newAnchor, link.replace("\\", "\\\\").replace("$", "\\$"));
+                final String attributeValue = s.group(1);
+                final String decorated = isExternalLink(attributeValue) ? decorator.externalLink(attributeValue) : decorator.internalLink(attributeValue);
+                appendEscapedReplacement(s, newTag, decorated);
             }
-            s.appendTail(newAnchor);
-            m.appendReplacement(processed, newAnchor.toString().replace("\\", "\\\\").replace("$", "\\$"));
+            s.appendTail(newTag);
+            appendEscapedReplacement(m, processed, removeSpacesBeforeEndTag(newTag.toString()));
         }
         m.appendTail(processed);
 
-        return processed.toString().replaceAll("<a target=\"_blank\"", "<a ");
+        return processed.toString();
     }
 
-    private static boolean isExternalLink(String link) {
-        return EXTERNAL_LINK_PATTERN.matcher(link).find();
+    private static void appendEscapedReplacement(Matcher m, StringBuffer sb, String replacement) {
+        final String escaped = replacement.replace("\\", "\\\\").replace("$", "\\$");
+        m.appendReplacement(sb, escaped);
+    }
+
+    private static String removeSpacesBeforeEndTag(final String text) {
+        return text.replaceFirst("\\s*/>$", "/>");
+    }
+
+    private static boolean isExternalLink(String href) {
+        return EXTERNAL_LINK_PATTERN.matcher(href).find();
     }
 
 }

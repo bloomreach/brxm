@@ -38,19 +38,29 @@ public class RichTextProcessorTest {
     @Test
     public void testPrefixInternalImage() {
         String text = "testing 1 2 3 <img src=\"link\"/>";
-        String processed = RichTextProcessor.prefixImageLinks(text, new IImageURLProvider() {
+        String processed = RichTextProcessor.prefixInternalImageLinks(text, new IImageURLProvider() {
             public String getURL(String name) {
                 return "test-prefix/" + name;
             }
         });
-        assertEquals("testing 1 2 3 <img src=\"test-prefix/link\" facetselect=\"link\" />", processed);
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/link\" facetselect=\"link\"/>", processed);
     }
 
+    @Test
+    public void testPrefixInternalImageWithResourceSuffix() {
+        String text = "testing 1 2 3 <img src=\"link/{_document}/hippogallery:original\"/>";
+        String processed = RichTextProcessor.prefixInternalImageLinks(text, new IImageURLProvider() {
+            public String getURL(String name) {
+                return "test-prefix/" + name;
+            }
+        });
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/link/{_document}/hippogallery:original\" facetselect=\"link/{_document}/hippogallery:original\" type=\"hippogallery:original\"/>", processed);
+    }
 
     @Test
     public void testPrefixExternalImage() {
         String text = "testing 1 2 3 <img src=\"http://link\"/>";
-        String processed = RichTextProcessor.prefixImageLinks(text, new IImageURLProvider() {
+        String processed = RichTextProcessor.prefixInternalImageLinks(text, new IImageURLProvider() {
             public String getURL(String name) {
                 return "test-prefix/" + name;
             }
@@ -60,36 +70,28 @@ public class RichTextProcessorTest {
 
     @Test
     public void testGetInternalLinks() {
-        String text = "testing 1 2 3 <a href=\"link-1\">link 1</a>\n"+
+        String text = "testing 1 2 3 <a uuid=\"1234\">link 1</a>\n"+
             "more text <a href=\"http://test\">test</a>\n"+
-            "and an image <img src=\"link-2/subnode\"/>";
-        Set<String> links = RichTextProcessor.getInternalLinks(text);
+            "and an image <img src=\"link-2/subnode\" uuid=\"5678\"/>";
+        Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertEquals(2, links.size());
-        assertTrue(links.contains("link-1"));
-        assertTrue(links.contains("link-2"));
+        assertTrue(links.contains("1234"));
+        assertTrue(links.contains("5678"));
     }
 
     @Test
     public void testMultilineGetInternalLinks() throws Exception {
-        String text="testing 1 2 3 <a\nhref=\"link\">link</a>";
-        Set<String> links = RichTextProcessor.getInternalLinks(text);
+        String text="testing 1 2 3 <a\nuuid=\"1234\">link</a>";
+        Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertEquals(1, links.size());
-        assertTrue(links.contains("link"));
-    }
-
-    @Test
-    public void testEncodedLink() throws Exception {
-        String text="<a href=\"link%20je\">link</a>";
-        Set<String> links = RichTextProcessor.getInternalLinks(text);
-        assertEquals(1, links.size());
-        assertTrue(links.contains("link je"));
+        assertTrue(links.contains("1234"));
     }
 
     @Test
     public void testFacetRestore() {
         String text="<img src=\"horriblyterriblelinkencoding\" facetselect=\"facet\" />";
         String restored = RichTextProcessor.restoreFacets(text);
-        assertEquals("<img  src=\"facet\" />", restored);
+        assertEquals("<img src=\"facet\"/>", restored);
     }
 
 }

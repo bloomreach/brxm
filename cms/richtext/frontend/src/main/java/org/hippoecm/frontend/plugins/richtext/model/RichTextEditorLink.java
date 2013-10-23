@@ -23,7 +23,7 @@ public abstract class RichTextEditorLink extends AbstractPersistedMap {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String HREF = "f_href";
+    public static final String UUID = "f_uuid";
     public static final String TITLE = "f_title";
     public static final String TARGET = "f_target";
     public static final String TARGET_OPEN_IN_NEW_WINDOW = "_blank";
@@ -32,12 +32,12 @@ public abstract class RichTextEditorLink extends AbstractPersistedMap {
         super(values);
     }
 
-    public String getHref() {
-        return get(HREF);
+    public String getUuid() {
+        return get(UUID);
     }
 
-    public void setHref(String href) {
-        put(HREF, href);
+    public void setUuid(String uuid) {
+        put(UUID, uuid);
     }
 
     public boolean getOpenInNewWindow() {
