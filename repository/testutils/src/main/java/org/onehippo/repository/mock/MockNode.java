@@ -66,11 +66,20 @@ public class MockNode extends MockItem implements Node {
     private String primaryItemName;
 
     public MockNode(String name) {
+        this(name, null);
+    }
+
+    public MockNode(String name, String primaryTypeName) {
         super(name);
+
         this.identifier = UUID.randomUUID().toString();
         this.properties = new HashMap<String, MockProperty>();
         this.children = new HashMap<String, MockNode>();
         this.primaryItemName = null;
+
+        if (primaryTypeName != null) {
+            setPrimaryType(primaryTypeName);
+        }
     }
 
     public static MockNode root() throws RepositoryException {

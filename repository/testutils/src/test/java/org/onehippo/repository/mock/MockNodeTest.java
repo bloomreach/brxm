@@ -218,7 +218,6 @@ public class MockNodeTest {
     @Test
     public void nodeCanBeAdded() throws RepositoryException {
         MockNode root = MockNode.root();
-        assertEquals(0, root.getNodes().getSize());
 
         MockNode child = new MockNode("child");
         root.addNode(child);
@@ -230,13 +229,18 @@ public class MockNodeTest {
     @Test
     public void nodeCanBeAddedWithPrimaryType() throws RepositoryException {
         MockNode root = MockNode.root();
-        assertEquals(0, root.getNodes().getSize());
 
         Node child = root.addNode("child", "nt:unstructured");
         assertEquals("nt:unstructured", child.getPrimaryNodeType().getName());
 
         assertEquals(1, root.getNodes().getSize());
         assertSame(child, root.getNode("child"));
+    }
+
+    @Test
+    public void nodeCanBeAddedWithPrimaryTypeInConstructor() throws RepositoryException {
+        MockNode node = new MockNode("child", "nt:unstructured");
+        assertEquals("nt:unstructured", node.getPrimaryNodeType().getName());
     }
 
     @Test
