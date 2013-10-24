@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor 
+  xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
+  name="Hippo Project"
+  partial="false">
+  <requiredProperties>
+    <requiredProperty key="groupId">
+      <defaultValue>org.example</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="artifactId">
+      <defaultValue>myhippoproject</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="version">
+      <defaultValue>1.01.00-SNAPSHOT</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="projectName">
+      <defaultValue>My Hippo Project</defaultValue>
+    </requiredProperty>
+  </requiredProperties>
+  <fileSets>
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>src/main/assembly</directory>
+      <includes>
+        <include>distribution.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>conf</directory>
+      <includes>
+        <include>**/*.dtd</include>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory/>
+      <includes>
+        <include>README.txt</include>
+        <include>BUILD</include>
+        <include>hippo-cms7-release-pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- bootstrap module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- bootstrap-configuration module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap/configuration/src/main/resources</directory>
+      <includes>
+        <include>**/*.xml</include>
+        <include>**/*.cnd</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap/configuration</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- bootstrap-content module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap/content/src/main/resources</directory>
+      <includes>
+        <include>**/*.xml</include>
+        <include>**/*.cnd</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap/content</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- cms module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>cms/src/main/webapp</directory>
+      <includes>
+        <include>**/*.xml</include>
+        <include>**/*.css</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>cms/src/main/webapp</directory>
+      <includes>
+        <include>**/*.png</include>
+        <include>**/*.jsp</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>cms/src/main/resources</directory>
+      <includes>
+        <include>**/*.xml</include>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>cms/src/main/resources</directory>
+      <includes>
+        <include>**/*.png</include>
+      </includes>
+    </fileSet>
+    <fileSet encoding="UTF-8">
+      <directory>cms/src/main/resources</directory>
+      <includes>
+        <include>**/*.dtd</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>cms</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+    <!-- site module -->
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>site/src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <!-- packaged part -->
+      <directory>site/src/main/resources</directory>
+      <includes>
+        <include>componentsinfo/**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <!-- non packaged part -->
+      <directory>site/src/main/resources</directory>
+      <includes>
+        <include>**/*.properties</include>
+        <include>**/*.xml</include>
+      </includes>
+      <excludes>
+        <exclude>componentsinfo/**/*.properties</exclude>
+      </excludes>
+    </fileSet>
+
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>site/src/main/webapp</directory>
+      <excludes>
+        <exclude>**/WEB-INF/jsp/errorpages/*.jsp</exclude>
+      </excludes>
+      <includes>
+        <include>**/README</include>
+        <include>**/*.jsp</include>
+        <include>**/*.jspf</include>
+        <include>**/*.tag</include>
+        <include>**/*.xml</include>
+        <include>**/*.properties</include>
+        <include>**/*.psml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>site</directory>
+      <includes>
+        <include>build.properties-sample</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="false" encoding="UTF-8">
+      <directory>site/src/main/webapp</directory>
+      <includes>
+        <include>**/WEB-INF/jsp/errorpages/*.jsp</include>
+        <include>**/*.gif</include>
+        <include>**/*.css</include>
+        <include>**/*.png</include>
+        <include>**/*.js</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>site/src/test/resources</directory>
+      <includes>
+        <include>**/*.properties</include>
+        <include>**/*.xml</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>site/src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>site</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</archetype-descriptor>

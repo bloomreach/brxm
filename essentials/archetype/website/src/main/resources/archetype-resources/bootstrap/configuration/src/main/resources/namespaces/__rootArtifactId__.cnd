@@ -1,0 +1,9 @@
+#set($hyphen = '-')
+#set($empty = '')
+<'${rootArtifactId.replace($hyphen,$empty)}'='http://www.onehippo.org/${rootArtifactId.replace($hyphen,$empty)}/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+
+[${rootArtifactId.replace($hyphen,$empty)}:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document orderable
+

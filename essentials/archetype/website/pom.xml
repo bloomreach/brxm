@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>essentials-archetype</artifactId>
+    <groupId>org.onehippo.cms7</groupId>
+    <version>1.01.00-SNAPSHOT</version>
+  </parent>
+
+  <name>Hippo CMS7 Site Toolkit Website Archetype</name>
+  <description>Hippo Site Toolkit Website Archetype: this creates a website skeleton, gluing together the correct
+  versions of cms7, hst config editor and hst, and showing a home page and about.</description>
+  <artifactId>hippo-archetype-website</artifactId>
+  <packaging>maven-archetype</packaging>
+
+  <properties>
+    <gettingstarted.app.groupId>org.onehippo.cms7.hst</gettingstarted.app.groupId>
+    <gettingstarted.app.artifactId>gettingstarted</gettingstarted.app.artifactId>
+    <gettingstarted.app.version>1.01.00</gettingstarted.app.version>
+    <gettingstarted.app.name>Getting Started</gettingstarted.app.name>
+  </properties>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>2.0</version>
+      </extension>
+    </extensions>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-archetype-plugin</artifactId>
+        <version>2.0</version>
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <id>generate-and-install-gettingstarted</id>
+            <phase>install</phase>
+            <configuration>
+              <tasks>
+                <echo message="$$$$$$$$$$ Deleting the existing example HST application if it exists. $$$$$$$$$$" />
+                <delete dir="${project.build.directory}/${gettingstarted.app.artifactId}" />
+                <echo message="$$$$$$$$$$ Generating an example HST application from the archetype $$$$$$$$$$" />
+                <java classname="org.codehaus.classworlds.Launcher" dir="${project.build.directory}" fork="true" failonerror="true">
+                  <permissions>
+                    <grant class="java.security.AllPermission" />
+                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                    <grant class="java.util.PropertyPermission" name="*" actions="read,write" />
+                  </permissions>
+                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                  <sysproperty key="maven.home" value="${maven.home}" />
+                  <classpath>
+                    <fileset dir="${maven.home}/boot">
+                      <include name="**/*.jar" />
+                    </fileset>
+                  </classpath>
+                  <arg value="org.apache.maven.plugins:maven-archetype-plugin:2.0:generate" />
+                  <arg value="-Dhippo.snapshots=${hippo.snapshots}" />
+                  <arg value="-DarchetypeGroupId=org.onehippo.cms7" />
+                  <arg value="-DarchetypeArtifactId=hippo-archetype-website" />
+                  <arg value="-DarchetypeVersion=${project.version}" />
+                  <arg value="-DgroupId=${gettingstarted.app.groupId}" />
+                  <arg value="-DartifactId=${gettingstarted.app.artifactId}" />
+                  <arg value="-Dversion=${gettingstarted.app.version}" />
+                  <arg value="-DprojectName=${gettingstarted.app.name}" />
+                </java>
+
+                <echo message="$$$$$$$$$$ Installing gettingstarted example $$$$$$$$$$" />
+                <java classname="org.codehaus.classworlds.Launcher" dir="${project.build.directory}/${gettingstarted.app.artifactId}" fork="true" failonerror="true">
+                  <permissions>
+                    <grant class="java.security.AllPermission" />
+                    <grant class="java.io.FilePermission" name="${maven.home}/bin/m2.conf" actions="read" />
+                    <grant class="java.util.PropertyPermission" name="*" actions="read,write" />
+                  </permissions>
+                  <sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+                  <sysproperty key="maven.home" value="${maven.home}" />
+                  <classpath>
+                    <fileset dir="${maven.home}/boot">
+                      <include name="**/*.jar" />
+                    </fileset>
+                  </classpath>
+                  <arg value="install" />
+                  <arg value="-Dhippo.snapshots=${hippo.snapshots}" />
+                </java>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-archetype-plugin</artifactId>
+            <version>2.0</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
