@@ -24,6 +24,17 @@ Hub. In order to make use of your SSH key, you have to make sure you use the fol
 $ git clone git@github.com:onehippo/essentials.git
 ```
 
+
+### Create empty project:
+$ cd essetials/archetype
+$ mvn clean install
+
+
+mvn archetype:generate \
+-DarchetypeGroupId=org.onehippo.cms7 \
+-DarchetypeArtifactId=essentials-archetype-website \
+-DarchetypeVersion=1.01.00-SNAPSHOT
+
 ## Working with Git
 
 Create local working branch to work on:

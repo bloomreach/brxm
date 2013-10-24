@@ -25,7 +25,7 @@
   <name>Hippo CMS7 Site Toolkit Website Archetype</name>
   <description>Hippo Site Toolkit Website Archetype: this creates a website skeleton, gluing together the correct
   versions of cms7, hst config editor and hst, and showing a home page and about.</description>
-  <artifactId>hippo-archetype-website</artifactId>
+  <artifactId>essentials-archetype-website</artifactId>
   <packaging>maven-archetype</packaging>
 
   <properties>
@@ -79,7 +79,7 @@
                   <arg value="org.apache.maven.plugins:maven-archetype-plugin:2.0:generate" />
                   <arg value="-Dhippo.snapshots=${hippo.snapshots}" />
                   <arg value="-DarchetypeGroupId=org.onehippo.cms7" />
-                  <arg value="-DarchetypeArtifactId=hippo-archetype-website" />
+                  <arg value="-DarchetypeArtifactId=essentials-archetype-website" />
                   <arg value="-DarchetypeVersion=${project.version}" />
                   <arg value="-DgroupId=${gettingstarted.app.groupId}" />
                   <arg value="-DartifactId=${gettingstarted.app.artifactId}" />
