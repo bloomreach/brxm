@@ -29,17 +29,17 @@ $ git clone git@github.com:onehippo/essentials.git
 ```
 $ cd essetials/archetype
 ```
-## Install archetype localy:
+### Install archetype locally:
 
 ```
 $ mvn clean install
 ```
-## Install dashboard module
+### Install dashboard module
 ```
 $ cd ..
 $ mvn clean install
 ```
-## run archetype
+### run archetype
 ```
 mvn archetype:generate \
 -DarchetypeGroupId=org.onehippo.cms7 \
