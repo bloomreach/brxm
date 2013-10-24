@@ -547,6 +547,10 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulLi
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/EventsPanel.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/EventsPanel.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalStep.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ProjectSetupStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ProjectSetupStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/WelcomeStep.html -text

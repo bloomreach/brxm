@@ -14,16 +14,29 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.event;
+package org.onehippo.cms7.essentials.setup.panels;
+
+import org.apache.wicket.markup.html.form.Form;
+import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-public class DisplayEvent extends MessageEvent {
+public class FinalStep extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
+    private static Logger log = LoggerFactory.getLogger(FinalStep.class);
 
-    public DisplayEvent(final String message) {
-        super(message);
+    public FinalStep(final String title) {
+        super(title);
+        add(new EventsPanel("events"));
     }
+
+    @Override
+    public void applyState() {
+
+    }
+
 }

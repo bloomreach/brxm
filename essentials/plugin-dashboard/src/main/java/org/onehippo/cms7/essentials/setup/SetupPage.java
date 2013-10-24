@@ -27,12 +27,15 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
+import org.onehippo.cms7.essentials.setup.panels.EventsPanel;
+import org.onehippo.cms7.essentials.setup.panels.FinalStep;
 import org.onehippo.cms7.essentials.setup.panels.ProjectSetupStep;
 import org.onehippo.cms7.essentials.setup.panels.WelcomeStep;
 import org.slf4j.Logger;
@@ -60,7 +63,8 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         }
     };
     private static Logger log = LoggerFactory.getLogger(SetupPage.class);
-    private final ImmutableList<Plugin> mainPlugins;
+
+    final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
     @Inject
     private EventBus eventBus;
@@ -84,6 +88,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         final List<Plugin> plugins = scanner.scan(libPath);
         for (Plugin plugin : plugins) {
             eventBus.post(new LogEvent(String.format("@@@Found plugin: %s", plugin)));
+            eventBus.post(new DisplayEvent(String.format("@@@Found plugin: %s", plugin)));
         }
 
 
@@ -91,12 +96,21 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         mainPlugins = ImmutableList.copyOf(Iterables.filter(plugins, Predicates.and(MAIN_PLUGIN)));
         pluginList = ImmutableList.copyOf(Iterables.filter(plugins, Predicates.not(MAIN_PLUGIN)));
 
-        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
-        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        //############################################
+        // SETTINGS PLUGIN TODO: do we need this one?
+        //############################################
+
         Plugin plugin = getPluginByName("Settings");
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin, eventBus);
+        //############################################
+        // WIZARD & STEPS
+        //############################################
+        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
+        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        wizard.addWizard(new FinalStep("Done"));
         wizard.addWizard(new ProjectSetupStep("Setup project", plugin, context));
         add(wizard);
+
     }
 
     private Plugin getPluginByName(String name) {
