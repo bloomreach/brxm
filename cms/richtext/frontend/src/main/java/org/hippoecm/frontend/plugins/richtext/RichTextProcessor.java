@@ -42,10 +42,12 @@ public class RichTextProcessor {
     private static ResourceReference BROKEN_IMAGE = new PackageResourceReference(RichTextProcessor.class, "broken-image-32.png");
 
     /**
-     * Decorate the targets of relative image links in a text.  Text and decorator may
-     * neither be null.
+     * Decorate the targets of relative image links in a text. The decorator may not be null.
      */
     public static String prefixInternalImageLinks(String text, IImageURLProvider decorator) {
+        if (text == null) {
+            return null;
+        }
 
         StringBuffer processed = new StringBuffer();
         Matcher imageMatcher = IMG_PATTERN.matcher(text);
@@ -93,6 +95,10 @@ public class RichTextProcessor {
     }
 
     public static String restoreFacets(String text) {
+        if (text == null) {
+            return null;
+        }
+
         StringBuffer processed = new StringBuffer();
         Matcher m = IMG_PATTERN.matcher(text);
 
@@ -137,30 +143,32 @@ public class RichTextProcessor {
      */
     public static Set<String> getInternalLinkUuids(String text) {
         Set<String> uuids = new TreeSet<String>();
-
-        final StringBuffer processed = new StringBuffer();
-        final Matcher m = LINK_OR_IMG_PATTERN.matcher(text);
-        while (m.find()) {
-            final String tag = m.group();
-            final Matcher uuidMatcher = UUID_PATTERN.matcher(tag);
-            if (uuidMatcher.find()) {
-                final Matcher hrefMatcher = HREF_PATTERN.matcher(tag);
-                boolean isExternalLink = false;
-                if (hrefMatcher.find()) {
-                    final String href = hrefMatcher.group(1);
-                    isExternalLink = isExternalLink(href);
-                }
-                if (!isExternalLink) {
-                    final String uuid = uuidMatcher.group(1);
-                    uuids.add(uuid);
+        if (text != null) {
+            final Matcher m = LINK_OR_IMG_PATTERN.matcher(text);
+            while (m.find()) {
+                final String tag = m.group();
+                final Matcher uuidMatcher = UUID_PATTERN.matcher(tag);
+                if (uuidMatcher.find()) {
+                    final Matcher hrefMatcher = HREF_PATTERN.matcher(tag);
+                    boolean isExternalLink = false;
+                    if (hrefMatcher.find()) {
+                        final String href = hrefMatcher.group(1);
+                        isExternalLink = isExternalLink(href);
+                    }
+                    if (!isExternalLink) {
+                        final String uuid = uuidMatcher.group(1);
+                        uuids.add(uuid);
+                    }
                 }
             }
         }
-
         return uuids;
     }
 
     public static String decorateLinkHrefs(final String text, final ILinkDecorator decorator) {
+        if (text == null) {
+            return null;
+        }
         String decorated = decorateLinkAttributes(text, decorator, HREF_PATTERN);
         return decorated.replaceAll("<a target=\"_blank\"", "<a ");
     }
@@ -182,6 +190,10 @@ public class RichTextProcessor {
     }
 
     private static String decorateTagAttributes(final String text, final ILinkDecorator decorator, final Pattern tagPattern, final Pattern attributePattern) {
+        if (text == null) {
+            return null;
+        }
+
         final StringBuffer processed = new StringBuffer();
         final Matcher m = tagPattern.matcher(text);
         while (m.find()) {

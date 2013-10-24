@@ -70,7 +70,7 @@ public class RichTextFacetHelper {
         return linkName;
     }
 
-    static String getChildDocBaseOrNull(final Node node, final String childNodeName) {
+    public static String getChildDocBaseOrNull(final Node node, final String childNodeName) {
         String result = null;
         try {
             if (node.hasNode(childNodeName)) {

@@ -268,6 +268,30 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
+    public void setEmptyTextRemovesAllChildNodes() throws RepositoryException {
+        final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
+        addChildFacetNode("linked-node", linkTarget.getIdentifier());
+
+        final ChildFacetUuidsModel model = createModel("");
+        model.setObject("");
+
+        assertEquals("Unused child facet node should have been removed", 0, documentNode.getNodes().getSize());
+        assertEquals("", model.getObject());
+    }
+
+    @Test
+    public void setNullTextRemovesAllChildNodes() throws RepositoryException {
+        final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
+        addChildFacetNode("linked-node", linkTarget.getIdentifier());
+
+        final ChildFacetUuidsModel model = createModel("");
+        model.setObject(null);
+
+        assertEquals("Unused child facet node should have been removed", 0, documentNode.getNodes().getSize());
+        assertEquals(null, model.getObject());
+    }
+
+    @Test
     public void setTextWithLinksRemovesUnusedChildNodes() throws RepositoryException {
         final Node document1 = rootNode.addNode("document1", "nt:unstructured");
         final Node document2 = rootNode.addNode("document2", "nt:unstructured");

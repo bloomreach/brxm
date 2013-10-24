@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextFacetHelper;
 import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextLink;
 import org.hippoecm.frontend.plugins.richtext.StripScriptModel;
@@ -73,9 +74,9 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
         response.render(CssHeaderItem.forReference(DIFF_CSS));
     }
 
-    private IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
-                                           final IModel<Node> currentNodeModel,
-                                           final PreviewLinksBehavior previewLinksBehavior) {
+    private static IModel<String> createDiffModel(final IModel<Node> baseNodeModel,
+                                                  final IModel<Node> currentNodeModel,
+                                                  final PreviewLinksBehavior previewLinksBehavior) {
 
         final JcrPropertyValueModel<String> baseModel = getContentModelOrNull(baseNodeModel);
         final IRichTextLinkFactory baseLinkFactory = new JcrRichTextLinkFactory(baseNodeModel);
@@ -99,15 +100,22 @@ public class RichTextDiffWithLinksAndImagesPanel extends AbstractRichTextDiffPan
                 if (link.indexOf('/') > 0) {
                     facetName = link.substring(0, link.indexOf('/'));
                 }
-                if (baseLinkFactory.getLinkUuids().contains(facetName) && currentLinkFactory.getLinkUuids().contains(facetName)) {
+
+                final String baseUuid = RichTextFacetHelper.getChildDocBaseOrNull(baseNodeModel.getObject(), facetName);
+                final String currentUuid = RichTextFacetHelper.getChildDocBaseOrNull(currentNodeModel.getObject(), facetName);
+
+                final boolean baseContainsUuid = baseUuid != null && baseLinkFactory.getLinkUuids().contains(baseUuid);
+                final boolean currentContainsUuid = currentUuid != null && currentLinkFactory.getLinkUuids().contains(currentUuid);
+
+                if (baseContainsUuid && currentContainsUuid) {
                     RichTextLink baseRtl = baseLinkFactory.loadLink(facetName);
                     RichTextLink currentRtl = currentLinkFactory.loadLink(facetName);
                     if (currentRtl.getTargetModel().equals(baseRtl.getTargetModel())) {
                         return currentDecorator.getURL(link);
                     }
-                } else if (baseLinkFactory.getLinkUuids().contains(facetName)) {
+                } else if (baseContainsUuid) {
                     return baseDecorator.getURL(link);
-                } else if (currentLinkFactory.getLinkUuids().contains(facetName)) {
+                } else if (currentContainsUuid) {
                     return currentDecorator.getURL(link);
                 }
                 return facetName;

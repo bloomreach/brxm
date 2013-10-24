@@ -82,11 +82,9 @@ public class ChildFacetUuidsModel implements IModel<String> {
     }
 
     public void setObject(String text) {
-        if (text != null) {
-            createMissingChildFacetNodes(text);
-            removeUnusedChildFacetNodes(text);
-            text = replaceUuids(text);
-        }
+        createMissingChildFacetNodes(text);
+        removeUnusedChildFacetNodes(text);
+        text = replaceUuids(text);
         delegate.setObject(text);
     }
 
