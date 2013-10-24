@@ -16,12 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.event;
 
-import org.onehippo.cms7.services.eventbus.Subscribe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import com.google.common.eventbus.Subscribe;
 
 /**
  * @version "$Id$"

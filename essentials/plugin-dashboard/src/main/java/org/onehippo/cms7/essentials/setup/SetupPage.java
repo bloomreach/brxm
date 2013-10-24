@@ -63,9 +63,10 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
     @Inject
-    private transient EventBus eventBus;
+    private  EventBus eventBus;
     @Inject
     private LoggingPluginEventListener listener;
+
 
     public SetupPage(final PageParameters parameters) {
         super(parameters);
@@ -80,7 +81,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         log.info("Scanning path for essentials: {}", libPath);
         final List<Plugin> plugins = scanner.scan(libPath);
         for (Plugin plugin : plugins) {
-            log.info("Found plugin: {}", plugin);
+            eventBus.post(new LogEvent(String.format("@@@Found plugin: %s", plugin)));
         }
 
 
