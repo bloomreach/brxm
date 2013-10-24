@@ -74,17 +74,32 @@ public class RichTextProcessorTest {
             "more text <a href=\"http://test\">test</a>\n"+
             "and an image <img src=\"link-2/subnode\" uuid=\"5678\"/>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
+        assertTrue("Links should contain 1234", links.contains("1234"));
+        assertTrue("Links should contain 5678", links.contains("5678"));
         assertEquals(2, links.size());
-        assertTrue(links.contains("1234"));
-        assertTrue(links.contains("5678"));
     }
 
     @Test
     public void testMultilineGetInternalLinks() throws Exception {
         String text="testing 1 2 3 <a\nuuid=\"1234\">link</a>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
-        assertEquals(1, links.size());
         assertTrue(links.contains("1234"));
+        assertEquals(1, links.size());
+    }
+
+    @Test
+    public void externalLinksWithUuidAreNotInternalLinks() {
+        String text = "<a href=\"http://www.example.com\" uuid=\"1234\">link</a>";
+        Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
+        assertEquals(0, links.size());
+    }
+
+    @Test
+    public void linkWithUuidAndHrefSetToOnlyHttpIsAnInternalLink() {
+        String text = "<a href=\"http://\" uuid=\"1234\">link</a>";
+        Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
+        assertTrue(links.contains("1234"));
+        assertEquals(1, links.size());
     }
 
     @Test

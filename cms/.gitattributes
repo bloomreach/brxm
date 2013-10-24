@@ -2553,10 +2553,11 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/Child
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/ImgAddUuidDecorator.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/ImgRemoveUuidDecorator.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/InternalLinkDecorator.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/InternalLinkHrefToUuidDecorator.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/InternalLinkRemoveHrefDecorator.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/InternalLinkUuidToHrefDecorator.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextImageFactory.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactory.java svneol=native#text/plain
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/LinkHrefToUuidDecorator.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/LinkUuidToHrefDecorator.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/RichTextFacetHelper.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/jcr/RichTextImageURLProvider.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/AbstractPersistedMap.java -text

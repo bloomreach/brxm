@@ -74,7 +74,7 @@ public class ChildFacetUuidsModel implements IModel<String> {
     private String replaceChildNodeNamesWithUuids(String text) {
         final Node node = nodeModel.getObject();
 
-        final LinkHrefToUuidDecorator linkDecorator = new LinkHrefToUuidDecorator(node);
+        final InternalLinkHrefToUuidDecorator linkDecorator = new InternalLinkHrefToUuidDecorator(node);
         text = RichTextProcessor.decorateLinkHrefs(text, linkDecorator);
 
         final ImgAddUuidDecorator imageDecorator = new ImgAddUuidDecorator(node);
@@ -118,11 +118,14 @@ public class ChildFacetUuidsModel implements IModel<String> {
     private String replaceUuids(String text) {
         final Node node = this.nodeModel.getObject();
 
-        final LinkUuidToHrefDecorator linkDecorator = new LinkUuidToHrefDecorator(node);
-        text = RichTextProcessor.decorateLinkUuids(text, linkDecorator);
+        final InternalLinkRemoveHrefDecorator removeInternalLinkHrefs = new InternalLinkRemoveHrefDecorator();
+        text = RichTextProcessor.decorateLinkHrefs(text, removeInternalLinkHrefs);
 
-        final ImgRemoveUuidDecorator imageDecorator = new ImgRemoveUuidDecorator();
-        return RichTextProcessor.decorateImgUuids(text, imageDecorator);
+        final InternalLinkUuidToHrefDecorator changeInternalLinkUuidsToHrefs = new InternalLinkUuidToHrefDecorator(node);
+        text = RichTextProcessor.decorateLinkUuids(text, changeInternalLinkUuidsToHrefs);
+
+        final ImgRemoveUuidDecorator removeImageUuids = new ImgRemoveUuidDecorator();
+        return RichTextProcessor.decorateImgUuids(text, removeImageUuids);
     }
 
     public void detach() {

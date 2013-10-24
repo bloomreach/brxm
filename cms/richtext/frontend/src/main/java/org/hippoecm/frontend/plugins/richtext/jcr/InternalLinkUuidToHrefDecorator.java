@@ -16,26 +16,21 @@
 package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for the 'href' attribute of link ('a') tags that replaces the 'uuid' attribute of internal links
  * with an 'href' attribute set to the name of the child hippo:facetselect node of the document node.
- * When no such facetselect node exists, the 'href' attribute will be set to '#'.
+ * When no such facetselect node exists, the 'href' attribute will be removed.
  */
-class LinkUuidToHrefDecorator extends InternalLinkDecorator {
-
-    private static final Logger log = LoggerFactory.getLogger(LinkUuidToHrefDecorator.class);
+class InternalLinkUuidToHrefDecorator extends InternalLinkDecorator {
 
     private final Node documentNode;
 
-    LinkUuidToHrefDecorator(Node documentNode) {
+    InternalLinkUuidToHrefDecorator(Node documentNode) {
         super("href");
         this.documentNode = documentNode;
     }
@@ -43,8 +38,10 @@ class LinkUuidToHrefDecorator extends InternalLinkDecorator {
     @Override
     public String internalLink(final String uuid) {
         final String facetNodeName = RichTextFacetHelper.getChildFacetNameOrNull(this.documentNode, uuid);
-        final String href = facetNodeName == null ? "#" : facetNodeName;
-        return "href=\"" + href + "\"";
+        if (facetNodeName == null) {
+            return StringUtils.EMPTY;
+        }
+        return "href=\"" + facetNodeName + "\"";
     }
 
 }

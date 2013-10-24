@@ -86,7 +86,7 @@ public class ChildFacetUuidsModelTest {
 
         final ChildFacetUuidsModel model = createModel("<a href=\"linked-node\">link</a>");
 
-        assertEquals("<a uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">link</a>", model.getObject());
+        assertEquals("<a href=\"http://\" uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">link</a>", model.getObject());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ChildFacetUuidsModelTest {
 
         final ChildFacetUuidsModel model = createModel("Two links: <a href=\"linked-node-1\">one</a> and <a href=\"linked-node-2\">two</a>");
 
-        assertEquals("Two links: <a uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">one</a> and <a uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\">two</a>", model.getObject());
+        assertEquals("Two links: <a href=\"http://\" uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">one</a> and <a href=\"http://\" uuid=\"eb40e696-67db-4d5b-a09a-987e6c49543d\">two</a>", model.getObject());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ChildFacetUuidsModelTest {
     @Test
     public void getMissingLinkChildNodeIsRewrittenToEmptyString() throws RepositoryException {
         ChildFacetUuidsModel model = createModel("<a href=\"no-such-child-node\">link</a>");
-        assertEquals("<a uuid=\"\">link</a>", model.getObject());
+        assertEquals("<a href=\"http://\" uuid=\"\">link</a>", model.getObject());
     }
 
     @Test
@@ -171,7 +171,7 @@ public class ChildFacetUuidsModelTest {
         final ChildFacetUuidsModel model = createModel("");
         assertEquals(0, documentNode.getNodes().getSize());
 
-        model.setObject("<a uuid=\"" + linkTarget.getIdentifier() + "\">link</a>");
+        model.setObject("<a href=\"http://\" uuid=\"" + linkTarget.getIdentifier() + "\">link</a>");
         assertTrue("Text with new link UUID should create a child facet node", documentNode.hasNode("linked-node"));
         assertEquals("Text with new link UUID should create exactly one child facet node", 1, documentNode.getNodes().getSize());
 
@@ -204,7 +204,7 @@ public class ChildFacetUuidsModelTest {
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
         final ChildFacetUuidsModel model = createModel("");
-        model.setObject("<a uuid=\"" + linkTarget.getIdentifier() + "\">link</a>");
+        model.setObject("<a href=\"http://\" uuid=\"" + linkTarget.getIdentifier() + "\">link</a>");
 
         assertEquals("Text with existing link UUID should reuse existing child facet node", 1, documentNode.getNodes().getSize());
 
@@ -239,6 +239,15 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
+    public void setExternalLinkWithUuidShouldIgnoreUuid() throws RepositoryException {
+        final Node document1 = rootNode.addNode("document1", "nt:unstructured");
+        final ChildFacetUuidsModel model = createModel("");
+        model.setObject("<a href=\"http://www.example.com\" uuid=\"" + document1.getIdentifier() + "\">external link</a>");
+        assertEquals("No child facet nodes should have been created", 0, documentNode.getNodes().getSize());
+        assertEquals("<a href=\"http://www.example.com\">external link</a>", textModel.getObject());
+    }
+
+    @Test
     public void setExternalImageDoesNotChange() {
         final ChildFacetUuidsModel model = createModel("");
         model.setObject("<img src=\"http://www.example.com/image.jpg\"/>");
@@ -267,7 +276,7 @@ public class ChildFacetUuidsModelTest {
         addChildFacetNode("document2", document2.getIdentifier());
 
         final ChildFacetUuidsModel model = createModel("");
-        model.setObject("Text with only one link to <a uuid=\"" + document1.getIdentifier() + "\">document one</a>");
+        model.setObject("Text with only one link to <a href=\"http://\" uuid=\"" + document1.getIdentifier() + "\">document one</a>");
 
         final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have only one facet child node", 1, documentNode.getNodes().getSize());
@@ -306,7 +315,7 @@ public class ChildFacetUuidsModelTest {
         addChildFacetNode("document_1", document.getIdentifier());
 
         final ChildFacetUuidsModel model = createModel("");
-        model.setObject("<a uuid=\"" + document.getIdentifier() + "\">document</a>");
+        model.setObject("<a href=\"http://\" uuid=\"" + document.getIdentifier() + "\">document</a>");
 
         final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have only one facet child node", 1, documentNode.getNodes().getSize());
@@ -325,8 +334,8 @@ public class ChildFacetUuidsModelTest {
         addChildFacetNode("document", document1.getIdentifier());
 
         final ChildFacetUuidsModel model = createModel("");
-        model.setObject("<a uuid=\"" + document1.getIdentifier() + "\">document one</a>" +
-                " and <a uuid=\"" + document2.getIdentifier() + "\">document two</a>");
+        model.setObject("<a href=\"http://\" uuid=\"" + document1.getIdentifier() + "\">document one</a>" +
+                " and <a href=\"http://\" uuid=\"" + document2.getIdentifier() + "\">document two</a>");
 
         final NodeIterator children = documentNode.getNodes();
         assertEquals("Document node should have two facet child nodes", 2, documentNode.getNodes().getSize());
@@ -350,7 +359,7 @@ public class ChildFacetUuidsModelTest {
 
         final ChildFacetUuidsModel model = createModel("");
 
-        model.setObject("<a uuid=\"" + linked.getIdentifier() + "\">linked</a>");
+        model.setObject("<a href=\"http://\" uuid=\"" + linked.getIdentifier() + "\">linked</a>");
         assertEquals("Child facet node should have been added", 1, documentNode.getNodes().getSize());
 
         model.setObject("");

@@ -15,22 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.richtext;
 
-import java.nio.charset.Charset;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
-import org.apache.wicket.util.encoding.UrlDecoder;
 
 public class RichTextProcessor {
 
-    private static Pattern LINK_AND_IMAGES_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(uuid)=\"(.*?)\"(.*?)>",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    private static Pattern LINK_OR_IMG_PATTERN = Pattern.compile("<(a|img)[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
     private static Pattern SRC_PATTERN = Pattern.compile("src=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
     private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
@@ -38,7 +34,7 @@ public class RichTextProcessor {
             Pattern.CASE_INSENSITIVE);
 
     private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
-    private static Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("^[a-z]+:/", Pattern.CASE_INSENSITIVE);
+    private static Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("^[a-z]+://.+?", Pattern.CASE_INSENSITIVE);
     private static Pattern HREF_PATTERN = Pattern.compile("href=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
     private static Pattern UUID_PATTERN = Pattern.compile("uuid=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
     private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
@@ -88,7 +84,7 @@ public class RichTextProcessor {
             }
 
             sourceMatcher.appendTail(newImg);
-            appendEscapedReplacement(imageMatcher, processed, removeSpacesBeforeEndTag(newImg.toString()));
+            appendEscapedReplacement(imageMatcher, processed, trimTag(newImg.toString()));
         }
 
         imageMatcher.appendTail(processed);
@@ -128,7 +124,7 @@ public class RichTextProcessor {
                 newImg.append(facet);
             }
             s.appendTail(newImg);
-            appendEscapedReplacement(m, processed, removeSpacesBeforeEndTag(newImg.toString()));
+            appendEscapedReplacement(m, processed, trimTag(newImg.toString()));
         }
 
         m.appendTail(processed);
@@ -140,32 +136,28 @@ public class RichTextProcessor {
      * in the text.  The text may not be null.
      */
     public static Set<String> getInternalLinkUuids(String text) {
-        Set<String> links = new TreeSet<String>();
-        Matcher m = LINK_AND_IMAGES_PATTERN.matcher(text);
-        while (m.find()) {
-            String link = m.group(5);
-            if (isExternalLink(link)) {
-                continue;
-            }
-            String linkName;
-            if (link.indexOf('/') > 0) {
-                linkName = link.substring(0, link.indexOf('/'));
-            } else {
-                linkName = link;
-            }
-            final Charset charset = getCharset();
-            linkName = UrlDecoder.PATH_INSTANCE.decode(linkName, charset);
-            links.add(linkName);
-        }
-        return links;
-    }
+        Set<String> uuids = new TreeSet<String>();
 
-    private static Charset getCharset() {
-        final RequestCycle requestCycle = RequestCycle.get();
-        if (requestCycle != null) {
-            return requestCycle.getRequest().getCharset();
+        final StringBuffer processed = new StringBuffer();
+        final Matcher m = LINK_OR_IMG_PATTERN.matcher(text);
+        while (m.find()) {
+            final String tag = m.group();
+            final Matcher uuidMatcher = UUID_PATTERN.matcher(tag);
+            if (uuidMatcher.find()) {
+                final Matcher hrefMatcher = HREF_PATTERN.matcher(tag);
+                boolean isExternalLink = false;
+                if (hrefMatcher.find()) {
+                    final String href = hrefMatcher.group(1);
+                    isExternalLink = isExternalLink(href);
+                }
+                if (!isExternalLink) {
+                    final String uuid = uuidMatcher.group(1);
+                    uuids.add(uuid);
+                }
+            }
         }
-        return Charset.forName("UTF-8");
+
+        return uuids;
     }
 
     public static String decorateLinkHrefs(final String text, final ILinkDecorator decorator) {
@@ -202,7 +194,7 @@ public class RichTextProcessor {
                 appendEscapedReplacement(s, newTag, decorated);
             }
             s.appendTail(newTag);
-            appendEscapedReplacement(m, processed, removeSpacesBeforeEndTag(newTag.toString()));
+            appendEscapedReplacement(m, processed, trimTag(newTag.toString()));
         }
         m.appendTail(processed);
 
@@ -214,8 +206,8 @@ public class RichTextProcessor {
         m.appendReplacement(sb, escaped);
     }
 
-    private static String removeSpacesBeforeEndTag(final String text) {
-        return text.replaceFirst("\\s*/>$", "/>");
+    private static String trimTag(final String text) {
+        return text.replaceAll("(<[a-z]+\\s)\\s*", "$1").replaceAll("\\s*>", ">").replaceFirst("\\s*/>$", "/>");
     }
 
     private static boolean isExternalLink(String href) {

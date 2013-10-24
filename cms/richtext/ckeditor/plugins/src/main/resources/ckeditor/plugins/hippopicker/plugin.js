@@ -130,8 +130,8 @@
             label: LANG.internalLinkTooltip,
             command: 'pickInternalLink',
             toolbar: 'links,5',
-            allowedContent: 'a[!uuid,title,target]',
-            requiredContent: 'a[!uuid]'
+            allowedContent: 'a[!uuid,!href,title,target]',
+            requiredContent: 'a[!uuid,!href]'
         });
 
         editor.addCommand('pickInternalLink', {
@@ -162,6 +162,14 @@
                     selectedLink.removeAttribute('data-cke-saved-href');
                 } else {
                     createLinkFromSelection(editor.getSelection(), parameters);
+                    selectedLink = getSelectedLinkOrNull(editor.getSelection());
+                }
+
+                // Set the href attribute to 'http://' so the CKEditor link picker will still recognize the link
+                // as a link (and, for example, enable the 'remove link' button). The CMS will recognize the empty
+                // 'http://' href and still interpret the link as an internal link.
+                if (selectedLink !== null) {
+                    selectedLink.setAttribute('href', 'http://');
                 }
             }
         });
