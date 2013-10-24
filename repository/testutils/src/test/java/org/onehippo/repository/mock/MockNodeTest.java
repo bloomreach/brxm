@@ -18,7 +18,6 @@ package org.onehippo.repository.mock;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -354,6 +353,52 @@ public class MockNodeTest {
 
         assertEquals("test", definition.getName());
         assertTrue("Multiple property should not defined as multiple", definition.isMultiple());
+    }
+
+    @Test(expected = ItemNotFoundException.class)
+    public void primaryItemNotDefined() throws RepositoryException {
+        MockNode.root().getPrimaryItem();
+    }
+
+    @Test(expected = ItemNotFoundException.class)
+    public void primaryItemNodeDoesNotExist() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        root.setPrimaryItemName("child");
+        root.getPrimaryItem();
+    }
+
+    @Test
+    public void primaryItemNode() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        root.setPrimaryItemName("child");
+        final Node child = root.addNode("child", "nt:unstructured");
+
+        final Item primaryItem = root.getPrimaryItem();
+        assertSame(child, primaryItem);
+    }
+
+    @Test
+    public void primaryItemProperty() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        root.setPrimaryItemName("prop");
+        root.setProperty("prop", "value");
+
+        final Item primaryItem = root.getPrimaryItem();
+        assertFalse("Primary item should be a property", primaryItem.isNode());
+        assertEquals("prop", primaryItem.getName());
+    }
+
+    @Test
+    public void primaryNodeTypeKnowsPrimaryItemNameIsNotSet() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        assertNull(root.getPrimaryNodeType().getPrimaryItemName());
+    }
+
+    @Test
+    public void primaryNodeTypeKnowsPrimaryItemName() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        root.setPrimaryItemName("foo");
+        assertEquals("foo", root.getPrimaryNodeType().getPrimaryItemName());
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {

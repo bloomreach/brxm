@@ -28,6 +28,7 @@ import javax.jcr.nodetype.PropertyDefinition;
 public class MockNodeType implements NodeType {
 
     private final String name;
+    private String primaryItemName;
 
     public MockNodeType(String name) {
         this.name = name;
@@ -41,6 +42,15 @@ public class MockNodeType implements NodeType {
     @Override
     public boolean isNodeType(final String nodeTypeName) {
         return name.equals(nodeTypeName);
+    }
+
+    @Override
+    public String getPrimaryItemName() {
+        return primaryItemName;
+    }
+
+    public void setPrimaryItemName(final String primaryItemName) {
+        this.primaryItemName = primaryItemName;
     }
 
     // REMAINING METHODS ARE NOT IMPLEMENTED
@@ -132,11 +142,6 @@ public class MockNodeType implements NodeType {
 
     @Override
     public boolean isQueryable() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getPrimaryItemName() {
         throw new UnsupportedOperationException();
     }
 

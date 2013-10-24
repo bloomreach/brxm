@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.jcr.Binary;
 import javax.jcr.Item;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -63,12 +63,14 @@ public class MockNode extends MockItem implements Node {
     private String identifier;
     private final Map<String, MockProperty> properties;
     private final Map<String, MockNode> children;
+    private String primaryItemName;
 
     public MockNode(String name) {
         super(name);
         this.identifier = UUID.randomUUID().toString();
         this.properties = new HashMap<String, MockProperty>();
         this.children = new HashMap<String, MockNode>();
+        this.primaryItemName = null;
     }
 
     public static MockNode root() throws RepositoryException {
@@ -110,6 +112,7 @@ public class MockNode extends MockItem implements Node {
     @Override
     public void setPrimaryType(final String nodeTypeName) {
         this.primaryType = new MockNodeType(nodeTypeName);
+        this.primaryType.setPrimaryItemName(primaryItemName);
     }
 
     @Override
@@ -252,6 +255,32 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
+    public Item getPrimaryItem() throws ItemNotFoundException {
+        if (primaryItemName == null) {
+            throw new ItemNotFoundException("MockNode '" + getPath() + "' does not have a primary item defined. "
+                    + "Use #setPrimaryItemName to define the name of the primary item.");
+        }
+        try {
+            return getNode(primaryItemName);
+        } catch (PathNotFoundException e) {
+            // node does not exist, maybe it is a property?
+        }
+        try {
+            return getProperty(primaryItemName);
+        } catch (PathNotFoundException e) {
+            // property does not exist either
+        }
+        throw new ItemNotFoundException("Primary item '" + primaryItemName + "' does not exist in MockNode '" + getPath() + "'");
+    }
+
+    public void setPrimaryItemName(String name) {
+        this.primaryItemName = name;
+        if (this.primaryType != null) {
+            this.primaryType.setPrimaryItemName(primaryItemName);
+        }
+    }
+
+    @Override
     public String toString() {
         return "MockNode[path=" + getPath() + "]";
     }
@@ -335,11 +364,6 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public PropertyIterator getProperties(final String[] nameGlobs) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Item getPrimaryItem() {
         throw new UnsupportedOperationException();
     }
 
