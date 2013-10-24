@@ -26,15 +26,27 @@ $ git clone git@github.com:onehippo/essentials.git
 
 
 ### Create empty project:
+```
 $ cd essetials/archetype
+```
+## Install archetype localy:
+
+```
 $ mvn clean install
-
-
+```
+## Install dashboard module
+```
+$ cd ..
+$ mvn clean install
+```
+## run archetype
+```
 mvn archetype:generate \
 -DarchetypeGroupId=org.onehippo.cms7 \
 -DarchetypeArtifactId=essentials-archetype-website \
 -DarchetypeVersion=1.01.00-SNAPSHOT
 
+```
 ## Working with Git
 
 Create local working branch to work on:
