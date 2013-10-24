@@ -108,7 +108,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
         wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
         wizard.addWizard(new FinalStep("Done"));
-        wizard.addWizard(new ProjectSetupStep("Setup project", plugin, context));
+        wizard.addWizard(new ProjectSetupStep("Project settings", plugin, context));
         add(wizard);
 
     }
