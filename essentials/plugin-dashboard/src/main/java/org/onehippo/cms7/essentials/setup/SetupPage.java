@@ -29,12 +29,12 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
-import org.onehippo.cms7.essentials.dashboard.event.LoggingPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.MemoryPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
-import org.onehippo.cms7.essentials.setup.panels.EventsPanel;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
 import org.onehippo.cms7.essentials.setup.panels.ProjectSetupStep;
 import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
@@ -73,6 +73,9 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private LoggingPluginEventListener loggingPluginEventListener;
     @Inject
     private MemoryPluginEventListener memoryPluginEventListener;
+
+    @Inject
+    private ValidationEventListener validationEventListener;
 
 
     public SetupPage(final PageParameters parameters) {

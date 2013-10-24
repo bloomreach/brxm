@@ -21,7 +21,7 @@ import java.util.Queue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.TestEvent;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.event;
+package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 
+import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
+import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

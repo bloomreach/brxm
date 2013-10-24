@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.event;
+package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

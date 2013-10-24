@@ -1938,6 +1938,12 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/e
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/.idea
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/atlassian-ide-plugin.xml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/*.iml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/.DS_Store
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/.idea
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/*.iml
