@@ -1,5 +1,5 @@
 #set( $dollar = '$' )
-<?xml version="1.0" encoding="UTF-8"?>
+  <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -16,53 +16,12 @@
   <version>${version}</version>
   <packaging>pom</packaging>
 
-  <!-- 
-    The below project elements are emptied/overridden as otherwise their metadata would be
-    inherited or merged from the parent hippo-cms7-release pom (or its hippo-cms7-project pom).
-
-    DO NOT remove these tags but instead fill them in appropriately as needed, 
-    UNLESS the inherited values are valid for your project.
-  -->
-  <url/>
-  <inceptionYear/>
-  <organization/>
-  <licenses>
-    <license/>
-  </licenses>
-  <mailingLists>
-    <mailingList/>
-  </mailingLists>
-  <developers>
-    <developer/>
-  </developers>
-  <contributors>
-    <contributor/>
-  </contributors>
-  <issueManagement/>
-  <!--
-  <scm>
-    <connection/>
-    <developerConnection/>
-    <url/>
-  </scm>
-  -->
-  <ciManagement/>
-  <distributionManagement>
-    <repository>
-      <id>-</id>
-      <url>-</url>
-    </repository>
-    <snapshotRepository>
-      <id>-</id>
-      <url>-</url>
-    </snapshotRepository>
-  </distributionManagement>
-  <!-- End of emptied/overridden metadata from parent hippo-cms7-release pom. -->
-
   <properties>
 
     <!--***START temporary override of versions*** -->
+    <plugin-dashboard.version>1.01.00-SNAPSHOT</plugin-dashboard.version>
     <!-- ***END temporary override of versions*** -->
+
 
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
@@ -70,23 +29,32 @@
     <junit.version>4.10</junit.version>
     <easymock.version>3.1</easymock.version>
     <freemarker.version>2.3.18</freemarker.version>
-     
+
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
   </properties>
+  <!--
+  <scm>
+    <connection/>
+    <developerConnection/>
+    <url/>
+  </scm>
+  -->
 
-  <repositories>
-    <repository>
-      <id>hippo</id>
-      <name>Hippo maven 2 repository.</name>
-      <url>http://maven.onehippo.com/maven2/</url>
-    </repository>
-  </repositories>
+  <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials.installer</groupId>
+      <artifactId>plugin-dashboard</artifactId>
+      <version>${plugin-dashboard.version}</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
+
 
   <dependencyManagement>
     <dependencies>
-      
+
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -114,7 +82,7 @@
         <artifactId>freemarker</artifactId>
         <version>${dollar}{freemarker.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -131,7 +99,7 @@
 
     </dependencies>
   </dependencyManagement>
-  
+
   <build>
     <defaultGoal>package</defaultGoal>
     <pluginManagement>
@@ -231,6 +199,12 @@
                       <context>/site</context>
                     </properties>
                   </deployable>
+                  <deployable>
+                    <groupId>org.onehippo.cms7.essentials.installer</groupId>
+                    <artifactId>plugin-dashboard</artifactId>
+                    <type>war</type>
+                  </deployable>
+
                 </deployables>
                 <properties>
                   <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
@@ -303,5 +277,52 @@
     </profile>
 
   </profiles>
+
+
+  <repositories>
+    <repository>
+      <id>hippo</id>
+      <name>Hippo maven 2 repository.</name>
+      <url>http://maven.onehippo.com/maven2/</url>
+    </repository>
+  </repositories>
+
+  <!--
+    The below project elements are emptied/overridden as otherwise their metadata would be
+    inherited or merged from the parent hippo-cms7-release pom (or its hippo-cms7-project pom).
+
+    DO NOT remove these tags but instead fill them in appropriately as needed,
+    UNLESS the inherited values are valid for your project.
+  -->
+  <url/>
+  <inceptionYear/>
+  <organization/>
+  <licenses>
+    <license/>
+  </licenses>
+  <mailingLists>
+    <mailingList/>
+  </mailingLists>
+  <developers>
+    <developer/>
+  </developers>
+  <contributors>
+    <contributor/>
+  </contributors>
+  <issueManagement/>
+
+  <ciManagement/>
+  <distributionManagement>
+    <repository>
+      <id>-</id>
+      <url>-</url>
+    </repository>
+    <snapshotRepository>
+      <id>-</id>
+      <url>-</url>
+    </snapshotRepository>
+  </distributionManagement>
+  <!-- End of emptied/overridden metadata from parent hippo-cms7-release pom. -->
+
 
 </project>
