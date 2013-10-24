@@ -29,7 +29,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LoggingPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
+import org.onehippo.cms7.essentials.dashboard.event.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
@@ -63,9 +63,11 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
     @Inject
-    private  EventBus eventBus;
+    private EventBus eventBus;
     @Inject
-    private LoggingPluginEventListener listener;
+    private LoggingPluginEventListener loggingPluginEventListener;
+    @Inject
+    private MemoryPluginEventListener memoryPluginEventListener;
 
 
     public SetupPage(final PageParameters parameters) {

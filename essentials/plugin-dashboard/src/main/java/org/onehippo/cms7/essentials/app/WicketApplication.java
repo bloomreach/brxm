@@ -1,4 +1,4 @@
-package org.onehippo.cms7.essentials.installer;
+package org.onehippo.cms7.essentials.app;
 
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.guice.GuiceComponentInjector;
@@ -11,11 +11,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Application object for your web application. If you want to run this application without deploying, run the Start class.
  *
- * @see org.onehippo.cms7.essentials.installer.Start#main(String[])
  */
 public class WicketApplication extends WebApplication {
+
+    private final EventBusModule eventBusModule = new EventBusModule();
     /**
      * @see org.apache.wicket.Application#getHomePage()
      */
@@ -32,13 +32,18 @@ public class WicketApplication extends WebApplication {
         super.init();
         getMarkupSettings().setStripWicketTags(true);
         // inject event bus:
-        final Injector injector = Guice.createInjector(new EventBusModule());
+        final Injector injector = Guice.createInjector(eventBusModule);
         getComponentInstantiationListeners().add(new GuiceComponentInjector(this, injector));
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBusModule.cleanup();
 
 
+    }
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {

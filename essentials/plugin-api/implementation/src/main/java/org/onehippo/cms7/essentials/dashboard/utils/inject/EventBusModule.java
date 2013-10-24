@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
 import org.onehippo.cms7.essentials.dashboard.event.LoggingPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.MemoryPluginEventListener;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
@@ -34,6 +35,12 @@ import com.google.inject.spi.TypeListener;
 public class EventBusModule extends AbstractModule {
     private final transient EventBus eventBus = new EventBus("Essentials Event Bus");
     private final transient LoggingPluginEventListener loggingPluginEventListener = new LoggingPluginEventListener();
+    private final transient MemoryPluginEventListener memoryPluginEventListener = new MemoryPluginEventListener();
+
+    public void cleanup() {
+        eventBus.unregister(loggingPluginEventListener);
+        eventBus.unregister(memoryPluginEventListener);
+    }
 
     @Override
     protected void configure() {
@@ -50,6 +57,7 @@ public class EventBusModule extends AbstractModule {
             }
         });
         bind(LoggingPluginEventListener.class).toInstance(loggingPluginEventListener);
+        bind(MemoryPluginEventListener.class).toInstance(memoryPluginEventListener);
 
     }
 }

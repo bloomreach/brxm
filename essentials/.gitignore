@@ -1682,6 +1682,12 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/atlassian-ide-plugin.xml
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/hippo-plugins.iws
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/target
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/*.iml
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/.DS_Store
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/.idea
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/atlassian-ide-plugin.xml
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/hippo-plugins.iws
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/target
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/hippo-plugins.iws
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/recorder/*.iml
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/recorder/.DS_Store
@@ -1977,6 +1983,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/*.iml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/.DS_Store
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/app/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/app/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/app/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/app/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/app/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/app/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/*.iml
