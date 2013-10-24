@@ -419,6 +419,8 @@ testcontent/src/main/resources/testcontent.cnd -text
 testcontent/src/main/resources/types/testcontent-type-document.xml -text
 testcontent/src/main/resources/types/testcontent-type-news.xml -text
 testutils/pom.xml -text
+testutils/src/main/java/org/onehippo/repository/mock/MockItemDefinition.java -text
+testutils/src/main/java/org/onehippo/repository/mock/MockPropertyDefinition.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/ExecuteOnLogLevel.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/JcrState.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/log4j/StringMatchFilter.java -text

@@ -28,6 +28,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.PropertyDefinition;
 
 import org.junit.Test;
 
@@ -330,6 +331,29 @@ public class MockNodeTest {
         }
 
         assertEquals(0, root.getNodes().getSize());
+    }
+
+    @Test
+    public void singlePropertyHasDefinition() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        root.setProperty("test", "value");
+
+        final PropertyDefinition definition = root.getProperty("test").getDefinition();
+
+        assertEquals("test", definition.getName());
+        assertFalse("Single property should not be defined as multiple", definition.isMultiple());
+    }
+
+    @Test
+    public void multiplePropertyHasDefinition() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        final String[] values = {"one", "two"};
+        root.setProperty("test", values);
+
+        final PropertyDefinition definition = root.getProperty("test").getDefinition();
+
+        assertEquals("test", definition.getName());
+        assertTrue("Multiple property should not defined as multiple", definition.isMultiple());
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {

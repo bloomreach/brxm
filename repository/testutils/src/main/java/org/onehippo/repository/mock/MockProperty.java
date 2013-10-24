@@ -120,6 +120,11 @@ public class MockProperty extends MockItem implements Property {
         getMockParent().removeProperty(name);
     }
 
+    @Override
+    public PropertyDefinition getDefinition() {
+        return new MockPropertyDefinition(getName(), multiple);
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
@@ -214,11 +219,6 @@ public class MockProperty extends MockItem implements Property {
 
     @Override
     public long[] getLengths() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PropertyDefinition getDefinition() {
         throw new UnsupportedOperationException();
     }
 
