@@ -68,8 +68,8 @@ public class RichTextEditorImageService implements IDetachable {
                         if (!isSameType(type) || !isExisting()) {
                             put(WIDTH, "");
                             put(HEIGHT, "");
-                            item.setSelectedResourceDefinition(type);
                         }
+                        item.setSelectedResourceDefinition(type);
                         setUrl(item.getUrl());
                     } catch (RichTextException e) {
                         log.error("Could not create link");
