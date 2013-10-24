@@ -99,6 +99,10 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public Node addNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException {
+        return addMockNode(relPath, primaryNodeTypeName);
+    }
+
+    public MockNode addMockNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException {
         final String[] pathElements = relPath.split("/");
         MockNode parent = this;
 
