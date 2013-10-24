@@ -152,3 +152,19 @@
 .wizard-actions {
   text-align: right;
 }
+.hippo-header {
+  width: 100%;
+  height: 35px;
+  background-color: #4f5e67;
+  color: #f0ad4e;
+  text-align: center;
+  vertical-align: middle;
+  table-layout: fixed;
+  font-size: 20px;
+  font-weight: bold;
+}
+body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #fff;
+}
