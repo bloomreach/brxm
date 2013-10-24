@@ -26,6 +26,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.PluginEvent;
 import org.slf4j.Logger;
@@ -50,17 +52,18 @@ public class EventsPanel extends Panel {
         // REPEATER 
         //############################################
         final Form<?> form = new Form("form");
-        final List<PluginEvent> eventsModelList = new LinkedList<>(listener.consumeEvents());
-        final ListView<PluginEvent> repeater = new ListView<PluginEvent>("repeater", eventsModelList) {
+        final List<DisplayEvent> eventsModelList = new LinkedList<>(listener.consumeEvents());
+        final ListView<DisplayEvent> repeater = new ListView<DisplayEvent>("repeater", eventsModelList) {
             private static final long serialVersionUID = 1L;
-            protected void populateItem(final ListItem<PluginEvent> item) {
+
+            protected void populateItem(final ListItem<DisplayEvent> item) {
                 final PluginEvent pluginEvent = item.getModelObject();
 
 
                 final Label eventMessage = new Label("eventMessage", new Model<>(pluginEvent.getMessage()));
                 item.add(eventMessage);
                 // TODO add model..
-                final CheckBox undoCheckbox = new CheckBox("undoCheckbox");
+                final CheckBox undoCheckbox = new CheckBox("undoCheckbox", new PropertyModel<Boolean>(pluginEvent, "selected"));
                 item.add(undoCheckbox);
             }
         };

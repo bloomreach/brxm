@@ -32,8 +32,9 @@ import com.google.common.eventbus.Subscribe;
 public class MemoryPluginEventListener implements PluginEventListener<DisplayEvent> {
 
     public static final int MAX_ITEMS = 1000;
-    private static Logger log = LoggerFactory.getLogger(MemoryPluginEventListener.class);
-    private final Queue<PluginEvent> events = new ConcurrentLinkedQueue<>();
+    private final Queue<DisplayEvent> events = new ConcurrentLinkedQueue<>();
+
+
 
     @Override
     @Subscribe
@@ -44,8 +45,8 @@ public class MemoryPluginEventListener implements PluginEventListener<DisplayEve
         events.add(event);
     }
 
-    public Queue<PluginEvent> consumeEvents() {
-        final Queue<PluginEvent> pluginEvents = new LinkedList<>(events);
+    public Queue<DisplayEvent> consumeEvents() {
+        final Queue<DisplayEvent> pluginEvents = new LinkedList<>(events);
         events.clear();
         return pluginEvents;
 

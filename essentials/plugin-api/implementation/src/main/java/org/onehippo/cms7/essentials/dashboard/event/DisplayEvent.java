@@ -23,6 +23,19 @@ public class DisplayEvent extends MessageEvent {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Flag that indicates event is selected for certain task (e.g. rollback)
+     */
+    private boolean selected;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(final boolean selected) {
+        this.selected = selected;
+    }
+
     public DisplayEvent(final String message) {
         super(message);
     }

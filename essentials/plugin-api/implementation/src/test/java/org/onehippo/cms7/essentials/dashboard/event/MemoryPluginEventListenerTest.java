@@ -51,7 +51,7 @@ public class MemoryPluginEventListenerTest {
         for (int i = 0; i < maxItems; i++) {
              bus.post(new DisplayEvent(String.valueOf(i)));
         }
-        Queue<PluginEvent> pluginEvents = listener.consumeEvents();
+        Queue<DisplayEvent> pluginEvents = listener.consumeEvents();
         assertEquals(MemoryPluginEventListener.MAX_ITEMS, pluginEvents.size());
         // above consume should remove all events:
         pluginEvents = listener.consumeEvents();
