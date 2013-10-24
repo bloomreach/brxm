@@ -335,7 +335,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                     ((FullReviewedActionsWorkflow) wf).rename(nodeName);
                 }
                 if (!node.getLocalizedName().equals(localName)) {
-                    defaultWorkflow.localizeName(localName);
+                    defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
                 }
                 return null;
             }
@@ -395,7 +395,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
                 WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", result.getNode(nodeName));
-                defaultWorkflow.localizeName(getLocalizeCodec().encode(name));
+                defaultWorkflow.localizeName(UserSession.get().getLocale(), getLocalizeCodec().encode(name));
 
                 browseTo(resultModel);
                 return null;

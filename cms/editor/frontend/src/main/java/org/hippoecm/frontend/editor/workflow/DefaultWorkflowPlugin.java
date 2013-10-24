@@ -180,7 +180,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                     ((DefaultWorkflow) wf).rename(nodeName);
                 }
                 if (!node.getLocalizedName().equals(localName)) {
-                    defaultWorkflow.localizeName(localName);
+                    defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
                 }
                 return null;
             }
@@ -293,7 +293,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 if (!node.getLocalizedName().equals(localName)) {
                     WorkflowManager manager = UserSession.get().getWorkflowManager();
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                    defaultWorkflow.localizeName(localName);
+                    defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
                 }
                 browseTo(copyMode);
                 return null;
