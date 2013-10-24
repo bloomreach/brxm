@@ -37,6 +37,7 @@ import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.onehippo.cms7.essentials.setup.panels.EventsPanel;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
 import org.onehippo.cms7.essentials.setup.panels.ProjectSetupStep;
+import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
 import org.onehippo.cms7.essentials.setup.panels.WelcomeStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +108,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         //############################################
         final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
         wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
+        wizard.addWizard(new SelectPowerpackStep("Select pwoerpacks"));
         wizard.addWizard(new FinalStep("Done"));
         wizard.addWizard(new ProjectSetupStep("Project settings", plugin, context));
         add(wizard);

@@ -646,6 +646,8 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalSt
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ProjectSetupStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ProjectSetupStep.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/SelectPowerpackStep.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/SelectPowerpackStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/WelcomeStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/WelcomeStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/hippo-logo.png -text
