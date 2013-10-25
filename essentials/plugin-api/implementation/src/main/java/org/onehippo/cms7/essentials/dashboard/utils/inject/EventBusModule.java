@@ -42,6 +42,7 @@ public class EventBusModule extends AbstractModule {
     public void cleanup() {
         eventBus.unregister(loggingPluginEventListener);
         eventBus.unregister(memoryPluginEventListener);
+        eventBus.unregister(validationEventListener);
     }
 
     @Override

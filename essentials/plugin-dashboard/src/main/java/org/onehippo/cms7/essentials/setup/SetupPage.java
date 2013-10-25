@@ -73,7 +73,6 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private LoggingPluginEventListener loggingPluginEventListener;
     @Inject
     private MemoryPluginEventListener memoryPluginEventListener;
-
     @Inject
     private ValidationEventListener validationEventListener;
 
