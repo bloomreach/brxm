@@ -16,12 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.event;
 
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
+
 /**
  * @version "$Id$"
  */
 public class InstructionEvent extends MessageEvent {
 
     private static final long serialVersionUID = 1L;
+    private Instruction instruction;
+
+    public InstructionEvent(final Instruction instruction) {
+        super(instruction.getMessage());
+        this.instruction = instruction;
+    }
 
     public InstructionEvent(final String message) {
         super(message);
@@ -30,5 +38,17 @@ public class InstructionEvent extends MessageEvent {
     @Override
     public DisplayLocation getDisplayLocation() {
         return DisplayLocation.SYSTEM;
+    }
+
+    public Instruction getInstruction() {
+        return instruction;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("InstructionEvent{");
+        sb.append("instruction=").append(instruction);
+        sb.append('}');
+        return sb.toString();
     }
 }

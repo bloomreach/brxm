@@ -20,6 +20,8 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventL
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
+import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
@@ -40,6 +42,7 @@ public class EventBusModule extends AbstractModule {
     private final transient MemoryPluginEventListener memoryPluginEventListener = new MemoryPluginEventListener();
     private final transient ValidationEventListener validationEventListener = new ValidationEventListener();
     private final transient InstructionsEventListener instructionsEventListener = new InstructionsEventListener();
+    private final transient InstructionExecutor instructionExecutor = new PluginInstructionExecutor();
 
     public void cleanup() {
         eventBus.unregister(loggingPluginEventListener);
@@ -66,6 +69,7 @@ public class EventBusModule extends AbstractModule {
         bind(MemoryPluginEventListener.class).toInstance(memoryPluginEventListener);
         bind(ValidationEventListener.class).toInstance(validationEventListener);
         bind(InstructionsEventListener.class).toInstance(instructionsEventListener);
+        bind(InstructionExecutor.class).toInstance(instructionExecutor);
 
     }
 }

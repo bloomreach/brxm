@@ -34,12 +34,18 @@ import com.google.common.eventbus.Subscribe;
  */
 public class InstructionsEventListener implements PluginEventListener<InstructionEvent> {
 
+    private static final Logger log = LoggerFactory.getLogger(InstructionsEventListener.class);
 
+    private transient int counter;
     @Override
     @Subscribe
     public void onPluginEvent(final InstructionEvent event) {
-       // TODO write to a file or into repository
+        log.info("INSTRUCTION EVENT: {}", event);
+        counter++;
     }
 
-
+    // TODO remove, debugging only
+    public int getNrInstructions() {
+        return counter;
+    }
 }
