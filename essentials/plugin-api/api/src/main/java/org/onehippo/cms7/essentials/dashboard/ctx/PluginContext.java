@@ -25,13 +25,6 @@ public interface PluginContext extends Serializable, AutoCloseable {
 
 
     /**
-     * Returns event bus instance
-     *
-     * @return event bus instance
-     */
-    public EventBus getEventBus();
-
-    /**
      * Returns JCR session for logged in user.
      * <p>NOTE: session is managed by plugin itself, so logout etc. must be done by plugin</p>
      * <p>Sessions will be logout after plugin is unloaded by plugin framework</p>

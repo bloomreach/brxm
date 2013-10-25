@@ -35,16 +35,15 @@ public class DashboardPluginContext implements PluginContext {
     private final transient Session session;
     private final Plugin plugin;
     private transient File siteFile;
-    private transient EventBus eventBus;
+
     private String componentsPackage;
     private String beansPackage;
     private String restPackage;
     private String projectNamespace;
 
-    public DashboardPluginContext(final Session session, final Plugin plugin, final EventBus eventBus) {
+    public DashboardPluginContext(final Session session, final Plugin plugin) {
         this.session = session;
         this.plugin = plugin;
-        this.eventBus = eventBus;
     }
 
     public Session getSession() {
@@ -174,7 +173,5 @@ public class DashboardPluginContext implements PluginContext {
         }
     }
 
-    public EventBus getEventBus() {
-        return eventBus;
-    }
+
 }

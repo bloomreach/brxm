@@ -20,8 +20,8 @@ public class TestPluginContext extends DashboardPluginContext {
     private static Logger log = LoggerFactory.getLogger(TestPluginContext.class);
     private Session session;
 
-    public TestPluginContext(final Session session, final Plugin plugin, final EventBus eventBus) {
-        super(session, plugin, eventBus);
+    public TestPluginContext(final Session session, final Plugin plugin) {
+        super(session, plugin);
     }
 
 

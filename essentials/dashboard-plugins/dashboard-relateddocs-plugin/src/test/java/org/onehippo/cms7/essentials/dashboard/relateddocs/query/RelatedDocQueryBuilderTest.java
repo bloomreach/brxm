@@ -44,7 +44,7 @@ public class RelatedDocQueryBuilderTest {
     @Test
     public void testRelatedDocQueryBuilderTest() throws Exception {
         assertFalse(session.itemExists("/hippo:configuration/hippo:update/hippo:registry/related-doc-updater"));
-        PluginContext context = new DashboardPluginContext(session, null, null);
+        PluginContext context = new DashboardPluginContext(session, null);
         RelatedDocQueryBuilder builder = new RelatedDocQueryBuilder.Builder().addDocumentType("test:test").build();
         builder.addToRegistry(context);
         assertTrue(session.itemExists("/hippo:configuration/hippo:update/hippo:registry/related-doc-updater"));
