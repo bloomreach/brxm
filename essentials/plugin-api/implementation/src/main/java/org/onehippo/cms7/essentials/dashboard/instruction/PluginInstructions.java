@@ -36,7 +36,7 @@ public class PluginInstructions implements Instructions {
 
     private Set<InstructionSet> instructionSets = new LinkedHashSet<>();
 
-    @XmlElementRefs({@XmlElementRef(type = PluginInstructionSet.class, namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)})
+    @XmlElementRefs({@XmlElementRef(type = PluginInstructionSet.class, name = "instructionSet")})
     @Override
     public Set<InstructionSet> getInstructionSets() {
         return instructionSets;

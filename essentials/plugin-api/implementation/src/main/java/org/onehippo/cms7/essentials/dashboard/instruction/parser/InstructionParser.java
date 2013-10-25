@@ -31,6 +31,7 @@ import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.model.PluginNamespaceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

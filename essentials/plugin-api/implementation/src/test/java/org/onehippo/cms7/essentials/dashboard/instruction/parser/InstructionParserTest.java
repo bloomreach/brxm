@@ -50,6 +50,24 @@ public class InstructionParserTest {
 
     @Test
     public void testParseInstructions() throws Exception {
+
+
+        //############################################
+        // READ FROM FILE
+        //############################################
+
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
+        final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
+        final String content = myBuilder.toString();
+        final Instructions myInstructions = InstructionParser.parseInstructions(content);
+        final Set<InstructionSet> iset = myInstructions.getInstructionSets();
+        assertEquals(1, iset.size());
+
+
+        //############################################
+        // OBJECTS
+        //############################################
+
         final Instructions value = new PluginInstructions();
         final HashSet<InstructionSet> instructionSets = new HashSet<>();
         final PluginInstructionSet instructionSet = new PluginInstructionSet();
@@ -59,7 +77,6 @@ public class InstructionParserTest {
         value.setInstructionSets(instructionSets);
         final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);
         final Marshaller m = context.createMarshaller();
-        final Unmarshaller unmarshaller = context.createUnmarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         final StringWriter writer = new StringWriter();
         m.marshal(value, writer);
@@ -84,13 +101,7 @@ public class InstructionParserTest {
 
         }
 
-        // from file
-        final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
-        final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
-        final String content = myBuilder.toString();
-        final Instructions myInstructions = InstructionParser.parseInstructions(content);
-        final Set<InstructionSet> iset = myInstructions.getInstructionSets();
-        assertEquals(1, iset.size());
+
 
 
     }

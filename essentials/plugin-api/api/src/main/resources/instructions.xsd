@@ -63,7 +63,7 @@
   -->
   <xs:complexType name="instructionsType">
     <xs:all minOccurs="0" maxOccurs="1">
-      <xs:element type="instructionsSetType" name="instructionsSet" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="instructionsSetType" name="instructionSet" minOccurs="1" maxOccurs="1"/>
     </xs:all>
   </xs:complexType>
 

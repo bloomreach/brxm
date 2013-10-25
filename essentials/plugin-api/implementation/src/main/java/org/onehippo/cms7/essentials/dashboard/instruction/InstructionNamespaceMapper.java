@@ -16,25 +16,28 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
- * @version "$Id$"
+ * Removes namespace prefix from plugin nodes
+ * @version "$Id: PluginNamespaceMapper.java 172296 2013-07-31 09:32:49Z mmilicevic $"
  */
-public class PluginInstructionExecutor implements InstructionExecutor {
-
-    private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutor.class);
+public class InstructionNamespaceMapper extends NamespacePrefixMapper {
 
     @Override
-    public InstructionStatus execute(final Instruction instruction) {
-        log.debug("Executing instruction {}", instruction);
-        if (instruction == null) {
-            return InstructionStatus.SKIPPED;
+    public String getPreferredPrefix(String namespaceUri, String suggestion, boolean requirePrefix) {
+        if (EssentialConst.URI_ESSENTIALS_INSTRUCTIONS.equals(namespaceUri)) {
+            return "";
         }
-        return InstructionStatus.FAILED;
+
+        return suggestion;
     }
+
+    @Override
+    public String[] getPreDeclaredNamespaceUris() {
+        return new String[]{EssentialConst.URI_ESSENTIALS_INSTRUCTIONS};
+    }
+
 }
