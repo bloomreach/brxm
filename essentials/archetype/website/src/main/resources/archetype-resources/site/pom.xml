@@ -17,6 +17,11 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-dashboard-plugin-sdk</artifactId>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <scope>runtime</scope>
