@@ -25,19 +25,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "instructionSet")
+@XmlRootElement(name = "instructionSet", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class PluginInstructionSet implements InstructionSet {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionSet.class);
     private Set<Instruction> instructions = new LinkedHashSet<>();
 
-    @XmlElementRefs({@XmlElementRef(type = XmlInstruction.class), @XmlElementRef(type = FileInstruction.class)})
+    @XmlElementRefs({@XmlElementRef(type = XmlInstruction.class, namespace=EssentialConst.URI_ESSENTIALS_INSTRUCTIONS), @XmlElementRef(type = FileInstruction.class, namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)})
     @Override
     public Set<Instruction> getInstructions() {
         return instructions;
@@ -54,5 +55,13 @@ public class PluginInstructionSet implements InstructionSet {
         }
         instructions.add(instruction);
 
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginInstructionSet{");
+        sb.append("instructions=").append(instructions);
+        sb.append('}');
+        return sb.toString();
     }
 }

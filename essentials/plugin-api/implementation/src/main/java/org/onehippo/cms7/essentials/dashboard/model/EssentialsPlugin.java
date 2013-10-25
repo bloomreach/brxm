@@ -16,14 +16,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.Screenshot;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
+import static org.onehippo.cms7.essentials.dashboard.utils.EssentialConst.*;
 
 /**
  * @version "$Id: EssentialsPlugin.java 174057 2013-08-16 13:45:41Z dvandiepen $"
  */
-@XmlRootElement(name = "plugin", namespace = EssentialsPlugin.HIPPO_PLUGIN_NAMESPACE_URL)
+@XmlRootElement(name = "plugin", namespace = URI_ESSENTIALS_PLUGIN)
 public class EssentialsPlugin implements Plugin {
 
-    public static final String HIPPO_PLUGIN_NAMESPACE_URL = "http://www.onehippo.org/essentials";
+    
     private static final long serialVersionUID = 1L;
     private String name;
     private String type;
@@ -53,7 +56,7 @@ public class EssentialsPlugin implements Plugin {
         assets.add(asset);
     }
 
-    @XmlElement(namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getDescription() {
         return description;
@@ -64,7 +67,7 @@ public class EssentialsPlugin implements Plugin {
         this.description = description;
     }
 
-    @XmlElement(namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getVendorLink() {
         return vendorLink;
@@ -75,7 +78,7 @@ public class EssentialsPlugin implements Plugin {
         this.vendorLink = vendorLink;
     }
 
-    @XmlElement(namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getVendor() {
         return vendor;
@@ -87,7 +90,7 @@ public class EssentialsPlugin implements Plugin {
     }
 
     @Override
-    @XmlElement(name = "documentation-link", namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(name = "documentation-link", namespace = URI_ESSENTIALS_PLUGIN)
     public String getDocumentationLink() {
         return documentationLink;
     }
@@ -98,7 +101,7 @@ public class EssentialsPlugin implements Plugin {
     }
 
     @Override
-    @XmlElement(name = "issues-link", namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(name = "issues-link", namespace = URI_ESSENTIALS_PLUGIN)
     public String getIssuesLink() {
         return issuesLink;
     }
@@ -109,7 +112,7 @@ public class EssentialsPlugin implements Plugin {
     }
 
     @Override
-    @XmlElementWrapper(name = "screenshots", namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElementWrapper(name = "screenshots", namespace = URI_ESSENTIALS_PLUGIN)
     @XmlElementRefs({@XmlElementRef(type = PluginScreenshot.class)})
     public List<Screenshot> getScreenshots() {
         return screenshots;
@@ -122,7 +125,7 @@ public class EssentialsPlugin implements Plugin {
 
 
     @Override
-    @XmlElementWrapper(name = "assets", namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElementWrapper(name = "assets", namespace = URI_ESSENTIALS_PLUGIN)
     @XmlElementRefs({@XmlElementRef(type = PluginAsset.class)})
     public List<Asset> getAssets() {
         return assets;
@@ -147,7 +150,7 @@ public class EssentialsPlugin implements Plugin {
     }
 
 
-    @XmlElement(namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getName() {
         return name;
@@ -158,7 +161,7 @@ public class EssentialsPlugin implements Plugin {
         this.name = name;
     }
 
-    @XmlElement(namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getType() {
         return type;
@@ -169,7 +172,7 @@ public class EssentialsPlugin implements Plugin {
         this.type = type;
     }
 
-    @XmlElement(namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getIcon() {
         return icon;
@@ -181,7 +184,7 @@ public class EssentialsPlugin implements Plugin {
     }
 
     @Override
-    @XmlElement(name = "plugin-class", namespace = HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(name = "plugin-class", namespace = URI_ESSENTIALS_PLUGIN)
     public String getPluginClass() {
         return pluginClass;
     }

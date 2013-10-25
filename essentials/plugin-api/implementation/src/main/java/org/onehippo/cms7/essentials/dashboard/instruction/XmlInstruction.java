@@ -19,10 +19,12 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "xml")
+@XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class XmlInstruction extends PluginInstruction {
 
 

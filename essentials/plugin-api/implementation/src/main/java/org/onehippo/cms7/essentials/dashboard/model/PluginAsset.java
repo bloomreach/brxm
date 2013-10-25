@@ -9,11 +9,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.onehippo.cms7.essentials.dashboard.Asset;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 /**
  * @version "$Id: PluginAsset.java 172296 2013-07-31 09:32:49Z mmilicevic $"
  */
-@XmlRootElement(name = "asset", namespace = EssentialsPlugin.HIPPO_PLUGIN_NAMESPACE_URL)
+@XmlRootElement(name = "asset", namespace = EssentialConst.URI_ESSENTIALS_PLUGIN)
 public class PluginAsset implements Asset {
 
     private static final long serialVersionUID = 1L;
@@ -43,7 +44,7 @@ public class PluginAsset implements Asset {
     }
 
     @Override
-    @XmlAttribute(namespace = EssentialsPlugin.HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlAttribute(namespace = EssentialConst.URI_ESSENTIALS_PLUGIN)
     public String getMimeType() {
         return mimeType;
     }

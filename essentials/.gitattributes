@@ -433,7 +433,9 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/Displa
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instruction.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionExecutor.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionSet.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionStatus.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
 plugin-api/api/src/main/resources/dashboard.cnd -text
 plugin-api/api/src/main/resources/hippoecm-extension.xml -text
@@ -474,6 +476,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/h
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/PropertyType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionSet.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructions.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstruction.java -text
@@ -546,6 +549,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginC
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/MemoryPluginEventListenerTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtilsTest.java -text
@@ -568,6 +572,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsListener.java -text
 plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
+plugin-api/implementation/src/test/resources/instructions.xml -text
 plugin-api/implementation/src/test/resources/log4j.xml -text
 plugin-api/implementation/src/test/resources/news_template.xml -text
 plugin-api/implementation/src/test/resources/no-plugin-example.jar -text

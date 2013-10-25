@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.instruction;
+package org.onehippo.cms7.essentials.dashboard.instructions;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@XmlTransient
-public abstract class PluginInstruction implements Instruction{
+public enum InstructionStatus {
+
+    SUCCESS, FAILED, SKIPPED
 
 }

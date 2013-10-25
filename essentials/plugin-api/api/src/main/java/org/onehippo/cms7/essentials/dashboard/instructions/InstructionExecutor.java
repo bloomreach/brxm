@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.instruction;
-
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.onehippo.cms7.essentials.dashboard.instructions;
 
 /**
  * @version "$Id$"
  */
-@XmlTransient
-public abstract class PluginInstruction implements Instruction{
+public interface InstructionExecutor {
 
+    InstructionStatus execute(Instruction instruction);
 }

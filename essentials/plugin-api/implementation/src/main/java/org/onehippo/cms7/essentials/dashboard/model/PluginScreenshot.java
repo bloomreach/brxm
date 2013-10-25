@@ -4,11 +4,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.Screenshot;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 /**
  * @version "$Id: PluginScreenshot.java 171742 2013-07-25 16:39:14Z mmilicevic $"
  */
-@XmlRootElement(name = "screenshot", namespace = EssentialsPlugin.HIPPO_PLUGIN_NAMESPACE_URL)
+@XmlRootElement(name = "screenshot", namespace = EssentialConst.URI_ESSENTIALS_PLUGIN)
 public class PluginScreenshot implements Screenshot {
 
     private static final long serialVersionUID = 1L;
@@ -21,7 +22,7 @@ public class PluginScreenshot implements Screenshot {
         this.path = path;
     }
 
-    @XmlElement(namespace = EssentialsPlugin.HIPPO_PLUGIN_NAMESPACE_URL)
+    @XmlElement(namespace = EssentialConst.URI_ESSENTIALS_PLUGIN)
     @Override
     public String getPath() {
         return path;

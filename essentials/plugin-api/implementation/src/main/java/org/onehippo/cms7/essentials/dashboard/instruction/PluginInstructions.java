@@ -16,38 +16,42 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.model.PluginScreenshot;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "instructions", namespace = "http://www.onehippo.org/essentials/instructions")
+@XmlRootElement(name = "instructions", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class PluginInstructions implements Instructions {
 
-    private static Logger log = LoggerFactory.getLogger(PluginInstructions.class);
 
-    private Set<InstructionSet> instructionSets;
+    private Set<InstructionSet> instructionSets = new LinkedHashSet<>();
+
+    @XmlElementRefs({@XmlElementRef(type = PluginInstructionSet.class, namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)})
+    @Override
+    public Set<InstructionSet> getInstructionSets() {
+        return instructionSets;
+    }
 
     @Override
     public void setInstructionSets(final Set<InstructionSet> instructionSets) {
         this.instructionSets = instructionSets;
     }
 
-
-    @XmlElementRefs({@XmlElementRef(type = PluginInstructionSet.class)})
     @Override
-    public Set<InstructionSet> getInstructionSets() {
-        return instructionSets;
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginInstructions{");
+        sb.append("instructionSets=").append(instructionSets);
+        sb.append('}');
+        return sb.toString();
     }
 }

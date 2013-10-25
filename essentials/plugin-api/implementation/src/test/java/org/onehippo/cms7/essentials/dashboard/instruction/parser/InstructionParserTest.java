@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction.parser;
 
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,9 +34,11 @@ import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -80,6 +83,15 @@ public class InstructionParserTest {
             }
 
         }
+
+        // from file
+        final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
+        final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
+        final String content = myBuilder.toString();
+        final Instructions myInstructions = InstructionParser.parseInstructions(content);
+        final Set<InstructionSet> iset = myInstructions.getInstructionSets();
+        assertEquals(1, iset.size());
+
 
     }
 

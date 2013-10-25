@@ -16,16 +16,24 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@XmlTransient
-public abstract class PluginInstruction implements Instruction{
+public class PluginInstructionExecutor implements InstructionExecutor {
 
+    private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutor.class);
+
+    @Override
+    public InstructionStatus execute(final Instruction instruction) {
+        if (instruction == null) {
+            return InstructionStatus.SKIPPED;
+        }
+        return InstructionStatus.FAILED;
+    }
 }
