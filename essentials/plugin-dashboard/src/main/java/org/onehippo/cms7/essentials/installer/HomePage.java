@@ -130,7 +130,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
     public void onPluginSelected(final Plugin plugin, final AjaxRequestTarget target) {
         log.info("Plugin selected:  {}", plugin);
 
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin, eventBus);
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
         // inject project settings:
         final ConfigDocument document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
         if (document != null) {
@@ -167,7 +167,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
         if(plugin==null) {
             log.info("Settings plugin not found");
         }
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin, eventBus);
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
         body.replace(new SetupPanel("plugin", plugin, context));
         target.add(body);
     }

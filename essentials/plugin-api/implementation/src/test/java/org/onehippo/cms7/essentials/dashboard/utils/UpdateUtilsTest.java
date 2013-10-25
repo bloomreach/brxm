@@ -45,7 +45,7 @@ public class UpdateUtilsTest {
 
     @Test
     public void testUpdateStreamUtil() throws Exception {
-        PluginContext context = new DashboardPluginContext(session, null, null);
+        PluginContext context = new DashboardPluginContext(session, null);
         final InputStream resourceAsStream = getClass().getResourceAsStream("/updateplugintest.xml");
         UpdateUtils.addToRegistry(context, resourceAsStream);
         assertTrue(session.itemExists(UpdateUtils.UPDATE_UTIL_PATH + UpdateUtils.UpdateType.REGISTRY.getPath() + "/new-1"));

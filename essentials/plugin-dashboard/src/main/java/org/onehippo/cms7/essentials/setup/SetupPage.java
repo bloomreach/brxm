@@ -104,7 +104,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         //############################################
 
         Plugin plugin = getPluginByName("Settings");
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin, eventBus);
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
         //############################################
         // WIZARD & STEPS
         //############################################

@@ -70,7 +70,7 @@ public class BaseTest {
             final URL resource = getClass().getResource("/project");
             final String basePath = resource.getPath();
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, basePath);
-            context = new TestPluginContext(null, null, null);
+            context = new TestPluginContext(null, null);
             context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");

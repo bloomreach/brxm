@@ -38,7 +38,7 @@ public class JcrPluginConfigServiceTest {
         final Node dashboard = root.getNode("dashboard");
         assertNotNull(dashboard);
         session.save();
-        final DashboardPluginContext context = new DashboardPluginContext(session, new DummyTestPlugin(), null);
+        final DashboardPluginContext context = new DashboardPluginContext(session, new DummyTestPlugin());
         PluginConfigService service = new JcrPluginConfigService(context);
         final ConfigDocument document = new PluginConfigDocument("test");
         final ConfigProperty property = new PluginConfigProperty("test");
