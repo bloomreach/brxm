@@ -89,7 +89,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
 
         menu = new MenuPanel("menu", this, pluginList, mainPlugins);
 
-        globalToolbarPanel = new GlobalToolbarPanel("globalToolbar", new PanelPluginContext(GlobalUtils.createSession(), eventBus));
+        globalToolbarPanel = new GlobalToolbarPanel("globalToolbar", new PanelPluginContext(GlobalUtils.createSession(), null));
         add(globalToolbarPanel);
         add(menu);
         add(body);
