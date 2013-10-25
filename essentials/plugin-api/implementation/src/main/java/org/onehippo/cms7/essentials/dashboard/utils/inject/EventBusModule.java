@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
+import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
@@ -38,11 +39,13 @@ public class EventBusModule extends AbstractModule {
     private final transient LoggingPluginEventListener loggingPluginEventListener = new LoggingPluginEventListener();
     private final transient MemoryPluginEventListener memoryPluginEventListener = new MemoryPluginEventListener();
     private final transient ValidationEventListener validationEventListener = new ValidationEventListener();
+    private final transient InstructionsEventListener instructionsEventListener = new InstructionsEventListener();
 
     public void cleanup() {
         eventBus.unregister(loggingPluginEventListener);
         eventBus.unregister(memoryPluginEventListener);
         eventBus.unregister(validationEventListener);
+        eventBus.unregister(instructionsEventListener);
     }
 
     @Override
@@ -62,6 +65,7 @@ public class EventBusModule extends AbstractModule {
         bind(LoggingPluginEventListener.class).toInstance(loggingPluginEventListener);
         bind(MemoryPluginEventListener.class).toInstance(memoryPluginEventListener);
         bind(ValidationEventListener.class).toInstance(validationEventListener);
+        bind(InstructionsEventListener.class).toInstance(instructionsEventListener);
 
     }
 }

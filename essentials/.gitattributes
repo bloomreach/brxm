@@ -453,12 +453,14 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PanelPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/BaseEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/InstructionEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/LogEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/MessageEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/NodeCreatedEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/NodeDeletedEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/NodeEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/ValidationEvent.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/InstructionsEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/LoggingPluginEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListener.java -text
