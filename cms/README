@@ -8,7 +8,7 @@ How to test and build Hippo CMS 7
 
 2. Requirements --
 
-  (1) Java 1.6
+  (1) Java 7
   (2) Maven 3.0.x
 
 3. Build 
@@ -26,7 +26,7 @@ How to test and build Hippo CMS 7
               Needed only when you build the TRUNK having snapshot dependencies!
       - Note: Please beware that the `-Dhippo.snapshots' option is effective only when you define
               a Maven profile with this property in your settings.xml for the Hippo snapshot repository.
-              For detail, see https://wiki.onehippo.com/display/CMS7/Build+Hippo+CMS+7.5+or+higher+from+scratch
+              For detail, see http://www.onehippo.org/7_8/library/development/build-hippo-cms-from-scratch.html
       - Add `-Dhippo.snapshots' for snapshot dependencies.
         For example,
         
