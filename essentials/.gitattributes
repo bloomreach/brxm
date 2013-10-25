@@ -438,6 +438,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/Ins
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/Recorder.java -text
 plugin-api/api/src/main/resources/dashboard.cnd -text
 plugin-api/api/src/main/resources/hippoecm-extension.xml -text
+plugin-api/api/src/main/resources/instructions.xsd -text
 plugin-api/api/src/main/resources/namespace-dashboard.xml -text
 plugin-api/api/src/main/resources/plugin.xsd -text
 plugin-api/api/src/test/resources/log4j.xml -text
