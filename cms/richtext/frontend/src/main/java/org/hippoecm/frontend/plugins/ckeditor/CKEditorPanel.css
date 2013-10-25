@@ -22,3 +22,12 @@
 .hippo-ckeditor .hippo-ckeditor-textarea {
     opacity: 0;
 }
+
+/*
+   TODO: remove once CKEditor is upgraded to a newer version than 4.2.
+   Workaround for CKEditor 4.2: make the editor always visibility in IE8 since visibility is not
+   properly reset once the editor is loaded. Seems to be fixed in CKEditor 4.2.2.
+ */
+.ext-ie8 .hippo-ckeditor .cke {
+    visibility: visible;
+}
