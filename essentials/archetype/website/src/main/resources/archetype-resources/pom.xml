@@ -19,7 +19,7 @@
   <properties>
 
     <!--***START temporary override of versions*** -->
-    <plugin-dashboard.version>1.01.00-SNAPSHOT</plugin-dashboard.version>
+    <essentials.version>1.01.00-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
 
@@ -46,7 +46,7 @@
     <dependency>
       <groupId>org.onehippo.cms7.essentials.installer</groupId>
       <artifactId>plugin-dashboard</artifactId>
-      <version>${plugin-dashboard.version}</version>
+      <version>${essentials.version}</version>
       <type>war</type>
     </dependency>
   </dependencies>
