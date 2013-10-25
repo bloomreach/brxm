@@ -20,15 +20,15 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.site.HstSite;
 
 /**
- * Implementations should return an unmodifiable map for {@link #getSiteMenuConfiguration()} because clients should not
+ * Implementations should return an unmodifiable map for {@link #getSiteMenuConfigurations()} because clients should not
  * be able to modify the configuration
  *
  */
 public interface HstSiteMenusConfiguration {
     
     /**
-     * Return the {@link HstSite} this <code>HstSiteMap</code> belongs to. 
-     * @return the site this <code>HstSiteMap</code> belongs to
+     * Return the {@link HstSite} this <code>HstSiteMenusConfiguration</code> belongs to.
+     * @return the site this <code>HstSiteMenusConfiguration</code> belongs to
      */
     HstSite getSite();
     
@@ -42,8 +42,8 @@ public interface HstSiteMenusConfiguration {
     
     /**
      * 
-     * @param name the name of the {@link SiteMenuConfiguration}
-     * @return the {@link SiteMenuConfiguration} with this name and <code>null</code> if does not exist 
+     * @param name the name of the {@link HstSiteMenuConfiguration}
+     * @return the {@link HstSiteMenuConfiguration} with this name and <code>null</code> if does not exist
      */
     HstSiteMenuConfiguration getSiteMenuConfiguration(String name);
  
