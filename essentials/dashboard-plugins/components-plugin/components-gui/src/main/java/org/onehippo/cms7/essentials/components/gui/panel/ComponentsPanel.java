@@ -267,8 +267,8 @@ public class ComponentsPanel extends EssentialsWizardStep {
         if (resourceAsStream != null) {
             try {
                 if (!target.exists()) {
-                    final File parent = target.getParentFile();
-                    Files.createDirectories(parent.toPath());
+                    final File myParent = target.getParentFile();
+                    Files.createDirectories(myParent.toPath());
                 }
 
                 Files.copy(resourceAsStream, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -307,7 +307,7 @@ public class ComponentsPanel extends EssentialsWizardStep {
                         final Node essentialContainerItem = it.nextNode();
                         final String label = essentialContainerItem.getProperty("hst:label").getString();
                         final String key = label.replace(HIPPOESSENTIALS_PREFIX, "");
-                        if (provider.containsKey(key)) {
+                        if (ComponentProvider.containsKey(key)) {
                             addedComponents.add(key);
                         }
                     }
