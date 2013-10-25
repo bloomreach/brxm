@@ -432,10 +432,9 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginCo
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayLocation.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/InstallerInstruction.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/Instruction.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/InstructionType.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/Recorder.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instruction.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionSet.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
 plugin-api/api/src/main/resources/dashboard.cnd -text
 plugin-api/api/src/main/resources/hippoecm-extension.xml -text
 plugin-api/api/src/main/resources/instructions.xsd -text
@@ -473,6 +472,13 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/h
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/ConfigType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/NodeType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/PropertyType.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionSet.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructions.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/package-info.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParser.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/CatalogObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginAsset.java -text
@@ -488,8 +494,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/p
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/EventListener.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/MultiSelectBoxPanel.html -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/MultiSelectBoxPanel.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/JcrInstruction.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/recorder/JcrRecorder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/EssentialsFeedbackPanel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/PluginFeedbackPanel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
@@ -542,7 +546,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginC
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/MemoryPluginEventListenerTest.java -text
-plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/recorder/JcrRecorderTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtilsTest.java -text

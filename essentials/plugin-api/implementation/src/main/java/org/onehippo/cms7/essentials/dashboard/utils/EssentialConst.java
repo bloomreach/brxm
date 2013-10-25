@@ -68,6 +68,7 @@ public final class EssentialConst {
      * Namespace of plugin.xml descriptor, HippoEssentials framework
      */
     public static final String URI_ESSENTIALS_PLUGIN = "http://www.onehippo.org/essentials";
+    public static final String URI_ESSENTIALS_INSTRUCTIONS = "http://www.onehippo.org/essentials/instructions";
     /**
      * Fully qualified name of HST node annotation
      */
