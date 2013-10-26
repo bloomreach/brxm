@@ -57,7 +57,7 @@
             i, len;
         // check if href already imported by this stylesheet
         for (i = 0, len = imports.length; i < len; i++) {
-            if (imports[i].href.indexOf(href) != -1) {
+            if (imports[i].href.indexOf(href) !== -1) {
                 return false;
             }
         }
@@ -68,7 +68,7 @@
             style.styleSheet.addImport(href);
             return true;
         }
-    };
+    }
 
     function addCssText(doc, cssStyleText) {
         var style = doc.createStyleSheet();
@@ -105,7 +105,7 @@
          */
         CKEDITOR.dom.document.prototype.appendStyleSheet = function(cssFileUrl) {
             addCssImport(this.$, 0, cssFileUrl);
-        }
+        };
         /*
           Fix broken appendStyleText implementation (the editor does not to load in IE8 because appendStyleText
           calls createStyleSheet with an empty string as argument, which throws an Error)
@@ -113,7 +113,7 @@
          */
         CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
             return addCssText(this.$, cssStyleText);
-        }
+        };
     }
 
 }(jQuery));
