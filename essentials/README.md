@@ -27,7 +27,7 @@ $ git clone git@github.com:onehippo/essentials.git
 
 ### Create empty project:
 ```
-$ cd essetials/archetype
+$ cd essentials/archetype
 ```
 ### Install archetype locally:
 

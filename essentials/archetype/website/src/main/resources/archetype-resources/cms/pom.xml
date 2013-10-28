@@ -19,6 +19,7 @@
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-dashboard-plugin-sdk</artifactId>
       <version>${dollar}{essentials.version}</version>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
