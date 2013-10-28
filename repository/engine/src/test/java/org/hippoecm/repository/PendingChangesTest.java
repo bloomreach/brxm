@@ -89,11 +89,11 @@ public class PendingChangesTest extends RepositoryTestCase {
         root.addNode("test0","nt:unstructured");
         node = root.addNode("test1","nt:unstructured");
         root.addNode("test2","nt:unstructured");
-        node.addNode("aap", "hippo:testdocument").addMixin("hippo:harddocument");
-        node.addNode("noot", "hippo:testdocument").addMixin("hippo:harddocument");
+        node.addNode("aap", "hippo:testdocument").addMixin("mix:versionable");
+        node.addNode("noot", "hippo:testdocument").addMixin("mix:versionable");
         node = node.addNode("mies", "hippo:testdocument");
-        node.addMixin("hippo:harddocument");
-        node.addNode("zus", "hippo:document").addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
+        node.addNode("zus", "hippo:document").addMixin("mix:versionable");
 
         assertTrue(session.hasPendingChanges());
 

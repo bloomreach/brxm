@@ -67,7 +67,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
         "/${name}", "hippo:handle",
             "jcr:mixinTypes", "hippo:hardhandle",
             "/${name}/${name}", "hippostdpubwf:test",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:versionable",
                 "hippostdpubwf:content", "test data",
                 "hippostd:holder", "admin",
                 "hippostd:state", "unpublished",

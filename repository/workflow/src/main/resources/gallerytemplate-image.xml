@@ -51,14 +51,12 @@
           <sv:value>hippogallery:imageset</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:harddocument</sv:value>
+          <sv:value>mix:versionable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>407e29dd-48a7-49a6-ba4b-1fd1d68692ae</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:paths" sv:type="String">
-        </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
         </sv:property>
         <sv:node sv:name="hippogallery:thumbnail">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">

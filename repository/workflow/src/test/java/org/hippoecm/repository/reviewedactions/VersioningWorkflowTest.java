@@ -54,7 +54,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         final ValueFactory valueFactory = session.getValueFactory();
         node.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[]{valueFactory.createValue("hippostd:state")});
         node = node.addNode("versiondocument", "hippo:testdocument");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.addMixin("hippostdpubwf:document");
         node.addMixin("hippostd:publishableSummary");
         node.setProperty("hippo:availability", new String[]{"preview"});
@@ -67,7 +67,7 @@ public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest 
         node.setProperty("counter", 0);
 
         node = root.addNode("baredocument", "hippo:testdocument");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.addMixin("hippostdpubwf:document");
         node.setProperty("hippostd:state", "unpublished");
         node.setProperty("hippostd:holder", "admin");

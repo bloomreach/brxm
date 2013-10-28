@@ -55,12 +55,12 @@ public class CheckoutNodeTest extends RepositoryTestCase {
         root.addMixin("mix:referenceable");
         node = root.addNode("documents");
         node = node.addNode("document","hippo:testdocument");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("aap", "noot");
         session.save();
 
         Node navigation = root.addNode("navigation", "hippo:testdocument");
-        navigation.addMixin("hippo:harddocument");
+        navigation.addMixin("mix:versionable");
         node = navigation.addNode("search",HippoNodeType.NT_FACETSELECT);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[0]);

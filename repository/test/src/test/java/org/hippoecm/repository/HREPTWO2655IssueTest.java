@@ -53,7 +53,7 @@ public class HREPTWO2655IssueTest extends RepositoryTestCase {
 
     String[] content3 = {
       "/test/documents/document", "hippo:document",
-      "jcr:mixinTypes", "hippo:harddocument"
+      "jcr:mixinTypes", "mix:versionable"
     };
 
     @Override

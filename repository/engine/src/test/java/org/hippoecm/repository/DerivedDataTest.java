@@ -80,7 +80,7 @@ public class DerivedDataTest extends RepositoryTestCase {
         folder.addMixin("mix:referenceable");
         Node document = folder.addNode("document", "hippo:testderiveddocument");
         document.addMixin("hippo:testderived");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
         document.setProperty("hippo:a", 3);
         document.setProperty("hippo:b", 4);
         document.setProperty("hippo:c", 6);
@@ -97,7 +97,7 @@ public class DerivedDataTest extends RepositoryTestCase {
         folder2.addMixin("mix:referenceable");
         Node document = folder2.addNode("document", "hippo:testderiveddocument");
         document.addMixin("hippo:testderived");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
         document.setProperty("hippo:a", 3);
         document.setProperty("hippo:b", 4);
         document.setProperty("hippo:c", 6);

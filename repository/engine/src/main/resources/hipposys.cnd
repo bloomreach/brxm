@@ -30,11 +30,9 @@
 
 [hipposys:softdocument] mixin
 - hippo:uuid (string) mandatory
-- hippo:paths (string) multiple mandatory
 
 [hipposys:softhandle] mixin
 - hippo:uuid (string) mandatory
-- hippo:paths (string) multiple mandatory
 
 [hipposys:request] > hippo:request, mix:versionable
 - *
@@ -135,6 +133,8 @@
 // node.  This mixin type should never exist for a longer period than
 // an action, typically an upgrade cycle.
 [hipposys:unstructured] mixin
+- *
+- * multiple
 + * multiple
 
 // REPOSITORY: SECURITY

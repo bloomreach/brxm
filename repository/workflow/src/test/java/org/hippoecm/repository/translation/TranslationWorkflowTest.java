@@ -37,6 +37,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,14 +52,14 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     
     String[] content = {
         "/test/folder", "hippostd:folder",
-            "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "mix:versionable",
         "/test/folder/document", "hippo:handle",
             "jcr:mixinTypes", "hippo:hardhandle",
         "/test/folder/document/document", "hippo:testdocument",
             "hippostd:state", "unpublished",
             "hippostd:holder", "admin",
         "/test/folder_nl", "hippostd:folder",
-            "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "mix:versionable",
         "/test/hipposysedit:prototype", "hippo:testdocument",
             "hippostd:state", "draft",
             "hippostd:holder", "admin",
@@ -103,7 +104,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         prototype.setProperty(HippoTranslationNodeType.ID, INVALID_ID);
 
         Node document = session.getRootNode().getNode("test/folder/document/document");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
 
         Node folder = session.getRootNode().getNode("test/folder");
         folder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
@@ -164,7 +165,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     @Test
     public void testTranslateFolder() throws Exception {
         Node deFolder = session.getRootNode().getNode("test").addNode("folder_de", "hippostd:folder");
-        deFolder.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        deFolder.addMixin(JcrConstants.MIX_VERSIONABLE);
         session.save();
         session.refresh(false);
 
@@ -181,7 +182,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     @Test
     public void testTranslatedFolderIsEmpty() throws Exception {
         Node subFolder = session.getRootNode().getNode("test/folder").addNode("subfolder", "hippostd:folder");
-        subFolder.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        subFolder.addMixin(JcrConstants.MIX_VERSIONABLE);
         subFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         String id = UUID.randomUUID().toString();
         subFolder.setProperty(HippoTranslationNodeType.ID, id);

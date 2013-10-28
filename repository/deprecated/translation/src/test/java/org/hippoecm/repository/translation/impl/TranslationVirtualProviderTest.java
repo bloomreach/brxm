@@ -31,7 +31,7 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
 
     String[] content = {
             "/test/folder", "hippostd:folder",
-                "jcr:mixinTypes", "hippo:harddocument," + HippoTranslationNodeType.NT_TRANSLATED,
+                "jcr:mixinTypes", "mix:versionable," + HippoTranslationNodeType.NT_TRANSLATED,
                 HippoTranslationNodeType.ID, FOLDER_T9N_ID,
                 HippoTranslationNodeType.LOCALE, "en",
                 "/test/folder/" + HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.NT_TRANSLATIONS,
@@ -41,7 +41,7 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
                         "hippostd:state", "unpublished",
                         "hippostd:holder", "admin",
             "/test/folder_nl", "hippostd:folder",
-                "jcr:mixinTypes", "hippo:harddocument," + HippoTranslationNodeType.NT_TRANSLATED,
+                "jcr:mixinTypes", "mix:versionable," + HippoTranslationNodeType.NT_TRANSLATED,
                 HippoTranslationNodeType.ID, FOLDER_T9N_ID,
                 HippoTranslationNodeType.LOCALE, "nl",
                 "/test/folder_nl/" + HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.NT_TRANSLATIONS,

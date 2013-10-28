@@ -102,7 +102,7 @@ public class DerivedDateTest extends RepositoryTestCase {
         Node handle = docs.addNode("doc", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
         Node doc = handle.addNode("doc", "hippo:datedocument1");
-        doc.addMixin("hippo:harddocument");
+        doc.addMixin("mix:versionable");
         doc = doc.addNode("hippo:d");
         doc.addMixin("mix:referenceable");
         doc.setProperty("hippostd:date", date);
@@ -124,7 +124,7 @@ public class DerivedDateTest extends RepositoryTestCase {
         Node handle = root.getNode("docs").addNode("doc", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
         Node doc = handle.addNode("doc", "hippo:datedocument1");
-        doc.addMixin("hippo:harddocument");
+        doc.addMixin("mix:versionable");
         doc = doc.addNode("hippo:d");
         doc.addMixin("mix:referenceable");
         doc.setProperty("hippostd:date", date);
@@ -149,18 +149,18 @@ public class DerivedDateTest extends RepositoryTestCase {
         node.addMixin("mix:referenceable");
         for (int i1 = 0; i1 < level1; i1++) {
             Node child1 = node.addNode("folder" + i1, "hippostd:folder");
-            child1.addMixin("hippo:harddocument");
+            child1.addMixin("mix:versionable");
             for (int i2 = 0; i2 < level2; i2++) {
                 Node child2 = child1.addNode("folder" + i2, "hippostd:folder");
-                child2.addMixin("hippo:harddocument");
+                child2.addMixin("mix:versionable");
                 for (int i3 = 0; i3 < level3; i3++) {
                     Node child3 = child2.addNode("folder" + i3, "hippostd:folder");
-                    child3.addMixin("hippo:harddocument");
+                    child3.addMixin("mix:versionable");
                     for (int i4 = 0; i4 < level4; i4++) {
                         Node handle = child3.addNode("document" + i4, "hippo:handle");
                         handle.addMixin("hippo:hardhandle");
                         Node document = handle.addNode("document" + i4, "hippo:datedocument1");
-                        document.addMixin("hippo:harddocument");
+                        document.addMixin("mix:versionable");
                         Node date = document.addNode("hippo:d");
                         date.addMixin("mix:referenceable");
                         Calendar cal = Calendar.getInstance();

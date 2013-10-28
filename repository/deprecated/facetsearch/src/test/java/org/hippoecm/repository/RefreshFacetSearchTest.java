@@ -57,10 +57,10 @@ public class RefreshFacetSearchTest extends RepositoryTestCase {
     public void testRefreshIndexAfterPropertyChange() throws RepositoryException {
         Node test = session.getRootNode().addNode("test");
         test.addMixin("mix:referenceable");
-        Node documents = test.addNode("documents", "nt:unstructured");
-        documents.addMixin("hippo:harddocument");
-        documents.setProperty("x", "xValue");
-        documents.setProperty("y", "yValue");
+        Node document = test.addNode("document", "hippo:testdocument");
+        document.addMixin("mix:versionable");
+        document.setProperty("x", "xValue");
+        document.setProperty("y", "yValue");
         session.save();
 
         Node navigation = test.addNode("navigation", HippoNodeType.NT_FACETSEARCH);

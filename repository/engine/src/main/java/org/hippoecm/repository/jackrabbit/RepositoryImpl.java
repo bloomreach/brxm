@@ -207,6 +207,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return context.getNodeTypeRegistry();
     }
 
+    @Override
+    protected NodeTypeRegistry createNodeTypeRegistry() throws RepositoryException {
+        return new HippoNodeTypeRegistry(context.getNamespaceRegistry(), context.getFileSystem());
+    }
+
     protected NodeId getRootNodeId() {
         return context.getRootNodeId();
     }
@@ -417,4 +422,5 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             }
         }
     }
+
 }

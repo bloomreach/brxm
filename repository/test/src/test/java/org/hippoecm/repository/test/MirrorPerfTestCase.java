@@ -29,7 +29,7 @@ public class MirrorPerfTestCase extends RepositoryTestCase {
     private String[] content = {
         "/test", "nt:unstructured",
         "/test/root", "hippostd:folder",
-        "jcr:mixinTypes", "hippo:harddocument",
+        "jcr:mixinTypes", "mix:versionable",
         "/test/mirror", "hippo:mirror",
         "hippo:docbase", "/test/root"
     };
@@ -54,14 +54,14 @@ public class MirrorPerfTestCase extends RepositoryTestCase {
         if(depth > 0) {
             for(int i=0; i<fanout; i++) {
                 Node child = node.addNode("folder"+i, "hippostd:folder");
-                child.addMixin("hippo:harddocument");
+                child.addMixin("mix:versionable");
                 total += build(child, depth-1, fanout, docsPerNode, docsPerLeaf);
             }
             for(int i=0; i<docsPerNode; i++) {
                 Node child = node.addNode("document"+i, "hippo:handle");
                 child.addMixin("hippo:hardhandle");
                 child = child.addNode("document"+i, "hippo:testdocument");
-                child.addMixin("hippo:harddocument");
+                child.addMixin("mix:versionable");
                 ++total;
             }
         } else {
@@ -69,7 +69,7 @@ public class MirrorPerfTestCase extends RepositoryTestCase {
                 Node child = node.addNode("document"+i, "hippo:handle");
                 child.addMixin("hippo:hardhandle");
                 child = child.addNode("document"+i, "hippo:testdocument");
-                child.addMixin("hippo:harddocument");
+                child.addMixin("mix:versionable");
                 ++total;
             }
         }

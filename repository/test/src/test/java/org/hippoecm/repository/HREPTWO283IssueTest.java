@@ -35,7 +35,7 @@ public class HREPTWO283IssueTest extends RepositoryTestCase {
         "/test/docs/funny",  "hippo:baddocument",
         "hippo:x",           "test",
         "/test/docs/proper", "hippo:document",
-        "jcr:mixinTypes",    "hippo:harddocument"
+        "jcr:mixinTypes",    "mix:versionable"
     };
     private String[] content2 = {
         "/test/nav",     "hippo:facetselect",

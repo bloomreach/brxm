@@ -31,6 +31,8 @@
 
 [hippo:authtestdocument] > hippo:document
 - *
+- * multiple
++ * (nt:base) = hippo:authtestdocument multiple
 
 [hippo:realdocument] > hippo:document
 + hippo:mirror (hippo:facetselect) version

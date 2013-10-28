@@ -103,18 +103,29 @@ public class DerivedDataEngine {
     }
 
     private Collection<Node> findModifiedDerivatives(final Node node) throws RepositoryException {
-        final Collection<Node> result = new ArrayList<Node>();
+        final Collection<Node> result = new TreeSet<>(new Comparator<Node>() {
+            @Override
+            public int compare(final Node o1, final Node o2) {
+                try {
+                    return o1.getPath().compareTo(o2.getPath());
+                } catch (RepositoryException e) {
+                    return 0;
+                }
+            }
+        });
         try {
-            for (Node modified : new NodeIterable(session.pendingChanges(node, HippoNodeType.NT_DERIVED))) {
-                if (modified == null) {
-                    log.error("Unable to access node that was changed by own session");
-                    continue;
+            for (String baseType : new String[] { HippoNodeType.NT_DERIVED, HippoNodeType.NT_DOCUMENT }) {
+                for (Node modified : new NodeIterable(session.pendingChanges(node, baseType))) {
+                    if (modified == null) {
+                        log.error("Unable to access node that was changed by own session");
+                        continue;
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Derived engine found modified node " + modified.getPath() + " ("
+                                + modified.getIdentifier() + ") with derived mixin");
+                    }
+                    result.add(modified);
                 }
-                if (log.isDebugEnabled()) {
-                    log.debug("Derived engine found modified node " + modified.getPath() + " ("
-                            + modified.getIdentifier() + ") with derived mixin");
-                }
-                result.add(modified);
             }
         } catch (NamespaceException ex) {
             throw new RepositoryException(HippoNodeType.NT_DERIVED + " not found");
@@ -265,7 +276,7 @@ public class DerivedDataEngine {
 
         final boolean changed = !Arrays.equals(oldDependenciesValues, dependenciesValues);
 
-        if (changed) {
+        if (changed && modified.isNodeType(HippoNodeType.NT_DERIVED)) {
             JcrUtils.ensureIsCheckedOut(modified, false);
             modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues, PropertyType.REFERENCE);
         }

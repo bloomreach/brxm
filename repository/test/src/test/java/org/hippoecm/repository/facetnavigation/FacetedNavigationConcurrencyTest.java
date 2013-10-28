@@ -283,7 +283,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
                Node car = cars.addNode(carName, "hippo:handle");
                car.addMixin("hippo:hardhandle");
                car = car.addNode(carName, "hippo:testcardocument");
-               car.addMixin("hippo:harddocument");
+               car.addMixin("mix:versionable");
                car.setProperty("hippo:brand", "mercedes");
                car.setProperty("hippo:color", "grey");
                car.setProperty("hippo:product", "car");
@@ -320,13 +320,13 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         Node car = cars.addNode("car0", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car0", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
 
         // car 1
         car = cars.addNode("car1", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car1", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "mercedes");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
@@ -338,7 +338,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         car = cars.addNode("car2", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car2", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "volkswagen");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
@@ -350,7 +350,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         car = cars.addNode("car3", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car3", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "peugeot");
         car.setProperty("hippo:color", "blue");
         car.setProperty("hippo:product", "car");
@@ -364,7 +364,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         car = cars.addNode("car4", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car4", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
 
         // add a facetselect to car 1
         String docbase = cars.getNode("car1").getIdentifier();

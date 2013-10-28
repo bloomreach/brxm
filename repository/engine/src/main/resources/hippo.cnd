@@ -41,6 +41,7 @@
 
 [hippo:document] > nt:base
 - hippo:availability (string) multiple ignore
+- hippo:paths (string) multiple
 
 [hippo:handle] > nt:base
 - hippo:discriminator (string) multiple
@@ -50,7 +51,6 @@
 [hippo:hardhandle] > mix:versionable mixin
 
 [hippo:harddocument] > hippo:derived, mix:referenceable, mix:versionable mixin
-- hippo:paths (string) multiple mandatory
 
 // DATA TYPES: VIRTUAL LAYER
 

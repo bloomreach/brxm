@@ -45,11 +45,11 @@ public class UpdaterTest extends RepositoryTestCase {
         "/test/docs/d", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
         "/test/docs/d/d", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument",
+        "jcr:mixinTypes", "mix:versionable",
         "/test/docs/doc", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
         "/test/docs/doc/doc", "hippo:testdocument",
-        "jcr:mixinTypes", "hippo:harddocument",
+        "jcr:mixinTypes", "mix:versionable",
         "hippo:x", "test"
     };
 
@@ -126,7 +126,7 @@ public class UpdaterTest extends RepositoryTestCase {
         // create back references (refA points to earlier node A)
         
         Node A = container.addNode("A", "test:target");
-        A.addMixin("hippo:harddocument");
+        A.addMixin("mix:versionable");
 
         Node refA = container.addNode("refA", "test:referrer");
         refA.setProperty("referenceA", A);
@@ -140,7 +140,7 @@ public class UpdaterTest extends RepositoryTestCase {
         // create forward references (refB points to later node B)
         Node refB = container.addNode("refB", "test:referrer");
         Node B = container.addNode("B", "test:target");
-        B.addMixin("hippo:harddocument");
+        B.addMixin("mix:versionable");
 
         refB.setProperty("referenceB", B);
         Node facetB = refB.addNode("linkB", "hippo:facetselect");

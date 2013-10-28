@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +39,7 @@ public class CanonicalPathTest extends RepositoryTestCase {
                 "jcr:mixinTypes",             "mix:referenceable",
                 "/test/content/nodes",        "nt:unstructured",
                     "/test/content/nodes/mynode", "hippo:testdocument",
-                        "jcr:mixinTypes",             "hippo:harddocument",
+                        "jcr:mixinTypes",             "mix:versionable",
                         "x",                          "foo"
     };
     String[] content2 = new String[] {

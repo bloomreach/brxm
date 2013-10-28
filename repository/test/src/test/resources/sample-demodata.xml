@@ -19,7 +19,7 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:versionable</sv:value>
   </sv:property>
   <sv:property sv:name="hippo:paths" sv:type="String"/>
   <sv:node sv:name="myarticle">
@@ -37,7 +37,7 @@
         <sv:value>sample:simpledocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String"/>
       <sv:property sv:name="sample:title" sv:type="String">

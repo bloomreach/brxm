@@ -136,7 +136,7 @@ public abstract class AbstractRangesFacetNavigationTest extends RepositoryTestCa
         Node carDoc = dateDocs.addNode(name, "hippo:handle");
         carDoc.addMixin("hippo:hardhandle");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
-        carDoc.addMixin("hippo:harddocument");
+        carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);
         carDoc.setProperty("hippo:travelled", travelled);
         carDoc.setProperty("hippo:price", price);

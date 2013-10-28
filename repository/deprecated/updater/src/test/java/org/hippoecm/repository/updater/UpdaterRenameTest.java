@@ -39,7 +39,7 @@ public class UpdaterRenameTest extends RepositoryTestCase {
     private final String[] content = {
         "/test", "nt:unstructured",
             "/test/d", "testsubns:document",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:versionable",
                 "testsuperns:x", "1",
                 "testsubns:x", "2",
                 "testsuperns:y", "11",

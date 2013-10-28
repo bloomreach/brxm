@@ -63,18 +63,18 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     WorkflowManager manager;
     String[] content = {
         "/test/f", "hippostd:folder",
-            "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "mix:versionable",
         "/test/aap", "hippostd:folder",
-            "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "mix:versionable",
             "/test/aap/noot", "nt:unstructured",
                 "/test/aap/noot/mies", "hippostd:folder",
-                    "jcr:mixinTypes", "hippo:harddocument",
+                    "jcr:mixinTypes", "mix:versionable",
                     "/test/aap/noot/mies/vuur", "nt:unstructured",
                         "/test/aap/noot/mies/vuur/jot", "nt:unstructured",
                             "/test/aap/noot/mies/vuur/jot/gijs", "hippo:coredocument",
-                                "jcr:mixinTypes", "hippo:harddocument",
+                                "jcr:mixinTypes", "mix:versionable",
                                 "/test/aap/noot/mies/vuur/jot/gijs/duif", "hippo:document",
-                                    "jcr:mixinTypes", "hippo:harddocument"
+                                    "jcr:mixinTypes", "mix:versionable"
     };
 
     Value[] embeddedModifyOnCopy;
@@ -123,7 +123,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     @Test
     public void testDeleteFolderWithHandlesFails() throws Exception {
         final Node g = node.addNode("g", "hippostd:folder");
-        g.addMixin("hippo:harddocument");
+        g.addMixin("mix:versionable");
         g.addNode("h", "hippo:handle").addMixin("hippo:hardhandle");
         session.save();
 
@@ -142,7 +142,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     @Test
     public void testDeleteFolderWithTranslationsButNoHandlesPass() throws Exception {
         final Node g = node.addNode("g", "hippostd:folder");
-        g.addMixin("hippo:harddocument");
+        g.addMixin("mix:versionable");
         g.addMixin("hippo:translated");
         Node translation = g.addNode("hippo:translation", "hippo:translation");
         translation.setProperty("hippo:message", "test");
@@ -245,7 +245,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         Map<String, String> nodes = new HashMap<String, String>();
 
         Node node = root.addNode("f","hippostd:folder");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         nodes.put("aap", node.addNode("aap").getIdentifier());
         nodes.put("noot", node.addNode("noot").getIdentifier());
         nodes.put("mies", node.addNode("mies").getIdentifier());
@@ -401,7 +401,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             Node child = session.getRootNode().getNode(childPath.substring(1));
             assertTrue(child.isNodeType("hippostd:folder"));
             assertTrue(child.isNodeType("hippo:document"));
-            assertTrue(child.isNodeType("hippo:harddocument"));
+            assertTrue(child.isNodeType("mix:versionable"));
             childPath = parentPath + "/f";
             //assertEquals("/test/f"+childPath.substring(1), child.getPath());
             if(!paths.contains(childPath)) {

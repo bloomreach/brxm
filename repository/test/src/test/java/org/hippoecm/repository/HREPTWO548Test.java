@@ -36,7 +36,7 @@ public class HREPTWO548Test extends RepositoryTestCase {
         "/test/docs", "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "/test/docs/red", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument"
+        "jcr:mixinTypes", "mix:versionable"
     };
     private String[] content2 = {
         "/test/nav", "hippo:facetselect",
@@ -47,7 +47,7 @@ public class HREPTWO548Test extends RepositoryTestCase {
     };
     private String[] content3 = {
         "/test/docs/blue", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument"
+        "jcr:mixinTypes", "mix:versionable"
     };
 
     @Before

@@ -105,7 +105,7 @@ public class DerivedDateTest extends RepositoryTestCase {
     public void testFacetedDateNode() throws Exception {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
         Node node = handle.addNode("doc", "hippo:datedocument1");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node = node.addNode("hippo:d");
         node.addMixin("mix:referenceable");
         node.setProperty("hippostd:date", date);
@@ -118,7 +118,7 @@ public class DerivedDateTest extends RepositoryTestCase {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
         Node node = handle.addNode("doc", "hippo:datedocument2");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("hippo:d1", date);
         node.setProperty("hippo:d2", date);
         session.save();
@@ -131,7 +131,7 @@ public class DerivedDateTest extends RepositoryTestCase {
         Node handle = session.getNode("/test").addNode("doc", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
         Node node = handle.addNode("doc", "hippo:datedocument2");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("hippo:d1", date);
         session.save();
         check(date, session.getNode("/test/doc/doc/hippo:d1fields"));

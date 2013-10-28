@@ -166,7 +166,7 @@
         <sv:value>testcontent:news</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -191,8 +191,6 @@
         <sv:value></sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String">
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
       </sv:property>
       <sv:property sv:name="hippostd:state" sv:type="String">
         <sv:value>unpublished</sv:value>

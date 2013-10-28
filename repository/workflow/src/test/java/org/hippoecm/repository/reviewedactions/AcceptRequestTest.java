@@ -62,7 +62,7 @@ public class AcceptRequestTest extends RepositoryTestCase {
         node = node.addNode("myarticle", "hippo:handle");
         node.addMixin("mix:referenceable");
         node = node.addNode("myarticle", "hippostdpubwf:test");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.addMixin("hippostd:publishableSummary");
         node.setProperty("hippostdpubwf:content", LOREM);
         node.setProperty("hippostd:holder", "admin");

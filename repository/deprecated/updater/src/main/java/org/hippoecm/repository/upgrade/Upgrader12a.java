@@ -402,7 +402,7 @@ public class Upgrader12a implements UpdaterModule {
         context.registerVisitor(new UpdaterItemVisitor.NodeTypeVisitor("hippostd:publishable") {
             @Override
             public void leaving(final Node node, int level) throws RepositoryException {
-                if(node.isNodeType("hippo:harddocument") && !node.isNodeType("hippostdpubwf_1_0:document")) {
+                if(node.isNodeType("mix:versionable") && !node.isNodeType("hippostdpubwf_1_0:document")) {
                     node.addMixin("hippostdpubwf_1_0:document");
                     node.setProperty("hippostdpubwf_1_0:createdBy", "");
                     node.setProperty("hippostdpubwf_1_0:creationDate", calendar);

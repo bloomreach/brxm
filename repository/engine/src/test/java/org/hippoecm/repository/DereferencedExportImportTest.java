@@ -78,7 +78,7 @@ public class DereferencedExportImportTest extends RepositoryTestCase {
         testExport.addNode("doc2",  "hippo:ntunstructured").addMixin("mix:referenceable");
         testExport.addNode("doc3",  "hippo:ntunstructured").addMixin("mix:referenceable");
         testExport.addNode("doc4",  "hippo:ntunstructured").addMixin("mix:referenceable");
-        testExport.addNode("doc5",  "hippo:document").addMixin("hippo:harddocument");
+        testExport.addNode("doc5",  "hippo:document").addMixin("hippo:derived");
 
         // references between doc1 and doc2
         Value uuidDoc1 = session.getValueFactory().createValue(testExport.getNode("doc1").getIdentifier(), PropertyType.REFERENCE);

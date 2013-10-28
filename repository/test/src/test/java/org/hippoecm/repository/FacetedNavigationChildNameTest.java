@@ -39,7 +39,7 @@ public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTes
 
         Node node = session.getRootNode().getNode("test/documents");
         Node docNode = node.addNode(simple, "hippo:testdocument");
-        docNode.addMixin("hippo:harddocument");
+        docNode.addMixin("mix:versionable");
         docNode.setProperty("x", "success");
         docNode.setProperty("y", encodeMe);
         session.save();

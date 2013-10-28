@@ -74,7 +74,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
         node.addMixin("hippo:hardhandle");
         node.setProperty("hippo:discriminator", new Value[0]);
         node = document = node.addNode(name, type);
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("hippo:availability", new String[] { "live", "preview" });
         node.setProperty("hippo:paths", new String[0]);
 

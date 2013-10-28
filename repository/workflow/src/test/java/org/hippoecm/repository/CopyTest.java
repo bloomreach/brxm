@@ -35,9 +35,9 @@ public class CopyTest extends RepositoryTestCase {
 
     private String[] content = {
             "/test/destination", "hippostd:folder",
-            "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "mix:versionable",
             "/test/folder", "hippostd:folder",
-            "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "mix:versionable",
             "/test/folder/document", "hippo:handle",
             "jcr:mixinTypes", "hippo:hardhandle"
     };
@@ -111,7 +111,7 @@ public class CopyTest extends RepositoryTestCase {
         if (published) {
             document = handle.addNode("document", "hippo:document");
             document.addMixin("hippostdpubwf:document");
-            document.addMixin("hippo:harddocument");
+            document.addMixin("mix:versionable");
             document.setProperty("hippostd:holder", "admin");
             document.setProperty("hippostd:state", "published");
             document.setProperty("hippo:availability", (unpublished ? new String[] {"live", "preview"} : new String[] {"live"}));
@@ -123,7 +123,7 @@ public class CopyTest extends RepositoryTestCase {
         if (unpublished) {
             document = handle.addNode("document", "hippo:document");
             document.addMixin("hippostdpubwf:document");
-            document.addMixin("hippo:harddocument");
+            document.addMixin("mix:versionable");
             document.setProperty("hippostd:holder", "admin");
             document.setProperty("hippostd:state", "unpublished");
             document.setProperty("hippo:availability", new String[] {"preview"});
@@ -144,7 +144,7 @@ public class CopyTest extends RepositoryTestCase {
     @Test
     public void testDuplicateAsset() throws Exception {
         Node document = session.getRootNode().getNode("test/folder/document").addNode("document", "hippo:document");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
         document.setProperty("hippo:availability", new String[] {"preview", "live"});
         session.save();
 
@@ -156,7 +156,7 @@ public class CopyTest extends RepositoryTestCase {
     @Test
     public void testCopyAsset() throws Exception {
         Node document = session.getRootNode().getNode("test/folder/document").addNode("document", "hippo:document");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
         document.setProperty("hippo:availability", new String[] {"preview", "live"});
         session.save();
 

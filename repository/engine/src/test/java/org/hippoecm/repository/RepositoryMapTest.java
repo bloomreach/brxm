@@ -34,11 +34,11 @@ public class RepositoryMapTest extends RepositoryTestCase {
     String[] content = new String[] {
         "/content", "nt:unstructured",
             "/content/articles", "hippo:testdocument",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:versionable",
                 "/content/articles/myarticle1", "hippo:handle",
                     "jcr:mixinTypes", "hippo:hardhandle",
                     "/content/articles/myarticle1/myarticle1", "hippo:testdocument",
-                        "jcr:mixinTypes", "hippo:harddocument"
+                        "jcr:mixinTypes", "mix:versionable"
     };
 
     @Before

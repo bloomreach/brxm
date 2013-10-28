@@ -56,7 +56,7 @@ public class CopyNodeTest extends RepositoryTestCase {
         root.addMixin("mix:referenceable");
         node = root.addNode("documents");
         node = node.addNode("document","hippo:testdocument");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("aap", "noot");
         session.save();
         node = root.addNode("navigation");

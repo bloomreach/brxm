@@ -34,6 +34,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,7 +185,7 @@ public class ReferringDocumentsTest extends RepositoryTestCase
 
     private Node addFolder(Node folder, String name) throws RepositoryException {
         Node document = folder.addNode(name, "hippostd:folder");
-        document.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        document.addMixin(JcrConstants.MIX_VERSIONABLE);
         return document;
     }
 
@@ -192,7 +193,7 @@ public class ReferringDocumentsTest extends RepositoryTestCase
         Node handle = folder.addNode(name, HippoNodeType.NT_HANDLE);
         handle.addMixin(HippoNodeType.NT_HARDHANDLE);
         Node document = handle.addNode(name, "hippo:testdocument");
-        document.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        document.addMixin(JcrConstants.MIX_VERSIONABLE);
         document.addMixin("hippostd:publishable");
         document.setProperty("hippostd:state", "published");
         Node html = document.addNode("html", "hippostd:html");

@@ -49,17 +49,17 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
     String[] content = new String[] {
         "/test",                "nt:unstructured",
         "/test/docs",           "hippo:testdocument",
-            "jcr:mixinTypes",   "hippo:harddocument",
+            "jcr:mixinTypes",   "mix:versionable",
 
         "/test/docs/orig",      "hippo:handle",
             "jcr:mixinTypes",   "hippo:hardhandle",
         "/test/docs/orig/orig", "hippo:document",
-            "jcr:mixinTypes",   "hippo:harddocument",
+            "jcr:mixinTypes",   "mix:versionable",
 
         "/test/docs/txn",       "hippo:handle",
             "jcr:mixinTypes",   "hippo:hardhandle",
         "/test/docs/txn/txn",  "hippo:testdocument",
-            "jcr:mixinTypes",   "hippo:harddocument",
+            "jcr:mixinTypes",   "mix:versionable",
 
     };
 

@@ -54,7 +54,7 @@ public class WorkflowChainingTest extends RepositoryTestCase {
         final Node handle = test.addNode("testdocument", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
         final Node document = handle.addNode("testdocument", "hippo:document");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
 
         session.save();
     }

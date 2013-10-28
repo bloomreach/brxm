@@ -104,7 +104,7 @@ public abstract class AbstractDateFacetNavigationTest extends RepositoryTestCase
         Node carDoc = carDocs.addNode(name, "hippo:handle");
         carDoc.addMixin("hippo:hardhandle");
         carDoc = carDoc.addNode(name, "hippo:testcardocument");
-        carDoc.addMixin("hippo:harddocument");
+        carDoc.addMixin("mix:versionable");
         carDoc.setProperty("hippo:date", cal);
         carDoc.setProperty("hippo:brand", brand);
         carDoc.setProperty("hippo:color", color);

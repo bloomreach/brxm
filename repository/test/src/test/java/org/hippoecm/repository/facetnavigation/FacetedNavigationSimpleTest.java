@@ -499,7 +499,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         Node car = cars.addNode("car_emptybrand", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car_emptybrand", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
@@ -581,13 +581,13 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         Node car = cars.addNode("car0", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car0", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
 
         // car 1
         car = cars.addNode("car1", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car1", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "mercedes");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
@@ -599,7 +599,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         car = cars.addNode("car2", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car2", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "volkswagen");
         car.setProperty("hippo:color", "grey");
         car.setProperty("hippo:product", "car");
@@ -611,7 +611,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         car = cars.addNode("car3", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car3", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         car.setProperty("hippo:brand", "peugeot");
         car.setProperty("hippo:color", "blue");
         car.setProperty("hippo:product", "car");
@@ -625,7 +625,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         car = cars.addNode("car4", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car4", "hippo:testcardocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
 
         // add a facetselect to car 1
         String docbase = cars.getNode("car1").getIdentifier();
@@ -653,14 +653,14 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         Node car = cars.addNode("car1", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car1", "hippo:testtagdocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         String[] tags1 = { "mercedes", "expensive", "lease" };
         car.setProperty("tags", tags1);
         // car 2
         car = cars.addNode("car2", "hippo:handle");
         car.addMixin("hippo:hardhandle");
         car = car.addNode("car2", "hippo:testtagdocument");
-        car.addMixin("hippo:harddocument");
+        car.addMixin("mix:versionable");
         String[] tags2 = { "toyota", "environment", "economical", "lease" };
         car.setProperty("tags", tags2);
     }
@@ -679,7 +679,7 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         Node article = node.addNode(name, "hippo:handle");
         article.addMixin("hippo:hardhandle");
         article = article.addNode(name, "hippo:document");
-        article.addMixin("hippo:harddocument");
+        article.addMixin("mix:versionable");
         article.addMixin(HippoStdNodeType.NT_PUBLISHABLE);
         article.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
     }

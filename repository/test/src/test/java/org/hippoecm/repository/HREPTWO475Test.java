@@ -37,55 +37,55 @@ public class HREPTWO475Test extends RepositoryTestCase {
         node.addMixin("mix:referenceable");
         node = node.addNode("doc1",HippoNodeType.NT_HANDLE);
         Node child = node.addNode("doc1","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","en");
         child = node.addNode("doc1","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","nl");
 
         node = root.getNode("docs");
         node = node.addNode("doc2",HippoNodeType.NT_HANDLE);
         child = node.addNode("doc2","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","nl");
         child = node.addNode("doc2","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","en");
 
         node = root.getNode("docs");
         node = node.addNode("doc3","nt:unstructured");
         child = node.addNode("doc3","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","nl");
         child = node.addNode("doc3","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","en");
 
         node = root.getNode("docs").addNode("sub");
         node = node.addNode("doc4",HippoNodeType.NT_HANDLE);
         child = node.addNode("doc4","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","en");
         child = node.addNode("doc4","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","nl");
 
         node = root.getNode("docs").getNode("sub");
         node = node.addNode("doc5",HippoNodeType.NT_HANDLE);
         child = node.addNode("doc5","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","nl");
         child = node.addNode("doc5","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","en");
 
         node = root.getNode("docs").getNode("sub");
         node = node.addNode("doc6","nt:unstructured");
         child = node.addNode("doc6","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","nl");
         child = node.addNode("doc6","hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("lang","en");
 
         node = root.addNode("nav","hippo:facetselect");

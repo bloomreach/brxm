@@ -63,7 +63,7 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
         handle.setProperty(HippoNodeType.HIPPO_DISCRIMINATOR, new Value[] { session.getValueFactory().createValue("hippostd:state") });
 
         Node document = handle.addNode("versiondocument", "hippo:document");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
         document.addMixin("hippostd:publishable");
         document.addMixin("hippostd:languageable");
         document.setProperty("hippostd:state", "published");
@@ -71,7 +71,7 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
         document.setProperty("hippostd:language", "aa");
 
         document = test.addNode("baredocument", "hippo:document");
-        document.addMixin("hippo:harddocument");
+        document.addMixin("mix:versionable");
         document.addMixin("hippostd:publishable");
         document.addMixin("hippostd:languageable");
         document.setProperty("hippostd:state", "published");

@@ -86,7 +86,7 @@ public class HippoISMTest extends FacetedNavigationAbstractTest {
 
             for(int i =1 ; i < 50; i++){
                 child = node.addNode("test"+i, "hippo:testdocument");
-                child.addMixin("hippo:harddocument");
+                child.addMixin("mix:versionable");
                 child.setProperty("x", "x1");
                 child.setProperty("y", "yy");
                 node.save();

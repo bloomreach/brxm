@@ -44,7 +44,7 @@ public class MirrorTest extends RepositoryTestCase {
         "/test/documents/test5", "hippo:handle",
         "jcr:mixinTypes", "hippo:hardhandle",
         "/test/documents/test5/test5", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument",
+        "jcr:mixinTypes", "mix:versionable",
         "/test/documents/testmore", "nt:unstructured",
         "/test/documents/testmore", "nt:unstructured",
         "/test/documents/testmore", "nt:unstructured",

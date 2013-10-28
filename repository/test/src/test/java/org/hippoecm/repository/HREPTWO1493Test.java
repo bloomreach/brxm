@@ -39,7 +39,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
         "/test/docs/doc",     "hippo:handle",
         "jcr:mixinTypes",     "hippo:hardhandle",
         "/test/docs/doc/doc", "hippo:testdocument",
-        "jcr:mixinTypes",     "hippo:harddocument",
+        "jcr:mixinTypes",     "mix:versionable",
         "hippo:x",            "test"
     };
 

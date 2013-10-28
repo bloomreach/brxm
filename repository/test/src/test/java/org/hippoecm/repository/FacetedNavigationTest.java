@@ -173,7 +173,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
         node = getDocsNode();
         child = node.addNode("test", "hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         node.save();
@@ -186,7 +186,7 @@ public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
 
         node = getDocsNode();
         child = node.addNode("test", "hippo:testdocument");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:versionable");
         child.setProperty("x", "x1");
         child.setProperty("y", "yy");
         session.save();

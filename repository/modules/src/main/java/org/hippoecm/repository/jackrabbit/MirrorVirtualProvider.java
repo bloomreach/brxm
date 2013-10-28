@@ -26,15 +26,16 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.RepositoryException;
+
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
-
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
+import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
-import org.apache.jackrabbit.spi.QPropertyDefinition;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
@@ -57,7 +58,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
     private Name jcrUUIDName;
     private Name jcrMixinTypesName;
     private Name hippoUUIDName;
-    private Name hardDocumentName;
+    private Name documentName;
     private Name hardHandleName;
     private Name softDocumentName;
     private Name softHandleName;
@@ -76,7 +77,7 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         jcrUUIDName = resolveName("jcr:uuid");
         jcrMixinTypesName = resolveName("jcr:mixinTypes");
         hippoUUIDName = resolveName(HippoNodeType.HIPPO_UUID);
-        hardDocumentName = resolveName(HippoNodeType.NT_HARDDOCUMENT);
+        documentName = resolveName(HippoNodeType.NT_DOCUMENT);
         hardHandleName = resolveName(HippoNodeType.NT_HARDHANDLE);
         softDocumentName = resolveName(HippoNodeType.NT_SOFTDOCUMENT);
         softHandleName = resolveName("hipposys:softhandle");
@@ -105,23 +106,25 @@ public class MirrorVirtualProvider extends HippoVirtualProvider
         if(dereference == null) {
             throw new RepositoryException("Cannot populate top mirror node dereferencing "+((MirrorNodeId)nodeId).getCanonicalId());
         }
-        NodeState state = createNew(nodeId, dereference.getNodeTypeName(), parentId);
-        state.setNodeTypeName(dereference.getNodeTypeName());
+        final Name nodeTypeName = dereference.getNodeTypeName();
+        final NodeTypeRegistry nodeTypeRegistry = getDataProviderContext().getNodeTypeRegistry();
+        final EffectiveNodeType effectiveNodeType = nodeTypeRegistry.getEffectiveNodeType(nodeTypeName);
 
-        Set<Name> mixins = new HashSet<Name>(((NodeState) dereference).getMixinTypeNames());
+        NodeState state = createNew(nodeId, nodeTypeName, parentId);
+        state.setNodeTypeName(nodeTypeName);
+
+        Set<Name> mixins = new HashSet<Name>(dereference.getMixinTypeNames());
         if(mixins.contains(mixinReferenceableName)) {
             mixins.remove(mixinReferenceableName);
-        }
-        if(mixins.contains(hardHandleName)) {
-            mixins.remove(hardHandleName);
-            mixins.add(softHandleName);
         }
         if(mixins.contains(mixinVersionableName)) {
             mixins.remove(mixinVersionableName);
         }
-        if(mixins.contains(hardDocumentName)) {
-            mixins.remove(hardDocumentName);
+        if (effectiveNodeType.includesNodeType(documentName)) {
             mixins.add(softDocumentName);
+        }
+        if(effectiveNodeType.includesNodeType(handleName)) {
+            mixins.add(softHandleName);
         }
         state.setMixinTypeNames(mixins);
 

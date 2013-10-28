@@ -45,7 +45,7 @@ public class NodeIndexerTest extends RepositoryTestCase {
                 "/test/doc", "hippo:handle",
                     "jcr:mixinTypes", "hippo:hardhandle",
                     "/test/doc/doc", "hippo:testdocument",
-                        "jcr:mixinTypes", "hippo:harddocument"
+                        "jcr:mixinTypes", "mix:versionable"
     };
 
     private Session userSession;

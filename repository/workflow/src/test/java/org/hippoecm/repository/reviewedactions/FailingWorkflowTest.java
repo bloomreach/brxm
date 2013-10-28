@@ -39,11 +39,11 @@ public class FailingWorkflowTest extends RepositoryTestCase {
     private String[] content = {
         "/test", "nt:unstructured",
             "/test/folder", "hippostd:folder",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:versionable",
                 "/test/folder/document", "hippo:handle",
                     "jcr:mixinTypes", "hippo:hardhandle",
                     "/test/folder/document/document", "hippostdpubwf:test",
-                        "jcr:mixinTypes", "hippo:harddocument",
+                        "jcr:mixinTypes", "mix:versionable",
                         "hippostdpubwf:createdBy", "admin",
                         "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
                         "hippostdpubwf:lastModifiedBy", "admin",

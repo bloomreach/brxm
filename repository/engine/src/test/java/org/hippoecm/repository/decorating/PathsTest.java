@@ -54,7 +54,7 @@ public class PathsTest extends RepositoryTestCase {
                 "/test/sub", "nt:unstructured",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/sub/node", "hippo:testdocument",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:versionable",
 
             });
         session.save();
@@ -83,7 +83,7 @@ public class PathsTest extends RepositoryTestCase {
                 "/test/f", "nt:unstructured",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/d/x", "hippo:document",
-                "jcr:mixinTypes", "hippo:harddocument"
+                "jcr:mixinTypes", "mix:versionable"
             });
 
         Node source = session.getRootNode().getNode("test/d/x");

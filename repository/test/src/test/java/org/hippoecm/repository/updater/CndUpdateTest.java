@@ -93,7 +93,7 @@ public class CndUpdateTest extends RepositoryTestCase {
                 "/test/doc", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/test/doc/doc", "testUpdateModel:document",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:versionable",
                 "/test/doc/doc/testUpdateModel:html", "hippostd:html",
                 "hippostd:content", "",
                 "/test/doc/doc/testUpdateModel:html/link", "hippo:facetselect",
@@ -148,12 +148,12 @@ public class CndUpdateTest extends RepositoryTestCase {
         Node handle = folder.addNode("description", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
         handle = handle.addNode("testUpdateModel:description", "testUpdateModel:document");
-        handle.addMixin("hippo:harddocument");
+        handle.addMixin("mix:versionable");
     }
 
     private Node createFolder(final Node folder) throws RepositoryException {
         Node childFolder = folder.addNode("testUpdateModel:folder", "testUpdateModel:folder");
-        childFolder.addMixin("hippo:harddocument");
+        childFolder.addMixin("mix:versionable");
         return childFolder;
     }
 

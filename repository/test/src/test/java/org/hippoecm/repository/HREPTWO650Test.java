@@ -62,12 +62,12 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
 
     private void addNodeWithDate(Node node) throws RepositoryException {
         Node datenode = node.addNode("datenode", "hippo:testdocument");
-        datenode.addMixin("hippo:harddocument");
+        datenode.addMixin("mix:versionable");
         Calendar cal = new GregorianCalendar();
         datenode.setProperty("date", cal);
 
         datenode = node.addNode("datenode2", "hippo:testdocument");
-        datenode.addMixin("hippo:harddocument");
+        datenode.addMixin("mix:versionable");
         cal = new GregorianCalendar();
         datenode.setProperty("date", cal);
     }

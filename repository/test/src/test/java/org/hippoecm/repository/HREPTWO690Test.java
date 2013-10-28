@@ -34,7 +34,7 @@ public class HREPTWO690Test extends RepositoryTestCase {
         "/test/docs", "nt:unstructured",
         "jcr:mixinTypes", "mix:referenceable",
         "/test/docs/funny", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument",
+        "jcr:mixinTypes", "mix:versionable",
         "jcr:mixinTypes", "hippo:testmixin",
         "hippo:a", "test",
     };
@@ -69,13 +69,13 @@ public class HREPTWO690Test extends RepositoryTestCase {
         result = traverse(session, "/test/docs/funny");
         assertNotNull(result);
         assertTrue(result.isNodeType("hippo:testmixin"));
-        assertTrue(result.isNodeType("hippo:harddocument"));
+        assertTrue(result.isNodeType("mix:versionable"));
         assertFalse(result.isNodeType("hipposys:softdocument"));
 
         result = traverse(session, "/test/nav/funny");
         assertNotNull(result);
         assertTrue(result.isNodeType("hippo:testmixin"));
-        assertFalse(result.isNodeType("hippo:harddocument"));
+        assertFalse(result.isNodeType("mix:versionable"));
         assertTrue(result.isNodeType("hipposys:softdocument"));
     }
 }

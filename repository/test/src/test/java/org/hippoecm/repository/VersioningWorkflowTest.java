@@ -43,7 +43,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         node = node.addNode("testdocument", "hippo:handle");
         node.addMixin("hippo:hardhandle");
         node = node.addNode("testdocument", "hippo:testdocument");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.addMixin("hippostd:publishable");
         node.setProperty("hippostd:state", "published");
         session.save();
@@ -79,7 +79,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
         node = node.addNode("testdocument", "hippo:handle");
         node.addMixin("hippo:hardhandle");
         node = node.addNode("testdocument", "hippo:autocreatedchild");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.addMixin("hippostd:publishable");
         node.setProperty("hippostd:state", "published");
         session.save();

@@ -27,7 +27,7 @@ public class FacetedSelectVersioningTest extends RepositoryTestCase {
             "/test/doc", "hippo:handle",
                 "jcr:mixinTypes", "hippo:hardhandle",
                 "/test/doc/doc", "hippo:realdocument",
-                    "jcr:mixinTypes", "hippo:harddocument"
+                    "jcr:mixinTypes", "mix:versionable"
     };
     String[] content2 = new String[] {
         "/test/doc/doc/hippo:mirror", "hippo:facetselect",

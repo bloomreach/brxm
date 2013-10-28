@@ -38,7 +38,7 @@ public class CanonicalPathTest extends RepositoryTestCase {
                 "jcr:mixinTypes",             "mix:referenceable",
                 "/test/content/nodes",        "nt:unstructured",
                     "/test/content/nodes/mynode", "hippo:testdocument",
-                        "jcr:mixinTypes",             "hippo:harddocument",
+                        "jcr:mixinTypes",             "mix:versionable",
                         "x",                          "foo"
     };
 

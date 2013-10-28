@@ -30,7 +30,7 @@
         <sv:value>org.hippoecm.repository.deriveddata.CoreDerivedDataFunction</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:nodetype" sv:type="String">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippo:document</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:serialver" sv:type="Long">
         <sv:value>1</sv:value>

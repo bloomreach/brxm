@@ -44,7 +44,7 @@ public class HREPTWO451Test extends RepositoryTestCase {
         node = root.addNode("documents","nt:unstructured");
         node.addMixin("mix:referenceable");
         node = node.addNode("document","hippo:testdocument");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         node.setProperty("hippo:testfacet", "aap");
         session.save();
         node = root.addNode("navigation");

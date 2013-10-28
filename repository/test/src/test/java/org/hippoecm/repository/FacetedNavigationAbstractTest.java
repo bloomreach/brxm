@@ -85,7 +85,7 @@ public abstract class FacetedNavigationAbstractTest extends RepositoryTestCase {
                 System.out.println(("          ".substring(0,level))+nodeNames[i]);
             }
             Node child = node.addNode(nodeNames[i],"hippo:testdocument");
-            child.addMixin("hippo:harddocument");
+            child.addMixin("mix:versionable");
             if (level-1 > 0) {
                 createStructure(child, level-1);
             }
@@ -118,7 +118,7 @@ public abstract class FacetedNavigationAbstractTest extends RepositoryTestCase {
             
             Node doc = getRandomDocNode();
             doc = doc.addNode(Integer.toString(docid), "hippo:testdocument");
-            doc.addMixin("hippo:harddocument");
+            doc.addMixin("mix:versionable");
             doc.setProperty("docid", Integer.toString(docid));
             if ((document.x = rnd.nextInt(3)) > 0) {
                 doc.setProperty("x", "x" + document.x);

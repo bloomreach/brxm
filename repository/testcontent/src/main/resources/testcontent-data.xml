@@ -19,7 +19,7 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:versionable</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>b05f6e96-b81d-4a24-acb6-e29a0a0dc65c</sv:value>
@@ -28,7 +28,6 @@
     <sv:value>preview</sv:value>
     <sv:value>live</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-folder</sv:value>
   </sv:property>
@@ -38,7 +37,7 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
@@ -47,7 +46,6 @@
       <sv:value>preview</sv:value>
       <sv:value>live</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
     <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-folder</sv:value>
       <sv:value>new-translated-folder</sv:value>
@@ -101,7 +99,7 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>e7579a94-7078-4812-8715-0bfbe7b5967c</sv:value>
@@ -110,7 +108,6 @@
         <sv:value>preview</sv:value>
         <sv:value>live</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
@@ -130,7 +127,7 @@
             <sv:value>testcontent:article</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>db1bddc5-d29f-47a1-ac12-b34d97a82715</sv:value>
@@ -202,7 +199,7 @@
             <sv:value>testcontent:article</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>118b876b-fc73-4400-89b8-5a0e2153628d</sv:value>
@@ -285,7 +282,7 @@
             <sv:value>testcontent:article</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>b363e8be-2ec7-4f62-8ba0-2f9c7a335b17</sv:value>
@@ -337,12 +334,11 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>e0155dd8-69d3-4c80-bc0a-2b81eeb092c4</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
@@ -362,7 +358,7 @@
             <sv:value>testcontent:news</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>d1847bd1-78da-4491-beab-e0e6d2fee3e0</sv:value>
@@ -446,7 +442,7 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>cbd837ed-2f07-492e-94dc-409f089a4fcf</sv:value>
@@ -455,7 +451,6 @@
         <sv:value>preview</sv:value>
         <sv:value>live</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
@@ -475,7 +470,7 @@
             <sv:value>testcontent:event</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>24c54e63-78d3-452f-a9f0-f216cc60c276</sv:value>
@@ -531,7 +526,6 @@
             <sv:property sv:name="jcr:uuid" sv:type="String">
               <sv:value>f2d61185-5bf6-48dd-9fd8-78b5a21297aa</sv:value>
             </sv:property>
-            <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
             <sv:property sv:name="hippostd:date" sv:type="Date">
               <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
             </sv:property>
@@ -579,7 +573,7 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>4e557532-98ff-4673-a289-5cdbb2822eed</sv:value>
@@ -588,7 +582,6 @@
         <sv:value>preview</sv:value>
         <sv:value>live</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-document</sv:value>
         <sv:value>new-folder</sv:value>
@@ -601,7 +594,7 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
@@ -610,7 +603,6 @@
       <sv:value>preview</sv:value>
       <sv:value>live</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
     <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-image-folder</sv:value>
     </sv:property>
@@ -666,7 +658,7 @@
         <sv:value>hippogallery:stdImageGallery</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>f770e2fa-e24a-4a1b-beb3-2f4bf2617473</sv:value>
@@ -675,7 +667,6 @@
         <sv:value>preview</sv:value>
         <sv:value>live</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-image-folder</sv:value>
       </sv:property>
@@ -698,7 +689,7 @@
             <sv:value>hippogallery:imageset</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>d2d1f4f1-b4ea-4cd3-8afa-24772cf3ff99</sv:value>
@@ -707,7 +698,6 @@
             <sv:value>preview</sv:value>
             <sv:value>live</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
           <sv:property sv:name="hippogallery:filename" sv:type="String">
             <sv:value>Hippo.jpg</sv:value>
           </sv:property>
@@ -761,7 +751,7 @@
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>hippo:translated</sv:value>
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>4e557532-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
@@ -770,7 +760,6 @@
       <sv:value>preview</sv:value>
       <sv:value>live</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
     <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>new-file-folder</sv:value>
     </sv:property>
@@ -826,7 +815,7 @@
         <sv:value>hippogallery:stdAssetGallery</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>dd1f34b9-9e3c-4361-856b-f74e0c3436d8</sv:value>
@@ -835,7 +824,6 @@
         <sv:value>preview</sv:value>
         <sv:value>live</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-file-folder</sv:value>
       </sv:property>
@@ -858,7 +846,7 @@
             <sv:value>hippogallery:exampleAssetSet</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:versionable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>f3f0b68d-4a8a-4a44-aa9b-475c6eae80af</sv:value>
@@ -867,7 +855,6 @@
             <sv:value>preview</sv:value>
             <sv:value>live</sv:value>
           </sv:property>
-          <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
           <sv:node sv:name="hippogallery:asset">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:resource</sv:value>
@@ -891,11 +878,10 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:versionable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>6c555eb9-3c1a-4ff1-ae1d-5d25f6759cc2</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   </sv:node>
 </sv:node>

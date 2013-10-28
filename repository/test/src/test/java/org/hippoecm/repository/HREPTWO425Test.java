@@ -29,7 +29,7 @@ public class HREPTWO425Test extends RepositoryTestCase {
     @Test
     public void testIssue() throws RepositoryException {
         Node node = session.getRootNode().addNode("test");
-        node.addMixin("hippo:harddocument");
+        node.addMixin("mix:versionable");
         session.save();
         node = node.addNode("n", HippoNodeType.NT_FACETSELECT);
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());

@@ -440,6 +440,7 @@ upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactio
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedFullReviewedActionsWorkflowImpl.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HandleMigratorTest.java -text
 upgrade/handlemigration/src/test/resources/hippoecm-extension.xml -text
+upgrade/handlemigration/src/test/resources/org/onehippo/cms7/repository/upgrade/hippo-old.cnd -text
 upgrade/pom.xml svneol=native#text/plain
 utilities/pom.xml svneol=native#text/plain
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text
