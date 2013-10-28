@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Implementation-Vendor: Hippo B.V. (http://www.onehippo.com)
+Implementation-Title: Repository Modules
+Implementation-Version: 2.25.05-SNAPSHOT
+Implementation-Vendor-Id: org.onehippo.cms7
+Built-By: frnk
+Build-Jdk: 1.7.0_17
+Specification-Vendor: Hippo B.V. (http://www.onehippo.com)
+Specification-Title: Repository Modules
+Created-By: Apache Maven 3.0.5
+Specification-Version: 2.25.05-SNAPSHOT
+Hippo-Modules: org.hippoecm.repository.jackrabbit.MirrorVirtualProvide
+ r org.hippoecm.repository.jackrabbit.FacetResultSetProvider org.hippo
+ ecm.repository.jackrabbit.facetnavigation.FacetNavigationProvider org
+ .hippoecm.repository.jackrabbit.facetnavigation.FacetsAvailableNaviga
+ tionProvider org.hippoecm.repository.jackrabbit.facetnavigation.Facet
+ SubNavigationProvider org.hippoecm.repository.jackrabbit.FacetSubSear
+ chProvider org.hippoecm.repository.jackrabbit.FacetSearchProvider org
+ .hippoecm.repository.jackrabbit.FacetSearchSubtypedDataProvider org.h
+ ippoecm.repository.jackrabbit.MirrorNodeVirtualProvider org.hippoecm.
+ repository.jackrabbit.FacetSelectProvider org.hippoecm.repository.jac
+ krabbit.SubtypedDataProvider
+Archiver-Version: Plexus Archiver
+
