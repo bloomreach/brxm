@@ -15,7 +15,8 @@
  * limitations under the License.
  *
  *
- * <p>This implementation is forked AS-IS from <a href="http://lucene.apache.org/">Apache Lucene</a> which in
+ * <p>This implementation is forked AS-IS from <code>org.apache.lucene.util.WeakIdentityMap</code>
+ * <a href="http://lucene.apache.org/">Apache Lucene</a> version 3.6.0 which in
  * turn copied it from <a href="http://cxf.apache.org/">Apache CXF</a>
  * but modified to <b>not</b> implement the {@link java.util.Map} interface and
  * without any set/iterator views on it, as those are error-prone
