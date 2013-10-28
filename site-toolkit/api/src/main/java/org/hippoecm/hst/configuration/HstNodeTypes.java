@@ -66,7 +66,7 @@ public interface HstNodeTypes {
     static final String GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID = "hst:defaultresourcebundleid";
     static final String GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE = "hst:schemenotmatchresponsecode";
     static final String GENERAL_PROEPRTY_SCHEME_AGNOSTIC = "hst:schemeagnostic";
-    static final String VIRTUALHOST_PROPERTY_HTTPS_APPROVED = "hst:httpsapproved";
+    static final String VIRTUALHOST_PROPERTY_CUSTOM_HTTPS_SUPPORT= "hst:customhttpssupport";
     
     static final String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     static final String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";

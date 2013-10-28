@@ -193,6 +193,6 @@ public interface VirtualHost {
      * be rendered while the matched {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem} or {@link Mount} indicates
      * through <code>getScheme()</code> the request should be <code>http</code>
      */
-    boolean isHttpsApproved();
+    boolean isCustomHttpsSupported();
 
 }

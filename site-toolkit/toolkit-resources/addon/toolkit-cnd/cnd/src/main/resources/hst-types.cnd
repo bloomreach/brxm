@@ -313,9 +313,9 @@
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
 - hst:schemeagnostic (boolean)
-// when httpsapproved is true, a https request will always be processed, even if
+// when customhttpssupport is true, a https request will always be processed, even if
 // the matching indicated hst:scheme = http.
-- hst:httpsapproved (boolean)
+- hst:customhttpssupport (boolean)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)

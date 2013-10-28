@@ -226,7 +226,7 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
      * </p>
      * <p>
      *     <b>Note 2</b>: This valve <b>requires</b> that the matched host has 'https approved = true'. This can be
-     *     achieved by setting the property <code>hst:httpsapproved = true</code> on the matching hst:virtualhost or one
+     *     achieved by setting the property <code>hst:customhttpssupport = true</code> on the matching hst:virtualhost or one
      *     of its ancestors.
      * </p>
      *
@@ -270,11 +270,11 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
             // check if hst by default supports https requests even if the current request is http and hst:scheme is 'http':
             // If hst does not support https requests a redirect to https would result in a redirect loop.
             // Instead of redirect to https we then serve request over http and log a warning
-            if(!mount.getVirtualHost().isHttpsApproved()) {
+            if(!mount.getVirtualHost().isCustomHttpsSupported()) {
                 log.warn("Current URL '{}' is over http but '{}' indicated preference over 'https' but virtualhost '{}' does not have" +
                         "'{}' = true. Set this property to true support url over https. Request will now be " +
                         "rendered over http.",
-                        new String[]{currentUrl, this.getClass().getName()+"#requiresHttps", mount.getVirtualHost().getHostName(), HstNodeTypes.VIRTUALHOST_PROPERTY_HTTPS_APPROVED});
+                        new String[]{currentUrl, this.getClass().getName()+"#requiresHttps", mount.getVirtualHost().getHostName(), HstNodeTypes.VIRTUALHOST_PROPERTY_CUSTOM_HTTPS_SUPPORT});
                 context.invokeNext();
                 return;
             }
