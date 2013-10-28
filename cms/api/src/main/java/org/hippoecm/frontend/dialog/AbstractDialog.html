@@ -16,7 +16,9 @@
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:head>
     <script type="text/javascript" language="JavaScript">
-      Wicket.Window.unloadConfirmation = false;
+        if (Wicket != null && Wicket.Window != null) {
+          Wicket.Window.unloadConfirmation = false;
+        }
     </script>
   </wicket:head>
   <wicket:panel>

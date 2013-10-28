@@ -31,6 +31,15 @@
         this.settings.isFullscreen = false;
     };
 
+    Wicket.Window.prototype.resizeLeftCropArea = function(w, h) {
+        var lca;
+        lca = document.getElementsByClassName('left-crop-area');
+        if (lca.length ===1) {
+            lca[0].style.width = w;
+            lca[0].style.height = h;
+        }
+    };
+
     Wicket.Window.prototype.onWindowResize = function(e) {
         var w, f, width, height;
         if (this.isFullscreen) {
@@ -47,6 +56,7 @@
 
             f.style.height = height + "px";
             f.style.width = width + "px";
+            this.resizeLeftCropArea(w.style.width, w.style.height);
             this.resizing();
         }
     };
@@ -97,6 +107,7 @@
             f.style.top = this.oldCTop;
             f.style.left = this.oldCLeft;
 
+            this.resizeLeftCropArea(w.style.width, w.style.height);
             this.resizing();
             this.isFullscreen = false;
         } else {
@@ -127,6 +138,7 @@
             f.style.width = width + "px";
             f.className = 'modal_fullscreen_content';
 
+            this.resizeLeftCropArea(w.style.width, w.style.height);
             this.resizing();
             this.isFullscreen = true;
         }
