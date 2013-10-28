@@ -29,8 +29,6 @@ import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.query.qom.ColumnImpl;
 import org.apache.lucene.search.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HippoQueryResult extends QueryResultImpl {
 
@@ -78,8 +76,7 @@ public class HippoQueryResult extends QueryResultImpl {
         return hits;
     }
 
-    // TODO after we rely on jackrabbit 2.6.4 or newer, uncomment the @Override below
-    // @Override
+    @Override
     protected boolean isAccessGranted(ScoreNode[] nodes) {
         return true;
     }

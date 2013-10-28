@@ -85,8 +85,8 @@
     <tika.version>0.9</tika.version>
     <pdfbox.version>1.7.1</pdfbox.version>
     <quartz.version>1.8.5</quartz.version>
-    <jackrabbit.patched.version>2.6.3-h1</jackrabbit.patched.version>
-    <jackrabbit.version>2.6.3</jackrabbit.version>
+    <jackrabbit.patched.version>2.6.4-h1</jackrabbit.patched.version>
+    <jackrabbit.version>2.6.4</jackrabbit.version>
     <json-lib.version>2.2.2</json-lib.version>
     <groovy.version>2.0.1</groovy.version>
     <easymock.version>3.1</easymock.version>
