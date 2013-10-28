@@ -432,7 +432,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
 
         @Override
         public boolean isHttpsApproved() {
-            return true;
+            return false;
         }
 
         @Override

@@ -113,9 +113,9 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
     /**
      * <p>
      *     Implementations of this {@link AbstractHttpsSchemeValve} should decide in this method whether the request
-     *     {@link org.hippoecm.hst.core.container.ValveContext#getServletRequest()} is preferred to be served over <code>https</code>,
+     *     {@link org.hippoecm.hst.core.container.ValveContext#getServletRequest()} is required to be served over <code>https</code>,
      *     Whether the request in the end will actually be served over <code>https</code> also depends on other variables,
-     *     see the javadoc at {@link #invoke(ValveContext)}
+     *     see the javadoc from {@link #invoke(ValveContext)}
      * </p>
      * <p>
      *     Example 1: Assume you want documents of (sub)type <code>myproject:form</code> to be served over <code>https</code>,
@@ -195,12 +195,10 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
      * </p>
      * @return <code>true</code> when the request should be secure
      */
-    public abstract boolean shouldBeSecure(ValveContext context);
+    public abstract boolean requiresHttps(ValveContext context);
 
     /**
      * <p>
-     *     If the method {@link #shouldBeSecure(ValveContext)} returns <code>true</code>, a check against the current
-     *     {@link HttpServletRequest} scheme is done: If the current {@link HttpServletRequest} uses <code>http</code>,
      *     this valve might do a client side redirect status code {@link #getRedirectStatusCode()}. The redirect will be
      *     to the same URL as for the current request, only with scheme <code>https</code> instead.
      *     A redirect is done <b>only</b> if:
@@ -214,6 +212,7 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
      *         {@link org.hippoecm.hst.core.request.ResolvedMount} is <b>not</b>
      *         {@link org.hippoecm.hst.configuration.hosting.Mount#isSchemeAgnostic()}
      *         </li>
+     *         <li>{@link #requiresHttps(ValveContext)} returns <code>true</code></li>
      *     </ol>
      * </p>
      * <p>
@@ -221,8 +220,14 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
      *     after this valve.
      * </p>
      * <p>
-     *     In case {@link #shouldBeSecure(ValveContext)} returns <code>false</code>, normal processing is continued, regardless
-     *     whether the current request is over <code>http</code> or <code>https</code>.
+     *     <b<Note</b> that the custom to be implemented {@link #requiresHttps(ValveContext)} is not always invoked.
+     *     {@link #requiresHttps(ValveContext)} is for example skipped when the request is already over <code>https</code>,
+     *     or when the mount/sitemapitem is marked to be scheme agnostic, or when the request is a cms request,
+     * </p>
+     * <p>
+     *     <b>Note 2</b>: This valve <b>requires</b> that the matched host has 'https approved = true'. This can be
+     *     achieved by setting the property <code>hst:httpsapproved = true</code> on the matching hst:virtualhost or one
+     *     of its ancestors.
      * </p>
      *
      */
@@ -251,8 +256,8 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
             context.invokeNext();
             return;
         }
-        log.debug("Invoking #shouldBeSecure to find out whether request should be over https.");
-        boolean secure = shouldBeSecure(context);
+        log.debug("Invoking #requiresHttps to find out whether request should be over https.");
+        boolean secure = requiresHttps(context);
         if (!secure) {
             context.invokeNext();
             return;
@@ -269,7 +274,7 @@ public abstract class AbstractHttpsSchemeValve extends AbstractOrderableValve {
                 log.warn("Current URL '{}' is over http but '{}' indicated preference over 'https' but virtualhost '{}' does not have" +
                         "'{}' = true. Set this property to true support url over https. Request will now be " +
                         "rendered over http.",
-                        new String[]{currentUrl, this.getClass().getName()+"#shouldBeSecure", mount.getVirtualHost().getHostName(), HstNodeTypes.VIRTUALHOST_PROPERTY_HTTPS_APPROVED});
+                        new String[]{currentUrl, this.getClass().getName()+"#requiresHttps", mount.getVirtualHost().getHostName(), HstNodeTypes.VIRTUALHOST_PROPERTY_HTTPS_APPROVED});
                 context.invokeNext();
                 return;
             }
