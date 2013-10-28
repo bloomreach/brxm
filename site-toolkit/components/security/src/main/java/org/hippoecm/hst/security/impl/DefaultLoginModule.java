@@ -183,12 +183,12 @@ public class DefaultLoginModule implements LoginModule {
             } catch (SecurityException se) {
                 if (se.getCause() != null) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Failed to authenticate: " + se.getCause(), se.getCause());
+                        log.info("Failed to authenticate: " + se.getCause(), se.getCause());
                     } else {
-                        log.warn("Failed to authenticate: " + se.getCause());
+                        log.info("Failed to authenticate: " + se.getCause());
                     }
                 } else {
-                    log.warn("Failed to authenticate: " + se);
+                    log.info("Failed to authenticate: " + se);
                 }
                 
                 throw new FailedLoginException("Authentication failed");
@@ -247,7 +247,7 @@ public class DefaultLoginModule implements LoginModule {
 
     /**
      * Default setup of the logged on Subject Principals for Tomcat
-     * @param subject
+     * @param containerSubject
      * @param user
      */
     protected void commitSubject(Subject containerSubject, User user) {

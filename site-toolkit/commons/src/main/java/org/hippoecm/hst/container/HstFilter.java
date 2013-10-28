@@ -299,19 +299,17 @@ public class HstFilter implements Filter {
              * Below is a workaround for JAAS authentication: The j_security_check URL is always handled by the
              * container, after which a REDIRECT takes place which always includes the contextpath. In case of a
              * proxy like httpd in front that again adds the contextpath, the URL ends up with twice the contextpath.
-             * This can only happen when the contextpath is not empty and when the !resolvedVirtualHost.getVirtualHost().isContextPathInUrl()
-             * We check below whether the previous location was /login/resource, and if so, whether the contextpath is twice in the url
-             * If so, we do a client redirect again to remove the duplicate contextpath
+             * Another problem occurs when the login is over https: The container normally runs over http, and hence
+             * always a http redirect is done by the container. Hence we check below whether there is an attribute
+             * on the http session that is only present after a jaas login attempt. If present, we do another redirect.
              */
-            if (doClientRedirectAfterJaasLoginBehindProxy && !resolvedVirtualHost.getVirtualHost().isContextPathInUrl() && !"".equals(req.getContextPath())) {
-                String referer = req.getHeader("Referer");
-                if (referer != null && referer.endsWith(defaultLoginResourcePath)) {
-                    String requestURI = req.getRequestURI();
-                    if (requestURI.startsWith(req.getContextPath() + req.getContextPath() + "/")) {
-                        String redirectTo = requestURI.substring((req.getContextPath() + req.getContextPath()).length());
-                        res.sendRedirect(redirectTo);
-                        return;
-                    }
+            if (doClientRedirectAfterJaasLoginBehindProxy) {
+                HttpSession session = req.getSession(false);
+                if (session != null && session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR) != null) {
+                    String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                    session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                    res.sendRedirect(resourceURL);
+                    return;
                 }
     	    }
 

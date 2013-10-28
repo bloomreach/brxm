@@ -45,6 +45,7 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.security.PolicyContextWrapper;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.HstResponseUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -263,13 +264,15 @@ public class LoginServlet extends HttpServlet {
         } else {
             session.removeAttribute(PASSWORD_ATTR_NAME);
         }
-
         String resourcePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginResourcePath", defaultLoginResourcePath);
+        String resourceURL;
         if(isContextPathInUrl(request)) {
-            response.sendRedirect(response.encodeURL(request.getContextPath() + resourcePath));
+            resourceURL = getBaseURL(request)+response.encodeURL(request.getContextPath() + resourcePath);
         } else {
-            response.sendRedirect(response.encodeURL(resourcePath));
+            resourceURL = getBaseURL(request)+response.encodeURL(resourcePath);
         }
+        session.setAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR, resourceURL);
+        response.sendRedirect(resourceURL);
     }
 
     protected void doLoginLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -297,8 +300,10 @@ public class LoginServlet extends HttpServlet {
 
         destination = normalizeDestination(destination, request);
 
-        response.sendRedirect(response.encodeURL(destination));
+        response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
     }
+
+
 
     protected void doLoginResource(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String destination = null;
@@ -326,7 +331,7 @@ public class LoginServlet extends HttpServlet {
 
         destination = normalizeDestination(destination, request);
 
-        response.sendRedirect(response.encodeURL(destination));
+        response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
     }
 
     protected void doLoginLogout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -337,7 +342,7 @@ public class LoginServlet extends HttpServlet {
             session.invalidate();
         }
 
-        response.sendRedirect(response.encodeURL(destination));
+        response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
     }
 
     protected void doLoginError(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -553,6 +558,29 @@ public class LoginServlet extends HttpServlet {
         } catch (Exception e) {
             log.warn("Unable to match '" + hostName + "' to a hst host. Try to complete request without but contextpath might be included in URLs while not desired", e);
         }
+    }
+
+    public static String getBaseURL(HttpServletRequest request) {
+        final StringBuilder builder = new StringBuilder();
+        final String scheme = HstRequestUtils.getFarthestRequestScheme(request);
+        final String serverName = HstRequestUtils.getFarthestRequestHost(request, false);
+
+        builder.append(scheme);
+        builder.append("://").append(serverName);
+
+        return builder.toString();
+    }
+
+    public static String getFullyQualifiedURL(final HttpServletRequest request, final String destination) {
+        if (destination.startsWith("http:") || destination.startsWith("https:")) {
+            return destination;
+        }
+        if (destination.startsWith("/")) {
+            return getBaseURL(request) + destination;
+        } else {
+            return getBaseURL(request) + "/" + destination;
+        }
+
     }
 
 }

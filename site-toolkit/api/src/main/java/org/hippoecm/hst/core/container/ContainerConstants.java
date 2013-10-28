@@ -172,4 +172,6 @@ public interface ContainerConstants {
      * The current servlet filter chain request attribute name.
      */
     String HST_FILTER_CHAIN = "org.hippoecm.hst.container.filter.chain";
+
+    String HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR = "org.hippoecm.hst.security.servlet.LoginServlet.jaas_login_attempt_resource_url";
 }
