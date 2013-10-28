@@ -2494,6 +2494,12 @@ plugin-dashboard/src/main/target
 plugin-dashboard/src/main/webapp/*.iml
 plugin-dashboard/src/main/webapp/.DS_Store
 plugin-dashboard/src/main/webapp/.idea
+plugin-dashboard/src/main/webapp/META-INF/*.iml
+plugin-dashboard/src/main/webapp/META-INF/.DS_Store
+plugin-dashboard/src/main/webapp/META-INF/.idea
+plugin-dashboard/src/main/webapp/META-INF/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/META-INF/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/META-INF/target
 plugin-dashboard/src/main/webapp/WEB-INF/*.iml
 plugin-dashboard/src/main/webapp/WEB-INF/.DS_Store
 plugin-dashboard/src/main/webapp/WEB-INF/.idea

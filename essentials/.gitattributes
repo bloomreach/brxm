@@ -669,6 +669,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/hippo-l
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/ImageModel.java -text
 plugin-dashboard/src/main/resources/log4j.xml -text
 plugin-dashboard/src/main/resources/rest.xml -text
+plugin-dashboard/src/main/webapp/META-INF/context.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
 plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
 plugin-dashboard/src/main/webapp/assets/css/hippo-essentials.css -text

@@ -125,6 +125,15 @@
 
 
   <build>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <configuration>
+                  <warName>dashboard</warName>
+              </configuration>
+          </plugin>
+      </plugins>
     <finalName>dashboard</finalName>
     <resources>
       <resource>
