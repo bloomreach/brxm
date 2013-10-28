@@ -25,7 +25,7 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 public class HttpsSchemeExampleValve extends AbstractHttpsSchemeValve {
 
     @Override
-    public boolean shouldBeSecure(final ValveContext context) {
+    public boolean requiresHttps(final ValveContext context) {
         final HippoBean contentBean = context.getRequestContext().getContentBean();
         if (contentBean == null ) {
             return false;
