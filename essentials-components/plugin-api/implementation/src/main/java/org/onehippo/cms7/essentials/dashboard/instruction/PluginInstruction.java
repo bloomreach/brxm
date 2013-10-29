@@ -19,13 +19,26 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 /**
  * @version "$Id$"
  */
 @XmlTransient
-public abstract class PluginInstruction implements Instruction{
+public abstract class PluginInstruction implements Instruction {
+
+
+
+    protected PluginInstruction() {
+        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
+        injector.injectMembers(this);
+    }
+
 
 }
