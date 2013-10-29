@@ -655,6 +655,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulLi
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.properties.xml -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/EventsPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/EventsPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalStep.html -text
@@ -663,11 +664,13 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/Project
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ProjectSetupStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/SelectPowerpackStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/SelectPowerpackStep.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/SelectPowerpackStep.properties.xml -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/WelcomeStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/WelcomeStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/WelcomeStep.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/hippo-logo.png -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/ImageModel.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/ProjectModel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/wizard/SetupWizard.java -text
 plugin-dashboard/src/main/resources/log4j.xml -text
 plugin-dashboard/src/main/resources/rest.xml -text

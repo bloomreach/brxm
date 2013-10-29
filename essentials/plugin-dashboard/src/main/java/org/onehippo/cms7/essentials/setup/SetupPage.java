@@ -16,10 +16,12 @@
 
 package org.onehippo.cms7.essentials.setup;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -36,19 +38,12 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
-import org.onehippo.cms7.essentials.setup.panels.ProjectSetupStep;
 import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
-import org.onehippo.cms7.essentials.setup.panels.WelcomeStep;
-import org.onehippo.cms7.essentials.setup.wizard.SetupWizard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import javax.servlet.ServletContext;
+import java.util.List;
 
 /**
  * @version "$Id$"
@@ -109,11 +104,9 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         //############################################
         // WIZARD & STEPS
         //############################################
-        final AjaxWizardPanel wizard = new SetupWizard("wizard");
-        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
-        wizard.addWizard(new SelectPowerpackStep("Select powerpacks"));
-        wizard.addWizard(new FinalStep("Done"));
-        wizard.addWizard(new ProjectSetupStep("Project settings", plugin, context));
+        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
+        wizard.addWizard(new SelectPowerpackStep(getString("step.choose.powerpack")));
+        wizard.addWizard(new FinalStep(getString("step.overview")));
         add(wizard);
 
     }
