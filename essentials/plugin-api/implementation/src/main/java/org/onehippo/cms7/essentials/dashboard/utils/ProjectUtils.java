@@ -4,18 +4,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.common.base.Strings;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -27,7 +16,17 @@ import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @version "$Id: ProjectUtils.java 164013 2013-05-11 14:05:39Z mmilicevic $"
@@ -120,26 +119,46 @@ public class ProjectUtils {
         }
     }
 
-    public static boolean isInstalled(final DependencyType type, final Dependency dependency) {
+    private static Model getPomModel(String path) {
         Reader fileReader = null;
+        Model model = null;
         try {
             final MavenXpp3Reader reader = new MavenXpp3Reader();
-            final String path = type == DependencyType.SITE ? ProjectUtils.getSite().getPath() : ProjectUtils.getCms().getPath();
             fileReader = new FileReader(path + File.separatorChar + "pom.xml");
-            final Model model = reader.read(fileReader);
-            final List<Dependency> dependencies = model.getDependencies();
-            for (Dependency dep : dependencies) {
-                if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
-                    return true;
-                }
-
-            }
+            model = reader.read(fileReader);
         } catch (XmlPullParserException | IOException e) {
             log.error("Error parsing pom", e);
         } finally {
             IOUtils.closeQuietly(fileReader);
         }
+        return model;
+    }
 
+    public static Model getSitePomModel() {
+        if (ProjectUtils.getSite() != null) {
+            return getPomModel(ProjectUtils.getSite().getPath());
+        } else {
+            return null;
+        }
+    }
+
+    public static Model getCMSPomModel() {
+        if (ProjectUtils.getCms() != null) {
+            return getPomModel(ProjectUtils.getCms().getPath());
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean isInstalled(final DependencyType type, final Dependency dependency) {
+        final Model model = type == DependencyType.SITE ? getSitePomModel() : getCMSPomModel();
+        final List<Dependency> dependencies = model.getDependencies();
+        for (Dependency dep : dependencies) {
+            if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
+                return true;
+            }
+
+        }
         return false;
     }
 
