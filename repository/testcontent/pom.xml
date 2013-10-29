@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
-    <version>2.25.05-SNAPSHOT</version>
+    <version>2.25.05-iteration-4</version>
   </parent>
 
   <name>Repository Test Content</name>
