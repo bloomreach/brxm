@@ -34,7 +34,7 @@ public class EventBusModuleTest {
 
     @Test
     public void testConfigure() throws Exception {
-        final Injector injector = Guice.createInjector(new EventBusModule());
+        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
         final TestEventsListener testEventListener = new TestEventsListener();
         injector.injectMembers(testEventListener);
         final TestEventsApplication application = testEventListener.getApplication();

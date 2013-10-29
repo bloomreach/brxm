@@ -1974,6 +1974,12 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/.DS_Store
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/.idea
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/*.iml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/.DS_Store
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/.idea
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/hippo-plugins.iws
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/*.iml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/.DS_Store
