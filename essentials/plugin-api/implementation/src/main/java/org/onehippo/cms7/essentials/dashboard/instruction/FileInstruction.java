@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
@@ -39,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 
 /**
  * @version "$Id$"
@@ -46,19 +49,32 @@ import com.google.inject.Inject;
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
+    public static final String COPY = "copy";
+    public static final String DELETE = "delete";
     public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
-            .add("copy")
-            .add("delete")
+            .add(COPY)
+            .add(DELETE)
             .add("overwrite")
             .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
+
+    @Inject
+    private EventBus eventBus;
+    @Inject
+    @Named("instruction.message.file.delete")
+    private String messageDelete;
+
+
+    @Inject
+    @Named("instruction.message.file.copy")
+    private String messageCopy;
+
     private boolean override;
     private String source;
     private String target;
     private String action;
-    @Inject
-    private EventBus eventBus;
+
 
     @Override
     public InstructionStatus process(final PluginContext context) {
@@ -69,15 +85,33 @@ public class FileInstruction extends PluginInstruction {
         }
         processPlaceholders(context.getPlaceholderData());
         // check action:
-        switch (action) {
-            case "copy":
-                break;
-            case "delete":
-                return delete();
-
+        if (action.equals(COPY)) {
+            return copy();
+        } else if (action.equals(DELETE)) {
+            return delete();
         }
+
+
         eventBus.post(new InstructionEvent(this));
-        return InstructionStatus.SUCCESS;
+        return InstructionStatus.FAILED;
+    }
+
+    private InstructionStatus copy() {
+        final File file = new File(source);
+        if (!file.exists()) {
+            log.error("Source file doesn't exists: {}", file);
+        }
+        try {
+            FileUtils.copyFile(file, new File(target));
+            eventBus.post(new InstructionEvent(this));
+            return InstructionStatus.SUCCESS;
+        } catch (IOException e) {
+            log.error("Error creating file", e);
+        }
+
+
+        return InstructionStatus.FAILED;
+
     }
 
     private InstructionStatus delete() {
@@ -98,6 +132,16 @@ public class FileInstruction extends PluginInstruction {
 
     @Override
     public void processPlaceholders(final Map<String, Object> data) {
+        // setup messages:
+        if (Strings.isEmpty(message)) {
+            // check message based on action:
+            if (action.equals(COPY)) {
+                message = messageCopy;
+            } else if (action.equals(DELETE)) {
+                message = messageDelete;
+            }
+        }
+
         super.processPlaceholders(data);
         //
         final String myTarget = TemplateUtils.replaceTemplateData(target, data);

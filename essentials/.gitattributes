@@ -530,6 +530,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/code/exc/EssentialsCodeCreationException.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/inject/EventBusModule.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/inject/PropertiesModule.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/update/UpdateUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/wicket/JcrNodeTypeModel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/wicket/SortedTypeChoiceRenderer.java -text
@@ -545,13 +546,17 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/w
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/EssentialsWizardStep.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/ModelWizardStep.java -text
 plugin-api/implementation/src/main/resources/dashboard.cnd -text
+plugin-api/implementation/src/main/resources/essentials_messages.properties -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseRepositoryTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/GuiceJUnitModules.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/GuiceJUnitRunner.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/MemoryRepository.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginContext.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/MemoryPluginEventListenerTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
@@ -570,6 +575,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/common/PackageVisitorTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/EventBusModuleTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/PropertiesModuleTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEvent.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsApplication.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsListener.java -text
@@ -601,6 +607,7 @@ plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplu
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/plugin.xml -text
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/vendor.xml -text
 plugin-api/implementation/src/test/resources/project/content/namespaces/hippoplugins/version.xml -text
+plugin-api/implementation/src/test/resources/project/instruction_file.txt -text
 plugin-api/implementation/src/test/resources/project/site/pom.xml -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/dummy/DummyClazz.java -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/BaseDocument.txt -text

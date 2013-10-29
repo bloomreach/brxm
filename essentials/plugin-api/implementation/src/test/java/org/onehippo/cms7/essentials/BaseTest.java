@@ -11,16 +11,21 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
- * @version "$Id: BaseTest.java 173107 2013-08-07 15:19:38Z mmilicevic $"
+ * @version "$Id$"
  */
+@RunWith(GuiceJUnitRunner.class)
+@GuiceJUnitModules({EventBusModule.class, PropertiesModule.class})
 public class BaseTest {
     public static final int NONE_EXISTING_BEANS_SIZE = 2;
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
@@ -40,6 +45,7 @@ public class BaseTest {
     private String oldSystemDir;
     private PluginContext context;
     private Path projectRoot;
+
 
     @After
     public void tearDown() throws Exception {

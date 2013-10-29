@@ -56,12 +56,6 @@ public class PluginInstructionExecutorTest extends BaseTest{
     @Inject
     private PluginInstructionExecutor pluginInstructionExecutor;
 
-    @Before
-    public void setUp() throws Exception {
-        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
-        injector.injectMembers(this);
-    }
-
     @Test
     public void testExecute() throws Exception {
 
