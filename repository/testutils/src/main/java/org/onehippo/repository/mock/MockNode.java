@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.Binary;
 import javax.jcr.Item;
@@ -42,6 +44,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.onehippo.repository.util.GlobCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -422,22 +425,62 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public NodeIterator getNodes(final String namePattern) {
-        throw new UnsupportedOperationException();
+        String [] nameGlobs = namePattern.split("\\|");
+        for (int i = 0; i < nameGlobs.length; i++) {
+            nameGlobs[i] = nameGlobs[i].trim();
+        }
+        return getNodes(nameGlobs);
     }
 
     @Override
     public NodeIterator getNodes(final String[] nameGlobs) {
-        throw new UnsupportedOperationException();
+        List<MockNode> childrenCopy = new LinkedList<MockNode>();
+
+        for (String nameGlob : nameGlobs) {
+            GlobCompiler compiler = new GlobCompiler();
+            Pattern pattern = compiler.compile(nameGlob);
+
+            for (List<MockNode> childList : children.values()) {
+                for (MockNode child : childList) {
+                    Matcher m = pattern.matcher(child.getName());
+
+                    if (m.matches()) {
+                        childrenCopy.add(child);
+                    }
+                }
+            }
+        }
+
+        return new MockNodeIterator(childrenCopy);
     }
 
     @Override
     public PropertyIterator getProperties(final String namePattern) {
-        throw new UnsupportedOperationException();
+        String [] nameGlobs = namePattern.split("\\|");
+        for (int i = 0; i < nameGlobs.length; i++) {
+            nameGlobs[i] = nameGlobs[i].trim();
+        }
+        return getProperties(nameGlobs);
     }
 
     @Override
     public PropertyIterator getProperties(final String[] nameGlobs) {
-        throw new UnsupportedOperationException();
+        List<MockProperty> propsCopy = new LinkedList<MockProperty>();
+
+        for (String nameGlob : nameGlobs) {
+            GlobCompiler compiler = new GlobCompiler();
+            Pattern pattern = compiler.compile(nameGlob);
+
+            for (MockProperty prop : properties.values()) {
+                Matcher m = pattern.matcher(prop.getName());
+
+                if (m.matches()) {
+                    propsCopy.add(prop);
+                }
+            }
+        }
+
+        return new MockPropertyIterator(propsCopy);
     }
 
     @Override

@@ -26,7 +26,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
@@ -436,6 +438,103 @@ public class MockNodeTest {
         } catch (ConstraintViolationException e) {
             // as expected.
         }
+    }
+
+    @Test
+    public void getNodesWithNamePattern() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
+        MockNode handle = folder.addMockNode("document1", "nt:unstructured");
+        handle.addMockNode("document1", "nt:unstructured");
+        handle.addMockNode("document1", "nt:unstructured");
+        handle.addMockNode("document1", "nt:unstructured");
+        handle.addMockNode("hippo:request", "nt:unstructured");
+
+        Set<String> variantPaths = new HashSet<String>();
+        NodeIterator nodeIt = handle.getNodes("document*");
+        assertEquals(3, nodeIt.getSize());
+
+        while (nodeIt.hasNext()) {
+            variantPaths.add(nodeIt.nextNode().getPath());
+        }
+
+        assertTrue(variantPaths.contains("/folder1/document1/document1"));
+        assertTrue(variantPaths.contains("/folder1/document1/document1[2]"));
+        assertTrue(variantPaths.contains("/folder1/document1/document1[3]"));
+
+        variantPaths.clear();
+
+        nodeIt = handle.getNodes("document*|hippo:*");
+        assertEquals(4, nodeIt.getSize());
+
+        while (nodeIt.hasNext()) {
+            variantPaths.add(nodeIt.nextNode().getPath());
+        }
+
+        assertTrue(variantPaths.contains("/folder1/document1/document1"));
+        assertTrue(variantPaths.contains("/folder1/document1/document1[2]"));
+        assertTrue(variantPaths.contains("/folder1/document1/document1[3]"));
+        assertTrue(variantPaths.contains("/folder1/document1/hippo:request"));
+
+        variantPaths.clear();
+
+        nodeIt = handle.getNodes(new String [] { "document*", "hippo:*" });
+        assertEquals(4, nodeIt.getSize());
+
+        while (nodeIt.hasNext()) {
+            variantPaths.add(nodeIt.nextNode().getPath());
+        }
+
+        assertTrue(variantPaths.contains("/folder1/document1/document1"));
+        assertTrue(variantPaths.contains("/folder1/document1/document1[2]"));
+        assertTrue(variantPaths.contains("/folder1/document1/document1[3]"));
+        assertTrue(variantPaths.contains("/folder1/document1/hippo:request"));
+    }
+
+    @Test
+    public void getPropertiesWithNamePattern() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode node = root.addMockNode("node1", "nt:unstructured");
+        node.setProperty("prop1", "value1");
+        node.setProperty("prop2", "value2");
+        node.setProperty("hippo:holder", "editor");
+
+        Set<String> propPaths = new HashSet<String>();
+        PropertyIterator propIt = node.getProperties("prop*");
+        assertEquals(2, propIt.getSize());
+
+        while (propIt.hasNext()) {
+            propPaths.add(propIt.nextProperty().getPath());
+        }
+
+        assertTrue(propPaths.contains("/node1/prop1"));
+        assertTrue(propPaths.contains("/node1/prop2"));
+
+        propPaths.clear();
+
+        propIt = node.getProperties("prop* | hippo:*");
+        assertEquals(3, propIt.getSize());
+
+        while (propIt.hasNext()) {
+            propPaths.add(propIt.nextProperty().getPath());
+        }
+
+        assertTrue(propPaths.contains("/node1/prop1"));
+        assertTrue(propPaths.contains("/node1/prop2"));
+        assertTrue(propPaths.contains("/node1/hippo:holder"));
+
+        propPaths.clear();
+
+        propIt = node.getProperties(new String [] { "prop*", "hippo:*" });
+        assertEquals(3, propIt.getSize());
+
+        while (propIt.hasNext()) {
+            propPaths.add(propIt.nextProperty().getPath());
+        }
+
+        assertTrue(propPaths.contains("/node1/prop1"));
+        assertTrue(propPaths.contains("/node1/prop2"));
+        assertTrue(propPaths.contains("/node1/hippo:holder"));
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {
