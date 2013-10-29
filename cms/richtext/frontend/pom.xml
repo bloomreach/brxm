@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms-richtext</artifactId>
-    <version>2.25.04-SNAPSHOT</version>
+    <version>2.25.04-iteration-4</version>
   </parent>
 
   <name>CMS Rich Text Frontend</name>
