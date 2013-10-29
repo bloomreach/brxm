@@ -142,7 +142,7 @@ public class TestLoginServlet {
         assertEquals("/site/welcome.html", request.getSession().getAttribute(LoginServlet.DESTINATION_ATTR_NAME));
         assertEquals("charley", request.getSession().getAttribute(LoginServlet.USERNAME_ATTR_NAME));
         assertEquals("brown", request.getSession().getAttribute(LoginServlet.PASSWORD_ATTR_NAME));
-        assertEquals("/site/login/resource", response.getRedirectedUrl());
+        assertEquals("http://localhost/site/login/resource", response.getRedirectedUrl());
     }
     
     @Test
@@ -182,7 +182,7 @@ public class TestLoginServlet {
         assertNull(request.getSession().getAttribute(LoginServlet.DESTINATION_ATTR_NAME));
         assertNull(request.getSession().getAttribute(LoginServlet.USERNAME_ATTR_NAME));
         assertNull(request.getSession().getAttribute(LoginServlet.PASSWORD_ATTR_NAME));
-        assertEquals("/site/welcome.html", response.getRedirectedUrl());
+        assertEquals("http://localhost/site/welcome.html", response.getRedirectedUrl());
     }
     
     @Test
@@ -195,6 +195,6 @@ public class TestLoginServlet {
         
         loginServlet.doLoginLogout(request, response);
         assertNull(request.getSession().getAttribute("foo"));
-        assertEquals("/site/welcome.html", response.getRedirectedUrl());
+        assertEquals("http://localhost/site/welcome.html", response.getRedirectedUrl());
     }
 }
