@@ -17,6 +17,7 @@ package org.onehippo.repository.mock;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
@@ -32,7 +33,7 @@ public class MockNodeFactory {
     /**
      * Creates a {@link MockNode} from system-view XML.
      *
-     * @param resourceName the resource name of the XML file (e.g. "/com/example/file.xml" for a file "file.xml"
+     * @param resourceName the classpath resource name of the XML file (e.g. "/com/example/file.xml" for a file "file.xml"
      *                     located in the test resources package "com.example")
      * @return the node representing the structure in the XML file.
      * @throws IOException when the XML file cannot be read
@@ -40,11 +41,27 @@ public class MockNodeFactory {
      * @throws RepositoryException when the node structure cannot be created
      */
     public static MockNode fromXml(String resourceName) throws IOException, JAXBException, RepositoryException {
-        final InputStream inputStream = MockNodeFactory.class.getResourceAsStream(resourceName);
-        if (inputStream == null) {
+        final URL resource = MockNodeFactory.class.getResource(resourceName);
+        if (resource == null) {
             throw new IOException("Resource not found: '" + resourceName + "'");
         }
+        return fromXml(resource);
+    }
+
+    /**
+     * Creates a {@link MockNode} from system-view XML URL.
+     * 
+     * @param resource
+     * @return
+     * @throws IOException
+     * @throws JAXBException
+     * @throws RepositoryException
+     */
+    public static MockNode fromXml(URL resource)  throws IOException, JAXBException, RepositoryException {
+        InputStream inputStream = null;
+
         try {
+            inputStream = resource.openStream();
             XmlNode xmlNode = parseXml(inputStream);
             return createMockNode(xmlNode);
         } finally {

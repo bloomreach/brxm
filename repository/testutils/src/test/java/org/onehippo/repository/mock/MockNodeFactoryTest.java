@@ -15,6 +15,11 @@
  */
 package org.onehippo.repository.mock;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,11 +34,6 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 public class MockNodeFactoryTest {
 
     @Test(expected = IOException.class)
@@ -43,7 +43,7 @@ public class MockNodeFactoryTest {
 
     @Test
     public void emptyNode() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-empty-node.xml");
+        MockNode root = MockNodeFactory.fromXml(getClass().getResource("MockNodeFactoryTest-empty-node.xml"));
 
         assertEquals("", root.getName());
         assertEquals("/", root.getPath());
