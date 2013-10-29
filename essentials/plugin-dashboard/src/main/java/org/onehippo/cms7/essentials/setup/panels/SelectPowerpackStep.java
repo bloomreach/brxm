@@ -17,10 +17,10 @@
 package org.onehippo.cms7.essentials.setup.panels;
 
 import com.google.common.base.Strings;
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.Model;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
@@ -59,12 +59,13 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
 
         Form<?> form = new Form<>("form");
 
-        Label packDescription = new Label("pack.description");
+        final Label packDescription = new Label("pack.description");
+        packDescription.setOutputMarkupId(true);
         form.add(packDescription);
 
         final List<String> powerpackList = new ArrayList<>();
-        powerpackList.add(getString("powerpack.news.and.event.label"));
-        powerpackList.add(getString("powerpack.none.label"));
+        powerpackList.add("powerpack.news.and.event.label");
+        powerpackList.add("powerpack.none.label");
 
         powerpackDropdown = new DropdownPanel("powerpackDropdown", getString("powerpack.select.label"), form, powerpackList, new EventListener<String>() {
             private static final long serialVersionUID = 1L;
@@ -77,9 +78,19 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
                     return;
                 }
                 setComplete(true);
-                Component description = get("form").get("pack.description");
-                //TODO add descriptions
+                packDescription.setDefaultModel(new Model<String>(getString(selectedPowerpack.replace("label", "description"))));
+                target.add(packDescription);
                 log.info("selectedPowerpack: {}", selectedPowerpack);
+            }
+        }, new IChoiceRenderer<String>() {
+            @Override
+            public String getDisplayValue(String value) {
+                return getString(value);
+            }
+
+            @Override
+            public String getIdValue(String value, int index) {
+                return String.valueOf(index);
             }
         });
         add(form);
