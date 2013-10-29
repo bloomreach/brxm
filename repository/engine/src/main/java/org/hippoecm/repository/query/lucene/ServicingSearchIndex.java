@@ -379,10 +379,12 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         Set<NodeId> includedIdsCache = new HashSet<>();
         while (add.hasNext()) {
             NodeState next = add.next();
-            if (!skipIndexing(next, excludedIdsCache, includedIdsCache)) {
-                includedNodeStates.add(next);
-            } else {
-                log.debug("Nodestate '{}' is marked to be skipped for indexing.", next.getId());
+            if (next != null) {
+                if (!skipIndexing(next, excludedIdsCache, includedIdsCache)) {
+                    includedNodeStates.add(next);
+                } else {
+                    log.debug("Nodestate '{}' is marked to be skipped for indexing.", next.getId());
+                }
             }
         }
 
@@ -464,7 +466,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return doc;
     }
 
-    private boolean skipIndexing(final  NodeState node,
+    private boolean skipIndexing(final NodeState node,
                                  final Set<NodeId> excludedIdsCache,
                                  final Set<NodeId> includedIdsCache) throws RepositoryException {
         return skipIndexing(node, excludedIdsCache, includedIdsCache, new ArrayList<NodeId>());
