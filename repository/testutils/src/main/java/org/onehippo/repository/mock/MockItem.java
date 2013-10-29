@@ -22,6 +22,9 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Mock version of a {@link Item}. Limitations:
  * <ul>
@@ -31,6 +34,8 @@ import javax.jcr.Session;
  * All methods that are not implemented throw an {@link UnsupportedOperationException}.
  */
 public abstract class MockItem implements Item {
+
+    private static Logger log = LoggerFactory.getLogger(MockItem.class);
 
     private String name;
     private MockNode parent;
@@ -65,13 +70,13 @@ public abstract class MockItem implements Item {
     }
 
     @Override
-    public String getPath() {
+    public String getPath() throws RepositoryException {
         StringBuilder pathBuilder = new StringBuilder();
         buildPath(pathBuilder);
         return pathBuilder.toString();
     }
 
-    void buildPath(StringBuilder builder) {
+    void buildPath(StringBuilder builder) throws RepositoryException {
         if (isRootNode()) {
             builder.append('/');
         } else {
@@ -80,28 +85,19 @@ public abstract class MockItem implements Item {
                 builder.append('/');
             }
             builder.append(name);
-        }
-    }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        } else if (o instanceof MockItem) {
-            MockItem other = (MockItem)o;
-            return getPath().equals(other.getPath());
+            if (this instanceof MockNode) {
+                int index = ((MockNode) this).getIndex();
+                if (index > 1) {
+                    builder.append('[').append(index).append(']');
+                }
+            }
         }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return getPath().hashCode();
     }
 
     @Override
     public boolean isSame(final Item otherItem) {
-        return this.equals(otherItem);
+        return equals(otherItem);
     }
 
     @Override

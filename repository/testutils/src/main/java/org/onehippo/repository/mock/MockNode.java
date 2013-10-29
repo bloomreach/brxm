@@ -17,10 +17,10 @@ package org.onehippo.repository.mock;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,10 +36,14 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.lock.Lock;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Mock version of a {@link Node}. Limitations:
@@ -56,13 +60,18 @@ import javax.jcr.version.VersionHistory;
  */
 public class MockNode extends MockItem implements Node {
 
+    private static Logger log = LoggerFactory.getLogger(MockNode.class);
+
     static final String NAMESPACE_JCR_SV = "http://www.jcp.org/jcr/sv/1.0";
     static final String ROOT_IDENTIFIER = "cafebabe-cafe-babe-cafe-babecafebabe";
+
+    private static boolean defaultSameNameSiblingSupported = true;
+    private boolean sameNameSiblingSupported = defaultSameNameSiblingSupported;
 
     private MockNodeType primaryType;
     private String identifier;
     private final Map<String, MockProperty> properties;
-    private final Map<String, MockNode> children;
+    private final Map<String, List<MockNode>> children;
     private String primaryItemName;
 
     public MockNode(String name) {
@@ -74,7 +83,7 @@ public class MockNode extends MockItem implements Node {
 
         this.identifier = UUID.randomUUID().toString();
         this.properties = new HashMap<String, MockProperty>();
-        this.children = new HashMap<String, MockNode>();
+        this.children = new HashMap<String, List<MockNode>>();
         this.primaryItemName = null;
 
         if (primaryTypeName != null) {
@@ -88,21 +97,50 @@ public class MockNode extends MockItem implements Node {
         return root;
     }
 
-    public void addNode(MockNode child) {
+    public static boolean isDefaultSameNameSiblingSupported() {
+        return defaultSameNameSiblingSupported;
+    }
+
+    public static void setDefaultSameNameSiblingSupported(boolean sameNameSiblingSupported) {
+        defaultSameNameSiblingSupported = sameNameSiblingSupported;
+    }
+
+    public boolean isSameNameSiblingSupported() {
+        return sameNameSiblingSupported;
+    }
+
+    public void setSameNameSiblingSupported(boolean sameNameSiblingSupported) {
+        this.sameNameSiblingSupported = sameNameSiblingSupported;
+    }
+
+    public void addNode(MockNode child) throws ConstraintViolationException {
         child.setParent(this);
         String childName = child.getName();
-        if (children.containsKey(childName)) {
-            throw new UnsupportedOperationException("Cannot add node '" + childName + "': MockNode does not support same-name siblings");
+        List<MockNode> childList = children.get(childName);
+
+        if (childList == null) {
+            childList = new LinkedList<MockNode>();
+            childList.add(child);
+            children.put(childName, childList);
+        } else {
+            if (childList.isEmpty()) {
+                childList.add(child);
+            } else {
+                if (isSameNameSiblingSupported()) {
+                    childList.add(child);
+                } else {
+                    throw new ConstraintViolationException("Cannot add node '" + childName + "': same name sibling support is turned off.");
+                }
+            }
         }
-        children.put(childName, child);
     }
 
     @Override
-    public Node addNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException {
+    public Node addNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException, ConstraintViolationException {
         return addMockNode(relPath, primaryNodeTypeName);
     }
 
-    public MockNode addMockNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException {
+    public MockNode addMockNode(final String relPath, final String primaryNodeTypeName) throws PathNotFoundException, ConstraintViolationException {
         final String[] pathElements = relPath.split("/");
         MockNode parent = this;
 
@@ -144,7 +182,10 @@ public class MockNode extends MockItem implements Node {
     public void remove() {
         final MockNode parent = getMockParent();
         if (parent != null) {
-            parent.children.remove(getName());
+            List<MockNode> childList = parent.children.get(getName());
+            if (childList != null) {
+                childList.remove(this);
+            }
         }
         setParent(null);
     }
@@ -248,12 +289,19 @@ public class MockNode extends MockItem implements Node {
         if (!children.containsKey(relPath)) {
             throw new PathNotFoundException("Node does not exist: '" + relPath + "'");
         }
-        return children.get(relPath);
+        List<MockNode> childList = children.get(relPath);
+        if (!childList.isEmpty()) {
+            return childList.get(0);
+        }
+        throw new PathNotFoundException("Node does not exist: '" + relPath + "'");
     }
 
     @Override
     public NodeIterator getNodes() {
-        Collection<MockNode> childrenCopy = new ArrayList<>(children.values());
+        List<MockNode> childrenCopy = new LinkedList<MockNode>();
+        for (List<MockNode> childList : children.values()) {
+            childrenCopy.addAll(childList);
+        }
         return new MockNodeIterator(childrenCopy);
     }
 
@@ -269,8 +317,14 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public Item getPrimaryItem() throws ItemNotFoundException {
+        String path = null;
+        try {
+            path = getPath();
+        } catch (RepositoryException e) {
+            log.error("Error when getting paths.", e);
+        }
         if (primaryItemName == null) {
-            throw new ItemNotFoundException("MockNode '" + getPath() + "' does not have a primary item defined. "
+            throw new ItemNotFoundException("MockNode '" + path + "' does not have a primary item defined. "
                     + "Use #setPrimaryItemName to define the name of the primary item.");
         }
         try {
@@ -283,7 +337,7 @@ public class MockNode extends MockItem implements Node {
         } catch (PathNotFoundException e) {
             // property does not exist either
         }
-        throw new ItemNotFoundException("Primary item '" + primaryItemName + "' does not exist in MockNode '" + getPath() + "'");
+        throw new ItemNotFoundException("Primary item '" + primaryItemName + "' does not exist in MockNode '" + path + "'");
     }
 
     public void setPrimaryItemName(String name) {
@@ -295,7 +349,13 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public String toString() {
-        return "MockNode[path=" + getPath() + "]";
+        String path = null;
+        try {
+            path = getPath();
+        } catch (RepositoryException e) {
+            log.error("Error when getting node path.", e);
+        }
+        return "MockNode[path=" + path + "]";
     }
 
     // REMAINING METHODS ARE NOT IMPLEMENTED
@@ -386,8 +446,17 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
-    public int getIndex() {
-        throw new UnsupportedOperationException();
+    public int getIndex() throws RepositoryException {
+        if (!isRootNode()) {
+            List<MockNode> childList = ((MockNode) getParent()).children.get(getName());
+            if (childList != null) {
+                int offset = childList.indexOf(this);
+                if (offset != -1) {
+                    return offset + 1;
+                }
+            }
+        }
+        return 1;
     }
 
     @Override
@@ -559,5 +628,4 @@ public class MockNode extends MockItem implements Node {
     public String[] getAllowedLifecycleTransistions() {
         throw new UnsupportedOperationException();
     }
-
 }

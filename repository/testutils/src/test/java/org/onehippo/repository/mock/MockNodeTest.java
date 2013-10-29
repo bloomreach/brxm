@@ -15,6 +15,16 @@
  */
 package org.onehippo.repository.mock;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,18 +37,10 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class MockNodeTest {
 
@@ -403,6 +405,37 @@ public class MockNodeTest {
         final MockNode root = MockNode.root();
         root.setPrimaryItemName("foo");
         assertEquals("foo", root.getPrimaryNodeType().getPrimaryItemName());
+    }
+
+    @Test
+    public void snsNodesSupportedByDefault() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode folder1 = root.addMockNode("folder1", "nt:unstructured");
+        MockNode folder2 = folder1.addMockNode("folder2", "nt:unstructured");
+        folder2 = folder1.addMockNode("folder2", "nt:unstructured");
+        MockNode sns1 = folder2.addMockNode("sns", "un:unstructured");
+        assertEquals("sns", sns1.getName());
+        assertEquals("/folder1/folder2[2]/sns", sns1.getPath());
+        MockNode sns2 = folder2.addMockNode("sns", "un:unstructured");
+        assertEquals("sns", sns2.getName());
+        assertEquals("/folder1/folder2[2]/sns[2]", sns2.getPath());
+        assertNotSame(sns1, sns2);
+        assertEquals(sns1.getName(), sns2.getName());
+    }
+
+    @Test
+    public void snsNodesSupportingDisabled() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode folder1 = root.addMockNode("folder1", "nt:unstructured");
+        folder1.setSameNameSiblingSupported(false);
+        MockNode folder2 = folder1.addMockNode("folder2", "nt:unstructured");
+
+        try {
+            folder2 = folder1.addMockNode("folder2", "nt:unstructured");
+            fail("SNS node disabled.");
+        } catch (ConstraintViolationException e) {
+            // as expected.
+        }
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {
