@@ -23,10 +23,10 @@
 <hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 
 [hippostdpubwf:document] > hippostd:publishable mixin
-- hippostdpubwf:creationDate (Date)
-- hippostdpubwf:createdBy (String)
-- hippostdpubwf:lastModificationDate (Date)
-- hippostdpubwf:lastModifiedBy (String)
+- hippostdpubwf:creationDate (Date) mandatory
+- hippostdpubwf:createdBy (String) mandatory
+- hippostdpubwf:lastModificationDate (Date) mandatory
+- hippostdpubwf:lastModifiedBy (String) mandatory
 - hippostdpubwf:publicationDate (Date)
 
 [hippostdpubwf:request] > hippo:request
