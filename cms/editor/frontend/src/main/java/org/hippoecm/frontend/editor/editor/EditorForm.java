@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,19 +21,14 @@ import java.util.List;
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -144,28 +139,6 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
         add(new EmptyPanel("template"));
         createTemplate();
     }
-
-    /**
-     * When uploading files ajax-style, Wicket uses a hidden Iframe to handle the post and passes the
-     * ajax response back to the originating Page. But even though the request is marked as ajax, no
-     * {@link AjaxRequestTarget} is found in the {@link RequestCycle}. This leads to a redirect in the
-     * response which in turn is handled by the hidden Iframe and renders the application in a locked state.
-     * To fix this we simply ensure that a request marked as ajax has a corresponding {@link AjaxRequestTarget}.
-     *
-     * @param submittingComponent
-     */
-    @Override
-    public void process(IFormSubmitter submittingComponent) {
-        RequestCycle rc = RequestCycle.get();
-        final WebRequest request = (WebRequest) rc.getRequest();
-        if (request.isAjax() && rc.find(AjaxRequestTarget.class) == null) {
-            WebApplication app = (WebApplication) getApplication();
-            AjaxRequestTarget target = app.newAjaxRequestTarget(getPage());
-            RequestCycle.get().scheduleRequestHandlerAfterCurrent(target);
-        }
-        super.process(submittingComponent);
-    }
-
 
     public void destroy() {
         if (cluster != null) {

@@ -29,6 +29,9 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
@@ -203,9 +206,28 @@ public class FileUploadWidget extends Panel {
 
     /**
      * The HTML4 upload collects the new files after the form has been fully posted to the server.
+     *
+     * When uploading files ajax-style, Wicket uses a hidden Iframe to handle the post and passes the
+     * ajax response back to the originating {@link Page}. But even though the request is marked as ajax, no
+     * {@link AjaxRequestTarget} is found in the {@link RequestCycle}. This leads to a redirect in the
+     * response which in turn is handled by the hidden Iframe and renders the application in a locked state.
+     * To fix this we simply ensure that a request marked as ajax has a corresponding {@link AjaxRequestTarget}.
      */
     public void onFinishHtmlUpload() {
+        AjaxRequestTarget target = null;
+        RequestCycle rc = RequestCycle.get();
+        final WebRequest request = (WebRequest) rc.getRequest();
+        if (request.isAjax() && rc.find(AjaxRequestTarget.class) == null) {
+            WebApplication app = (WebApplication) getApplication();
+            target = app.newAjaxRequestTarget(getPage());
+            RequestCycle.get().scheduleRequestHandlerAfterCurrent(target);
+        }
+
         onFinishUpload();
+
+        if (target != null) {
+            target.add(this);
+        }
     }
 
     protected final void onFinishUpload() {
