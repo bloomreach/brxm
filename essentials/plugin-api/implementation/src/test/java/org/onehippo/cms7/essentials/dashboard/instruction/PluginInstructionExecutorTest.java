@@ -21,10 +21,12 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -42,19 +44,21 @@ import static org.junit.Assert.assertTrue;
 /**
  * @version "$Id$"
  */
-public class PluginInstructionExecutorTest {
+public class PluginInstructionExecutorTest extends BaseTest{
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
+
 
     @Inject
     private InstructionsEventListener listener;
 
+
     @Inject
-    private InstructionExecutor executor;
+    private PluginInstructionExecutor pluginInstructionExecutor;
 
     @Before
     public void setUp() throws Exception {
-        final Injector injector = Guice.createInjector(new EventBusModule());
+        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
         injector.injectMembers(this);
     }
 
@@ -70,10 +74,10 @@ public class PluginInstructionExecutorTest {
         for (InstructionSet instructionSet : instructionSets) {
             final Set<Instruction> insSet = instructionSet.getInstructions();
             for (Instruction instruction : insSet) {
-                executor.execute(instruction);
+                pluginInstructionExecutor.execute(instruction, getContext());
             }
         }
-        assertEquals(2, listener.getNrInstructions());
+        assertEquals(3, listener.getNrInstructions());
 
     }
 }

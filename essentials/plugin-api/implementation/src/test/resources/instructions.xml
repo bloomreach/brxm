@@ -4,5 +4,6 @@
   <instructionSet>
     <file action="copy" overwrite="false" source="/test_cnd.cnd" target="/test_cnd2.cnd"/>
     <file action="delete" target="/test_cnd2.cnd"/>
+    <xml action="delete" target="/hst:hst"/>
   </instructionSet>
 </instructions>

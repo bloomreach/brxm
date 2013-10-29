@@ -479,10 +479,10 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/h
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/InstructionNamespaceMapper.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstruction.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionSet.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructions.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstruction.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/PluginInstructionExecutor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/package-info.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParser.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/CatalogObject.java -text

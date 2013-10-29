@@ -16,10 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+
 /**
  * @version "$Id$"
  */
 public interface InstructionExecutor {
 
-    InstructionStatus execute(Instruction instruction);
+    InstructionStatus execute(Instruction instruction, PluginContext context);
 }

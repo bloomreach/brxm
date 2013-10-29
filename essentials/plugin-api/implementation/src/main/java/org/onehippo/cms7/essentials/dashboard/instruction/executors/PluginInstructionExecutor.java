@@ -14,37 +14,22 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.instruction;
+package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
-import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
  */
 public class PluginInstructionExecutor implements InstructionExecutor {
 
-    private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutor.class);
 
-
-    @Inject
-    private EventBus eventBus;
-
-    @Override
-    public InstructionStatus execute(final Instruction instruction) {
-        log.debug("Executing instruction {}", instruction);
-        if (instruction == null) {
-            return InstructionStatus.SKIPPED;
-        }
-
-        eventBus.post(new InstructionEvent(instruction));
-        return InstructionStatus.FAILED;
+    public InstructionStatus execute(final Instruction instruction, PluginContext context) {
+        // TODO "enrich" instructions here
+        return instruction.process(context);
     }
+
 }

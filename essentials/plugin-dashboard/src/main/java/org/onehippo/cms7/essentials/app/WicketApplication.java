@@ -15,7 +15,7 @@ import com.google.inject.Injector;
  */
 public class WicketApplication extends WebApplication {
 
-    private final EventBusModule eventBusModule = new EventBusModule();
+
     /**
      * @see org.apache.wicket.Application#getHomePage()
      */
@@ -32,7 +32,7 @@ public class WicketApplication extends WebApplication {
         super.init();
         getMarkupSettings().setStripWicketTags(true);
         // inject event bus:
-        final Injector injector = Guice.createInjector(eventBusModule);
+        final Injector injector = Guice.createInjector(EventBusModule.getInstance());
         getComponentInstantiationListeners().add(new GuiceComponentInjector(this, injector));
 
     }
@@ -40,7 +40,7 @@ public class WicketApplication extends WebApplication {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        eventBusModule.cleanup();
+        EventBusModule.getInstance().cleanup();
 
 
     }
