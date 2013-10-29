@@ -16,15 +16,15 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
@@ -34,10 +34,17 @@ import com.google.inject.Injector;
 public abstract class PluginInstruction implements Instruction {
 
 
-
     protected PluginInstruction() {
         final Injector injector = Guice.createInjector(EventBusModule.getInstance());
         injector.injectMembers(this);
+    }
+
+    @Override
+    public void processPlaceholders(final Map<String, Object> data) {
+        final String message = TemplateUtils.replaceTemplateData(getMessage(), data);
+        if (message != null) {
+            setMessage(message);
+        }
     }
 
 
