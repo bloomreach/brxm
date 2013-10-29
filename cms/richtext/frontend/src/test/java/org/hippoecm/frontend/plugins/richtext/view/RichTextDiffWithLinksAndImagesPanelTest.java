@@ -111,7 +111,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
                 + "</html>\n"), diff);
     }
 
-    private MockNode addImage(final MockNode node, final String name) throws PathNotFoundException {
+    private MockNode addImage(final MockNode node, final String name) throws RepositoryException {
         MockNode imageHandle = node.addMockNode(name, "hippo:handle");
         MockNode imageSet = imageHandle.addMockNode(name, "hippogallery:imageset");
         imageSet.setPrimaryItemName("hippogallery:thumbnail");
