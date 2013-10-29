@@ -4,6 +4,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -14,7 +16,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 @XmlTransient
 public interface Instruction {
 
-
     String getMessage();
 
     void setMessage(String message);
@@ -24,4 +25,6 @@ public interface Instruction {
     void setAction(String action);
 
     InstructionStatus process(PluginContext context);
+
+    void processPlaceholders(final Map<String, Object> data);
 }

@@ -71,6 +71,17 @@ public class TemplateUtilsTest extends BaseTest {
     }
 
     @Test
+    public void testInjectTemplateContent() throws Exception {
+
+        final Map<String, Object> data = new HashMap<>();
+        data.put("namespace", "myNamespace");
+        String result = TemplateUtils.replaceTemplateData("test ${namespace}", data);
+        log.info("result {}", result);
+        assertTrue(result.contains("myNamespace"));
+
+    }
+
+    @Test
     public void testInjectTemplate() throws Exception {
 
         final Map<String, Object> data = new HashMap<>();

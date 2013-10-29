@@ -15,6 +15,14 @@ public final class EssentialConst {
 
 
     /**
+     * Namespace placeholder name
+     */
+    public static final String PLACEHOLDER_NAMESPACE = "namespace";
+    public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
+    public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
+    public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
+    public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
+    /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */
     public static final String ANNOTATION_ATTR_INTERNAL_NAME = "internalName";
@@ -26,8 +34,6 @@ public final class EssentialConst {
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#allowModifications() ()
      */
     public static final String ANNOTATION_ATTR_ALLOW_MODIFICATIONS = "allowModifications";
-
-
     public static final String MIME_TEXT_PLAIN = "text/plain";
     public static final String MIME_IMAGE_JPEG = "text/jpeg";
     public static final String MIME_IMAGE_GIF = "image/gif";

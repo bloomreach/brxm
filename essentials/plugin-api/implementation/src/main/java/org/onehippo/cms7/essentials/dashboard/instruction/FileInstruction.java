@@ -16,21 +16,29 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * @version "$Id$"
@@ -38,24 +46,77 @@ import com.google.inject.name.Named;
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
+    public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
+            .add("copy")
+            .add("delete")
+            .add("overwrite")
+            .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
-
     private String message;
     private boolean override;
     private String source;
     private String target;
     private String action;
-
     @Inject
     private EventBus eventBus;
 
     @Override
     public InstructionStatus process(final PluginContext context) {
-        log.debug("FILE Instruction");
+        log.debug("executing FILE Instruction {}", this);
+        if (!valid()) {
+            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
+            return InstructionStatus.FAILED;
+        }
+        processPlaceholders(context.getPlaceholderData());
+        // check action:
+        switch (action) {
+            case "copy":
+                break;
+            case "delete":
+                return delete();
+
+        }
         eventBus.post(new InstructionEvent(this));
+        return InstructionStatus.SUCCESS;
+    }
+
+    private InstructionStatus delete() {
+        try {
+            Path path = new File(target).toPath();
+            final boolean deleted = Files.deleteIfExists(path);
+            eventBus.post(new InstructionEvent(this));
+            if (deleted) {
+                return InstructionStatus.SUCCESS;
+            } else {
+                return InstructionStatus.SKIPPED;
+            }
+        } catch (IOException e) {
+            log.error("Error deleting file", e);
+        }
         return InstructionStatus.FAILED;
     }
 
+    @Override
+    public void processPlaceholders(final Map<String, Object> data) {
+        super.processPlaceholders(data);
+        //
+        final String myTarget = TemplateUtils.replaceTemplateData(target, data);
+        if (myTarget != null) {
+            target = myTarget;
+        }
+        //
+        final String mySource = TemplateUtils.replaceTemplateData(source, data);
+        if (mySource != null) {
+            source = mySource;
+        }
+    }
+
+    private boolean valid() {
+        if (Strings.isEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isEmpty(target)) {
+            return false;
+        }
+        return true;
+    }
 
     @XmlAttribute
     public boolean isOverride() {
@@ -105,8 +166,6 @@ public class FileInstruction extends PluginInstruction {
     public void setAction(final String action) {
         this.action = action;
     }
-
-
 
     @Override
     public String toString() {

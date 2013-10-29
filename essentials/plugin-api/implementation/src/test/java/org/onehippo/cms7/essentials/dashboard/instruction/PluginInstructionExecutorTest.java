@@ -77,6 +77,8 @@ public class PluginInstructionExecutorTest extends BaseTest{
                 pluginInstructionExecutor.execute(instruction, getContext());
             }
         }
+
+        // we had three instrucitons executed
         assertEquals(3, listener.getNrInstructions());
 
     }
