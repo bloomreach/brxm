@@ -92,6 +92,17 @@ public class ContentUpgrade {
                 mixins = property;
             } else if ("hippostd:state".equals(propName)) {
                 state = property.getChild("value", SV).getText();
+            } else if ("hippo:paths".equals(propName) || "hippo:related".equals(propName)
+                    || "hippo:related___pathreference".equals(propName)) {
+                List<Node> nodes = element.getNodes();
+                for (int index = nodes.indexOf(property); index >= 0; index--) {
+                    final Node node = nodes.get(index);
+                    if (node instanceof Text) {
+                        element.removeNode(node);
+                        break;
+                    }
+                }
+                property.remove();
             }
         }
         if (mixins != null) {

@@ -54,6 +54,9 @@
       <sv:property sv:multiple="true" sv:name="hippostd:state" sv:type="String">
         <sv:value>published</sv:value>
       </sv:property>
+      <sv:property sv:name="hippo:paths" sv:type="String">
+        <sv:value>7b15b2ab-e677-4283-8586-773d9471dfa6</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="document">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
