@@ -37,7 +37,6 @@
     <xs:attribute use="optional" name="source" type="xs:string"/>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
-    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 
   <xs:complexType name="xmlType" mixed="true">
@@ -45,7 +44,6 @@
     <xs:attribute use="optional" name="source" type="xs:string"/>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
-    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 
 
