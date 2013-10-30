@@ -24,10 +24,13 @@ import java.util.List;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
+
+import org.apache.jackrabbit.util.ISO8601;
 
 /**
  * Mock version of a {@link Property}. It only supports string properties.
@@ -64,7 +67,7 @@ public class MockProperty extends MockItem implements Property {
     @Override
     public void setValue(final String value) {
         this.values.clear();
-        this.values.add(new MockValue(value));
+        this.values.add(new MockValue(PropertyType.STRING, value));
         multiple = false;
     }
 
@@ -72,7 +75,7 @@ public class MockProperty extends MockItem implements Property {
     public void setValue(final String[] values) {
         this.values.clear();
         for (String value: values) {
-            this.values.add(new MockValue(value));
+            this.values.add(new MockValue(PropertyType.STRING, value));
         }
         multiple = true;
     }
@@ -125,8 +128,6 @@ public class MockProperty extends MockItem implements Property {
         return new MockPropertyDefinition(getName(), multiple);
     }
 
-    // REMAINING METHODS ARE NOT IMPLEMENTED
-
     @Override
     public void setValue(final InputStream value) {
         throw new UnsupportedOperationException();
@@ -139,27 +140,37 @@ public class MockProperty extends MockItem implements Property {
 
     @Override
     public void setValue(final long value) {
-        throw new UnsupportedOperationException();
+        this.values.clear();
+        this.values.add(new MockValue(PropertyType.LONG, Long.toString(value)));
+        multiple = false;
     }
 
     @Override
     public void setValue(final double value) {
-        throw new UnsupportedOperationException();
+        this.values.clear();
+        this.values.add(new MockValue(PropertyType.DOUBLE, Double.toString(value)));
+        multiple = false;
     }
 
     @Override
     public void setValue(final BigDecimal value) {
-        throw new UnsupportedOperationException();
+        this.values.clear();
+        this.values.add(new MockValue(PropertyType.DECIMAL, value.toString()));
+        multiple = false;
     }
 
     @Override
     public void setValue(final Calendar value) {
-        throw new UnsupportedOperationException();
+        this.values.clear();
+        this.values.add(new MockValue(PropertyType.DECIMAL, ISO8601.format(value)));
+        multiple = false;
     }
 
     @Override
     public void setValue(final boolean value) {
-        throw new UnsupportedOperationException();
+        this.values.clear();
+        this.values.add(new MockValue(PropertyType.DECIMAL, Boolean.toString(value)));
+        multiple = false;
     }
 
     @Override
@@ -178,28 +189,28 @@ public class MockProperty extends MockItem implements Property {
     }
 
     @Override
-    public long getLong() {
-        throw new UnsupportedOperationException();
+    public long getLong() throws RepositoryException {
+        return getValue().getLong();
     }
 
     @Override
-    public double getDouble() {
-        throw new UnsupportedOperationException();
+    public double getDouble() throws RepositoryException {
+        return getValue().getDouble();
     }
 
     @Override
-    public BigDecimal getDecimal() {
-        throw new UnsupportedOperationException();
+    public BigDecimal getDecimal() throws RepositoryException {
+        return getValue().getDecimal();
     }
 
     @Override
-    public Calendar getDate() {
-        throw new UnsupportedOperationException();
+    public Calendar getDate() throws RepositoryException {
+        return getValue().getDate();
     }
 
     @Override
-    public boolean getBoolean() {
-        throw new UnsupportedOperationException();
+    public boolean getBoolean() throws RepositoryException {
+        return getValue().getBoolean();
     }
 
     @Override

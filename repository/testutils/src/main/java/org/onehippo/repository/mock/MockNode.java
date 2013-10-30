@@ -363,8 +363,6 @@ public class MockNode extends MockItem implements Node {
         return "MockNode[path=" + path + "]";
     }
 
-    // REMAINING METHODS ARE NOT IMPLEMENTED
-
     @Override
     public Node addNode(final String relPath)  {
         throw new UnsupportedOperationException("Try using #addNode(String relPath, String primaryNodeTypeName) instead");
@@ -376,13 +374,17 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
-    public Property setProperty(final String name, final Value value, final int type) {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final Value value, final int type) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, type);
+        p.setValue(value);
+        return p;
     }
 
     @Override
-    public Property setProperty(final String name, final Value[] values, final int type)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final Value[] values, final int type) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, type);
+        p.setValue(values);
+        return p;
     }
 
     @Override
@@ -396,28 +398,38 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
-    public Property setProperty(final String name, final boolean value)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final boolean value) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, PropertyType.BOOLEAN);
+        p.setValue(value);
+        return p;
     }
 
     @Override
-    public Property setProperty(final String name, final double value)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final double value) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, PropertyType.DOUBLE);
+        p.setValue(value);
+        return p;
     }
 
     @Override
-    public Property setProperty(final String name, final BigDecimal value)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final BigDecimal value) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, PropertyType.DECIMAL);
+        p.setValue(value);
+        return p;
     }
 
     @Override
-    public Property setProperty(final String name, final long value)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final long value) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, PropertyType.LONG);
+        p.setValue(value);
+        return p;
     }
 
     @Override
-    public Property setProperty(final String name, final Calendar value)  {
-        throw new UnsupportedOperationException();
+    public Property setProperty(final String name, final Calendar value) throws RepositoryException {
+        Property p = getPropertyOrAddNew(name, PropertyType.DATE);
+        p.setValue(value);
+        return p;
     }
 
     @Override
@@ -526,7 +538,7 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public boolean hasNodes() {
-        throw new UnsupportedOperationException();
+        return !children.isEmpty();
     }
 
     @Override

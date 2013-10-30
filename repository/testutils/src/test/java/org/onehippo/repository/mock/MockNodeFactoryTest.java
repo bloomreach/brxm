@@ -28,6 +28,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.JAXBException;
@@ -79,8 +80,8 @@ public class MockNodeFactoryTest {
         assertEquals("/multipleStringProperty", property.getPath());
 
         Value[] expected = new MockValue[2];
-        expected[0] = new MockValue("ccc");
-        expected[1] = new MockValue("ddd");
+        expected[0] = new MockValue(PropertyType.STRING, "ccc");
+        expected[1] = new MockValue(PropertyType.STRING, "ddd");
         assertArrayEquals(expected, property.getValues());
     }
 
@@ -93,7 +94,7 @@ public class MockNodeFactoryTest {
         assertEquals("/multipleStringPropertyWithOneValue", property.getPath());
 
         Value[] expected = new MockValue[1];
-        expected[0] = new MockValue("eee");
+        expected[0] = new MockValue(PropertyType.STRING, "eee");
         assertArrayEquals(expected, property.getValues());
     }
 

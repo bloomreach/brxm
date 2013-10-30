@@ -25,6 +25,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,11 +39,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.jackrabbit.util.ISO8601;
 import org.junit.Test;
 
 public class MockNodeTest {
@@ -97,8 +102,8 @@ public class MockNodeTest {
         assertEquals(node, actual.getParent());
 
         MockValue[] expected = new MockValue[2];
-        expected[0] = new MockValue("value1");
-        expected[1] = new MockValue("value2");
+        expected[0] = new MockValue(PropertyType.STRING, "value1");
+        expected[1] = new MockValue(PropertyType.STRING, "value2");
         assertArrayEquals(expected, actual.getValues());
     }
 
@@ -115,8 +120,8 @@ public class MockNodeTest {
         assertTrue(actual.isMultiple());
 
         MockValue[] expected = new MockValue[2];
-        expected[0] = new MockValue("value2.1");
-        expected[1] = new MockValue("value2.2");
+        expected[0] = new MockValue(PropertyType.STRING, "value2.1");
+        expected[1] = new MockValue(PropertyType.STRING, "value2.2");
         assertArrayEquals(expected, actual.getValues());
     }
 
@@ -131,7 +136,7 @@ public class MockNodeTest {
         assertTrue(actual.isMultiple());
 
         MockValue[] expected = new MockValue[1];
-        expected[0] = new MockValue("value");
+        expected[0] = new MockValue(PropertyType.STRING, "value");
         assertArrayEquals(expected, actual.getValues());
     }
 
@@ -535,6 +540,65 @@ public class MockNodeTest {
         assertTrue(propPaths.contains("/node1/prop1"));
         assertTrue(propPaths.contains("/node1/prop2"));
         assertTrue(propPaths.contains("/node1/hippo:holder"));
+    }
+
+    @Test
+    public void testVariousTypesOfProperties() throws RepositoryException {
+        MockNode root = MockNode.root();
+        MockNode node = root.addMockNode("node1", "nt:unstructured");
+
+        Calendar now = Calendar.getInstance();
+
+        node.setProperty("string1", "stringvalue1");
+        node.setProperty("boolean1", true);
+        node.setProperty("long1", Long.MAX_VALUE);
+        node.setProperty("date1", now);
+        node.setProperty("double1", Double.MAX_VALUE);
+        node.setProperty("bigdecimal1", BigDecimal.TEN);
+
+        assertTrue(node.getProperty("boolean1").getBoolean());
+        assertEquals(Long.MAX_VALUE, node.getProperty("long1").getLong());
+        assertEquals(ISO8601.format(now), ISO8601.format(node.getProperty("date1").getDate()));
+        assertEquals(Double.toString(Double.MAX_VALUE), Double.toString(node.getProperty("double1").getDouble()));
+        assertEquals(BigDecimal.TEN, node.getProperty("bigdecimal1").getDecimal());
+        assertEquals("stringvalue1", node.getProperty("string1").getString());
+
+        node.setProperty("stringarray1", new String [] { "stringvalue1", "stringvalue2" });
+        node.setProperty("booleanarray1", new MockValue[] { new MockValue(PropertyType.BOOLEAN, "true"), new MockValue(PropertyType.BOOLEAN, "false") });
+        node.setProperty("longarray1", new MockValue[] { new MockValue(PropertyType.LONG, "123"), new MockValue(PropertyType.LONG, "456") });
+        node.setProperty("datearray1", new MockValue[] { new MockValue(PropertyType.DATE, "2013-10-30T00:00:00.000Z"), new MockValue(PropertyType.DATE, "2013-10-31T00:00:00.000Z") });
+        node.setProperty("doublearray1", new MockValue[] { new MockValue(PropertyType.DOUBLE, "1.23"), new MockValue(PropertyType.DOUBLE, "4.56") });
+        node.setProperty("bigdecimalarray1", new MockValue[] { new MockValue(PropertyType.DECIMAL, "1.23E3"), new MockValue(PropertyType.DECIMAL, "4.56E3") });
+
+        Value [] values = node.getProperty("stringarray1").getValues();
+        assertEquals(2, values.length);
+        assertEquals("stringvalue1", values[0].getString());
+        assertEquals("stringvalue2", values[1].getString());
+
+        values = node.getProperty("booleanarray1").getValues();
+        assertEquals(2, values.length);
+        assertEquals(true, values[0].getBoolean());
+        assertEquals(false, values[1].getBoolean());
+
+        values = node.getProperty("longarray1").getValues();
+        assertEquals(2, values.length);
+        assertEquals(123, values[0].getLong());
+        assertEquals(456, values[1].getLong());
+
+        values = node.getProperty("datearray1").getValues();
+        assertEquals(2, values.length);
+        assertEquals("2013-10-30T00:00:00.000Z", ISO8601.format(values[0].getDate()));
+        assertEquals("2013-10-31T00:00:00.000Z", ISO8601.format(values[1].getDate()));
+
+        values = node.getProperty("doublearray1").getValues();
+        assertEquals(2, values.length);
+        assertEquals(Double.toString(1.23d), Double.toString(values[0].getDouble()));
+        assertEquals(Double.toString(4.56), Double.toString(values[1].getDouble()));
+
+        values = node.getProperty("bigdecimalarray1").getValues();
+        assertEquals(2, values.length);
+        assertEquals(new BigDecimal("1.23E3"), values[0].getDecimal());
+        assertEquals(new BigDecimal("4.56E3"), values[1].getDecimal());
     }
 
     private static void assertNoParent(String message, Item item) throws RepositoryException {
