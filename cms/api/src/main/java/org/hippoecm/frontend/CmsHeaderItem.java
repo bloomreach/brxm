@@ -31,8 +31,9 @@ public class CmsHeaderItem extends HeaderItem {
 
     private static final ResourceReference SCREEN_CSS = new UrlResourceReference(Url.parse("skin/screen.css")).setContextRelative(true);
     private static final ResourceReference SCREEN_IE_CSS = new UrlResourceReference(Url.parse("skin/screen_ie.css")).setContextRelative(true);
-    private static final ResourceReference FUTURE_REFERENCE = new JavaScriptResourceReference(CmsHeaderItem.class, "js/future.js");
-    private static final ResourceReference GLOBAL_REFERENCE = new JavaScriptResourceReference(CmsHeaderItem.class, "js/global.js");
+    private static final ResourceReference FUTURE_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/future.js");
+    private static final ResourceReference GLOBAL_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/global.js");
+    private static final ResourceReference IE_JS = new JavaScriptResourceReference(CmsHeaderItem.class, "js/ie.js");
 
     private static final CmsHeaderItem INSTANCE = new CmsHeaderItem();
 
@@ -55,8 +56,12 @@ public class CmsHeaderItem extends HeaderItem {
             CssHeaderItem.forReference(SCREEN_IE_CSS).render(response);
         }
 
-        JavaScriptReferenceHeaderItem.forReference(FUTURE_REFERENCE).render(response);
-        JavaScriptReferenceHeaderItem.forReference(GLOBAL_REFERENCE).render(response);
+        JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
+        JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
+
+        if (isBrowserInternetExplorer()) {
+            JavaScriptReferenceHeaderItem.forReference(IE_JS).render(response);
+        }
     }
 
     private boolean isBrowserInternetExplorer() {

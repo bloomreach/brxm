@@ -41,41 +41,6 @@
         $('#' + elementId).closest('.hippo-editor-field-subfield').css('border', '0');
     }
 
-    function getWicketImportStyleElement(doc, styleCount) {
-        var element = doc.getElementById('wicketimportstyle' + styleCount);
-        if (element === undefined) {
-            element = doc.createStyleSheet();
-            element.owningElement.id = 'wicketimportstyle' + styleCount;
-            element.owningElement.type = 'text/css';
-        }
-        return element;
-    }
-
-    function addCssImport(doc, styleCount, href) {
-        var style = getWicketImportStyleElement(doc, styleCount),
-            imports = style.styleSheet.imports,
-            i, len;
-        // check if href already imported by this stylesheet
-        for (i = 0, len = imports.length; i < len; i++) {
-            if (imports[i].href.indexOf(href) !== -1) {
-                return false;
-            }
-        }
-        // stylesheets in IE8 can have no more than 31 imports
-        if (imports.length > 30) {
-            return addCssImport(styleCount + 1, href);
-        } else {
-            style.styleSheet.addImport(href);
-            return true;
-        }
-    }
-
-    function addCssText(doc, cssStyleText) {
-        var style = doc.createStyleSheet();
-        style.cssText = cssStyleText;
-        return style;
-    }
-
     if (Hippo === undefined) {
         Hippo = {};
     }
@@ -98,21 +63,15 @@
         }, DOM_MIN_TIMEOUT_MS);
     };
 
-    if (Wicket.Browser.isIELessThan9()) {
+    if (Wicket.Browser.isIE()) {
         /*
-          IE8 can only have up to 31 CSS style imports. Reuse the CMS trick to add more imports via
-          @import statements in style tags (see org.hippoecm.frontend.CssImportingHeaderResponse).
-         */
-        CKEDITOR.dom.document.prototype.appendStyleSheet = function(cssFileUrl) {
-            addCssImport(this.$, 0, cssFileUrl);
-        };
-        /*
-          Fix broken appendStyleText implementation (the editor does not to load in IE8 because appendStyleText
-          calls createStyleSheet with an empty string as argument, which throws an Error)
-          TODO: check whether this workaround is still needed when CKEditor is upgraded to a version newer than 4.2
+          Replace CKEditor's 'appendStyleText' method. IE chokes on the original because it calls createStyleSheet()
+          with an empty string as argument. That throws an Error when the page is served by an HTTP server.
          */
         CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
-            return addCssText(this.$, cssStyleText);
+            var style = this.$.createStyleSheet();
+            style.cssText = cssStyleText;
+            return style;
         };
     }
 

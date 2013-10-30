@@ -104,6 +104,7 @@ api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/js/future.js -text
 api/src/main/java/org/hippoecm/frontend/js/global.js -text
+api/src/main/java/org/hippoecm/frontend/js/ie.js -text
 api/src/main/java/org/hippoecm/frontend/model/AbstractProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/ChildNodeProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/DetachMonitor.java svneol=native#text/plain
@@ -3035,7 +3036,6 @@ types/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 types/src/main/resources/reporting.cnd -text
 upgrade/src/main/java/org/hippoecm/frontend/upgrade/RelaxingDoctypeUpdaterModule.java svneol=native#text/plain
 versioning/pom.xml svneol=native#text/plain
-/wicket.patch -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/editor/HippostdPublishableEditor.java svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/BasicRequestWorkflowPlugin.html svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/BasicRequestWorkflowPlugin.java svneol=native#text/plain
