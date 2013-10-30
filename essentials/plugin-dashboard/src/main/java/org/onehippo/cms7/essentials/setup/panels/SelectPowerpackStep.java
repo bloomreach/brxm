@@ -30,6 +30,7 @@ import org.onehippo.cms7.essentials.setup.panels.model.ProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +56,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
             projectModel.setName("No project found");
             projectModel.setVersion("NA");
         }
-        setDefaultModel(new Model(projectModel));
+        setDefaultModel(new Model<Serializable>(projectModel));
 
         Form<?> form = new Form<>("form");
 
@@ -78,11 +79,13 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
                     return;
                 }
                 setComplete(true);
-                packDescription.setDefaultModel(new Model<String>(getString(selectedPowerpack.replace("label", "description"))));
+                packDescription.setDefaultModel(new Model<>(getString(selectedPowerpack.replace("label", "description"))));
                 target.add(packDescription);
                 log.info("selectedPowerpack: {}", selectedPowerpack);
             }
         }, new IChoiceRenderer<String>() {
+
+            private static final long serialVersionUID = 1L;
             @Override
             public String getDisplayValue(String value) {
                 return getString(value);

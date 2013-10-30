@@ -52,7 +52,7 @@ public class DropdownPanel extends Panel {
     private boolean shown = true;
 
 
-    public DropdownPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener, final IChoiceRenderer iChoiceRenderer) {
+    public DropdownPanel(final String id, final String title, final Form<?> form, final Collection<String> model, final EventListener<String> listener, final IChoiceRenderer<String> iChoiceRenderer) {
         this(id, title, form, model);
         addListener(listener);
         dropDown.setChoiceRenderer(iChoiceRenderer);

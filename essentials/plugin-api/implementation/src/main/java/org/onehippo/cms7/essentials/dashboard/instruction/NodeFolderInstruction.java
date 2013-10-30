@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
-import org.codehaus.plexus.util.StringInputStream;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -54,9 +53,7 @@ public class NodeFolderInstruction extends PluginInstruction {
     private String message;
     private String template;
     private String path;
-
     private PluginContext context;
-
     @Inject(optional = true)
     @Named("instruction.message.folder.create")
     private String messageSuccess;
@@ -83,7 +80,7 @@ public class NodeFolderInstruction extends PluginInstruction {
                 return InstructionStatus.SKIPPED;
             }
             stream = getClass().getResourceAsStream(template);
-            if(stream ==null){
+            if (stream == null) {
                 log.error("Template was not found: {}", template);
                 return InstructionStatus.FAILED;
             }
@@ -97,7 +94,7 @@ public class NodeFolderInstruction extends PluginInstruction {
                     continue;
                 }
                 // replace node name
-                final Map<String,Object> data = new HashMap<>();
+                final Map<String, Object> data = new HashMap<>();
                 data.put("name", part);
                 final String folderXml = TemplateUtils.replaceTemplateData(content, data);
                 session.importXML(parent.getPath(), new ByteArrayInputStream(folderXml.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
