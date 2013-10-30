@@ -28,6 +28,7 @@ import de.pdark.decentxml.Document;
 import de.pdark.decentxml.Element;
 import de.pdark.decentxml.Namespace;
 import de.pdark.decentxml.XMLIOSource;
+import de.pdark.decentxml.XMLParseException;
 import de.pdark.decentxml.XMLParser;
 
 public class ContentUpgrade {
@@ -60,15 +61,20 @@ public class ContentUpgrade {
     }
 
     public void process(File file) throws IOException {
-        XMLParser reader = new XMLParser();
-        Document document = reader.parse(new XMLIOSource(new FileInputStream(file)));
+        Document document;
+        try {
+            XMLParser reader = new XMLParser();
+            document = reader.parse(new XMLIOSource(new FileInputStream(file)));
 
-        final Element rootElement = document.getRootElement();
-        processNode(rootElement, false);
+            final Element rootElement = document.getRootElement();
+            processNode(rootElement, false);
 
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
-        writer.write(document.toString());
-        writer.close();
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
+            writer.write(document.toString());
+            writer.close();
+        } catch (XMLParseException xpe) {
+            System.out.println("Unable to process " + file.getAbsolutePath() + " : " + xpe.getMessage());
+        }
     }
 
     private void processNode(Element element, boolean inDocument) {
