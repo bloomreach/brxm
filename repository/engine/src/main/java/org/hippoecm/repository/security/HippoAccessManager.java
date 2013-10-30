@@ -657,6 +657,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     log.error("Unable to retrieve parent state of node with id " + nodeState.getId(), e);
                 }
                 if (docState != null) {
+                    Boolean allowRead = getAccessFromCache(docState.getNodeId());
+                    if (allowRead != null) {
+                        return allowRead.booleanValue();
+                    }
                     return isNodeInDomain(docState, fap);
                 }
             }
@@ -1187,10 +1191,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
             try {
                 if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
+                    // assert that parent is a handle to be sure we are dealing with a real document
+                    final NodeState handle = getParentState(nodeState);
+                    if (handle.getNodeTypeName().equals(hippoHandle)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("MATCH hippoDoc: " + nodeState.getNodeTypeName());
+                        }
+                        return nodeState;
+                    } else {
+                        return null;
                     }
-                    return nodeState;
                 }
             } catch (NamespaceException e) {
                 log.warn("NamespaceException while trying to get parent doc", e);
