@@ -47,10 +47,6 @@ public class ComponentsInstaller extends AbstractDependencyInstaller {
 
     @Override
     public InstallState getInstallState() {
-        // TODO enable installer
-        if(true) {
-            return InstallState.INSTALLED_AND_RESTARTED;
-        }
         if (ProjectUtils.isInstalled(DependencyType.SITE, dependency)) {
             return InstallState.INSTALLED_AND_RESTARTED;
         }
