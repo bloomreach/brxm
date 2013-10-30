@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.onehippo.cms7.essentials.dashboard.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -34,6 +35,7 @@ import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
@@ -95,12 +97,21 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         mainPlugins = ImmutableList.copyOf(Iterables.filter(plugins, Predicates.and(MAIN_PLUGIN)));
         pluginList = ImmutableList.copyOf(Iterables.filter(plugins, Predicates.not(MAIN_PLUGIN)));
 
-        //############################################
-        // SETTINGS PLUGIN TODO: do we need this one?
-        //############################################
 
         Plugin plugin = getPluginByName("Settings");
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
+        //############################################
+        // INJECT PROJECT SETTINGS
+        //############################################
+        final ConfigDocument document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+        if (document != null) {
+            context.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
+            context.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
+            context.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
+            context.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
+        }
+
+
         //############################################
         // WIZARD & STEPS
         //############################################

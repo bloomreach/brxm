@@ -24,6 +24,9 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
     public static final String PLACEHOLDER_SOURCE = "source";
     public static final String PLACEHOLDER_TARGET = "target";
+    public static final String PLACEHOLDER_BEANS_PACKAGE = "beansPackage";
+    public static final String PLACEHOLDER_COMPONENTS_PACKAGE = "componentsPackage";
+    public static final String PLACEHOLDER_REST_PACKAGE = "restPackage";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */

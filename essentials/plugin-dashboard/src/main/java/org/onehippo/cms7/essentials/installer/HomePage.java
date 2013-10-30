@@ -136,6 +136,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
         if (document != null) {
             context.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
             context.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
+            context.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
             context.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
         }
         final String pluginClass = plugin.getPluginClass();
