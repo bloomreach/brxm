@@ -4,7 +4,7 @@
         <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:hardhandle</sv:value>
+        <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>db02dde5-0098-4488-a72c-2a4fc6d51beb</sv:value>
@@ -15,12 +15,10 @@
             <sv:value>hippogallery:exampleImageSet</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>669f4436-9399-491e-b443-6060f20b6e06</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
         </sv:property>
         <sv:node sv:name="hippogallery:thumbnail">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">

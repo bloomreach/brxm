@@ -18,19 +18,11 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:paths" sv:type="String">
-    <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-    <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-    <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-    <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-folder</sv:value>
     <sv:value>new-document</sv:value>
@@ -40,7 +32,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -51,7 +43,7 @@
         <sv:value>testproject:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippostd:taggable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -81,18 +73,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>004e68f5-bd6e-4562-a489-383fa6c3c2e0</sv:value>
-        <sv:value>db72e3c9-3bab-40df-9d28-e466974af710</sv:value>
-        <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>products/alfa-romeo</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -157,7 +137,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -168,7 +148,7 @@
         <sv:value>testproject:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippostd:taggable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -198,18 +178,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>af5926d4-0e34-42b5-bd3b-cda90646066c</sv:value>
-        <sv:value>26b29234-9325-4e75-bf51-775cabe254f8</sv:value>
-        <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>products/opel</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -274,7 +242,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -285,7 +253,7 @@
         <sv:value>testproject:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippostd:taggable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -315,18 +283,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>c4400ed1-d661-4ef2-8e09-868f7627b447</sv:value>
-        <sv:value>7ab888be-308b-4075-b256-c68e117480bc</sv:value>
-        <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>products/nissan</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -391,7 +347,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -402,7 +358,7 @@
         <sv:value>testproject:productdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippostd:taggable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -432,18 +388,6 @@
       <sv:property sv:name="hippo:availability" sv:type="String">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>7b628362-8b10-4219-b3a8-33660f381d3b</sv:value>
-        <sv:value>c8f1e54f-b2ed-480b-8bbb-87b148ed3585</sv:value>
-        <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        <sv:value>products/alfa-romeo2</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>

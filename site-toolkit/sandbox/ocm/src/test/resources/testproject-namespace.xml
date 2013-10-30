@@ -39,7 +39,7 @@
                 <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:hardhandle</sv:value>
+                <sv:value>mix:referenceable</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:uuid" sv:type="String">
                 <sv:value>25b7c05b-f143-492d-9db1-d99347cfdc7a</sv:value>
@@ -77,7 +77,7 @@
                 <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:hardhandle</sv:value>
+                <sv:value>mix:referenceable</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:uuid" sv:type="String">
                 <sv:value>d2870ca9-1240-4bf1-a564-2611baa4e13b</sv:value>
@@ -88,20 +88,11 @@
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hipposysedit:remodel</sv:value>
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                     <sv:value>6ef8d567-d4ce-48b9-beea-3af71f46f9f0</sv:value>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String">
-                    <sv:value>6ef8d567-d4ce-48b9-beea-3af71f46f9f0</sv:value>
-                    <sv:value>d2870ca9-1240-4bf1-a564-2611baa4e13b</sv:value>
-                    <sv:value>8341d42f-4815-483e-a1fd-08dd25abcfd0</sv:value>
-                    <sv:value>322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee</sv:value>
-                    <sv:value>74bebaa8-d277-4890-bff7-dd5ba8a0361f</sv:value>
-                    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
                 <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
                     <sv:value>true</sv:value>
                 </sv:property>
@@ -214,7 +205,7 @@
                     <sv:value>testproject:textpage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                     <sv:value>f99f9955-bdfa-43ac-83e9-e5b1e43be410</sv:value>
@@ -228,14 +219,6 @@
                 <sv:property sv:name="testproject:title" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String">
-                    <sv:value>f99f9955-bdfa-43ac-83e9-e5b1e43be410</sv:value>
-                    <sv:value>8341d42f-4815-483e-a1fd-08dd25abcfd0</sv:value>
-                    <sv:value>322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee</sv:value>
-                    <sv:value>74bebaa8-d277-4890-bff7-dd5ba8a0361f</sv:value>
-                    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
                 <sv:property sv:name="hippostd:state" sv:type="String">
                     <sv:value>unpublished</sv:value>
                 </sv:property>
@@ -282,7 +265,7 @@
                 <sv:value>hippo:handle</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:hardhandle</sv:value>
+                <sv:value>mix:referenceable</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:uuid" sv:type="String">
                 <sv:value>b82fb2ee-0e28-4748-bc32-d46d580d57eb</sv:value>
@@ -293,20 +276,11 @@
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
                     <sv:value>hipposysedit:remodel</sv:value>
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                     <sv:value>3ed0ce75-1398-4772-836c-861d3b92a2c2</sv:value>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String">
-                    <sv:value>3ed0ce75-1398-4772-836c-861d3b92a2c2</sv:value>
-                    <sv:value>b82fb2ee-0e28-4748-bc32-d46d580d57eb</sv:value>
-                    <sv:value>a844cc4d-705a-484f-a86e-9a65d10a9507</sv:value>
-                    <sv:value>322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee</sv:value>
-                    <sv:value>74bebaa8-d277-4890-bff7-dd5ba8a0361f</sv:value>
-                    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
                 <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
                     <sv:value>true</sv:value>
                 </sv:property>
@@ -419,7 +393,7 @@
                     <sv:value>testproject:newspage</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:uuid" sv:type="String">
                     <sv:value>b7c4ea75-7c8d-4ac8-9ff7-775b2a900927</sv:value>
@@ -433,14 +407,6 @@
                 <sv:property sv:name="testproject:title" sv:type="String">
                     <sv:value/>
                 </sv:property>
-                <sv:property sv:name="hippo:paths" sv:type="String">
-                    <sv:value>b7c4ea75-7c8d-4ac8-9ff7-775b2a900927</sv:value>
-                    <sv:value>a844cc4d-705a-484f-a86e-9a65d10a9507</sv:value>
-                    <sv:value>322e0ee1-5a5d-4d1c-a15a-397bfa9b64ee</sv:value>
-                    <sv:value>74bebaa8-d277-4890-bff7-dd5ba8a0361f</sv:value>
-                    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-                </sv:property>
-                <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
                 <sv:property sv:name="hippostd:state" sv:type="String">
                     <sv:value>unpublished</sv:value>
                 </sv:property>

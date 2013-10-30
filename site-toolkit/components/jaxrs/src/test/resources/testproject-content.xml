@@ -18,7 +18,7 @@
         <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>abababab-511b-49e0-92b5-126970694fa8</sv:value>
@@ -35,7 +35,7 @@
             <sv:value>abababab-98ff-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-image-folder</sv:value>
@@ -52,7 +52,7 @@
             <sv:value>abababab-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-file-folder</sv:value>
@@ -66,7 +66,7 @@
             <sv:value>hippostd:folder</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
     </sv:node>
     <sv:node sv:name="documents">
@@ -74,7 +74,7 @@
             <sv:value>hippostd:folder</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-folder</sv:value>
@@ -88,7 +88,7 @@
                 <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                <sv:value>hippo:harddocument</sv:value>
+                <sv:value>mix:referenceable</sv:value>
             </sv:property>
             <sv:property sv:name="hippostd:foldertype" sv:type="String">
                 <sv:value>new-folder</sv:value>
@@ -99,7 +99,7 @@
                     <sv:value>hippostd:folder</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostd:foldertype" sv:type="String">
                     <sv:value>new-folder</sv:value>
@@ -110,14 +110,14 @@
                         <sv:value>hippo:handle</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:hardhandle</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:node sv:name="SomeProduct">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                             <sv:value>testproject:textpage</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:versionable</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
                             <sv:value>2009-08-14T10:05:07.580+02:00</sv:value>
@@ -188,14 +188,14 @@
                         <sv:value>hippo:handle</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:hardhandle</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:node sv:name="HippoCMS">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                             <sv:value>testproject:textpage</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:versionable</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
                             <sv:value>2009-08-13T10:05:07.580+02:00</sv:value>
@@ -310,7 +310,7 @@
                     <sv:value>hippostd:folder</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostd:foldertype" sv:type="String">
                     <sv:value>new-folder</sv:value>
@@ -321,14 +321,14 @@
                         <sv:value>hippo:handle</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:hardhandle</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:node sv:name="SolutionsPage">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                             <sv:value>testproject:textpage</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:versionable</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
                             <sv:value>2009-08-11T10:05:07.580+02:00</sv:value>
@@ -396,7 +396,7 @@
                     <sv:value>hippostd:folder</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostd:foldertype" sv:type="String">
                     <sv:value>new-folder</sv:value>
@@ -408,7 +408,7 @@
                     <sv:value>hippostd:folder</sv:value>
                 </sv:property>
                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                    <sv:value>hippo:harddocument</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostd:foldertype" sv:type="String">
                     <sv:value>new-folder</sv:value>
@@ -419,7 +419,7 @@
                         <sv:value>hippostd:folder</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:harddocument</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:property sv:name="hippostd:foldertype" sv:type="String">
                         <sv:value>new-folder</sv:value>
@@ -430,7 +430,7 @@
                             <sv:value>hippostd:folder</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:referenceable</sv:value>
                         </sv:property>
                         <sv:property sv:name="hippostd:foldertype" sv:type="String">
                             <sv:value>new-folder</sv:value>
@@ -441,7 +441,7 @@
                                 <sv:value>hippostd:folder</sv:value>
                             </sv:property>
                             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                <sv:value>hippo:harddocument</sv:value>
+                                <sv:value>mix:referenceable</sv:value>
                             </sv:property>
                             <sv:property sv:name="hippostd:foldertype" sv:type="String">
                                 <sv:value>new-folder</sv:value>
@@ -452,14 +452,14 @@
                                     <sv:value>hippo:handle</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                    <sv:value>hippo:hardhandle</sv:value>
+                                    <sv:value>mix:referenceable</sv:value>
                                 </sv:property>
                                 <sv:node sv:name="Day5Article">
                                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                         <sv:value>testproject:newspage</sv:value>
                                     </sv:property>
                                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                        <sv:value>hippo:harddocument</sv:value>
+                                        <sv:value>mix:versionable</sv:value>
                                     </sv:property>
                                     <sv:property sv:name="testproject:date" sv:type="Date">
                                         <sv:value>2009-08-10T10:05:07.580+02:00</sv:value>
@@ -507,14 +507,14 @@
                                 <sv:value>hippo:handle</sv:value>
                             </sv:property>
                             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                <sv:value>hippo:hardhandle</sv:value>
+                                <sv:value>mix:referenceable</sv:value>
                             </sv:property>
                             <sv:node sv:name="AprilNewsArticle">
                                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                     <sv:value>testproject:newspage</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                    <sv:value>hippo:harddocument</sv:value>
+                                    <sv:value>mix:versionable</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="testproject:date" sv:type="Date">
                                     <sv:value>2009-08-09T10:05:07.580+02:00</sv:value>
@@ -561,14 +561,14 @@
                                 <sv:value>hippo:handle</sv:value>
                             </sv:property>
                             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                <sv:value>hippo:hardhandle</sv:value>
+                                <sv:value>mix:referenceable</sv:value>
                             </sv:property>
                             <sv:node sv:name="April News Article 2">
                                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
                                     <sv:value>testproject:newspage</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                                    <sv:value>hippo:harddocument</sv:value>
+                                    <sv:value>mix:versionable</sv:value>
                                 </sv:property>
                                 <sv:property sv:name="testproject:date" sv:type="Date">
                                     <sv:value>2009-08-09T10:05:07.580+02:00</sv:value>
@@ -616,7 +616,7 @@
                             <sv:value>hippostd:folder</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:referenceable</sv:value>
                         </sv:property>
                         <sv:property sv:name="hippostd:foldertype" sv:type="String">
                             <sv:value>new-folder</sv:value>
@@ -630,7 +630,7 @@
                         <sv:value>hippostd:folder</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:harddocument</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:property sv:name="hippostd:foldertype" sv:type="String">
                         <sv:value>new-folder</sv:value>
@@ -642,14 +642,14 @@
                         <sv:value>hippo:handle</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:hardhandle</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:node sv:name="News1">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                             <sv:value>testproject:newspage</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:versionable</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
                             <sv:value>2009-04-15T10:05:07.580+02:00</sv:value>
@@ -696,14 +696,14 @@
                         <sv:value>hippo:handle</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:hardhandle</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:node sv:name="News2">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                             <sv:value>testproject:newspage</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:versionable</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
                             <sv:value>2009-03-15T10:05:07.580+02:00</sv:value>
@@ -750,14 +750,14 @@
                         <sv:value>hippo:handle</sv:value>
                     </sv:property>
                     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                        <sv:value>hippo:hardhandle</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
                     </sv:property>
                     <sv:node sv:name="News3">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
                             <sv:value>testproject:newspage</sv:value>
                         </sv:property>
                         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-                            <sv:value>hippo:harddocument</sv:value>
+                            <sv:value>mix:versionable</sv:value>
                         </sv:property>
                         <sv:property sv:name="testproject:date" sv:type="Date">
                             <sv:value>2009-02-15T10:05:07.580+02:00</sv:value>

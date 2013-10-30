@@ -701,13 +701,13 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
     }
     
     private boolean isDocument(Node node) throws RepositoryException  {
-        if (NodeUtils.isNodeType(node, "hippo:handle", "hippo:hardhandle")) {
+        if (NodeUtils.isNodeType(node, "hippo:handle")) {
             return true;
-        } else if (NodeUtils.isNodeType(node, "hippo:document", "hippo:harddocument")) {
+        } else if (NodeUtils.isNodeType(node, "hippo:document")) {
             if (!session.getRootNode().isSame(node)) {
                 Node parentNode = node.getParent();
                 
-                if (NodeUtils.isNodeType(parentNode, "hippo:handle", "hippo:hardhandle")) {
+                if (NodeUtils.isNodeType(parentNode, "hippo:handle")) {
                     return true;
                 }
             }
