@@ -478,7 +478,7 @@ public class MockNodeTest {
 
         variantPaths.clear();
 
-        nodeIt = handle.getNodes(new String [] { "document*", "hippo:*" });
+        nodeIt = handle.getNodes(new String [] { "document*", "hippo:*", "doc*" });
         assertEquals(4, nodeIt.getSize());
 
         while (nodeIt.hasNext()) {
@@ -525,7 +525,7 @@ public class MockNodeTest {
 
         propPaths.clear();
 
-        propIt = node.getProperties(new String [] { "prop*", "hippo:*" });
+        propIt = node.getProperties(new String [] { "prop*", "hippo:*", "pro*" });
         assertEquals(3, propIt.getSize());
 
         while (propIt.hasNext()) {

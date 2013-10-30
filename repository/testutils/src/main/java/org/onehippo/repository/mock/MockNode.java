@@ -19,9 +19,11 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -434,7 +436,7 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public NodeIterator getNodes(final String[] nameGlobs) {
-        List<MockNode> childrenCopy = new LinkedList<MockNode>();
+        Set<MockNode> childrenCopy = new LinkedHashSet<MockNode>();
 
         for (String nameGlob : nameGlobs) {
             GlobCompiler compiler = new GlobCompiler();
@@ -465,7 +467,7 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public PropertyIterator getProperties(final String[] nameGlobs) {
-        List<MockProperty> propsCopy = new LinkedList<MockProperty>();
+        Set<MockProperty> propsCopy = new LinkedHashSet<MockProperty>();
 
         for (String nameGlob : nameGlobs) {
             GlobCompiler compiler = new GlobCompiler();
