@@ -5,14 +5,9 @@
 package org.onehippo.cms7.essentials.dashboard.ctx;
 
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.jcr.Session;
-
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
@@ -21,9 +16,12 @@ import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
+import javax.jcr.Session;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @version "$Id: DashboardPluginContext.java 169746 2013-07-05 11:50:33Z ksalic $"
@@ -180,9 +178,9 @@ public class DashboardPluginContext implements PluginContext {
         final Map<String, Object> placeholderData = new HashMap<>();
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getCms());
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms());
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getSite());
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite());
         return placeholderData;
     }
 

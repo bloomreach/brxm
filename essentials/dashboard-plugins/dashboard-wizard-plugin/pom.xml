@@ -19,9 +19,14 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
-      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
