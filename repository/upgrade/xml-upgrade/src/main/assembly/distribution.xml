@@ -21,6 +21,11 @@
     <format>tar.gz</format>
   </formats>
   <includeBaseDirectory>true</includeBaseDirectory>
+  <files>
+    <file>
+      <source>src/main/resources/README.txt</source>
+    </file>
+  </files>
   <fileSets>
     <fileSet>
       <directory>target/xml-upgrade/bin</directory>
