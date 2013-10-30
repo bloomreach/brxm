@@ -174,18 +174,30 @@ public class DashboardPluginContext implements PluginContext {
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_JSP_ROOT
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_TARGET
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_SOURCE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_BEANS_FOLDER
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_BEANS_PACKAGE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_COMPONENTS_FOLDER
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_COMPONENTS_PACKAGE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_REST_PACKAGE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_REST_FOLDER
      */
     @Override
     public Map<String, Object> getPlaceholderData() {
         final Map<String, Object> placeholderData = new HashMap<>();
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms());
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getCms());
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite());
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getSite());
+        // packages
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_PACKAGE, componentsPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_PACKAGE, restPackage);
+        // folders
+        placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getComponentsPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getRestPackagePath().toString());
+
         return placeholderData;
     }
 

@@ -27,6 +27,9 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_BEANS_PACKAGE = "beansPackage";
     public static final String PLACEHOLDER_COMPONENTS_PACKAGE = "componentsPackage";
     public static final String PLACEHOLDER_REST_PACKAGE = "restPackage";
+    public static final String PLACEHOLDER_BEANS_FOLDER = "beansFolder";
+    public static final String PLACEHOLDER_COMPONENTS_FOLDER = "componentsFolder";
+    public static final String PLACEHOLDER_REST_FOLDER = "restFolder";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */
