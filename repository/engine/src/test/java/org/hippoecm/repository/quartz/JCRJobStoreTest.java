@@ -66,7 +66,6 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
         final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
         assertNotNull(trigger);
-        assertFalse(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));
         assertTrue(jobNode.getNode("hipposched:triggers/trigger").isLocked());
     }
 
