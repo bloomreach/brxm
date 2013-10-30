@@ -43,4 +43,8 @@ public class InstructionsEventListener implements PluginEventListener<Instructio
     public int getNrInstructions() {
         return counter;
     }
+
+    public void reset() {
+        counter = 0;
+    }
 }

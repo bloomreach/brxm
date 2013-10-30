@@ -63,6 +63,7 @@ public class PluginInstructionExecutorTest extends BaseTest{
         final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
         final String content = myBuilder.toString();
         log.info("content {}", content);
+        listener.reset();
         final Instructions instructions = InstructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
