@@ -12,6 +12,7 @@ archetype/website/src/main/resources/archetype-resources/bootstrap/configuration
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/modules/autoexport-module.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/queries/templates/new-subsite/__rootArtifactId__-subsite.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/configuration/richtextconfig/xinha.xml -text
+archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/dashboard.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hippoecm-extension.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite.xml -text
 archetype/website/src/main/resources/archetype-resources/bootstrap/configuration/src/main/resources/hst/blueprints/__rootArtifactId__-subsite/pages.xml -text
