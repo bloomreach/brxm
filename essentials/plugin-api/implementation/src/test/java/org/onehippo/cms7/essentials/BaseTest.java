@@ -83,6 +83,7 @@ public class BaseTest {
             context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
+            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
         }
         return context;
     }

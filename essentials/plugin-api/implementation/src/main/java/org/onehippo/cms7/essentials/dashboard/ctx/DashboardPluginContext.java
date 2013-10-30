@@ -183,9 +183,15 @@ public class DashboardPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getCms());
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
         placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getSite());
+        // packages
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_PACKAGE, componentsPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_PACKAGE, restPackage);
+        // folders
+        placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getComponentsPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getRestPackagePath().toString());
+
         return placeholderData;
     }
 
