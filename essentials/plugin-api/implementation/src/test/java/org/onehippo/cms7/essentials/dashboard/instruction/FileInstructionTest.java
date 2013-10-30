@@ -38,7 +38,6 @@ public class FileInstructionTest extends BaseTest {
     private InstructionExecutor executor;
     @Inject
     private FileInstruction copyInstruction;
-
     @Inject
     private FileInstruction deleteInstruction;
 
@@ -51,9 +50,9 @@ public class FileInstructionTest extends BaseTest {
         copyInstruction.setAction(FileInstruction.COPY);
         copyInstruction.setSource(SOURCE);
         copyInstruction.setTarget(TARGET);
-        InstructionSet set = new PluginInstructionSet();
+        final InstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
-        final InstructionStatus status = executor.execute(set, getContext());
+        InstructionStatus status = executor.execute(set, getContext());
         assertTrue(status == InstructionStatus.SUCCESS);
         // make sure all placeholders
         assertTrue(copyInstruction.getMessage().indexOf('$') == -1);
@@ -61,7 +60,13 @@ public class FileInstructionTest extends BaseTest {
         // DELETE
         //############################################
         deleteInstruction.setAction(FileInstruction.DELETE);
-        copyInstruction.setTarget(TARGET);
+        deleteInstruction.setTarget(TARGET);
+        final InstructionSet deleteSet = new PluginInstructionSet();
+        deleteSet.addInstruction(copyInstruction);
+        status = executor.execute(deleteSet, getContext());
+        assertTrue(status == InstructionStatus.SUCCESS);
+        // make sure all placeholders
+        assertTrue(copyInstruction.getMessage().indexOf('$') == -1);
 
 
     }

@@ -31,6 +31,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -104,7 +105,7 @@ public class FileInstruction extends PluginInstruction {
                         Files.createFile(destination.toPath());
                     }
                     FileUtils.copyInputStreamToFile(stream, destination);
-                    eventBus.post(new InstructionEvent(this));
+                    sendEvents();
                     return InstructionStatus.SUCCESS;
                 } catch (IOException e) {
                     log.error("Error while copy resource", e);
@@ -117,7 +118,7 @@ public class FileInstruction extends PluginInstruction {
         }
         try {
             FileUtils.copyFile(file, new File(target));
-            eventBus.post(new InstructionEvent(this));
+            sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (IOException e) {
             log.error("Error creating file", e);
@@ -128,14 +129,21 @@ public class FileInstruction extends PluginInstruction {
 
     }
 
+    private void sendEvents() {
+        eventBus.post(new InstructionEvent(this));
+        eventBus.post(new DisplayEvent(message));
+    }
+
     private InstructionStatus delete() {
         try {
             Path path = new File(target).toPath();
             final boolean deleted = Files.deleteIfExists(path);
-            eventBus.post(new InstructionEvent(this));
             if (deleted) {
+                sendEvents();
+                log.debug("Deleted file {}", target);
                 return InstructionStatus.SUCCESS;
             } else {
+                log.debug("File not deleted {}", target);
                 return InstructionStatus.SKIPPED;
             }
         } catch (IOException e) {
@@ -171,7 +179,7 @@ public class FileInstruction extends PluginInstruction {
 
         super.processPlaceholders(data);
         //
-        message = TemplateUtils.replaceTemplateData(source, data);
+        message = TemplateUtils.replaceTemplateData(message, data);
     }
 
     private boolean valid() {
