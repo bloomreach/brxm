@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -34,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
@@ -494,6 +496,7 @@ abstract class SessionImplHelper {
             private final org.apache.jackrabbit.core.ItemManager itemMgr = sessionImpl.getItemManager();
             private final Iterator<NodeId> iterator = filteredResults.iterator();
             private int pos = 0;
+            private Item next;
 
             public Node nextNode() {
                 return (Node)next();
@@ -508,33 +511,39 @@ abstract class SessionImplHelper {
             }
 
             public void skip(long skipNum) {
-                if (skipNum<0) {
+                if (skipNum < 0) {
                     throw new IllegalArgumentException("skipNum must not be negative");
-                } else if (skipNum==0) {
-                    return;
-                } else {
-                    do {
-                        NodeId id = iterator.next();
-                        ++pos;
-                    } while (--skipNum>0);
+                }
+                while (skipNum-- > 0) {
+                    iterator.next();
+                    ++pos;
                 }
             }
 
             public boolean hasNext() {
-                return iterator.hasNext();
+                fetchNext();
+                return next != null;
             }
 
             public Object next() {
-                try {
-                    NodeId id = iterator.next();
-                    ++pos;
-                    return itemMgr.getItem(id);
-                } catch (AccessDeniedException ex) {
-                    return null;
-                } catch (ItemNotFoundException ex) {
-                    return null;
-                } catch (RepositoryException ex) {
-                    return null;
+                fetchNext();
+                if (next == null) {
+                    throw new NoSuchElementException();
+                }
+                final Item result = next;
+                next = null;
+                return result;
+            }
+
+            private void fetchNext() {
+                while (next == null && iterator.hasNext()) {
+                    try {
+                        final NodeId id = iterator.next();
+                        next = itemMgr.getItem(id);
+                        ++pos;
+                    } catch (RepositoryException e) {
+                        log.error("Failed to fetch next item", e);
+                    }
                 }
             }
 

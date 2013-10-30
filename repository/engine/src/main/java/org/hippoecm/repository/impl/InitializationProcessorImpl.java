@@ -187,8 +187,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 initializeItems.add(nodes.nextNode());
             }
             processInitializeItems(session, initializeItems, false);
-        } catch (InvalidQueryException ex) {
-            getLogger().error(ex.getMessage(), ex);
         } catch (RepositoryException ex) {
             getLogger().error(ex.getMessage(), ex);
         }
@@ -255,9 +253,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                             getLogger().debug("configuration as specified by " + initializeItem.getName());
                             for (NodeIterator iter = ((HippoSession)session).pendingChanges(); iter.hasNext();) {
                                 Node pendingNode = iter.nextNode();
-                                if (pendingNode != null) {
-                                    getLogger().debug("configuration as specified by " + initializeItem.getName() + " modified node " + pendingNode.getPath());
-                                }
+                                getLogger().debug("configuration as specified by " + initializeItem.getName() + " modified node " + pendingNode.getPath());
                             }
                         }
                         session.refresh(false);
@@ -266,31 +262,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         session.save();
                     }
 
-                } catch (MalformedURLException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (IOException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (ParseException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (AccessDeniedException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (ConstraintViolationException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (InvalidItemStateException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (ItemExistsException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (LockException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (NoSuchNodeTypeException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (UnsupportedRepositoryOperationException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (ValueFormatException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (VersionException ex) {
-                    getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
-                } catch (PathNotFoundException ex) {
+                } catch (IOException | ParseException | RepositoryException ex) {
                     getLogger().error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } finally {
                     session.refresh(false);

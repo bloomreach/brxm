@@ -84,9 +84,7 @@ public class DerivedDataEngine {
             for (Node modified : nodesToCompute) {
                 compute(derivatesFolder, modified);
             }
-        } catch (NamespaceException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-        } catch (ConstraintViolationException ex) {
+        } catch (NamespaceException | ConstraintViolationException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         } finally {
             if (log.isDebugEnabled()) {
@@ -116,10 +114,6 @@ public class DerivedDataEngine {
         try {
             for (String baseType : new String[] { HippoNodeType.NT_DERIVED, HippoNodeType.NT_DOCUMENT }) {
                 for (Node modified : new NodeIterable(session.pendingChanges(node, baseType))) {
-                    if (modified == null) {
-                        log.error("Unable to access node that was changed by own session");
-                        continue;
-                    }
                     if (log.isDebugEnabled()) {
                         log.debug("Derived engine found modified node " + modified.getPath() + " ("
                                 + modified.getIdentifier() + ") with derived mixin");
@@ -127,9 +121,7 @@ public class DerivedDataEngine {
                     result.add(modified);
                 }
             }
-        } catch (NamespaceException ex) {
-            throw new RepositoryException(HippoNodeType.NT_DERIVED + " not found");
-        } catch (NoSuchNodeTypeException ex) {
+        } catch (NamespaceException | NoSuchNodeTypeException ex) {
             throw new RepositoryException(HippoNodeType.NT_DERIVED + " not found");
         }
         return result;
@@ -139,10 +131,6 @@ public class DerivedDataEngine {
         final Collection<Node> result = new ArrayList<Node>();
         try {
             for (Node modified : new NodeIterable(session.pendingChanges(node, "mix:referenceable"))) {
-                if (modified == null) {
-                    log.error("Unable to access node that was changed by own session");
-                    continue;
-                }
                 if (log.isDebugEnabled()) {
                     log.debug("Derived engine found modified referenceable node " + modified.getPath() +
                             " with " + modified.getReferences().getSize() + " references");
