@@ -210,6 +210,7 @@
             <!-- TODO DEJDO: following tests rely on JDO like inheritance behavior: either have to be rewritten or removed -->
             <exclude>**/SampleWorkflowTest.java</exclude>
             <!-- end TODO DEJDO -->
+            <exclude>**/SchedulerTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -253,6 +254,7 @@
                     <include>**/integration/VersioningWorkflowTest.java</include>
                     <include>**/StampedeTest.java</include>
                     <include>**/UpdaterExecutorTest.java</include>
+                    <include>**/SchedulerTest.java</include>
                   </includes>
                 </configuration>
               </execution>

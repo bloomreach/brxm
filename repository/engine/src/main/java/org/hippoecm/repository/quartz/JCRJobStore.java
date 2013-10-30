@@ -262,17 +262,7 @@ public class JCRJobStore extends AbstractJobStore {
                         if (lock(session, triggerNode.getPath())) {
                             try {
                                 startLockKeepAlive(session, triggerNode.getIdentifier());
-                                JcrUtils.ensureIsCheckedOut(triggerNode, false);
-                                final Trigger trigger = createTriggerFromNode(triggerNode);
-                                final Date nextFireTime = trigger.getNextFireTime();
-                                final Date fireTimeAfter = trigger.getFireTimeAfter(nextFireTime);
-                                if (fireTimeAfter != null) {
-                                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, dateToCalendar(fireTimeAfter));
-                                } else {
-                                    triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
-                                }
-                                session.save();
-                                return trigger;
+                                return createTriggerFromNode(triggerNode);
                             } catch (IOException e) {
                                 log.error("Failed to read trigger for job " + jobNode.getPath(), e);
                                 stopLockKeepAlive(triggerNode.getIdentifier());
@@ -299,6 +289,7 @@ public class JCRJobStore extends AbstractJobStore {
             log.warn("Cannot deserialize obsolete trigger definition at " + triggerNode.getPath());
         } else {
             final String triggerType = triggerNode.getPrimaryNodeType().getName();
+            final Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, Calendar.getInstance());
             if (HIPPOSCHED_SIMPLE_TRIGGER.equals(triggerType)) {
                 final Calendar startTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_STARTTIME, null);
                 final Calendar endTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_ENDTIME, null);
@@ -318,7 +309,8 @@ public class JCRJobStore extends AbstractJobStore {
                     if (repeatInterval != 0) {
                         simpleTrigger.setRepeatInterval(repeatInterval);
                     }
-                    final Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, null);
+
+
                     simpleTrigger.setNextFireTime(nextFireTime.getTime());
                     trigger = simpleTrigger;
                 }
@@ -330,7 +322,6 @@ public class JCRJobStore extends AbstractJobStore {
                 } else {
                     try {
                         CronTrigger cronTrigger = new CronTrigger(triggerNode.getIdentifier(), null, cronExpression);
-                        final Calendar nextFireTime = JcrUtils.getDateProperty(triggerNode, HIPPOSCHED_NEXTFIRETIME, null);
                         cronTrigger.setNextFireTime(nextFireTime.getTime());
                         trigger = cronTrigger;
                     } catch (ParseException e) {

@@ -20,19 +20,26 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.scheduling.RepositoryJob;
+import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
 import org.onehippo.repository.scheduling.RepositoryJobSimpleTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 public class SchedulerTest extends RepositoryTestCase {
+
+    private static final Logger log = LoggerFactory.getLogger(SchedulerTest.class);
 
     private static boolean repositoryJobExecuted;
     private static String failureMessage;
@@ -103,6 +110,37 @@ public class SchedulerTest extends RepositoryTestCase {
         }
     }
 
+    /**
+     * REPO-813 Scheduling a repeating job with a repeat interval of 5 minutes
+     * fires repeating triggers every 30 seconds more or less
+     */
+    @Test
+    public void testScheduleCronJob() throws Exception {
+        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
+        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
+        final RepositoryJobTrigger testJobTrigger = new RepositoryJobCronTrigger("test", "0 0/1 * * * ?");
+        scheduler.scheduleJob(testJobInfo, testJobTrigger);
+        long start = System.currentTimeMillis();
+        int count = 0;
+        outer: while (count++ < 3) {
+            while (true) {
+                if (repositoryJobExecuted) {
+                    repositoryJobExecuted = false;
+                    break;
+                } else {
+                    long totalTime = System.currentTimeMillis() - start;
+                    if (totalTime > 1000*60*5) {
+                        break outer;
+                    }
+                }
+                Thread.sleep(1000);
+            }
+        }
+        long totalTime = System.currentTimeMillis() - start;
+        assertTrue("Execution of jobs took less time than expected", totalTime > 1000*60*2);
+        assertTrue("Execution of jobs took more time than expected", totalTime < 1000*60*3);
+    }
+
 
     private boolean waitUntilExecuted() throws Exception {
         int n = 50;
@@ -120,6 +158,7 @@ public class SchedulerTest extends RepositoryTestCase {
 
         @Override
         public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
+            log.debug("Executing TestRepositoryJob");
             repositoryJobExecuted = true;
             if (context.getAttribute("foo") == null) {
                 failureMessage = "expected attribute not found";
