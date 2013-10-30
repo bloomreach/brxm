@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
@@ -37,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class PluginInstructionExecutorTest extends BaseTest {
+public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
     @Inject
@@ -59,8 +60,8 @@ public class PluginInstructionExecutorTest extends BaseTest {
             pluginInstructionExecutor.execute(instructionSet, getContext());
         }
 
-        // we had 3 executed
-        assertEquals(3, listener.getNrInstructions());
+        // we had 5 executed, see /instructions.xml, 4 file and one XML instruction
+        assertEquals(4, listener.getNrInstructions());
 
     }
 }

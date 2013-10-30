@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +25,7 @@ import org.onehippo.cms7.essentials.GuiceJUnitModules;
 import org.onehippo.cms7.essentials.GuiceJUnitRunner;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
@@ -33,33 +33,50 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @version "$Id$"
  */
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitModules({EventBusModule.class, PropertiesModule.class})
-public class XmlInstructionTest extends BaseRepositoryTest{
+public class XmlInstructionTest extends BaseRepositoryTest {
 
+    /**
+     * See instruction_xml_file.xml file
+     */
+    private static final String NODE_NAME = "testNode";
     private static Logger log = LoggerFactory.getLogger(XmlInstructionTest.class);
-
     @Inject
     private InstructionExecutor executor;
-
     @Inject
     private XmlInstruction addNodeInstruction;
+    @Inject
+    private XmlInstruction removeNodeInstruction;
 
     @Test
     public void testInstructions() throws Exception {
 
-        final Node rootNode = session.getRootNode();
-        log.info("rootNode {}", rootNode.getPath());
+        //############################################
+        // ADD
+        //############################################
         addNodeInstruction.setAction(PluginInstruction.COPY);
         addNodeInstruction.setTarget("/");
         addNodeInstruction.setSource("/instruction_xml_file.xml");
         final InstructionSet set = new PluginInstructionSet();
         set.addInstruction(addNodeInstruction);
-        executor.execute(set, getContext());
+        final InstructionStatus status = executor.execute(set, getContext());
+        assertTrue("Expected SUCCESS but got: " + status,status == InstructionStatus.SUCCESS);
+        //############################################
+        // DELETE
+        //############################################
 
+        removeNodeInstruction.setAction(PluginInstruction.DELETE);
+        removeNodeInstruction.setTarget('/' + NODE_NAME);
+        final InstructionSet removeSet = new PluginInstructionSet();
+        removeSet.addInstruction(removeNodeInstruction);
+        final InstructionStatus deleteStatus = executor.execute(removeSet, getContext());
+        assertTrue("Expected SUCCESS but got: " + deleteStatus, deleteStatus == InstructionStatus.SUCCESS);
 
 
     }

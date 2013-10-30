@@ -56,7 +56,6 @@ public class FileInstruction extends PluginInstruction {
     public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
             .add(COPY)
             .add(DELETE)
-            .add("overwrite")
             .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
@@ -188,6 +187,9 @@ public class FileInstruction extends PluginInstruction {
 
     private boolean valid() {
         if (Strings.isEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isEmpty(target)) {
+            return false;
+        }
+        if (action.equals(COPY) && (Strings.isEmpty(source))) {
             return false;
         }
         return true;
