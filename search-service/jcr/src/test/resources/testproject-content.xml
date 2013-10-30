@@ -7,7 +7,7 @@
     <sv:value>hippostd:directory</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>abababab-511b-49e0-92b5-126970694fa8</sv:value>
@@ -21,7 +21,7 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
       <sv:value>New Folder</sv:value>
@@ -35,7 +35,7 @@
         <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>New Folder</sv:value>
@@ -49,7 +49,7 @@
           <sv:value>cbcbcbcb-5fa8-48a8-b03b-4524373d992a</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:harddocument</sv:value>
+          <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
           <sv:value>new-translated-folder</sv:value>
@@ -60,7 +60,7 @@
             <sv:value>hippo:handle</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:hardhandle</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippo:translated</sv:value>
           </sv:property>
           <sv:node sv:name="homepage">
@@ -68,7 +68,7 @@
               <sv:value>testproject:textpage</sv:value>
             </sv:property>
             <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-              <sv:value>hippo:harddocument</sv:value>
+              <sv:value>mix:versionable</sv:value>
             </sv:property>
             <sv:property sv:name="testproject:date" sv:type="Date">
               <sv:value>2009-08-10T10:05:07.580+02:00</sv:value>
