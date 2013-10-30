@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import de.pdark.decentxml.Attribute;
 import de.pdark.decentxml.Document;
 import de.pdark.decentxml.Element;
 import de.pdark.decentxml.Namespace;
@@ -67,6 +68,10 @@ public class ContentUpgrade {
         try {
             XMLParser reader = new XMLParser();
             document = reader.parse(new XMLIOSource(new FileInputStream(file)));
+            final Namespace sv = document.getNamespace("sv");
+            if (sv == null || !sv.equals(SV)) {
+                return;
+            }
 
             final Element rootElement = document.getRootElement();
             processNode(rootElement, false);
@@ -80,6 +85,13 @@ public class ContentUpgrade {
     }
 
     private void processNode(Element element, boolean inDocument) {
+        final Attribute nameAttr = element.getAttribute("name", SV);
+        if (nameAttr == null) {
+            return;
+        }
+        String name = nameAttr.getValue();
+        boolean prototype = "hipposysedit:prototype".equals(name);
+
         String primaryType = null;
         final List<Element> properties = element.getChildren("property", SV);
         Element mixins = null;
@@ -106,7 +118,7 @@ public class ContentUpgrade {
             }
         }
         if (mixins != null) {
-            convertMixins(mixins, inDocument, state);
+            convertMixins(mixins, inDocument, state, prototype);
         }
 
         if ("hippo:handle".equals(primaryType)) {
@@ -122,7 +134,7 @@ public class ContentUpgrade {
         return property.getChild("value", SV).getText();
     }
 
-    private void convertMixins(Element property, boolean doc, final String state) {
+    private void convertMixins(Element property, boolean doc, final String state, final boolean prototype) {
         boolean hasSkipIndex = false;
         for (Element value : property.getChildren("value", SV)) {
             String mixin = value.getText();
@@ -138,7 +150,7 @@ public class ContentUpgrade {
                 hasSkipIndex = true;
             }
         }
-        if ("draft".equals(state) && !hasSkipIndex) {
+        if ("draft".equals(state) && !hasSkipIndex && !prototype) {
             addSkipIndex(property);
         }
     }
