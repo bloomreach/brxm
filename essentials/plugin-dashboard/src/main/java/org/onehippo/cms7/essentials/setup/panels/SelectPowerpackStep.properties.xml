@@ -7,8 +7,12 @@
         project ${name} will be. We'll then add the relevant components and configuration to get you started.
     </entry>
     <entry key="powerpack.news.and.event.label">Basic News and Events site</entry>
-    <entry key="powerpack.news.and.event.description">Basic News and Events site</entry>
+    <entry key="powerpack.news.and.event.description">A basic News and Events site that contains a homepage template, News and Agenda components and detail pages
+    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the most basic Power Pack to start with.
+    You can easily extend with more components later on</entry>
     <entry key="powerpack.rest.label">Headless REST based content repository</entry>
+    <entry key="powerpack.rest.description">A REST only site that contains only REST services and no pages.</entry>
     <entry key="powerpack.none.label">Don't install a Power Pack at this time</entry>
+    <entry key="powerpack.none.description">Just create the basic structure for the project, don't install anything yet.</entry>
     <entry key="powerpack.select.label">Select a Power Pack</entry>
 </properties>
