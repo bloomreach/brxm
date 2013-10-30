@@ -90,6 +90,7 @@
     <json-lib.version>2.2.2</json-lib.version>
     <groovy.version>2.0.1</groovy.version>
     <easymock.version>3.1</easymock.version>
+    <decentxml.version>1.4</decentxml.version>
   </properties>
 
   <scm>
@@ -238,6 +239,12 @@
         <artifactId>groovy-all</artifactId>
         <version>${groovy.version}</version>
       </dependency>
+      <dependency>
+        <groupId>de.pdark</groupId>
+        <artifactId>decentxml</artifactId>
+        <version>${decentxml.version}</version>
+      </dependency>
+
 
       <!-- Testing needs a JTA implementation -->
       <dependency>
