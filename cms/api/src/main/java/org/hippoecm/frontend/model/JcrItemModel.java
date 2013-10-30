@@ -336,7 +336,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                 }
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error(ex.toString());
         }
     }
 
