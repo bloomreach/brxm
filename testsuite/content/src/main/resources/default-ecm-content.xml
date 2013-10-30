@@ -21,7 +21,7 @@
         <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
@@ -35,12 +35,10 @@
             <sv:value>hippostd:directory</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        </sv:property>
-        <sv:property sv:name="hippo:paths" sv:type="String">
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-folder</sv:value>
@@ -54,7 +52,7 @@
             <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -77,7 +75,7 @@
             <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffc</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -100,7 +98,7 @@
             <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffd</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -123,7 +121,7 @@
             <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482ffe</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -146,7 +144,7 @@
             <sv:value>ad48b4c0-c6b9-4b2a-8cbe-5cf993482fff</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -170,7 +168,7 @@
             <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-image-folder</sv:value>
@@ -187,7 +185,7 @@
             <sv:value>4e557532-bbbb-4673-a2a9-5cdbb2822eed</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
             <sv:value>new-file-folder</sv:value>
@@ -201,7 +199,7 @@
             <sv:value>hippostd:folder</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
         </sv:property>
     </sv:node>
 </sv:node>

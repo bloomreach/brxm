@@ -48,21 +48,21 @@ public class DummyCarDocsCreator {
         
         if(!baseNode.hasNode("products")) {
             productsFolder = baseNode.addNode("products", "hippostd:folder");
-            productsFolder.addMixin("hippo:harddocument");
+            productsFolder.addMixin("mix:referenceable");
         } else {
             productsFolder = baseNode.getNode("products");
         }
         
         Node dummyProducts = null;
         dummyProducts  = productsFolder.addNode("dummy-"+System.currentTimeMillis(), "hippostd:folder");
-        dummyProducts.addMixin("hippo:harddocument");
+        dummyProducts.addMixin("mix:referenceable");
         
         
         Random r = new Random();
         
         Calendar cal = Calendar.getInstance();
         Node crFolder = dummyProducts.addNode("folder"+cal.getTimeInMillis());
-        crFolder.addMixin("hippo:harddocument");
+        crFolder.addMixin("mix:referenceable");
         
         for(int i = 0 ;i < number; i++) {
             cal = Calendar.getInstance();
@@ -71,7 +71,7 @@ public class DummyCarDocsCreator {
             Car randomCar = availableCars.get(car);
             
             Node handle = crFolder.addNode(randomCar.brand + "-" + cal.getTimeInMillis(), "hippo:handle"); 
-            handle.addMixin("hippo:hardhandle");
+            handle.addMixin("mix:referenceable");
             handle.addMixin("hippo:translated");
             
             Node translation = handle.addNode("hippo:translation","hippo:translation");
@@ -79,7 +79,7 @@ public class DummyCarDocsCreator {
             translation.setProperty("hippo:language", "");
             
             Node doc = handle.addNode(randomCar.brand + "-"+cal.getTimeInMillis(), "demosite:productdocument");
-            doc.addMixin("hippo:harddocument");
+            doc.addMixin("mix:referenceable");
             
             doc.setProperty("demosite:created", Calendar.getInstance());
             
@@ -146,7 +146,7 @@ public class DummyCarDocsCreator {
             if(i%100 == 0) {
                 writableSession.save();
                 crFolder = dummyProducts.addNode("folder"+cal.getTimeInMillis());
-                crFolder.addMixin("hippo:harddocument");
+                crFolder.addMixin("mix:referenceable");
             }
         }
         writableSession.save();

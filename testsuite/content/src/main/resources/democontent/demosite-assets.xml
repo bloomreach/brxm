@@ -20,9 +20,8 @@
     <sv:value>hippogallery:stdAssetGallery</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
     <sv:value>new-file-folder</sv:value>
   </sv:property>
@@ -34,7 +33,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
     <sv:node sv:name="testpdf.pdf">
@@ -42,13 +41,12 @@
         <sv:value>hippogallery:exampleAssetSet</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:node sv:name="hippogallery:asset">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:resource</sv:value>

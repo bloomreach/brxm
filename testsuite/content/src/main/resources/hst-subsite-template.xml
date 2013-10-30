@@ -21,7 +21,7 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
@@ -38,7 +38,7 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -56,7 +56,7 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:hardhandle</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippo:translated</sv:value>
       </sv:property>
       <sv:node sv:name="about">
@@ -64,7 +64,7 @@
           <sv:value>demosite:textdocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:harddocument</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -133,7 +133,7 @@
         <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:hardhandle</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippo:translated</sv:value>
       </sv:property>
       <sv:node sv:name="home">
@@ -141,7 +141,7 @@
           <sv:value>demosite:textdocument</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:harddocument</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
         </sv:property>
         <sv:property sv:name="hippotranslation:locale" sv:type="String">

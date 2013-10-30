@@ -20,7 +20,7 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -41,7 +41,7 @@
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
      <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -62,7 +62,7 @@
         <sv:value>hippostd:folder</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -83,7 +83,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -94,7 +94,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -256,7 +256,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -277,7 +277,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -288,7 +288,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -395,7 +395,7 @@
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippotranslation:translated</sv:value>
     </sv:property>
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -416,7 +416,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -437,7 +437,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -448,7 +448,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -546,7 +546,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
@@ -567,7 +567,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -578,7 +578,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -691,7 +691,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>fcaca397-0e2a-4f6f-8bb8-e75563a5f399</sv:value>
@@ -705,7 +705,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -716,7 +716,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>19fe9f4c-f9a1-4a4c-bb5d-d91fb25d289b</sv:value>
@@ -818,7 +818,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>0654da23-7393-44e4-8674-28956511bedf</sv:value>
@@ -832,7 +832,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>43355f96-e77d-4b8a-9dfa-d45fb58f0fe4</sv:value>
@@ -842,7 +842,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>78410315-a778-4759-ae7e-d2f9a499173d</sv:value>
@@ -938,7 +938,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>c2516ae5-86ad-403b-9053-e01b853d0d17</sv:value>
@@ -952,7 +952,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>267fe4a0-8523-4598-aa96-acf07297b1dd</sv:value>
@@ -962,7 +962,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>f1ea4034-8ae4-46f4-9498-e161648dc60d</sv:value>
@@ -1058,7 +1058,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1069,7 +1069,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>9de57ca6-756c-4adf-a79c-baf3f17b8236</sv:value>
@@ -1202,7 +1202,7 @@
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>836158d4-518e-4959-91b2-20318182f0ec</sv:value>
@@ -1216,7 +1216,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>7b656b3a-3832-4484-bd8c-3bfaa8e14f6b</sv:value>
@@ -1230,7 +1230,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1241,7 +1241,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>13e6cbf6-2283-4626-b3db-f78d65f6b9fa</sv:value>
@@ -1342,7 +1342,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1353,7 +1353,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>74dac901-bcfd-4686-84a1-7e84e4b5d9b7</sv:value>
@@ -1433,7 +1433,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>484ab687-06e7-49c9-a2ea-71d21fb47387</sv:value>
@@ -1447,7 +1447,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1458,7 +1458,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>05b47f7a-ffe0-43d2-804d-82810a789694</sv:value>
@@ -1567,7 +1567,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>99b2b829-ea20-4d54-94d1-b50bd9db6717</sv:value>
@@ -1581,7 +1581,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1592,7 +1592,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>7d5ad0dc-7d8a-4d04-8212-9cfa22a0889f</sv:value>
@@ -1679,7 +1679,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>7670d9ee-0c79-414b-b1c3-706113e19ce1</sv:value>
@@ -1693,7 +1693,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1704,7 +1704,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>00c0311a-966b-495c-b411-b737c394269e</sv:value>
@@ -1780,7 +1780,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>42891b60-4c84-433c-9ed0-37d5371b1652</sv:value>
@@ -1794,7 +1794,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>0becfbcb-c98f-4d4a-b3db-6c8d3b7c1245</sv:value>
@@ -1804,7 +1804,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>05ef4d4c-3188-4106-8737-d04670fc85c3</sv:value>
@@ -1892,7 +1892,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1903,7 +1903,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>50b332ad-9f61-44ad-9bb4-c6d1ea3ad7b8</sv:value>
@@ -1982,7 +1982,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -1993,7 +1993,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>a696c8b3-bd7f-4470-9a2a-97fae136fb1f</sv:value>
@@ -2081,7 +2081,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -2092,7 +2092,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>a33416c4-bc7d-4dad-8271-47dd45f01748</sv:value>
@@ -2212,7 +2212,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>800f2d24-385c-48b1-b33d-92f85b538508</sv:value>
@@ -2226,7 +2226,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -2237,7 +2237,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>24f2090a-b5cf-4e6f-89b7-98e67045ecb8</sv:value>
@@ -2341,7 +2341,7 @@
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>cdf25545-e718-4b90-9f36-bf944383bfd6</sv:value>
@@ -2355,21 +2355,11 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>84412ec8-4af1-4d8c-af39-b042ad6c5fd8</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-        <sv:value>84412ec8-4af1-4d8c-af39-b042ad6c5fd8</sv:value>
-        <sv:value>cdf25545-e718-4b90-9f36-bf944383bfd6</sv:value>
-        <sv:value>8458a193-3c50-4606-a58d-52bd086992c7</sv:value>
-        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
-        <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
-        <sv:value>7d92c518-511b-49e0-92b5-126970694fa8</sv:value>
-        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
       <sv:property sv:name="hippostd:foldertype" sv:type="String">
         <sv:value>new-folder</sv:value>
         <sv:value>new-document</sv:value>
@@ -2379,7 +2369,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -2390,7 +2380,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>7796e6ef-2153-4037-95b4-da318cbe16d0</sv:value>
@@ -2477,7 +2467,7 @@
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:harddocument</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>3440138a-6c0e-4afb-902e-5fe412f1d563</sv:value>
@@ -2491,7 +2481,7 @@
         <sv:value>hippostd:directory</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>de9698bf-d7de-4d45-aa23-26d0b7063f7e</sv:value>
@@ -2505,7 +2495,7 @@
           <sv:value>hippo:handle</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
+          <sv:value>mix:referenceable</sv:value>
           <sv:value>hippo:translated</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -2516,7 +2506,7 @@
             <sv:value>demosite:newsdocument</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>21f8c72f-52ff-425d-858b-1e9340fb8a50</sv:value>

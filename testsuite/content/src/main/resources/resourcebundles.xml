@@ -8,7 +8,7 @@
     <sv:value>hippostd:folder</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
   </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String">
     <sv:value>new-translated-folder</sv:value>
@@ -23,7 +23,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>b8619050-5e5a-11e2-bcfd-0800200c9a66</sv:value>
@@ -33,7 +33,7 @@
         <sv:value>resourcebundle:resourcebundle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippostd:publishableSummary</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -107,7 +107,7 @@
         <sv:value>resourcebundle:resourcebundle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
         <sv:value>hippostd:publishableSummary</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -183,7 +183,7 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
       <sv:value>a8619050-5e5a-11e2-bcfd-0800200c9a66</sv:value>
@@ -193,7 +193,7 @@
         <sv:value>resourcebundle:resourcebundle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippostd:publishableSummary</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -271,7 +271,7 @@
         <sv:value>resourcebundle:resourcebundle</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:versionable</sv:value>
         <sv:value>hippostd:publishableSummary</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">

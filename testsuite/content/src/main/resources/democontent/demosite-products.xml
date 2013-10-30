@@ -5,15 +5,13 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
     sv:multiple="true">
-    <sv:value>hippo:harddocument</sv:value>
+    <sv:value>mix:referenceable</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
 
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>ccd7a056-16e6-4d8c-90a3-edfc64973d34</sv:value>
   </sv:property>
-  <sv:property sv:name="hippo:related___pathreference"
-    sv:type="String" />
   <sv:property sv:name="hippostd:foldertype" sv:type="String"
     sv:multiple="true">
     <sv:value>new-translated-folder</sv:value>
@@ -31,14 +29,14 @@
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
     </sv:property>
     <sv:node sv:name="newstest">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>demosite:newsdocument</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="demosite:date" sv:type="Date">
@@ -132,7 +130,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
 
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
       sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -146,7 +144,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
         <sv:value>hippostd:taggable</sv:value>
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -182,10 +180,6 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
 
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference"
-        sv:type="String">
-        <sv:value>products/alfa-romeo</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -282,7 +276,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
       sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
 
     </sv:property>
@@ -297,7 +291,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
         <sv:value>hippostd:taggable</sv:value>
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -333,10 +327,6 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
 
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference"
-        sv:type="String">
-        <sv:value>products/opel</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
 
@@ -434,7 +424,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
       sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
 
@@ -449,7 +439,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         sv:multiple="true">
 
         <sv:value>hippostd:taggable</sv:value>
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -485,10 +475,6 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         <sv:value>live</sv:value>
 
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference"
-        sv:type="String">
-        <sv:value>products/nissan</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -587,7 +573,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
       sv:multiple="true">
 
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -601,7 +587,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
         <sv:value>hippostd:taggable</sv:value>
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
 
       </sv:property>
@@ -637,11 +623,6 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         sv:multiple="true">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference"
-        sv:type="String">
-
-        <sv:value>products/alfa-romeo2</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -741,7 +722,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
 
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
       sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -754,7 +735,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
 
       </sv:property>
@@ -790,11 +771,6 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         sv:multiple="true">
         <sv:value>live</sv:value>
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference"
-        sv:type="String">
-
-        <sv:value>products/gazelle</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
@@ -893,7 +869,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
       sv:multiple="true">
-      <sv:value>hippo:hardhandle</sv:value>
+      <sv:value>mix:referenceable</sv:value>
       <sv:value>hippo:translated</sv:value>
 
     </sv:property>
@@ -907,7 +883,7 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
 
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name"
         sv:multiple="true">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
@@ -943,10 +919,6 @@ sv:name="hst:componentconfigurationmappingvalues" sv:type="String"&amp;gt;
         <sv:value>live</sv:value>
 
         <sv:value>preview</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference"
-        sv:type="String">
-        <sv:value>products/koga</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>admin</sv:value>
