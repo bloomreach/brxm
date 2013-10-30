@@ -1074,8 +1074,6 @@
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>503f2f56-a435-4a5c-85fb-6bb1288af8b8</sv:value>
         </sv:property>
-        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-        </sv:property>
         <sv:property sv:name="hippostd:date" sv:type="Date">
           <sv:value>2008-09-11T14:02:28.068+02:00</sv:value>
         </sv:property>

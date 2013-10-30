@@ -15,7 +15,7 @@
         <sv:value>brokenlinks:config</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
+        <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="enabled" sv:type="Boolean">
         <sv:value>false</sv:value>

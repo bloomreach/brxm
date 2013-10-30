@@ -101,7 +101,7 @@
             <sv:value>hipposysedit:nodetype</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
             <sv:value>true</sv:value>
@@ -122,8 +122,9 @@
             <sv:value>nt:unstructured</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
             <sv:value>hippotranslation:translated</sv:value>
+            <sv:value>hippo:skipindex</sv:value>
           </sv:property>
           <sv:property sv:name="hippotranslation:id" sv:type="String">
             <sv:value>document-type-locale-id</sv:value>
@@ -168,7 +169,7 @@
             <sv:value>hipposysedit:nodetype</sv:value>
           </sv:property>
           <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
+            <sv:value>mix:referenceable</sv:value>
           </sv:property>
           <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
             <sv:value>true</sv:value>
