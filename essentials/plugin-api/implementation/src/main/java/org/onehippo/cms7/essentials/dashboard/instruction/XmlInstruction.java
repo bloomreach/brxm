@@ -50,7 +50,7 @@ public class XmlInstruction extends PluginInstruction {
     private EventBus eventBus;
 
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("XML Instruction");
         eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;

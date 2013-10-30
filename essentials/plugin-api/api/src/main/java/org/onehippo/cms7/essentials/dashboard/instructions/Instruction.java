@@ -24,7 +24,7 @@ public interface Instruction {
 
     void setAction(String action);
 
-    InstructionStatus process(PluginContext context);
+    InstructionStatus process(PluginContext context, InstructionStatus previousStatus);
 
     void processPlaceholders(final Map<String, Object> data);
 }

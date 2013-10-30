@@ -9,7 +9,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * @version "$Id: EssentialConst.java 174363 2013-08-20 12:37:31Z mmilicevic $"
+ * @version "$Id$"
  */
 public final class EssentialConst {
 
@@ -22,6 +22,8 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
     public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
     public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
+    public static final String PLACEHOLDER_SOURCE = "source";
+    public static final String PLACEHOLDER_TARGET = "target";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */

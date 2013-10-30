@@ -17,15 +17,11 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.GuiceJUnitModules;
-import org.onehippo.cms7.essentials.GuiceJUnitRunner;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 
 import com.google.inject.Inject;
 
@@ -38,12 +34,13 @@ public class FileInstructionTest extends BaseTest {
 
     public static final String SOURCE = createPlaceHolder(EssentialConst.PLACEHOLDER_PROJECT_ROOT) + "/instruction_file.txt";
     public static final String TARGET = createPlaceHolder(EssentialConst.PLACEHOLDER_PROJECT_ROOT) + "/instruction_file_copy.txt";
-
     @Inject
     private InstructionExecutor executor;
     @Inject
-    private FileInstruction instruction;
+    private FileInstruction copyInstruction;
 
+    @Inject
+    private FileInstruction deleteInstruction;
 
     private static String createPlaceHolder(final String placeholderProjectRoot) {
         return "${" + placeholderProjectRoot + '}';
@@ -51,10 +48,21 @@ public class FileInstructionTest extends BaseTest {
 
     @Test
     public void testProcess() throws Exception {
-        instruction.setAction("copy");
-        instruction.setSource(SOURCE);
-        instruction.setTarget(TARGET);
-        final InstructionStatus status = executor.execute(instruction, getContext());
+        copyInstruction.setAction(FileInstruction.COPY);
+        copyInstruction.setSource(SOURCE);
+        copyInstruction.setTarget(TARGET);
+        InstructionSet set = new PluginInstructionSet();
+        set.addInstruction(copyInstruction);
+        final InstructionStatus status = executor.execute(set, getContext());
         assertTrue(status == InstructionStatus.SUCCESS);
+        // make sure all placeholders
+        assertTrue(copyInstruction.getMessage().indexOf('$') == -1);
+        //############################################
+        // DELETE
+        //############################################
+        deleteInstruction.setAction(FileInstruction.DELETE);
+        copyInstruction.setTarget(TARGET);
+
+
     }
 }

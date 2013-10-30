@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
@@ -58,28 +60,21 @@ public class FileInstruction extends PluginInstruction {
             .build();
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
     private String message;
-
     @Inject
     private EventBus eventBus;
-
     @Inject(optional = true)
     @Named("instruction.message.file.delete")
     private String messageDelete;
-
-
     @Inject(optional = true)
     @Named("instruction.message.file.copy")
     private String messageCopy;
-
-
     private boolean override;
     private String source;
     private String target;
     private String action;
 
-
     @Override
-    public InstructionStatus process(final PluginContext context) {
+    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("executing FILE Instruction {}", this);
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
@@ -93,15 +88,32 @@ public class FileInstruction extends PluginInstruction {
             return delete();
         }
 
-
         eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
     private InstructionStatus copy() {
-        final File file = new File(source);
+        File file = new File(source);
         if (!file.exists()) {
+            // try to read as resource:
+            final InputStream stream = getClass().getResourceAsStream(source);
+            if (stream != null) {
+                try {
+                    final File destination = new File(target);
+                    if (!destination.exists()) {
+                        Files.createFile(destination.toPath());
+                    }
+                    FileUtils.copyInputStreamToFile(stream, destination);
+                    eventBus.post(new InstructionEvent(this));
+                    return InstructionStatus.SUCCESS;
+                } catch (IOException e) {
+                    log.error("Error while copy resource", e);
+                } finally {
+                    IOUtils.closeQuietly(stream);
+                }
+            }
             log.error("Source file doesn't exists: {}", file);
+            return InstructionStatus.FAILED;
         }
         try {
             FileUtils.copyFile(file, new File(target));
@@ -134,7 +146,20 @@ public class FileInstruction extends PluginInstruction {
 
     @Override
     public void processPlaceholders(final Map<String, Object> data) {
+        final String myTarget = TemplateUtils.replaceTemplateData(target, data);
+        if (myTarget != null) {
+            target = myTarget;
+        }
+        //
+        final String mySource = TemplateUtils.replaceTemplateData(source, data);
+        if (mySource != null) {
+            source = mySource;
+        }
+        // add local data
+        data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
+        data.put(EssentialConst.PLACEHOLDER_TARGET, target);
         // setup messages:
+
         if (Strings.isEmpty(message)) {
             // check message based on action:
             if (action.equals(COPY)) {
@@ -146,15 +171,7 @@ public class FileInstruction extends PluginInstruction {
 
         super.processPlaceholders(data);
         //
-        final String myTarget = TemplateUtils.replaceTemplateData(target, data);
-        if (myTarget != null) {
-            target = myTarget;
-        }
-        //
-        final String mySource = TemplateUtils.replaceTemplateData(source, data);
-        if (mySource != null) {
-            source = mySource;
-        }
+        message = TemplateUtils.replaceTemplateData(source, data);
     }
 
     private boolean valid() {

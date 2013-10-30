@@ -66,13 +66,10 @@ public class PluginInstructionExecutorTest extends BaseTest{
         final Instructions instructions = InstructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
-            final Set<Instruction> insSet = instructionSet.getInstructions();
-            for (Instruction instruction : insSet) {
-                pluginInstructionExecutor.execute(instruction, getContext());
-            }
+            pluginInstructionExecutor.execute(instructionSet, getContext());
         }
 
-        // we had three instrucitons executed
+        // we had 3 executed
         assertEquals(3, listener.getNrInstructions());
 
     }

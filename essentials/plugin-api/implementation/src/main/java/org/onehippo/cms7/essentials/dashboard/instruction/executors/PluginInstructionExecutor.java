@@ -16,9 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction.executors;
 
+import java.util.Set;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 
 /**
@@ -27,9 +30,14 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 public class PluginInstructionExecutor implements InstructionExecutor {
 
 
-    public InstructionStatus execute(final Instruction instruction, PluginContext context) {
-        // TODO "enrich" instructions here
-        return instruction.process(context);
+    public InstructionStatus execute(final InstructionSet set, PluginContext context) {
+
+        InstructionStatus status = InstructionStatus.SUCCESS;
+        final Set<Instruction> instructions = set.getInstructions();
+        for (Instruction instruction : instructions) {
+            status = instruction.process(context, status);
+        }
+        return status;
     }
 
 }

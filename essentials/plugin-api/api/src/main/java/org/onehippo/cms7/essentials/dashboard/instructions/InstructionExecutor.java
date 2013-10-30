@@ -23,5 +23,5 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
  */
 public interface InstructionExecutor {
 
-    InstructionStatus execute(Instruction instruction, PluginContext context);
+    InstructionStatus execute(InstructionSet instruction, PluginContext context);
 }
