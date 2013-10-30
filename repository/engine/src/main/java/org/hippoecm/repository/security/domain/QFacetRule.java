@@ -286,16 +286,20 @@ public class QFacetRule implements Serializable {
             return false;
         }
         QFacetRule other = (QFacetRule) obj;
-        return facet.equals(other.getFacet()) && value.equals(other.getValue()) && (equals == other.isEqual());
+        return facet.equals(other.facet) && value.equals(other.value) && (equals == other.equals) && type == other.type && optional == other.optional;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = this.toString().hashCode();
+        if (hash != 0) {
+            return hash;
         }
+        int result = type;
+        result = 31 * result + (facet != null ? facet.hashCode() : 0);
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (equals ? 1 : 0);
+        result = 31 * result + (optional ? 1 : 0);
+        hash = result;
         return hash;
     }
 }
