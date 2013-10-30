@@ -89,8 +89,6 @@ public class InstructionParserTest {
         // test ordering
         final Iterator<Instruction> iterator = mySet.iterator();
         for (int i = 0; i < mySet.size(); i++) {
-
-
             final Instruction next = iterator.next();
             final int isMod3 = i % 3;
             if (isMod3 == 0) {
@@ -98,12 +96,7 @@ public class InstructionParserTest {
             } else {
                 assertTrue(next.getMessage().equals(String.format("FILE%d", i)));
             }
-
         }
-
-
-
-
     }
 
     private void addInstructions(final PluginInstructionSet pluginInstructionSet) {
@@ -117,7 +110,10 @@ public class InstructionParserTest {
             }
             pluginInstructionSet.addInstruction(instruction);
         }
+    }
 
-
+    @Test
+    public void initTest() {
+        assertTrue(true);
     }
 }

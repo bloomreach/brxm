@@ -40,9 +40,10 @@ public class FileInstructionTest extends BaseTest {
     public static final String TARGET = createPlaceHolder(EssentialConst.PLACEHOLDER_PROJECT_ROOT) + "/instruction_file_copy.txt";
 
     @Inject
-    InstructionExecutor executor;
+    private InstructionExecutor executor;
     @Inject
-    FileInstruction instruction;
+    private FileInstruction instruction;
+
 
     private static String createPlaceHolder(final String placeholderProjectRoot) {
         return "${" + placeholderProjectRoot + '}';

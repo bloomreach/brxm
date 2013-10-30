@@ -29,11 +29,17 @@ import javax.xml.bind.Unmarshaller;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
 import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.model.PluginNamespaceMapper;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @version "$Id$"
@@ -47,7 +53,18 @@ public final class InstructionParser {
         try {
             final JAXBContext context = JAXBContext.newInstance(PluginInstructions.class);
             final Unmarshaller unmarshaller = context.createUnmarshaller();
-            return  (Instructions) unmarshaller.unmarshal(new StringReader(content));
+            final Instructions instructions = (Instructions) unmarshaller.unmarshal(new StringReader(content));
+            final Injector injector = Guice.createInjector(new PropertiesModule(), EventBusModule.getInstance());
+            final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
+            for (InstructionSet instructionSet : instructionSets) {
+                final Set<Instruction> myInstr = instructionSet.getInstructions();
+                for (Instruction instruction : myInstr) {
+                    injector.injectMembers(instruction);
+                }
+            }
+
+            injector.injectMembers(instructions);
+            return instructions;
 
         } catch (JAXBException e) {
             log.error("Error parsing instruction", e);

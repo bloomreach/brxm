@@ -61,14 +61,16 @@ public class FileInstruction extends PluginInstruction {
 
     @Inject
     private EventBus eventBus;
-    @Inject
+
+    @Inject(optional = true)
     @Named("instruction.message.file.delete")
     private String messageDelete;
 
 
-    @Inject
+    @Inject(optional = true)
     @Named("instruction.message.file.copy")
     private String messageCopy;
+
 
     private boolean override;
     private String source;
