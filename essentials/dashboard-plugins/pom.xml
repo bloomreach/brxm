@@ -72,9 +72,16 @@
         <version>${hippo-dashboard-plugin-api.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.onehippo.cms7.essentials</groupId>
+          <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+          <version>${hippo-dashboard-plugin-api.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.onehippo.cms7.essentials</groupId>
         <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
         <version>${hippo-dashboard-plugin-api.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
