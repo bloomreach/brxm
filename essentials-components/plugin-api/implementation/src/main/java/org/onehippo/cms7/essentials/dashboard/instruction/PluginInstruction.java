@@ -33,6 +33,8 @@ import com.google.inject.Injector;
 @XmlTransient
 public abstract class PluginInstruction implements Instruction {
 
+    public static final String COPY = "copy";
+    public static final String DELETE = "delete";
 
     protected PluginInstruction() {
         final Injector injector = Guice.createInjector(EventBusModule.getInstance());
