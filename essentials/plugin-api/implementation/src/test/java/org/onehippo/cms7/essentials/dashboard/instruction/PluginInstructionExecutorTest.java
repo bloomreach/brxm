@@ -19,40 +19,29 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.onehippo.cms7.essentials.TestPluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
  */
-public class PluginInstructionExecutorTest extends BaseTest{
+public class PluginInstructionExecutorTest extends BaseTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
-
-
     @Inject
     private InstructionsEventListener listener;
-
-
     @Inject
     private PluginInstructionExecutor pluginInstructionExecutor;
 

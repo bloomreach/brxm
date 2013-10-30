@@ -558,6 +558,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/XmlInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParserTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtilsTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtilsTest.java -text
@@ -581,6 +582,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/utils/inject/TestEventsListener.java -text
 plugin-api/implementation/src/test/resources/TestMockBean.java -text
 plugin-api/implementation/src/test/resources/cms-pom.xml -text
+plugin-api/implementation/src/test/resources/instruction_xml_file.xml -text
 plugin-api/implementation/src/test/resources/instructions.xml -text
 plugin-api/implementation/src/test/resources/log4j.xml -text
 plugin-api/implementation/src/test/resources/news_template.xml -text

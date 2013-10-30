@@ -52,8 +52,7 @@ import com.google.inject.name.Named;
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
 
-    public static final String COPY = "copy";
-    public static final String DELETE = "delete";
+
     public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
             .add(COPY)
             .add(DELETE)
@@ -69,7 +68,7 @@ public class FileInstruction extends PluginInstruction {
     @Inject(optional = true)
     @Named("instruction.message.file.copy")
     private String messageCopy;
-    private boolean override;
+    private boolean overwrite;
     private String source;
     private String target;
     private String action;
@@ -94,13 +93,18 @@ public class FileInstruction extends PluginInstruction {
     }
 
     private InstructionStatus copy() {
+        final File destination = new File(target);
+        if (!overwrite && destination.exists()) {
+            log.info("File already exists {}", destination);
+            return InstructionStatus.SKIPPED;
+        }
         File file = new File(source);
         if (!file.exists()) {
             // try to read as resource:
             final InputStream stream = getClass().getResourceAsStream(source);
             if (stream != null) {
                 try {
-                    final File destination = new File(target);
+
                     if (!destination.exists()) {
                         Files.createFile(destination.toPath());
                     }
@@ -117,7 +121,7 @@ public class FileInstruction extends PluginInstruction {
             return InstructionStatus.FAILED;
         }
         try {
-            FileUtils.copyFile(file, new File(target));
+            FileUtils.copyFile(file, destination);
             sendEvents();
             return InstructionStatus.SUCCESS;
         } catch (IOException e) {
@@ -190,12 +194,12 @@ public class FileInstruction extends PluginInstruction {
     }
 
     @XmlAttribute
-    public boolean isOverride() {
-        return override;
+    public boolean isOverwrite() {
+        return overwrite;
     }
 
-    public void setOverride(final boolean override) {
-        this.override = override;
+    public void setOverwrite(final boolean overwrite) {
+        this.overwrite = overwrite;
     }
 
     @XmlAttribute
@@ -242,7 +246,7 @@ public class FileInstruction extends PluginInstruction {
     public String toString() {
         final StringBuilder sb = new StringBuilder("FileInstruction{");
         sb.append("message='").append(message).append('\'');
-        sb.append(", override=").append(override);
+        sb.append(", overwrite=").append(overwrite);
         sb.append(", source='").append(source).append('\'');
         sb.append(", target='").append(target).append('\'');
         sb.append(", action='").append(action).append('\'');

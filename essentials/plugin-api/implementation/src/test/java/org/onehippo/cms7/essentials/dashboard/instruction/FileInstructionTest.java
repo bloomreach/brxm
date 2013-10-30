@@ -47,26 +47,24 @@ public class FileInstructionTest extends BaseTest {
 
     @Test
     public void testProcess() throws Exception {
-        copyInstruction.setAction(FileInstruction.COPY);
+        copyInstruction.setAction(PluginInstruction.COPY);
         copyInstruction.setSource(SOURCE);
         copyInstruction.setTarget(TARGET);
         final InstructionSet set = new PluginInstructionSet();
         set.addInstruction(copyInstruction);
         InstructionStatus status = executor.execute(set, getContext());
-        assertTrue(status == InstructionStatus.SUCCESS);
-        // make sure all placeholders
+        assertTrue(status == InstructionStatus.SUCCESS || status == InstructionStatus.SKIPPED);
         assertTrue(copyInstruction.getMessage().indexOf('$') == -1);
         //############################################
         // DELETE
         //############################################
-        deleteInstruction.setAction(FileInstruction.DELETE);
+        deleteInstruction.setAction(PluginInstruction.DELETE);
         deleteInstruction.setTarget(TARGET);
         final InstructionSet deleteSet = new PluginInstructionSet();
-        deleteSet.addInstruction(copyInstruction);
+        deleteSet.addInstruction(deleteInstruction);
         status = executor.execute(deleteSet, getContext());
         assertTrue(status == InstructionStatus.SUCCESS);
-        // make sure all placeholders
-        assertTrue(copyInstruction.getMessage().indexOf('$') == -1);
+        assertTrue(deleteInstruction.getMessage().indexOf('$') == -1);
 
 
     }
