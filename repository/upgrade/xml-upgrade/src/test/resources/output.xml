@@ -21,19 +21,61 @@
   <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>mix:referenceable</sv:value>
   </sv:property>
-  <sv:node sv:name="myarticle1">
+  <sv:node sv:name="asset">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:handle</sv:value>
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
       <sv:value>mix:referenceable</sv:value>
     </sv:property>
-    <sv:node sv:name="myarticle1">
+    <sv:node sv:name="asset">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>testcontent:article</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:node sv:name="document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>testcontent:article</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hippostd:state" sv:type="String">
+        <sv:value>published</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="document">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>testcontent:article</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>mix:versionable</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hippostd:state" sv:type="String">
+        <sv:value>unpublished</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="document">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>testcontent:article</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+        <sv:value>hippo:skipindex</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="hippostd:state" sv:type="String">
+        <sv:value>draft</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

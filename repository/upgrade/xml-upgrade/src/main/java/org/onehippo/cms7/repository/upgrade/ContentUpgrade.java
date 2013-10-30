@@ -27,6 +27,8 @@ import java.util.List;
 import de.pdark.decentxml.Document;
 import de.pdark.decentxml.Element;
 import de.pdark.decentxml.Namespace;
+import de.pdark.decentxml.Node;
+import de.pdark.decentxml.Text;
 import de.pdark.decentxml.XMLIOSource;
 import de.pdark.decentxml.XMLParseException;
 import de.pdark.decentxml.XMLParser;
@@ -80,13 +82,20 @@ public class ContentUpgrade {
     private void processNode(Element element, boolean inDocument) {
         String primaryType = null;
         final List<Element> properties = element.getChildren("property", SV);
+        Element mixins = null;
+        String state = null;
         for (Element property : properties) {
             String propName = property.getAttribute("name", SV).getValue();
             if ("jcr:primaryType".equals(propName)) {
                 primaryType = getPrimaryType(property);
             } else if ("jcr:mixinTypes".equals(propName)) {
-                convertMixins(property, inDocument);
+                mixins = property;
+            } else if ("hippostd:state".equals(propName)) {
+                state = property.getChild("value", SV).getText();
             }
+        }
+        if (mixins != null) {
+            convertMixins(mixins, inDocument, state);
         }
 
         if ("hippo:handle".equals(primaryType)) {
@@ -102,19 +111,52 @@ public class ContentUpgrade {
         return property.getChild("value", SV).getText();
     }
 
-    private void convertMixins(Element property, boolean doc) {
+    private void convertMixins(Element property, boolean doc, final String state) {
+        boolean hasSkipIndex = false;
         for (Element value : property.getChildren("value", SV)) {
             String mixin = value.getText();
             if ("hippo:hardhandle".equals(mixin)) {
                 value.setText("mix:referenceable");
             } else if ("hippo:harddocument".equals(mixin)) {
-                if (doc) {
+                if (doc && "unpublished".equals(state)) {
                     value.setText("mix:versionable");
                 } else {
                     value.setText("mix:referenceable");
                 }
+            } else if ("hippo:skipindex".equals(mixin)) {
+                hasSkipIndex = true;
             }
         }
+        if ("draft".equals(state) && !hasSkipIndex) {
+            addSkipIndex(property);
+        }
+    }
+
+    private void addSkipIndex(final Element property) {
+        final List<Node> children = property.getNodes();
+        int lastValue = children.size() - 1;
+        for (; lastValue >= 0; lastValue--) {
+            if (children.get(lastValue) instanceof Element) {
+                break;
+            }
+        }
+        int lastText = lastValue - 1;
+        for (; lastText >= 0; lastText--) {
+            if (children.get(lastText) instanceof Text) {
+                break;
+            }
+        }
+        final Element value = new Element("value", SV);
+        value.setBeginName("sv:value");
+        value.setEndName("sv:value");
+        value.addNode(new Text("hippo:skipindex"));
+        if (lastText >= 0) {
+            property.addNode(lastValue + 1, children.get(lastText).copy());
+        } else {
+            property.addNode(lastValue + 1, new Text("\n"));
+        }
+        lastValue++;
+        property.addNode(lastValue + 1, value);
     }
 
     public static void main(String[] args) throws IOException {
