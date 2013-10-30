@@ -23,6 +23,7 @@
     <xs:sequence>
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -34,9 +35,14 @@
   -->
   <xs:complexType name="fileType" mixed="true">
     <xs:attribute use="required" name="action" type="fileActionType" default="copy"/>
-    <xs:attribute use="optional" name="source" type="xs:string"/>
+    <xs:attribute use="optional" name="source" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Source file. We'll first try to check if file exist on a file system and copy it, if not, we'll try to fetch it from the classpath</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 
   <xs:complexType name="xmlType" mixed="true">
@@ -44,15 +50,35 @@
     <xs:attribute use="optional" name="source" type="xs:string"/>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
+  </xs:complexType>
+  <xs:annotation>
+    <xs:documentation source="xmlTe">This is the business description</xs:documentation>
+    <xs:documentation source="TechnicalDescription">This is the business description</xs:documentation>
+  </xs:annotation>
+  <xs:complexType name="folderType" mixed="true">
+    <xs:attribute use="required" name="path" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>Absolute path like /content/documents/news/2012</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute use="required" name="template" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>NOTE: template must have following name: ${name}</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
 
 
-<!--  <xs:complexType name="instructionsSet" mixed="true">
-    <xs:attribute use="required" name="action" type="fileActionType" default="copy"/>
-    <xs:attribute use="optional" name="source" type="xs:string"/>
-    <xs:attribute use="optional" name="target" type="xs:string"/>
-    <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
-  </xs:complexType>-->
+  <!--  <xs:complexType name="instructionsSet" mixed="true">
+      <xs:attribute use="required" name="action" type="fileActionType" default="copy"/>
+      <xs:attribute use="optional" name="source" type="xs:string"/>
+      <xs:attribute use="optional" name="target" type="xs:string"/>
+      <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
+    </xs:complexType>-->
 
   <!--
     //############################################
@@ -60,9 +86,9 @@
     //############################################
   -->
   <xs:complexType name="instructionsType">
-    <xs:all minOccurs="0" maxOccurs="1">
-      <xs:element type="instructionsSetType" name="instructionSet" minOccurs="1" maxOccurs="1"/>
-    </xs:all>
+    <xs:sequence minOccurs="0"maxOccurs="unbounded">
+      <xs:element type="instructionsSetType" name="instructionSet"  />
+    </xs:sequence>
   </xs:complexType>
 
 </xs:schema>

@@ -20,11 +20,15 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
@@ -36,6 +40,8 @@ public abstract class PluginInstruction implements Instruction {
     public static final String COPY = "copy";
     public static final String DELETE = "delete";
 
+    @Inject
+    private EventBus eventBus;
     protected PluginInstruction() {
         final Injector injector = Guice.createInjector(EventBusModule.getInstance());
         injector.injectMembers(this);
@@ -49,5 +55,10 @@ public abstract class PluginInstruction implements Instruction {
         }
     }
 
+
+    protected void sendEvents() {
+        eventBus.post(new InstructionEvent(this));
+        eventBus.post(new DisplayEvent(getMessage()));
+    }
 
 }

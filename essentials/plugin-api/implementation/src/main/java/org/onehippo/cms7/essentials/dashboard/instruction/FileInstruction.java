@@ -132,11 +132,6 @@ public class FileInstruction extends PluginInstruction {
 
     }
 
-    private void sendEvents() {
-        eventBus.post(new InstructionEvent(this));
-        eventBus.post(new DisplayEvent(message));
-    }
-
     private InstructionStatus delete() {
         try {
             Path path = new File(target).toPath();

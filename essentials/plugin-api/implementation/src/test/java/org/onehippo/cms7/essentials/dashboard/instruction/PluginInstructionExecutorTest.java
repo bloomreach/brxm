@@ -60,8 +60,8 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
             pluginInstructionExecutor.execute(instructionSet, getContext());
         }
 
-        // we had 5 executed, see /instructions.xml, 4 file and one XML instruction
-        assertEquals(4, listener.getNrInstructions());
+        // we had 5 executed, see /instructions.xml, 2 file and 2 XML instructions and 1 folder
+        assertEquals(5, listener.getNrInstructions());
 
     }
 }

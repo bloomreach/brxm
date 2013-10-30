@@ -6,5 +6,6 @@
     <file action="delete" target="${projectRoot}/test_cnd2.cnd"/>
     <xml action="copy" source="/instruction_xml_file.xml" target="/"/>
     <xml action="delete" target="/testNode"/>
+    <folder path="/foo/bar/foobar" template="/my_folder_template.xml"/>
   </instructionSet>
 </instructions>

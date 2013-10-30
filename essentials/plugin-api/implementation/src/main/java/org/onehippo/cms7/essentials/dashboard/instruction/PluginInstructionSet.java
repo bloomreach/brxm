@@ -36,7 +36,10 @@ public class PluginInstructionSet implements InstructionSet {
 
     private Set<Instruction> instructions = new LinkedHashSet<>();
 
-    @XmlElementRefs({@XmlElementRef(type = XmlInstruction.class), @XmlElementRef(type = FileInstruction.class)})
+    @XmlElementRefs({
+            @XmlElementRef(type = XmlInstruction.class),
+            @XmlElementRef(type = NodeFolderInstruction.class),
+            @XmlElementRef(type = FileInstruction.class)})
     @Override
     public Set<Instruction> getInstructions() {
         return instructions;
