@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
@@ -26,7 +23,7 @@ import com.google.inject.Inject;
  * @version "$Id$"
  */
 public class TestEventsListener {
-    private static Logger log = LoggerFactory.getLogger(TestEventsListener.class);
+
 
     @Inject
     private TestEventsApplication application;

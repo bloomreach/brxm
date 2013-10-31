@@ -7,15 +7,12 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: PluginConfigDocument.java 171585 2013-07-24 16:57:57Z mmilicevic $"
  */
 public class PluginConfigDocument implements ConfigDocument {
 
-    private static Logger log = LoggerFactory.getLogger(PluginConfigDocument.class);
+
     private final String name;
     private final List<ConfigProperty> properties = new LinkedList<>();
 

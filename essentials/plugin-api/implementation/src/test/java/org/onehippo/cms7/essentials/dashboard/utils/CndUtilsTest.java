@@ -7,8 +7,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +17,6 @@ public class CndUtilsTest extends BaseRepositoryTest {
 
     public static final String TEST_URI = "http://www.test.com";
     public static final String TEST_PREFX = "test";
-    private static Logger log = LoggerFactory.getLogger(CndUtilsTest.class);
 
     @Test
     public void testRegisterNamespaceUri() throws Exception {

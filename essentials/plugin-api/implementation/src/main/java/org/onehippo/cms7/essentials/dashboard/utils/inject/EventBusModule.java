@@ -20,7 +20,6 @@ import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventL
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
-import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 
@@ -39,6 +38,7 @@ import com.google.inject.spi.TypeListener;
  */
 public class EventBusModule extends AbstractModule {
 
+    @SuppressWarnings("StaticVariableOfConcreteClass")
     private static final EventBusModule instance = new EventBusModule();
 
     private final transient EventBus eventBus = new EventBus("Essentials Event Bus");

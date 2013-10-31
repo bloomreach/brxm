@@ -16,8 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import javax.jcr.Node;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
@@ -28,8 +26,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -46,7 +42,7 @@ public class XmlInstructionTest extends BaseRepositoryTest {
      * See instruction_xml_file.xml file
      */
     private static final String NODE_NAME = "testNode";
-    private static Logger log = LoggerFactory.getLogger(XmlInstructionTest.class);
+
     @Inject
     private InstructionExecutor executor;
     @Inject

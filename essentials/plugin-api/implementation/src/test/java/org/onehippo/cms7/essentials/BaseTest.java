@@ -17,8 +17,6 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -44,7 +42,6 @@ public class BaseTest {
             .add("hippoplugins:version")
             .add("hippoplugins:dependency")
             .build();
-    private static Logger log = LoggerFactory.getLogger(BaseTest.class);
     private String oldSystemDir;
     private PluginContext context;
     private Path projectRoot;

@@ -7,16 +7,13 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: PluginConfigProperty.java 171584 2013-07-24 16:21:10Z mmilicevic $"
  */
 public class PluginConfigProperty implements ConfigProperty {
 
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
-    private static Logger log = LoggerFactory.getLogger(PluginConfigProperty.class);
+
     private String propertyName;
     private List<String> propertyValues;
 

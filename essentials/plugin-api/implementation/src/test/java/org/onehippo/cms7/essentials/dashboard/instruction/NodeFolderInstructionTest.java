@@ -21,8 +21,6 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -33,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class NodeFolderInstructionTest extends BaseRepositoryTest {
 
-    private static Logger log = LoggerFactory.getLogger(NodeFolderInstructionTest.class);
+
     @Inject
     private NodeFolderInstruction instruction;
     @Inject

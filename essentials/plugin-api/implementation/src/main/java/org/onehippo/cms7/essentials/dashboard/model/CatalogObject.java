@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Wrapper for HST catalog items
  * TODO: move to API?
@@ -15,7 +12,8 @@ import org.slf4j.LoggerFactory;
 public class CatalogObject implements Serializable {
 
     public static final String PRIMARY_TYPE = "hst:containeritemcomponent";
-    private static Logger log = LoggerFactory.getLogger(CatalogObject.class);
+    private static final long serialVersionUID = 1L;
+
     private String siteName;
     private String name;
     private String componentClassName;

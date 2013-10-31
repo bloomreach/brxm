@@ -10,15 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: MemoryBean.java 172944 2013-08-06 16:37:37Z mmilicevic $"
  */
 public class MemoryBean {
 
 
+    @SuppressWarnings("StaticVariableOfConcreteClass")
     public static final MemoryBean HIPPO_DOCUMENT = new MemoryBean();
 
     static {
@@ -28,7 +26,7 @@ public class MemoryBean {
         HIPPO_DOCUMENT.setName("HippoDocument");
     }
 
-    private static Logger log = LoggerFactory.getLogger(MemoryBean.class);
+
     private boolean builtInType = false;
     private List<MemoryProperty> properties = new ArrayList<>();
     private MemoryBean beans;

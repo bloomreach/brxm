@@ -7,9 +7,6 @@ package org.onehippo.cms7.essentials.dashboard.utils.code;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Used
  *
@@ -17,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ComponentInformation {
 
-    private static Logger log = LoggerFactory.getLogger(ComponentInformation.class);
+
     private final List<String> imports = new ArrayList<>();
     private String extendingComponentName;
     private String targetClassName;
