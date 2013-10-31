@@ -3788,6 +3788,12 @@ plugin-dashboard/src/main/webapp/css/.idea
 plugin-dashboard/src/main/webapp/css/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/css/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/css/target
+plugin-dashboard/src/main/webapp/fonts/*.iml
+plugin-dashboard/src/main/webapp/fonts/.DS_Store
+plugin-dashboard/src/main/webapp/fonts/.idea
+plugin-dashboard/src/main/webapp/fonts/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/fonts/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/fonts/target
 plugin-dashboard/src/main/webapp/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/images/*.iml
 plugin-dashboard/src/main/webapp/images/.DS_Store
