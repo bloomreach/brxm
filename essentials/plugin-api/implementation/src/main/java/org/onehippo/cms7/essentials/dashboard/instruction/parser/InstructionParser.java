@@ -17,22 +17,16 @@
 package org.onehippo.cms7.essentials.dashboard.instruction.parser;
 
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instruction.PluginInstructions;
-import org.onehippo.cms7.essentials.dashboard.instruction.XmlInstruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.model.PluginNamespaceMapper;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;

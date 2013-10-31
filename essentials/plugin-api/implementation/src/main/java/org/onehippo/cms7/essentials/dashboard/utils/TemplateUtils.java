@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;

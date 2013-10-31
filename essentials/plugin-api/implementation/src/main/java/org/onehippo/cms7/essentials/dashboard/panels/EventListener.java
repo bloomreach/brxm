@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.panels;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 

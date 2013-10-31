@@ -8,9 +8,6 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: Screenshot.java 171742 2013-07-25 16:39:14Z mmilicevic $"
  */

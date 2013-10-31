@@ -4,18 +4,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import com.google.common.base.Strings;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.onehippo.cms7.essentials.dashboard.DependencyType;
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,6 +15,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.onehippo.cms7.essentials.dashboard.DependencyType;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.common.PackageVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id: ProjectUtils.java 164013 2013-05-11 14:05:39Z mmilicevic $"

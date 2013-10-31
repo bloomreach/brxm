@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;

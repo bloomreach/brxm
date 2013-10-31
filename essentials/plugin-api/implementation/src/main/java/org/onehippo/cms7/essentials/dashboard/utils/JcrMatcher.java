@@ -3,9 +3,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Interface for iterating through a set of nodes to match. Used currently in org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes
  * @version "$Id$"

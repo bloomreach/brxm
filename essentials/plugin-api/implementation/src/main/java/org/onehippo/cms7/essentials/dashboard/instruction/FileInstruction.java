@@ -31,7 +31,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;

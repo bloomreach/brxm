@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.dashboard.event;
 
 import javax.jcr.Item;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.slf4j.Logger;

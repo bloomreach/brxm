@@ -13,11 +13,11 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.config.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.config.Asset;
 import org.onehippo.cms7.essentials.dashboard.config.Screenshot;
 
-import static org.onehippo.cms7.essentials.dashboard.utils.EssentialConst.*;
+import static org.onehippo.cms7.essentials.dashboard.utils.EssentialConst.URI_ESSENTIALS_PLUGIN;
 
 /**
  * @version "$Id: EssentialsPlugin.java 174057 2013-08-16 13:45:41Z dvandiepen $"
