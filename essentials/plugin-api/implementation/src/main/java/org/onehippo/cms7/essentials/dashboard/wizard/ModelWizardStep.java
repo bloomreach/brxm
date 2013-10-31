@@ -16,16 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.wizard;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id$"
  */
 public class ModelWizardStep<T> extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(ModelWizardStep.class);
+
 
     final T model;
     public ModelWizardStep(final String title, final T model) {

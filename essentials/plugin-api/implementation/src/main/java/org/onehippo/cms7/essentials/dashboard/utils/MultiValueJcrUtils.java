@@ -8,16 +8,12 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Common Utils for multi valued JCR properties.
  * @version "$Id$"
  */
 public class MultiValueJcrUtils {
 
-    private static Logger log = LoggerFactory.getLogger(MultiValueJcrUtils.class);
 
       /*
     *

@@ -6,8 +6,6 @@ import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id: PluginFeedbackPanel.java 171536 2013-07-24 12:41:00Z mmilicevic $"
@@ -15,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class PluginFeedbackPanel extends FeedbackPanel {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(PluginFeedbackPanel.class);
+
 
     public PluginFeedbackPanel(final String id, final IFeedbackMessageFilter filter) {
         super(id, filter);

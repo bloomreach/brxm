@@ -21,8 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.google.common.base.Strings;
-
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -34,6 +32,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -166,7 +166,7 @@ public class DropdownPanel extends Panel {
         return dropDown;
     }
 
-    public IChoiceRenderer getChoiceRenderer() {
+    public IChoiceRenderer<?> getChoiceRenderer() {
         return dropDown.getChoiceRenderer();
     }
 }
