@@ -15,12 +15,8 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Item;
