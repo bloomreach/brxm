@@ -69,12 +69,7 @@ public class HstNodeImpl implements HstNode {
     private boolean stale = false;
     private boolean staleChildren = false;
     private boolean childOrderedReload = false;
-    
-    /**
-     * when <code>true</code>, is means this HstNode is inherited from some other structure
-     */
-    private boolean inherited = false; 
-    
+
     public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChildren) throws RepositoryException {
         this.parent = parent;
         provider = new JCRValueProviderImpl(jcrNode, false, true, false);
@@ -85,48 +80,6 @@ public class HstNodeImpl implements HstNode {
         // detach the backing jcr node now we are done.       
         stale = false;
         provider.detach();
-    }
-
-    /**
-     * This is a copy constructor. A copy of <code>node</code> is created
-     * 
-     * Note: This deep copy does NOT copy the parent field, as this constructor is used to copy descendant structures. 
-     * Also it does not make a kind of clone of the JCRValueProvider: that one is still shared.
-     * 
-     * It is something between a deep and shallow copy: The descendant are copied.
-     * 
-     * Inherited is marked as false
-     * 
-     * @param node
-     */
-    public HstNodeImpl(HstNodeImpl node, HstNode parent) {
-       this(false, node, parent);
-    }
-    
-    /**
-     * This is a copy constructor. A copy of <code>node</code> is created
-     * 
-     * Note: This deep copy does NOT copy the parent field, as this constructor is used to copy descendant structures. 
-     * Also it does not make a kind of clone of the JCRValueProvider: that one is still shared.
-     * 
-     * It is something between a deep and shallow copy: The descendant are copied
-     * 
-     * If <code>inherited</code> equals <code>true</code>, the HstNode's are marked as inherited. 
-     * 
-     * @param node
-     */
-    public HstNodeImpl(boolean inherited, HstNodeImpl node, HstNode parent) {
-        provider = node.provider;
-        nodeTypeName = node.nodeTypeName;
-        stale = node.stale;
-        this.parent = parent;
-        this.inherited = inherited;
-        if(node.children != null) {
-            children = new LinkedHashMap<String, HstNode>(node.children.size() * 4 / 3);
-            for(Entry<String, HstNode> entry : node.children.entrySet()) {
-                children.put(entry.getKey(), new HstNodeImpl(inherited, (HstNodeImpl)entry.getValue(), this));
-            }
-        }
     }
 
     protected void loadChildren(Node jcrNode) throws RepositoryException {
@@ -195,6 +148,12 @@ public class HstNodeImpl implements HstNode {
         HstNode child = children.get(args[0]);
         int i = 1;
         while(i < args.length && child != null) {
+            // instead of recursively invoking #getNode with the next rel path use
+            // code below as this is more efficient as it needs no string parsing
+            if (((HstNodeImpl)child).children == null) {
+                child = null;
+                break;
+            }
             child = ((HstNodeImpl)child).children.get(args[i]);
             i++;
         }
@@ -233,7 +192,7 @@ public class HstNodeImpl implements HstNode {
         if(children == null) {
             return Collections.emptyList();
         }
-        return new ArrayList<HstNode>(children.values());
+        return new ArrayList<>(children.values());
     }
   
     /* (non-Javadoc)
@@ -345,7 +304,7 @@ public class HstNodeImpl implements HstNode {
         Map<String, HstNode> newChildren = new HashMap<>();
         for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
             String childName = jcrChildNode.getName();
-            final HstNode existing = getNode(childName);
+            final HstNode existing = getChild(childName);
             if (existing == null) {
                 newChildren.put(childName, new HstNodeImpl(jcrChildNode, this, true));
             } else {
@@ -360,7 +319,17 @@ public class HstNodeImpl implements HstNode {
             children.clear();
             children.putAll(newChildren);
         }
+    }
 
+    /**
+     * private method that is an efficient variant of getNode(String relPath) as this method does never assume
+     * relative path and never needs to parse the argument
+     */
+    private HstNode getChild(String name) {
+        if(children == null) {
+            return null;
+        }
+        return children.get(name);
     }
 
     private void orderedChildrenReload(Node jcrNode) throws RepositoryException {
@@ -373,11 +342,6 @@ public class HstNodeImpl implements HstNode {
             addNode(hstChildNode.getName(), hstChildNode);
         }
 
-    }
-
-    @Override
-    public boolean isInherited() {
-        return inherited;
     }
 
     @Override
@@ -398,7 +362,7 @@ public class HstNodeImpl implements HstNode {
             pathBuilder.insert(0, cr.getName()).insert(0, "/");
         }
         return this.getClass().getSimpleName() + "[path=" + pathBuilder.toString() + ", nodeTypeName=" + nodeTypeName +
-                ", JcrValueProvider path=" + getValueProvider().getPath() + ", stale=" + stale + ", inherited=" + inherited + "]";
+                ", JcrValueProvider path=" + getValueProvider().getPath() +"]";
     }
 
     

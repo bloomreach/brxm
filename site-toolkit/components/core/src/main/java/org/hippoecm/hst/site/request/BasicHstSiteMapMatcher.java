@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -68,9 +69,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             pathInfo = link.getPath();
         }
         
-        String[] elements = pathInfo.split("/"); 
-        
-        HstSiteMapItem hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(elements[0]);
+        String[] elements = pathInfo.split("/");
+
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+        HstSiteMapItem hstSiteMapItem = siteMap.getSiteMapItem(elements[0]);
         
         HstSiteMapItem matchedSiteMapItem = null;
         if(hstSiteMapItem != null) {
@@ -81,7 +83,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         if(matchedSiteMapItem == null) {
             params.clear();
             // check for partial wildcard (*.xxx) matcher first
-            for(HstSiteMapItem item : hstSite.getSiteMap().getSiteMapItems()) {
+            for(HstSiteMapItem item : siteMap.getSiteMapItems()) {
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsWildCard() && service.patternMatch(elements[0], service.getPrefix(), service.getPostfix())) {
                     String parameter = getStrippedParameter((HstSiteMapItemService)service, elements[0]);
@@ -99,7 +101,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         if(matchedSiteMapItem == null) {
             params.clear();
             // check for a wildcard (*) matcher :
-            hstSiteMapItem = hstSite.getSiteMap().getSiteMapItem(WILDCARD);
+            hstSiteMapItem = siteMap.getSiteMapItem(WILDCARD);
             if(hstSiteMapItem != null) {
                 params.put(String.valueOf(params.size()+1), elements[0]);
                 matchedSiteMapItem =  resolveMatchingSiteMap(hstSiteMapItem, params, 1, elements);
@@ -110,7 +112,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         if(matchedSiteMapItem == null) {
             params.clear();
          // check for partial wildcard (**.xxx) matcher first
-            for(HstSiteMapItem item : hstSite.getSiteMap().getSiteMapItems()) {
+            for(HstSiteMapItem item : siteMap.getSiteMapItems()) {
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
                     String parameter = getStrippedParameter((HstSiteMapItemService)service, pathInfo);
@@ -126,7 +128,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
         if(matchedSiteMapItem == null) {
             params.clear();
             // check for a wildcard (**) matcher :
-            HstSiteMapItem hstSiteMapItemAny = hstSite.getSiteMap().getSiteMapItem(ANY);
+            HstSiteMapItem hstSiteMapItemAny = siteMap.getSiteMapItem(ANY);
             if(hstSiteMapItemAny == null) {
                 log.warn("Did not find a matching sitemap item for path '{}', Mount '{}' and Host '"+resolvedMount.getResolvedVirtualHost().getResolvedHostName()+"'" +
                         ". Return null", pathInfo, resolvedMount.getMount().getParent() == null ? "hst:root" : resolvedMount.getMount().getMountPath() );

@@ -17,34 +17,49 @@ package org.hippoecm.hst.configuration.cache;
 
 import org.junit.Test;
 
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 
 public class TestHstConfigurationLoadingCache extends AbstractHstLoadingCacheTestCase {
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetRootConfigPathFromInvalidEvent() {
-        hstConfigurationLoadingCache.getRootConfigPath(new HstEvent("invalid", false));
-
+        assertNull(hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("invalid", false)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetRootConfigPathFromInvalidEvent2() {
-        hstConfigurationLoadingCache.getRootConfigPath(new HstEvent("/hst:hst/hst:configurations/", false));
+        assertNull( hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/", false)));
     }
 
     @Test
     public void testGetRootConfigPathFromEvents() {
-        String rootConfigEventPath = hstConfigurationLoadingCache.getRootConfigPath(new HstEvent("/hst:hst/hst:configurations/foo", false));
+        String rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo", false));
         assertEquals("/hst:hst/hst:configurations/foo", rootConfigEventPath);
 
-        rootConfigEventPath = hstConfigurationLoadingCache.getRootConfigPath(new HstEvent("/hst:hst/hst:configurations/foo/", false));
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo/", false));
         assertEquals("/hst:hst/hst:configurations/foo", rootConfigEventPath);
 
-        rootConfigEventPath = hstConfigurationLoadingCache.getRootConfigPath(new HstEvent("/hst:hst/hst:configurations/foo/bar", false));
-        assertEquals("/hst:hst/hst:configurations/foo", rootConfigEventPath);
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo/bar", false));
+        assertEquals("/hst:hst/hst:configurations/foo/bar", rootConfigEventPath);
 
-        rootConfigEventPath = hstConfigurationLoadingCache.getRootConfigPath(new HstEvent("/hst:hst/hst:configurations/foo[1]", false));
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo/bar/lux", false));
+        assertEquals("/hst:hst/hst:configurations/foo/bar", rootConfigEventPath);
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo/bar/lux/", false));
+        assertEquals("/hst:hst/hst:configurations/foo/bar", rootConfigEventPath);
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo[1]", false));
         assertEquals("/hst:hst/hst:configurations/foo[1]", rootConfigEventPath);
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo[1]/bar", false));
+        assertEquals("/hst:hst/hst:configurations/foo[1]/bar", rootConfigEventPath);
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo[1]/bar/lux", false));
+        assertEquals("/hst:hst/hst:configurations/foo[1]/bar", rootConfigEventPath);
+
+        rootConfigEventPath = hstConfigurationLoadingCache.getMainConfigOrRootConfigNodePath(new HstEvent("/hst:hst/hst:configurations/foo[1]/bar/lux/", false));
+        assertEquals("/hst:hst/hst:configurations/foo[1]/bar", rootConfigEventPath);
     }
 }

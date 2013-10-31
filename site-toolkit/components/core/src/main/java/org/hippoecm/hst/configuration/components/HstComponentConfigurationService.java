@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.component.HstURL;
@@ -181,8 +182,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public HstComponentConfigurationService(final HstNode node,
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
-                                            final HstNode referenceableContainers) throws ServiceException {
-        this(node, parent, rootNodeName, true, referenceableContainers, null);
+                                            final HstNode referenceableContainers,
+                                            final boolean inherited) {
+        this(node, parent, rootNodeName, true, referenceableContainers, inherited, null);
     }
 
     /**
@@ -194,13 +196,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                             final String rootNodeName,
                                             final boolean traverseDescendants,
                                             final HstNode referenceableContainers,
-                                            final String explicitName) throws ServiceException {
+                                            final boolean inherited,
+                                            final String explicitName) {
 
 
         this.canonicalStoredLocation = StringPool.get(node.getValueProvider().getCanonicalPath());
         this.canonicalIdentifier = StringPool.get(node.getValueProvider().getIdentifier());
-        this.inherited = node.isInherited();
 
+        this.inherited =  inherited;
         this.parent = parent;
 
 
@@ -233,7 +236,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             type = Type.CONTAINER_ITEM_COMPONENT;
             componentFilterTag = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_FILTER_TAG);
         } else {
-            throw new ServiceException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
+            throw new ModelLoadingException("Unknown componentType '" + node.getNodeTypeName() + "' for '" + canonicalStoredLocation + "'. Cannot build configuration.");
         }
         this.referenceName = StringPool.get(node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME));
         
@@ -241,7 +244,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         
         if(referenceComponent != null) {
             if (type == Type.CONTAINER_COMPONENT) {
-                throw new ServiceException("ContainerComponents are not allowed to have a reference. Pls fix the" +
+                throw new ModelLoadingException("ContainerComponents are not allowed to have a reference. Pls fix the" +
                         "configuration for '"+canonicalStoredLocation+"'");
             } else if (type == Type.CONTAINER_ITEM_COMPONENT) {
                 log.error("Component '{}' is not allowed to have a '{}' property as this is not supported for " +
@@ -360,15 +363,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     // the name of the component node
                     String explicitName = child.getValueProvider().getName();
                     return new HstComponentConfigurationService(referencedContainerNode,
-                            this, rootNodeName, true, referenceableContainers, explicitName);
+                            this, rootNodeName, true, referenceableContainers, inherited, explicitName);
                 } else {
-                    return new HstComponentConfigurationService(child, this, rootNodeName, true, referenceableContainers, null);
+                    return new HstComponentConfigurationService(child, this, rootNodeName, true, referenceableContainers, inherited, null);
                 }
-            } catch (ServiceException e) {
+            } catch (ModelLoadingException e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Skipping component '{}'", child.getValueProvider().getPath(), e);
+                    log.warn("Skipping component '"+child.getValueProvider().getPath()+"'", e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Skipping component '{}'", child.getValueProvider().getPath());
+                    log.warn("Skipping component '{}' : '{}'", child.getValueProvider().getPath(), e.toString());
                 }
                 return null;
             }
@@ -617,7 +620,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
+            Map<String, HstComponentConfiguration> rootComponentConfigurations) {
         if (child.getReferenceComponent() != null) {
             // populate child component if not yet happened
             child.populateComponentReferences(rootComponentConfigurations, populated);
@@ -670,7 +673,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void populateComponentReferences(Map<String, HstComponentConfiguration> rootComponentConfigurations,
-            List<HstComponentConfiguration> populated) throws ServiceException{
+            List<HstComponentConfiguration> populated) {
         if (populated.contains(this)) {
             return;
         }
@@ -682,7 +685,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                     .get(this.getReferenceComponent());
             if (referencedComp != null) {
                 if(referencedComp == this) {
-                    throw new ServiceException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. Incorrect ComponentId = "+this.getId());
+                    throw new ModelLoadingException("There is a component referencing itself: this is not allowed. The site configuration cannot be loaded. Incorrect ComponentId = "+this.getId());
                 }
                 if (referencedComp.getReferenceComponent() != null) {
                     // populate referenced comp first:
@@ -813,7 +816,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private void combine(HstComponentConfigurationService childToMerge,
             Map<String, HstComponentConfiguration> rootComponentConfigurations,
-            List<HstComponentConfiguration> populated) throws ServiceException {
+            List<HstComponentConfiguration> populated) {
         
         if(this.type == Type.CONTAINER_COMPONENT || childToMerge.type == Type.CONTAINER_COMPONENT) {
             log.warn("Incorrect component configuration: *Container* Components are not allowed to be merged with other " +
@@ -928,7 +931,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     private void addDeepCopy(HstComponentConfigurationService childToMerge, List<HstComponentConfiguration> populated,
-            Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
+            Map<String, HstComponentConfiguration> rootComponentConfigurations) {
 
         String newId = StringPool.get(this.id + "-" + childToMerge.id);
         

@@ -26,8 +26,10 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
@@ -59,41 +61,47 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private Set<String> usedReferenceNames = new HashSet<String>();
     private int autocreatedCounter = 0;
 
-    public HstComponentsConfigurationService(final HstNode configurationNode,
-                                             final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
 
-        id = configurationNode.getValueProvider().getPath();
 
-        HstNode modifiableContainers = configurationNode.getNode(HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS);
-        HstNode components = configurationNode.getNode(HstNodeTypes.NODENAME_HST_COMPONENTS);
-        
-        if (components != null) {
-            log.debug("Initializing the components");
-            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, modifiableContainers);
+    public HstComponentsConfigurationService(final CompositeConfigurationNodes ccn,
+                                             final List<HstComponentConfiguration> commonCatalogItem) throws ModelLoadingException {
+
+        id = ccn.getConfigurationRootNode().getValueProvider().getPath();
+
+        HstNode modifiableContainers = null;
+        final CompositeConfigurationNodes.CompositeConfigurationNode workspace = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        if (workspace != null) {
+            modifiableContainers = workspace.getCompositeChildren().get(HstNodeTypes.NODENAME_HST_CONTAINERS);
         }
 
-        HstNode pages =  configurationNode.getNode(HstNodeTypes.NODENAME_HST_PAGES);
+        final CompositeConfigurationNodes.CompositeConfigurationNode components = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_COMPONENTS);
+
+        final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
+        if (components != null) {
+            log.debug("Initializing the components");
+            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, rootConfigurationPathPrefix, modifiableContainers);
+        }
+
+        final CompositeConfigurationNodes.CompositeConfigurationNode pages = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_PAGES);
+
         if (pages != null) {
             log.debug("Initializing the pages");
-            init(pages, HstNodeTypes.NODENAME_HST_PAGES, modifiableContainers);
+            init(pages, HstNodeTypes.NODENAME_HST_PAGES, rootConfigurationPathPrefix, modifiableContainers);
         }
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
         // are *never* used directly. They are only to be used by the page composer that can drop these containeritems into containers
-        
-        HstNode catalog =  configurationNode.getNode(HstNodeTypes.NODENAME_HST_CATALOG);
+        final CompositeConfigurationNodes.CompositeConfigurationNode catalog = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_CATALOG);
+
         if (catalog != null) {
             log.debug("Initializing the catalog");
-            initCatalog(catalog);
+            initCatalog(catalog, rootConfigurationPathPrefix);
         }
 
-        HstNode commonCatalog = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath() +"/hst:configurations/hst:catalog");
-        if(commonCatalog != null) {
-            // now also load the COMMON catalog
-            log.debug("Initializing the common catalog");
-            initCatalog(commonCatalog);
+        if (commonCatalogItem != null) {
+            availableContainerItems.addAll(commonCatalogItem);
         }
-     
+
         for (HstComponentConfiguration child : childComponents) {
             populateCanonicalComponentConfigurations(child);
         }
@@ -106,12 +114,12 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
          * 4: Adding parameters from parent components to child components and override them when they already are present
          */
         
-        Map<String, HstNode> templateResourceMap = getTemplateResourceMap(configurationNode);
+        Map<String, HstNode> templateResourceMap = getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES));
         enhanceComponentTree(templateResourceMap);
 
     }
 
-    private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) throws ServiceException{
+    private void enhanceComponentTree(Map<String, HstNode> templateResourceMap) {
         // merging referenced components:  to avoid circular population, hold a list of already populated configs
         List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
         for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
@@ -198,21 +206,26 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     /*
      * rootNodeName is either hst:components or hst:pages.
      */
-    private void init(final HstNode node,final  String rootNodeName, final HstNode modifiableContainers) {
-        for (HstNode child : node.getNodes()) {
+    private void init(final CompositeConfigurationNodes.CompositeConfigurationNode node,
+                      final String rootNodeName,
+                      final String rootConfigurationPathPrefix,
+                      final HstNode modifiableContainers) {
+
+        for (HstNode child : node.getCompositeChildren().values()) {
             if (isHstComponentType(child)) {
                 if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                     // add to the used referencenames set
                     usedReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
                 }
                 try {
+                    boolean inherited = !child.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                     HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(child,
-                            null, rootNodeName, modifiableContainers);
+                            null, rootNodeName, modifiableContainers, inherited);
                     childComponents.add(componentConfiguration);
                     log.debug("Added component service with key '{}'", componentConfiguration.getId());
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     if (log.isDebugEnabled()) {
-                        log.warn("Skipping component '{}'", child.getValueProvider().getPath(), e);
+                        log.warn("Skipping component '"+child.getValueProvider().getPath()+"'" , e);
                     } else if (log.isWarnEnabled()) {
                         log.warn("Skipping component '{}' : '{}'", child.getValueProvider().getPath(), e.toString());
                     }
@@ -230,22 +243,24 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
                 || HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(node.getNodeTypeName());
     }
     
-    private void initCatalog(HstNode catalog) {
+    private void initCatalog(final CompositeConfigurationNodes.CompositeConfigurationNode catalog,
+                             final String rootConfigurationPathPrefix) {
         
-        for(HstNode itemPackage :catalog.getNodes()){
+        for(HstNode itemPackage :catalog.getCompositeChildren().values()){
             if(HstNodeTypes.NODETYPE_HST_CONTAINERITEM_PACKAGE.equals(itemPackage.getNodeTypeName())) {
                 for(HstNode containerItem : itemPackage.getNodes()) {
                     if(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT.equals(containerItem.getNodeTypeName()))
                     {
                         try {
+                            boolean inherited = !containerItem.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                             // create a HstComponentConfigurationService that does not traverse to descendant components: this is not needed for the catalog. Hence, the argument 'false'
                             HstComponentConfiguration componentConfiguration = new HstComponentConfigurationService(containerItem,
-                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , false, null, null);
+                                    null, HstNodeTypes.NODENAME_HST_COMPONENTS , false, null, inherited, null);
                             availableContainerItems.add(componentConfiguration);
                             log.debug("Added catalog component to availableContainerItems with key '{}'", componentConfiguration.getId());
-                        } catch (ServiceException e) {
+                        } catch (ModelLoadingException e) {
                             if (log.isDebugEnabled()) {
-                                log.warn("Skipping catalog component '{}'", containerItem.getValueProvider().getPath(), e);
+                                log.warn("Skipping catalog component '"+containerItem.getValueProvider().getPath()+"'", e);
                             } else if (log.isWarnEnabled()) {
                                 log.warn("Skipping catalog component '{}' : '{}'", containerItem.getValueProvider().getPath(), e.toString());
                             }
@@ -263,37 +278,33 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
     }
 
-    private Map<String, HstNode> getTemplateResourceMap(HstNode configurationNode) throws ServiceException {
+    private Map<String, HstNode> getTemplateResourceMap(CompositeConfigurationNodes.CompositeConfigurationNode templateNodes) throws ModelLoadingException {
+        if(templateNodes == null) {
+            throw new ModelLoadingException("Mandatory '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' missing'");
+        }
         Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
-           
-           // templates
-           HstNode hstTemplates = configurationNode.getNode(HstNodeTypes.NODENAME_HST_TEMPLATES);
-           
-           if(hstTemplates == null) {
-               throw new ServiceException("There are no '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' present for the configuration at '"+configurationNode.getValueProvider().getPath()+"'");
-           }
-           
-           for(HstNode template : hstTemplates.getNodes()) {
-               ValueProvider valueProvider = template.getValueProvider();
-               boolean renderPathExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-               boolean scriptExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT);
-               
-               if (!renderPathExisting && !scriptExisting) {
-                   log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", valueProvider.getPath());
-                   continue;
-               }
-               
-               if (renderPathExisting && !scriptExisting) {
-                   String resourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
-                   
-                   if (StringUtils.isBlank(resourcePath)) {
-                       log.warn("Skipping template '{}' because of invalid hst:renderpath value.", valueProvider.getPath());
-                       continue;
-                   }
-               }
-               
-               templateResourceMap.put(valueProvider.getName(), template);
-           }
+
+        for (HstNode template : templateNodes.getCompositeChildren().values()) {
+            ValueProvider valueProvider = template.getValueProvider();
+            boolean renderPathExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+            boolean scriptExisting = valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT);
+
+            if (!renderPathExisting && !scriptExisting) {
+                log.warn("Skipping template '{}' because missing property, either hst:renderpath or hst:script.", valueProvider.getPath());
+                continue;
+            }
+
+            if (renderPathExisting && !scriptExisting) {
+                String resourcePath = valueProvider.getString(HstNodeTypes.TEMPLATE_PROPERTY_RENDERPATH);
+
+                if (StringUtils.isBlank(resourcePath)) {
+                    log.warn("Skipping template '{}' because of invalid hst:renderpath value.", valueProvider.getPath());
+                    continue;
+                }
+            }
+
+            templateResourceMap.put(valueProvider.getName(), template);
+        }
         return templateResourceMap;
     }
 

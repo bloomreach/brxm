@@ -45,6 +45,7 @@ import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.ChannelException.Type;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -231,9 +232,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
         // all the locks are on the preview mount, hence decorate it first
         Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
         channel.setPreviewHstConfigExists(previewMount.getHstSite().hasPreviewConfiguration());
-        Set<String> s = new HashSet<String>();
 
-        Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
+         Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
 
         HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewMount.getHstSite().getConfigurationPath());
         if (channelRootConfigNode != null) {
@@ -247,8 +247,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
             log.error("Expected configuration node at '" + previewMount.getHstSite().getConfigurationPath() + "' but not found.");
         }
 
+        // TODO make lazy : fill in changedBySet only during REST call as normally not needed!!!!
         Set<String> changedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
         changedBySet.addAll(mainConfigNodesLockedBySet);
+        // TODO can we inject here some kind of lazy/future set instead?
         channel.setChangedBySet(changedBySet);
 
         String mountPath = mount.getMountPath();
@@ -288,7 +290,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     private Set<String> getAllUsersWithAContainerLock(final Mount mount) {
         Set<String> usersWithLock = new HashSet<String>();
-        for (HstComponentConfiguration hstComponentConfiguration : mount.getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
+        final HstComponentsConfiguration componentsConfiguration = mount.getHstSite().getComponentsConfiguration();
+        for (HstComponentConfiguration hstComponentConfiguration : componentsConfiguration.getComponentConfigurations().values()) {
             addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
         }
         return usersWithLock;

@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.ServiceException;
@@ -33,8 +35,8 @@ public class HstSiteMapItemHandlersConfigurationService implements HstSiteMapIte
 
     private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHanderConfigurations = new HashMap<String, HstSiteMapItemHandlerConfiguration>();
     
-    public HstSiteMapItemHandlersConfigurationService(HstNode siteMapItemHandlersNode) throws ServiceException {
-        for(HstNode handlerNode : siteMapItemHandlersNode.getNodes()) {
+    public HstSiteMapItemHandlersConfigurationService(final CompositeConfigurationNodes.CompositeConfigurationNode ccn) throws ModelLoadingException {
+        for(HstNode handlerNode : ccn.getCompositeChildren().values()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEMHANDLER.equals(handlerNode.getNodeTypeName())) {
                 try {
                     HstSiteMapItemHandlerConfiguration siteMapItemHandler = new HstSiteMapItemHandlerConfigurationService(handlerNode);
@@ -45,10 +47,9 @@ public class HstSiteMapItemHandlersConfigurationService implements HstSiteMapIte
             }else {
                log.warn("Skipping node '{}' because is not of type {}", handlerNode.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_SITEMAPITEMHANDLER); 
             }
-        } 
-       
+        }
     }
-    
+
     public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String id) {
         return siteMapItemHanderConfigurations.get(id);
     }

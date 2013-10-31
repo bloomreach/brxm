@@ -212,7 +212,9 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private String scheme;
     private boolean schemeAgnostic;
-    private boolean containsMultipleSchemes = false;
+
+    // volatile because lazy computed after model has been loaded
+    private volatile Boolean containsMultipleSchemes = null;
     private int schemeNotMatchingResponseCode = -1;
 
     /**
@@ -576,11 +578,13 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
 
             MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
+
+            // TODO for hstSite check already existing instances to be REUSED : If hstSiteNodeForMount and mountSiteMapConfiguration are equal,
+            // already created instance can be reused... not sure if helps
+
             hstSite = new HstSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
             canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
             contentPath = canonicalContentPath;
-            // TODO make LAZY!!!
-            containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
 
@@ -622,7 +626,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
         // add this Mount to the maps in the VirtualHostsService
-                ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
+       ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
     }
 
     private void mountException(final HstNode mount) throws ServiceException {
@@ -636,19 +640,19 @@ public class MountService implements ContextualizableMount, MutableMount {
      * @return <code>true</code> if any of the <code>siteMapItems</code> or its descendents uses a different scheme than
      * the scheme of this {@link MountService}
      */
-    private boolean multipleSchemesUsed(final List<HstSiteMapItem> siteMapItems) {
+    private Boolean multipleSchemesUsed(final List<HstSiteMapItem> siteMapItems) {
         for (HstSiteMapItem siteMapItem : siteMapItems) {
             if (siteMapItem.isSchemeAgnostic()) {
                 continue;
             }
             if (!scheme.equals(siteMapItem.getScheme())) {
-                return true;
+                return Boolean.TRUE;
             }
             if (multipleSchemesUsed(siteMapItem.getChildren())) {
-                return true;
+                return Boolean.TRUE;
             }
         }
-        return false;
+        return Boolean.FALSE;
     }
 
 
@@ -747,7 +751,16 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     @Override
     public boolean containsMultipleSchemes() {
-        return containsMultipleSchemes;
+        if (containsMultipleSchemes != null) {
+            return containsMultipleSchemes.booleanValue();
+        }
+        synchronized (this) {
+            if (containsMultipleSchemes != null) {
+                return containsMultipleSchemes.booleanValue();
+            }
+            containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
+            return containsMultipleSchemes.booleanValue();
+        }
     }
 
     public int getSchemeNotMatchingResponseCode() {

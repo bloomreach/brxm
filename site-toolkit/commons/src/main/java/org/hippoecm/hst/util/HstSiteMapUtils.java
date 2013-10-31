@@ -16,6 +16,7 @@
 package org.hippoecm.hst.util;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class HstSiteMapUtils {
@@ -78,12 +79,13 @@ public class HstSiteMapUtils {
         if (refIdOrPath == null) {
             return null;
         }
-        
-        if(mount.getHstSite() == null || mount.getHstSite().getSiteMap() == null) {
+
+        final HstSiteMap siteMap = mount.getHstSite().getSiteMap();
+        if(mount.getHstSite() == null || siteMap == null) {
             return refIdOrPath;
         }
         
-        HstSiteMapItem siteMapItemByRefId = mount.getHstSite().getSiteMap().getSiteMapItemByRefId(refIdOrPath);
+        HstSiteMapItem siteMapItemByRefId = siteMap.getSiteMapItemByRefId(refIdOrPath);
         
         if (siteMapItemByRefId != null) {
             return getPath(siteMapItemByRefId);
@@ -96,7 +98,8 @@ public class HstSiteMapUtils {
      * Returns string representation of the sitemap item which is specified by either refId or path
      * If <CODE>refIdOrRelPath</CODE> doesn't represent a refId, then its return will be equivalent to {@link #getPath(HstSiteMapItem siteMapItem, String relPath)}.
      * @param mount
-     * @param refIdOrPath
+     * @param siteMapItem
+     * @param refIdOrRelPath
      * @return
      */
     public static String getPath(Mount mount, HstSiteMapItem siteMapItem, String refIdOrRelPath) {

@@ -21,10 +21,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
@@ -212,9 +212,6 @@ public class LocationMapResolver {
      * matchedLocationMapTreeItem, we find the one that in closest to the current context, or, if <code>canonical</code> is true,
      * we return one without context. <code>null</code> is returned when no correct hstsitemap item can be extracted 
      * @param matchedLocationMapTreeItem
-     * @param currentCtxResolvedSiteMapItem
-     * @param params 
-     * @param canonical
      * @return
      */
     private HstSiteMapItem resolveToSiteMapItem(LocationMapTreeItem matchedLocationMapTreeItem) {

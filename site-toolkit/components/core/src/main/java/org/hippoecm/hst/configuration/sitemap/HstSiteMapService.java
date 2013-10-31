@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.Service;
@@ -55,20 +58,19 @@ public class HstSiteMapService implements HstSiteMap {
      */
     private Map<String, HstSiteMapItem> siteMapDescendantsByRefId = new HashMap<String, HstSiteMapItem>();
     
-    public HstSiteMapService(HstSite hstSite, HstNode siteMapNode, MountSiteMapConfiguration mountSiteMapConfiguration, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ServiceException {
+    public HstSiteMapService(final HstSite hstSite,
+                             final CompositeConfigurationNodes.CompositeConfigurationNode siteMapNode,
+                             final MountSiteMapConfiguration mountSiteMapConfiguration,
+                             final HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ModelLoadingException {
         this.hstSite = hstSite;
-       
-        if(!HstNodeTypes.NODETYPE_HST_SITEMAP.equals(siteMapNode.getNodeTypeName())) {
-            throw new ServiceException("Cannot create SitemapServiceImpl: Expected nodeType '"+HstNodeTypes.NODETYPE_HST_SITEMAP+"' but was '"+siteMapNode.getNodeTypeName()+"'");
-        }
-        
+
         // initialize all sitemap items
-        for(HstNode child : siteMapNode.getNodes()) {
+        for(HstNode child : siteMapNode.getCompositeChildren().values()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
                     HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration, siteMapItemHandlersConfiguration , null, this, 1);
                     rootSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath(), e);
                     } else if (log.isWarnEnabled()) {
@@ -90,12 +92,13 @@ public class HstSiteMapService implements HstSiteMap {
         }
         
     }
-    
-    private void populateDescendants(HstSiteMapItem hstSiteMapItem)  throws ServiceException {
+
+
+    private void populateDescendants(HstSiteMapItem hstSiteMapItem)  throws ModelLoadingException {
         try {
             siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
         } catch (IllegalArgumentException e) {
-           throw new ServiceException("HstSiteMapItem with already existing id encountered. Not allowed to have duplicate id's within one HstSiteMap. Duplicate id = '"+hstSiteMapItem.getId()+"'" , e);
+           throw new ModelLoadingException("HstSiteMapItem with already existing id encountered. Not allowed to have duplicate id's within one HstSiteMap. Duplicate id = '"+hstSiteMapItem.getId()+"'" , e);
         }
         if(hstSiteMapItem.getRefId() != null) {
             HstSiteMapItem prevValue =  siteMapDescendantsByRefId.put(hstSiteMapItem.getRefId(), hstSiteMapItem);

@@ -34,13 +34,13 @@ import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
-import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +136,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private int schemeNotMatchingResponseCode = -1;
     private final String [] resourceBundleIds;
 
-    HstSiteMapItemService(HstNode node, MountSiteMapConfiguration mountSiteMapConfiguration, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
+    HstSiteMapItemService(final HstNode node,
+                          final MountSiteMapConfiguration mountSiteMapConfiguration,
+                          final HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration,
+                          final HstSiteMapItem parentItem, HstSiteMap hstSiteMap,
+                          final int depth) throws ModelLoadingException {
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap;
         this.depth = depth;
@@ -167,7 +171,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
         if(this.value == null){
             log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
-            throw new ServiceException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
+            throw new ModelLoadingException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
         }
         if(parentItem != null) {
             this.parameterizedPath = this.parentItem.getParameterizedPath()+"/";
@@ -418,9 +422,9 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
-                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, ++depth);
+                    HstSiteMapItemService siteMapItemService = new HstSiteMapItemService(child, mountSiteMapConfiguration,  siteMapItemHandlersConfiguration , this, this.hstSiteMap, depth + 1);
                     childSiteMapItems.put(siteMapItemService.getValue(), siteMapItemService);
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     if (log.isDebugEnabled()) {
                         log.warn("Skipping root sitemap '{}'", child.getValueProvider().getPath(), e);
                     } else if (log.isWarnEnabled()) {

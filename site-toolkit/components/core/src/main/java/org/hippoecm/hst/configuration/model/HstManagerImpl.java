@@ -18,10 +18,6 @@ package org.hippoecm.hst.configuration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Credentials;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.cache.HstCache;
@@ -35,12 +31,10 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -342,11 +336,11 @@ public class HstManagerImpl implements MutableHstManager {
 
         log.info("Start building in memory hst configuration model");
 
-        // TODO only when needed
+        // TODO make componentRegistry use WEAK REFERENCES INSTEAD OF CLEARING IT OURSELVES
         componentRegistry.unregisterAllComponents();
         try {
 
-            // TODO only when needed
+            // TODO make siteMapItemHandlerRegistry use WEAK REFERENCES INSTEAD OF CLEARING IT OURSELVES
             siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
 
             long start = System.currentTimeMillis();
@@ -357,16 +351,7 @@ public class HstManagerImpl implements MutableHstManager {
                 configurationAugmenter.augment((MutableVirtualHosts) hstModel);
             }
 
-            // TODO remove session usage here and load channel manager with HstNode only
-            Session session = null;
-            try {
-                session = getSession();
-                this.channelManager.load(hstModel);
-            } finally {
-                if (session != null) {
-                    session.logout();
-                }
-            }
+            this.channelManager.load(hstModel);
 
             log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
         } catch (ServiceException e) {
@@ -381,18 +366,6 @@ public class HstManagerImpl implements MutableHstManager {
             StringPool.clear();
         }
 
-    }
-
-    private Session getSession() throws RepositoryException {
-        Credentials defaultCredentials = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".hstconfigreader");
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-
-        Session session = null;
-        if (repository != null) {
-             session = repository.login(defaultCredentials);
-
-        }
-        return session;
     }
 
     @Deprecated

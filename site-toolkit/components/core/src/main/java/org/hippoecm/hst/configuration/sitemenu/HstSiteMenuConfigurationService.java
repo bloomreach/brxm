@@ -19,29 +19,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(HstSiteMenuConfigurationService.class);
     private String name;
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
 
-    public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu) throws ServiceException{
+    public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu) {
        this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
        this.name = StringPool.get(siteMenu.getValueProvider().getName());
         for(HstNode siteMenuItem : siteMenu.getNodes()) {
-            try {
-                HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
-                siteMenuItems.add(siteMenuItemConfiguration);
-            } catch(ServiceException e) {
-                log.warn("Skipping siteMenuItemConfiguration for '{}' : '{}'", siteMenuItem.getValueProvider().getPath(), e.toString());
-            }
+            HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
+            siteMenuItems.add(siteMenuItemConfiguration);
         }
     }
     

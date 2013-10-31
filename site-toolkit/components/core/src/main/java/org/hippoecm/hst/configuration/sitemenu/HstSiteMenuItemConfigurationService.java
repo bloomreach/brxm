@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
@@ -52,7 +53,9 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
     
-    public HstSiteMenuItemConfigurationService(HstNode siteMenuItem, HstSiteMenuItemConfiguration parent, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws ServiceException {
+    public HstSiteMenuItemConfigurationService(HstNode siteMenuItem,
+                                               HstSiteMenuItemConfiguration parent,
+                                               HstSiteMenuConfiguration hstSiteMenuConfiguration) {
         this.parent = parent;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
         

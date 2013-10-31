@@ -113,9 +113,4 @@ public interface HstNode {
      */
     void update(Session session) throws RepositoryException;
 
-    /**
-     * @return <code>true</code> when this HstNode is inherited
-     */
-    boolean isInherited();
-
 }
