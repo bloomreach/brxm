@@ -48,6 +48,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,8 +129,7 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 NodeIterator docs = handle.getNodes(handle.getName());
                 while (docs.hasNext()) {
                     document = docs.nextNode();
-                    if (document.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)
-                            && "unpublished".equals(document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString())) {
+                    if ("unpublished".equals(JcrUtils.getStringProperty(document, HippoStdNodeType.HIPPOSTD_STATE, null))) {
                         unpublished = document;
                         break;
                     }
@@ -141,18 +141,15 @@ public class VersionWorkflowPlugin extends RenderPlugin {
 
                 if (unpublished != null) {
                     // create a revision to prevent loss of content from unpublished.
-                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning",
-                            unpublished);
+                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", unpublished);
                     versionWorkflow.version();
                 }
 
-                BasicReviewedActionsWorkflow braw = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow(
-                        "default", document);
+                BasicReviewedActionsWorkflow braw = (BasicReviewedActionsWorkflow) workflowManager.getWorkflow("default", document);
                 Document doc = braw.obtainEditableInstance();
 
                 try {
-                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning",
-                            frozenNode);
+                    VersionWorkflow versionWorkflow = (VersionWorkflow) workflowManager.getWorkflow("versioning", frozenNode);
                     versionWorkflow.restoreTo(doc);
                 } finally {
                     doc = braw.commitEditableInstance();
