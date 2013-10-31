@@ -5,7 +5,7 @@
 */
 .footer {
   border-top: 1px solid #eeeeee;
-  margin-top: 100px;
+  margin-top: 300px;
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: #35363a;
@@ -176,4 +176,5 @@ body {
 }
 form {
   width: 100%;
+  max-width: 100%;
 }
