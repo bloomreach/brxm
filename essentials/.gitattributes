@@ -971,6 +971,7 @@ plugin-dashboard/src/main/webapp/images/ecommerce2.png -text
 plugin-dashboard/src/main/webapp/images/forward_disabled.png -text
 plugin-dashboard/src/main/webapp/images/forward_enabled.png -text
 plugin-dashboard/src/main/webapp/images/forward_enabled_hover.png -text
+plugin-dashboard/src/main/webapp/images/hippo-logo.png -text
 plugin-dashboard/src/main/webapp/images/sort_asc.png -text
 plugin-dashboard/src/main/webapp/images/sort_asc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/sort_both.png -text
@@ -978,6 +979,7 @@ plugin-dashboard/src/main/webapp/images/sort_desc.png -text
 plugin-dashboard/src/main/webapp/images/sort_desc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
+plugin-dashboard/src/main/webapp/images/top-back.png -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/resources/keystore -text

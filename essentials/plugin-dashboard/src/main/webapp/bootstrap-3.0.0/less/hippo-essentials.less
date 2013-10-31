@@ -47,7 +47,6 @@
   font-size: 12px;
   min-height: 300px;
 
-
 }
 
 /* Responsive: Portrait tablets and up */
@@ -217,17 +216,33 @@
 
 .hippo-header {
   width: 100%;
-  height: 35px;
-  background-color: #C84A4B;
-  color: #FFF;
+  height: 80px;
+  /*background-color: #C84A4B;*/
   text-align: center;
   vertical-align: middle;
   table-layout: fixed;
   font-size: 20px;
   font-weight: bold;
   /*background: url("../images/top-back.png") repeat;*/
+  color: @brand-steel;
 }
 
+.hippo-header-logo, .hippo-header-text {
+  display: inline;
+  text-align: center;
+  vertical-align: middle;
+  height: 80px;
+}
+
+.hippo-header-logo {
+  float: left;
+  padding: 5px;
+  padding-left: 20px;
+}
+
+.hippo-header-text{
+  padding-top: 30px;
+}
 body {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -237,8 +252,7 @@ body {
 
 }
 
-
 form {
-     width:100%;
-     max-width:100%;
+  width: 100%;
+  max-width: 100%;
 }
