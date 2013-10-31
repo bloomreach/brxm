@@ -57,7 +57,7 @@
 
             style.styleSheet.addImport(cssFileUrl);
         } else {
-            style = doc.createStyleSheet();
+            style = window.document.createStyleSheet();
             style.owningElement.id = styleId;
             style.owningElement.type = 'text/css';
             style.addImport(cssFileUrl);
