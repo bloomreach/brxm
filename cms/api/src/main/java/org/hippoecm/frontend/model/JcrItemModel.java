@@ -59,6 +59,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private String relPath;
     private int hash;
     private boolean property;
+    private String userId;
 
     // the path of the item, used to retrieve the item when the uuid has not been
     // determined yet or the uuid cannot be resolved.
@@ -71,6 +72,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     public JcrItemModel(T item) {
         super(item);
+        setUserId();
         relPath = null;
         uuid = null;
         if (item != null) {
@@ -82,6 +84,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Deprecated
     public JcrItemModel(String path) {
+        setUserId();
         absPath = path;
         try {
             final Item item = UserSession.get().getJcrSession().getItem(path);
@@ -93,6 +96,7 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     }
 
     public JcrItemModel(String path, boolean property) {
+        setUserId();
         uuid = null;
         absPath = path;
         this.property = property;
@@ -275,6 +279,9 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     }
 
     private void doSave() {
+        if (!isValidSession()) {
+            return;
+        }
         try {
             relPath = null;
             Node node = null;
@@ -422,4 +429,12 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         return hash;
     }
 
+    private boolean isValidSession() {
+        final Session session = UserSession.get().getJcrSession();
+        return session.getUserID().equals(userId);
+    }
+
+    private void setUserId() {
+        userId = UserSession.get().getJcrSession().getUserID();
+    }
 }
