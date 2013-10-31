@@ -47,6 +47,7 @@ import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.util.JcrConstants;
 
@@ -110,6 +111,7 @@ public class PathsMigratorTest {
     }
 
     @Test
+    @Ignore
     public void testContentIsNotTouchedDuringUpgrade() throws LoginException, RepositoryException, InterruptedException, IOException, ParseException {
         // create content using jackrabbit repository
         final RepositoryImpl jrRepository = createJRRepository();
