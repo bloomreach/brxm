@@ -326,10 +326,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private void addVisibleNodes(NodeIterator pending, Set<Node> nodes) {
         while (pending.hasNext()) {
             Node node = pending.nextNode();
-            if (node != null) {
-                if (isVisible(node)) {
-                    nodes.add(node);
-                }
+            if (isVisible(node)) {
+                nodes.add(node);
             }
         }
     }
