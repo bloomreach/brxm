@@ -136,15 +136,15 @@ public class MockSession implements Session {
         return result;
     }
 
+    @Override
+    public String getUserID() {
+        return "";
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
     public Repository getRepository() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getUserID() {
         throw new UnsupportedOperationException();
     }
 

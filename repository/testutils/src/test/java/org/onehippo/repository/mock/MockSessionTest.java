@@ -18,9 +18,11 @@ package org.onehippo.repository.mock;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -74,6 +76,12 @@ public class MockSessionTest {
         assertSame(root, session.getNodeByIdentifier(root.getIdentifier()));
         assertSame(child, session.getNodeByIdentifier(child.getIdentifier()));
         assertSame(grandchild, session.getNodeByIdentifier(grandchild.getIdentifier()));
+    }
+
+    @Test
+    public void getUserIdReturnsEmptyString() throws RepositoryException {
+        Session session = MockNode.root().getSession();
+        assertEquals("", session.getUserID());
     }
 
     private MockNode createRootFooBarMockNode() throws RepositoryException {
