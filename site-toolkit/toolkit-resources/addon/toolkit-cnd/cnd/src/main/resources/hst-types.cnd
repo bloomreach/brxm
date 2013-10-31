@@ -190,8 +190,9 @@
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
-// the lock props used for coarse grained locking
+// deprecated : not used any more as only fine grained locking
 - hst:lockedby (string)
+// deprecated : not used any more as only fine grained locking
 - hst:lockedon (date)
 + hst:components (hst:components) = hst:components
 + hst:pages (hst:pages) = hst:pages
