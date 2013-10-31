@@ -200,6 +200,8 @@ upgrade/tm.out.1
 upgrade/tm.out.lck
 upgrade/tmlog.lck
 upgrade/wdbp-error-log.txt
+upgrade/xml-upgrade/*.iml
+upgrade/xml-upgrade/target
 utilities/*.iml
 utilities/*.tmp
 utilities/.classpath
