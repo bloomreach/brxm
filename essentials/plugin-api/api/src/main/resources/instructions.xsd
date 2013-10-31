@@ -86,7 +86,7 @@
     //############################################
   -->
   <xs:complexType name="instructionsType">
-    <xs:sequence minOccurs="0"maxOccurs="unbounded">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element type="instructionsSetType" name="instructionSet"  />
     </xs:sequence>
   </xs:complexType>
