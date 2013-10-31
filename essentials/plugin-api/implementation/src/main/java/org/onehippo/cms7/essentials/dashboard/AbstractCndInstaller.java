@@ -1,6 +1,7 @@
 package org.onehippo.cms7.essentials.dashboard;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

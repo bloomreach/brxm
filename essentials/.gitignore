@@ -1848,6 +1848,12 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/atlass
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/hippo-plugins.iws
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/target
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/hippo-plugins.iws
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/*.iml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/.DS_Store
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/.idea
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/atlassian-ide-plugin.xml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/hippo-plugins.iws
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/target
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/*.iml
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/.DS_Store
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/.idea

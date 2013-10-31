@@ -3,7 +3,7 @@ package org.onehippo.cms7.essentials.dashboard.model;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.Screenshot;
+import org.onehippo.cms7.essentials.dashboard.config.Screenshot;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 /**

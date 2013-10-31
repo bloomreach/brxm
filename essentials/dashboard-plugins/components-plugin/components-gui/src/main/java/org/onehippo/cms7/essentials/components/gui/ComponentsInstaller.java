@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.AbstractDependencyInstaller;
 import org.onehippo.cms7.essentials.dashboard.DependencyType;
-import org.onehippo.cms7.essentials.dashboard.InstallState;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

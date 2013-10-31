@@ -3,7 +3,7 @@ package org.onehippo.cms7.essentials.components.gui;
 import org.onehippo.cms7.essentials.components.gui.panel.AttachComponentPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.ComponentsPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.provider.ComponentProvider;
-import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
