@@ -13,9 +13,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.onehippo.cms7.essentials.dashboard.ConfigDocument;
-import org.onehippo.cms7.essentials.dashboard.ConfigProperty;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

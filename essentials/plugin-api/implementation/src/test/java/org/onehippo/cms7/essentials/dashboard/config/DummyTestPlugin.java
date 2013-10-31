@@ -2,7 +2,6 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.Screenshot;
 import org.slf4j.Logger;

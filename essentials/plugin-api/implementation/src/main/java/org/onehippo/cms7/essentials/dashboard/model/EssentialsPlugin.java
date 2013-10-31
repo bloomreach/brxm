@@ -13,10 +13,9 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.onehippo.cms7.essentials.dashboard.Asset;
+import org.onehippo.cms7.essentials.dashboard.config.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.Screenshot;
-import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 import static org.onehippo.cms7.essentials.dashboard.utils.EssentialConst.*;
 

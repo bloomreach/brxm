@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 
 /**
  * Plugin context is passed to all HippoEssentials plugins.

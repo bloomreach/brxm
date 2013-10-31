@@ -7,7 +7,6 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

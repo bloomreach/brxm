@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.onehippo.cms7.essentials.dashboard.Asset;
+import org.onehippo.cms7.essentials.dashboard.config.Asset;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 
 /**

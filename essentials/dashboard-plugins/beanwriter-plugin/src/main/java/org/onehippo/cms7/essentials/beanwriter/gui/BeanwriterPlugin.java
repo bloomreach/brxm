@@ -7,17 +7,11 @@ package org.onehippo.cms7.essentials.beanwriter.gui;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-
-import javax.jcr.RepositoryException;
 
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
-import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -30,7 +24,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.BeanWriterUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
-import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

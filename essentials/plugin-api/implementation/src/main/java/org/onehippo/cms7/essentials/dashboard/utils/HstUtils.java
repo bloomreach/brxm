@@ -13,7 +13,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
-import org.onehippo.cms7.essentials.dashboard.Asset;
+import org.onehippo.cms7.essentials.dashboard.config.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstTemplate;

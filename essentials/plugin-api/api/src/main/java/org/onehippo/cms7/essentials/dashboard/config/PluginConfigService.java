@@ -1,4 +1,6 @@
-package org.onehippo.cms7.essentials.dashboard;
+package org.onehippo.cms7.essentials.dashboard.config;
+
+import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 
 /**
  * @version "$Id: PluginConfigService.java 171587 2013-07-24 17:22:33Z mmilicevic $"

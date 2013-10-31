@@ -16,23 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.ctx;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Iterator;
-
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id$"

@@ -1829,6 +1829,12 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/hippo-plugins.iws
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/target
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/atlassian-ide-plugin.xml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/*.iml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/.DS_Store
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/.idea
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/atlassian-ide-plugin.xml
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/hippo-plugins.iws
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/target
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/*.iml
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/.DS_Store
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/.idea
