@@ -41,6 +41,7 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
@@ -98,7 +99,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                 if (name.startsWith("jcr:frozen") || name.startsWith("jcr:uuid") ||
                         name.equals(HippoNodeType.HIPPO_RELATED) ||
                         name.equals(HippoNodeType.HIPPO_COMPUTE) ||
-                        name.equals(HippoNodeType.HIPPO_PATHS)) {
+                        name.equals(HippoNodeType.HIPPO_PATHS) ||
+                        name.equals(HippoStdNodeType.HIPPOSTD_STATE)) {
                     return;
                 }
                 super.setProperty(prop);
@@ -299,7 +301,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             throw new WorkflowException("No version available to restore");
         }
 
-        Node target = subject.getSession().getNodeByUUID(targetDocument.getIdentity());
+        Node target = subject.getSession().getNodeByIdentifier(targetDocument.getIdentity());
         Node handle = getVersionableHandle(target);
         if (handle != null) {
             handle.checkin();
