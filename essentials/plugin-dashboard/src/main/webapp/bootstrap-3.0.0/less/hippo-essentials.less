@@ -7,7 +7,8 @@
 @brand-info: #45B3E3;
 @brand-steel: #4F5E67;
 
-@body-bg: #fff;
+@color-hippo-footer: #35363A;
+@body-bg: #FFF;
 @font-size-base: 16px;
 
 // Links
@@ -37,12 +38,15 @@
 //
 .footer {
   border-top: 1px solid @footer-border;
-  margin-top: 40px;
+  margin-top: 100px;
   padding-top: 10px;
   padding-bottom: 10px;
-  background-color: #4F5E67;
+  background-color: @color-hippo-footer;
   text-align: center;
-  color: #fff;
+  color: @brand-steel;
+  font-size: 12px;
+  min-height: 300px;
+
 
 }
 
@@ -214,20 +218,25 @@
 .hippo-header {
   width: 100%;
   height: 35px;
-  background-color: @brand-steel;
-  color: @brand-warning;
+  background-color: #C84A4B;
+  color: #FFF;
   text-align: center;
   vertical-align: middle;
   table-layout: fixed;
   font-size: 20px;
   font-weight: bold;
+  background: url("../images/top-back.png") repeat;
 }
 
 body {
   padding-top: 0px;
   padding-bottom: 0px;
-  background-color: #fff;
+  background-color: @body-bg;
   font-size: 14px;
   font-family: 'ralewaymedium', sans-serif;
 
+}
+
+form {
+     width:100%;
 }
