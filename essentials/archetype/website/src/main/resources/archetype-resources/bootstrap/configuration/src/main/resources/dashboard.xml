@@ -129,7 +129,7 @@
                       <sv:value>${rootArtifactId.replace($hyphen,$empty)}</sv:value>
                     </sv:property>
                     <sv:property sv:name="rest-package" sv:type="String" sv:multiple="true">
-                      <sv:value>${package}.components</sv:value>
+                      <sv:value>${package}.rest</sv:value>
                     </sv:property>
                   </sv:node>
                 </sv:node>
