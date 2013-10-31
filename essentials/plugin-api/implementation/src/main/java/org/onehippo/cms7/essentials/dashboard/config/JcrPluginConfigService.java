@@ -109,6 +109,10 @@ public class JcrPluginConfigService implements PluginConfigService {
 
     private ConfigDocument getConfigDocument(final String path) {
         try {
+            // NOTE: added null check so we can test dashboard without repository (CMS) running
+            if(session==null){
+                return null;
+            }
             final Node rootNode = session.getRootNode();
             if (rootNode.hasNode(path)) {
                 final Node folderNode = rootNode.getNode(path);
