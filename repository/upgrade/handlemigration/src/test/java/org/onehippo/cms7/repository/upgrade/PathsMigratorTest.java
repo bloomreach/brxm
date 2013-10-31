@@ -18,6 +18,9 @@ package org.onehippo.cms7.repository.upgrade;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.jcr.Credentials;
 import javax.jcr.ImportUUIDBehavior;
@@ -56,8 +59,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class PathsMigratorTest {
 
+    private File repoDir;
+
     @Before
     public void createRepository() throws Exception {
+        final String tmpDir = System.getProperty("java.io.tmpdir");
+        final Path tmpPath = FileSystems.getDefault().getPath(tmpDir);
+        repoDir = Files.createTempDirectory(tmpPath, PathsMigratorTest.class.getCanonicalName() + "-repository-").toFile();
+
         RepositoryImpl jackrabbitRepository = createJRRepository();
 
         final Session session = jackrabbitRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -84,28 +93,19 @@ public class PathsMigratorTest {
     }
 
     private void transformToHippoRepository() throws IOException {
-        FileUtils.copyURLToFile(getClass().getResource("workspace.xml"), new File(getStorage(), "workspaces/default/workspace.xml"));
+        FileUtils.copyURLToFile(getClass().getResource("workspace.xml"), new File(repoDir, "workspaces/default/workspace.xml"));
     }
 
     private RepositoryImpl createJRRepository() throws RepositoryException {
-        final File repoDir = getStorage();
-
         final RepositoryConfig repConfig = RepositoryConfig.create(PathsMigratorTest.class.getResourceAsStream("repository.xml"),
                 repoDir.getAbsolutePath());
 
         return new RepositoryImpl(repConfig) {};
     }
 
-    private File getStorage() {
-        final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-        return new File(tmpdir, "jr-repository");
-    }
-
     @After
     public void deleteRepository() {
-        final File storage = getStorage();
-        FileUtils.deleteQuietly(storage);
-
+        FileUtils.deleteQuietly(repoDir);
         System.clearProperty(LocalHippoRepository.SYSTEM_CONFIG_PROPERTY);
     }
 
@@ -128,7 +128,7 @@ public class PathsMigratorTest {
 
         // start up with hippo repository, to migrate the content
         System.setProperty(LocalHippoRepository.SYSTEM_CONFIG_PROPERTY, "/org/onehippo/cms7/repository/upgrade/hippo-repository.xml");
-        HippoRepository repository = HippoRepositoryFactory.getHippoRepository("file://" + getStorage().getAbsolutePath());
+        HippoRepository repository = HippoRepositoryFactory.getHippoRepository("file://" + repoDir.getAbsolutePath());
 
         try {
             Session testSession;
