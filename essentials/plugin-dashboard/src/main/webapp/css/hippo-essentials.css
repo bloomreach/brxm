@@ -164,7 +164,8 @@
   table-layout: fixed;
   font-size: 20px;
   font-weight: bold;
-  background: url("../images/top-back.png") repeat;
+  /*background: url("../images/top-back.png") repeat;*/
+
 }
 body {
   padding-top: 0px;
