@@ -138,7 +138,7 @@ public class DerivedDataEngine {
                 for (Property property : new PropertyIterable(modified.getReferences())) {
                     try {
                         final Node dependentNode = property.getParent();
-                        if (dependentNode.isNodeType(HippoNodeType.NT_DERIVED)) {
+                        if (property.getName().equals(HippoNodeType.HIPPO_RELATED) && dependentNode.isNodeType(HippoNodeType.NT_DERIVED)) {
                             result.add(dependentNode);
                         }
                     } catch (AccessDeniedException ex) {
