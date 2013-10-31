@@ -26,20 +26,51 @@ import org.apache.wicket.request.resource.ResourceReference;
 
 public class RichTextProcessor {
 
-    private static Pattern LINK_OR_IMG_PATTERN = Pattern.compile("<(a|img)[^>]+>", Pattern.CASE_INSENSITIVE);
-    private static Pattern IMG_PATTERN = Pattern.compile("<img[^>]+>", Pattern.CASE_INSENSITIVE);
-    private static Pattern SRC_PATTERN = Pattern.compile("src=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
-    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
-    private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(facetselect|type|src)=\"([^\"]+)\"\\s*",
-            Pattern.CASE_INSENSITIVE);
-
-    private static Pattern LINK_PATTERN = Pattern.compile("<a[^>]+>", Pattern.CASE_INSENSITIVE);
-    private static Pattern EXTERNAL_LINK_PATTERN = Pattern.compile("^[a-z]+://.+?", Pattern.CASE_INSENSITIVE);
-    private static Pattern HREF_PATTERN = Pattern.compile("href=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
-    private static Pattern UUID_PATTERN = Pattern.compile("uuid=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
-    private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
-
     private static ResourceReference BROKEN_IMAGE = new PackageResourceReference(RichTextProcessor.class, "broken-image-32.png");
+
+    /**
+     * @param tag the HTML tag to match
+     * @return a pattern for matching the given HTML start tag.
+     */
+    private static Pattern startTagPattern(final String tag) {
+        return Pattern.compile("<" + tag + "[^>]+>", Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * @param tag the HTML tag to match
+     * @return a pattern for matching tags with at least a 'uuid' attribute, e.g. <a href="link.html" uuid="1234">
+     *         for 'a' tags, or <img src="image.png" uuid="5678"/> for 'img' tags.
+     */
+    private static Pattern startTagWithUuidPattern(final String tag) {
+        return Pattern.compile("<" + tag + "[^>]+uuid=\"[^\"]+\"[^>]*>", Pattern.CASE_INSENSITIVE);
+    }
+
+    /**
+     * @param tag the HTML attribute to match
+     * @return a pattern for matching the given HTML attribute. The value of the attribute (between quotes) is the first
+     * matching group.
+     */
+    private static Pattern attributePattern(final String attribute) {
+        return Pattern.compile(attribute + "=\"([^\"]+)\"", Pattern.CASE_INSENSITIVE);
+    }
+
+    private static Pattern LINK_PATTERN = startTagPattern("a");
+    private static Pattern IMG_PATTERN = startTagPattern("img");
+    private static Pattern LINK_OR_IMG_PATTERN = Pattern.compile("<(a|img)[^>]+>", Pattern.CASE_INSENSITIVE);
+
+    private static Pattern INTERNAL_LINK_PATTERN = startTagWithUuidPattern("a");
+    private static Pattern INTERNAL_IMG_PATTERN = startTagWithUuidPattern("img");
+
+    private static Pattern HREF_PATTERN = attributePattern("href");
+    private static Pattern SRC_PATTERN = attributePattern("src");
+    private static Pattern UUID_PATTERN = attributePattern("uuid");
+
+    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
+    private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(facetselect|type|src)=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
+
+    private static Pattern EXTERNAL_LINK_HREF_PATTERN = Pattern.compile("^[a-z]+://.+?", Pattern.CASE_INSENSITIVE);
+
+    private static Pattern RESOURCE_DEFINITION_PATTERN = Pattern.compile("/\\{_document\\}/([^/]+)$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Decorate the targets of relative image links in a text. The decorator may not be null.
@@ -169,24 +200,34 @@ public class RichTextProcessor {
         if (text == null) {
             return null;
         }
-        String decorated = decorateLinkAttributes(text, decorator, HREF_PATTERN);
-        return decorated.replaceAll("<a target=\"_blank\"", "<a ");
-    }
-
-    public static String decorateLinkUuids(final String text, final ILinkDecorator decorator) {
-        return decorateLinkAttributes(text, decorator, UUID_PATTERN);
+        return decorateLinkAttributes(text, decorator, HREF_PATTERN);
     }
 
     private static String decorateLinkAttributes(final String text, final ILinkDecorator decorator, final Pattern attributePattern) {
         return decorateTagAttributes(text, decorator, LINK_PATTERN, attributePattern);
     }
 
+    public static String decorateInternalLinkHrefs(final String text, final ILinkDecorator decorator) {
+        if (text == null) {
+            return null;
+        }
+        return decorateInternalLinkAttributes(text, decorator, HREF_PATTERN);
+    }
+
+    public static String decorateInternalLinkUuids(final String text, final ILinkDecorator decorator) {
+        return decorateInternalLinkAttributes(text, decorator, UUID_PATTERN);
+    }
+
+    private static String decorateInternalLinkAttributes(final String text, final ILinkDecorator decorator, final Pattern attributePattern) {
+        return decorateTagAttributes(text, decorator, INTERNAL_LINK_PATTERN, attributePattern);
+    }
+
     public static String decorateImgSrcs(final String text, final ILinkDecorator decorator) {
         return decorateTagAttributes(text, decorator, IMG_PATTERN, SRC_PATTERN);
     }
 
-    public static String decorateImgUuids(final String text, final ILinkDecorator decorator) {
-        return decorateTagAttributes(text, decorator, IMG_PATTERN, UUID_PATTERN);
+    public static String decorateInternalImgUuids(final String text, final ILinkDecorator decorator) {
+        return decorateTagAttributes(text, decorator, INTERNAL_IMG_PATTERN, UUID_PATTERN);
     }
 
     private static String decorateTagAttributes(final String text, final ILinkDecorator decorator, final Pattern tagPattern, final Pattern attributePattern) {
@@ -223,7 +264,7 @@ public class RichTextProcessor {
     }
 
     private static boolean isExternalLink(String href) {
-        return EXTERNAL_LINK_PATTERN.matcher(href).find();
+        return EXTERNAL_LINK_HREF_PATTERN.matcher(href).find();
     }
 
 }

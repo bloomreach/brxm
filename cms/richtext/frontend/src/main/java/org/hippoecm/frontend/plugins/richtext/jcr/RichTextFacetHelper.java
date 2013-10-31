@@ -17,19 +17,14 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 
 import java.util.Set;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +66,6 @@ public class RichTextFacetHelper {
     }
 
     public static String getChildDocBaseOrNull(final Node node, final String childNodeName) {
-        String result = null;
         try {
             if (node.hasNode(childNodeName)) {
                 final Node child = node.getNode(childNodeName);
@@ -82,7 +76,7 @@ public class RichTextFacetHelper {
             final String childNodePath = parentNodePath != null ? parentNodePath + "/" + childNodeName : childNodeName;
             log.warn("Cannot get child node '{}'", childNodePath, e);
         }
-        return result;
+        return null;
     }
 
     private static String getDocBaseOrNull(final Node node) throws RepositoryException {
@@ -115,7 +109,7 @@ public class RichTextFacetHelper {
         }
         int postfix = 1;
         while (true) {
-            String testLink = link + "_" + postfix;
+            final String testLink = NodeNameCodec.encode(link + "_" + postfix, true);
             if (!node.hasNode(testLink)) {
                 return testLink;
             }

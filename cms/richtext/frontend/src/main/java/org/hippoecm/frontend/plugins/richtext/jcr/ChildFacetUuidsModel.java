@@ -117,13 +117,13 @@ public class ChildFacetUuidsModel implements IModel<String> {
         final Node node = this.nodeModel.getObject();
 
         final InternalLinkRemoveHrefDecorator removeInternalLinkHrefs = new InternalLinkRemoveHrefDecorator();
-        text = RichTextProcessor.decorateLinkHrefs(text, removeInternalLinkHrefs);
+        text = RichTextProcessor.decorateInternalLinkHrefs(text, removeInternalLinkHrefs);
 
         final InternalLinkUuidToHrefDecorator changeInternalLinkUuidsToHrefs = new InternalLinkUuidToHrefDecorator(node);
-        text = RichTextProcessor.decorateLinkUuids(text, changeInternalLinkUuidsToHrefs);
+        text = RichTextProcessor.decorateInternalLinkUuids(text, changeInternalLinkUuidsToHrefs);
 
         final ImgRemoveUuidDecorator removeImageUuids = new ImgRemoveUuidDecorator();
-        return RichTextProcessor.decorateImgUuids(text, removeImageUuids);
+        return RichTextProcessor.decorateInternalImgUuids(text, removeImageUuids);
     }
 
     public void detach() {

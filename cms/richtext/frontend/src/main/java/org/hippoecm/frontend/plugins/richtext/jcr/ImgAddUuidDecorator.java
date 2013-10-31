@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for 'img' tags that adds a 'uuid' attribute based on the provided 'src' attribute of the image.
@@ -29,8 +27,6 @@ import org.slf4j.LoggerFactory;
  * will be empty.
  */
 class ImgAddUuidDecorator extends InternalLinkDecorator {
-
-    private static final Logger log = LoggerFactory.getLogger(ImgAddUuidDecorator.class);
 
     private final Node documentNode;
 
@@ -43,8 +39,13 @@ class ImgAddUuidDecorator extends InternalLinkDecorator {
     public String internalLink(final String src) {
         final String childFacetNodeName = StringUtils.substringBefore(src, "/");
         final String uuidOrNull = RichTextFacetHelper.getChildDocBaseOrNull(this.documentNode, childFacetNodeName);
-        final String uuid = uuidOrNull == null ? StringUtils.EMPTY : uuidOrNull;
-        return "src=\"" + src + "\" uuid=\"" + uuid + "\"";
+
+        if (uuidOrNull == null) {
+            // Child facet does not exist; assume the src is referring to something else and should be returned as-is
+            return "src=\"" + src + "\"";
+        }
+
+        return "src=\"" + src + "\" uuid=\"" + uuidOrNull + "\"";
     }
 
 }

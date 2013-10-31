@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,7 @@ import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -70,14 +71,31 @@ public class ChildFacetUuidsModelTest {
         child.setProperty(HippoNodeType.HIPPO_DOCBASE, uuid);
     }
 
-    @Test
-    public void getNullTextIsUnchanged() {
-        assertEquals(null, createModel(null).getObject());
+    private void assertNoChanges(String text) throws RepositoryException {
+        assertEquals("Stored text should be returned without changes", text, createModel(text).getObject());
+
+        final ChildFacetUuidsModel model = createModel("");
+        final long childFacetCount = documentNode.getNodes().getSize();
+        model.setObject(text);
+        assertEquals("Text should be stored without changes", text, textModel.getObject());
+        assertEquals("Number of child facet nodes should not have changed", childFacetCount, documentNode.getNodes().getSize());
+    }
+
+    private void assertSetTextUnchangedAndAllChildFacetsRemoved(String text) throws RepositoryException {
+        final ChildFacetUuidsModel model = createModel("");
+        model.setObject(text);
+        assertEquals("all child facet nodes should have been removed", 0, documentNode.getNodes().getSize());
+        assertEquals(text, textModel.getObject());
     }
 
     @Test
-    public void getEmptyTextIsUnchanged() {
-        assertEquals("", createModel("").getObject());
+    public void nullTextDoesNotChange() throws RepositoryException {
+        assertNoChanges(null);
+    }
+
+    @Test
+    public void emptyTextDoesNotChange() throws RepositoryException {
+        assertNoChanges("");
     }
 
     @Test
@@ -85,6 +103,19 @@ public class ChildFacetUuidsModelTest {
         addChildFacetNode("linked-node", "d1b804c0-cf19-451f-8c0f-184da74289e4");
 
         final ChildFacetUuidsModel model = createModel("<a href=\"linked-node\">link</a>");
+
+        assertEquals("<a href=\"http://\" uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">link</a>", model.getObject());
+    }
+
+    @Test
+    public void getLinkWithEscapedNameIsRewrittenToUuid() throws RepositoryException {
+        final String name = "A name that needs 'encoding'";
+        final String linkTargetName = NodeNameCodec.encode(name, true);
+        assertFalse(name.equals(linkTargetName));
+
+        addChildFacetNode(linkTargetName, "d1b804c0-cf19-451f-8c0f-184da74289e4");
+
+        final ChildFacetUuidsModel model = createModel("<a href=\"" + linkTargetName + "\">link</a>");
 
         assertEquals("<a href=\"http://\" uuid=\"d1b804c0-cf19-451f-8c0f-184da74289e4\">link</a>", model.getObject());
     }
@@ -119,49 +150,98 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
-    public void getMissingLinkChildNodeIsRewrittenToEmptyString() throws RepositoryException {
-        ChildFacetUuidsModel model = createModel("<a href=\"no-such-child-node\">link</a>");
-        assertEquals("<a href=\"http://\" uuid=\"\">link</a>", model.getObject());
+    public void getMissingImageChildNodeDoesNotChange() throws RepositoryException {
+        assertNoChanges("<img src=\"no-such-image.jpg/{_document}/hippogallery:thumbnail\"/>");
     }
 
     @Test
-    public void getMissingImageChildNodeIsRewrittenToEmptyString() throws RepositoryException {
-        ChildFacetUuidsModel model = createModel("<img src=\"no-such-image.jpg/{_document}/hippogallery:thumbnail\"/>");
-        assertEquals("<img src=\"no-such-image.jpg/{_document}/hippogallery:thumbnail\" uuid=\"\"/>", model.getObject());
+    public void anchorDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a name=\"foo\">anchor</a>");
     }
 
     @Test
-    public void getAnchorsAreNotChanged() throws RepositoryException {
-        final String textWithAnchor = "<a name=\"foo\">anchor</a>";
-        final ChildFacetUuidsModel model = createModel(textWithAnchor);
-        assertEquals(textWithAnchor, model.getObject());
+    public void relativeLinkDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"somepage.html\">relative link</a>");
     }
 
     @Test
-    public void getExternalLinksAreNotChanged() throws RepositoryException {
-        final String textWithExternalLink = "<a href=\"http://www.example.com\">link</a>";
-        assertEquals(textWithExternalLink, createModel(textWithExternalLink).getObject());
+    public void relativeLinkWithPathDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"../somepage.html\">relative link with path</a>");
     }
 
     @Test
-    public void getExternalImagesAreNotChanged() throws RepositoryException {
-        final String textWithExternalImage = "<img src=\"http://www.example.com/foo.jpg\"/>";
-        final ChildFacetUuidsModel model = createModel(textWithExternalImage);
-        assertEquals(textWithExternalImage, model.getObject());
+    public void relativeLinkWithIllegalJcrCharsDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"2*3=6.html\">Link to file with illegal JCR characters in its name</a>");
     }
 
     @Test
-    public void setNullTextIsUnchanged() {
-        final ChildFacetUuidsModel model = createModel(null);
-        model.setObject(null);
-        assertEquals(null, model.getObject());
+    public void externalHttpLinkDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"http://www.example.com\">external link</a>");
     }
 
     @Test
-    public void setEmptyTextIsUnchanged() {
-        final ChildFacetUuidsModel model = createModel("");
-        model.setObject("");
-        assertEquals("", model.getObject());
+    public void externalLinkWithPortDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"http://www.example.com:8080\">external link with port</a>");
+    }
+
+    @Test
+    public void externalHttpOnlyLinkDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"http://\">strange external link</a>");
+    }
+
+    @Test
+    public void linkWithEmptyHrefDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"\">link with empty href</a>");
+    }
+
+    @Test
+    public void linkWithEmptyHrefAndUuidDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"\" uuid=\"\">link with empty href and uuid</a>");
+    }
+
+    @Test
+    public void externalFtpLinkDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"ftp://www.example.com\">external FTP link</a>");
+    }
+
+    @Test
+    public void externalFtpOnlyLinkDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a href=\"ftp://\">strange external FTP link</a>");
+    }
+
+    @Test
+    public void emptyLinkDoesNotChange() throws RepositoryException {
+        assertNoChanges("<a>strange empty link</a>");
+    }
+
+    @Test
+    public void externalImageDoesNotChange() throws RepositoryException {
+        assertNoChanges("<img src=\"http://www.example.com/foo.jpg\"/>");
+    }
+
+    @Test
+    public void externalHttpOnlyImageDoesNotChange() throws RepositoryException {
+        assertNoChanges("<img src=\"http://\"/>");
+    }
+
+    @Test
+    public void externalRelativeImageDoesNotChange() throws RepositoryException {
+        assertNoChanges("<img src=\"images/foo.jpg\"/>");
+    }
+
+    @Test
+    public void externalRelativeWithPathImageDoesNotChange() throws RepositoryException {
+        assertNoChanges("<img src=\"../images/foo.jpg\"/>");
+    }
+
+    @Test
+    public void externalImageWithIllegalJcrCharsDoesNotChange() throws RepositoryException {
+        assertNoChanges("<img src=\"2*3=6.png\">Link to image illegal JCR characters in its name</a>");
+    }
+
+    @Test
+    public void externalRelativeImageWithIllegalJcrCharsDoesNotChange() throws RepositoryException {
+        assertNoChanges("100% correct image: <img src=\"100%25+correct.png\"/>");
     }
 
     @Test
@@ -231,15 +311,7 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
-    public void setExternalLinkDoesNotChange() {
-        final ChildFacetUuidsModel model = createModel("");
-        model.setObject("<a href=\"http://www.example.com\">external link</a>");
-        assertEquals("No child facet nodes should have been created", 0, documentNode.getNodes().getSize());
-        assertEquals("<a href=\"http://www.example.com\">external link</a>", textModel.getObject());
-    }
-
-    @Test
-    public void setExternalLinkWithUuidShouldIgnoreUuid() throws RepositoryException {
+    public void setExternalLinkWithUuidIgnoresUuid() throws RepositoryException {
         final Node document1 = rootNode.addNode("document1", "nt:unstructured");
         final ChildFacetUuidsModel model = createModel("");
         model.setObject("<a href=\"http://www.example.com\" uuid=\"" + document1.getIdentifier() + "\">external link</a>");
@@ -248,23 +320,11 @@ public class ChildFacetUuidsModelTest {
     }
 
     @Test
-    public void setExternalImageDoesNotChange() {
-        final ChildFacetUuidsModel model = createModel("");
-        model.setObject("<img src=\"http://www.example.com/image.jpg\"/>");
-        assertEquals("No child facet nodes should have been created", 0, documentNode.getNodes().getSize());
-        assertEquals("<img src=\"http://www.example.com/image.jpg\"/>", textModel.getObject());
-    }
-
-    @Test
     public void setTextWithoutAnyLinksRemovesAllChildNodes() throws RepositoryException {
         final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        final ChildFacetUuidsModel model = createModel("");
-        model.setObject("Text without link");
-
-        assertEquals("Unused child facet node should have been removed", 0, documentNode.getNodes().getSize());
-        assertEquals("Text without link", model.getObject());
+        assertSetTextUnchangedAndAllChildFacetsRemoved("Text without link");
     }
 
     @Test
@@ -272,11 +332,7 @@ public class ChildFacetUuidsModelTest {
         final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        final ChildFacetUuidsModel model = createModel("");
-        model.setObject("");
-
-        assertEquals("Unused child facet node should have been removed", 0, documentNode.getNodes().getSize());
-        assertEquals("", model.getObject());
+        assertSetTextUnchangedAndAllChildFacetsRemoved("");
     }
 
     @Test
@@ -284,11 +340,7 @@ public class ChildFacetUuidsModelTest {
         final Node linkTarget = rootNode.addNode("linked-node", "nt:unstructured");
         addChildFacetNode("linked-node", linkTarget.getIdentifier());
 
-        final ChildFacetUuidsModel model = createModel("");
-        model.setObject(null);
-
-        assertEquals("Unused child facet node should have been removed", 0, documentNode.getNodes().getSize());
-        assertEquals(null, model.getObject());
+        assertSetTextUnchangedAndAllChildFacetsRemoved(null);
     }
 
     @Test
