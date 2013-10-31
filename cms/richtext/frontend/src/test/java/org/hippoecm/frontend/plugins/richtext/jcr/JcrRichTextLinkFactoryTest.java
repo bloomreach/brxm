@@ -20,19 +20,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.richtext.RichTextException;
-import org.hippoecm.frontend.plugins.richtext.RichTextLink;
-import org.hippoecm.frontend.plugins.richtext.RichTextModel;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class JcrRichTextLinkFactoryTest {
+public class JcrRichTextLinkFactoryTest extends PluginTest {
 
     @Test
     public void createLink() throws RichTextException, RepositoryException {
@@ -46,7 +40,7 @@ public class JcrRichTextLinkFactoryTest {
         html.setProperty("hippostd:content", "testing 1 2 3");
 
         JcrRichTextLinkFactory factory = new JcrRichTextLinkFactory(new JcrNodeModel(html));
-        RichTextLink link = factory.createLink(new JcrNodeModel(targetHandle));
+        factory.createLink(new JcrNodeModel(targetHandle));
 
         assertTrue(html.hasNode("target"));
     }
