@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,6 +95,8 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
     private static final String CONFIG_PREFERRED_IMAGE_VARIANT = "preferred.image.variant";
     private static final String DEFAULT_PREFERRED_IMAGE_VARIANT = "hippogallery:original";
     private static final String GALLERY_TYPE_SELECTOR_ID = "galleryType";
+    private static final String EXCLUDED_IMAGE_VARIANTS = "excluded.image.variants";
+    private static final String INCLUDED_IMAGE_VARIANTS = "included.image.variants";
 
     public final static List<String> ALIGN_OPTIONS = Arrays.asList("top", "middle", "bottom", "left", "right");
 
@@ -258,12 +261,10 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             }
             TypeTranslator typeTranslator = new TypeTranslator(new JcrNodeTypeModel(tmpImageSetNode.getPrimaryNodeType()));
             NodeIterator childNodes = tmpImageSetNode.getNodes();
-            while (childNodes.hasNext()) {
-                Node childNode = childNodes.nextNode();
-                if (childNode.isNodeType("hippogallery:image")) {
-                    String childNodeName = childNode.getName();
-                    sortedEntries.add(new AbstractMap.SimpleEntry<String, String>(childNodeName, typeTranslator.getPropertyName(childNodeName).getObject()));
-                }
+            List<String> allImageVariants = getAllImageVariants(childNodes);
+            List<String> shownImageVariants = ShownImageVariantsBuilder.getAllowedList(allImageVariants, getExcludedImageVariants(), getIncludedImageVariants());
+            for (String childNodeName : shownImageVariants) {
+                sortedEntries.add(new AbstractMap.SimpleEntry<String, String>(childNodeName, typeTranslator.getPropertyName(childNodeName).getObject()));
             }
         } catch (RepositoryException repositoryException) {
             log.error("Error updating the available image variants.", repositoryException);
@@ -278,6 +279,41 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
             type.updateModel();
         }
     }
+
+    private List<String> getAllImageVariants(final NodeIterator childNodes) throws RepositoryException {
+        List<String> allImageVariants = new ArrayList<String>();
+        while (childNodes.hasNext()) {
+            Node childNode = childNodes.nextNode();
+            if (childNode.isNodeType("hippogallery:image")) {
+                String childNodeName = childNode.getName();
+                allImageVariants.add(childNodeName);
+            }
+        }
+        return allImageVariants;
+    }
+
+
+    private List<String> getIncludedImageVariants() {
+        return getMultipleString(INCLUDED_IMAGE_VARIANTS);
+    }
+
+    private List<String> getExcludedImageVariants() {
+        return getMultipleString(EXCLUDED_IMAGE_VARIANTS);
+    }
+
+    private List<String> getMultipleString(final String key) {
+        List<String> result=null;
+        if (!getPluginConfig().containsKey(key)){
+            return null;
+        }
+        final String[] stringArray = getPluginConfig().getStringArray(key);
+        if (stringArray != null) {
+            result = new ArrayList<String>();
+            Collections.addAll(result, stringArray);
+        }
+        return result;
+    }
+
 
     @SuppressWarnings("unchecked")
     private Component createUploadForm() {
