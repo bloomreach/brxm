@@ -52,6 +52,7 @@ public class TestSharedHstComponentsConfigurationModels extends AbstractTestConf
      *  <li>hst:components</li>
      *  <li>hst:templates</li>
      *  <li>hst:catalog</li>
+     *  <li>hst:workspace</li>
      * </ol>
      * 
      * MUST also share the same {@link HstComponentsConfigurationService}. This also 

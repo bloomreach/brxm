@@ -38,6 +38,7 @@ public class CompositeConfigurationNodes {
     private List<String> compositeConfigurationNodeNames;
     private boolean compositeConfigurationNodesLoaded;
     private List<HstNode> orderedRootConfigurationNodeInheritanceList = new ArrayList<>();
+    private List<UUID> cacheKey;
 
 
     public CompositeConfigurationNodes(HstNode configurationRootNode, String... nodeNames) {
@@ -125,10 +126,15 @@ public class CompositeConfigurationNodes {
     }
 
     /**
-     * @return the cachekey for this {@link CompositeConfigurationNodes} object : It is the UUIDs of all compositeConfigurationNodes + its
-     * direct children (and thus not descendants of those children)
+     * @return the cachekey for this {@link CompositeConfigurationNodes} object : It is the UUIDs of all main
+     * configuration nodes (like hst:pages, hst:templates) *PLUS* their direct children (and thus not
+     * descendants of those children)
      */
     public List<UUID> getCacheKey() {
+        if (cacheKey != null) {
+            return cacheKey;
+        }
+        long start = System.currentTimeMillis();
         List<UUID> uuids = new ArrayList<>();
         for (CompositeConfigurationNode compositeConfigurationNode : getCompositeConfigurationNodes().values()) {
             uuids.add(UUID.fromString(compositeConfigurationNode.getMainConfigNode().getValueProvider().getIdentifier()));
@@ -136,7 +142,11 @@ public class CompositeConfigurationNodes {
                 uuids.add(UUID.fromString(compositeChild.getValueProvider().getIdentifier()));
             }
         }
-        return uuids;
+        if (log.isDebugEnabled()) {
+            log.debug("Creating cachekey took {} ms.", System.currentTimeMillis() -start);
+        }
+        cacheKey = uuids;
+        return cacheKey;
     }
 
     private List<String> createDependencyPaths(final String rootPath, final String[] nodeNames) {

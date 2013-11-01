@@ -138,8 +138,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                 HstNodeTypes.NODENAME_HST_COMPONENTS,
                 HstNodeTypes.NODENAME_HST_TEMPLATES,
                 HstNodeTypes.NODENAME_HST_WORKSPACE,
-                HstNodeTypes.NODENAME_HST_CATALOG,
-                HstNodeTypes.NODENAME_HST_SITEMENUS);
+                HstNodeTypes.NODENAME_HST_CATALOG);
 
         List<UUID> cachekey = ccn.getCacheKey();
 
@@ -175,6 +174,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         final CompositeConfigurationNodes ccn = getCompositeConfigurationNodes(configurationPath,
                 HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
 
+        // TODO cache ccn also !!!
         final CompositeConfigurationNodes.CompositeConfigurationNode compositeSiteMapItemHandlersNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
         if (compositeSiteMapItemHandlersNode != null) {
             return new HstSiteMapItemHandlersConfiguration() {
