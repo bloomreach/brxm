@@ -145,7 +145,7 @@ public class BrowseServiceTest extends PluginTest {
                     "/test/content/document", "hippo:handle",
                         "jcr:mixinTypes", "mix:versionable",
                         "/test/content/document/document", "frontendtest:document",
-                            "jcr:mixinTypes", "hippo:harddocument",
+                            "jcr:mixinTypes", "mix:referenceable",
                             "a", "xxx",
                     "/test/content/folder", "hippostd:folder",
             "/test/config", "frontend:pluginconfig",
@@ -229,7 +229,7 @@ public class BrowseServiceTest extends PluginTest {
 
             public void visit(Node node) throws RepositoryException {
                 if (node.isNodeType("hippo:document")) {
-                    node.addMixin("hippo:harddocument");
+                    node.addMixin("mix:referenceable");
                 } else if (node.isNodeType("hippo:docNode")) {
                     node.addMixin("mix:referenceable");
                 }
@@ -296,7 +296,7 @@ public class BrowseServiceTest extends PluginTest {
     @Test
     public void folderDoesNotFollowDocumentWhenSearching() throws Exception {
         Node otherDoc = root.getNode("test/content").addNode("doc", "hippo:document");
-        otherDoc.addMixin("hippo:harddocument");
+        otherDoc.addMixin("mix:referenceable");
         session.save();
 
         BrowseService service = startServiceWithSearchSection(null);
@@ -339,7 +339,7 @@ public class BrowseServiceTest extends PluginTest {
     @Test
     public void switchToBrowseWhenSelectingFolder() throws Exception {
         Node child = root.getNode("test/content/folder").addNode("kind", "hippostd:folder");
-        child.addMixin("hippo:harddocument");
+        child.addMixin("mix:referenceable");
         session.save();
 
         BrowseService service = startServiceWithSearchSection(null);
@@ -353,7 +353,7 @@ public class BrowseServiceTest extends PluginTest {
         Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
         otherHandle.addMixin("mix:referenceable");
         Node otherDoc = otherHandle.addNode("doc", "hippo:document");
-        otherDoc.addMixin("hippo:harddocument");
+        otherDoc.addMixin("mix:referenceable");
         session.save();
 
         BrowseService service = startServiceWithSearchSection(null);
@@ -367,7 +367,7 @@ public class BrowseServiceTest extends PluginTest {
         Node otherHandle = root.getNode("test/content/folder").addNode("doc", "hippo:handle");
         otherHandle.addMixin("mix:referenceable");
         Node otherDoc = otherHandle.addNode("doc", "hippo:document");
-        otherDoc.addMixin("hippo:harddocument");
+        otherDoc.addMixin("mix:referenceable");
         session.save();
 
         List<Node> nodes = new LinkedList<Node>();

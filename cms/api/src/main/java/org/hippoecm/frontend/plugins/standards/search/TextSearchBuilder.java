@@ -15,20 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.util.io.IClusterable;
-import org.apache.wicket.Session;
-import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
-import org.hippoecm.frontend.session.UserSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.StringTokenizer;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
-import java.util.StringTokenizer;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TextSearchBuilder implements IClusterable {
 
@@ -303,13 +303,13 @@ public class TextSearchBuilder implements IClusterable {
     /**
      * Translates the included primary type(s) to a filter for a JCR xpath query.
      *
-     * @return xpath condition with configured document types or a clause that queries {@literal hippo:harddocument} and all its subtypes
+     * @return xpath condition with configured document types or a clause that queries {@literal hippo:document} and all its subtypes
      *          if no document type filter is configured
      */
     private StringBuilder getIncludedPrimaryTypeFilter() {
         StringBuilder sb = new StringBuilder();
         if (includePrimaryTypes == null || includePrimaryTypes.length == 0) {
-            sb.append("//element(*, hippo:harddocument)");
+            sb.append("//element(*, hippo:document)");
         } else {
             sb.append("//node()[");
 

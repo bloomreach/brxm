@@ -198,7 +198,7 @@ public class DefaultEditorFactoryTest extends PluginTest {
             "/${name}", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "cmstest:document",
-                    "jcr:mixinTypes", "hippo:harddocument"
+                    "jcr:mixinTypes", "mix:referenceable"
             
     };
 
@@ -206,7 +206,7 @@ public class DefaultEditorFactoryTest extends PluginTest {
             "/${name}", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "hippo:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
+                    "jcr:mixinTypes", "mix:referenceable",
             
     };
 

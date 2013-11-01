@@ -121,7 +121,7 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
             "/${name}", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "cmstest:document",
-                    "jcr:mixinTypes", "hippo:harddocument"
+                    "jcr:mixinTypes", "mix:referenceable"
     };
 
     ModelReference modelReference;

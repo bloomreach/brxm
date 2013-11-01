@@ -566,7 +566,7 @@ public class ObservationTest extends PluginTest {
             editSession = session.impersonate(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
         }
         Node xyz = editSession.getNodeByUUID(source.getUUID()).addNode("xyz", "frontendtest:document");
-        xyz.addMixin("hippo:harddocument");
+        xyz.addMixin("mix:referenceable");
         xyz.setProperty("facet", "xyz");
         editSession.save();
         if (!sameSession) {

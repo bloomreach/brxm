@@ -200,7 +200,7 @@ public class EditorFactoryTest extends PluginTest {
             "/${name}", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/${name}/${name}", "cmstest:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
+                    "jcr:mixinTypes", "mix:versionable",
                     "jcr:mixinTypes", "hippostdpubwf:document",
                     "jcr:mixinTypes", "hippostd:publishableSummary",
                     HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED,
@@ -209,14 +209,6 @@ public class EditorFactoryTest extends PluginTest {
                     "hippostdpubwf:creationDate", "2010-02-04T16:32:28.068+02:00",
                     "hippostdpubwf:lastModifiedBy", "admin",
                     "hippostdpubwf:lastModificationDate", "2010-02-04T16:32:28.068+02:00"
-            
-    };
-
-    final static String[] plaintestdocument = new String[] {
-            "/${name}", "hippo:handle",
-                "jcr:mixinTypes", "mix:referenceable",
-                "/${name}/${name}", "hippo:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
             
     };
 

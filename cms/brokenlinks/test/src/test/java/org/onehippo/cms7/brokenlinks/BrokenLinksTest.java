@@ -91,13 +91,13 @@ public class BrokenLinksTest extends RepositoryTestCase {
         while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
         }
-        session.getRootNode().addNode("test", "hippostd:folder").addMixin("hippo:harddocument");
+        session.getRootNode().addNode("test", "hippostd:folder").addMixin("mix:referenceable");
         session.save();
         String[] content = new String[] {
             "/test/cfg", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/cfg/cfg", "brokenlinks:config",
-                    "jcr:mixinTypes", "hippo:harddocument"
+                    "jcr:mixinTypes", "mix:referenceable"
         };
         build(session, content);
         session.save();
@@ -113,7 +113,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
                     "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test", "hippo:handle",
                         "jcr:mixinTypes", "mix:referenceable",
                         "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test/brokenlinks:test", "brokenlinks:test",
-                            "jcr:mixinTypes", "hippo:harddocument"
+                            "jcr:mixinTypes", "mix:referenceable"
         };
         build(session, config);
         session.save();
@@ -151,7 +151,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
             "/test/doc", "hippo:handle",
             "jcr:mixinTypes", "mix:referenceable",
                 "/test/doc/doc", "hippo:testdocument",
-                "jcr:mixinTypes", "hippo:harddocument",
+                "jcr:mixinTypes", "mix:referenceable",
                     "/test/doc/doc/text", "hippostd:html",
                     "hippostd:content", "<html><body><a href=\""+BAD+"\">link</a></body></html>"
         };
@@ -169,7 +169,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
                     "/test/doc", "hippo:handle",
                     "jcr:mixinTypes", "mix:referenceable",
                         "/test/doc/doc", "hippo:testdocument",
-                        "jcr:mixinTypes", "hippo:harddocument",
+                        "jcr:mixinTypes", "mix:referenceable",
                             "/test/doc/doc/text", "hippostd:html",
                             "hippostd:content", "<html><body><img src=\""+GOOD+"\"/><img src=\""+BAD+"\"/></body></html>"
                 });
@@ -192,7 +192,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
                 "/test/doc", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                     "/test/doc/doc", "hippo:testdocument",
-                    "jcr:mixinTypes", "hippo:harddocument",
+                    "jcr:mixinTypes", "mix:referenceable",
                         "/test/doc/doc/text", "hippostd:html",
                         "hippostd:content", "<html><body><a href=\""+malformedUrl+"\">link</a></body></html>"
         };
@@ -472,14 +472,14 @@ public class BrokenLinksTest extends RepositoryTestCase {
             if (subLevels.size() > 0) {
                 String subName = "folder" + i;
                 final Node childFolder = folder.addNode(subName, "hippostd:folder");
-                childFolder.addMixin("hippo:harddocument");
+                childFolder.addMixin("mix:referenceable");
                 numof = createDocuments(childFolder, subLevels, numof, documentText, docIds);
             } else {
                 String subName = "document" + i;
                 final Node handleNode = folder.addNode(subName, "hippo:handle");
                 handleNode.addMixin("mix:referenceable");
                 final Node documentNode = handleNode.addNode(subName, "brokenlinks:test");
-                documentNode.addMixin("hippo:harddocument");
+                documentNode.addMixin("mix:referenceable");
                 docIds.add(documentNode.getIdentifier());
                 Node htmlNode = documentNode.addNode(HTML_COMPOUND_NODE_NAME, "hippostd:html");
                 htmlNode.setProperty("hippostd:content", documentText.getTextForDocument(i));
@@ -551,7 +551,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
                             "/test/check", "hippo:handle",
                             "jcr:mixinTypes", "mix:referenceable",
                                 "/test/check/check", "hippo:document",
-                                "jcr:mixinTypes", "hippo:harddocument",});
+                                    "jcr:mixinTypes", "mix:referenceable",});
                 Node node = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
                 node = node.addNode("test");
                 node = node.addNode("test", "hipposys:workflow");

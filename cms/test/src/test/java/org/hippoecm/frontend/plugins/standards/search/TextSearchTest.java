@@ -40,7 +40,7 @@ public class TextSearchTest extends PluginTest {
                 "/test/content/a", "hippo:handle",
                     "jcr:mixinTypes", "mix:referenceable",
                     "/test/content/a/a", "frontendtest:document",
-                        "jcr:mixinTypes", "hippo:harddocument",
+                        "jcr:mixinTypes", "mix:referenceable",
                         "title", "title",
                         "introduction", "introduction",
                         "ab", "ab",
@@ -51,7 +51,7 @@ public class TextSearchTest extends PluginTest {
             "/test/alternative/a", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/alternative/a/a", "frontendtest:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
+                    "jcr:mixinTypes", "mix:referenceable",
                     "title", "title",
                     "ab", "ab",
     };
@@ -60,7 +60,7 @@ public class TextSearchTest extends PluginTest {
             "/test/alternative/a", "hippo:handle",
                 "jcr:mixinTypes", "mix:referenceable",
                 "/test/alternative/a/a", "frontendtest:document",
-                    "jcr:mixinTypes", "hippo:harddocument",
+                    "jcr:mixinTypes", "mix:referenceable",
                     "title", "title",
                     "ab", "ab",
     };
@@ -196,7 +196,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("title");
         tsb.setScope(new String[] { "/test/alternative"} );
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[jcr:contains(.,'title')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -215,7 +215,7 @@ public class TextSearchTest extends PluginTest {
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setText("title");
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -252,14 +252,14 @@ public class TextSearchTest extends PluginTest {
         // leading and trailing space does not matter
         tsb.setText("   title   ");
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
 
         tsb.setText("  title  bar  ");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title bar')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -271,7 +271,7 @@ public class TextSearchTest extends PluginTest {
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setText(" title OR bar AND lux");
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title OR bar AND lux')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -279,7 +279,7 @@ public class TextSearchTest extends PluginTest {
         // consecutive operators are skipped, hence 'title OR AND bar OR OR AND AND lux' should result in 'title OR bar OR AND lux'
         tsb.setText(" title OR AND bar OR OR AND AND lux");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title AND bar AND lux')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -287,7 +287,7 @@ public class TextSearchTest extends PluginTest {
         // 'or' and 'and' (lowercase) are *not* and operator
         tsb.setText(" title OR or bar OR or AND and lux");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title OR or bar OR or AND and lux')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -295,7 +295,7 @@ public class TextSearchTest extends PluginTest {
         // leading and trailing operators are skipped
         tsb.setText(" OR title bar OR lux AND ");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title bar OR lux')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -303,7 +303,7 @@ public class TextSearchTest extends PluginTest {
         // multiple leading and trailing operators are skipped
         tsb.setText(" AND OR title bar OR lux AND AND ");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title bar OR lux')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -311,7 +311,7 @@ public class TextSearchTest extends PluginTest {
         // assert search with dashes and _
         tsb.setText("AND hippo-cms great_version AND ");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'hippo-cms great_version')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -345,7 +345,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText(" title");
 
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'title') or jcr:contains(.,'title*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -353,7 +353,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText(" title bar lux ");
 
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'title bar lux') or jcr:contains(.,'title* bar* lux*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -362,7 +362,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("A quick brown fox jumps at");
         // when a term is shorter then #getMinimalLength() it should be SKIPPED for wildcard searching
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'A quick brown fox jumps at') or jcr:contains(.,'quick* brown* fox* jumps*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -370,7 +370,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("A quick fox AND jumps OR lazy");
         // OR and AND should never get wildcard postfix
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'A quick fox AND jumps OR lazy') or jcr:contains(.,'quick* fox* AND jumps* OR lazy*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -379,7 +379,7 @@ public class TextSearchTest extends PluginTest {
         // OR and AND should never get wildcard postfix
         // after the ignored first OR, the 'or' should be skipped for wildcard search because too short
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'or A quick fox AND jumps at') or jcr:contains(.,'quick* fox* AND jumps*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -387,7 +387,7 @@ public class TextSearchTest extends PluginTest {
         // dashes and _ should work well
         tsb.setText("AND hippo-cms great_version AND ");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'hippo-cms great_version') or jcr:contains(.,'hippo-cms* great_version*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -395,7 +395,7 @@ public class TextSearchTest extends PluginTest {
         // only smaller than 3 letters text thus no wildcard postfix version
         tsb.setText("AND is it so OR ");
         query = tsb.getQueryStringBuilder();
-        expectedQuery = "//element(*, hippo:harddocument)" +
+        expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'is it so')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -409,7 +409,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("très Plattenbandförderer ");
 
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'tres Plattenbandforderer') or jcr:contains(.,'tres* Plattenbandforderer*'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -434,7 +434,7 @@ public class TextSearchTest extends PluginTest {
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setText(queryString);
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'"+expectation+"')] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
@@ -445,7 +445,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setWildcardSearch(true);
         tsb.setText(queryString);
         StringBuilder query = tsb.getQueryStringBuilder();
-        String expectedQuery = "//element(*, hippo:harddocument)" +
+        String expectedQuery = "//element(*, hippo:document)" +
                 "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'"+expectationNoWildcard+"') or jcr:contains(.,'"+expectationWithWildcard+"'))] order by @jcr:score descending";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));

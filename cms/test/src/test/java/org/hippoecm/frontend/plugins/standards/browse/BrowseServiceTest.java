@@ -15,11 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.browse;
 
-import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
 import org.hippoecm.frontend.PluginTest;
@@ -39,11 +35,13 @@ public class BrowseServiceTest extends PluginTest {
     String[] content = new String[] {
             "/test", "nt:unstructured",
                 "/test/content", "hippostd:folder",
+                    "jcr:mixinTypes", "mix:referenceable",
                     "/test/content/document", "hippo:handle",
                         "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document/document", "hippo:document",
-                            "jcr:mixinTypes", "hippo:harddocument",
+                            "jcr:mixinTypes", "mix:versionable",
                     "/test/content/folder", "hippostd:folder",
+                        "jcr:mixinTypes", "mix:referenceable",
             "/test/config", "frontend:pluginconfig",
                 BrowseService.BROWSER_ID, BROWSE_SERVICE,
                 "model.folder", FOLDER_SERVICE,
@@ -97,24 +95,6 @@ public class BrowseServiceTest extends PluginTest {
     @Test
     public void selectCurrentFolderForVersionedNode() throws Exception {
         build(session, content);
-
-        root.getNode("test").accept(new ItemVisitor() {
-            public void visit(Property property) throws RepositoryException {
-            }
-
-            public void visit(Node node) throws RepositoryException {
-                if (node.isNodeType("hippo:document")) {
-                    node.addMixin("hippo:harddocument");
-                } else if (node.isNodeType("hippo:document")) {
-                    node.addMixin("mix:referenceable");
-                }
-
-                NodeIterator nodeIter = node.getNodes();
-                while (nodeIter.hasNext()) {
-                    nodeIter.nextNode().accept(this);
-                }
-            }
-        });
         session.save();
 
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
