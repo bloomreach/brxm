@@ -76,15 +76,20 @@ public abstract class RepositoryTestCase {
     protected static HippoRepository external = null;
     protected static HippoRepository background = null;
 
-    private static final String defaultRepoPath;
+    private static final String repoPath;
 
     static {
-        final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
-        final File storage = new File(tmpdir, "repository-" + UUID.randomUUID().toString());
-        if (!storage.exists()) {
-            storage.mkdir();
+        String location = System.getProperty("repo.path");
+        if (location == null || location.isEmpty()) {
+            final File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+            final File storage = new File(tmpdir, "repository-" + UUID.randomUUID().toString());
+            if (!storage.exists()) {
+                storage.mkdir();
+            }
+            repoPath = storage.getAbsolutePath();
+        } else {
+            repoPath = location;
         }
-        defaultRepoPath = storage.getAbsolutePath();
     }
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -101,11 +106,8 @@ public abstract class RepositoryTestCase {
     @BeforeClass
     public static void setUpClass() throws Exception {
         if (background == null && external == null) {
-            if (System.getProperty("repo.path") == null) {
-                System.setProperty("repo.path", defaultRepoPath);
-            }
             clearRepository();
-            background = HippoRepositoryFactory.getHippoRepository();
+            background = HippoRepositoryFactory.getHippoRepository(repoPath);
         }
     }
 
@@ -121,7 +123,7 @@ public abstract class RepositoryTestCase {
             background.close();
             background = null;
         }
-        final File storage = new File(System.getProperty("repo.path", defaultRepoPath));
+        final File storage = new File(repoPath);
         String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
         for (final String path : paths) {
             FileUtils.deleteQuietly(new File(storage, path));
