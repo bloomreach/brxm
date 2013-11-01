@@ -176,7 +176,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
         // TODO cache ccn also !!!
         final CompositeConfigurationNodes.CompositeConfigurationNode compositeSiteMapItemHandlersNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
-        if (compositeSiteMapItemHandlersNode != null) {
+        if (compositeSiteMapItemHandlersNode == null) {
             return new HstSiteMapItemHandlersConfiguration() {
                 @Override
                 public Map<String, HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
