@@ -15,12 +15,17 @@
  */
 package org.onehippo.repository.mock;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
 
 import javax.jcr.Credentials;
+import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.Item;
+import javax.jcr.ItemExistsException;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -30,16 +35,27 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.retention.RetentionManager;
 import javax.jcr.security.AccessControlManager;
+import javax.jcr.version.VersionException;
+import javax.transaction.xa.XAResource;
 
+import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 /**
  * Mock version of a {@link Session}. It only returns the root node. Saving changes is ignored.
  * All methods that are not implemented throw an {@link UnsupportedOperationException}.
  */
-public class MockSession implements Session {
+public class MockSession implements HippoSession {
+
+
 
     private final MockNode root;
 
@@ -141,6 +157,68 @@ public class MockSession implements Session {
         return "";
     }
 
+    @Override
+    public boolean isLive() {
+        return true;
+    }
+
+    @Override
+    public void refresh(final boolean keepChanges) {
+    }
+
+    @Override
+    public boolean hasPermission(final String absPath, final String actions) {
+        return true;
+    }
+
+    @Override
+    public void checkPermission(final String absPath, final String actions) {
+    }
+
+    @Override
+    public boolean hasCapability(final String methodName, final Object target, final Object[] arguments) {
+        return true;
+    }
+
+    @Override
+    public void logout() {
+    }
+
+    @Override
+    public Session impersonate(final Credentials credentials) {
+        return this;
+    }
+
+    @Override
+    public String[] getAttributeNames() {
+        return new String[0];
+    }
+
+    @Override
+    public Object getAttribute(final String name) {
+        return null;
+    }
+
+    @Override
+    public boolean hasPendingChanges() {
+        return false;
+    }
+
+    @Override
+    public NodeIterator pendingChanges(final Node node, final String nodeType, final boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        return new MockNodeIterator(Collections.<MockNode>emptyList());
+    }
+
+    @Override
+    public NodeIterator pendingChanges(final Node node, final String nodeType) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        return new MockNodeIterator(Collections.<MockNode>emptyList());
+    }
+
+    @Override
+    public NodeIterator pendingChanges() throws RepositoryException {
+        return new MockNodeIterator(Collections.<MockNode>emptyList());
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
@@ -149,22 +227,7 @@ public class MockSession implements Session {
     }
 
     @Override
-    public String[] getAttributeNames() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getAttribute(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Workspace getWorkspace() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Session impersonate(final Credentials credentials) {
         throw new UnsupportedOperationException();
     }
 
@@ -194,32 +257,7 @@ public class MockSession implements Session {
     }
 
     @Override
-    public void refresh(final boolean keepChanges) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasPendingChanges() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public ValueFactory getValueFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasPermission(final String absPath, final String actions) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void checkPermission(final String absPath, final String actions) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasCapability(final String methodName, final Object target, final Object[] arguments) {
         throw new UnsupportedOperationException();
     }
 
@@ -274,16 +312,6 @@ public class MockSession implements Session {
     }
 
     @Override
-    public void logout() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isLive() {
-        return true;
-    }
-
-    @Override
     public void addLockToken(final String lt) {
         throw new UnsupportedOperationException();
     }
@@ -306,5 +334,57 @@ public class MockSession implements Session {
     @Override
     public RetentionManager getRetentionManager() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Node copy(final Node srcNode, final String destAbsNodePath) throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void exportDereferencedView(final String absPath, final OutputStream out, final boolean binaryAsLink, final boolean noRecurse) throws IOException, PathNotFoundException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void exportDereferencedView(final String absPath, final ContentHandler contentHandler, final boolean binaryAsLink, final boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void importDereferencedXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public XAResource getXAResource() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ClassLoader getSessionClassLoader() throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public User getUser() throws ItemNotFoundException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void registerSessionCloseCallback(final CloseCallback callback) {
+    }
+
+    @Override
+    public Session createSecurityDelegate(final Session session, final DomainRuleExtension... domainExtensions) throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void localRefresh() {
+    }
+
+    @Override
+    public void disableVirtualLayers() {
     }
 }

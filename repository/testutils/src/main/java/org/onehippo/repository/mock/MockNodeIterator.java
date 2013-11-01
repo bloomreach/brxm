@@ -18,9 +18,10 @@ package org.onehippo.repository.mock;
 import java.util.Collection;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 
-public class MockNodeIterator extends MockItemIterator<MockNode> implements NodeIterator {
+import org.hippoecm.repository.api.HippoNodeIterator;
+
+public class MockNodeIterator extends MockItemIterator<MockNode> implements HippoNodeIterator {
 
     public MockNodeIterator(Collection<MockNode> collection) {
         super(collection);
@@ -31,4 +32,8 @@ public class MockNodeIterator extends MockItemIterator<MockNode> implements Node
         return next();
     }
 
+    @Override
+    public long getTotalSize() {
+        return getSize();
+    }
 }

@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import javax.jcr.Binary;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -41,11 +42,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.lock.Lock;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.Localized;
 import org.onehippo.repository.util.GlobCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * All methods that are not implemented throw an {@link UnsupportedOperationException}.
  */
-public class MockNode extends MockItem implements Node {
+public class MockNode extends MockItem implements HippoNode {
 
     private static Logger log = LoggerFactory.getLogger(MockNode.class);
 
@@ -517,6 +521,28 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
+    public boolean hasNodes() {
+        return !children.isEmpty();
+    }
+
+    @Override
+    public Node getCanonicalNode() throws ItemNotFoundException, RepositoryException {
+        return this;
+    }
+
+    @Override
+    public boolean isVirtual() throws RepositoryException {
+        return false;
+    }
+
+    @Override
+    public boolean recomputeDerivedData() throws RepositoryException {
+        return false;
+    }
+
+    // REMAINING METHODS ARE NOT IMPLEMENTED
+
+    @Override
     public PropertyIterator getReferences() {
         throw new UnsupportedOperationException();
     }
@@ -534,11 +560,6 @@ public class MockNode extends MockItem implements Node {
     @Override
     public PropertyIterator getWeakReferences(final String name) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasNodes() {
-        return !children.isEmpty();
     }
 
     @Override
@@ -683,6 +704,31 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public String[] getAllowedLifecycleTransistions() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getLocalizedName() throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getLocalizedName(final Localized localized) throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public NodeIterator pendingChanges(final String nodeType, final boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public NodeIterator pendingChanges(final String nodeType) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public NodeIterator pendingChanges() throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 }

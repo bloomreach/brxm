@@ -118,6 +118,11 @@ public abstract class MockItem implements Item {
         // do nothing
     }
 
+    @Override
+    public void refresh(final boolean keepChanges) {
+        // do nothing
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
@@ -142,11 +147,6 @@ public abstract class MockItem implements Item {
 
     @Override
     public void accept(final ItemVisitor visitor) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void refresh(final boolean keepChanges) {
         throw new UnsupportedOperationException();
     }
 
