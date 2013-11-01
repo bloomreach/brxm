@@ -443,6 +443,7 @@ commons/src/test/java/org/hippoecm/hst/container/TestHstContainerRequest.java -t
 commons/src/test/java/org/hippoecm/hst/container/TestRequestContextProvider.java -text
 commons/src/test/java/org/hippoecm/hst/core/component/TestHstParameterInfoProxyFactoryImpl.java -text
 commons/src/test/java/org/hippoecm/hst/core/hosting/TestCustomMountAndVirtualhostAugmenter.java -text
+commons/src/test/java/org/hippoecm/hst/core/internal/TestStringPool.java -text
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/diagnosis/TestHDC.java -text

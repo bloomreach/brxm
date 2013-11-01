@@ -360,12 +360,7 @@ public class HstManagerImpl implements MutableHstManager {
             throw e;
         } catch (Exception e) {
             throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
-        } finally {
-            // clear the StringPool as it is not needed any more
-            // TODO After lazy loading is implemented, we should StringPool clear smarter...
-            StringPool.clear();
         }
-
     }
 
     @Deprecated

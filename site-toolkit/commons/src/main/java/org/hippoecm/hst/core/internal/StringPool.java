@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.internal;
 
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -25,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class StringPool {
 
-    private static final ConcurrentMap<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
+    private static final WeakHashMap<String, WeakReference<String>> stringPool = new WeakHashMap<>(1000);
 
     /**
      * not allowed to instantiate
@@ -38,26 +40,27 @@ public class StringPool {
      * @param string The {@link String} object for which to get its cached object instance
      * @return the String object from the argument or if their was already and equal object in the pool, the object that was already there.
      */
-    public static String get(String string) {
+    public static synchronized String get(String string) {
         if(string == null) {
             return null;
         }
-        // it is faster in ConcurrentHashMap to first check with a get and only when null
-        // use the putIfAbsent : ConcurrentHashMap is optimized for retrieval operations
-        String cached = stringPool.get(string);
-        if(cached == null) {
-            cached = stringPool.putIfAbsent(string, string);
-            if (cached == null) {
-                cached = string;
-            }
+        WeakReference<String> weakVal = stringPool.get(string);
+        String pooledString;
+        if (weakVal != null && (pooledString = weakVal.get()) != null) {
+            return pooledString;
         }
-        return cached;
+        stringPool.put(string, new WeakReference<>(string));
+        return string;
+    }
+
+    public static synchronized int size() {
+        return stringPool.size();
     }
 
     /**
      * Clears the entire StringPool
      */
-    public static void clear() {
+    public static synchronized void clear() {
         stringPool.clear();
     }
 }
