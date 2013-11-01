@@ -50,26 +50,28 @@ public class EventCache<CacheKey, CachedObj, Event> {
                 log.debug("Succesfully removed '{}' from cache BY event '{}'", remove, event);
             }
         }
+
     }
 
     public void put(CacheKey key, CachedObj value, Event event) {
+        expungeStaleEntries();
         WeakReference<CachedObj> weakCachedObj = new WeakReference<>(value, cleanupQueue);
         keyToValueMap.put(key, weakCachedObj);
         valueKeyMap.put(weakCachedObj, key);
         eventCacheKeyRegistry.put(event, key);
-        cleanup();
     }
 
     public void put(CacheKey key, CachedObj value, Event[] events) {
+        expungeStaleEntries();
         WeakReference<CachedObj> weakObject = new WeakReference<>(value, cleanupQueue);
         keyToValueMap.put(key, weakObject);
         valueKeyMap.put(weakObject, key);
         eventCacheKeyRegistry.put(events, key);
-        cleanup();
     }
 
     public CachedObj get(CacheKey key) {
-        cleanup();
+
+        expungeStaleEntries();;
         final WeakReference<CachedObj> weakRef = keyToValueMap.get(key);
         if (weakRef == null) {
             return null;
@@ -78,16 +80,16 @@ public class EventCache<CacheKey, CachedObj, Event> {
     }
 
     public CachedObj remove (CacheKey key) {
+        expungeStaleEntries();
         final WeakReference<CachedObj> weakRef = keyToValueMap.remove(key);
         if (weakRef == null) {
             return null;
         }
         valueKeyMap.remove(weakRef);
-        cleanup();
         return weakRef.get();
     }
 
-    private void cleanup() {
+    private void expungeStaleEntries() {
         Reference<? extends CachedObj> cleaned;
         while ((cleaned = cleanupQueue.poll()) != null) {
             // remove gc-ed weak reference from maps
