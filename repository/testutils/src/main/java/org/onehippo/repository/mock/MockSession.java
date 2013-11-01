@@ -280,7 +280,7 @@ public class MockSession implements Session {
 
     @Override
     public boolean isLive() {
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override
