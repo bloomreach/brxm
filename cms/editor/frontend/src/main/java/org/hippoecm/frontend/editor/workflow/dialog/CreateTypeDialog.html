@@ -15,9 +15,11 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:head>
-    <script type="text/javascript" language="JavaScript">
-      Wicket.Window.unloadConfirmation = false;
-    </script>
+    <script type="text/javascript" language="JavaScript"><![CDATA[
+        if (Wicket != null && Wicket.Window != null) {
+            Wicket.Window.unloadConfirmation = false;
+        }
+    ]]></script>
   </wicket:head>
   <wicket:panel>
     <div class="hippo-window">
