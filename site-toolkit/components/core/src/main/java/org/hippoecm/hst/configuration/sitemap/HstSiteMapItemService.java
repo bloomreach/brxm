@@ -52,7 +52,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
 
-    private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new LinkedHashMap<String, HstSiteMapItemHandlerConfiguration>();
+    private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new LinkedHashMap<>();
 
     private String id;
 
