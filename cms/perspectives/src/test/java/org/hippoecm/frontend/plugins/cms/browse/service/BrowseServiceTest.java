@@ -19,10 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.RowIterator;
@@ -142,12 +140,14 @@ public class BrowseServiceTest extends PluginTest {
     String[] content = new String[] {
             "/test", "nt:unstructured",
                 "/test/content", "hippostd:folder",
+                    "jcr:mixinTypes", "mix:referenceable",
                     "/test/content/document", "hippo:handle",
-                        "jcr:mixinTypes", "mix:versionable",
+                        "jcr:mixinTypes", "mix:referenceable",
                         "/test/content/document/document", "frontendtest:document",
-                            "jcr:mixinTypes", "mix:referenceable",
+                            "jcr:mixinTypes", "mix:versionable",
                             "a", "xxx",
                     "/test/content/folder", "hippostd:folder",
+                        "jcr:mixinTypes", "mix:referenceable",
             "/test/config", "frontend:pluginconfig",
                 BrowseService.BROWSER_ID, BROWSE_SERVICE,
                 "sections", "section.browse",
@@ -223,25 +223,6 @@ public class BrowseServiceTest extends PluginTest {
 
     @Test
     public void selectCurrentFolderForVersionedNode() throws Exception {
-        root.getNode("test").accept(new ItemVisitor() {
-            public void visit(Property property) throws RepositoryException {
-            }
-
-            public void visit(Node node) throws RepositoryException {
-                if (node.isNodeType("hippo:document")) {
-                    node.addMixin("mix:referenceable");
-                } else if (node.isNodeType("hippo:docNode")) {
-                    node.addMixin("mix:referenceable");
-                }
-
-                NodeIterator nodeIter = node.getNodes();
-                while (nodeIter.hasNext()) {
-                    nodeIter.nextNode().accept(this);
-                }
-            }
-        });
-        session.save();
-
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
                 new JcrNodeModel("/test"));
 
