@@ -29,6 +29,18 @@
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+      <!--<exclusions>-->
+        <!--<exclusion>-->
+          <!--<artifactId>tika-parsers</artifactId>-->
+          <!--<groupId>org.apache.tika</groupId>-->
+        <!--</exclusion>-->
+      <!--</exclusions>-->
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-client</artifactId>
       <scope>provided</scope>

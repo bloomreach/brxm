@@ -614,6 +614,12 @@ dashboard-plugins/components-plugin/components-gui/src/test/.DS_Store
 dashboard-plugins/components-plugin/components-gui/src/test/.idea
 dashboard-plugins/components-plugin/components-gui/src/test/atlassian-ide-plugin.xml
 dashboard-plugins/components-plugin/components-gui/src/test/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-gui/src/test/java/*.iml
+dashboard-plugins/components-plugin/components-gui/src/test/java/.DS_Store
+dashboard-plugins/components-plugin/components-gui/src/test/java/.idea
+dashboard-plugins/components-plugin/components-gui/src/test/java/atlassian-ide-plugin.xml
+dashboard-plugins/components-plugin/components-gui/src/test/java/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-gui/src/test/java/target
 dashboard-plugins/components-plugin/components-gui/src/test/resources/*.iml
 dashboard-plugins/components-plugin/components-gui/src/test/resources/.DS_Store
 dashboard-plugins/components-plugin/components-gui/src/test/resources/.idea
@@ -746,6 +752,12 @@ dashboard-plugins/components-plugin/components-library/src/test/.DS_Store
 dashboard-plugins/components-plugin/components-library/src/test/.idea
 dashboard-plugins/components-plugin/components-library/src/test/atlassian-ide-plugin.xml
 dashboard-plugins/components-plugin/components-library/src/test/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-library/src/test/java/*.iml
+dashboard-plugins/components-plugin/components-library/src/test/java/.DS_Store
+dashboard-plugins/components-plugin/components-library/src/test/java/.idea
+dashboard-plugins/components-plugin/components-library/src/test/java/atlassian-ide-plugin.xml
+dashboard-plugins/components-plugin/components-library/src/test/java/hippo-plugins.iws
+dashboard-plugins/components-plugin/components-library/src/test/java/target
 dashboard-plugins/components-plugin/components-library/src/test/resources/*.iml
 dashboard-plugins/components-plugin/components-library/src/test/resources/.DS_Store
 dashboard-plugins/components-plugin/components-library/src/test/resources/.idea

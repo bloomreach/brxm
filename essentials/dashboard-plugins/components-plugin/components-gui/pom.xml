@@ -35,10 +35,11 @@
         <scope>test</scope>
     </dependency>
      <dependency>
-         <groupId>org.onehippo.cms7.essentials</groupId>
-         <artifactId>hippo-dashboard-plugin-sdk</artifactId>
-         <type>pom</type>
-         <version>1.01.00-SNAPSHOT</version>
+       <groupId>org.onehippo.cms7.essentials</groupId>
+       <artifactId>hippo-dashboard-plugin-sdk</artifactId>
+       <type>pom</type>
+       <scope>test</scope>
+       <version>${hippo-dashboard-plugin-api.version}</version>
      </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -48,6 +49,18 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+      <!--<exclusions>-->
+      <!--<exclusion>-->
+      <!--<artifactId>tika-parsers</artifactId>-->
+      <!--<groupId>org.apache.tika</groupId>-->
+      <!--</exclusion>-->
+      <!--</exclusions>-->
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>

@@ -16,17 +16,10 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
@@ -39,10 +32,15 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
+import java.util.*;
 
 
 /**
@@ -66,16 +64,23 @@ public class FileInstruction extends PluginInstruction {
     @Inject(optional = true)
     @Named("instruction.message.file.copy")
     private String messageCopy;
+    @Inject(optional = true)
+    @Named("instruction.message.folder.create")
+    private String messageFolderCreate;
     private boolean overwrite;
     private String source;
     private String target;
     private String action;
+    private String folderMessage;
+    private String createdFolders;
+    private String createdFoldersTarget;
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("executing FILE Instruction {}", this);
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
+            eventBus.post(new InstructionEvent(this));
             return InstructionStatus.FAILED;
         }
         processPlaceholders(context.getPlaceholderData());
@@ -94,6 +99,7 @@ public class FileInstruction extends PluginInstruction {
         final File destination = new File(target);
         if (!overwrite && destination.exists()) {
             log.info("File already exists {}", destination);
+            eventBus.post(new InstructionEvent(this));
             return InstructionStatus.SKIPPED;
         }
         File file = new File(source);
@@ -104,6 +110,21 @@ public class FileInstruction extends PluginInstruction {
                 try {
 
                     if (!destination.exists()) {
+                        //Recursively creates parent directories in case they don't exist yet
+                        Deque<String> directories = new ArrayDeque<>();
+                        String parent = destination.getParent();
+                        while (!new File(parent).exists()) {
+                            directories.push(parent);
+                            parent = new File(parent).getParent();
+                        }
+                        if (!directories.isEmpty()) {
+                            folderMessage = directories.size() > 1 ? directories.size() - 1 + " directories" : "directory";
+                            createdFolders = directories.getLast().substring(directories.getFirst().length());
+                            createdFoldersTarget = directories.getLast();
+                            Files.createDirectories(new File(directories.getLast()).toPath(),  new FileAttribute[] {});
+                            eventBus.post(new InstructionEvent(messageFolderCreate));
+                        }
+
                         Files.createFile(destination.toPath());
                     }
                     FileUtils.copyInputStreamToFile(stream, destination);
@@ -116,6 +137,7 @@ public class FileInstruction extends PluginInstruction {
                 }
             }
             log.error("Source file doesn't exists: {}", file);
+            eventBus.post(new InstructionEvent(this));
             return InstructionStatus.FAILED;
         }
         try {
@@ -126,7 +148,7 @@ public class FileInstruction extends PluginInstruction {
             log.error("Error creating file", e);
         }
 
-
+        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
 
     }
@@ -141,11 +163,13 @@ public class FileInstruction extends PluginInstruction {
                 return InstructionStatus.SUCCESS;
             } else {
                 log.debug("File not deleted {}", target);
+                eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.SKIPPED;
             }
         } catch (IOException e) {
             log.error("Error deleting file", e);
         }
+        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
@@ -163,6 +187,10 @@ public class FileInstruction extends PluginInstruction {
         // add local data
         data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
         data.put(EssentialConst.PLACEHOLDER_TARGET, target);
+        //TODO check what Wicket can offer regarding placeholders and localization, it's probably reusable
+        data.put("folderMessage", folderMessage);
+        data.put("createdFolders", createdFolders);
+        data.put("createdFoldersTarget", createdFoldersTarget);
         // setup messages:
 
         if (Strings.isEmpty(message)) {

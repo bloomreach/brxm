@@ -116,13 +116,17 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/TemplatePanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/provider/ComponentProvider.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/render/ComponentChoiceRenderer.java -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-document.jsp -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-event-detail.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-events.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-list.jsp -text
+dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-news-detail.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-news.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/freemarkertemplate.ftl -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/jsptemplate.ftl -text
+dashboard-plugins/components-plugin/components-gui/src/test/java/InstallationTest.java -text
 dashboard-plugins/components-plugin/components-gui/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-library/pom.xml -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/CommonComponent.java -text
@@ -302,7 +306,9 @@ dashboard-plugins/components-plugin/components-library/src/main/java/org/onehipp
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/SiteUtils.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/HstQueryBuilder.java -text
 dashboard-plugins/components-plugin/components-library/src/main/java/org/onehippo/cms7/essentials/components/utils/query/QueryBuilder.java -text
+dashboard-plugins/components-plugin/components-library/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/components-plugin/components-library/src/main/resources/META-INF/plugin.xml -text
+dashboard-plugins/components-plugin/components-library/src/test/java/InstallationTest.java -text
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text

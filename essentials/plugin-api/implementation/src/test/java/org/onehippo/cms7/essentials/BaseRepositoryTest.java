@@ -4,11 +4,11 @@
 
 package org.onehippo.cms7.essentials;
 
-import javax.jcr.Session;
-
 import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+
+import javax.jcr.Session;
 
 /**
  * @version "$Id: BaseRepositoryTest.java 172679 2013-08-02 14:21:12Z mmilicevic $"

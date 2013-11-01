@@ -4,11 +4,7 @@
 
 package org.onehippo.cms7.essentials;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +14,10 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 
-import com.google.common.collect.ImmutableSet;
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -49,16 +48,16 @@ public class BaseTest {
 
     @After
     public void tearDown() throws Exception {
-        if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
-            oldSystemDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
+        // reset system property
+        if (oldSystemDir != null) {
+            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
         }
     }
 
     @Before
     public void setUp() throws Exception {
-        // reset system property
-        if (oldSystemDir != null) {
-            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
+        if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
+            oldSystemDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         }
 
         final URL resource = getClass().getResource("/project");
