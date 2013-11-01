@@ -1,0 +1,105 @@
+/*
+ * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+
+[hippostd:languageable] mixin
+- hippostd:language (string) < 'aa', 'ab', 'ae', 'af', 'ak', 'am', 'an', 'ar', 'as', 'av', 'ay', 'az', 'ba', 'be', 'bg', 'bh', 'bi', 'bm', 'bn', 'bo', 'br', 'bs', 'ca', 'ce', 'ch', 'co', 'cr', 'cs', 'cu', 'cv', 'cy', 'da', 'de', 'dv', 'dz', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'ff', 'fi', 'fj', 'fo', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gu', 'gv', 'ha', 'he', 'hi', 'ho', 'hr', 'ht', 'hu', 'hy', 'hz', 'ia', 'id', 'ie', 'ig', 'ii', 'ik', 'io', 'is', 'it', 'iu', 'ja', 'jv', 'ka', 'kg', 'ki', 'kj', 'kk', 'kl', 'km', 'kn', 'kr', 'ks', 'ku', 'kv', 'kw', 'ky', 'la', 'lb', 'lg', 'li', 'ln', 'lo', 'lt', 'lu', 'lv', 'mg', 'mh', 'mi', 'mk', 'ml', 'mn', 'mo', 'mr', 'ms', 'mt', 'my', 'na', 'nb', 'nd', 'ne', 'ng', 'nl', 'nn', 'no', 'nr', 'nv', 'ny', 'oc', 'oj', 'om', 'or', 'os', 'pa', 'pi', 'pl', 'ps', 'pt', 'qu', 'rm', 'rn', 'ro', 'ru', 'rw', 'sa', 'sc', 'sd', 'se', 'sg', 'sh', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'ss', 'st', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tn', 'to', 'tr', 'ts', 'tt', 'tw', 'ty', 'ug', 'uk', 'ur', 'uz', 've', 'vi', 'vo', 'wa', 'wo', 'xh', 'yi', 'yo', 'za', 'zh', 'zu' // ISO 639-1 codes
+
+[hippostd:publishableSummary] > hippo:derived mixin
+- hippostd:stateSummary (string) mandatory
+
+[hippostd:publishable] mixin
+- hippostd:state (string) = 'draft' mandatory copy < 'draft', 'unpublished', 'published', 'stale'
+- hippostd:holder (string) copy
+
+[hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
+- hippostd:content (string) primary mandatory
+
+[hippostd:folder] > hippo:document orderable
+- hippostd:foldertype (string) multiple copy
++ * = hippostd:folder multiple
+
+[hippostd:space] > hippostd:folder
+
+[hippostd:directory] > hippo:document
+- hippostd:foldertype (string) multiple copy
++ * = hippostd:folder multiple
+
+[hippostd:templates] > nt:base
++ *
+
+[hippostd:translations]
++ * (nt:base)
+
+[hippostd:translated] mixin
++ hippostd:translations (hippostd:translations)
+
+[hippostd:templatequery] > nt:query
+- hippostd:icon (string)
+- hippostd:renderer (string)
+- hippostd:modify (string) multiple
++ hippostd:templates (hippostd:templates) = hippostd:templates
+
+[hippostd:html] > nt:base
+- hippostd:content (string) primary mandatory
++ * (hippo:facetselect)
+
+[hippostd:taggable] mixin
+- hippostd:tags (string) multiple
+
+[hippostd:gallery] > hippostd:folder orderable
+- hippostd:gallerytype (string) multiple copy
+// the children of this node are supposed to be images or other assets
+
+[hippostd:datefields] > nt:base
+- hippostd:year (long)
+- hippostd:month (long) < '[0,11]'
+- hippostd:weekofyear (long) < '[1,53]'
+- hippostd:dayofweek (long) < '[1,7]'
+- hippostd:dayofmonth (long) < '[1,31]'
+- hippostd:dayofyear (long) < '[1,366]'
+- hippostd:hourofday (long) < '[0,24]'
+- hippostd:minute (long) < '[0,59]'
+- hippostd:second (long)
+
+[hippostd:date] > hippostd:datefields, hippo:derived
+- hippostd:date (date) mandatory primary
+
+[hippostd:container] > hippo:container mixin
++ * (hippostd:html) multiple
++ * (hippostd:date) multiple
+
+[hippostd:relaxed] > hippostd:container mixin
+- * (boolean)
+- * (boolean) multiple
+- * (date)
+- * (date) multiple
+- * (decimal)
+- * (decimal) multiple
+- * (double)
+- * (double) multiple
+- * (long)
+- * (long) multiple
+- * (string)
+- * (string) multiple
+- * (uri)
+- * (uri) multiple
