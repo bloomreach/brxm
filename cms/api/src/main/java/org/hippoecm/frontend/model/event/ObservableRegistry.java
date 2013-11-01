@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.model.event;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Page;
 import org.hippoecm.frontend.Home;
@@ -96,6 +98,7 @@ public class ObservableRegistry implements IPlugin {
 
     private IPluginContext pluginContext;
     private List<ObservationContext> contexts;
+    private Map<IObserver, ObservationContext> observers = new IdentityHashMap<>();
 
     @SuppressWarnings("unchecked")
     public ObservableRegistry(IPluginContext context, IPluginConfig config) {
@@ -128,17 +131,25 @@ public class ObservableRegistry implements IPlugin {
             obContext.observable.startObservation();
             contexts.add(obContext);
         }
+        if (observers.containsKey(service)) {
+            log.warn("Same observer {} registered multiple times", service);
+        } else {
+            observers.put(service, obContext);
+        }
         obContext.addObserver(service);
     }
 
     @SuppressWarnings("unchecked")
     void removeObserver(IObserver service) {
-        IObservable observable = service.getObservable();
-        ObservationContext obContext = getContext(observable);
+        ObservationContext obContext = observers.get(service);
         if (obContext == null) {
+            log.warn("No observation context found for observer {}", service);
             return;
         }
         obContext.removeObserver(service);
+        if (!obContext.observers.contains(service)) {
+            observers.remove(service);
+        }
         if (!obContext.hasObservers()) {
             obContext.observable.stopObservation();
             contexts.remove(obContext);
