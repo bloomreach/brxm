@@ -16,13 +16,12 @@
 package org.hippoecm.frontend.plugins.richtext.view;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.mock.MockHomePage;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.classextension.EasyMock;
+import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -45,15 +44,11 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
 
     @Before
     public void setUp() throws RepositoryException, NoSuchMethodException {
-        root = MockNode.root();
-        session = root.getSession();
+        final HippoTester tester = new HippoTester();
+        tester.startPage(MockHomePage.class);
 
-        new WicketTester().startPage(MockHomePage.class);
-
-        UserSession mockUserSession = EasyMock.createMock(UserSession.class);
-        expect(mockUserSession.getJcrSession()).andReturn(session).anyTimes();
-        replay(mockUserSession);
-        UserSession.mock(mockUserSession);
+        session = UserSession.get().getJcrSession();
+        root = (MockNode) session.getRootNode();
     }
 
     @Test

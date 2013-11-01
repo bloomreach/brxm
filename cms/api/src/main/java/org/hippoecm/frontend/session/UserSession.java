@@ -38,19 +38,10 @@ import org.hippoecm.repository.api.WorkflowManager;
 public abstract class UserSession extends WebSession {
     private static final long serialVersionUID = 8123464713164870284L;
 
-    private static volatile UserSession mockedSession;
-
     public static UserSession get() {
-        if (mockedSession == null) {
-            return (UserSession) org.apache.wicket.Session.get();
-        }
-        return mockedSession;
+        return (UserSession) org.apache.wicket.Session.get();
     }
 
-    public static void mock(UserSession session) {
-        mockedSession = session;
-    }
-    
     public UserSession(Request request) {
         super(request);
     }
