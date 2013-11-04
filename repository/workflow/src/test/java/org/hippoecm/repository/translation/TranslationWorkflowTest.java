@@ -73,10 +73,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp(true);
         Node root = session.getRootNode();
-        if (root.hasNode("test"))
-            root.getNode("test").remove();
-        root = root.addNode("test");
-        session.save();
+        root.addNode("test");
 
         build(session, content);
 
@@ -123,10 +120,6 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     @Override
     @After
     public void tearDown() throws Exception {
-        Node root = session.getRootNode();
-        if (root.hasNode("test")) {
-            root.getNode("test").remove();
-        }
         for (Map.Entry<String, Value[]> entry : privileges.entrySet()) {
             session.getNode(entry.getKey()).setProperty(HippoNodeType.HIPPO_PRIVILEGES, entry.getValue());
         }
