@@ -80,8 +80,13 @@ public class HstSiteMapUtils {
             return null;
         }
 
+        if(mount.getHstSite() == null) {
+            return refIdOrPath;
+        }
+
         final HstSiteMap siteMap = mount.getHstSite().getSiteMap();
-        if(mount.getHstSite() == null || siteMap == null) {
+
+        if(siteMap == null) {
             return refIdOrPath;
         }
         
