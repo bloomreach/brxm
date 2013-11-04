@@ -188,10 +188,6 @@ ${paramValues.maxDocsPerFolder}
         <td></td>
         <td><input type="submit" value="Add wikipedia docs"/></td>
       </tr>
-      <tr>
-        <td>Skip versioning: </td>
-        <td><input type="checkbox" name="skipVersioning" checked="true"/></td>
-      </tr>
     </table>
   </form>
 </div>
