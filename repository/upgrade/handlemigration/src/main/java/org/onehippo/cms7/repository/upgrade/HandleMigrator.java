@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +30,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -132,45 +130,6 @@ class HandleMigrator extends AbstractMigrator {
         }
         removeMixin(handle, HippoNodeType.NT_HARDHANDLE);
         defaultSession.save();
-    }
-
-    private void removeMixin(final Node node, final String mixin) throws RepositoryException {
-        if (node.isNodeType(mixin)) {
-            JcrUtils.ensureIsCheckedOut(node, false);
-            final List<Reference> references = removeReferences(node);
-            try {
-                node.removeMixin(mixin);
-                node.addMixin(JcrConstants.MIX_REFERENCEABLE);
-            } finally {
-                restoreReferences(references);
-            }
-        }
-    }
-
-    private void restoreReferences(final List<Reference> references) throws RepositoryException {
-        for (Reference reference : references) {
-            Node node = reference.getNode();
-            String property = reference.getPropertyName();
-            if (reference.getValue() != null) {
-                node.setProperty(property, reference.getValue());
-            } else {
-                node.setProperty(property, reference.getValues());
-            }
-        }
-    }
-
-    private List<Reference> removeReferences(final Node handle) throws RepositoryException {
-        final List<Reference> references = new LinkedList<>();
-        for (Property property : new PropertyIterable(handle.getReferences())) {
-            final Node node = property.getParent();
-            JcrUtils.ensureIsCheckedOut(node, true);
-            final String propertyName = property.getName();
-            if (!HippoNodeType.HIPPO_RELATED.equals(propertyName)) {
-                references.add(new Reference(property));
-            }
-            property.remove();
-        }
-        return references;
     }
 
     private void migrateVersionHistory(final Node handle, final List<Version> versions) throws RepositoryException {
@@ -363,41 +322,6 @@ class HandleMigrator extends AbstractMigrator {
         RepositoryImpl repositoryImpl = (RepositoryImpl) RepositoryDecorator.unwrap(defaultSession.getRepository());
         final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
         return DecoratorFactoryImpl.getSessionDecorator(repositoryImpl.getRootSession(HANDLE_MIGRATION_WORKSPACE).impersonate(credentials), credentials);
-    }
-
-    static class Reference {
-        private final Node node;
-        private final String propertyName;
-        private final Value value;
-        private final Value[] values;
-
-        Reference(Property property) throws RepositoryException {
-            this.node = property.getParent();
-            this.propertyName = property.getName();
-            if (property.isMultiple()) {
-                this.value = property.getValue();
-                this.values = null;
-            } else {
-                this.value = null;
-                this.values = property.getValues();
-            }
-        }
-
-        Node getNode() {
-            return node;
-        }
-
-        String getPropertyName() {
-            return propertyName;
-        }
-
-        Value getValue() {
-            return value;
-        }
-
-        Value[] getValues() {
-            return values;
-        }
     }
 
 }

@@ -15,14 +15,21 @@
  */
 package org.onehippo.cms7.repository.upgrade;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,5 +125,81 @@ abstract class AbstractMigrator {
     protected abstract void migrate(final Node node) throws RepositoryException;
 
     protected abstract HippoNodeIterator getNodes() throws RepositoryException;
+
+    protected void removeMixin(final Node node, final String mixin) throws RepositoryException {
+        if (node.isNodeType(mixin)) {
+            JcrUtils.ensureIsCheckedOut(node, true);
+            final List<Reference> references = removeReferences(node);
+            try {
+                node.removeMixin(mixin);
+                JcrUtils.ensureIsCheckedOut(node, true);
+                node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+            } finally {
+                restoreReferences(references);
+            }
+        }
+    }
+
+
+    protected void restoreReferences(final List<Reference> references) throws RepositoryException {
+        for (Reference reference : references) {
+            Node node = reference.getNode();
+            String property = reference.getPropertyName();
+            if (reference.getValue() != null) {
+                node.setProperty(property, reference.getValue());
+            } else {
+                node.setProperty(property, reference.getValues());
+            }
+        }
+    }
+
+    protected List<Reference> removeReferences(final Node handle) throws RepositoryException {
+        final List<Reference> references = new LinkedList<>();
+        for (Property property : new PropertyIterable(handle.getReferences())) {
+            final Node node = property.getParent();
+            JcrUtils.ensureIsCheckedOut(node, true);
+            final String propertyName = property.getName();
+            if (!HippoNodeType.HIPPO_RELATED.equals(propertyName)) {
+                references.add(new Reference(property));
+            }
+            property.remove();
+        }
+        return references;
+    }
+
+    static class Reference {
+        private final Node node;
+        private final String propertyName;
+        private final Value value;
+        private final Value[] values;
+
+        Reference(Property property) throws RepositoryException {
+            this.node = property.getParent();
+            this.propertyName = property.getName();
+            if (property.isMultiple()) {
+                this.value = property.getValue();
+                this.values = null;
+            } else {
+                this.value = null;
+                this.values = property.getValues();
+            }
+        }
+
+        Node getNode() {
+            return node;
+        }
+
+        String getPropertyName() {
+            return propertyName;
+        }
+
+        Value getValue() {
+            return value;
+        }
+
+        Value[] getValues() {
+            return values;
+        }
+    }
 
 }

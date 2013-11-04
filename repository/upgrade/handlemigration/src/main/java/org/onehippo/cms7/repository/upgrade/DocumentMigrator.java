@@ -28,8 +28,7 @@ import org.onehippo.repository.util.JcrConstants;
 
 /**
  * Queries for all nodes of type hippo:harddocument and for each node found:
- * - removes the hippo:harddocument mixin
- * - adds the mix:referenceable mixin
+ * - replaces hippo:harddocument mixin with mix:referenceable
  */
 class DocumentMigrator extends AbstractMigrator {
 
@@ -41,9 +40,7 @@ class DocumentMigrator extends AbstractMigrator {
     protected void migrate(final Node node) throws RepositoryException {
         log.debug("Migrating {}", node.getPath());
         try {
-            JcrUtils.ensureIsCheckedOut(node, false);
-            node.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
-            node.addMixin(JcrConstants.MIX_REFERENCEABLE);
+            removeMixin(node, HippoNodeType.NT_HARDDOCUMENT);
             session.save();
         } finally {
             session.refresh(false);
@@ -56,4 +53,5 @@ class DocumentMigrator extends AbstractMigrator {
         final Query query = queryManager.createQuery("SELECT * FROM hippo:harddocument ORDER BY jcr:name", Query.SQL);
         return (HippoNodeIterator) query.execute().getNodes();
     }
+
 }
