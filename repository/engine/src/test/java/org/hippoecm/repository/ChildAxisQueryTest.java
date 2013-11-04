@@ -70,7 +70,6 @@ public class ChildAxisQueryTest extends RepositoryTestCase
         assertEquals(0L, session.getWorkspace().getQueryManager().createQuery(xpath,"xpath").execute().getNodes().getSize());
     }
 
-    @Ignore("Because of JCR-3673 : Once we are on Jackrabbit 2.6.4, this test needs to be enabled")
     @Test
     public void testNoneExistingSibblingChildAxis() throws Exception {
         String xpath = "/jcr:root/test/Document1/Document1[2]";
