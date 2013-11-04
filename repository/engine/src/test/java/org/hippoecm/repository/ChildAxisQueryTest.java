@@ -23,9 +23,16 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 
-public class ChildAxisQueryTest extends RepositoryTestCase
+public class ChildAxisQueryTest extends RepositoryTestCase {
 
-{
+    private String[] content = new String[]{
+            "/test", "nt:unstructured",
+            "/test/Document1", "hippo:handle",
+            "jcr:mixinTypes", "mix:referenceable",
+            "/test/Document1/Document1", "hippo:testsearchdocument",
+            "jcr:mixinTypes", "mix:referenceable",
+            "title", "foo",
+    };
 
 
     @Override
@@ -41,16 +48,6 @@ public class ChildAxisQueryTest extends RepositoryTestCase
     public void tearDown() throws Exception {
         super.tearDown();
     }
-
-    String[] content = new String[]{
-            "/test", "nt:unstructured",
-            "/test/Document1", "hippo:handle",
-            "jcr:mixinTypes", "mix:referenceable",
-            "/test/Document1/Document1", "hippo:testsearchdocument",
-            "jcr:mixinTypes", "mix:referenceable",
-            "title", "foo",
-    };
-
 
     @Test
     public void testExistingChildAxis() throws Exception {
@@ -71,7 +68,7 @@ public class ChildAxisQueryTest extends RepositoryTestCase
     }
 
     @Test
-    public void testNoneExistingSibblingChildAxis() throws Exception {
+    public void testNoneExistingSiblingChildAxis() throws Exception {
         String xpath = "/jcr:root/test/Document1/Document1[2]";
         assertEquals(0L, session.getWorkspace().getQueryManager().createQuery(xpath,"xpath").execute().getNodes().getSize());
 
