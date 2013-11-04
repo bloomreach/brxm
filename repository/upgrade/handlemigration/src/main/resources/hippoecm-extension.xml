@@ -27,7 +27,7 @@
       <sv:value>15.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>handlemigration-module.xml</sv:value>
+      <sv:value>contentmodelmigrationmodule.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:modules</sv:value>

@@ -71,22 +71,20 @@ import org.xml.sax.InputSource;
  * the obsoleted versions here. (After the hardhandle and harddocument mixins have been dropped from the
  * handle and respective variants the orphaned version histories cannot be cleaned because of cached references)
  */
-class HandleMigrator {
+class HandleMigrator extends AbstractMigrator {
 
     private static final Logger log = LoggerFactory.getLogger(HandleMigrator.class);
     private static final String HANDLE_MIGRATION_WORKSPACE = "handlemigration";
     private static final String JCR_FROZEN_PRIMARY_TYPE = "jcr:frozenPrimaryType";
-    private static final String JCR_FROZEN_MIXIN_TYPES = "jcr:frozenMixinTypes";
-    private static final String NT_FROZEN_NODE = "nt:frozenNode";
     private static final String ATTIC_PATH = "/content/attic";
 
     private static final int VERSIONS_RETAIN_COUNT = Integer.getInteger("org.onehippo.cms7.migration.versions_retain_count", Integer.MAX_VALUE);
 
     private final Session defaultSession;
     private Session migrationSession;
-    private boolean cancelled = false;
 
     HandleMigrator(final Session session) {
+        super(session);
         this.defaultSession = session;
     }
 
@@ -94,89 +92,18 @@ class HandleMigrator {
         createMigrationWorkspaceIfNotExists();
         migrationSession = loginToMigrationWorkspace();
         defaultSession.getWorkspace().getObservationManager().setUserData(HippoNodeType.HIPPO_IGNORABLE);
-    }
-
-    void cancel() {
-        cancelled = true;
+        super.init();
     }
 
     void shutdown() {
-        if (defaultSession != null && defaultSession.isLive()) {
-            defaultSession.logout();
-        }
         if (migrationSession != null && migrationSession.isLive()) {
             migrationSession.logout();
         }
+        super.shutdown();
     }
 
-    void migrate() {
-        log.debug("Running handle migration tool");
-
-        final HippoNodeIterator hardHandles = (HippoNodeIterator) getHardHandles();
-        final long size = hardHandles.getTotalSize();
-
-        log.debug("{} handles to migrate", size);
-
-        if (size > 0) {
-            try {
-                int count = 0;
-                final long progressInterval = (size + 99) / 100;
-                for (Node handle : new NodeIterable(hardHandles)) {
-                    if (cancelled) {
-                        break;
-                    }
-                    try {
-                        migrate(handle);
-                        count++;
-                        throttle(count);
-                        if (count % 100 == 0) {
-                            log.info("Migrated {} handles", count);
-                        }
-                        if (count % progressInterval == 0) {
-                            long progress = Math.round(100.0 * count / size);
-                            log.info("Progress: {} %", progress);
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Failed to migrate " + JcrUtils.getNodePathQuietly(handle), e);
-                    }
-                }
-                log.info("Finished migrating {} handles to new model", count);
-            } finally {
-                if (migrationSession != null) {
-                    migrationSession.logout();
-                }
-            }
-        }
-
-    }
-
-    private NodeIterator getHardHandles() {
-        try {
-            final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();
-            final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle ORDER BY jcr:name", Query.SQL);
-            return query.execute().getNodes();
-        } catch (RepositoryException e) {
-            log.error("Failed to query for handles to migrate", e);
-        }
-        return null;
-    }
-
-    private void throttle(final int count) {
-        if (count % 10 == 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ignore) {
-            }
-        } else {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException ignore) {
-            }
-        }
-    }
-
-    void migrate(final Node handle) throws RepositoryException {
-        log.debug("Migrating {}", handle.getPath());
+    @Override
+    protected void migrate(final Node handle) throws RepositoryException {
         try {
             final List<Version> versions = getVersions(handle);
             if (!versions.isEmpty()) {
@@ -187,6 +114,13 @@ class HandleMigrator {
             defaultSession.refresh(false);
             migrationSession.refresh(false);
         }
+    }
+
+    @Override
+    protected HippoNodeIterator getNodes() throws RepositoryException {
+        final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();
+        final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle ORDER BY jcr:name", Query.SQL);
+        return (HippoNodeIterator) query.execute().getNodes();
     }
 
     private void migrateHandle(final Node handle) throws RepositoryException {
@@ -336,7 +270,10 @@ class HandleMigrator {
     }
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
-        JcrUtils.copyTo(srcNode, new DefaultCopyHandler(destNode) {
+        for (NodeType nodeType : JcrUtils.getMixinNodeTypes(srcNode)) {
+            destNode.addMixin(nodeType.getName());
+        }
+        JcrUtils.copyToChain(srcNode, new DefaultCopyHandler(destNode) {
 
             @Override
             public void startNode(final NodeInfo nodeInfo) throws RepositoryException {

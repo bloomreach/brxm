@@ -88,7 +88,7 @@ public class DefaultCopyHandler implements CopyHandler {
                 setCurrent(childDest);
             }
         } catch (ConstraintViolationException cve) {
-            log.error("Unable to create node from NodeInfo " + nodeInfo);
+            log.error("Unable to create node from NodeInfo " + nodeInfo + ": " + cve.toString());
         }
     }
 

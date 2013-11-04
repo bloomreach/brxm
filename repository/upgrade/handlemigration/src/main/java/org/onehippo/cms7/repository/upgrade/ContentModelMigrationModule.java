@@ -17,33 +17,39 @@ package org.onehippo.cms7.repository.upgrade;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.onehippo.repository.modules.ExecutableDaemonModule;
 
 
-public class HandleMigrationModule implements ExecutableDaemonModule {
+public class ContentModelMigrationModule implements ExecutableDaemonModule {
 
-    private HandleMigrator migrator;
+    private HandleMigrator handleMigrator;
+    private DocumentMigrator documentMigrator;
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
-        migrator = new HandleMigrator(session);
-        migrator.init();
+        handleMigrator = new HandleMigrator(session.impersonate(new SimpleCredentials("system", new char[] {})));
+        handleMigrator.init();
+        documentMigrator = new DocumentMigrator(session.impersonate(new SimpleCredentials("system", new char[] {})));
+        documentMigrator.init();
     }
 
     @Override
     public void execute() throws RepositoryException {
-        migrator.migrate();
+//        handleMigrator.migrate();
+        documentMigrator.migrate();
     }
 
     @Override
     public void cancel() {
-        migrator.cancel();
+        handleMigrator.cancel();
+        documentMigrator.cancel();
     }
 
     @Override
     public void shutdown() {
-        migrator.shutdown();
+        handleMigrator.shutdown();
     }
 
 }

@@ -432,9 +432,11 @@ testutils/src/test/java/org/onehippo/repository/testutils/ExecuteOnLogLevelTest.
 testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilterTest.java -text
 testutils/src/test/resources/log4j-filters.txt -text
 upgrade/handlemigration/pom.xml -text
-upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/HandleMigrationModule.java -text
+upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/AbstractMigrator.java -text
+upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/ContentModelMigrationModule.java -text
+upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/DocumentMigrator.java -text
 upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/HandleMigrator.java -text
-upgrade/handlemigration/src/main/resources/handlemigration-module.xml -text
+upgrade/handlemigration/src/main/resources/contentmodelmigrationmodule.xml -text
 upgrade/handlemigration/src/main/resources/hippoecm-extension.xml -text
 upgrade/handlemigration/src/main/resources/org/onehippo/cms7/repository/upgrade/handlemigration-workspace.xml -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactions/DeprecatedBasicReviewedActionsWorkflowImpl.java -text
