@@ -339,7 +339,7 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
             if (deletedExternals.containsKey(id))
                 return state;
             if (id instanceof HippoNodeId) {
-                if (!virtualNodes.containsKey((NodeId)id)) {
+                if (!virtualNodes.containsKey(id)) {
                     edit();
                     NodeState nodeState = (NodeState)state;
                     if (isEnabled()) {
