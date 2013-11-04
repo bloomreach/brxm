@@ -539,7 +539,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         for (FacetAuthPrincipal fap : faps) {
             Set<String> privs = fap.getPrivileges();
             if (privs.contains("jcr:read")) {
-                if (isNodeInDomain(nodeState, fap, true)) {
+                if (isNodeInDomain(nodeState, fap)) {
                     addAccessToCache(id, true);
                     return true;
                 }
@@ -611,12 +611,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      *
      * @param nodeState the state of the node to check
      * @param fap the facet auth principal to check
-     * @param checkRead
      * @return true if the node is in the domain of the facet auth
      * @throws RepositoryException
      * @see FacetAuthPrincipal
      */
-    private boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap, final boolean checkRead) throws RepositoryException {
+    private boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap) throws RepositoryException {
         log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fap);
         boolean isInDomain = false;
 
@@ -659,13 +658,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     log.error("Unable to retrieve parent state of node with id " + nodeState.getId(), e);
                 }
                 if (docState != null) {
-                    if (checkRead) {
-                        Boolean allowRead = getAccessFromCache(docState.getNodeId());
-                        if (allowRead != null) {
-                            return allowRead.booleanValue();
-                        }
-                    }
-                    return isNodeInDomain(docState, fap, checkRead);
+                    return isNodeInDomain(docState, fap);
                 }
             }
         }
@@ -1451,7 +1444,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
 
                 if (fap.getPrivileges().contains(priv.getName())) {
-                    if (isNodeInDomain(nodeState, fap, false)) {
+                    if (isNodeInDomain(nodeState, fap)) {
                         allowed = true;
                         if (log.isInfoEnabled()) {
                             log.info("GRANT: " + priv.getName() + " to user " + getUserIdAsString() + " in domain " + fap + " for "
@@ -1493,7 +1486,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         Set<Privilege> privileges = new HashSet<Privilege>();
         for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
-            if (isNodeInDomain(nodeState, fap, false)) {
+            if (isNodeInDomain(nodeState, fap)) {
                 for (String privilegeName : fap.getPrivileges()) {
                     privileges.add(privilegeFromName(privilegeName));
                 }
