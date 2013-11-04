@@ -539,7 +539,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         for (FacetAuthPrincipal fap : faps) {
             Set<String> privs = fap.getPrivileges();
             if (privs.contains("jcr:read")) {
-                if (isNodeInDomain(nodeState, fap)) {
+                if (isNodeInDomain(nodeState, fap, true)) {
                     addAccessToCache(id, true);
                     return true;
                 }
@@ -611,11 +611,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      *
      * @param nodeState the state of the node to check
      * @param fap the facet auth principal to check
+     * @param checkRead
      * @return true if the node is in the domain of the facet auth
      * @throws RepositoryException
      * @see FacetAuthPrincipal
      */
-    private boolean isNodeInDomain(NodeState nodeState, FacetAuthPrincipal fap) throws RepositoryException {
+    private boolean isNodeInDomain(final NodeState nodeState,
+                                   final FacetAuthPrincipal fap,
+                                   final boolean checkRead) throws RepositoryException {
         log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fap);
         boolean isInDomain = false;
 
@@ -658,7 +661,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     log.error("Unable to retrieve parent state of node with id " + nodeState.getId(), e);
                 }
                 if (docState != null) {
-                    return isNodeInDomain(docState, fap);
+                    if (checkRead) {
+                        Boolean allowRead = getAccessFromCache(docState.getNodeId());
+                        if (allowRead != null) {
+                            return allowRead.booleanValue();
+                        }
+                    }
+                    return isNodeInDomain(docState, fap, checkRead);
                 }
             }
         }
@@ -1004,7 +1013,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Get the <code>NodeId</code> for the absolute path. If the absolute path points
-     * to a property return the NodeId of the parent. This method return null instead of 
+     * to a property return the NodeId of the parent. This method return null instead of
      * throwing a <code>PathNotFoundException</code> for performance reasons.
      * @param absPath the absolute Path
      * @return the NodeId of the node (holding the property) or null when the node not found
@@ -1135,8 +1144,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * document (bonzai tree).
      * @param nodeState the node of which to check the parents
      * @return NodeState the parent node state or null
-     * @throws NoSuchItemStateException 
-     * @throws RepositoryException 
+     * @throws NoSuchItemStateException
+     * @throws RepositoryException
      */
     private NodeState getParentDoc(NodeState nodeState) throws NoSuchItemStateException, RepositoryException {
 
@@ -1444,7 +1453,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
 
                 if (fap.getPrivileges().contains(priv.getName())) {
-                    if (isNodeInDomain(nodeState, fap)) {
+                    if (isNodeInDomain(nodeState, fap, false)) {
                         allowed = true;
                         if (log.isInfoEnabled()) {
                             log.info("GRANT: " + priv.getName() + " to user " + getUserIdAsString() + " in domain " + fap + " for "
@@ -1486,7 +1495,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         Set<Privilege> privileges = new HashSet<Privilege>();
         for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
-            if (isNodeInDomain(nodeState, fap)) {
+            if (isNodeInDomain(nodeState, fap, false)) {
                 for (String privilegeName : fap.getPrivileges()) {
                     privileges.add(privilegeFromName(privilegeName));
                 }
