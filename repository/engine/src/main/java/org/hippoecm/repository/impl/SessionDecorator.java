@@ -27,7 +27,6 @@ import javax.jcr.Item;
 import javax.jcr.ItemExistsException;
 import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
-import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -54,7 +53,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
-import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -130,22 +128,6 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     Node getCanonicalNode(Node node) throws RepositoryException {
         return getInternalHippoSession().getCanonicalNode(node);
-    }
-
-    String[] getQPath(String absPath) throws NamespaceException, RepositoryException {
-        NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
-        Path.Element[] elements = getInternalHippoSession().
-            getQPath(absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
-        String[] rtelements = new String[elements.length];
-        for (int i = 0; i < elements.length; i++) {
-            if (nsreg.getPrefix(elements[i].getName().getNamespaceURI()).equals("")) {
-                rtelements[i] = elements[i].getName().getLocalName();
-            } else {
-                rtelements[i] = nsreg.getPrefix(elements[i].getName().getNamespaceURI()) + ":"
-                        + elements[i].getName().getLocalName();
-            }
-        }
-        return rtelements;
     }
 
     @Override
