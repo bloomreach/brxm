@@ -603,9 +603,9 @@ public class JcrUtils {
 
         final DefaultCopyHandler chain = new DefaultCopyHandler(destParentNode);
         final NodeInfo nodeInfo = new NodeInfo(srcNode);
-        NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
+        final NodeInfo newInfo = new NodeInfo(destNodeName, 0, nodeInfo.getNodeTypeName(), nodeInfo.getMixinNames());
         chain.startNode(newInfo);
-        Node destNode = chain.getCurrent();
+        final Node destNode = chain.getCurrent();
         copyToChain(srcNode, chain);
         chain.endNode();
         return destNode;
@@ -648,9 +648,7 @@ public class JcrUtils {
             chain.setProperty(propInfo);
         }
 
-        final NodeIterator nodes = srcNode.getNodes();
-        while (nodes.hasNext()) {
-            final Node child = nodes.nextNode();
+        for (final Node child : new NodeIterable(srcNode.getNodes())) {
             if (isVirtual(child)) {
                 continue;
             }

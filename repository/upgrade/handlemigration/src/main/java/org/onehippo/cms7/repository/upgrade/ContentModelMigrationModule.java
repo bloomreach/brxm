@@ -37,7 +37,7 @@ public class ContentModelMigrationModule implements ExecutableDaemonModule {
 
     @Override
     public void execute() throws RepositoryException {
-//        handleMigrator.migrate();
+        handleMigrator.migrate();
         documentMigrator.migrate();
     }
 
