@@ -393,7 +393,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hippofavnav-facetnavigation">
+  <sv:node sv:name="hippofacnav-facetnavigation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
@@ -418,7 +418,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hippofavnav-abstractfacetnavigation">
+  <sv:node sv:name="hippofacnav-abstractfacetnavigation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
     </sv:property>
