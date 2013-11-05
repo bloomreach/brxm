@@ -446,6 +446,7 @@ upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/Docum
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HandleMigratorTest.java -text
 upgrade/handlemigration/src/test/resources/hippoecm-extension.xml -text
 upgrade/handlemigration/src/test/resources/legacy-document-template.xml -text
+upgrade/handlemigration/src/test/resources/log4j-filters.txt -text
 upgrade/handlemigration/src/test/resources/org/onehippo/cms7/repository/upgrade/hippo-old.cnd -text
 upgrade/pom.xml svneol=native#text/plain
 utilities/pom.xml svneol=native#text/plain

@@ -20,11 +20,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.version.VersionHistory;
+import javax.jcr.version.VersionManager;
 
+import org.apache.jackrabbit.core.version.VersionHistoryRemover;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.util.JcrConstants;
 
 /**
  * Queries for all nodes of type hippo:harddocument and for each node found:
@@ -40,8 +41,10 @@ class DocumentMigrator extends AbstractMigrator {
     protected void migrate(final Node node) throws RepositoryException {
         log.debug("Migrating {}", node.getPath());
         try {
+            final VersionHistory versionHistory = getVersionHistory(node);
             removeMixin(node, HippoNodeType.NT_HARDDOCUMENT);
             session.save();
+            VersionHistoryRemover.removeVersionHistory(versionHistory);
         } finally {
             session.refresh(false);
         }
@@ -52,6 +55,11 @@ class DocumentMigrator extends AbstractMigrator {
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query query = queryManager.createQuery("SELECT * FROM hippo:harddocument ORDER BY jcr:name", Query.SQL);
         return (HippoNodeIterator) query.execute().getNodes();
+    }
+
+    private VersionHistory getVersionHistory(final Node node) throws RepositoryException {
+        final VersionManager versionManager = session.getWorkspace().getVersionManager();
+        return versionManager.getVersionHistory(node.getPath());
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.repository.upgrade;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,7 +73,6 @@ public class HandleMigratorTest extends RepositoryTestCase {
     public void testHandleMigration() throws Exception {
         editAndPublishTestDocuments();
         migrate();
-//        session.exportSystemView("/content/documents/document0", System.out, true, false);
         checkDocumentHistory();
     }
 
@@ -100,6 +100,12 @@ public class HandleMigratorTest extends RepositoryTestCase {
     }
 
     private void checkAtticDocumentHistory() throws RepositoryException {
+        for (Node handle : getAtticHandles()) {
+            checkAtticHandle(handle);
+        }
+    }
+
+    private List<Node> getAtticHandles() throws RepositoryException {
         final List<Node> handles = new ArrayList<Node>();
         attic.accept(new ItemVisitor() {
             @Override
@@ -119,9 +125,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
                 }
             }
         });
-        for (Node handle : handles) {
-            checkAtticHandle(handle);
-        }
+        return handles;
     }
 
     private void checkAtticHandle(final Node handle) throws RepositoryException {
@@ -132,7 +136,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
         final String documentPath = deleted.getPath();
         final VersionHistory versionHistory = versionManager.getVersionHistory(documentPath);
         final VersionIterator versions = versionHistory.getAllVersions();
-        assertEquals("Unexpected number of versions", 7, versions.getSize());
+        assertEquals("Unexpected number of versions", NO_OF_VERSIONS+2, versions.getSize());
     }
 
     private void migrate() throws RepositoryException {
@@ -143,6 +147,10 @@ public class HandleMigratorTest extends RepositoryTestCase {
                 handleMigrator.migrate(handle);
             }
         }
+        for (Node handle : getAtticHandles()) {
+            handleMigrator.migrate(handle);
+        }
+
     }
 
     private void checkDocumentHistory() throws Exception {

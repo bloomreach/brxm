@@ -66,10 +66,7 @@ import org.xml.sax.InputSource;
  * - migrates the handle:
  *   - remove hippo:hardhandle and replace with mix:referenceable
  *   - remove mix:versionable from draft and live variants and replace with mix:referenceable
- *
- * Because of a bug in the caching internals of the VersionManager it is not possible at the moment to remove
- * the obsoleted versions here. (After the hardhandle and harddocument mixins have been dropped from the
- * handle and respective variants the orphaned version histories cannot be cleaned because of cached references)
+ * - removes the orphaned version histories
  */
 class HandleMigrator extends AbstractMigrator {
 
