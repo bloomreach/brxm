@@ -168,14 +168,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
     </dependency>
-    <!--Dependency for jcrom library - https://code.google.com/p/jcrom/wiki/UserGuide - Apache License 2.0-->
-    <dependency>
-      <groupId>org.jcrom</groupId>
-      <artifactId>jcrom</artifactId>
-      <version>2.1.0</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
