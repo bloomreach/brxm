@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -283,9 +284,12 @@ class HandleMigrator extends AbstractMigrator {
                     final Node node = nodes.nextNode();
                     if (node.isNodeType("nt:versionedChild")) {
                         final String reference = node.getProperty("jcr:childVersionHistory").getString();
-                        final VersionHistory documentHistory = (VersionHistory)
-                                defaultSession.getNodeByIdentifier(reference);
-                        VersionHistoryRemover.removeVersionHistory(documentHistory);
+                        try {
+                            final VersionHistory documentHistory = (VersionHistory) defaultSession.getNodeByIdentifier(reference);
+                            VersionHistoryRemover.removeVersionHistory(documentHistory);
+                        } catch (ItemNotFoundException ignore) {
+                            // this can happen for items in the attic
+                        }
                     }
                 }
             }
