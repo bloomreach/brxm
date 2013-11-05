@@ -24,8 +24,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
-/**
- */
+
 public class VersionHistoryDecorator extends org.hippoecm.repository.decorating.VersionHistoryDecorator {
 
     public VersionHistoryDecorator(DecoratorFactory factory, Session session, VersionHistory versionHistory) {

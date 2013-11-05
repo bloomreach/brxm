@@ -47,6 +47,9 @@ import static junit.framework.Assert.assertTrue;
 
 public class HandleMigratorTest extends RepositoryTestCase {
 
+    private static int NO_OF_DOCS = 1;
+    private static int NO_OF_VERSIONS = 4;
+
     private Node documents;
     private Node attic;
 
@@ -55,7 +58,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
         super.setUp();
         documents = session.getNode("/content/documents");
         attic = session.getNode("/content/attic");
-        createTestDocuments(5);
+        createTestDocuments(NO_OF_DOCS);
         session.save();
     }
 
@@ -69,6 +72,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
     public void testHandleMigration() throws Exception {
         editAndPublishTestDocuments();
         migrate();
+//        session.exportSystemView("/content/documents/document0", System.out, true, false);
         checkDocumentHistory();
     }
 
@@ -134,11 +138,15 @@ public class HandleMigratorTest extends RepositoryTestCase {
     private void migrate() throws RepositoryException {
         final HandleMigrator handleMigrator = new HandleMigrator(session);
         handleMigrator.init();
-        handleMigrator.migrate();
+        for (Node handle : new NodeIterable(documents.getNodes())) {
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                handleMigrator.migrate(handle);
+            }
+        }
     }
 
     private void checkDocumentHistory() throws Exception {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < NO_OF_DOCS; i++) {
             checkDocumentHistory(getPreview(i));
         }
     }
@@ -152,7 +160,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
         final String documentIdentifier = document.getIdentifier();
         final VersionHistory versionHistory = versionManager.getVersionHistory(documentPath);
         final VersionIterator versions = versionHistory.getAllVersions();
-        assertEquals("Unexpected number of versions", 6, versions.getSize());
+        assertEquals("Unexpected number of versions", NO_OF_VERSIONS+1, versions.getSize());
         versionManager.restore(documentPath, "1.2", true);
         document = session.getNodeByIdentifier(documentIdentifier);
         assertEquals("Unexpected property value", "bar2", JcrUtils.getStringProperty(document, "foo", null));
@@ -164,7 +172,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
             if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
                 continue;
             }
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < NO_OF_VERSIONS; i++) {
                 final Node document = handle.getNode(handle.getName());
                 publishTestDocument(editTestDocument(document, i));
             }
@@ -182,7 +190,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
         for (int i = 0; i < count; i++) {
             String path = createTestDocument(i);
             Node node = session.getNode(path).getParent();
-            node.addMixin("hippo:hardhandle");
+            node.addMixin(HippoNodeType.NT_HARDHANDLE);
         }
     }
 
@@ -198,7 +206,7 @@ public class HandleMigratorTest extends RepositoryTestCase {
     }
 
     private String createTestDocument(int index) throws Exception {
-        return getFolderWorkflow(documents).add("new-document", "testcontent:news", "document" + index);
+        return getFolderWorkflow(documents).add("legacy-document", "testcontent:news", "document" + index);
     }
 
     private Node getPreview(final int index) throws RepositoryException {

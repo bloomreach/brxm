@@ -432,6 +432,7 @@ testutils/src/test/java/org/onehippo/repository/testutils/ExecuteOnLogLevelTest.
 testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilterTest.java -text
 testutils/src/test/resources/log4j-filters.txt -text
 upgrade/handlemigration/pom.xml -text
+upgrade/handlemigration/src/main/java/org/apache/jackrabbit/core/version/VersionHistoryRemover.java -text
 upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/AbstractMigrator.java -text
 upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/ContentModelMigrationModule.java -text
 upgrade/handlemigration/src/main/java/org/onehippo/cms7/repository/upgrade/DocumentMigrator.java -text
@@ -444,6 +445,7 @@ upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/reviewedactio
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/DocumentMigratorTest.java -text
 upgrade/handlemigration/src/test/java/org/onehippo/cms7/repository/upgrade/HandleMigratorTest.java -text
 upgrade/handlemigration/src/test/resources/hippoecm-extension.xml -text
+upgrade/handlemigration/src/test/resources/legacy-document-template.xml -text
 upgrade/handlemigration/src/test/resources/org/onehippo/cms7/repository/upgrade/hippo-old.cnd -text
 upgrade/pom.xml svneol=native#text/plain
 utilities/pom.xml svneol=native#text/plain

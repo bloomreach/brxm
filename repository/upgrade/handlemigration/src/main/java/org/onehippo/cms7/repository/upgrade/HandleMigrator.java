@@ -39,6 +39,7 @@ import javax.jcr.version.VersionIterator;
 import javax.jcr.version.VersionManager;
 
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
+import org.apache.jackrabbit.core.version.VersionHistoryRemover;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -103,11 +104,13 @@ class HandleMigrator extends AbstractMigrator {
     @Override
     protected void migrate(final Node handle) throws RepositoryException {
         try {
-            final List<Version> versions = getVersions(handle);
+            final VersionHistory handleVersionHistory = getHandleVersionHistory(handle);
+            final List<Version> versions = getDocumentVersions(handleVersionHistory);
             if (!versions.isEmpty()) {
                 migrateVersionHistory(handle, versions);
             }
             migrateHandle(handle);
+            cleanVersionHistory(handleVersionHistory);
         } finally {
             defaultSession.refresh(false);
             migrationSession.refresh(false);
@@ -126,6 +129,7 @@ class HandleMigrator extends AbstractMigrator {
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
             if (!HippoStdNodeType.UNPUBLISHED.equals(JcrUtils.getStringProperty(variant, HippoStdNodeType.HIPPOSTD_STATE, null))) {
                 removeMixin(variant, HippoNodeType.NT_HARDDOCUMENT);
+                removeMixin(variant, JcrConstants.MIX_VERSIONABLE);
             }
         }
         removeMixin(handle, HippoNodeType.NT_HARDHANDLE);
@@ -230,7 +234,11 @@ class HandleMigrator extends AbstractMigrator {
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
         for (NodeType nodeType : JcrUtils.getMixinNodeTypes(srcNode)) {
-            destNode.addMixin(nodeType.getName());
+            if (!nodeType.getName().equals(HippoNodeType.NT_HARDDOCUMENT)) {
+                destNode.addMixin(nodeType.getName());
+            } else {
+                destNode.addMixin(JcrConstants.MIX_VERSIONABLE);
+            }
         }
         JcrUtils.copyToChain(srcNode, new DefaultCopyHandler(destNode) {
 
@@ -265,12 +273,35 @@ class HandleMigrator extends AbstractMigrator {
 
     }
 
-    private List<Version> getVersions(final Node handle) throws RepositoryException {
+    private void cleanVersionHistory(final VersionHistory handleVersionHistory) throws RepositoryException {
+        final VersionIterator allHandleVersions = handleVersionHistory.getAllVersions();
+        while (allHandleVersions.hasNext()) {
+            final Version handleVersion = allHandleVersions.nextVersion();
+            if (!handleVersion.getName().equals("jcr:rootVersion")) {
+                final NodeIterator nodes = handleVersion.getNode("jcr:frozenNode").getNodes();
+                while (nodes.hasNext()) {
+                    final Node node = nodes.nextNode();
+                    if (node.isNodeType("nt:versionedChild")) {
+                        final String reference = node.getProperty("jcr:childVersionHistory").getString();
+                        final VersionHistory documentHistory = (VersionHistory)
+                                defaultSession.getNodeByIdentifier(reference);
+                        VersionHistoryRemover.removeVersionHistory(documentHistory);
+                    }
+                }
+            }
+        }
+        VersionHistoryRemover.removeVersionHistory(handleVersionHistory);
+    }
+
+    private VersionHistory getHandleVersionHistory(final Node handle) throws RepositoryException {
+        final VersionManager versionManager = defaultSession.getWorkspace().getVersionManager();
+        return versionManager.getVersionHistory(handle.getPath());
+    }
+
+    private List<Version> getDocumentVersions(final VersionHistory handleVersionHistory) throws RepositoryException {
         final List<Version> versions = new ArrayList<Version>();
 
-        final VersionManager versionManager = defaultSession.getWorkspace().getVersionManager();
-        final VersionHistory handleHistory = versionManager.getVersionHistory(handle.getPath());
-        final VersionIterator allHandleVersions = handleHistory.getAllVersions();
+        final VersionIterator allHandleVersions = handleVersionHistory.getAllVersions();
         while (allHandleVersions.hasNext()) {
             final Version handleVersion = allHandleVersions.nextVersion();
             if (!handleVersion.getName().equals("jcr:rootVersion")) {

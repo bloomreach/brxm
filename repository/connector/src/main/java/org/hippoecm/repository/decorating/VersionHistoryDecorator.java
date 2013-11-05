@@ -142,4 +142,11 @@ public abstract class VersionHistoryDecorator extends NodeDecorator implements V
     public NodeIterator getAllFrozenNodes() throws RepositoryException {
         return versionHistory.getAllFrozenNodes();
     }
+
+    public static VersionHistory unwrap(VersionHistory versionHistory) {
+        if (versionHistory instanceof VersionHistoryDecorator) {
+            return ((VersionHistoryDecorator) versionHistory).versionHistory;
+        }
+        return versionHistory;
+    }
 }
