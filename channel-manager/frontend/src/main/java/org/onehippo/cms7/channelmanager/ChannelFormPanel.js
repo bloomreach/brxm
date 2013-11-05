@@ -144,36 +144,41 @@
             return str !== null && suffix !== null && str.indexOf(suffix, str.length - suffix.length) !== -1;
         },
 
-        submitForm: function(enableNextButtonCallback) {
-            var form, panel;
-            form = this.getForm();
-            panel = this;
-            if (form.isValid()) {
-                form.submit({
-                    params: {
-                        xaction: 'create',
-                        records: Ext.encode(form.getValues())
-                    },
-                    success: function() {
-                        //Event to hide the window & rerender the channels panel
-                        panel.fireEvent('channel-created');
-                    },
-                    failure: function(form, action) {
-                        switch (action.failureType) {
-                            case Ext.form.Action.CLIENT_INVALID:
-                                panel.showError(panel.resources['error-check-highlighted-fields']);
-                                break;
-                            case Ext.form.Action.CONNECT_FAILURE:
-                                panel.showError(panel.resources['error-cannot-connect-to-server']);
-                                break;
-                            case Ext.form.Action.SERVER_INVALID:
-                                panel.showError(action.result.message);
-                                break;
+        submitForm: function() {
+            var form = this.getForm(),
+                panel = this;
+
+            return new Hippo.Future(function(success, failure) {
+                if (form.isValid()) {
+                    form.submit({
+                        params: {
+                            xaction: 'create',
+                            records: Ext.encode(form.getValues())
+                        },
+                        success: function() {
+                            success();
+                            //Event to hide the window & rerender the channels panel
+                            panel.fireEvent('channel-created');
+                        },
+                        failure: function(form, action) {
+                            switch (action.failureType) {
+                                case Ext.form.Action.CLIENT_INVALID:
+                                    panel.showError(panel.resources['error-check-highlighted-fields']);
+                                    break;
+                                case Ext.form.Action.CONNECT_FAILURE:
+                                    panel.showError(panel.resources['error-cannot-connect-to-server']);
+                                    break;
+                                case Ext.form.Action.SERVER_INVALID:
+                                    panel.showError(action.result.message);
+                                    break;
+                            }
+                            failure();
                         }
-                        enableNextButtonCallback(true);
-                    }
-                });
-            }
+                    });
+                } else {
+                    failure();
+                }
+            });
         },
 
         showError: function(message) {
