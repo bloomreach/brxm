@@ -143,6 +143,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<String, ResolvedVirtualHost>();
 
     public VirtualHostsService(final HstManagerImpl hstManager, final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+        long start = System.currentTimeMillis();
         HstNode vhostsNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath()+"/hst:hosts");
         if (vhostsNode == null) {
             throw new ModelLoadingException("No hst node found for '"+hstNodeLoadingCache.getRootPath()+"/hst:hosts'. Cannot load model.'");
@@ -276,7 +277,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                }
             }
         }
-
+        log.info("VirtualHostsService loading took '{}' ms.", String.valueOf(System.currentTimeMillis() -start));
     }
 
     public HstManager getHstManager() {

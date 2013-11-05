@@ -18,7 +18,7 @@ package org.hippoecm.hst.configuration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.observation.EventIterator;
+import com.google.common.base.Stopwatch;
 
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
@@ -30,7 +30,6 @@ import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
@@ -44,8 +43,8 @@ public class HstManagerImpl implements MutableHstManager {
 
     private Object hstModelMutex;
 
-    private volatile VirtualHosts prevHstModel;
-    private volatile VirtualHosts hstModel;
+    private volatile VirtualHosts prevVirtualHostsModel;
+    private volatile VirtualHosts virtualHostsModel;
 
 
     private volatile BuilderState state = BuilderState.UNDEFINED;
@@ -256,14 +255,14 @@ public class HstManagerImpl implements MutableHstManager {
     @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
         if (state == BuilderState.UP2DATE) {
-            return hstModel;
+            return virtualHostsModel;
         }
         if (state == BuilderState.UNDEFINED) {
             return synchronousBuild();
         }
         if (allowStale && staleConfigurationSupported) {
             asynchronousBuild();
-            return prevHstModel;
+            return prevVirtualHostsModel;
         }
         return synchronousBuild();
     }
@@ -277,7 +276,7 @@ public class HstManagerImpl implements MutableHstManager {
         if (state != BuilderState.UP2DATE) {
             synchronized (hstModelMutex) {
                 if (state == BuilderState.UP2DATE) {
-                    return hstModel;
+                    return virtualHostsModel;
                 } else {
                     try {
                         state = BuilderState.RUNNING;
@@ -287,12 +286,12 @@ public class HstManagerImpl implements MutableHstManager {
                         } catch (ModelLoadingException e) {
                             state = BuilderState.FAILED;
                             consecutiveBuildFailCounter++;
-                            if (prevHstModel == null) {
+                            if (prevVirtualHostsModel == null) {
                                 throw new ContainerException("HST model failed to load", e);
                             } else {
                                 log.warn("Exception during model loading happened. Return previous stale model. Reason: ", e);
                             }
-                            return prevHstModel;
+                            return prevVirtualHostsModel;
                         }
                     } finally {
                         if (state == BuilderState.RUNNING) {
@@ -303,19 +302,19 @@ public class HstManagerImpl implements MutableHstManager {
                     }
                     if (state == BuilderState.FAILED) {
                         // do not flush pageCache but return old prev virtual host instance instead
-                        return prevHstModel;
+                        return prevVirtualHostsModel;
                     }
                     log.info("Flushing page cache after new model is loaded");
                     pageCache.clear();
                 }
                 if (state == BuilderState.UP2DATE) {
                     consecutiveBuildFailCounter = 0;
-                    prevHstModel = hstModel;
+                    prevVirtualHostsModel = virtualHostsModel;
                 }
-                return hstModel;
+                return virtualHostsModel;
             }
         }
-        return hstModel;
+        return virtualHostsModel;
     }
 
     private long computeReloadDelay(final int consecutiveBuildFailCounter) {
@@ -338,13 +337,12 @@ public class HstManagerImpl implements MutableHstManager {
 
         try {
             long start = System.currentTimeMillis();
-            hstModel = new VirtualHostsService(this, hstNodeLoadingCache);
-            log.info("Loading VirtualHostsService took '{}' ms.", (System.currentTimeMillis() - start));
+            virtualHostsModel = new VirtualHostsService(this, hstNodeLoadingCache);
 
             for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
-                configurationAugmenter.augment((MutableVirtualHosts) hstModel);
+                configurationAugmenter.augment((MutableVirtualHosts) virtualHostsModel);
             }
-            this.channelManager.load(hstModel);
+            this.channelManager.load(virtualHostsModel);
 
             componentRegistry.unregisterAllComponents();
             siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();

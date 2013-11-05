@@ -326,7 +326,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     public void load(VirtualHosts virtualHosts) {
         synchronized (hstModelMutex) {
-            long loadStart = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
 
             final HstNode rootConfigNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath());
 
@@ -390,7 +390,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
             }
             discardChannelsWithoutMountForCurrentHostGroup();
-            log.info("Channel manager load took '{}' ms.", (System.currentTimeMillis() - loadStart));
+            log.info("Channel manager load took '{}' ms.", (System.currentTimeMillis() - start));
         }
     }
 
