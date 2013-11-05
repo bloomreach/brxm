@@ -53,24 +53,23 @@ public class TestStringPool {
     @Test
     public void testStringPoolWeakRefsAvoidOOM() throws InterruptedException {
 
-        // if all string were kept, the memory would never reduce between the 1000 test steps
-        long prevInUse = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        boolean memoryReductionTookPlace = false;
+        // if all string were kept, the size could never get smaller
+        boolean evictionTookPlace = false;
         for (int i = 1; i < 1000 * 10000; i++) {
             // puts 10 Mb + i bytes Strings in pool (i needed to get unique strings)
             StringPool.get(new String(new byte[100 * 100 + i]));
             if (i % 1000 == 0) {
-                long currentMemInUse = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-                if (currentMemInUse < prevInUse) {
-                    memoryReductionTookPlace = true;
-                    break;
-                }
+                int sizeBefore = StringPool.size();
                 System.gc();
                 Thread.sleep(100);
                 System.gc();
+                if (StringPool.size() < sizeBefore) {
+                    evictionTookPlace = true;
+                    break;
+                }
             }
         }
-        assertTrue("GC should had kicked in to reduce memory of weak references.", memoryReductionTookPlace);
+        assertTrue("GC should had kicked in to reduce memory of weak references.", evictionTookPlace);
     }
 
 
