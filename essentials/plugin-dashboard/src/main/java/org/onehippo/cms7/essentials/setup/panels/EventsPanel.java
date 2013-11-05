@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.setup.panels;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -28,8 +29,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.PluginEvent;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +44,8 @@ public class EventsPanel extends Panel {
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(EventsPanel.class);
     @Inject
-    MemoryPluginEventListener listener;
-
+    private MemoryPluginEventListener listener;
+    private final ListView<DisplayEvent> repeater;
 
     public EventsPanel(final String id) {
         super(id);
@@ -53,17 +54,17 @@ public class EventsPanel extends Panel {
         //############################################
         final Form<?> form = new Form("form");
         final List<DisplayEvent> eventsModelList = new LinkedList<>(listener.consumeEvents());
-        final ListView<DisplayEvent> repeater = new ListView<DisplayEvent>("repeater", eventsModelList) {
+
+        repeater = new ListView<DisplayEvent>("repeater", eventsModelList) {
             private static final long serialVersionUID = 1L;
 
             protected void populateItem(final ListItem<DisplayEvent> item) {
                 final PluginEvent pluginEvent = item.getModelObject();
-
-
                 final Label eventMessage = new Label("eventMessage", new Model<>(pluginEvent.getMessage()));
                 item.add(eventMessage);
                 // TODO add model..
                 final CheckBox undoCheckbox = new CheckBox("undoCheckbox", new PropertyModel<Boolean>(pluginEvent, "selected"));
+                undoCheckbox.setVisible(false);
                 item.add(undoCheckbox);
             }
         };
@@ -71,8 +72,19 @@ public class EventsPanel extends Panel {
         repeater.setReuseItems(true);
         form.add(repeater);
         add(form);
+        setOutputMarkupId(true);
 
     }
+
+
+    @Override
+    protected void onModelChanged() {
+        final Queue<DisplayEvent> events = listener.consumeEvents();
+        final List<DisplayEvent> modelObject = repeater.getModel().getObject();
+        modelObject.clear();
+        modelObject.addAll(events);
+    }
+
 
 
 }

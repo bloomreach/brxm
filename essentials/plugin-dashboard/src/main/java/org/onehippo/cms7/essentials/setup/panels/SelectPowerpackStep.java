@@ -16,24 +16,30 @@
 
 package org.onehippo.cms7.essentials.setup.panels;
 
-import com.google.common.base.Strings;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
+import org.onehippo.cms7.essentials.setup.SetupPage;
 import org.onehippo.cms7.essentials.setup.panels.model.ProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -43,10 +49,14 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SelectPowerpackStep.class);
     private final DropdownPanel powerpackDropdown;
+    private String selectedPowerpack;
+    @Inject
+    private EventBus eventBus;
+    private final  SetupPage myParent;
 
-    public SelectPowerpackStep(final String title) {
+    public SelectPowerpackStep(final SetupPage component, final String title) {
         super(title);
-
+        myParent = component;
         ProjectModel projectModel = new ProjectModel();
         org.apache.maven.model.Model pomModel = ProjectUtils.getSitePomModel();
         if (pomModel != null) {
@@ -73,7 +83,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
 
             @Override
             public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
-                final String selectedPowerpack = powerpackDropdown.getSelectedItem();
+                selectedPowerpack = powerpackDropdown.getSelectedItem();
                 if (Strings.isNullOrEmpty(selectedPowerpack)) {
                     log.debug("No powerpack selected");
                     return;
@@ -86,6 +96,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         }, new IChoiceRenderer<String>() {
 
             private static final long serialVersionUID = 1L;
+
             @Override
             public String getDisplayValue(String value) {
                 return getString(value);
@@ -95,13 +106,27 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
             public String getIdValue(String value, int index) {
                 return String.valueOf(index);
             }
-        });
+        }
+        );
         add(form);
     }
 
     @Override
     public void applyState() {
+        if (Strings.isNullOrEmpty(selectedPowerpack)) {
+            eventBus.post(new DisplayEvent(getString("powerpack.none.selected.label")));
+            RequestCycle cycle = myParent.getRequestCycle();
+            AjaxRequestTarget target = cycle.find(AjaxRequestTarget.class);
+            final FinalStep finalStep = myParent.getFinalStep();
+            finalStep.displayEvents(target);
+
+        } else {
+            eventBus.post(new DisplayEvent(getString("powerpack.news.and.event.description")));
+        }
 
     }
 
+    public String getSelectedPowerpack() {
+        return selectedPowerpack;
+    }
 }

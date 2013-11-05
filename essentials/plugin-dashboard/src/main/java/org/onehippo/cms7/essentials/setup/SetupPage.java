@@ -75,7 +75,8 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     @Inject
     private ValidationEventListener validationEventListener;
 
-
+    private final SelectPowerpackStep selectStep;
+    private final FinalStep finalStep;
     @SuppressWarnings("unchecked")
     public SetupPage(final PageParameters parameters) {
         super(parameters);
@@ -117,8 +118,11 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         // WIZARD & STEPS
         //############################################
         final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
-        wizard.addWizard(new SelectPowerpackStep(getString("step.choose.powerpack")));
-        wizard.addWizard(new FinalStep(getString("step.overview")));
+
+        selectStep = new SelectPowerpackStep(this, getString("step.choose.powerpack"));
+        finalStep = new FinalStep(this, getString("step.overview"));
+        wizard.addWizard(selectStep);
+        wizard.addWizard(finalStep);
         add(wizard);
 
     }
@@ -142,4 +146,11 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         }
     }
 
+    public FinalStep getFinalStep() {
+        return finalStep;
+    }
+
+    public SelectPowerpackStep getSelectStep() {
+        return selectStep;
+    }
 }
