@@ -277,6 +277,7 @@
 
         resetWizard: function() {
             this.showBlueprintChoice();
+            Ext.getCmp('nextButton').enable();
         },
 
         processPreviousStep: function() {
@@ -289,7 +290,13 @@
             if (Ext.getCmp('card-container').layout.activeItem.id === 'blueprints-panel') {
                 this.showChannelForm();
             } else { //current item is the form panel so call submit on it.
-                Ext.getCmp('channel-form-panel').submitForm();
+                Ext.getCmp('nextButton').disable();
+                Ext.getCmp('channel-form-panel').submitForm(function(enableNextButton){
+                    if(enableNextButton) {
+                        //in case of an error on the form
+                        Ext.getCmp('nextButton').enable();
+                    }
+                });
             }
         }
     });

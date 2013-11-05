@@ -144,7 +144,7 @@
             return str !== null && suffix !== null && str.indexOf(suffix, str.length - suffix.length) !== -1;
         },
 
-        submitForm: function() {
+        submitForm: function(enableNextButtonCallback) {
             var form, panel;
             form = this.getForm();
             panel = this;
@@ -170,6 +170,7 @@
                                 panel.showError(action.result.message);
                                 break;
                         }
+                        enableNextButtonCallback(true);
                     }
                 });
             }
