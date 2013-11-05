@@ -24,7 +24,6 @@ import org.junit.Test;
 public class BasicHstTestCase extends AbstractHstTestCase{
 
     public final static String TEST_VIRTURALHOSTS_PATH = "/hst:hst/hst:hosts";
-    public final static String TEST_PREVIEW_SITE_PATH= "/hst:hst/hst:sites/unittestproject-preview";
     public final static String TEST_LIVE_SITE_PATH= "/hst:hst/hst:sites/unittestproject";
     public final static String TEST_SITE_CONTENT_PATH = "/unittestcontent/documents/unittestproject";
    
@@ -38,12 +37,9 @@ public class BasicHstTestCase extends AbstractHstTestCase{
     public void testDefaultHstConfiguration() throws Exception {
 
        Session session = this.getSession();
-
-       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"' must exist",session.nodeExists(TEST_PREVIEW_SITE_PATH));
        assertTrue("Node '"+TEST_SITE_CONTENT_PATH+"' must exist",session.nodeExists(TEST_SITE_CONTENT_PATH));
        assertTrue("Node '"+TEST_LIVE_SITE_PATH+"' must exist",session.nodeExists(TEST_LIVE_SITE_PATH));
        assertTrue("Node '"+TEST_VIRTURALHOSTS_PATH+"s' must exist", session.nodeExists(TEST_VIRTURALHOSTS_PATH));
-       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"/hst:content/common/homepage' must exist", session.nodeExists(TEST_PREVIEW_SITE_PATH + "/hst:content/common/homepage"));
 
     }
     

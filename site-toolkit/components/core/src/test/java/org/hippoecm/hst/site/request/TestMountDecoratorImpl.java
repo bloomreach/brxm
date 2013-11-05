@@ -35,7 +35,6 @@ public class TestMountDecoratorImpl {
 
         expect(mount.isPreview()).andReturn(false).anyTimes();
         expect(mount.getMountPoint()).andReturn("/hst:hst/hst:sites/myproject").anyTimes();
-        expect(mount.getPreviewMountPoint()).andReturn("/hst:hst/hst:sites/myproject-preview").anyTimes();
         expect(mount.getType()).andReturn("live").anyTimes();
         String[] arr = {"foo", "bar", "lux"};
         List<String> types = Arrays.asList(arr);
@@ -44,7 +43,7 @@ public class TestMountDecoratorImpl {
         replay(mount);
         Mount decoratedMount = new MountDecoratorImpl().decorateMountAsPreview(mount);
         assertTrue("The decorated mount is expected to be a preview. ", decoratedMount.isPreview());
-        assertEquals("The decorated mount should have a mountPoint '/hst:hst/hst:sites/myproject-preview'. ","/hst:hst/hst:sites/myproject-preview", decoratedMount.getMountPoint());
+        assertEquals("The decorated mount should have a mountPoint '/hst:hst/hst:sites/myproject'. ","/hst:hst/hst:sites/myproject", decoratedMount.getMountPoint());
 
         assertEquals("The decorated mount should should NEVER change the type, also not live to preview. ",decoratedMount.getType(), "live");
         assertEquals("The decorated mount should should NEVER change the types ",decoratedMount.getTypes().get(0), "foo");

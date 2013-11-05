@@ -40,7 +40,6 @@ public class Channel implements Serializable {
     private String url; //Probably not needed for all channels ?
 
     private String hstMountPoint;
-    private String hstPreviewMountPoint;
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
@@ -102,14 +101,6 @@ public class Channel implements Serializable {
 
     public void setHstMountPoint(final String hstMountPoint) {
         this.hstMountPoint = hstMountPoint;
-    }
-
-    public void setHstPreviewMountPoint(final String hstPreviewMountPoint) {
-        this.hstPreviewMountPoint = hstPreviewMountPoint;
-    }
-
-    public String getHstPreviewMountPoint() {
-        return this.hstPreviewMountPoint;
     }
 
     public String getHstConfigPath() {
@@ -279,7 +270,6 @@ public class Channel implements Serializable {
         result = 31 * result + (mountPath != null ? mountPath.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (hstMountPoint != null ? hstMountPoint.hashCode() : 0);
-        result = 31 * result + (hstPreviewMountPoint != null ? hstPreviewMountPoint.hashCode() : 0);
         result = 31 * result + (hstConfigPath != null ? hstConfigPath.hashCode() : 0);
         result = 31 * result + (contentRoot != null ? contentRoot.hashCode() : 0);
         result = 31 * result + (composerModeEnabled ? 1 : 0);

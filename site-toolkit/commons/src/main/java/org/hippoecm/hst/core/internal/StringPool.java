@@ -17,8 +17,6 @@ package org.hippoecm.hst.core.internal;
 
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * A String pool utility that can be used to return an already present String object from the heap instead

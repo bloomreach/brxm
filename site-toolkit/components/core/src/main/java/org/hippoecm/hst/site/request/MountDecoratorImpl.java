@@ -16,7 +16,6 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -69,26 +68,17 @@ public class MountDecoratorImpl implements MountDecorator {
 
         @Override
         public String getMountPoint() {
-            if (delegatee.isPreview()) {
-                return delegatee.getMountPoint();
-            }
-            return delegatee.getPreviewMountPoint();
+            return delegatee.getMountPoint();
         }
 
         @Override
         public String getCanonicalContentPath() {
-            if (delegatee.isPreview()) {
-                return delegatee.getCanonicalContentPath();
-            }
-            return delegatee.getPreviewCanonicalContentPath();
+            return delegatee.getCanonicalContentPath();
         }
 
         @Override
         public String getContentPath() {
-            if (delegatee.isPreview()) {
-                return delegatee.getContentPath();
-            }
-            return delegatee.getPreviewContentPath();
+            return delegatee.getContentPath();
         }
 
         @Override
@@ -146,23 +136,8 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public String getPreviewCanonicalContentPath() {
-            return getCanonicalContentPath();
-        }
-
-        @Override
-        public String getPreviewContentPath() {
-            return getContentPath();
-        }
-
-        @Override
         public HstSite getPreviewHstSite() {
             return getHstSite();
-        }
-
-        @Override
-        public String getPreviewMountPoint() {
-            return getMountPoint();
         }
 
         /*

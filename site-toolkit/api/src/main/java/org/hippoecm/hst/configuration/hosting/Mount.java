@@ -137,7 +137,7 @@ public interface Mount {
     /**
      * <p>
      * Returns the mount point for this {@link Mount} object. The mount point can be the absolute jcr path to the root site node, for example
-     * something like '/hst:hst/hst:sites/mysite-live', but it can also be some jcr path to some virtual or canonical node in the repository. For example
+     * something like '/hst:hst/hst:sites/mysite', but it can also be some jcr path to some virtual or canonical node in the repository. For example
      * it can be '/content/gallery' , which might be the case for a Mount suited for REST gallery calls.
      * </p>
      *

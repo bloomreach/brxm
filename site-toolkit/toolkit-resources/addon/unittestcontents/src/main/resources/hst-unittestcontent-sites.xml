@@ -28,29 +28,7 @@
       <sv:value>/unittestcontent/documents/unittestproject</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="unittestproject-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/unittestproject</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="unittestsubproject">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/unittestsubproject</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestsubproject</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="unittestsubproject-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
@@ -74,31 +52,8 @@
       <sv:value>/unittestcontent/documents/unittestproject</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="global-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/global</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject</sv:value>
-    </sv:property>
-  </sv:node>
 
   <sv:node sv:name="sub1">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/sub1</sv:value>
-    </sv:property>
-    <!-- sub1 directly points to common folder !! -->
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject/common</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="sub1-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
@@ -123,32 +78,8 @@
       <sv:value>/unittestcontent/documents/unittestproject/common/aboutfolder</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="subsub1-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/subsub1</sv:value>
-    </sv:property>
-    <!-- sub1 directly points to common/aboutfolder !! -->
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject/common/aboutfolder</sv:value>
-    </sv:property>
-  </sv:node>
 
   <sv:node sv:name="sub2">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:configurationpath" sv:type="String">
-      <sv:value>/hst:hst/hst:configurations/sub2</sv:value>
-    </sv:property>
-    <!-- sub1 directly points to News folder !! -->
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/unittestcontent/documents/unittestproject/News</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="sub2-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>

@@ -122,7 +122,7 @@
                 <sv:value>preview</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
-               <sv:value>/hst:hst/hst:sites/unittestproject-preview</sv:value>
+               <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
               </sv:property>
               <sv:node sv:name="custompipeline">
                   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -170,7 +170,7 @@
                 <sv:value>preview</sv:value>
               </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
-               <sv:value>/hst:hst/hst:sites/unittestproject-preview</sv:value>
+               <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
               </sv:property>
              </sv:node>
           </sv:node>
@@ -294,7 +294,7 @@
                       <sv:value>test</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:mountpoint" sv:type="String">
-                       <sv:value>/hst:hst/hst:sites/unittestproject-preview</sv:value>
+                       <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>
                     </sv:property>
                     <sv:property sv:name="hst:type" sv:type="String">
                       <sv:value>preview</sv:value>

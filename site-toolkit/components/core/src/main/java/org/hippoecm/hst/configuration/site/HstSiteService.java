@@ -54,40 +54,53 @@ public class HstSiteService implements HstSite {
     private HstConfigurationLoadingCache configLoadingCache;
     private final Object hstModelMutex;
 
-    
-    public HstSiteService(HstNode site, MountSiteMapConfiguration mountSiteMapConfiguration, HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
+
+    public static HstSiteService createLiveSiteService(final HstNode site,
+                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
+                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
+        return new HstSiteService(site, mountSiteMapConfiguration, hstNodeLoadingCache, false);
+    }
+
+    public static HstSiteService createPreviewSiteService(final HstNode site,
+                                                       final MountSiteMapConfiguration mountSiteMapConfiguration,
+                                                       final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
+        return new HstSiteService(site, mountSiteMapConfiguration, hstNodeLoadingCache, true);
+    }
+
+    private HstSiteService(final HstNode site,
+                           final MountSiteMapConfiguration mountSiteMapConfiguration,
+                           final HstNodeLoadingCache hstNodeLoadingCache,
+                           final boolean isPreviewSite) throws ModelLoadingException {
         hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
         configLoadingCache = HstServices.getComponentManager().getComponent(HstConfigurationLoadingCache.class.getName());
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         this.mountSiteMapConfiguration = mountSiteMapConfiguration;
-        findAndSetConfigurationPath(site, hstNodeLoadingCache);
+        findAndSetConfigurationPath(site, hstNodeLoadingCache, isPreviewSite);
         init();
     }
 
-    private void findAndSetConfigurationPath(final HstNode site, final HstNodeLoadingCache hstNodeLoadingCache) {
-        boolean isPreviewSite = site.getValueProvider().getName().endsWith("-preview");
+    private void findAndSetConfigurationPath(final HstNode site,
+                                             final HstNodeLoadingCache hstNodeLoadingCache,
+                                             final boolean isPreviewSite
+                                             ) {
         if (site.getValueProvider().hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
             configurationPath = site.getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
-            if (isPreviewSite) {
-                configurationPath = configurationPath + "-preview";
-            }
         } else {
             configurationPath = hstNodeLoadingCache.getRootPath() + "/" +
                     HstNodeTypes.NODENAME_HST_CONFIGURATIONS + "/" +site.getValueProvider().getName();
         }
         if (isPreviewSite) {
-            HstNode previewConfig = hstNodeLoadingCache.getNode(configurationPath);
+            String previewConfigurationPath = configurationPath + "-preview";
+            HstNode previewConfig = hstNodeLoadingCache.getNode(previewConfigurationPath);
             if (previewConfig != null) {
                 hasPreviewConfiguration = true;
-            } else {
-                configurationPath = configurationPath.substring(0, configurationPath.length() - "-preview".length());
+                configurationPath = previewConfigurationPath;
             }
         }
     }
 
     private void init() {
-
 
         HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, false);
         if (ccs != null) {

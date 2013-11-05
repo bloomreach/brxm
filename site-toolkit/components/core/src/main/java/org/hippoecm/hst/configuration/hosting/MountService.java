@@ -34,6 +34,7 @@ import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
@@ -43,6 +44,7 @@ import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,23 +142,9 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String contentPath;
 
     /**
-     * The absolute path of the content of the preview version of this {@link Mount}. previewContentPath
-     */
-    private String previewContentPath;
-
-    /**
      * The absolute canonical path of the content
      */
     private String canonicalContentPath;
-
-    /**
-     * The absolute canonical path of the content of the preview version of this {@link Mount}: In case <code>previewContentPath</code> points to a mirror,
-     * this <code>canonicalContentPath</code> points to the location the mirror points to.
-     *
-     * Note that although <code>contentPath</code> and <code>previewContentPath</code> may point to a differrent mirror,
-     * <code>canonicalContentPath</code> and <code>previewCanonicalContentPath</code> are most of the time equal
-     */
-    private String previewCanonicalContentPath;
 
     /**
      * The path where the {@link Mount} is pointing to
@@ -245,6 +233,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String cmsLocation;
 
     private Map<String, String> parameters;
+
+    private HstSiteMapMatcher matcher;
 
     public MountService(final HstNode mount,
                         final Mount parent,
@@ -579,30 +569,13 @@ public class MountService implements ContextualizableMount, MutableMount {
 
             MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
 
-            // TODO for hstSite check already existing instances to be REUSED : If hstSiteNodeForMount and mountSiteMapConfiguration are equal,
-            // already created instance can be reused... not sure if helps
-
-            hstSite = new HstSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+            hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+            previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
             canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
             contentPath = canonicalContentPath;
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
 
-            // now also try to get hold of the previewHstSite. If we cannot load it, we log an info:
-            HstNode previewHstSiteNodeForMount = hstNodeLoadingCache.getNode(previewMountPoint);
-            if(previewHstSiteNodeForMount == null || isPreview()) {
-                if (!isPreview()) {
-                    log.warn("There is no preview version '{}-preview' for mount '{}'. Cannot create automatic PREVIEW HstSite " +
-                		"for this Mount. The mount '{}' will be used as preview.", new String[] {mountPoint,  mount.getValueProvider().getPath(), mountPoint});
-                    }
-                previewHstSite = hstSite;
-                previewCanonicalContentPath = canonicalContentPath;
-                previewContentPath = contentPath;
-            } else {
-                previewHstSite = new HstSiteService(previewHstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
-                previewCanonicalContentPath = previewHstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
-                previewContentPath = previewCanonicalContentPath;
-            }
         }
 
         for (HstNode childMount : mount.getNodes()) {
@@ -708,28 +681,9 @@ public class MountService implements ContextualizableMount, MutableMount {
         return canonicalContentPath;
     }
 
-    /*
-     * internal only : not api
-     */
-    public String getPreviewContentPath() {
-        return previewContentPath;
-    }
-    /*
-     * internal only: not api
-     */
-    public String getPreviewCanonicalContentPath() {
-        return previewCanonicalContentPath;
-    }
 
     public String getMountPoint() {
         return mountPoint;
-    }
-
-    /*
-     * internal only: not api
-     */
-    public String getPreviewMountPoint() {
-        return previewMountPoint;
     }
 
     public boolean isMapped() {
@@ -852,7 +806,15 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     public HstSiteMapMatcher getHstSiteMapMatcher() {
-        return getVirtualHost().getVirtualHosts().getHstManager().getSiteMapMatcher();
+        // although code below is called concurrently, no need for synchronization or usage of volatile: worst
+        // that can happen is that HstServices.getComponentManager().getComponent(HstManager.class.getName()); is
+        // invoked multiple times. No issue and is much cheaper than synchronization
+        if (matcher != null) {
+            return matcher;
+        }
+        HstManager mngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        matcher =  mngr.getSiteMapMatcher();
+        return matcher;
     }
 
     public boolean isAuthenticated() {

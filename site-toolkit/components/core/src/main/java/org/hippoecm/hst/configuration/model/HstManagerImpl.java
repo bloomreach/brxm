@@ -336,13 +336,7 @@ public class HstManagerImpl implements MutableHstManager {
 
         log.info("Start building in memory hst configuration model");
 
-        // TODO make componentRegistry use WEAK REFERENCES INSTEAD OF CLEARING IT OURSELVES
-        componentRegistry.unregisterAllComponents();
         try {
-
-            // TODO make siteMapItemHandlerRegistry use WEAK REFERENCES INSTEAD OF CLEARING IT OURSELVES
-            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-
             long start = System.currentTimeMillis();
             hstModel = new VirtualHostsService(this, hstNodeLoadingCache);
             log.info("Loading VirtualHostsService took '{}' ms.", (System.currentTimeMillis() - start));
@@ -350,8 +344,10 @@ public class HstManagerImpl implements MutableHstManager {
             for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
                 configurationAugmenter.augment((MutableVirtualHosts) hstModel);
             }
-
             this.channelManager.load(hstModel);
+
+            componentRegistry.unregisterAllComponents();
+            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
 
             log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
         } catch (ServiceException e) {
@@ -361,23 +357,6 @@ public class HstManagerImpl implements MutableHstManager {
         } catch (Exception e) {
             throw new ModelLoadingException("Could not load hst node model due to Runtime Exception :", e);
         }
-    }
-
-    @Deprecated
-    @Override
-    public void invalidate(EventIterator events) {
-        log.warn("deprecated. Not used any more ");
-    }
-
-    @Deprecated
-    @Override
-    public void invalidate(final String... absEventPaths) {
-        log.warn("deprecated. Not used any more ");
-    }
-
-    @Override
-    public void invalidateAll() {
-        log.warn("deprecated. Not used any more ");
     }
 
     @Override

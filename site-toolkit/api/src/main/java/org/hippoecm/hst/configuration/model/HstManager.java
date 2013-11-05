@@ -57,30 +57,6 @@ public interface HstManager {
      * @return the siteMapItemHandler factory which can create {@link HstSiteMapItemHandler} instances
      */
     HstSiteMapItemHandlerFactory getSiteMapItemHandlerFactory();
-    
-    /**
-     * Invalidates this HstSitesManager with EventIterator events. Typically this invalidate is called after a received event indicating that for example
-     * the backing hosts configuration has been changed.
-     * @param events
-     * @deprecated deprecated since 7.9.0 Use {@link xxx} object instead
-     */
-    @Deprecated
-    void invalidate(EventIterator events);
-
-    /**
-     * Invalidates this HstSitesManager with all the varargs absEventPaths. This is useful in cases where you directly want to
-     * invalidate the hst model and cannot wait for asynchronous jcr events to be dispatched.
-     * @param absEventPaths the varargs abs paths of the event that should be invalidated
-     * @deprecated deprecated since 7.9.0 Use {@link xxx} object instead
-     */
-    @Deprecated
-    void invalidate(String... absEventPaths);
-    
-    /**
-     * Invalidates this HstSitesManager completely. For example useful after a 
-     * repository reconnection where you do not know whether some events might have been missed
-     */
-    void invalidateAll();
 
     /**
      *

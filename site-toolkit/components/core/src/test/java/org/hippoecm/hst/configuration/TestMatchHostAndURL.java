@@ -451,7 +451,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
                 assertTrue("The mount for /preview/services should return that it is not mounted ", !mount.getMount().isMapped());
                 assertNull("An not mounted Mount should have a HstSite that is null", mount.getMount().getHstSite());
                 assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getMount().getMountPath()+"'", "/preview/services".equals(mount.getMount().getMountPath()));
-                assertTrue("The mountpoint for /preview/services mount must be '/hst:hst/hst:sites/unittestproject-preview' but was '"+mount.getMount().getMountPoint()+"'", "/hst:hst/hst:sites/unittestproject-preview".equals(mount.getMount().getMountPoint()));
+                assertTrue("The mountpoint for /preview/services mount must be '/hst:hst/hst:sites/unittestproject' but was '"+mount.getMount().getMountPoint()+"'", "/hst:hst/hst:sites/unittestproject".equals(mount.getMount().getMountPoint()));
             } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();

@@ -221,7 +221,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         String mountPoint = mount.getMountPoint();
         if (mountPoint != null) {
             channel.setHstMountPoint(mountPoint);
-            channel.setHstPreviewMountPoint(mountPoint + "-preview");
             channel.setContentRoot(mount.getCanonicalContentPath());
             String configurationPath = mount.getHstSite().getConfigurationPath();
             if (configurationPath != null) {
@@ -230,6 +229,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
 
         // all the locks are on the preview mount, hence decorate it first
+        // TODO MAKE LAZY : We do not want to create a HstSite for preview
         Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
         channel.setPreviewHstConfigExists(previewMount.getHstSite().hasPreviewConfiguration());
 
@@ -734,23 +734,17 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
             final Node sitesNode = configRoot.getNode(sites);
             final Node liveSiteNode = createSiteNode(sitesNode, channelId, channelContentRootPath);
-            final Node previewSiteNode = createSiteNode(sitesNode, channelId + "-preview",
-                    channelContentRootPath);
 
             if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
                 Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
                 if (blueprintSiteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                     String explicitConfigPath = blueprintSiteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
                     liveSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
-                    previewSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
                 }
             }
 
             final String mountPointPath = liveSiteNode.getPath();
             channel.setHstMountPoint(mountPointPath);
-
-            final String previewMountPointPath = previewSiteNode.getPath();
-            channel.setHstPreviewMountPoint(previewMountPointPath);
 
             // Create mount
             Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());

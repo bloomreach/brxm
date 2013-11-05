@@ -50,22 +50,18 @@ public class EventCache<CacheKey, CachedObj, Event> {
                 log.debug("Succesfully removed '{}' from cache BY event '{}'", remove, event);
             }
         }
-
     }
 
     public void put(CacheKey key, CachedObj value, Event event) {
         expungeStaleEntries();
-        WeakReference<CachedObj> weakCachedObj = new WeakReference<>(value, cleanupQueue);
-        keyToValueMap.put(key, weakCachedObj);
-        valueKeyMap.put(weakCachedObj, key);
+        store(key, value);
         eventCacheKeyRegistry.put(event, key);
     }
 
+
     public void put(CacheKey key, CachedObj value, Event[] events) {
         expungeStaleEntries();
-        WeakReference<CachedObj> weakObject = new WeakReference<>(value, cleanupQueue);
-        keyToValueMap.put(key, weakObject);
-        valueKeyMap.put(weakObject, key);
+        store(key, value);
         eventCacheKeyRegistry.put(events, key);
     }
 
@@ -87,6 +83,13 @@ public class EventCache<CacheKey, CachedObj, Event> {
         }
         valueKeyMap.remove(weakRef);
         return weakRef.get();
+    }
+
+
+    private void store(final CacheKey key, final CachedObj value) {
+        WeakReference<CachedObj> weakCachedObj = new WeakReference<>(value, cleanupQueue);
+        keyToValueMap.put(key, weakCachedObj);
+        valueKeyMap.put(weakCachedObj, key);
     }
 
     private void expungeStaleEntries() {

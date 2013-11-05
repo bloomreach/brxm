@@ -39,10 +39,6 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
     protected Map<HstContainerConfig, Map<String, HstComponentHolder>> servletConfigComponentsMap =
             new ConcurrentHashMap<HstContainerConfig, Map<String, HstComponentHolder>>(128);
 
-    // TODO use
-    protected Map<HstComponentConfiguration, Set<HstComponentHolder>> componentsByHstConfiguration =
-            new ConcurrentHashMap<HstComponentConfiguration, Set<HstComponentHolder>>(128);
-    
     public HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId) {
         HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
         

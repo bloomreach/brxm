@@ -56,12 +56,12 @@ public interface VirtualHosts {
     /**
      * <p>This method tries to match a hstContainerURL to a flyweight {@link ResolvedSiteMapItem}. It does so, by first trying to match the
      * correct {@link ResolvedVirtualHost}. If it does find a {@link ResolvedVirtualHost}, the match is delegated to
-     * {@link ResolvedVirtualHost#matchSiteMount(HstContainerURL)}, which returns the {@link ResolvedMount}. This object
+     * {@link ResolvedVirtualHost#matchMount(String, String)}, which returns the {@link ResolvedMount}. This object
      * delegates to {@link ResolvedMount#matchSiteMapItem(String)} which in the end returns the {@link ResolvedSiteMapItem}. If somewhere
      * in the chain a match cannot be made a MatchException exception is thrown
      * </p>
      *
-     * @param request the HttpServletRequest
+     * @param hstContainerURL the HstContainerURL
      * @return the resolvedSiteMapItem for this request
      * @throws MatchException when the matching cannot be done, for example because no valid virtual hosts are configured or when the request path does not match
      * a sitemap item

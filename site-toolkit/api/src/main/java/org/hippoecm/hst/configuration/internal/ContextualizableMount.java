@@ -27,25 +27,6 @@ public interface ContextualizableMount extends MutableMount {
 
     /**
      * internal only : not api 
-     * @return the preview content path of this mount. If there cannot be created a preview or this mount is already a preview, this returns the same as {@link #getContentPath()}
-     */
-    
-    String getPreviewContentPath();
-    
-    /**
-     * internal only : not api 
-     * @return the preview canonical content path of this mount. If there cannot be created a preview or this mount is already a preview, this returns the same as {@link #getCanonicalContentPath()}
-     */
-    String getPreviewCanonicalContentPath();
-    
-    /**
-     * internal only : not api 
-     * @return the preview mount point of this mount. If this mount is already a preview mount, the same is returned as {@link #getMountPoint()}
-     */
-    String getPreviewMountPoint();
-
-    /**
-     * internal only : not api 
      * @return the preview hstSite of this mount. If this mount is already a preview mount, the same is returned as {@link #getHstSite()}
      */
     HstSite getPreviewHstSite();
