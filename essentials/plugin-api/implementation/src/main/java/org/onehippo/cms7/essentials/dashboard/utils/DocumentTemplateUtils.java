@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -57,7 +56,7 @@ public final class DocumentTemplateUtils {
 
     /**
      * Check if document template exists
-     * @param content      XML content to import
+     * @param context      plugin context instance
      * @param documentName name of the document
      * @param namespace    document namespace
      * @return  true if template exists, false otherwise

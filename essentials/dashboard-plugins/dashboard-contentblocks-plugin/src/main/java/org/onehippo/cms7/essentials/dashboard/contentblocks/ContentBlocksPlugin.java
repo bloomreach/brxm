@@ -36,7 +36,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.installer.ContentBlocksInstaller;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;

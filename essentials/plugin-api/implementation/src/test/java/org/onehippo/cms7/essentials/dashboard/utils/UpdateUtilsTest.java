@@ -1,6 +1,5 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import javax.jcr.Session;

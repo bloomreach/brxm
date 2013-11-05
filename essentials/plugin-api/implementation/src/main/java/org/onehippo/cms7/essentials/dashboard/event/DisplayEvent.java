@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.event;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @version "$Id$"
  */
@@ -23,6 +26,7 @@ public class DisplayEvent extends MessageEvent {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger log = LoggerFactory.getLogger(DisplayEvent.class);
     /**
      * Flag that indicates event is selected for certain task (e.g. rollback)
      */
@@ -38,5 +42,6 @@ public class DisplayEvent extends MessageEvent {
 
     public DisplayEvent(final String message) {
         super(message);
+        log.debug("DISPLAY EVENT: {}", message);
     }
 }

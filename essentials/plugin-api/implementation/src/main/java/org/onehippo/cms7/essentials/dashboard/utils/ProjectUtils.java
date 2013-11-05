@@ -120,26 +120,46 @@ public class ProjectUtils {
         }
     }
 
-    public static boolean isInstalled(final DependencyType type, final Dependency dependency) {
+    private static Model getPomModel(String path) {
         Reader fileReader = null;
+        Model model = null;
         try {
             final MavenXpp3Reader reader = new MavenXpp3Reader();
-            final String path = type == DependencyType.SITE ? ProjectUtils.getSite().getPath() : ProjectUtils.getCms().getPath();
             fileReader = new FileReader(path + File.separatorChar + "pom.xml");
-            final Model model = reader.read(fileReader);
-            final List<Dependency> dependencies = model.getDependencies();
-            for (Dependency dep : dependencies) {
-                if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
-                    return true;
-                }
-
-            }
+            model = reader.read(fileReader);
         } catch (XmlPullParserException | IOException e) {
             log.error("Error parsing pom", e);
         } finally {
             IOUtils.closeQuietly(fileReader);
         }
+        return model;
+    }
 
+    public static Model getSitePomModel() {
+        if (ProjectUtils.getSite() != null) {
+            return getPomModel(ProjectUtils.getSite().getPath());
+        } else {
+            return null;
+        }
+    }
+
+    public static Model getCMSPomModel() {
+        if (ProjectUtils.getCms() != null) {
+            return getPomModel(ProjectUtils.getCms().getPath());
+        } else {
+            return null;
+        }
+    }
+
+    public static boolean isInstalled(final DependencyType type, final Dependency dependency) {
+        final Model model = type == DependencyType.SITE ? getSitePomModel() : getCMSPomModel();
+        final List<Dependency> dependencies = model.getDependencies();
+        for (Dependency dep : dependencies) {
+            if (dep.getArtifactId().equals(dependency.getArtifactId()) && dep.getGroupId().equals(dependency.getGroupId())) {
+                return true;
+            }
+
+        }
         return false;
     }
 

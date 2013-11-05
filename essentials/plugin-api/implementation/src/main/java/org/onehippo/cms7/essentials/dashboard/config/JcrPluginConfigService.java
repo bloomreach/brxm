@@ -13,9 +13,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.onehippo.cms7.essentials.dashboard.ConfigDocument;
-import org.onehippo.cms7.essentials.dashboard.ConfigProperty;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +109,10 @@ public class JcrPluginConfigService implements PluginConfigService {
 
     private ConfigDocument getConfigDocument(final String path) {
         try {
+            // NOTE: added null check so we can test dashboard without repository (CMS) running
+            if(session==null){
+                return null;
+            }
             final Node rootNode = session.getRootNode();
             if (rootNode.hasNode(path)) {
                 final Node folderNode = rootNode.getNode(path);

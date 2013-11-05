@@ -2,9 +2,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: VersionUtils.java 171565 2013-07-24 14:38:15Z mmilicevic $"
  */
@@ -12,7 +9,7 @@ public class VersionUtils {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("[\\._\\-]");
     private static final Pattern VERSION_NUMBER_PATTERN = Pattern.compile("\\d+");
-    private static Logger log = LoggerFactory.getLogger(VersionUtils.class);
+
 
 
     //VersionUtils.compareVersionNumbers("1.00.00, 1.00.01) >= 0;

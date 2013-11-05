@@ -16,19 +16,24 @@
 
 package org.onehippo.cms7.essentials.setup.panels;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.google.common.base.Strings;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.model.Model;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
+import org.onehippo.cms7.essentials.setup.panels.model.ProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @version "$Id$"
@@ -38,15 +43,32 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SelectPowerpackStep.class);
     private final DropdownPanel powerpackDropdown;
+
     public SelectPowerpackStep(final String title) {
         super(title);
+
+        ProjectModel projectModel = new ProjectModel();
+        org.apache.maven.model.Model pomModel = ProjectUtils.getSitePomModel();
+        if (pomModel != null) {
+            projectModel.setName(pomModel.getName());
+            projectModel.setVersion(pomModel.getVersion());
+        } else {
+            projectModel.setName("No project found");
+            projectModel.setVersion("NA");
+        }
+        setDefaultModel(new Model<Serializable>(projectModel));
+
         Form<?> form = new Form<>("form");
 
-        final List<String> powerpacks = new ArrayList<>();
-        powerpacks.add("News and events powerpack");
-        powerpacks.add("Enterprise forms powerpack");
+        final Label packDescription = new Label("pack.description");
+        packDescription.setOutputMarkupId(true);
+        form.add(packDescription);
 
-        powerpackDropdown = new DropdownPanel("powerpacks", "Select a powerpack", form, powerpacks, new EventListener<String>() {
+        final List<String> powerpackList = new ArrayList<>();
+        powerpackList.add("powerpack.news.and.event.label");
+        powerpackList.add("powerpack.none.label");
+
+        powerpackDropdown = new DropdownPanel("powerpackDropdown", getString("powerpack.select.label"), form, powerpackList, new EventListener<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -56,8 +78,22 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
                     log.debug("No powerpack selected");
                     return;
                 }
-
+                setComplete(true);
+                packDescription.setDefaultModel(new Model<>(getString(selectedPowerpack.replace("label", "description"))));
+                target.add(packDescription);
                 log.info("selectedPowerpack: {}", selectedPowerpack);
+            }
+        }, new IChoiceRenderer<String>() {
+
+            private static final long serialVersionUID = 1L;
+            @Override
+            public String getDisplayValue(String value) {
+                return getString(value);
+            }
+
+            @Override
+            public String getIdValue(String value, int index) {
+                return String.valueOf(index);
             }
         });
         add(form);

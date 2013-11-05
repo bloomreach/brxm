@@ -4,15 +4,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.hstconfigwriter.model.ctx;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: HstConfigContext.java 171483 2013-07-24 09:26:52Z mmilicevic $"
  */
 public class HstConfigContext implements Context {
 
-    private static Logger log = LoggerFactory.getLogger(HstConfigContext.class);
+
     private boolean debug = true;
     private boolean merge;
 

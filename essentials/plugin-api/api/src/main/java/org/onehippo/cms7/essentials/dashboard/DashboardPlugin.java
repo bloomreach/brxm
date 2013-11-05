@@ -15,6 +15,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.onehippo.cms7.essentials.dashboard.config.Screenshot;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**

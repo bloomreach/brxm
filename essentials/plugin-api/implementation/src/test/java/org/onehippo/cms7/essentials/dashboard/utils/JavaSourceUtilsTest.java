@@ -37,7 +37,8 @@ public class JavaSourceUtilsTest extends BaseTest {
     public void setUp() throws Exception {
 
         super.setUp();
-        absolutePath = new File("").getAbsolutePath();
+        final String tmpDir = System.getProperty("java.io.tmpdir");
+        absolutePath = new File(tmpDir).getAbsolutePath();
         path = JavaSourceUtils.createJavaClass(absolutePath, CLASS_NAME, "com.foo.bar", ".txt");
     }
 

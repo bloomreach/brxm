@@ -22,8 +22,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
 
@@ -34,7 +32,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class MemoryPluginEventListenerTest {
 
-    private static Logger log = LoggerFactory.getLogger(MemoryPluginEventListenerTest.class);
+
     private final EventBus bus  = new EventBus();
     private final MemoryPluginEventListener listener  = new MemoryPluginEventListener();
 

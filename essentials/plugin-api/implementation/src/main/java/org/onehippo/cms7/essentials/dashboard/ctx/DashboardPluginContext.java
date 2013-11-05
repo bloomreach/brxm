@@ -7,13 +7,16 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,21 +24,19 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
 
 /**
  * @version "$Id: DashboardPluginContext.java 169746 2013-07-05 11:50:33Z ksalic $"
  */
 public class DashboardPluginContext implements PluginContext {
 
-    private static final Logger log = LoggerFactory.getLogger(DashboardPluginContext.class);
-    private static final long serialVersionUID = 1L;
     public static final String MAIN_JAVA_PART = File.separator + "src" + File.separator + "main" + File.separator + "java"
             + File.separator;
+    private static final Logger log = LoggerFactory.getLogger(DashboardPluginContext.class);
+    private static final long serialVersionUID = 1L;
     private final transient Session session;
     private final Plugin plugin;
     private transient File siteFile;
-
     private String componentsPackage;
     private String beansPackage;
     private String restPackage;
@@ -66,7 +67,6 @@ public class DashboardPluginContext implements PluginContext {
     public File getCmsDirectory() {
         return ProjectUtils.getCms();
     }
-
 
     @Override
     public boolean isEnterpriseProject() {
@@ -163,6 +163,42 @@ public class DashboardPluginContext implements PluginContext {
     @Override
     public String getSiteJavaRoot() {
         return getSiteDirectory().getAbsolutePath() + MAIN_JAVA_PART;
+    }
+
+    /**
+     * @inherit
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_NAMESPACE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_PROJECT_ROOT
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_CMS_ROOT
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_SITE_ROOT
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_JSP_ROOT
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_TARGET
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_SOURCE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_BEANS_FOLDER
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_BEANS_PACKAGE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_COMPONENTS_FOLDER
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_COMPONENTS_PACKAGE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_REST_PACKAGE
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_REST_FOLDER
+     */
+    @Override
+    public Map<String, Object> getPlaceholderData() {
+        final Map<String, Object> placeholderData = new HashMap<>();
+        placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
+        placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite());
+        placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms());
+        // packages
+        placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
+        placeholderData.put(EssentialConst.PLACEHOLDER_REST_PACKAGE, componentsPackage);
+        placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_PACKAGE, restPackage);
+        // folders
+        placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getComponentsPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getRestPackagePath().toString());
+
+        return placeholderData;
     }
 
     @Override

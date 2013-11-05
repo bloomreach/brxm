@@ -23,8 +23,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.ValidationEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -34,7 +32,7 @@ import com.google.common.eventbus.Subscribe;
 public class ValidationEventListener implements PluginEventListener<ValidationEvent> {
 
     public static final int MAX_ITEMS = 100;
-    private static Logger log = LoggerFactory.getLogger(ValidationEventListener.class);
+
     private final Queue<ValidationEvent> events = new ConcurrentLinkedQueue<>();
 
     @Override

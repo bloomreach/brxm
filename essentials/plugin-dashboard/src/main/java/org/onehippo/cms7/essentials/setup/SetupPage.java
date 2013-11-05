@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -32,14 +33,12 @@ import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
-import org.onehippo.cms7.essentials.setup.panels.ProjectSetupStep;
 import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
-import org.onehippo.cms7.essentials.setup.panels.WelcomeStep;
-import org.onehippo.cms7.essentials.setup.wizard.SetupWizard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +77,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private ValidationEventListener validationEventListener;
 
 
+    @SuppressWarnings("unchecked")
     public SetupPage(final PageParameters parameters) {
         super(parameters);
         eventBus.post(new LogEvent("@@@@@@@@@@@@  Starting setup page @@@@@@@@@@@@@@"));
@@ -100,20 +100,27 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         mainPlugins = ImmutableList.copyOf(Iterables.filter(plugins, Predicates.and(MAIN_PLUGIN)));
         pluginList = ImmutableList.copyOf(Iterables.filter(plugins, Predicates.not(MAIN_PLUGIN)));
 
-        //############################################
-        // SETTINGS PLUGIN TODO: do we need this one?
-        //############################################
 
         Plugin plugin = getPluginByName("Settings");
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
         //############################################
+        // INJECT PROJECT SETTINGS
+        //############################################
+        final ConfigDocument document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+        if (document != null) {
+            context.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
+            context.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
+            context.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
+            context.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
+        }
+
+
+        //############################################
         // WIZARD & STEPS
         //############################################
-        final AjaxWizardPanel wizard = new SetupWizard("wizard");
-        wizard.addWizard(new WelcomeStep("Hippo Essentials setup"));
-        wizard.addWizard(new SelectPowerpackStep("Select powerpacks"));
-        wizard.addWizard(new FinalStep("Done"));
-        wizard.addWizard(new ProjectSetupStep("Project settings", plugin, context));
+        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
+        wizard.addWizard(new SelectPowerpackStep(getString("step.choose.powerpack")));
+        wizard.addWizard(new FinalStep(getString("step.overview")));
         add(wizard);
 
     }

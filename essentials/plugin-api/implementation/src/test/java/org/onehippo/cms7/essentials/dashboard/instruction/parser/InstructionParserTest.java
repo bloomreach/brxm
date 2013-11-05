@@ -24,7 +24,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.instruction.FileInstruction;
@@ -55,13 +54,15 @@ public class InstructionParserTest {
         //############################################
         // READ FROM FILE
         //############################################
-
         final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
         final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
         final String content = myBuilder.toString();
         final Instructions myInstructions = InstructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
         assertEquals(1, iset.size());
+        final InstructionSet inSet = iset.iterator().next();
+        assertEquals(5, inSet.getInstructions().size());
+
 
 
         //############################################
@@ -89,8 +90,6 @@ public class InstructionParserTest {
         // test ordering
         final Iterator<Instruction> iterator = mySet.iterator();
         for (int i = 0; i < mySet.size(); i++) {
-
-
             final Instruction next = iterator.next();
             final int isMod3 = i % 3;
             if (isMod3 == 0) {
@@ -98,12 +97,7 @@ public class InstructionParserTest {
             } else {
                 assertTrue(next.getMessage().equals(String.format("FILE%d", i)));
             }
-
         }
-
-
-
-
     }
 
     private void addInstructions(final PluginInstructionSet pluginInstructionSet) {
@@ -117,7 +111,10 @@ public class InstructionParserTest {
             }
             pluginInstructionSet.addInstruction(instruction);
         }
+    }
 
-
+    @Test
+    public void initTest() {
+        assertTrue(true);
     }
 }

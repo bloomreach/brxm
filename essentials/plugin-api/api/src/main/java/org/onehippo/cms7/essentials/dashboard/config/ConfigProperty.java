@@ -1,4 +1,4 @@
-package org.onehippo.cms7.essentials.dashboard;
+package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 

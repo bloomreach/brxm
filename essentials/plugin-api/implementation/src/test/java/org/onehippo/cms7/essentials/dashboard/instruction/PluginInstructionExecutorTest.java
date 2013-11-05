@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener;
+import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
@@ -27,12 +30,20 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * @version "$Id$"
  */
-public class PluginInstructionExecutorTest {
+public class PluginInstructionExecutorTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutorTest.class);
+    @Inject
+    private InstructionsEventListener listener;
+    @Inject
+    private PluginInstructionExecutor pluginInstructionExecutor;
 
     @Test
     public void testExecute() throws Exception {
@@ -41,11 +52,15 @@ public class PluginInstructionExecutorTest {
         final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
         final String content = myBuilder.toString();
         log.info("content {}", content);
+        listener.reset();
         final Instructions instructions = InstructionParser.parseInstructions(content);
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         for (InstructionSet instructionSet : instructionSets) {
-            log.info("instructionSet {}", instructionSet);
+            pluginInstructionExecutor.execute(instructionSet, getContext());
         }
+
+        // we had 5 executed, see /instructions.xml, 2 file and 2 XML instructions and 1 folder
+        assertEquals(5, listener.getNrInstructions());
 
     }
 }

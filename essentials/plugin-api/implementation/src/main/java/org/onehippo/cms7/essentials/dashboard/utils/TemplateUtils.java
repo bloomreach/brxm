@@ -16,9 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
+import org.apache.wicket.util.string.Strings;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -124,6 +125,23 @@ public final class TemplateUtils {
         return identifier.startsWith("get") || identifier.startsWith("is");
     }
 
+    public static String replaceTemplateData(final String content, final Map<String, Object> data) {
+        if(Strings.isEmpty(content)){
+            return content;
+        }
+        final Configuration config = new Configuration();
+        try {
+            final Template template = new Template("name", new StringReader(content), config);
+            final StringWriter stringWriter = new StringWriter();
+            template.process(data, stringWriter);
+            return stringWriter.toString();
+        } catch (IOException e) {
+            log.error("Error finding template: " + content, e);
+        } catch (TemplateException e) {
+            log.error("Error injecting template: " + content, e);
+        }
+        return null;
+    }
     public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {
         final Configuration config = new Configuration();
         config.setClassForTemplateLoading(clazz, "/");

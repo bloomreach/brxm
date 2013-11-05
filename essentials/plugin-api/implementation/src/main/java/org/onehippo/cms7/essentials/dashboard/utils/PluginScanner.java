@@ -26,9 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin;
-import org.onehippo.cms7.essentials.dashboard.model.PluginAsset;
 import org.onehippo.cms7.essentials.dashboard.model.PluginNamespaceMapper;
-import org.onehippo.cms7.essentials.dashboard.model.PluginScreenshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

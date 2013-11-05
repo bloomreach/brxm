@@ -20,9 +20,6 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id$"
  */
@@ -32,4 +29,6 @@ public interface InstructionSet {
     Set<Instruction> getInstructions();
 
     void setInstructions(Set<Instruction> instructions);
+
+    void addInstruction(Instruction instruction);
 }

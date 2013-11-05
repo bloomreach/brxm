@@ -16,11 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
 
 /**
@@ -28,7 +24,7 @@ import com.google.inject.Inject;
  */
 public class TestEventsApplication {
 
-    private static Logger log = LoggerFactory.getLogger(TestEventsApplication.class);
+
     private EventBus eventBus;
     private int counter;
 

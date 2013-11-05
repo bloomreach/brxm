@@ -15,7 +15,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.xml.SvNodeNamespaceMapper;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlProperty;
 import org.slf4j.Logger;

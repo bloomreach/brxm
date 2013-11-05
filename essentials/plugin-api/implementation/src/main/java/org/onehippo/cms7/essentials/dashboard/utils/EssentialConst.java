@@ -9,11 +9,27 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * @version "$Id: EssentialConst.java 174363 2013-08-20 12:37:31Z mmilicevic $"
+ * @version "$Id$"
  */
 public final class EssentialConst {
 
 
+    /**
+     * Namespace placeholder name
+     */
+    public static final String PLACEHOLDER_NAMESPACE = "namespace";
+    public static final String PLACEHOLDER_PROJECT_ROOT = "projectRoot";
+    public static final String PLACEHOLDER_SITE_ROOT = "siteRoot";
+    public static final String PLACEHOLDER_JSP_ROOT = "jspRoot";
+    public static final String PLACEHOLDER_CMS_ROOT = "cmsRoot";
+    public static final String PLACEHOLDER_SOURCE = "source";
+    public static final String PLACEHOLDER_TARGET = "target";
+    public static final String PLACEHOLDER_BEANS_PACKAGE = "beansPackage";
+    public static final String PLACEHOLDER_COMPONENTS_PACKAGE = "componentsPackage";
+    public static final String PLACEHOLDER_REST_PACKAGE = "restPackage";
+    public static final String PLACEHOLDER_BEANS_FOLDER = "beansFolder";
+    public static final String PLACEHOLDER_COMPONENTS_FOLDER = "componentsFolder";
+    public static final String PLACEHOLDER_REST_FOLDER = "restFolder";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */
@@ -26,8 +42,6 @@ public final class EssentialConst {
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#allowModifications() ()
      */
     public static final String ANNOTATION_ATTR_ALLOW_MODIFICATIONS = "allowModifications";
-
-
     public static final String MIME_TEXT_PLAIN = "text/plain";
     public static final String MIME_IMAGE_JPEG = "text/jpeg";
     public static final String MIME_IMAGE_GIF = "image/gif";

@@ -16,25 +16,36 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
+import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @version "$Id$"
  */
-public class PluginInstructionExecutor implements InstructionExecutor {
+public class NodeFolderInstructionTest extends BaseRepositoryTest {
 
-    private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutor.class);
 
-    @Override
-    public InstructionStatus execute(final Instruction instruction) {
-        log.debug("Executing instruction {}", instruction);
-        if (instruction == null) {
-            return InstructionStatus.SKIPPED;
-        }
-        return InstructionStatus.FAILED;
+    @Inject
+    private NodeFolderInstruction instruction;
+    @Inject
+    private InstructionExecutor executor;
+
+    @Test
+    public void testInstruction() throws Exception {
+        instruction.setPath("/foo/bar/foobar");
+        instruction.setTemplate("/my_folder_template.xml");
+        final InstructionSet instructionSet = new PluginInstructionSet();
+        instructionSet.addInstruction(instruction);
+        final InstructionStatus execute = executor.execute(instructionSet, getContext());
+        assertEquals(execute, InstructionStatus.SUCCESS);
+
+
     }
 }

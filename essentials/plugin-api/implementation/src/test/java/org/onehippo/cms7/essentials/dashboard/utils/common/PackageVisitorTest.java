@@ -9,8 +9,6 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class PackageVisitorTest extends BaseTest{
 
-    private static Logger log = LoggerFactory.getLogger(PackageVisitorTest.class);
+
 
     @Test
     public void testGetPackages() throws Exception {
