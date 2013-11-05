@@ -358,8 +358,10 @@ public interface HstRequestContext {
     String getRenderHost();
 
     /**
-     * @return A {@link ContentBeansTool} instance, never <code>null</code>. Note that the {@link ContentBeansTool} is a object shared by
-     * multiple threads
+     * @return A {@link ContentBeansTool} instance. Note that the {@link ContentBeansTool} instance is an object shared by
+     * multiple threads. Invoking this method before the {@link ContentBeansTool} is set on the {@link HstRequestContext}
+     * results in <code>null</code> being returned. As of 2.26.xx, this is for example the case when invoking
+     * {@link HstRequestContext#getContentBeansTool()} during execution of a {@link org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler}
      */
     ContentBeansTool getContentBeansTool();
 
