@@ -88,9 +88,6 @@ public class SitesOverview extends BaseHstComponent {
                     Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
                     site.setProperty("hst:content", "/content/documents/demosite");
 
-                    Node preview = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many" + tryToAdd + "-preview", "hst:site");
-                    preview.setProperty("hst:content", "/content/documents/demosite");
-
                     writableSession.save();
 
                     // now copy the hst:configurations
