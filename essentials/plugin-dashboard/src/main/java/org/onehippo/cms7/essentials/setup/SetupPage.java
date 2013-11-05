@@ -28,7 +28,6 @@ import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
@@ -92,7 +91,6 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         final List<Plugin> plugins = scanner.scan(libPath);
         for (Plugin plugin : plugins) {
             eventBus.post(new LogEvent(String.format("@@@Found plugin: %s", plugin)));
-            eventBus.post(new DisplayEvent(String.format("@@@Found plugin: %s", plugin)));
         }
 
 
