@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -46,16 +47,21 @@ public class EventsPanel extends Panel {
     @Inject
     private MemoryPluginEventListener listener;
     private final ListView<DisplayEvent> repeater;
+    private List<DisplayEvent> displayItems;
+    private final Form<?> form;
 
     public EventsPanel(final String id) {
         super(id);
         //############################################
         // REPEATER 
         //############################################
-        final Form<?> form = new Form("form");
-        final List<DisplayEvent> eventsModelList = new LinkedList<>(listener.consumeEvents());
 
-        repeater = new ListView<DisplayEvent>("repeater", eventsModelList) {
+        form = new Form("form");
+
+        displayItems = new LinkedList<>(listener.consumeEvents());
+
+
+        repeater = new ListView<DisplayEvent>("repeater", new PropertyModel<List<DisplayEvent>>(this, "displayItems")) {
             private static final long serialVersionUID = 1L;
 
             protected void populateItem(final ListItem<DisplayEvent> item) {
@@ -70,6 +76,8 @@ public class EventsPanel extends Panel {
         };
 
         repeater.setReuseItems(true);
+        repeater.setOutputMarkupId(true);
+        form.setOutputMarkupId(true);
         form.add(repeater);
         add(form);
         setOutputMarkupId(true);
@@ -77,14 +85,12 @@ public class EventsPanel extends Panel {
     }
 
 
-    @Override
-    protected void onModelChanged() {
+    public void repaint(final AjaxRequestTarget target) {
         final Queue<DisplayEvent> events = listener.consumeEvents();
-        final List<DisplayEvent> modelObject = repeater.getModel().getObject();
-        modelObject.clear();
-        modelObject.addAll(events);
+        displayItems.clear();
+        displayItems.addAll(new LinkedList<>(events));
+        //displayItems = new LinkedList<>(events);
+        repeater.modelChanged();
+        target.add(form);
     }
-
-
-
 }

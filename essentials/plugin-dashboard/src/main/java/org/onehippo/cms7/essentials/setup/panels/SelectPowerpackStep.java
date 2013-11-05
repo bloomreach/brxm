@@ -26,8 +26,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
 import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -49,10 +49,12 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SelectPowerpackStep.class);
     private final DropdownPanel powerpackDropdown;
+    private final SetupPage myParent;
     private String selectedPowerpack;
     @Inject
     private EventBus eventBus;
-    private final  SetupPage myParent;
+    @Inject
+    private MemoryPluginEventListener listener;
 
     public SelectPowerpackStep(final SetupPage component, final String title) {
         super(title);
@@ -111,19 +113,19 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         add(form);
     }
 
+
     @Override
-    public void applyState() {
+    public void applyState(final AjaxRequestTarget target) {
+        // clear previous events, e.g. when on back button is used:
+        listener.consumeEvents();
         if (Strings.isNullOrEmpty(selectedPowerpack)) {
             eventBus.post(new DisplayEvent(getString("powerpack.none.selected.label")));
-            RequestCycle cycle = myParent.getRequestCycle();
-            AjaxRequestTarget target = cycle.find(AjaxRequestTarget.class);
-            final FinalStep finalStep = myParent.getFinalStep();
-            finalStep.displayEvents(target);
-
         } else {
             eventBus.post(new DisplayEvent(getString("powerpack.news.and.event.description")));
         }
 
+        final FinalStep finalStep = myParent.getFinalStep();
+        finalStep.displayEvents(target);
     }
 
     public String getSelectedPowerpack() {

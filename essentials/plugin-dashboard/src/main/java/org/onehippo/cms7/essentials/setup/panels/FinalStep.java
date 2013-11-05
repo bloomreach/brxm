@@ -57,9 +57,7 @@ public class FinalStep extends EssentialsWizardStep {
     }
 
     public void displayEvents(final AjaxRequestTarget target) {
-        eventsPanel.modelChanged();
-        target.add(eventsPanel);
-        //eventsPanel.consumeEvents();
+        eventsPanel.repaint(target);
 
     }
 }
