@@ -712,6 +712,10 @@ public class MountService implements ContextualizableMount, MutableMount {
             if (containsMultipleSchemes != null) {
                 return containsMultipleSchemes.booleanValue();
             }
+            if (hstSite == null) {
+                containsMultipleSchemes = Boolean.FALSE;
+                return false;
+            }
             containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
             return containsMultipleSchemes.booleanValue();
         }

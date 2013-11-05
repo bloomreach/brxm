@@ -186,7 +186,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         // we are only interested in Mount's that have isMapped = true and that 
         // are live mounts: We do not display 'preview' Mounts in cms: instead, a 
         // live mount decorated as preview are shown
-        if (!mount.isMapped() || mount.isPreview()) {
+        if (!mount.isMapped() || mount.isPreview() || mount.getHstSite() == null) {
             log.debug("Skipping mount '{}' because it is either not mapped or is a preview mount", mount.getName());
             return;
         }

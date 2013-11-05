@@ -27,7 +27,8 @@ public interface ContextualizableMount extends MutableMount {
 
     /**
      * internal only : not api 
-     * @return the preview hstSite of this mount. If this mount is already a preview mount, the same is returned as {@link #getHstSite()}
+     * @return the preview hstSite of this mount. If this mount is already a preview mount, the same is returned as {@link #getHstSite()}.
+     * Returned value can be <code>null</code> if this mount does not point to a hst:site as mountpoint
      */
     HstSite getPreviewHstSite();
     
