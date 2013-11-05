@@ -29,24 +29,7 @@
       <sv:value>/content/documents/demosite</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="demosite-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="demosite_fr">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_fr</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="demosite_fr-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
@@ -63,14 +46,7 @@
       <sv:value>/content/documents/demosite_it</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="demosite_it-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_it</sv:value>
-    </sv:property>
-  </sv:node>
+
   <sv:node sv:name="demosite_de">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
@@ -79,23 +55,8 @@
       <sv:value>/content/documents/demosite_de</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="demosite_de-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_de</sv:value>
-    </sv:property>
-  </sv:node>
+
   <sv:node sv:name="demosite_nl">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite_nl</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="demosite_nl-preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
@@ -112,14 +73,7 @@
       <sv:value>/content/documents/demosite</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="demosite-test-many-preview">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hst:site</sv:value>
-    </sv:property>
-    <sv:property sv:name="hst:content" sv:type="String">
-      <sv:value>/content/documents/demosite</sv:value>
-    </sv:property>
-  </sv:node>
+
 </sv:node>
   
   
