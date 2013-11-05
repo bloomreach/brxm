@@ -26,6 +26,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,14 +82,21 @@ public class SitesOverview extends BaseHstComponent {
                     Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
                     Node mount = host.addNode("hst:root", "hst:mount");
                     mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many"+tryToAdd);
+                    mount.setProperty("hst:channelpath", "/hst:hst/hst:channels/demosite-test-many"+tryToAdd);
                     mount.setProperty("hst:alias", "mount"+tryToAdd);
 
                     // add a new hst:site
-
                     Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
                     site.setProperty("hst:content", "/content/documents/demosite");
 
-                    writableSession.save();
+                    // add a new hst:channel
+                    Node channel = writableSession.getNode("/hst:hst/hst:channels").addNode("demosite-test-many"+tryToAdd, "hst:channel");
+                    channel.setProperty("hst:channelinfoclass", "org.hippoecm.hst.demo.channel.DemoChannelInfo");
+                    channel.setProperty("hst:defaultdevice", "default");
+                    channel.setProperty("hst:name", "Test Many Site " + tryToAdd);
+                    channel.setProperty("hst:type", "website");
+                    Node channelInfo = channel.addNode("hst:channelinfo", "hst:channelinfo");
+                    channelInfo.setProperty("exampleValue", "example " + tryToAdd);
 
                     // now copy the hst:configurations
 
@@ -96,16 +104,16 @@ public class SitesOverview extends BaseHstComponent {
                     String[] inherits = {"../democommon"};
                     config.setProperty("hst:inheritsfrom", inherits);
 
-                    writableSession.save();
-
-
-                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
-                    writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
+                    JcrUtils.copy(writableSession, "/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
+                    JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
 
                     if (copyComponents) {
-                        writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
-                        writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:templates", config.getPath()  + "/hst:templates");
+                        JcrUtils.copy(writableSession, "/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
+                        JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:templates",  config.getPath()  + "/hst:templates");
                     }
+
+                    writableSession.save();
+
                 }
             }
 
