@@ -39,6 +39,11 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
 
     private static final List<String> VALID_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 
+    // Matches headers in the wikipedia format having two or three equals-signs
+    private static final String blockSeparator = "===?([^=]*?)===?";
+    // private static final Pattern blockSeparatorPattern = Pattern.compile(blockSeparator);
+
+
     // Matches the first word for each category (to keep the number of categories down)
     private static final Pattern categoryPattern = Pattern.compile("\\[\\[Category:(\\w+).*?]]");
 

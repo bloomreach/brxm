@@ -32,9 +32,6 @@ public class NonWorkflowWikiImporter {
 
     private static Logger log = LoggerFactory.getLogger(NonWorkflowWikiImporter.class);
 
-    // Matches headers in the wikipedia format having two or three equals-signs
-    private static final String blockSeparator = "===?([^=]*?)===?";
-    // private static final Pattern blockSeparatorPattern = Pattern.compile(blockSeparator);
     private String type ;
 
     public void importAction(final Session session, int amount, int offset, int maxDocsPerFolder, int maxSubFolder, int numberOfTranslations, String filesystemLocation, String siteContentBasePath, boolean addImages, final String type) {
@@ -152,7 +149,7 @@ public class NonWorkflowWikiImporter {
                     .getWorkspace()
                     .getQueryManager()
                     .createQuery(
-                            String.format("//element(*,mytestproject:newsdocument)[@hippo:paths='" + wikipedia.getIdentifier() + "'] order by @jcr:uuid", type),
+                            String.format("//element(*,%s)[@hippo:paths='%s'] order by @jcr:uuid", type, wikipedia.getIdentifier()),
                             Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator it = result.getNodes();
