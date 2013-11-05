@@ -113,13 +113,14 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         add(form);
     }
 
-
     @Override
     public void applyState(final AjaxRequestTarget target) {
         // clear previous events, e.g. when on back button is used:
         listener.consumeEvents();
         if (Strings.isNullOrEmpty(selectedPowerpack)) {
             eventBus.post(new DisplayEvent(getString("powerpack.none.selected.label")));
+        } else if (selectedPowerpack.equals("powerpack.none.label")) {
+            eventBus.post(new DisplayEvent(getString("powerpack.none.description")));
         } else {
             eventBus.post(new DisplayEvent(getString("powerpack.news.and.event.description")));
         }

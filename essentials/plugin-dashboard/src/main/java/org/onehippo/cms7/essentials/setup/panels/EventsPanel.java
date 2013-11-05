@@ -46,7 +46,7 @@ public class EventsPanel extends Panel {
     private static Logger log = LoggerFactory.getLogger(EventsPanel.class);
     @Inject
     private MemoryPluginEventListener listener;
-    private final ListView<DisplayEvent> repeater;
+    private ListView<DisplayEvent> repeater;
     private List<DisplayEvent> displayItems;
     private final Form<?> form;
 
@@ -60,8 +60,20 @@ public class EventsPanel extends Panel {
 
         displayItems = new LinkedList<>(listener.consumeEvents());
 
+        setDefaultModel(new PropertyModel<>(this, "displayItems"));
+        repeater = createRepeater();
 
-        repeater = new ListView<DisplayEvent>("repeater", new PropertyModel<List<DisplayEvent>>(this, "displayItems")) {
+        repeater.setReuseItems(true);
+        repeater.setOutputMarkupId(true);
+        form.setOutputMarkupId(true);
+        form.add(repeater);
+        add(form);
+
+        setOutputMarkupId(true);
+    }
+
+    private ListView<DisplayEvent> createRepeater() {
+        return new ListView<DisplayEvent>("repeater", new PropertyModel<List<DisplayEvent>>(this, "displayItems")) {
             private static final long serialVersionUID = 1L;
 
             protected void populateItem(final ListItem<DisplayEvent> item) {
@@ -74,16 +86,15 @@ public class EventsPanel extends Panel {
                 item.add(undoCheckbox);
             }
         };
-
-        repeater.setReuseItems(true);
-        repeater.setOutputMarkupId(true);
-        form.setOutputMarkupId(true);
-        form.add(repeater);
-        add(form);
-        setOutputMarkupId(true);
-
     }
 
+
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+        repeater = createRepeater();
+        form.addOrReplace(repeater);
+    }
 
     public void repaint(final AjaxRequestTarget target) {
         final Queue<DisplayEvent> events = listener.consumeEvents();
@@ -91,6 +102,7 @@ public class EventsPanel extends Panel {
         displayItems.addAll(new LinkedList<>(events));
         //displayItems = new LinkedList<>(events);
         repeater.modelChanged();
+        modelChanged();
         target.add(form);
     }
 }

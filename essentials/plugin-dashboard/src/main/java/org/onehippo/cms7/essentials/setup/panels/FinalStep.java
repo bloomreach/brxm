@@ -39,6 +39,7 @@ public class FinalStep extends EssentialsWizardStep {
 
         eventsPanel = new EventsPanel("events");
         add(eventsPanel);
+        setOutputMarkupId(true);
     }
 
     @Override
@@ -58,6 +59,7 @@ public class FinalStep extends EssentialsWizardStep {
 
     public void displayEvents(final AjaxRequestTarget target) {
         eventsPanel.repaint(target);
+        target.add(this);
 
     }
 }
