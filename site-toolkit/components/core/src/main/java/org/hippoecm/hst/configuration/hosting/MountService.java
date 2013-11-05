@@ -568,13 +568,14 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
 
             MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
-
+            long start = System.currentTimeMillis();
             hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
             previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
             canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
             contentPath = canonicalContentPath;
 
-            log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
+            log.info("Successfull initialized hstSite '{}' for Mount '{}' in '{}' ms.",
+                    new String[]{hstSite.getName(), getName(), String.valueOf(System.currentTimeMillis() - start)});
 
         }
 
