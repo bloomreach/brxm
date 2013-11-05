@@ -54,9 +54,6 @@
       <sv:property sv:name="initialHstConnectionTimeout" sv:type="Long">
         <sv:value>60000</sv:value>
       </sv:property>
-      <sv:property sv:name="initializeHstConfigEditorWithPreviewContext" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
       <sv:property sv:name="previewMode" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>

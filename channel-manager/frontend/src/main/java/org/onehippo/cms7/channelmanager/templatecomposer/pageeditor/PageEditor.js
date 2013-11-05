@@ -536,7 +536,7 @@
                                 listeners: {
                                     click: {
                                         fn: function() {
-                                            this.fireEvent('edit-hst-config', this.channelId, (this.initializeHstConfigEditorWithPreviewContext ? this.hstPreviewMountPoint : this.hstMountPoint));
+                                            this.fireEvent('edit-hst-config', this.channelId, this.hstMountPoint);
                                         },
                                         scope: this
                                     }
@@ -963,7 +963,6 @@
                 this.title = record.get('name');
                 this.channel = record.data;
                 this.hstMountPoint = record.get('hstMountPoint');
-                this.hstPreviewMountPoint = record.get('hstPreviewMountPoint');
                 this.pageContainer.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
                 this.pageContainer.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
                 this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');

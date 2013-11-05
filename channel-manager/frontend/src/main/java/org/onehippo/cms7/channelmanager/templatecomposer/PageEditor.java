@@ -163,9 +163,6 @@ public class PageEditor extends ExtPanel {
     @SuppressWarnings("unused")
     private String variantsUuid;
 
-    @ExtProperty
-    private Boolean initializeHstConfigEditorWithPreviewContext = DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT;
-    
     private IPluginContext context;
     private ExtStoreFuture<Object> channelStoreFuture;
     private ChannelPropertiesWindow channelPropertiesWindow;
@@ -193,7 +190,6 @@ public class PageEditor extends ExtPanel {
             this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
-            this.initializeHstConfigEditorWithPreviewContext = config.getAsBoolean("initializeHstConfigEditorWithPreviewContext", DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT);
             this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);

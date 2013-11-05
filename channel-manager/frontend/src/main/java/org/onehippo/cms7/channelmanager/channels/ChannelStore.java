@@ -80,7 +80,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         hostname,
         hstConfigPath,
         hstMountPoint,
-        hstPreviewMountPoint,
         id, // channel id
         locale,
         mountId,
@@ -106,7 +105,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         ALL_FIELD_NAMES = Collections.unmodifiableList(names);
         INTERNAL_FIELDS = Collections.unmodifiableList(
                 Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
-                        ChannelField.hstPreviewMountPoint.name(),
                         ChannelField.changedBySet.name(),
                         ChannelField.devices.name(),
                         ChannelField.previewHstConfigExists.name()));
