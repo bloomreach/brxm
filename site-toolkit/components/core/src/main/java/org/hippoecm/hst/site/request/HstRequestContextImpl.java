@@ -85,7 +85,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected Session session;
     protected ResolvedMount resolvedMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
-    protected String targetComponentPath;
     protected HstURLFactory urlFactory;
     protected HstContainerURL baseURL;
     protected String contextNamespace = "";
@@ -199,14 +198,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     public ResolvedSiteMapItem getResolvedSiteMapItem() {
         return this.resolvedSiteMapItem;
-    }
-
-    public void setTargetComponentPath(String targetComponentPath) {
-    	this.targetComponentPath = targetComponentPath;
-    }
-
-    public String getTargetComponentPath() {
-    	return this.targetComponentPath;
     }
 
     public void setBaseURL(HstContainerURL baseURL) {

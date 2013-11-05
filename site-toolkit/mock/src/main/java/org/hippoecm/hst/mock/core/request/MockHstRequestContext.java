@@ -83,7 +83,6 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private List<Locale> locales;
     private String pathSuffix;
     private VirtualHost virtualHost;
-    private String targetComponentPath;
     private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
     private Set<String> componentFilterTags;
@@ -280,14 +279,6 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider) {
         this.contextCredentialsProvider = contextCredentialsProvider;
     }
-
-	public String getTargetComponentPath() {
-		return targetComponentPath;
-	}
-
-	public void setTargetComponentPath(String targetComponentPath) {
-	    this.targetComponentPath = targetComponentPath;
-	}
 
     public Subject getSubject() {
         return subject;

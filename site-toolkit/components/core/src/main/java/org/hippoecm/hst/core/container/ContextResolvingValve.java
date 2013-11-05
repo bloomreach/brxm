@@ -42,25 +42,7 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
         if (rootComponentConfig == null) {
             throw new ContainerNotFoundException("Resolved siteMapItem '"+resolvedSiteMapItem.getHstSiteMapItem().getQualifiedId()+"' does not contain a ComponentConfiguration that can be resolved.");
         }
-        
-        String targetComponentPath = requestContext.getTargetComponentPath();
-        if (targetComponentPath != null) {
-        	HstComponentConfiguration hcc = rootComponentConfig;
-            for ( String pathName : targetComponentPath.split("/"))
-            {
-                hcc = hcc.getChildByName(pathName);
-                if (hcc == null)
-                {
-                    break;
-                }
-            }
-            if (hcc == null) {
-            	// TODO: log ResolvedSiteMapItem.getQualifiedId() as reference or better rootComponentConfig.getQualifiedId())
-            	throw new ContainerNotFoundException("Cannot find target child component configuration '"+targetComponentPath+"'");
-            }
-            rootComponentConfig = hcc;
-        }
-        
+
         try {
             HstComponentWindow rootComponentWindow = getComponentWindowFactory().create(context.getRequestContainerConfig(), requestContext, rootComponentConfig, getComponentFactory());
             context.setRootComponentWindow(rootComponentWindow);

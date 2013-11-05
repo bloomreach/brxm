@@ -62,8 +62,6 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
 	public void setResolvedSiteMapItem(ResolvedSiteMapItem resolvedSiteMapItem);
 
-	public void setTargetComponentPath(String targetComponentPath);
-
 	public void setBaseURL(HstContainerURL baseURL);
 
 	public void setURLFactory(HstURLFactory urlFactory);

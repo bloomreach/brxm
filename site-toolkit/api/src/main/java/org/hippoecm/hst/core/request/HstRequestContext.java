@@ -118,12 +118,6 @@ public interface HstRequestContext {
     ResolvedSiteMapItem getResolvedSiteMapItem();
     
     /**
-     * Returns a target component path relative to {@link HstComponentConfiguration} of the {@link #getResolvedSiteMapItem().
-     * If not null the targeted sub component configuration will be used as root component for this request instead.
-     */
-    String getTargetComponentPath();
-    
-    /**
      * @return <code>true</code> when this request is matched to a preview site
      * @see Mount#isPreview()
      */
