@@ -292,7 +292,7 @@
             <sv:value>/hst:hst/hst:channels/demosite</sv:value>
           </sv:property>
           <sv:property sv:name="hst:mountpoint" sv:type="String">
-            <sv:value>/hst:hst/hst:sites/demosite-preview</sv:value>
+            <sv:value>/hst:hst/hst:sites/demosite</sv:value>
           </sv:property>
           <sv:property sv:name="hst:type" sv:type="String">
             <sv:value>preview</sv:value>
