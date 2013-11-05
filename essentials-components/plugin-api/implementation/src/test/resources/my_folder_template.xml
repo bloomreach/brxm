@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2013 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,11 +15,11 @@
   limitations under the License.
   -->
 
-<wicket:panel xmlns:wicket="http://wicket.apache.org">
-    <wicket:message key="step.choose.powerpack.description" />
-
-    <form wicket:id="form">
-        <wicket:panel wicket:id="powerpackDropdown">[POWERPACK DROPDOWN]</wicket:panel>
-        <div wicket:id="pack.description" />
-    </form>
-</wicket:panel>
+<sv:node sv:name="${name}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>nt:unstructured</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>6009441a-1792-42a6-bfc2-744e5b475a75</sv:value>
+  </sv:property>
+</sv:node>
