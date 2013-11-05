@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="step.choose.powerpack.description">Step 1: Choose a Power Pack
-        Congratulations - you've successfully created ${name} and are almost ready to get coding!
+    <entry key="step.choose.powerpack.description">
+      <![CDATA[
+        <div class="alert alert-success">Congratulations - you've successfully created ${name} and are almost ready to get coding!
         We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
-        project ${name} will be. We'll then add the relevant components and configuration to get you started.
+        project ${name} will be. We'll then add the relevant components and configuration to get you started.</div>
+        
+      <p>&nbsp;</p>
+
+      <strong>Step 1:</strong>
+      ]]>
     </entry>
     <entry key="powerpack.news.and.event.label">Basic News and Events site</entry>
     <entry key="powerpack.news.and.event.description">A basic News and Events site that contains a homepage template, News and Agenda components and detail pages
