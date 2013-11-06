@@ -91,8 +91,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     private static void restore(Node target, Node source) throws RepositoryException {
-        JcrUtils.copyTo(source, new DefaultCopyHandler(target) {
-
+        JcrUtils.copyToChain(source, new DefaultCopyHandler(target) {
             @Override
             public void setProperty(final PropInfo prop) throws RepositoryException {
                 final String name = prop.getName();
