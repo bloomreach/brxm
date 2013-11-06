@@ -33,7 +33,6 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +40,11 @@ import org.slf4j.LoggerFactory;
 public class HstSiteService implements HstSite {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteService.class);
-    private volatile Optional<HstSiteMap> siteMap;
-    private volatile LocationMapTree locationMapTree;
-    private volatile Optional<HstSiteMapItemHandlersConfiguration> siteMapItemHandlersConfigurationService;
-    private volatile Optional<HstComponentsConfiguration> componentsConfiguration;
-    private volatile Optional<HstSiteMenusConfiguration> siteMenusConfigurations;
+    volatile Optional<HstSiteMap> siteMap;
+    volatile LocationMapTree locationMapTree;
+    volatile Optional<HstSiteMapItemHandlersConfiguration> siteMapItemHandlersConfigurationService;
+    volatile Optional<HstComponentsConfiguration> componentsConfiguration;
+    volatile Optional<HstSiteMenusConfiguration> siteMenusConfigurations;
     private String name;
     private boolean hasPreviewConfiguration;
     private String canonicalIdentifier;
