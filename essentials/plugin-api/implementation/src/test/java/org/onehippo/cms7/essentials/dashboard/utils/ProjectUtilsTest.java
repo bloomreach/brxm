@@ -27,6 +27,7 @@ public class ProjectUtilsTest extends BaseTest {
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         // reset system property
         if (oldSystemDir != null) {
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);

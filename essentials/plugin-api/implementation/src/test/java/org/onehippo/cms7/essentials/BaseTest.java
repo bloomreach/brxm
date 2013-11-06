@@ -93,6 +93,9 @@ public class BaseTest {
 
     public PluginContext getContext() {
 
+        if(context ==null){
+            context = getPluginContextFile();
+        }
         return context;
     }
 
