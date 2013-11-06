@@ -47,6 +47,7 @@ class DocumentMigrator extends AbstractMigrator {
         log.debug("Migrating {}", node.getPath());
         try {
             final VersionHistory versionHistory = getVersionHistory(node);
+            JcrUtils.ensureIsCheckedOut(node, true);
             removeHippoPaths(node);
             removeMixin(node, HippoNodeType.NT_HARDDOCUMENT);
             session.save();
