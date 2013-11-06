@@ -16,16 +16,14 @@
 
 package org.onehippo.cms7.essentials.setup.panels;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.*;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
@@ -37,9 +35,10 @@ import org.onehippo.cms7.essentials.setup.panels.model.ProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @version "$Id$"
@@ -51,6 +50,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
     private final DropdownPanel powerpackDropdown;
     private final SetupPage myParent;
     private String selectedPowerpack;
+    private String selectedTemplatesType;
     @Inject
     private EventBus eventBus;
     @Inject
@@ -110,6 +110,19 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
             }
         }
         );
+
+        CheckBox sampleContentCheckBox = new CheckBox("sampleContentCheckbox", Model.of(Boolean.TRUE));
+        sampleContentCheckBox.setEnabled(false);
+        form.add(sampleContentCheckBox);
+
+        RadioGroup<String> radioGroup = new RadioGroup<String>("templatesRadioGroup", new PropertyModel<String>(this, "selectedTemplatesType"));
+        radioGroup.setRequired(true);
+
+        radioGroup.add(new Radio<String>("jspFilesystemRadio", new Model<String>(getString("templates.radio.jsp.filesystem"))));
+        radioGroup.add(new Radio<String>("freemarkerFilesystemRadio", new Model<String>(getString("templates.radio.freemarker.filesystem"))).setEnabled(false));
+        radioGroup.add(new Radio<String>("freemarkerRepositoryRadio", new Model<String>(getString("templates.radio.freemarker.repository"))).setEnabled(false));
+        form.add(radioGroup);
+
         add(form);
     }
 

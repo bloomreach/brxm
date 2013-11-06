@@ -20,5 +20,20 @@
     <form wicket:id="form">
         <wicket:panel wicket:id="powerpackDropdown">[POWERPACK DROPDOWN]</wicket:panel>
         <div wicket:id="pack.description" />
+
+        <br/><br/>
+
+        <span>
+            <input wicket:id="sampleContentCheckbox" id="sample-content" type="checkbox"/>
+            <label for="sample-content"><wicket:message key="content.sample.add.label"/></label>
+        </span>
+
+        <p>&nbsp;</p>
+
+        <span wicket:id="templatesRadioGroup" id="templatesRadioGroup">
+            <input wicket:id="jspFilesystemRadio" type="radio"><wicket:message key="templates.radio.jsp.filesystem"/></input><br/>
+            <input wicket:id="freemarkerFilesystemRadio" type="radio"><wicket:message key="templates.radio.freemarker.filesystem"/></input><br/>
+            <input wicket:id="freemarkerRepositoryRadio" type="radio"><wicket:message key="templates.radio.freemarker.repository"/></input><br/>
+        </span>
     </form>
 </wicket:panel>
