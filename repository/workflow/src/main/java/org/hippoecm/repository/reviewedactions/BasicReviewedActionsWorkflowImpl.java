@@ -71,7 +71,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             HippoNodeType.HIPPO_PATHS,
             HippoStdNodeType.HIPPOSTD_STATE,
             HippoStdNodeType.HIPPOSTD_HOLDER,
-            HippoStdNodeType.HIPPOSTD_STATESUMMARY
+            HippoStdNodeType.HIPPOSTD_STATESUMMARY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE
     };
     static {
         Arrays.sort(PROTECTED_PROPERTIES);
@@ -407,15 +408,16 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
             if (unpublishedDocument == null) {
                 createUnpublished(draftDocument);
-            } else {
-                copyDocumentTo(draftDocument, unpublishedDocument);
             }
 
-            unpublishedDocument.setAvailability(new String[]{"preview"});
-            if (publishedDocument != null && publishedDocument.isAvailable("live")) {
-                publishedDocument.setAvailability(new String[]{"live"});
+            if (!equals(draftDocument.getNode(), unpublishedDocument.getNode())) {
+                copyDocumentTo(draftDocument, unpublishedDocument);
+                unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
+                unpublishedDocument.setAvailability(new String[]{"preview"});
+                if (publishedDocument != null && publishedDocument.isAvailable("live")) {
+                    publishedDocument.setAvailability(new String[]{"live"});
+                }
             }
-            unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
             return toUserDocument(unpublishedDocument);
         } catch (RepositoryException ex) {
             throw new WorkflowException("failed to commit editable instance", ex);

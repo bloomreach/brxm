@@ -56,6 +56,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>500.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.25.05</sv:value>
+    </sv:property>
   </sv:node>
   <!--Workflows configuration-->
   <sv:node sv:name="default-workflows">

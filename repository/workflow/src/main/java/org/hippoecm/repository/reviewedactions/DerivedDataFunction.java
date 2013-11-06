@@ -16,6 +16,7 @@
 package org.hippoecm.repository.reviewedactions;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,31 +31,41 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
 
     static final Logger log = LoggerFactory.getLogger(DerivedDataFunction.class);
 
-    private Set<String> getValues(Value[] values) throws RepositoryException {
+    private Set<String> getStringValues(Value[] values) throws RepositoryException {
         if (values == null) {
             return Collections.emptySet();
         }
 
-        HashSet<String> set = new HashSet<String>(2);
+        final Set<String> set = new HashSet<>(values.length);
         for (Value value : values) {
             set.add(value.getString());
         }
         return set;
     }
 
+    private Date getDateValue(Value[] values) throws RepositoryException {
+        if (values == null || values.length == 0) {
+            return null;
+        }
+        return values[0].getDate().getTime();
+    }
+
     public Map<String, Value[]> compute(Map<String, Value[]> parameters) {
         String stateSummary = "unknown";
         try {
-            Set<String> unpublishedAvailability = getValues(parameters.get("unpublished"));
-            Set<String> publishedAvailability = getValues(parameters.get("published"));
+            Set<String> unpublishedAvailability = getStringValues(parameters.get("unpublished"));
+            Set<String> publishedAvailability = getStringValues(parameters.get("published"));
+
+            final Date publishedLastModified = getDateValue(parameters.get("publishedLastModified"));
+            final Date unPublishedLastModified = getDateValue(parameters.get("unpublishedLastModified"));
 
             if (publishedAvailability.size() == 0) {
                 stateSummary = "new";
             } else {
-                if (unpublishedAvailability.size() == 0) {
-                    stateSummary = "live";
-                } else {
+                if (unpublishedAvailability.size() != 0 && !equals(publishedLastModified, unPublishedLastModified)) {
                     stateSummary = "changed";
+                } else {
+                    stateSummary = "live";
                 }
             }
         } catch (RepositoryException e) {
@@ -62,5 +73,12 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
         }
         parameters.put("summary", new Value[]{getValueFactory().createValue(stateSummary)});
         return parameters;
+    }
+
+    private boolean equals(final Date date1, final Date date2) {
+        if (date1 == null && date2 == null) {
+            return false;
+        }
+        return date1 != null && date1.equals(date2);
     }
 }

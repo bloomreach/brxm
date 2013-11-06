@@ -48,6 +48,22 @@
         <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippo:availability</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="publishedLastModified">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippostdpubwf:lastModificationDate</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="unpublishedLastModified">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippostdpubwf:lastModificationDate</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="hipposys:derived">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
