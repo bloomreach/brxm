@@ -68,7 +68,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.24.02</sv:value>
+      <sv:value>2.25.05</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippolog-folder">
@@ -246,6 +246,12 @@
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>20.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.25.05</sv:value>
     </sv:property>
   </sv:node>
 
