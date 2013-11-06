@@ -58,7 +58,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
     public void testParseInstructions() throws Exception {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
         final Instructions instructions = powerpackPackage.getInstructions();
-        assertEquals(3, instructions.getInstructionSets().size());
+        assertEquals(5, instructions.getInstructionSets().size());
     }
 
     @Test

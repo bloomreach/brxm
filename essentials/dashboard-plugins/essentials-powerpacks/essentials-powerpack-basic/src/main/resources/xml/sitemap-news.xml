@@ -3,9 +3,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sitemapitem</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>32cbfd5e-5f92-4c25-914b-65a5ce8ca82b</sv:value>
-  </sv:property>
   <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
     <sv:value>hst:pages/newsoverview</sv:value>
   </sv:property>
@@ -15,9 +12,6 @@
   <sv:node sv:name="_any_.html">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>ca63a6ff-4d60-465e-b730-d0fba01623b3</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/newspage</sv:value>
@@ -29,9 +23,6 @@
   <sv:node sv:name="_any_">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>0f8547a4-e7b6-4701-b47a-72cc1c6cc2ed</sv:value>
     </sv:property>
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/newsoverview</sv:value>
