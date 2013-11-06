@@ -428,6 +428,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/log4j.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/project/site/dummy.txt -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/pom.xml -text
 plugin-api/api/pom.xml -text
