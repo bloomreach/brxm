@@ -53,16 +53,15 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
     public Map<String, Value[]> compute(Map<String, Value[]> parameters) {
         String stateSummary = "unknown";
         try {
-            Set<String> unpublishedAvailability = getStringValues(parameters.get("unpublished"));
-            Set<String> publishedAvailability = getStringValues(parameters.get("published"));
+            Set<String> publishedAvailability = getStringValues(parameters.get("publishedAvailability"));
 
             final Date publishedLastModified = getDateValue(parameters.get("publishedLastModified"));
-            final Date unPublishedLastModified = getDateValue(parameters.get("unpublishedLastModified"));
+            final Date unpublishedLastModified = getDateValue(parameters.get("unpublishedLastModified"));
 
-            if (publishedAvailability.size() == 0) {
+            if (publishedAvailability.isEmpty()) {
                 stateSummary = "new";
             } else {
-                if (unpublishedAvailability.size() != 0 && !equals(publishedLastModified, unPublishedLastModified)) {
+                if (unpublishedLastModified != null && !unpublishedLastModified.equals(publishedLastModified)) {
                     stateSummary = "changed";
                 } else {
                     stateSummary = "live";
@@ -75,10 +74,4 @@ public class DerivedDataFunction extends org.hippoecm.repository.ext.DerivedData
         return parameters;
     }
 
-    private boolean equals(final Date date1, final Date date2) {
-        if (date1 == null && date2 == null) {
-            return false;
-        }
-        return date1 != null && date1.equals(date2);
-    }
 }

@@ -32,20 +32,12 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:propertyreferences</sv:value>
     </sv:property>
-    <sv:node sv:name="published">
+    <sv:node sv:name="publishedAvailability">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:resolvepropertyreference</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:relPath" sv:type="String">
         <sv:value>../{.}[{_similar},@hippostd:state='published']/hippo:availability</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="unpublished">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:resolvepropertyreference</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:relPath" sv:type="String">
-        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippo:availability</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="publishedLastModified">
