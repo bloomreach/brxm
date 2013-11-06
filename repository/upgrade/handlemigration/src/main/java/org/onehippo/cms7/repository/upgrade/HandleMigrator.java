@@ -116,10 +116,8 @@ class HandleMigrator extends AbstractMigrator {
     }
 
     @Override
-    protected HippoNodeIterator getNodes() throws RepositoryException {
-        final QueryManager queryManager = defaultSession.getWorkspace().getQueryManager();
-        final Query query = queryManager.createQuery("SELECT * FROM hippo:hardhandle ORDER BY jcr:name", Query.SQL);
-        return (HippoNodeIterator) query.execute().getNodes();
+    protected String getNodeType() {
+        return "hippo:hardhandle";
     }
 
     private void migrateHandle(final Node handle) throws RepositoryException {

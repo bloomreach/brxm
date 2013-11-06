@@ -23,6 +23,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
 abstract class AbstractMigrator {
 
     private int count;
+    private long totalSize;
     protected final Session session;
     protected boolean cancelled = false;
     protected Logger log = LoggerFactory.getLogger(getClass());
@@ -62,30 +65,26 @@ abstract class AbstractMigrator {
     void migrate() throws RepositoryException {
         log.debug("Running migration tool");
 
-        HippoNodeIterator hardHandles = getNodes();
-        long size = hardHandles.getTotalSize();
+        HippoNodeIterator nodes = getNodes();
+        totalSize = nodes.getTotalSize();
 
-        if (size <= 0) {
-            log.debug("No nodes to migrate");
+        if (totalSize <= 0) {
+            log.debug("No " + getNodeType() + "s to migrate");
             return;
         }
 
-        log.info("{} nodes to migrate", size);
+        log.info("{} {}s to migrate", totalSize, getNodeType());
 
-        final long progressInterval = (size + 99) / 100;
+        long size = totalSize;
         while (size > 0) {
             if (cancelled) {
                 break;
             }
-            migrate(hardHandles);
-            if (count % progressInterval == 0) {
-                long progress = Math.round(100.0 * count / size);
-                log.info("Progress: {} %", progress);
-            }
-            hardHandles = getNodes();
-            size = hardHandles.getTotalSize();
+            migrate(nodes);
+            nodes = getNodes();
+            size = nodes.getTotalSize();
         }
-        log.info("Finished migrating handles to new model");
+        log.info("Finished migrating {}s to new model", getNodeType());
     }
 
     private void migrate(final HippoNodeIterator nodes) {
@@ -98,6 +97,10 @@ abstract class AbstractMigrator {
                 migrate(node);
                 count++;
                 throttle();
+                if (count % ((totalSize + 99) / 100) == 0) {
+                    long progress = Math.round(100.0 * count / totalSize);
+                    log.info("Progress: {} %", progress);
+                }
                 if (count % 100 == 0) {
                     log.info("Migrated {} nodes", count);
                     return;
@@ -122,9 +125,15 @@ abstract class AbstractMigrator {
         }
     }
 
-    protected abstract void migrate(final Node node) throws RepositoryException;
+    private HippoNodeIterator getNodes() throws RepositoryException {
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        final Query query = queryManager.createQuery("SELECT * FROM " + getNodeType() + " ORDER BY jcr:name", Query.SQL);
+        return (HippoNodeIterator) query.execute().getNodes();
+    }
 
-    protected abstract HippoNodeIterator getNodes() throws RepositoryException;
+    protected abstract String getNodeType();
+
+    protected abstract void migrate(final Node node) throws RepositoryException;
 
     protected void removeMixin(final Node node, final String mixin) throws RepositoryException {
         if (node.isNodeType(mixin)) {
