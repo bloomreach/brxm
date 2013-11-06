@@ -15,13 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.yui.datetime;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.Behavior;
@@ -75,7 +78,6 @@ public class YuiDateTimeField extends DateTimeField {
     private boolean todayLinkVisible = true;
 
     private YuiDatePickerSettings settings;
-    private transient boolean shouldUpdate = false;
 
     public YuiDateTimeField(String id, IModel<Date> model) {
         this(id, model, null);
@@ -135,13 +137,10 @@ public class YuiDateTimeField extends DateTimeField {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
+                YuiDateTimeField.this.setDefaultModelObject(new Date());
                 ((FormComponent<Date>) YuiDateTimeField.this.get("date")).clearInput();
-                MutableDateTime date = new MutableDateTime(new Date());
-                boolean use12HourFormat = use12HourFormat();
-                int hours = date.getHourOfDay() % (use12HourFormat ? 12 : 24);
-                setHours(hours);
-                setMinutes(date.getMinuteOfHour());
-                setDate(date.toDate());
+                ((FormComponent<Date>) YuiDateTimeField.this.get("hours")).clearInput();
+                ((FormComponent<Date>) YuiDateTimeField.this.get("minutes")).clearInput();
                 if (target != null) {
                     target.add(YuiDateTimeField.this);
                 }
@@ -163,7 +162,7 @@ public class YuiDateTimeField extends DateTimeField {
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
-                    shouldUpdate = true;
+                    updateDateTime();
                 }
             });
         }
@@ -174,28 +173,8 @@ public class YuiDateTimeField extends DateTimeField {
         response.render(CssHeaderItem.forReference(YUIDATETIME_STYLESHEET));
     }
 
-    @Override
-    protected void onAfterRenderChildren() {
-        super.onAfterRenderChildren();
-        if (shouldUpdate) {
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                this.onUpdate(target);
-            }
-            shouldUpdate = false;
-        }
-    }
-
-    // callback that the ChangeBehaviour calls when one of the composing fields updates
-    public void onUpdate(AjaxRequestTarget target) {
-        updateDateTime(getDate(), getHours(), getMinutes());
-
-        if (target != null) {
-            target.add(this);
-        }
-    }
-
-    private void updateDateTime(Date date, Integer hours, Integer minutes) {
+    private void updateDateTime() {
+        Date date = getDate();
         if (date != null) {
             MutableDateTime datetime = new MutableDateTime(date);
             try {
@@ -204,8 +183,11 @@ public class YuiDateTimeField extends DateTimeField {
                     datetime.setZone(DateTimeZone.forTimeZone(zone));
                 }
 
+                Integer hours = getHours();
                 if (hours != null) {
                     datetime.set(DateTimeFieldType.hourOfDay(), hours % 24);
+
+                    Integer minutes = getMinutes();
                     datetime.setMinuteOfHour(minutes != null ? minutes : 0);
                 }
 
