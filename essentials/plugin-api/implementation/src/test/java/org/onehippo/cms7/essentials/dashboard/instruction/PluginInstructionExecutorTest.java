@@ -48,7 +48,7 @@ public class PluginInstructionExecutorTest extends BaseRepositoryTest {
     @Test
     public void testExecute() throws Exception {
 
-        final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
+        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("instructions.xml");
         final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
         final String content = myBuilder.toString();
         log.info("content {}", content);

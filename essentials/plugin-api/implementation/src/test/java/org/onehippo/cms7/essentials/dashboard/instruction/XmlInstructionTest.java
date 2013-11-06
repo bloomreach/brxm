@@ -57,7 +57,7 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         //############################################
         addNodeInstruction.setAction(PluginInstruction.COPY);
         addNodeInstruction.setTarget("/");
-        addNodeInstruction.setSource("/instruction_xml_file.xml");
+        addNodeInstruction.setSource("instruction_xml_file.xml");
         final InstructionSet set = new PluginInstructionSet();
         set.addInstruction(addNodeInstruction);
         final InstructionStatus status = executor.execute(set, getContext());
