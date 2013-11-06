@@ -82,13 +82,9 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             final String eventPath = getMainConfigOrRootConfigNodePath(event);
             if (eventPath != null) {
                 if (eventPath.startsWith(commonCatalogPath)) {
-                    // change in common catalog. No need to ever reload any item in
-                    // componentsConfigurationCache or siteMapItemHandlerConfigurationCache for that
-                    // just set commonCatalogItems to null : will be reloaded then
                     commonCatalogItems = null;
-                } else {
-                    eventPaths.add(eventPath);
                 }
+                eventPaths.add(eventPath);
             }
         }
         for (String eventPath : eventPaths) {
@@ -164,6 +160,11 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
         hstComponentsConfiguration = new HstComponentsConfigurationService(ccn, commonCatalogItems.orNull());
         final List<String> events = ccn.getCompositeConfigurationDependenyPaths();
+
+        // the commmon catalog, default at /hst:hst/hst:configurations/hst:catalog is a special node that is always included
+        // as all the hstComponentsConfiguration need a reload after a change in there
+        events.add(commonCatalogPath);
+
         componentsConfigurationCache.put(cachekey, hstComponentsConfiguration, events.toArray(new String[events.size()]));
 
         return hstComponentsConfiguration;
