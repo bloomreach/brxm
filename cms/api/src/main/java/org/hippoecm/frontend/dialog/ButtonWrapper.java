@@ -17,6 +17,7 @@ package org.hippoecm.frontend.dialog;
 
 import java.util.Map;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -125,7 +126,17 @@ public class ButtonWrapper implements IClusterable {
         button.setEnabled(enabled);
         button.setVisible(visible);
         if (getKeyType() != null) {
-            button.add(new InputBehavior(new KeyType[]{getKeyType()}, EventType.click));
+            button.add(new InputBehavior(new KeyType[]{getKeyType()}, EventType.click) {
+
+                @Override
+                public void onRemove(final Component component) {
+                    super.onRemove(component);
+                    AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    if (target != null) {
+                        target.appendJavaScript("shortcut.remove('" + getKeyType().getKeyCode() + "');");
+                    }
+                }
+            });
         }
         return button;
     }
