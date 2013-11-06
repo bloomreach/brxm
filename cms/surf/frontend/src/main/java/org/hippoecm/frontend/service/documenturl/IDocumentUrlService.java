@@ -27,7 +27,7 @@ public interface IDocumentUrlService extends IClusterable {
     public static final String DEFAULT_SERVICE_ID = "default.document.url.service";
 
     /**
-     * @param documentNode the Hippo document node (
+     * @param documentNode the Hippo document node
      * @return the external URL to a Hippo document node, or null of no external URL could be created.
      */
     public String getUrl(Node documentNode);
