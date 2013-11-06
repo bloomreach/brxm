@@ -102,8 +102,13 @@ public abstract class AbstractReconfigurableSchedulingDaemonModule extends Abstr
         try {
             synchronized (this) {
                 super.onConfigurationChange(moduleConfig);
-                unscheduleJob();
-                scheduleJob(moduleConfig);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        unscheduleJob();
+                        scheduleJob(moduleConfig);
+                    }
+                }).start();
             }
         } catch (RepositoryException e) {
             log.warn("Failed to reconfigure the module, " + getClass(), e);
