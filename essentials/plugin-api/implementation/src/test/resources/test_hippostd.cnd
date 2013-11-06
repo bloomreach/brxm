@@ -1,0 +1,96 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[hippostd:datefields] > nt:base
+  - hippostd:month (long) < '[0,11]'
+  - hippostd:hourofday (long) < '[0,24]'
+  - hippostd:dayofyear (long) < '[1,366]'
+  - hippostd:weekofyear (long) < '[1,53]'
+  - hippostd:dayofweek (long) < '[1,7]'
+  - hippostd:dayofmonth (long) < '[1,31]'
+  - hippostd:year (long)
+  - hippostd:minute (long) < '[0,59]'
+  - hippostd:second (long)
+
+[hippostd:date] > hippo:derived, hippostd:datefields
+  - hippostd:date (date) primary mandatory
+
+[hippostd:html] > nt:base
+  - hippostd:content (string) primary mandatory
+  + * (hippo:facetselect)
+
+[hippostd:container] > hippo:container
+  mixin
+  + * (hippostd:date) multiple
+  + * (hippostd:html) multiple
+
+[hippostd:folder] > hippo:document
+  orderable
+  - hippostd:foldertype (string) multiple
+  + * (nt:base) = hippostd:folder multiple
+
+[hippostd:directory] > hippo:document
+  - hippostd:foldertype (string) multiple
+  + * (nt:base) = hippostd:folder multiple
+
+[hippostd:languageable]
+  mixin
+  - hippostd:language (string) < 'aa', 'ab', 'ae', 'af', 'ak', 'am', 'an', 'ar', 'as', 'av', 'ay', 'az', 'ba', 'be', 'bg', 'bh', 'bi', 'bm', 'bn', 'bo', 'br', 'bs', 'ca', 'ce', 'ch', 'co', 'cr', 'cs', 'cu', 'cv', 'cy', 'da', 'de', 'dv', 'dz', 'ee', 'el', 'en', 'eo', 'es', 'et', 'eu', 'fa', 'ff', 'fi', 'fj', 'fo', 'fr', 'fy', 'ga', 'gd', 'gl', 'gn', 'gu', 'gv', 'ha', 'he', 'hi', 'ho', 'hr', 'ht', 'hu', 'hy', 'hz', 'ia', 'id', 'ie', 'ig', 'ii', 'ik', 'io', 'is', 'it', 'iu', 'ja', 'jv', 'ka', 'kg', 'ki', 'kj', 'kk', 'kl', 'km', 'kn', 'kr', 'ks', 'ku', 'kv', 'kw', 'ky', 'la', 'lb', 'lg', 'li', 'ln', 'lo', 'lt', 'lu', 'lv', 'mg', 'mh', 'mi', 'mk', 'ml', 'mn', 'mo', 'mr', 'ms', 'mt', 'my', 'na', 'nb', 'nd', 'ne', 'ng', 'nl', 'nn', 'no', 'nr', 'nv', 'ny', 'oc', 'oj', 'om', 'or', 'os', 'pa', 'pi', 'pl', 'ps', 'pt', 'qu', 'rm', 'rn', 'ro', 'ru', 'rw', 'sa', 'sc', 'sd', 'se', 'sg', 'sh', 'si', 'sk', 'sl', 'sm', 'sn', 'so', 'sq', 'sr', 'ss', 'st', 'su', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'ti', 'tk', 'tl', 'tn', 'to', 'tr', 'ts', 'tt', 'tw', 'ty', 'ug', 'uk', 'ur', 'uz', 've', 'vi', 'vo', 'wa', 'wo', 'xh', 'yi', 'yo', 'za', 'zh', 'zu'
+
+[hippostd:publishable]
+  mixin
+  - hippostd:holder (string)
+  - hippostd:state (string) = 'draft' mandatory < 'draft', 'unpublished', 'published', 'stale'
+
+[hippostd:publishableSummary] > hippo:derived
+  mixin
+  - hippostd:stateSummary (string) mandatory
+
+[hippostd:document] > hippo:document, hippostd:languageable, hippostd:publishable, hippostd:publishableSummary
+  - hippostd:content (string) primary mandatory
+
+[hippostd:gallery] > hippostd:folder
+  orderable
+  - hippostd:gallerytype (string) multiple
+
+[hippostd:relaxed] > hippostd:container
+  mixin
+  - * (double)
+  - * (double) multiple
+  - * (date)
+  - * (decimal)
+  - * (boolean) multiple
+  - * (decimal) multiple
+  - * (long)
+  - * (long) multiple
+  - * (uri) multiple
+  - * (uri)
+  - * (string)
+  - * (string) multiple
+  - * (date) multiple
+  - * (boolean)
+
+[hippostd:space] > hippostd:folder
+  orderable
+
+[hippostd:taggable]
+  mixin
+  - hippostd:tags (string) multiple
+
+[hippostd:templates] > nt:base
+  + * (nt:base)
+
+[hippostd:templatequery] > nt:query
+  - hippostd:renderer (string)
+  - hippostd:modify (string) multiple
+  - hippostd:icon (string)
+  + hippostd:templates (hippostd:templates) = hippostd:templates
+
+[hippostd:translations] > nt:base
+  + * (nt:base)
+
+[hippostd:translated]
+  mixin
+  + hippostd:translations (hippostd:translations)
+

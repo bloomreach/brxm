@@ -1849,6 +1849,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/target
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/*.iml

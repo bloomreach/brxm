@@ -22,7 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class BasicPowerpackTest extends BaseTest {
+public class BasicPowerpackTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpackTest.class);
     @Inject
@@ -50,24 +50,29 @@ public class BasicPowerpackTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_TMP_FOLDER) + File.separator + "essentials");
+        createHstRootConfig();
+
     }
 
     @Test
     public void testParseInstructions() throws Exception {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
         final Instructions instructions = powerpackPackage.getInstructions();
-        assertEquals(2, instructions.getInstructionSets().size());
+        assertEquals(3, instructions.getInstructionSets().size());
     }
 
     @Test
     public void testExecute() throws Exception {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
         final InstructionStatus status = powerpackPackage.execute(getContext());
+        // create target node:
         assertEquals(InstructionStatus.SUCCESS, status);
         assertEquals(jspDirectory.listFiles().length, 6);
 
 
     }
+
+
 
     @Override
     @After

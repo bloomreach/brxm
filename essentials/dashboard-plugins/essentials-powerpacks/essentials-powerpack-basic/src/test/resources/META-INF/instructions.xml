@@ -28,5 +28,8 @@
   <instructionSet name="COMPONENT">
 
   </instructionSet>
+  <instructionSet name="XML">
+    <xml action="copy" source="/xml/sitemap-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+  </instructionSet>
 
 </instructions>

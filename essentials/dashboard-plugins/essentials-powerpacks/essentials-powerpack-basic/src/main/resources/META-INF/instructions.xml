@@ -25,6 +25,9 @@
     <file action="copy" overwrite="true" source="/jsp/essentials-component-news.jsp" target="${jspRoot}/essentials/essentials-component-news.jsp"/>
     <file action="copy" overwrite="true" source="/jsp/essentials-component-news-detail.jsp" target="${jspRoot}/essentials/essentials-component-news-details.jsp"/>
   </instructionSet>
+  <instructionSet name="XML">
+    <xml action="copy"  source="/xml/sitemap-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+  </instructionSet>
   <instructionSet name="COMPONENT">
 
   </instructionSet>

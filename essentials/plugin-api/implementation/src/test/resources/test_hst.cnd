@@ -1,0 +1,338 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hst'='http://www.hippoecm.org/hst/nt/2.1'>
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[hst:descriptive]
+  mixin
+  - hst:description (string)
+  + hst:icon (hippo:resource) = hippo:resource
+
+[hst:abstractcomponent] > hst:descriptive, mix:referenceable, nt:base
+  orderable
+  - hst:page_errorhandlerclassname (string)
+  - hst:template (string)
+  - hst:asyncmode (string)
+  - hst:referencename (string)
+  - hst:componentclassname (string)
+  - hst:async (boolean)
+  - hst:cacheable (boolean)
+  - hst:parametervalues (string) multiple
+  - hst:parameternameprefixes (string) multiple
+  - hst:standalone (boolean)
+  - hst:resourcetemplate (string)
+  - hst:parameternames (string) multiple
+
+[hst:site] > mix:referenceable, mix:versionable, nt:base
+  - hst:content (string)
+  - hst:portalconfigurationenabled (boolean)
+  - hst:version (long)
+  - hst:configurationpath (string)
+  + hst:content (hippo:facetselect)
+
+[hst:sitemapitem] > mix:referenceable, nt:base
+  - hst:namedpipeline (string)
+  - hst:refId (string)
+  - hst:componentconfigurationmappingnames (string) multiple
+  - hst:statuscode (long)
+  - hst:excludedforlinkrewriting (boolean)
+  - hst:value (string)
+  - hst:componentconfigurationid (string)
+  - hst:errorcode (long)
+  - hst:portletcomponentconfigurationid (string)
+  - hst:schemeagnostic (boolean)
+  - hst:componentconfigurationmappingvalues (string) multiple
+  - hst:parameternames (string) multiple
+  - hst:schemenotmatchresponsecode (long)
+  - hst:roles (string) multiple
+  - hst:parametervalues (string) multiple
+  - hst:resourcebundleid (string)
+  - hst:cacheable (boolean)
+  - hst:users (string) multiple
+  - hst:relativecontentpath (string)
+  - hst:scheme (string)
+  - hst:locale (string)
+  - hst:authenticated (boolean)
+  - hst:sitemapitemhandlerids (string) multiple
+  + * (hst:sitemapitem)
+
+[hst:sitemap] > mix:referenceable, nt:base
+  orderable
+  - hst:lockedon (date)
+  - hst:lastmodified (date)
+  - hst:lastmodifiedby (string)
+  - hst:lockedby (string)
+  + * (hst:sitemapitem)
+
+[hst:sitemenuitem] > mix:referenceable, nt:base
+  orderable
+  - hst:parameternames (string) multiple
+  - hst:mountalias (string)
+  - hst:parametervalues (string) multiple
+  - hst:foldersonly (boolean)
+  - hst:depth (long)
+  - hst:referencesitemapitem (string)
+  - hst:repobased (boolean)
+  - hst:refidsitemapitem (string)
+  - hst:externallink (string)
+  - hst:roles (string) multiple
+  + * (hst:sitemenuitem)
+
+[hst:sitemenu] > mix:referenceable, nt:base
+  orderable
+  + * (hst:sitemenuitem)
+
+[hst:sitemenus] > mix:referenceable, nt:base
+  - hst:lastmodifiedby (string)
+  - hst:lockedby (string)
+  - hst:lastmodified (date)
+  - hst:lockedon (date)
+  + * (hst:sitemenu)
+
+[hst:components] > mix:referenceable, nt:base
+  orderable
+  + * (hst:abstractcomponent)
+
+[hst:template] > hst:descriptive, mix:referenceable, nt:base
+  - hst:containers (string) multiple
+  - * (string)
+  - hst:renderpath (string)
+  - hst:script (string)
+  - hst:isnamed (boolean)
+
+[hst:templates] > mix:referenceable, nt:base
+  orderable
+  - hst:lastmodifiedby (string)
+  - hst:lockedon (date)
+  - hst:lockedby (string)
+  - hst:lastmodified (date)
+  + * (hst:template)
+
+[hst:pages] > mix:referenceable, nt:base
+  orderable
+  + * (hst:abstractcomponent)
+
+[hst:sitemapitemhandler] > mix:referenceable, nt:base
+  - * (date)
+  - * (long) multiple
+  - * (boolean) multiple
+  - * (boolean)
+  - * (double)
+  - * (string) multiple
+  - * (long)
+  - * (string)
+  - hst:sitemapitemhandlerclassname (string) mandatory
+  - * (date) multiple
+  - * (double) multiple
+
+[hst:sitemapitemhandlers] > mix:referenceable, nt:base
+  orderable
+  + * (hst:sitemapitemhandler)
+
+[hst:containeritemcomponent] > hst:abstractcomponent
+  orderable
+  - hst:dummycontent (string)
+  - hst:componentfiltertag (string)
+  - hst:xtype (string) mandatory
+  - hst:label (string)
+  - hst:iconpath (string)
+  - hst:referencecomponent (string)
+  + * (hst:abstractcomponent)
+
+[hst:containeritempackage] > mix:referenceable, nt:base
+  orderable
+  + * (hst:containeritemcomponent)
+
+[hst:catalog] > mix:referenceable, nt:base
+  orderable
+  - hst:lastmodified (date)
+  - hst:lockedby (string)
+  - hst:lastmodifiedby (string)
+  - hst:lockedon (date)
+  + * (hst:containeritempackage)
+
+[hst:configuration] > mix:referenceable, mix:versionable, nt:base
+  - hst:lockedon (date)
+  - hst:lockedby (string)
+  - hst:inheritsfrom (string) multiple
+  + hst:sitemap (hst:sitemap) = hst:sitemap
+  + hst:pages (hst:pages) = hst:pages
+  + hst:components (hst:components) = hst:components
+  + hst:catalog (hst:catalog) = hst:catalog
+  + hst:sitemenus (hst:sitemenus) = hst:sitemenus
+  + hst:sitemapitemhandlers (hst:sitemapitemhandlers) = hst:sitemapitemhandlers
+  + hst:templates (hst:templates) = hst:templates
+
+[hst:mount] > mix:referenceable, nt:base
+  - hst:cacheable (boolean)
+  - hst:defaultresourcebundleid (string)
+  - * (string)
+  - hst:showport (boolean)
+  - hst:defaultsitemapitemhandlerids (string) multiple
+  - hst:pagenotfound (string)
+  - hst:schemeagnostic (boolean)
+  - hst:versioninpreviewheader (boolean)
+  - hst:schemenotmatchresponsecode (long)
+  - hst:namedpipeline (string)
+  - hst:ismapped (boolean)
+  - hst:formloginpage (string)
+  - hst:parametervalues (string) multiple
+  - hst:subjectbasedsession (boolean)
+  - hst:scheme (string)
+  - hst:channelpath (string)
+  - hst:showcontextpath (boolean)
+  - hst:isSite (boolean)
+  - hst:types (string) multiple
+  - hst:onlyforcontextpath (string)
+  - hst:authenticated (boolean)
+  - hst:mountpoint (string)
+  - hst:sessionstateful (boolean)
+  - hst:embeddedmountpath (string)
+  - hst:roles (string) multiple
+  - hst:users (string) multiple
+  - hst:locale (string)
+  - hst:type (string)
+  - hst:parameternames (string) multiple
+  - hst:alias (string)
+  - hst:homepage (string)
+  + * (hst:mount)
+
+[hst:channelinfo] > nt:base
+  - * (long) multiple
+  - * (long)
+  - * (string) multiple
+  - * (date) multiple
+  - * (boolean) multiple
+  - * (double) multiple
+  - * (boolean)
+  - * (date)
+  - * (double)
+  - * (string)
+
+[hst:channel] > mix:referenceable, mix:versionable, nt:base
+  - hst:name (string)
+  - hst:channelinfoclass (string)
+  - hst:defaultdevice (string)
+  - hst:devices (string) multiple
+  - hst:type (string)
+  + hst:channelinfo (hst:channelinfo)
+
+[hst:blueprint] > mix:referenceable, mix:versionable, nt:base
+  - hst:description (string)
+  - hst:name (string)
+  - hst:contentRoot (string)
+  + hst:mount (hst:mount)
+  + hst:configuration (hst:configuration)
+  + hst:site (hst:site)
+  + hst:channel (hst:channel)
+
+[hst:blueprints] > mix:referenceable, mix:versionable, nt:base
+  + * (hst:blueprint)
+
+[hst:channels] > mix:referenceable, mix:versionable, nt:base
+  + * (hst:channel)
+
+[hst:component] > hst:abstractcomponent
+  orderable
+  - hst:referencecomponent (string)
+  + * (hst:abstractcomponent)
+
+[hst:configurations] > mix:referenceable, mix:versionable, nt:base
+  + hst:catalog (hst:catalog) = hst:catalog
+  + * (hst:configuration) = hst:configuration version
+
+[hst:containercomponent] > hst:abstractcomponent
+  orderable
+  - hst:lastmodifiedby (string)
+  - hst:lockedby (string)
+  - hst:lastmodified (date)
+  - hst:xtype (string) mandatory
+  - hst:lockedon (date)
+  + * (hst:containeritemcomponent)
+
+[hst:contentshare] > hippo:mirror
+
+[hst:formfieldvalue] > nt:base
+  - hst:formfielddata (string) multiple
+  - hst:formfieldname (string) mandatory
+  - hst:formfieldmessages (string) multiple
+
+[hst:formdata] > nt:base
+  - hst:predecessor (string)
+  - hst:sealed (boolean)
+  - hst:creationtime (date) mandatory
+  + hst:formfieldvalue (hst:formfieldvalue) multiple
+
+[hst:formdatacontainer] > nt:base
+  + * (hst:formdata)
+  + * (hst:formdatacontainer)
+
+[hst:sites] > mix:referenceable, mix:versionable, nt:base
+  + * (hst:site) = hst:site version
+
+[hst:portmount] > mix:referenceable, nt:base
+  + hst:root (hst:mount)
+
+[hst:virtualhost] > mix:referenceable, nt:base
+  - hst:showport (boolean)
+  - hst:showcontextpath (boolean)
+  - hst:versioninpreviewheader (boolean)
+  - hst:onlyforcontextpath (string)
+  - hst:scheme (string)
+  - hst:schemenotmatchresponsecode (long)
+  - hst:parameternames (string) multiple
+  - hst:defaultresourcebundleid (string)
+  - hst:homepage (string)
+  - hst:schemeagnostic (boolean)
+  - hst:pagenotfound (string)
+  - hst:cacheable (boolean)
+  - hst:parametervalues (string) multiple
+  - hst:locale (string)
+  + hst:root (hst:mount)
+  + * (hst:portmount)
+  + * (hst:virtualhost)
+
+[hst:virtualhostgroup] > mix:referenceable, nt:base
+  - hst:cmslocation (string)
+  - hst:defaultport (long)
+  + * (hst:virtualhost)
+
+[hst:virtualhosts] > mix:referenceable, mix:versionable, nt:base
+  - hst:prefixexclusions (string) multiple
+  - hst:showcontextpath (boolean)
+  - hst:locale (string)
+  - hst:suffixexclusions (string) multiple
+  - hst:defaultcontextpath (string)
+  - hst:diagnosticsenabled (boolean)
+  - hst:showport (boolean)
+  - hst:parametervalues (string) multiple
+  - hst:channelmanagersiteauthenticationskipped (boolean)
+  - hst:scheme (string)
+  - hst:pagenotfound (string)
+  - hst:defaulthostname (string)
+  - hst:channelmanagerhostgroup (string)
+  - hst:schemenotmatchresponsecode (long)
+  - hst:channelmanagersites (string)
+  - hst:homepage (string)
+  - hst:diagnosticsforips (string) multiple
+  - hst:cacheable (boolean)
+  - hst:parameternames (string) multiple
+  - hst:defaultresourcebundleid (string)
+  - hst:cmspreviewprefix (string)
+  - hst:versioninpreviewheader (boolean)
+  + * (hst:virtualhostgroup)
+
+[hst:hst] > mix:referenceable, mix:versionable, nt:base
+  + hst:channels (hst:channels) = hst:channels version
+  + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
+  + * (hst:sites) = hst:sites version
+  + hst:configurations (hst:configurations) = hst:configurations version
+  + hst:blueprints (hst:blueprints) = hst:blueprints version
+
+[hst:primarydomain]
+  mixin
+
+[hst:redirectdomain]
+  mixin
+  - hst:redirect (string)
+

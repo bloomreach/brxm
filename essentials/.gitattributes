@@ -424,6 +424,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-list.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/sitemap-news.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpackTest.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/jsp/essentials-component-news-detail.jsp -text
@@ -648,6 +649,8 @@ plugin-api/implementation/src/test/resources/test_cnd.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo_gal.cnd -text
 plugin-api/implementation/src/test/resources/test_hippo_sys_edit.cnd -text
+plugin-api/implementation/src/test/resources/test_hippostd.cnd -text
+plugin-api/implementation/src/test/resources/test_hst.cnd -text
 plugin-api/implementation/src/test/resources/test_template.ftl -text
 plugin-api/implementation/src/test/resources/test_template_freemarker.ftl -text
 plugin-api/implementation/src/test/resources/test_template_httl.ftl -text
