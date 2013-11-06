@@ -54,9 +54,9 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -72,13 +72,11 @@ import org.slf4j.LoggerFactory;
 
 public class ChannelManagerImpl implements MutableChannelManager {
 
-    private static final String DEFAULT_HST_ROOT_PATH = "/hst:hst";
     private static final String DEFAULT_HST_SITES = "hst:sites";
     private static final String DEFAULT_CONTENT_ROOT = "/content/documents";
 
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
-    private String rootPath = DEFAULT_HST_ROOT_PATH;
     private String hostGroup = null;
     private String sites = DEFAULT_HST_SITES;
 
@@ -86,7 +84,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private boolean bluePrintsPrototypeChecked;
 
     private Map<String, Channel> channels;
-    private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     private String contentRoot = DEFAULT_CONTENT_ROOT;
 
     /**
@@ -99,10 +96,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     private HstManager hstManager;
     private EventPathsInvalidator eventPathsInvalidator;
-    private MountDecorator mountDecorator;
 
     private Object hstModelMutex;
     private HstNodeLoadingCache hstNodeLoadingCache;
+    private String channelsRoot;
 
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
@@ -110,6 +107,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     public void setHstNodeLoadingCache(HstNodeLoadingCache hstNodeLoadingCache) {
         this.hstNodeLoadingCache = hstNodeLoadingCache;
+        channelsRoot = hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     }
 
     public void setHstManager(HstManager hstManager) {
@@ -118,18 +116,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     public void setEventPathsInvalidator(final EventPathsInvalidator eventPathsInvalidator) {
         this.eventPathsInvalidator = eventPathsInvalidator;
-    }
-
-    public void setMountDecorator(MountDecorator mountDecorator) {
-        this.mountDecorator = mountDecorator;
-    }
-
-    public ChannelManagerImpl() {
-    }
-
-    public void setRootPath(String rootPath) {
-        this.rootPath = rootPath.trim();
-        channelsRoot = rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     }
 
     public void setContentRoot(final String contentRoot) {
@@ -199,7 +185,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (!channelPath.startsWith(channelsRoot)) {
             log.warn(
                     "Channel path '{}' is not part of the HST configuration under {}, ignoring channel info for mount {}.  Use the full repository path for identification.",
-                    new Object[] { channelPath, rootPath, mount.getName() });
+                    new Object[] { channelPath, hstNodeLoadingCache.getRootPath(), mount.getName() });
 
             return;
         }
@@ -228,14 +214,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
         }
 
-        // all the locks are on the preview mount, hence decorate it first
-        // TODO MAKE LAZY : We do not want to create a HstSite for preview
-        Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
-        channel.setPreviewHstConfigExists(previewMount.getHstSite().hasPreviewConfiguration());
+        final HstSite previewHstSite = mount.getPreviewHstSite();
+        channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
 
-         Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
+        Set<String> mainConfigNodesLockedBySet = new HashSet<>();
 
-        HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewMount.getHstSite().getConfigurationPath());
+        HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
         if (channelRootConfigNode != null) {
             for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
                 final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
@@ -244,13 +228,14 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
             }
         } else {
-            log.error("Expected configuration node at '" + previewMount.getHstSite().getConfigurationPath() + "' but not found.");
+            log.error("Expected configuration node at '" + previewHstSite.getConfigurationPath() + "' but not found.");
         }
 
         // TODO make lazy : fill in changedBySet only during REST call as normally not needed!!!!
-        Set<String> changedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
+        Set<String> changedBySet = getAllUsersWithAContainerLock(previewHstSite);
         changedBySet.addAll(mainConfigNodesLockedBySet);
-        // TODO can we inject here some kind of lazy/future set instead?
+
+        // TODO make below lazy regarding mainConfigNodesLockedBySet &&& getAllUsersWithAContainerLock
         channel.setChangedBySet(changedBySet);
 
         String mountPath = mount.getMountPath();
@@ -288,9 +273,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
         mount.setChannel(channel);
     }
 
-    private Set<String> getAllUsersWithAContainerLock(final Mount mount) {
-        Set<String> usersWithLock = new HashSet<String>();
-        final HstComponentsConfiguration componentsConfiguration = mount.getHstSite().getComponentsConfiguration();
+    private Set<String> getAllUsersWithAContainerLock(final HstSite previewHstSite) {
+        Set<String> usersWithLock = new HashSet<>();
+        final HstComponentsConfiguration componentsConfiguration = previewHstSite.getComponentsConfiguration();
         for (HstComponentConfiguration hstComponentConfiguration : componentsConfiguration.getComponentConfigurations().values()) {
             addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
         }
@@ -466,7 +451,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
             try {
                 final Session session = getSession();
-                Node configNode = session.getNode(rootPath);
+                Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 String channelId = createUniqueChannelId(channel.getName(), session);
                 createChannel(configNode, blueprint, session, channelId, channel);
 
@@ -491,7 +476,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
 
                 channels = null;
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), false);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
                 return channelId;
@@ -518,7 +503,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             String channelId = CHANNEL_ID_CODEC.encode(channelName);
             int retries = 0;
             Node channelsNode = session.getNode(channelsRoot);
-            Node rootNode = session.getNode(rootPath);
+            Node rootNode = session.getNode(hstNodeLoadingCache.getRootPath());
             Node sitesNode = rootNode.getNode(sites);
             Node configurationsNode = rootNode.getNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS);
 
@@ -547,7 +532,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
             try {
                 final Session session = getSession();
-                Node configNode = session.getNode(rootPath);
+                Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
                 updateChannel(configNode, channel);
 
                 ChannelManagerEvent event = new ChannelManagerEventImpl(null, null, channel, configNode);
@@ -569,7 +554,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                                 listenerEx);
                     }
                 }
-                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), false);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(hstNodeLoadingCache.getRootPath()), false);
                 session.save();
                 eventPathsInvalidator.eventPaths(pathsToBeChanged);
             } catch (RepositoryException e) {
@@ -686,7 +671,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     public synchronized boolean canUserModifyChannels() {
         try {
             final Session session = getSession();
-            return session.hasPermission(rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
+            return session.hasPermission(hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
         }

@@ -63,7 +63,7 @@ public class MountDecoratorImpl implements MountDecorator {
             if (delegatee.isPreview()) {
                 return delegatee.getHstSite();
             }
-            return  delegatee.getPreviewHstSite();
+            return delegatee.getPreviewHstSite();
         }
 
         @Override
