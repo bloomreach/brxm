@@ -64,7 +64,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     };
     private static Logger log = LoggerFactory.getLogger(SetupPage.class);
 
-    final ImmutableList<Plugin> mainPlugins;
+    private final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
     @Inject
     private EventBus eventBus;

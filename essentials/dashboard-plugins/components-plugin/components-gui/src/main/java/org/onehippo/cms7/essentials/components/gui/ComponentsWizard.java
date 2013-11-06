@@ -3,9 +3,9 @@ package org.onehippo.cms7.essentials.components.gui;
 import org.onehippo.cms7.essentials.components.gui.panel.AttachComponentPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.ComponentsPanel;
 import org.onehippo.cms7.essentials.components.gui.panel.provider.ComponentProvider;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class ComponentsWizard extends InstallablePlugin<ComponentsInstaller> {
 
             @Override
             public void onFinish() {
-                info("Finished installing components. You might need to re-deploy you site.war due to new templates on disk.");
+                log.info("Finished installing components. You might need to re-deploy you site.war due to new templates on disk.");
             }
         };
         // TODO move attach to last

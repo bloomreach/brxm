@@ -98,6 +98,12 @@
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>core</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>app</artifactId>
+          <groupId>org.eclipse.equinox</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
