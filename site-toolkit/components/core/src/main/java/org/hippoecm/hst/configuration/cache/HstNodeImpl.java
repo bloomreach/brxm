@@ -89,7 +89,7 @@ public class HstNodeImpl implements HstNode {
             Node child = nodes.nextNode();
             HstNode childRepositoryNode = createNew(child, this, true);
             if(children == null) {
-                children = new LinkedHashMap<String, HstNode>((int)iteratorSizeBeforeLoop * 4 / 3);
+                children = new LinkedHashMap<>((int)iteratorSizeBeforeLoop * 4 / 3);
             }
             HstNodeImpl existing = (HstNodeImpl) children.get(childRepositoryNode.getName());
             if (existing != null) {
@@ -259,11 +259,11 @@ public class HstNodeImpl implements HstNode {
                 return;
             }
 
-            final LinkedHashMap<String, HstNode> clone = (LinkedHashMap<String, HstNode>)children.clone();
-            // because below 'parent.removeNode(getName());' modifies the children, we first
-            // need to clone them
-            for (HstNode hstNode : clone.values()) {
-                hstNode.update(session);
+            // because when calling child.update(session) can result in child.getParent().remove(child.getName())
+            // we can not iterate directly through the children map
+            final HstNode[] arr = children.values().toArray(new HstNode[children.size()]);
+            for (HstNode child : arr) {
+                child.update(session);
             }
             return;
         }
