@@ -428,6 +428,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/page-news.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/page-newsoverview.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/sitemap-news.xml -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/xml/template-news-overview.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpackTest.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/jsp/essentials-component-news-detail.jsp -text

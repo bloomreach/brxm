@@ -19,7 +19,7 @@
     <xml action="copy" source="xml/page-newsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
   </instructionSet>
   <instructionSet name="TEMPLATES">
-    <!--<xml action="copy" source="/xml/component-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>-->
+    <xml action="copy" source="xml/template-news-overview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
   </instructionSet>
 
 </instructions>
