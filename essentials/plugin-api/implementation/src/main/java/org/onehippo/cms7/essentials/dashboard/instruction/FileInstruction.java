@@ -81,10 +81,12 @@ public class FileInstruction extends PluginInstruction {
     private String folderMessage;
     private String createdFolders;
     private String createdFoldersTarget;
+    private PluginContext context;
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("executing FILE Instruction {}", this);
+        this.context = context;
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
             eventBus.post(new InstructionEvent(this));
@@ -134,7 +136,9 @@ public class FileInstruction extends PluginInstruction {
 
                         Files.createFile(destination.toPath());
                     }
-                    FileUtils.copyInputStreamToFile(stream, destination);
+                    // replace file placeholders:
+                    final String replacedData = TemplateUtils.replaceTemplateDataHttl(source, context.getPlaceholderData());
+                    FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData), destination);
                     sendEvents();
                     return InstructionStatus.SUCCESS;
                 } catch (IOException e) {

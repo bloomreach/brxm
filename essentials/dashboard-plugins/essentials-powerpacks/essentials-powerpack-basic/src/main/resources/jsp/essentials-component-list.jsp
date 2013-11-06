@@ -5,4 +5,4 @@
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags" %>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
-<h1>${pageable.total}</h1>
+<h1>\${pageable.total}</h1>

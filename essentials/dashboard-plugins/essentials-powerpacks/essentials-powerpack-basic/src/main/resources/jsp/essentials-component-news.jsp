@@ -7,16 +7,16 @@
 <%--@elvariable id="pageable" type="EL_PAGEABLE"--%>
 <%--@elvariable id="bean" type="EL_BEAN"--%>
 
-<c:forEach var="item" items="${pageable.items}" varStatus="status">
-  <hst:link var="link" hippobean="${item}"/>
+<c:forEach var="item" items="\${pageable.items}" varStatus="status">
+  <hst:link var="link" hippobean="\${item}"/>
   <article>
-    <hst:cmseditlink hippobean="${item}"/>
-    <h3><a href="${link}"><c:out value="${item.title}"/></a></h3>
-    <c:if test="${hst:isReadable(item, 'date.time')}">
+    <hst:cmseditlink hippobean="\${item}"/>
+    <h3><a href="\${link}"><c:out value="\${item.title}"/></a></h3>
+    <c:if test="\${hst:isReadable(item, 'date.time')}">
       <p>
-        <fmt:formatDate value="${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
+        <fmt:formatDate value="\${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
       </p>
     </c:if>
-    <p><c:out value="${item.summary}"/></p>
+    <p><c:out value="\${item.summary}"/></p>
   </article>
 </c:forEach>

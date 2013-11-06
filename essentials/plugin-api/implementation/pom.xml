@@ -20,8 +20,12 @@
   <packaging>jar</packaging>
 
   <dependencies>
-
-  <dependency>
+    <dependency>
+      <groupId>com.github.httl</groupId>
+      <artifactId>httl</artifactId>
+      <version>1.0.11</version>
+    </dependency>
+    <dependency>
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>${freemarker.version}</version>
@@ -222,11 +226,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
-            <execution>
-                <goals>
-                    <goal>test-jar</goal>
-                </goals>
-            </execution>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
     </plugins>

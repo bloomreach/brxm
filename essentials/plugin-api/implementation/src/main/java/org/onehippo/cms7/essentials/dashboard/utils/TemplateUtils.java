@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Path;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,7 @@ import com.google.common.collect.ImmutableSet;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import httl.Engine;
 
 /**
  * @version "$Id$"
@@ -125,8 +127,24 @@ public final class TemplateUtils {
         return identifier.startsWith("get") || identifier.startsWith("is");
     }
 
+    public static String replaceTemplateDataHttl(final String resourceUrl, final Map<String, Object> data) {
+
+        final Engine engine = Engine.getEngine();
+        try {
+            final httl.Template template = engine.getTemplate(resourceUrl);
+            final StringWriter out = new StringWriter();
+            template.render(data, out);
+            return out.toString();
+        } catch (IOException | ParseException e) {
+            log.error("", e);
+        }
+
+        return null;
+
+    }
+
     public static String replaceTemplateData(final String content, final Map<String, Object> data) {
-        if(Strings.isEmpty(content)){
+        if (Strings.isEmpty(content)) {
             return content;
         }
         final Configuration config = new Configuration();
@@ -142,6 +160,7 @@ public final class TemplateUtils {
         }
         return null;
     }
+
     public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {
         final Configuration config = new Configuration();
         config.setClassForTemplateLoading(clazz, "/");
