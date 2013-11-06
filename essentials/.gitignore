@@ -1895,6 +1895,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/*.iml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/.DS_Store
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/atlassian-ide-plugin.xml
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/target

@@ -4,7 +4,11 @@
 
 package org.onehippo.cms7.essentials;
 
-import com.google.common.collect.ImmutableSet;
+import java.io.File;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Set;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +18,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 
-import java.io.File;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.assertTrue;
 
@@ -56,6 +57,8 @@ public class BaseTest {
 
     @Before
     public void setUp() throws Exception {
+
+        context =  getPluginContextFile();
         if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
             oldSystemDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         }
@@ -89,9 +92,7 @@ public class BaseTest {
     }
 
     public PluginContext getContext() {
-        if (context == null) {
-            return getPluginContextFile();
-        }
+
         return context;
     }
 

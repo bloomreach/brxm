@@ -422,8 +422,10 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-event-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-events.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-list.jsp -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-news.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpackTest.java -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/META-INF/instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/pom.xml -text

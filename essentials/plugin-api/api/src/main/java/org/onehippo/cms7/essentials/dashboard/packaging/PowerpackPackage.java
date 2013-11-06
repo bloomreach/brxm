@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.packaging;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 
@@ -24,7 +25,15 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
  */
 public interface PowerpackPackage {
 
-    Instructions parseInstructions();
+    /**
+     * Returns parsed instructions
+     * @return  instructions collection or null if not found
+     */
+    Instructions getInstructions();
 
-    InstructionStatus execute();
+    /**
+     * Executes instructions
+     * @return executions status
+     */
+    InstructionStatus execute(final PluginContext context);
 }

@@ -16,10 +16,19 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
@@ -32,15 +41,10 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
-import java.util.*;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 
 /**
@@ -64,6 +68,9 @@ public class FileInstruction extends PluginInstruction {
     @Inject(optional = true)
     @Named("instruction.message.file.copy")
     private String messageCopy;
+    @Inject(optional = true)
+    @Named("instruction.message.file.copy.error")
+    private String messageCopyError;
     @Inject(optional = true)
     @Named("instruction.message.folder.create")
     private String messageFolderCreate;
@@ -105,7 +112,7 @@ public class FileInstruction extends PluginInstruction {
         File file = new File(source);
         if (!file.exists()) {
             // try to read as resource:
-            final InputStream stream = getClass().getResourceAsStream(source);
+            final InputStream stream = getClass().getClassLoader().getResourceAsStream(source);
             if (stream != null) {
                 try {
 
@@ -121,7 +128,7 @@ public class FileInstruction extends PluginInstruction {
                             folderMessage = directories.size() > 1 ? directories.size() - 1 + " directories" : "directory";
                             createdFolders = directories.getLast().substring(directories.getFirst().length());
                             createdFoldersTarget = directories.getLast();
-                            Files.createDirectories(new File(directories.getLast()).toPath(),  new FileAttribute[] {});
+                            Files.createDirectories(new File(directories.getLast()).toPath());
                             eventBus.post(new InstructionEvent(messageFolderCreate));
                         }
 
@@ -137,6 +144,7 @@ public class FileInstruction extends PluginInstruction {
                 }
             }
             log.error("Source file doesn't exists: {}", file);
+            message = messageCopyError;
             eventBus.post(new InstructionEvent(this));
             return InstructionStatus.FAILED;
         }
@@ -147,7 +155,6 @@ public class FileInstruction extends PluginInstruction {
         } catch (IOException e) {
             log.error("Error creating file", e);
         }
-
         eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
 
@@ -204,6 +211,7 @@ public class FileInstruction extends PluginInstruction {
 
         super.processPlaceholders(data);
         //
+        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
         message = TemplateUtils.replaceTemplateData(message, data);
     }
 

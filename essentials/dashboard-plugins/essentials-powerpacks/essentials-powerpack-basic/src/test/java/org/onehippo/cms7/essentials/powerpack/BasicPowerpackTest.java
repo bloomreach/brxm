@@ -16,10 +16,17 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,23 +38,45 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class BasicPowerpackTest extends BaseTest{
+public class BasicPowerpackTest extends BaseTest {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpackTest.class);
-
     @Inject
     private EventBus eventBus;
 
+    private  File jspDirectory;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_TMP_FOLDER) + File.separator + "essentials");
+    }
+
     @Test
     public void testParseInstructions() throws Exception {
-        PowerpackPackage powerpackPackage = new BasicPowerpack();
-        final Instructions instructions = powerpackPackage.parseInstructions();
-        assertEquals(2,instructions.getInstructionSets().size());
-
+        final PowerpackPackage powerpackPackage = new BasicPowerpack();
+        final Instructions instructions = powerpackPackage.getInstructions();
+        assertEquals(2, instructions.getInstructionSets().size());
     }
 
     @Test
     public void testExecute() throws Exception {
+        final PowerpackPackage powerpackPackage = new BasicPowerpack();
+        final InstructionStatus status = powerpackPackage.execute(getContext());
+        assertEquals(InstructionStatus.SUCCESS, status);
+        assertEquals(jspDirectory.listFiles().length, 6);
+
+
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        // delete all tmp files:
+
+        FileUtils.deleteDirectory(jspDirectory);
 
     }
 }
