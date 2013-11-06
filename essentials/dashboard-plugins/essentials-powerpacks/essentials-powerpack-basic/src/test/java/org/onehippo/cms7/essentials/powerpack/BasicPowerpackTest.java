@@ -43,8 +43,7 @@ public class BasicPowerpackTest extends BaseTest {
     private static Logger log = LoggerFactory.getLogger(BasicPowerpackTest.class);
     @Inject
     private EventBus eventBus;
-
-    private  File jspDirectory;
+    private File jspDirectory;
 
     @Override
     @Before
@@ -76,7 +75,9 @@ public class BasicPowerpackTest extends BaseTest {
         super.tearDown();
         // delete all tmp files:
 
-        FileUtils.deleteDirectory(jspDirectory);
+        if (jspDirectory != null && jspDirectory.exists()) {
+            FileUtils.deleteDirectory(jspDirectory);
+        }
 
     }
 }
