@@ -77,14 +77,18 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         }
         Set<String> eventPaths = new HashSet<>();
         for (HstEvent event : events) {
-            log.debug("Processing event {}", event);
-            // get event for root config
-            final String eventPath = getMainConfigOrRootConfigNodePath(event);
-            if (eventPath != null) {
-                if (eventPath.startsWith(commonCatalogPath)) {
-                    commonCatalogItems = null;
+            try {
+                log.debug("Processing event {}", event);
+                // get event for root config
+                final String eventPath = getMainConfigOrRootConfigNodePath(event);
+                if (eventPath != null) {
+                    if (eventPath.startsWith(commonCatalogPath)) {
+                        commonCatalogItems = null;
+                    }
+                    eventPaths.add(eventPath);
                 }
-                eventPaths.add(eventPath);
+            } catch (Exception e) {
+                log.warn("Exception during processing event '"+event.toString()+"'. Skip event.", e);
             }
         }
         for (String eventPath : eventPaths) {

@@ -43,12 +43,16 @@ public class EventCache<CacheKey, CachedObj, Event> {
     EventCacheKeyRegistry<Event, CacheKey> eventCacheKeyRegistry = new EventCacheKeyRegistry();
 
     public void handleEvent(final Event event) {
-        final List<CacheKey> evictKeys = eventCacheKeyRegistry.get(event);
-        for (CacheKey evictKey : evictKeys) {
-            final CachedObj remove = remove(evictKey);
-            if (remove != null) {
-                log.debug("Succesfully removed '{}' from cache BY event '{}'", remove, event);
+        try {
+            final List<CacheKey> evictKeys = eventCacheKeyRegistry.get(event);
+            for (CacheKey evictKey : evictKeys) {
+                final CachedObj remove = remove(evictKey);
+                if (remove != null) {
+                    log.debug("Succesfully removed '{}' from cache BY event '{}'", remove, event);
+                }
             }
+        } catch (Exception e) {
+            log.warn("Exception during processing event '"+event.toString()+"'. Skip event.", e);
         }
     }
 
