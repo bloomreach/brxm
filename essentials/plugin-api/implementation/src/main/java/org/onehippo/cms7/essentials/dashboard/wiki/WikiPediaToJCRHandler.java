@@ -1,33 +1,18 @@
 package org.onehippo.cms7.essentials.dashboard.wiki;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -37,7 +22,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class WikiPediaToJCRHandler extends DefaultHandler {
 
-    private static final List<String> VALID_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
+    private static Logger log = LoggerFactory.getLogger(WikiPediaToJCRHandler.class);
+
 
     // Matches headers in the wikipedia format having two or three equals-signs
     private static final String blockSeparator = "===?([^=]*?)===?";
@@ -62,7 +48,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
 
     private final boolean addImages;
 
-    private String type;
+    private WikiStrategy strategy;
     private StringBuilder fieldText;
     private boolean recording;
     int count = 0;
@@ -73,8 +59,8 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
     private final Random rand;
 
     public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset, final int maxDocsPerFolder,
-                                 final int maxSubFolders, final boolean addImages, final String type) throws Exception {
-        this.type = type;
+                                 final int maxSubFolders, final boolean addImages, final WikiStrategy strategy) throws Exception {
+        this.strategy = strategy;
         this.wikiFolder = wikiFolder;
         this.total = total;
         this.offset = offset;
@@ -105,17 +91,17 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
             if (offsetcount < offset) {
                 offsetcount++;
                 if ((offsetcount % maxDocsPerFolder) == 0) {
-                    System.out.println("Offset '" + offset + "' not yet reached. Currently at '" + offsetcount
+                    log.info("Offset '" + offset + "' not yet reached. Currently at '" + offsetcount
                             + "'");
                 }
             }
             if (offsetcount == offset) {
                 try {
                     if (count >= total) {
-                        System.out.println(total);
+                        log.info("total: " + total);
                         wikiFolder.getSession().save();
 
-                        System.out.println("Total added wiki docs = " + count + ". It took "
+                        log.info("Total added wiki docs = " + count + ". It took "
                                 + (System.currentTimeMillis() - startTime) + " ms.");
                         throw new ForcedStopException();
                     }
@@ -139,17 +125,17 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                         currentSubFolder.setProperty("hippotranslation:locale", "en");
                         currentSubFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
                         numberOfSubFolders++;
-                        System.out.println("Counter = " + count);
+                        log.info("Counter = " + count);
                     }
                 } catch (RepositoryException e) {
-                    e.printStackTrace();
+                    log.error("repository exception while trying to import document", e);
                 }
                 startRecording();
                 count++;
             }
         }
 
-        if (qName.equals("text") || qName.equals("timestamp")) {
+        if (qName.equals("text") || qName.equals("timestamp") || qName.equals("username")) {
             if (offsetcount == offset) {
                 startRecording();
             }
@@ -178,7 +164,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                     translation.setProperty("hippo:message", docTitle);
                     translation.setProperty("hippo:language", "");
 
-                    doc = handle.addNode(docName, type);
+                    doc = handle.addNode(docName, strategy.getType());
                     doc.addMixin("hippo:harddocument");
                     doc.setProperty("hippo:paths", new String[]{});
                     doc.addMixin("hippotranslation:translated");
@@ -208,30 +194,26 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                     doc.setProperty("hippotranslation:locale", "en");
                     doc.setProperty("hippotranslation:id", "" + UUID.randomUUID().toString());
                         /**/
-                    doc.setProperty("mytestproject:title", docTitle);
+                    strategy.onTitle(doc, currentSubFolder, docTitle);
                 } else if (qName.equals("timestamp") && recording) {
                     checkCorrectDoc();
                     String time = stopRecording();
                     DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-//                        try {
-//                            todo
-//                            Node placetime = doc.addNode("mytestproject:placetime", "mytestproject:placetimecompound");
-//                            Calendar date = Calendar.getInstance();
-//                            date.setTime(format.parse(time));
-//
-//                            placetime.setProperty("mytestproject:date", date);
-//
-//                            Node place = placetime.addNode("mytestproject:demosite_placecompound", "mytestproject:placecompound");
-//                            place.setProperty("mytestproject:city", "City");
-//                            place.setProperty("mytestproject:country", "Country");
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
+                    Calendar date = Calendar.getInstance();
+                    try {
+                        date.setTime(format.parse(time));
+                        strategy.onTimeStamp(doc, currentSubFolder, date);
+                    } catch (ParseException e) {
+                        log.error("error parsing date in wikipedia importer", e);
+                    }
                 } else if (qName.equals("text") && recording) {
                     checkCorrectDoc();
                     String text = stopRecording();
-                    //createBlocks(text);
-                    addCategories(text);
+                    strategy.onText(doc, currentSubFolder, text);
+                } else if (qName.equals("username") && recording) {
+                    checkCorrectDoc();
+                    String username = stopRecording();
+                    strategy.onUserName(doc, currentSubFolder, username);
                 }
             } catch (RepositoryException e) {
                 throw new SAXException(e);
@@ -240,201 +222,6 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
         super.endElement(uri, localName, qName);
     }
 
-    private void addCategories(String text) throws RepositoryException {
-        Matcher m = categoryPattern.matcher(text);
-        List<String> categories = new ArrayList<String>();
-        while (m.find()) {
-            categories.add(m.group(1));
-        }
-        doc.setProperty("mytestproject:categories", categories.toArray(new String[categories.size()]));
-    }
-//todo
-//        private void createBlocks(String text) throws RepositoryException {
-//            //Divide text into blocks
-//            Matcher m = blockSeparatorPattern.matcher(text);
-//            int textProcessedIndex = 0;
-//
-//            while (m.find()) {
-//                // New block found. Create the previous block
-//                createBlock(text.substring(textProcessedIndex, m.start()));
-//                textProcessedIndex = m.start();
-//            }
-//
-//            // create the last block
-//            createBlock(text.substring(textProcessedIndex));
-//
-//        }
-
-//        private void createBlock(String textBlock) throws RepositoryException {
-//            Matcher m = blockSeparatorPattern.matcher(textBlock);
-//            Node block = doc.addNode("mytestproject:block", "mytestproject:contentblockcompound");
-//            String textBody = textBlock;
-//
-//            if (m.find()) {
-//                String textHeader = m.group(1);
-//                if (m.end() == textBody.length()) {
-//                    // There is nothing more
-//                    textBody = "";
-//                } else {
-//                    textBody = textBlock.substring(m.end());
-//                }
-//                block.setProperty("mytestproject:header", textHeader.trim());
-//            }
-//
-//            Node body = block.addNode("mytestproject:body", "hippostd:html");
-//
-//            if (addImages) {
-//                textBody = createImages(body, textBody);
-//            }
-//
-//            body.setProperty("hippostd:content", textBody.trim());
-//        }
-
-    private String createImages(Node body, String text) throws RepositoryException {
-        final Pattern pattern = Pattern.compile("\\[\\[(?:Image|File):([^|\\]]*)");
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String imageName = matcher.group(1).trim();
-            String imageUuid = createImage(imageName);
-            if (imageUuid != null) {
-                text = text.substring(0, matcher.start()) + "<img src=\"" + imageName
-                        + "/{_document}/hippogallery:original\"/>" + text.substring(matcher.end());
-                Node imageRef;
-                if (body.hasNode(imageName)) {
-                    imageRef = body.getNode(imageName);
-                } else {
-                    imageRef = body.addNode(imageName, "hippo:facetselect");
-                    imageRef.setProperty("hippo:docbase", imageUuid);
-                    String[] esa = {};
-                    imageRef.setProperty("hippo:facets", esa);
-                    imageRef.setProperty("hippo:modes", esa);
-                    imageRef.setProperty("hippo:values", esa);
-                }
-            } else {
-                text = text.substring(0, matcher.start()) + imageName + text.substring(matcher.end());
-            }
-            matcher = pattern.matcher(text);
-        }
-        return text;
-    }
-
-    /**
-     * @param name The name of the image
-     * @return The UUID of the created image
-     */
-    private String createImage(String name) {
-        try {
-            String imgExt = name.substring(name.lastIndexOf('.') + 1);
-            if (!VALID_IMAGE_EXTENSIONS.contains(imgExt)) {
-                return null;
-            }
-
-            Node images = doc.getSession().getRootNode().getNode("content/gallery/images");
-
-            // Create wikipedia folder
-            Node wikiImages;
-            if (!images.hasNode("wikipedia")) {
-                wikiImages = images.addNode("wikipedia", "hippogallery:stdImageGallery");
-                wikiImages.addMixin("hippo:harddocument");
-                wikiImages.setProperty("hippo:paths", new String[]{});
-                String[] foldertype = {"new-image-folder"};
-                wikiImages.setProperty("hippostd:foldertype", foldertype);
-                String[] gallerytype = {"hippogallery:imageset"};
-                wikiImages.setProperty("hippostd:gallerytype", gallerytype);
-            } else {
-                wikiImages = images.getNode("wikipedia");
-            }
-
-            // Create document subfolder
-            Node imgSubFolder;
-            if (!wikiImages.hasNode(currentSubFolder.getName())) {
-                imgSubFolder = wikiImages.addNode(currentSubFolder.getName(), "hippogallery:stdImageGallery");
-                imgSubFolder.addMixin("hippo:harddocument");
-                imgSubFolder.setProperty("hippo:paths", new String[]{});
-                String[] foldertype = {"new-image-folder"};
-                imgSubFolder.setProperty("hippostd:foldertype", foldertype);
-                String[] gallerytype = {"hippogallery:imageset"};
-                imgSubFolder.setProperty("hippostd:gallerytype", gallerytype);
-            } else {
-                imgSubFolder = wikiImages.getNode(currentSubFolder.getName());
-            }
-
-            // Create document folder
-            Node imgFolder;
-            if (!imgSubFolder.hasNode(doc.getName())) {
-                imgFolder = imgSubFolder.addNode(doc.getName(), "hippogallery:stdImageGallery");
-                imgFolder.addMixin("hippo:harddocument");
-                imgFolder.setProperty("hippo:paths", new String[]{});
-                String[] foldertype = {"new-image-folder"};
-                imgFolder.setProperty("hippostd:foldertype", foldertype);
-                String[] gallerytype = {"hippogallery:imageset"};
-                imgFolder.setProperty("hippostd:gallerytype", gallerytype);
-            } else {
-                imgFolder = imgSubFolder.getNode(doc.getName());
-            }
-
-            // Create handle
-            Node imgHandle;
-            if (imgFolder.hasNode(name)) {
-                imgHandle = imgFolder.getNode(name);
-            } else {
-                imgHandle = imgFolder.addNode(name, "hippo:handle");
-                imgHandle.addMixin("hippo:hardhandle");
-            }
-
-            // Create image set (if it doesn't exist)
-            if (!imgHandle.hasNode(name)) {
-                Node imgDoc = imgHandle.addNode(name, "hippogallery:imageset");
-                imgDoc.addMixin("hippo:harddocument");
-                imgDoc.setProperty("hippo:paths", new String[]{});
-                String[] availability = {"live", "preview"};
-                imgDoc.setProperty("hippo:availability", availability);
-                imgDoc.setProperty("hippogallery:filename", name);
-
-                //Thumbnail node might already exist
-                Node imgThumb;
-                if (imgDoc.hasNode("hippogallery:thumbnail")) {
-                    imgThumb = imgDoc.getNode("hippogallery:thumbnail");
-                } else {
-                    imgThumb = imgDoc.addNode("hippogallery:thumbnail", "hippogallery:image");
-                }
-
-                imgThumb.setProperty("jcr:lastModified", Calendar.getInstance());
-                imgThumb.setProperty("jcr:mimeType", "image/" + imgExt);
-                imgThumb.setProperty("hippogallery:height", 50L);
-                imgThumb.setProperty("hippogallery:width", 300L);
-
-                Node imgOrig = imgDoc.addNode("hippogallery:original", "hippogallery:image");
-                imgOrig.setProperty("jcr:lastModified", Calendar.getInstance());
-                imgOrig.setProperty("jcr:mimeType", "image/" + imgExt);
-                imgOrig.setProperty("hippogallery:height", 50L);
-                imgOrig.setProperty("hippogallery:width", 300L);
-
-                BufferedImage image = new BufferedImage(300, 50, BufferedImage.TYPE_INT_RGB);
-                Graphics2D g2d = image.createGraphics();
-                g2d.setPaint(Color.blue);
-                g2d.setFont(new Font("Serif", Font.BOLD, 32));
-                g2d.drawString(name, 5, 35);
-                g2d.dispose();
-
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ImageIO.write(image, imgExt, os);
-                InputStream is = new ByteArrayInputStream(os.toByteArray());
-                imgThumb.setProperty("jcr:data", imgThumb.getSession().getValueFactory().createBinary(is));
-                is = new ByteArrayInputStream(os.toByteArray());
-                imgOrig.setProperty("jcr:data", imgThumb.getSession().getValueFactory().createBinary(is));
-            }
-
-            return imgHandle.getIdentifier();
-        } catch (PathNotFoundException e) {
-            e.printStackTrace();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {

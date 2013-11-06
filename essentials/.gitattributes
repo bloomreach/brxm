@@ -539,9 +539,16 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/XmlNode.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/XmlProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/xml/package-info.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/DefaultStrategy.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/ForcedStopException.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/Importer.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/JcrWikiNode.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/NewsWikiStrategy.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/NonWorkflowWikiImporter.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiNodeType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiPediaToJCRHandler.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiStrategy.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WorkflowWikiImporter.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/AjaxWizardPanel.html -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/AjaxWizardPanel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wizard/AjaxWizardPanel.properties -text

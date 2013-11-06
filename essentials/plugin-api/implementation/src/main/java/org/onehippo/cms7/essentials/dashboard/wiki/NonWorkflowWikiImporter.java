@@ -28,29 +28,21 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * @version "$Id$"
  */
-public class NonWorkflowWikiImporter {
+public class NonWorkflowWikiImporter implements Importer {
 
     private static Logger log = LoggerFactory.getLogger(NonWorkflowWikiImporter.class);
 
-    private String type ;
+    private WikiStrategy strategy;
 
-    public void importAction(final Session session, int amount, int offset, int maxDocsPerFolder, int maxSubFolder, int numberOfTranslations, String filesystemLocation, String siteContentBasePath, boolean addImages, final String type) {
-        // String numberStr = "10" ;
-       // long start = System.currentTimeMillis();
-        this.type = type;
+    public void importAction(final Session session, int amount, int offset, int maxSubFolder, int maxDocsPerFolder, int numberOfTranslations, String filesystemLocation, String siteContentBasePath, boolean addImages, final WikiStrategy strategy) {
+        this.strategy = strategy;
         if (amount != 0) {
             SAXParserFactoryImpl impl = new SAXParserFactoryImpl();
             SAXParser parser;
-            int numberOfWikiDocs = 0;
-            try {
-                numberOfWikiDocs = amount;
-            } catch (NumberFormatException e) {
-                //response.setRenderParameter("message", "number must be a number but was '" + numberStr + "'");
-            }
+            int numberOfWikiDocs = amount;
 
             if (numberOfWikiDocs <= 0) {
-                //response.setRenderParameter("message", "number must be a number larger than 0 but was '" + numberStr
-                //        + "'");
+                log.error("message", "number must be a number larger than 0 but was '" + amount);
             }
 
             String wikiContentFileSystem = filesystemLocation;
@@ -102,9 +94,7 @@ public class NonWorkflowWikiImporter {
                     }
 
                     handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset, maxDocsPerFolder,
-                            maxSubFolder, addImages, type);
-
-                    //handler = getHandler();
+                            maxSubFolder, addImages, strategy);
 
                     if (wikiStream == null) {
                         parser.parse(f, handler);
@@ -112,15 +102,13 @@ public class NonWorkflowWikiImporter {
                         parser.parse(wikiStream, handler);
                     }
                 } catch (ForcedStopException e) {
-                    // successful handler quits after numberOfWikiDocs has been achieved
+                    log.info("successful handler quits after numberOfWikiDocs has been achieved");
                 } catch (Exception e) {
-                    log.warn("Exception during importing wikipedia docs", e);
-                    //response.setRenderParameter("message",
-                    //          "An exception happened. Did not import wiki docs. " + e.toString());
+                    log.error("Exception during importing wikipedia docs, it did notimport wiki docs.", e);
                     return;
                 }
             } catch (ParserConfigurationException e) {
-                //response.setRenderParameter("message", "Did not import wiki: " + e.toString());
+                log.error("Exception during importing wikipedia docs, it did notimport wiki docs.", e);
                 return;
             }
         }
@@ -129,7 +117,7 @@ public class NonWorkflowWikiImporter {
 
         ///relateDocuments(session, siteContentBasePath, getLinkNodesOperation(), numberOfLinks, "versionHistory");
 
-        relateDocuments(session, siteContentBasePath, getTranslateOperation(), numberOfTranslations);
+       // relateDocuments(session, siteContentBasePath, getTranslateOperation(), numberOfTranslations);
     }
 
 
@@ -149,7 +137,7 @@ public class NonWorkflowWikiImporter {
                     .getWorkspace()
                     .getQueryManager()
                     .createQuery(
-                            String.format("//element(*,%s)[@hippo:paths='%s'] order by @jcr:uuid", type, wikipedia.getIdentifier()),
+                            String.format("//element(*,%s)[@hippo:paths='%s'] order by @jcr:uuid", strategy.getType(), wikipedia.getIdentifier()),
                             Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator it = result.getNodes();
