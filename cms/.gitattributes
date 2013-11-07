@@ -2575,6 +2575,7 @@ richtext/frontend/src/site/apt/index.apt -text
 richtext/frontend/src/site/site.xml svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
+richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/BrowsableModelTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/ChildFacetUuidsModelTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/RichTextImageMetaDataModelTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/view/RichTextDiffWithLinksAndImagesPanelTest.java -text
