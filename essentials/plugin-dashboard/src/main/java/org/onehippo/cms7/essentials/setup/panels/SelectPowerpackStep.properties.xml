@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+  <entry key="form.powerpackDropdown.null">Select a Power Pack</entry>
   <entry key="step.choose.powerpack.description">
     <![CDATA[
         <div class="alert alert-success">Congratulations - you've successfully created ${name} and are almost ready to get coding!
@@ -17,18 +18,17 @@
     and Agenda components and detail pages
     to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the
     most basic Power Pack to start with.
-    You can easily extend with more components later on
+    You can easily extend with more components later on.
   </entry>
-  <entry key="powerpack.rest.label">Headless REST based content repository</entry>
+  <entry key="powerpack.rest.label">Headless REST based content repository.</entry>
   <entry key="powerpack.rest.description">A REST only site that contains only REST services and no pages.</entry>
   <entry key="powerpack.none.label">Don't install a Power Pack at this time</entry>
   <entry key="powerpack.none.selected.label">No Power Pack will be installed at this time</entry>
   <entry key="powerpack.none.description">Just create the basic structure for the project, don't install anything yet.
   </entry>
-  <entry key="powerpack.select.label">Select a Power Pack</entry>
   <entry key="powerpack.select.description"></entry>
-  <entry key="templates.radio.jsp.filesystem">Generate JSP templates on filesystem</entry>
-  <entry key="templates.radio.freemarker.filesystem">Generate Freemarker templates on filesystem</entry>
-  <entry key="templates.radio.freemarker.repository">Generate Freemarker templates in repository</entry>
+  <entry key="templates.radio.jsp.filesystem">Generate JSP templates on filesystem.</entry>
+  <entry key="templates.radio.freemarker.filesystem">Generate Freemarker templates on filesystem.</entry>
+  <entry key="templates.radio.freemarker.repository">Generate Freemarker templates in repository.</entry>
   <entry key="content.sample.add.label">Add sample content</entry>
 </properties>

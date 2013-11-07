@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.setup.panels;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.*;
@@ -26,8 +27,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.panels.DropdownPanel;
-import org.onehippo.cms7.essentials.dashboard.panels.EventListener;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.onehippo.cms7.essentials.setup.SetupPage;
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,7 +45,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SelectPowerpackStep.class);
-    private final DropdownPanel powerpackDropdown;
+    private final DropDownChoice<String> powerpackDropdown;
     private final SetupPage myParent;
     private String selectedPowerpack;
     private String selectedTemplatesType;
@@ -80,23 +78,31 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         powerpackList.add("powerpack.news.and.event.label");
         powerpackList.add("powerpack.none.label");
 
-        powerpackDropdown = new DropdownPanel("powerpackDropdown", getString("powerpack.select.label"), form, powerpackList, new EventListener<String>() {
+        final PropertyModel<String> powerpackModel = new PropertyModel<>(this, "selectedPowerpack");
+        powerpackDropdown = new DropDownChoice<String>("powerpackDropdown", powerpackModel, powerpackList);
+        powerpackDropdown.setNullValid(false);
+        powerpackDropdown.add(new AjaxEventBehavior("onchange") {
             private static final long serialVersionUID = 1L;
 
             @Override
-            public void onSelected(final AjaxRequestTarget target, final Collection<String> selectedItems) {
-                selectedPowerpack = powerpackDropdown.getSelectedItem();
-                if (Strings.isNullOrEmpty(selectedPowerpack)) {
-                    log.debug("No powerpack selected");
-                    return;
-                }
-                setComplete(true);
-                packDescription.setDefaultModel(new Model<>(getString(selectedPowerpack.replace("label", "description"))));
-                target.add(packDescription);
-                log.info("selectedPowerpack: {}", selectedPowerpack);
-            }
-        }, new IChoiceRenderer<String>() {
+            protected void onEvent(final AjaxRequestTarget target) {
+                final String selectedInput = powerpackDropdown.getInput();
 
+                if (!(selectedInput == null && selectedInput.isEmpty())) {
+                    selectedPowerpack = powerpackDropdown.getChoices().get(Integer.valueOf(selectedInput));
+                    log.debug("#selected powerpack: {}", selectedPowerpack);
+                    setComplete(true);
+                    packDescription.setDefaultModel(new Model<>(getString(selectedPowerpack.replace("label", "description"))));
+                    target.add(packDescription);
+                } else {
+                    setComplete(false);
+                    packDescription.setDefaultModel(new Model<>(""));
+                    target.add(packDescription);
+                }
+                target.add(powerpackDropdown);
+            }
+        });
+        powerpackDropdown.setChoiceRenderer(new IChoiceRenderer<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -111,6 +117,8 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         }
         );
 
+        form.add(powerpackDropdown);
+
         CheckBox sampleContentCheckBox = new CheckBox("sampleContentCheckbox", Model.of(Boolean.TRUE));
         sampleContentCheckBox.setEnabled(false);
         form.add(sampleContentCheckBox);
@@ -118,9 +126,17 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         RadioGroup<String> radioGroup = new RadioGroup<String>("templatesRadioGroup", new PropertyModel<String>(this, "selectedTemplatesType"));
         radioGroup.setRequired(true);
 
-        radioGroup.add(new Radio<String>("jspFilesystemRadio", new Model<String>(getString("templates.radio.jsp.filesystem"))));
-        radioGroup.add(new Radio<String>("freemarkerFilesystemRadio", new Model<String>(getString("templates.radio.freemarker.filesystem"))).setEnabled(false));
-        radioGroup.add(new Radio<String>("freemarkerRepositoryRadio", new Model<String>(getString("templates.radio.freemarker.repository"))).setEnabled(false));
+        radioGroup.add(new Radio<Boolean>("jspFilesystemRadio", Model.of(Boolean.TRUE)));
+        radioGroup.add(new Radio<Boolean>("freemarkerFilesystemRadio", Model.of(Boolean.FALSE)).
+
+                setEnabled(false)
+
+        );
+        radioGroup.add(new Radio<Boolean>("freemarkerRepositoryRadio", Model.of(Boolean.FALSE)).
+
+                setEnabled(false)
+
+        );
         form.add(radioGroup);
 
         add(form);

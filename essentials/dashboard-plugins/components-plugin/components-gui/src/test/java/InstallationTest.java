@@ -21,12 +21,9 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Session;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileAttribute;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -55,14 +52,15 @@ public class InstallationTest extends BaseRepositoryTest {
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
 
         oldProjectBaseDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         final URL resource = BaseTest.class.getClassLoader().getResource("project");
         log.info("Resource loader: " + BaseTest.class.getClassLoader().getResource("project"));
         log.info("Resource loader: " + BaseTest.class.getClassLoader().getResource("."));
-        projectRoot = Files.createTempDirectory("hippo-testcase", new FileAttribute[] {});
-        projectRoot.toFile().setReadable(true);
-        projectRoot.toFile().setWritable(true);
+        File root = new File(System.getProperty("java.io.tmpdir") + "hippo-testcase");
+        root.mkdir();
+        projectRoot = root.toPath();
 
         String resourceUrl = resource.toString();
         String JAR_URI_PREFIX = "jar:file:";
@@ -98,13 +96,14 @@ public class InstallationTest extends BaseRepositoryTest {
 
     @After
     @Override
-    public void tearDown() {
-        try {
-            log.debug("Deleting dir : {}", projectRoot);
-            FileUtils.deleteDirectory(projectRoot.toFile());
-        } catch (IOException e) {
-            log.error("Cannot delete temporary directory");
-        }
+    public void tearDown() throws Exception {
+        super.tearDown();
+//        try {
+//            log.debug("Deleting dir : {}", projectRoot);
+//            FileUtils.deleteDirectory(projectRoot.toFile());
+//        } catch (IOException e) {
+//            log.error("Cannot delete temporary directory");
+//        }
         if (oldProjectBaseDir != null && !oldProjectBaseDir.isEmpty()) {
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldProjectBaseDir);
         }
