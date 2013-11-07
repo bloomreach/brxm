@@ -35,10 +35,10 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
         super(descriptor);
         this.category = category;
         if (subject.isNodeType("mix:referenceable")) {
-            this.uuid = subject.getUUID();
+            this.uuid = subject.getIdentifier();
             this.relPath = null;
         } else {
-            this.uuid = subject.getParent().getUUID();
+            this.uuid = subject.getParent().getIdentifier();
             this.relPath = subject.getName();
             if (subject.getIndex() > 1) {
                 this.relPath += "[" + subject.getIndex() + "]";
@@ -63,7 +63,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
 
     private Node getNode(Session session) throws RepositoryException {
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             if (relPath != null) {
                 node = node.getNode(relPath);
             }
