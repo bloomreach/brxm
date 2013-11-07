@@ -15,8 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
+import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.jcr.Node;
@@ -32,13 +35,15 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
+import org.hippoecm.frontend.plugins.standards.NodeFilter;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +54,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
     private static final int DEFAULT_LIMIT = 15;
 
     private final int limit;
+    private final List<NodeFilter> filters = new ArrayList<>();
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -59,6 +65,19 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
         limit = config.getAsInteger("limit", DEFAULT_LIMIT);
 
+        filters.add(new DefaultNodeFilter());
+        for (IPluginConfig childConfig : config.getPluginConfigSet()) {
+            if (childConfig.getName().endsWith(".filter")) {
+                final String className = childConfig.getString("className");
+                try {
+                    NodeFilter filter = (NodeFilter) Class.forName(className).newInstance();
+                    filters.add(filter);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException e) {
+                    log.error("Can't create NodeFilter {}", className, e);
+                }
+            }
+        }
+
         add(new CurrentActivityView("view", getDefaultModel()));
     }
 
@@ -68,26 +87,11 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         redraw();
     }
 
-    /**
-     * Filter out event items that are irrelevant.
-     * We only display messages for 'top-level' items and we don't display
-     * actions of system users.
-     */
     protected boolean accept(JcrNodeModel nodeModel) {
-        final Node node = nodeModel.getNode();
-        try {
-            final String userName = JcrUtils.getStringProperty(node, "hippolog:user", null);
-            if (userName == null || !User.userExists(userName) || new User(userName).isSystemUser()) {
+        for (NodeFilter filter : filters) {
+            if (!filter.accept(nodeModel)) {
                 return false;
             }
-            final String interaction = JcrUtils.getStringProperty(node, "hippolog:interaction", null);
-            if (interaction != null) {
-                final String category = JcrUtils.getStringProperty(node, "hippolog:workflowCategory", null);
-                final String workflowName = JcrUtils.getStringProperty(node, "hippolog:workflowName", null);
-                final String methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", null);
-                return interaction.equals(category + ":" + workflowName + ":" + methodName);
-            }
-        } catch (RepositoryException ignored) {
         }
         return true;
     }
@@ -189,7 +193,43 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 log.error("Failed to create activity event item from log node", e);
             }
         }
+    }
 
+    /**
+     * We only display messages for 'top-level' items and we don't display
+     * actions of system users.
+     */
+    private static class DefaultNodeFilter implements NodeFilter, Serializable {
+
+        @Override
+        public boolean accept(final JcrNodeModel nodeModel) {
+            final Node node = nodeModel.getNode();
+            try {
+                return isValidUser(node) && isTopLevelEvent(node);
+            } catch (RepositoryException ignored) {
+            }
+            return false;
+        }
+
+        private boolean isTopLevelEvent(final Node node) throws RepositoryException {
+            final String interaction = JcrUtils.getStringProperty(node, "hippolog:interaction", null);
+            if (interaction != null) {
+                final String category = JcrUtils.getStringProperty(node, "hippolog:workflowCategory", null);
+                final String workflowName = JcrUtils.getStringProperty(node, "hippolog:workflowName", null);
+                final String methodName = JcrUtils.getStringProperty(node, "hippolog:methodName", null);
+                return interaction.equals(category + ":" + workflowName + ":" + methodName);
+            }
+            return true;
+        }
+
+        private boolean isValidUser(final Node node) throws RepositoryException {
+            final String userName = JcrUtils.getStringProperty(node, "hippolog:user", null);
+            if (userName != null) {
+                final User user = ((HippoWorkspace) node.getSession().getWorkspace()).getSecurityService().getUser(userName);
+                return user != null && !user.isSystemUser();
+            }
+            return false;
+        }
     }
 
 }

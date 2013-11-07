@@ -184,6 +184,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/GalleryException.j
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/NullGalleryProcessor.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/ClassResourceModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/DocumentListFilter.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/NodeFilter.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BreadcrumbPlugin.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BreadcrumbPlugin.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/browse/BreadcrumbPlugin.properties svneol=native#text/plain
