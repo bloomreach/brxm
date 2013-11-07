@@ -28,6 +28,15 @@ public abstract class DefaultStrategy implements WikiStrategy {
 
     private static Logger log = LoggerFactory.getLogger(DefaultStrategy.class);
 
+    // Matches headers in the wikipedia format having two or three equals-signs
+//    private static final String blockSeparator = "===?([^=]*?)===?";
+//    // private static final Pattern blockSeparatorPattern = Pattern.compile(blockSeparator);
+//
+//
+//    // Matches the first word for each category (to keep the number of categories down)
+//    private static final Pattern categoryPattern = Pattern.compile("\\[\\[Category:(\\w+).*?]]");
+
+
     private static final List<String> VALID_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
 
     private Properties properties;
@@ -92,12 +101,14 @@ public abstract class DefaultStrategy implements WikiStrategy {
                 return null;
             }
 
-            Node images = doc.getSession().getRootNode().getNode("content/gallery/images8");
+            Node images = doc.getSession().getNode(properties.getProperty("imageContentBasePath"));
+
+            String containerName = properties.containsKey("container") ? properties.getProperty("container") : "wikipedia";
 
             // Create wikipedia folder
             Node wikiImages;
-            if (!images.hasNode("wikipedia")) {
-                wikiImages = images.addNode("wikipedia", "hippogallery:stdImageGallery");
+            if (!images.hasNode(containerName)) {
+                wikiImages = images.addNode(containerName, "hippogallery:stdImageGallery");
                 wikiImages.addMixin("hippo:harddocument");
                 wikiImages.setProperty("hippo:paths", new String[]{});
                 String[] foldertype = {"new-image-folder"};
@@ -105,7 +116,7 @@ public abstract class DefaultStrategy implements WikiStrategy {
                 String[] gallerytype = {"hippogallery:imageset"};
                 wikiImages.setProperty("hippostd:gallerytype", gallerytype);
             } else {
-                wikiImages = images.getNode("wikipedia");
+                wikiImages = images.getNode(containerName);
             }
 
             // Create document subfolder
@@ -162,14 +173,20 @@ public abstract class DefaultStrategy implements WikiStrategy {
                     imgThumb = imgDoc.addNode("hippogallery:thumbnail", "hippogallery:image");
                 }
 
-                imgThumb.setProperty("jcr:lastModified", Calendar.getInstance());
-                imgThumb.setProperty("jcr:mimeType", "image/" + imgExt);
+
+                if (isNotSimulation()) {
+                    imgThumb.setProperty("jcr:lastModified", Calendar.getInstance());
+                    imgThumb.setProperty("jcr:mimeType", "image/" + imgExt);
+                }
+
                 imgThumb.setProperty("hippogallery:height", 50L);
                 imgThumb.setProperty("hippogallery:width", 300L);
 
                 Node imgOrig = imgDoc.addNode("hippogallery:original", "hippogallery:image");
-                imgOrig.setProperty("jcr:lastModified", Calendar.getInstance());
-                imgOrig.setProperty("jcr:mimeType", "image/" + imgExt);
+                if (isNotSimulation()) {
+                    imgOrig.setProperty("jcr:lastModified", Calendar.getInstance());
+                    imgOrig.setProperty("jcr:mimeType", "image/" + imgExt);
+                }
                 imgOrig.setProperty("hippogallery:height", 50L);
                 imgOrig.setProperty("hippogallery:width", 300L);
 
@@ -183,9 +200,14 @@ public abstract class DefaultStrategy implements WikiStrategy {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 ImageIO.write(image, imgExt, os);
                 InputStream is = new ByteArrayInputStream(os.toByteArray());
-                imgThumb.setProperty("jcr:data", imgThumb.getSession().getValueFactory().createBinary(is));
+                if (isNotSimulation()) {
+                    imgThumb.setProperty("jcr:data", imgThumb.getSession().getValueFactory().createBinary(is));
+                }
                 is = new ByteArrayInputStream(os.toByteArray());
-                imgOrig.setProperty("jcr:data", imgThumb.getSession().getValueFactory().createBinary(is));
+                if (isNotSimulation()) {
+                    imgOrig.setProperty("jcr:data", imgThumb.getSession().getValueFactory().createBinary(is));
+                }
+
             }
 
             return imgHandle.getIdentifier();
@@ -193,6 +215,10 @@ public abstract class DefaultStrategy implements WikiStrategy {
             log.error("Exception while trying to convert import wiki document", e);
         }
         return null;
+    }
+
+    private boolean isNotSimulation() {
+        return !Boolean.valueOf(properties.getProperty("simulation"));
     }
 
 }

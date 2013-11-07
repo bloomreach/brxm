@@ -2,19 +2,11 @@ package org.onehippo.cms7.essentials.dashboard.wiki;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
@@ -34,8 +26,10 @@ public class NonWorkflowWikiImporter implements Importer {
 
     private WikiStrategy strategy;
 
-    public void importAction(final Session session, int amount, int offset, int maxSubFolder, int maxDocsPerFolder, int numberOfTranslations, String filesystemLocation, String siteContentBasePath, boolean addImages, final WikiStrategy strategy) {
+    @Override
+    public void importAction(final Session session, final WikiStrategy strategy, final Properties properties) {
         this.strategy = strategy;
+        int amount = (int) properties.get("amount");
         if (amount != 0) {
             SAXParserFactoryImpl impl = new SAXParserFactoryImpl();
             SAXParser parser;
@@ -45,20 +39,23 @@ public class NonWorkflowWikiImporter implements Importer {
                 log.error("message", "number must be a number larger than 0 but was '" + amount);
             }
 
-            String wikiContentFileSystem = filesystemLocation;
+            String wikiContentFileSystem = properties.containsKey("filesystemLocation") ? (String) properties.get("filesystemLocation") : null;
 
             if (numberOfWikiDocs > 100 && StringUtils.isEmpty(wikiContentFileSystem)) {
                 return;
             }
 
+            int offset = (int) properties.get("offset");
             if (offset < 0) {
                 offset = 0;
             }
 
+            int maxDocsPerFolder = (int) properties.get("maxDocsPerFolder");
             if (maxDocsPerFolder < 0) {
                 maxDocsPerFolder = 0;
             }
 
+            int maxSubFolder = (int) properties.get("maxSubFolder");
             if (maxSubFolder < 0) {
                 maxSubFolder = 0;
             }
@@ -77,24 +74,29 @@ public class NonWorkflowWikiImporter implements Importer {
                 DefaultHandler handler = null;
 
                 try {
+                    String siteContentBasePath = properties.getProperty("siteContentBasePath");
                     Session writableSession = session;
                     Node baseNode = writableSession.getNode(siteContentBasePath);
 
                     Node wikiFolder;
 
-                    if (!baseNode.hasNode("wikipedia")) {
-                        wikiFolder = baseNode.addNode("wikipedia", "hippostd:folder");
+                    String containerName = properties.containsKey("container") ? properties.getProperty("container") : "wikipedia";
+
+                    if (!baseNode.hasNode(containerName)) {
+                        wikiFolder = baseNode.addNode(containerName, "hippostd:folder");
                         wikiFolder.addMixin("hippo:harddocument");
                         wikiFolder.setProperty("hippo:paths", new String[]{});
                         wikiFolder.addMixin("hippotranslation:translated");
                         wikiFolder.setProperty("hippotranslation:locale", "en");
                         wikiFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
                     } else {
-                        wikiFolder = baseNode.getNode("wikipedia");
+                        wikiFolder = baseNode.getNode(containerName);
                     }
 
+                    String prefix = properties.containsKey("prefix") ? properties.getProperty("prefix") : "wiki-";
+
                     handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset, maxDocsPerFolder,
-                            maxSubFolder, addImages, strategy);
+                            maxSubFolder, prefix, strategy);
 
                     if (wikiStream == null) {
                         parser.parse(f, handler);
@@ -113,171 +115,6 @@ public class NonWorkflowWikiImporter implements Importer {
             }
         }
 
-        //relateDocuments(session,siteContentBasePath, getRelateNodesOperation(), numberOfRelations, "uuid");
-
-        ///relateDocuments(session, siteContentBasePath, getLinkNodesOperation(), numberOfLinks, "versionHistory");
-
-       // relateDocuments(session, siteContentBasePath, getTranslateOperation(), numberOfTranslations);
-    }
-
-
-    /**
-     * Relates the nodes to the previous nodes (in order of UUID)
-     */
-    private void relateDocuments(Session session, String siteContentBasePath, Operation op, final int relations) {
-        if (relations < 1) {
-            return;
-        }
-
-        try {
-            Session writableSession = session;
-            Node wikipedia = writableSession.getNode(siteContentBasePath + "/wikipedia");
-            @SuppressWarnings("deprecation")
-            Query q = writableSession
-                    .getWorkspace()
-                    .getQueryManager()
-                    .createQuery(
-                            String.format("//element(*,%s)[@hippo:paths='%s'] order by @jcr:uuid", strategy.getType(), wikipedia.getIdentifier()),
-                            Query.XPATH);
-            QueryResult result = q.execute();
-            NodeIterator it = result.getNodes();
-
-            // Fill first queue with elements, which can't be fully linked yet
-            Node current;
-            LinkedList<Node> firsts = new LinkedList();
-            LinkedList<Node> previous = new LinkedList();
-            while (it.hasNext() && firsts.size() != relations) {
-                current = it.nextNode();
-                firsts.add(current);
-                previous.add(current);
-            }
-
-            // Link to previous documents, update previous documents queue, occasionally save
-            int count = 1;
-            while (it.hasNext()) {
-                current = it.nextNode();
-                Iterator<Node> qit = previous.listIterator();
-
-                while (qit.hasNext()) {
-                    op.perform(current, qit.next());
-                }
-
-                previous.remove();
-                previous.add(current);
-
-                if (count++ % 200 == 0) {
-                    writableSession.save();
-                }
-            }
-
-            // Finally, link the first queue with elements
-            Iterator<Node> fit = firsts.listIterator();
-            while (fit.hasNext()) {
-                current = fit.next();
-                Iterator<Node> qit = previous.listIterator();
-
-                while (qit.hasNext()) {
-                    op.perform(current, qit.next());
-                }
-
-                previous.remove();
-                previous.add(current);
-            }
-
-            writableSession.save();
-        } catch (RepositoryException e) {
-            log.warn("Exception during relating wiki docs", e);
-        }
-    }
-
-    private Operation getTranslateOperation() {
-        return new Operation() {
-            private final List<String> locales = Arrays.asList("de", "it", "fr", "nl");
-            private int localeIndex = 0;
-            private Node lastNode;
-
-            @Override
-            public void perform(Node from, Node to) {
-                if (from == lastNode) {
-                    localeIndex++;
-                } else {
-                    localeIndex = 0;
-                }
-                lastNode = from;
-
-                if (localeIndex >= locales.size()) {
-                    return;
-                }
-
-                try {
-                    Node handle = from.getParent();
-                    Node subFolder = handle.getParent();
-                    Node folder = subFolder.getParent();
-
-                    Node tHandle;
-                    Node tFolder;
-                    Node tSubFolder;
-                    Node tDoc;
-
-                    // Get the wikipedia folder for the translated site
-                    Node tContentRoot = folder.getParent().getParent().getParent().getNode("demosite_" + locales.get(localeIndex));
-                    Node tWikipedia = tContentRoot.getNode("wikipedia");
-
-
-                    String tFolderName = folder.getName() + "-" + locales.get(localeIndex);
-                    tFolder = getTranslatedFolder(tWikipedia, tFolderName, locales.get(localeIndex), folder);
-
-                    String tSubFolderName = subFolder.getName() + "-" + locales.get(localeIndex);
-                    tSubFolder = getTranslatedFolder(tFolder, tSubFolderName, locales.get(localeIndex), subFolder);
-
-                    // Create handle for translated document
-                    tHandle = tSubFolder.addNode(handle.getName(), "hippo:handle");
-                    tHandle.addMixin("hippo:hardhandle");
-                    tHandle.addMixin("hippo:translated");
-
-                    // Create translated document
-                    tDoc = tHandle.addNode(handle.getName(), "mytestproject:newsdocument");
-                    tDoc.addMixin("hippo:harddocument");
-                    tDoc.setProperty("hippo:paths", new String[]{});
-                    tDoc.addMixin("hippotranslation:translated");
-
-                    String[] availability = {"live", "preview"};
-                    tDoc.setProperty("hippo:availability", availability);
-                    tDoc.setProperty("hippostd:stateSummary", "live");
-                    tDoc.setProperty("hippostd:state", "published");
-                    tDoc.setProperty("hippostdpubwf:lastModifiedBy", from.getProperty("hippostdpubwf:lastModifiedBy")
-                            .getString());
-                    tDoc.setProperty("hippostdpubwf:createdBy", from.getProperty("hippostdpubwf:createdBy").getString());
-                    tDoc.setProperty("hippostdpubwf:lastModificationDate", Calendar.getInstance());
-                    tDoc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance());
-                    tDoc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance());
-                    tDoc.setProperty("hippotranslation:locale", locales.get(localeIndex));
-                    tDoc.setProperty("hippotranslation:id", from.getProperty("hippotranslation:id").getString());
-                } catch (RepositoryException e) {
-                    log.warn("Couldn't translate document", e);
-                }
-            }
-        };
-    }
-
-    private static Node getTranslatedFolder(Node parent, String name, String locale, Node folderToTranslate) throws RepositoryException {
-        Node translatedFolder;
-        if (parent.hasNode(name)) {
-            translatedFolder = parent.getNode(name);
-        } else {
-            translatedFolder = parent.addNode(name, "hippostd:folder");
-            translatedFolder.addMixin("hippo:harddocument");
-            translatedFolder.setProperty("hippo:paths", new String[]{});
-            translatedFolder.addMixin("hippotranslation:translated");
-            translatedFolder.setProperty("hippotranslation:locale", locale);
-            translatedFolder.setProperty("hippotranslation:id", folderToTranslate.getProperty("hippotranslation:id")
-                    .getString());
-        }
-        return translatedFolder;
-    }
-
-    interface Operation {
-        public void perform(Node from, Node to);
     }
 
 }

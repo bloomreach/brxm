@@ -1,5 +1,7 @@
 package org.onehippo.cms7.essentials.dashboard.wiki;
 
+import java.util.Properties;
+
 import javax.jcr.Session;
 
 /**
@@ -7,6 +9,6 @@ import javax.jcr.Session;
  */
 public interface Importer {
 
-    public void importAction(final Session session, int amount, int offset, int maxSubFolder, int maxDocsPerFolder, int numberOfTranslations, String filesystemLocation, String siteContentBasePath, boolean addImages, final WikiStrategy strategy);
+    public void importAction(final Session session, final WikiStrategy strategy, Properties properties);
 
 }

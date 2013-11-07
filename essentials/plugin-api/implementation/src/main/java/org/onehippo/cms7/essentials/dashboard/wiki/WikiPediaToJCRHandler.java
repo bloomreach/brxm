@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,14 +24,6 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
     private static Logger log = LoggerFactory.getLogger(WikiPediaToJCRHandler.class);
 
 
-    // Matches headers in the wikipedia format having two or three equals-signs
-    private static final String blockSeparator = "===?([^=]*?)===?";
-    // private static final Pattern blockSeparatorPattern = Pattern.compile(blockSeparator);
-
-
-    // Matches the first word for each category (to keep the number of categories down)
-    private static final Pattern categoryPattern = Pattern.compile("\\[\\[Category:(\\w+).*?]]");
-
     // five year of seconds : 157680000
     private static final int NUMBER_OF_SECONDS_IN_TWO_YEARS = 63072000;
     private final Node wikiFolder;
@@ -46,7 +37,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
     private final int maxDocsPerFolder;
     private final int maxSubFolders;
 
-    private final boolean addImages;
+    private final String prefix;
 
     private WikiStrategy strategy;
     private StringBuilder fieldText;
@@ -54,26 +45,28 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
     int count = 0;
     int offsetcount = 0;
     long startTime = 0;
+
     private final String[] users = {"ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
             "junaid", "ate", "tjeerd", "verberg", "simon", "jannis"};
+
     private final Random rand;
 
     public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset, final int maxDocsPerFolder,
-                                 final int maxSubFolders, final boolean addImages, final WikiStrategy strategy) throws Exception {
+                                 final int maxSubFolders, final String prefix, final WikiStrategy strategy) throws Exception {
+        this.prefix = prefix;
         this.strategy = strategy;
         this.wikiFolder = wikiFolder;
         this.total = total;
         this.offset = offset;
         this.maxDocsPerFolder = maxDocsPerFolder;
         this.maxSubFolders = maxSubFolders;
-        this.addImages = addImages;
-        currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
+        currentFolder = wikiFolder.addNode(prefix + System.currentTimeMillis(), "hippostd:folder");
         currentFolder.addMixin("hippo:harddocument");
         currentFolder.setProperty("hippo:paths", new String[]{});
         currentFolder.addMixin("hippotranslation:translated");
         currentFolder.setProperty("hippotranslation:locale", "en");
         currentFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
-        currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(), "hippostd:folder");
+        currentSubFolder = currentFolder.addNode(prefix + System.currentTimeMillis(), "hippostd:folder");
         currentSubFolder.addMixin("hippo:harddocument");
         currentSubFolder.addMixin("hippotranslation:translated");
         currentSubFolder.setProperty("hippo:paths", new String[]{});
@@ -108,7 +101,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                     if ((count % maxDocsPerFolder) == 0 && count != 0) {
                         wikiFolder.getSession().save();
                         if (numberOfSubFolders >= maxSubFolders) {
-                            currentFolder = wikiFolder.addNode("wiki-" + System.currentTimeMillis(),
+                            currentFolder = wikiFolder.addNode(prefix + System.currentTimeMillis(),
                                     "hippostd:folder");
                             currentFolder.addMixin("hippo:harddocument");
                             currentFolder.setProperty("hippo:paths", new String[]{});
@@ -117,7 +110,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                             currentFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
                             numberOfSubFolders = 0;
                         }
-                        currentSubFolder = currentFolder.addNode("wiki-" + System.currentTimeMillis(),
+                        currentSubFolder = currentFolder.addNode(prefix + System.currentTimeMillis(),
                                 "hippostd:folder");
                         currentSubFolder.addMixin("hippo:harddocument");
                         currentSubFolder.setProperty("hippo:paths", new String[]{});
