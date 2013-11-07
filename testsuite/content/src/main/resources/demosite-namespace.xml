@@ -257,7 +257,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>f0b9c5c2-87b2-4b80-a252-ffa530f6bb91</sv:value>
@@ -317,7 +316,6 @@
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
           <sv:value>hippostd:publishableSummary</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>1f1da5a8-2ddf-4cd8-85c2-4d3004a6d181</sv:value>
@@ -772,7 +770,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>32aa2ebd-fcf4-4c93-8a3c-9a4fa77cf146</sv:value>
@@ -846,7 +843,6 @@
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
           <sv:value>hippostd:publishableSummary</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>1557a0b0-27a6-4486-b928-cdc83ae844c3</sv:value>
@@ -1226,7 +1222,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>51baa2e2-34ce-4a52-bc7c-e5fc0c35510c</sv:value>
@@ -1912,7 +1907,6 @@
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>7e8bd1a7-3e5c-48c8-a775-0f4ef097257a</sv:value>
@@ -1987,7 +1981,6 @@
           <sv:value>mix:referenceable</sv:value>
           <sv:value>hippotranslation:translated</sv:value>
           <sv:value>hippostd:publishableSummary</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>a8e72f9d-6ccf-41c9-b0cd-3c17b2f13765</sv:value>
@@ -3330,7 +3323,6 @@
         </sv:property>
         <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
           <sv:value>mix:referenceable</sv:value>
-          <sv:value>hippo:skipindex</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:uuid" sv:type="String">
           <sv:value>04fa2be4-3618-4127-83e8-fbab86e1baac</sv:value>
