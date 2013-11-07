@@ -27,18 +27,18 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
-import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
-import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.IImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.IRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.IRichTextLinkFactory;
-import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.RichTextModel;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.images.RichTextEditorImageService;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
+import org.hippoecm.frontend.plugins.richtext.dialog.links.RichTextEditorLinkService;
 import org.hippoecm.frontend.plugins.richtext.jcr.ChildFacetUuidsModel;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextImageFactory;
 import org.hippoecm.frontend.plugins.richtext.jcr.JcrRichTextLinkFactory;
+import org.hippoecm.frontend.plugins.richtext.jcr.RichTextImageURLProvider;
 import org.hippoecm.frontend.plugins.richtext.model.RichTextImageMetaDataModel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextDiffWithLinksAndImagesPanel;
 import org.hippoecm.frontend.plugins.richtext.view.RichTextPreviewWithLinksAndImagesPanel;
@@ -79,6 +79,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "  linkShowAdvancedTab: false,"
             + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tabletools,toolbar,undo,youtube',"
             + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
+            + "  title: false,"
             + "  toolbarGroups: ["
             + "    { name: 'styles' },"
             + "    { name: 'basicstyles' },"
