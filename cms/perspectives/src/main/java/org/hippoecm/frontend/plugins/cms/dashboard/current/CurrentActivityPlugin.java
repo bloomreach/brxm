@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -43,7 +44,7 @@ import org.hippoecm.frontend.plugins.standards.NodeFilter;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,11 +226,14 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         private boolean isValidUser(final Node node) throws RepositoryException {
             final String userName = JcrUtils.getStringProperty(node, "hippolog:user", null);
             if (userName != null) {
-                final User user = ((HippoWorkspace) node.getSession().getWorkspace()).getSecurityService().getUser(userName);
-                return user != null && !user.isSystemUser();
+                final SecurityService securityService = ((HippoWorkspace) node.getSession().getWorkspace()).getSecurityService();
+                if (securityService.hasUser(userName)) {
+                    return !securityService.getUser(userName).isSystemUser();
+                }
             }
             return false;
         }
+
     }
 
 }
