@@ -17,7 +17,11 @@ public class WizardPlugin extends DashboardPlugin {
 
     public WizardPlugin(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
-        AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
+        AjaxWizardPanel panel = new AjaxWizardPanel("wizard") {
+            @Override
+            public void onFinish() {
+            }
+        };
         panel.addWizard(new Step1("test1"));
         panel.addWizard(new Step2("test2"));
         panel.addWizard(new Step3("test3"));
