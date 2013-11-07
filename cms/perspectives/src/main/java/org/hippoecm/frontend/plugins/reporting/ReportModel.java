@@ -172,8 +172,8 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
             Node listenerNode = node.getNode(ReportingNodeTypes.LISTENER);
             listener = new JcrFrontendListener(obContext, new JcrNodeModel(listenerNode));
             listener.start();
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+        } catch (RepositoryException e) {
+            log.error(e.toString());
         }
     }
 
