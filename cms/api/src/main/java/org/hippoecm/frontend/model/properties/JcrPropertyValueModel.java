@@ -277,34 +277,32 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
 
     public void setObject(final Serializable object) {
         load();
-        if (object == null) {
-            if (value != null) {
-                setValue(null);
-            }
-            return;
-        }
-        Value value;
+        Value value = null;
         try {
-            ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
-            int type = getType();
-            switch (type) {
-            case PropertyType.BOOLEAN:
-                value = factory.createValue((Boolean) object);
-                break;
-            case PropertyType.DATE:
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime((Date) object);
-                value = factory.createValue(calendar);
-                break;
-            case PropertyType.DOUBLE:
-                value = factory.createValue((Double) object);
-                break;
-            case PropertyType.LONG:
-                value = factory.createValue((Long) object);
-                break;
-            default:
-                String string = object.toString();
-                value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+            final ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
+            if (object != null) {
+                int type = getType();
+                switch (type) {
+                    case PropertyType.BOOLEAN:
+                        value = factory.createValue((Boolean) object);
+                        break;
+                    case PropertyType.DATE:
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime((Date) object);
+                        value = factory.createValue(calendar);
+                        break;
+                    case PropertyType.DOUBLE:
+                        value = factory.createValue((Double) object);
+                        break;
+                    case PropertyType.LONG:
+                        value = factory.createValue((Long) object);
+                        break;
+                    default:
+                        String string = object.toString();
+                        value = factory.createValue(string, (type == PropertyType.UNDEFINED ? PropertyType.STRING : type));
+                }
+            } else if (getType() == PropertyType.STRING) {
+                value = factory.createValue("");
             }
         } catch (ValueFormatException ex) {
             log.info("invalid value " + object + ": " + ex.getMessage());
