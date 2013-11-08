@@ -1,0 +1,10 @@
+<'mytestproject'='http://www.onehippo.org/mytestproject/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+
+[mytestproject:basedocument] > hippo:document, hippostd:publishableSummary orderable
+
+[mytestproject:textdocument] > mytestproject:basedocument, hippostd:relaxed
+
+[mytestproject:newsdocument] > mytestproject:basedocument, hippostd:relaxed
