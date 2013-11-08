@@ -91,7 +91,7 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
                 final boolean nextAvailable = wizardModel.isNextAvailable();
                 final EssentialsWizardStep activeStep = (EssentialsWizardStep) wizardModel.getActiveStep();
                 activeStep.setProcessed(true);
-                activeStep.applyState();
+                activeStep.applyState(target);
                 final boolean complete = activeStep.isComplete();
                 if(!complete){
                     log.info("Current step not completed, stay: {}," , activeStep);

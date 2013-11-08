@@ -1,4 +1,4 @@
-package org.onehippo.cms7.essentials.dashboard;
+package org.onehippo.cms7.essentials.dashboard.installer;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -8,9 +8,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.StringResourceModel;
+import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
+import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 
@@ -24,7 +24,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
 
     private static final long serialVersionUID = 1L;
     public static final String SESSION_SUFIX = "installState";
-    private static Logger log = LoggerFactory.getLogger(InstallablePlugin.class);
+
     private String titleId;
 
     public InstallablePlugin(final String id, final Plugin plugin, final PluginContext context) {

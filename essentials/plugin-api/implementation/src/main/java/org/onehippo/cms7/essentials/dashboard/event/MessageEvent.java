@@ -16,16 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id$"
  */
 public class MessageEvent extends BaseEvent {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(MessageEvent.class);
     private final String message;
 
     public MessageEvent(final String message) {

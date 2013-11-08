@@ -5,6 +5,7 @@ import org.apache.wicket.guice.GuiceComponentInjector;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.onehippo.cms7.essentials.setup.SetupPage;
 
 import com.google.inject.Guice;
@@ -15,7 +16,7 @@ import com.google.inject.Injector;
  */
 public class WicketApplication extends WebApplication {
 
-    private final EventBusModule eventBusModule = new EventBusModule();
+
     /**
      * @see org.apache.wicket.Application#getHomePage()
      */
@@ -31,16 +32,15 @@ public class WicketApplication extends WebApplication {
     public void init() {
         super.init();
         getMarkupSettings().setStripWicketTags(true);
-        // inject event bus:
-        final Injector injector = Guice.createInjector(eventBusModule);
-        getComponentInstantiationListeners().add(new GuiceComponentInjector(this, injector));
+        // inject modules
+        getComponentInstantiationListeners().add(new GuiceComponentInjector(this, EventBusModule.getInstance(), new PropertiesModule()));
 
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        eventBusModule.cleanup();
+        EventBusModule.getInstance().cleanup();
 
 
     }

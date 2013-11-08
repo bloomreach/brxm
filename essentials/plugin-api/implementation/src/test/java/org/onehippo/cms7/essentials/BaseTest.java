@@ -11,16 +11,22 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
+import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 
 import com.google.common.collect.ImmutableSet;
 
+import static org.junit.Assert.assertTrue;
+
 /**
- * @version "$Id: BaseTest.java 173107 2013-08-07 15:19:38Z mmilicevic $"
+ * @version "$Id$"
  */
+@RunWith(GuiceJUnitRunner.class)
+@GuiceJUnitModules({EventBusModule.class, PropertiesModule.class})
 public class BaseTest {
     public static final int NONE_EXISTING_BEANS_SIZE = 2;
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
@@ -36,23 +42,25 @@ public class BaseTest {
             .add("hippoplugins:version")
             .add("hippoplugins:dependency")
             .build();
-    private static Logger log = LoggerFactory.getLogger(BaseTest.class);
     private String oldSystemDir;
     private PluginContext context;
     private Path projectRoot;
 
+
     @After
     public void tearDown() throws Exception {
-        if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
-            oldSystemDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
+        // reset system property
+        if (oldSystemDir != null) {
+            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
         }
     }
 
     @Before
     public void setUp() throws Exception {
-        // reset system property
-        if (oldSystemDir != null) {
-            System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);
+
+        context =  getPluginContextFile();
+        if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
+            oldSystemDir = System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         }
 
         final URL resource = getClass().getResource("/project");
@@ -74,6 +82,7 @@ public class BaseTest {
             context.setProjectNamespacePrefix(PROJECT_NAMESPACE_TEST);
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
+            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
         }
         return context;
     }
@@ -83,9 +92,15 @@ public class BaseTest {
     }
 
     public PluginContext getContext() {
-        if (context == null) {
-            return getPluginContextFile();
+
+        if(context ==null){
+            context = getPluginContextFile();
         }
         return context;
+    }
+
+    @Test
+    public void initTest() {
+        assertTrue(true);
     }
 }

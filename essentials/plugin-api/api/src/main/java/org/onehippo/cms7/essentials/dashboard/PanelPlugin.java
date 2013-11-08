@@ -20,15 +20,13 @@ import javax.jcr.Session;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public abstract class PanelPlugin extends Panel{
 
-    private static Logger log = LoggerFactory.getLogger(PanelPlugin.class);
+
 
 
     private static final long serialVersionUID = 1L;

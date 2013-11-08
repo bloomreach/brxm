@@ -324,7 +324,6 @@ public class JavaSourceUtils {
      * @param methodName   name of the method
      * @param propertyName name of the property
      */
-    @SuppressWarnings("unchecked")
     public static void addBeanMethodCalendar(final Path path, final String methodName, final String propertyName) {
         addBeanMethodProperty(path, methodName, propertyName, Calendar.class.getSimpleName());
         final String importName = Calendar.class.getPackage().getName();

@@ -51,7 +51,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
-import org.onehippo.cms7.essentials.dashboard.InstallablePlugin;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.taxonomy.installer.TaxonomyInstaller;

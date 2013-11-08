@@ -39,14 +39,32 @@
       <artifactId>hippo-dashboard-plugin-api</artifactId>
     </dependency>
     <dependency>
+        <groupId>org.onehippo.cms7.essentials</groupId>
+        <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-modules</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+      <!--<exclusions>-->
+      <!--<exclusion>-->
+      <!--<artifactId>tika-parsers</artifactId>-->
+      <!--<groupId>org.apache.tika</groupId>-->
+      <!--</exclusion>-->
+      <!--</exclusions>-->
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -89,6 +107,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.cnd</include>
+          <include>**/*.jsp</include>
           <include>**/*.xml</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>

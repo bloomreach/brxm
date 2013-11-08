@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.instruction;
+package org.onehippo.cms7.essentials.dashboard.packaging;
 
-import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 
 /**
  * @version "$Id$"
  */
-public class PluginInstructionExecutor implements InstructionExecutor {
+public interface PowerpackPackage {
 
-    private static Logger log = LoggerFactory.getLogger(PluginInstructionExecutor.class);
+    /**
+     * Returns parsed instructions
+     * @return  instructions collection or null if not found
+     */
+    Instructions getInstructions();
 
-    @Override
-    public InstructionStatus execute(final Instruction instruction) {
-        log.debug("Executing instruction {}", instruction);
-        if (instruction == null) {
-            return InstructionStatus.SKIPPED;
-        }
-        return InstructionStatus.FAILED;
-    }
+    /**
+     * Executes instructions
+     * @return executions status
+     */
+    InstructionStatus execute(final PluginContext context);
 }

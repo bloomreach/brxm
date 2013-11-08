@@ -21,6 +21,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.github.httl</groupId>
+      <artifactId>httl</artifactId>
+      <version>1.0.11</version>
+    </dependency>
+    <dependency>
       <groupId>org.freemarker</groupId>
       <artifactId>freemarker</artifactId>
       <version>${freemarker.version}</version>
@@ -97,6 +102,12 @@
     <dependency>
       <groupId>org.eclipse.jdt</groupId>
       <artifactId>core</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>app</artifactId>
+          <groupId>org.eclipse.equinox</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -168,6 +179,7 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -213,6 +225,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 

@@ -9,12 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.MemoryRepository;
-import org.onehippo.cms7.essentials.dashboard.ConfigDocument;
-import org.onehippo.cms7.essentials.dashboard.ConfigProperty;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 public class JcrPluginConfigServiceTest {
 
     public static final Credentials CREDENTIALS = new SimpleCredentials("admin", "admin".toCharArray());
-    private static Logger log = LoggerFactory.getLogger(JcrPluginConfigServiceTest.class);
+
     private MemoryRepository repository;
     private Session session;
 

@@ -12,8 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.DependencyType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -23,12 +21,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class ProjectUtilsTest extends BaseTest {
 
-    private static Logger log = LoggerFactory.getLogger(ProjectUtilsTest.class);
+
     private String oldSystemDir;
 
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         // reset system property
         if (oldSystemDir != null) {
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, oldSystemDir);

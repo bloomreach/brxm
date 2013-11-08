@@ -4,7 +4,9 @@
 <%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags" %>
-<%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<%--@elvariable id="pageable" type="EL_PAGEABLE"--%>
+<%--@elvariable id="bean" type="EL_BEAN"--%>
+
 <c:forEach var="item" items="${pageable.items}" varStatus="status">
   <hst:link var="link" hippobean="${item}"/>
   <article>

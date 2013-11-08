@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet name="JSP">
+    <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="${jspRoot}/essentials/essentials-component-document.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="${jspRoot}/essentials/essentials-component-events.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="${jspRoot}/essentials/essentials-component-event-detail.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="${jspRoot}/essentials/essentials-component-list.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-news.jsp" target="${jspRoot}/essentials/essentials-component-news.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="${jspRoot}/essentials/essentials-component-news-details.jsp"/>
+  </instructionSet>
+  <instructionSet name="SITE-MAPS">
+    <xml action="copy"  source="xml/sitemap-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+  </instructionSet>
+  <instructionSet name="COMPONENTS">
+    <xml action="copy" source="xml/component-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
+  </instructionSet>
+  <instructionSet name="PAGES">
+    <xml action="copy" source="xml/page-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/page-newsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+  </instructionSet>
+  <instructionSet name="TEMPLATES">
+    <xml action="copy" source="xml/template-news-overview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+  </instructionSet>
+
+</instructions>

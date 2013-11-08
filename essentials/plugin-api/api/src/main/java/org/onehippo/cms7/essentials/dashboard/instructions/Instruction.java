@@ -4,7 +4,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.instructions;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
  * @version "$Id$"
@@ -13,8 +17,14 @@ import javax.xml.bind.annotation.XmlTransient;
 public interface Instruction {
 
     String getMessage();
+
     void setMessage(String message);
 
     String getAction();
+
     void setAction(String action);
+
+    InstructionStatus process(PluginContext context, InstructionStatus previousStatus);
+
+    void processPlaceholders(final Map<String, Object> data);
 }

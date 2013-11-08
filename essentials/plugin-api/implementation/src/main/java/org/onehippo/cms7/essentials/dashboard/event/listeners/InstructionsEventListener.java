@@ -17,13 +17,8 @@
 package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
-import org.onehippo.cms7.essentials.dashboard.event.ValidationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +29,22 @@ import com.google.common.eventbus.Subscribe;
  */
 public class InstructionsEventListener implements PluginEventListener<InstructionEvent> {
 
+    private static final Logger log = LoggerFactory.getLogger(InstructionsEventListener.class);
+    private transient int counter;
 
     @Override
     @Subscribe
     public void onPluginEvent(final InstructionEvent event) {
-       // TODO write to a file or into repository
+        log.info("INSTRUCTION EVENT: {}", event.getMessage());
+        counter++;
     }
 
+    // TODO remove, debugging only
+    public int getNrInstructions() {
+        return counter;
+    }
 
+    public void reset() {
+        counter = 0;
+    }
 }

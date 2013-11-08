@@ -17,26 +17,24 @@
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.BaseTest;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * @version "$Id$"
  */
-public class EventBusModuleTest {
+public class EventBusModuleTest extends BaseTest{
 
-    private static Logger log = LoggerFactory.getLogger(EventBusModuleTest.class);
+
+
+    @Inject
+    private TestEventsListener testEventListener;
 
     @Test
     public void testConfigure() throws Exception {
-        final Injector injector = Guice.createInjector(new EventBusModule());
-        final TestEventsListener testEventListener = new TestEventsListener();
-        injector.injectMembers(testEventListener);
         final TestEventsApplication application = testEventListener.getApplication();
         for (int i = 0; i < 100; i++) {
             application.postEvent();

@@ -1,0 +1,2 @@
+FOR [FileInstructions] TESTING ONLY:
+project namespace is: ${namespace}

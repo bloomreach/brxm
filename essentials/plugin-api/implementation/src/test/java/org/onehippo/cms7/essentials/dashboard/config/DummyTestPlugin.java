@@ -2,11 +2,7 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.Asset;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.Screenshot;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id: DummyTestPlugin.java 174785 2013-08-23 08:28:52Z mmilicevic $"
@@ -14,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class DummyTestPlugin implements Plugin {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(DummyTestPlugin.class);
+
 
     @Override
     public void addScreenShot(final Screenshot screenShot) {

@@ -3,8 +3,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -18,7 +16,7 @@ public class GlobalUtilsTest {
 
     public static final String REPLACE_NAMESPACE = "testnamespace";
     public static final String REPLACE_DOC_NAME = "mytestname";
-    private static Logger log = LoggerFactory.getLogger(GlobalUtilsTest.class);
+
 
     @Test
     public void testReplacePlaceholders() throws Exception {

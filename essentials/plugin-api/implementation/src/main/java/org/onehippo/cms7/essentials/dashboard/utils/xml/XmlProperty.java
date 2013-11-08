@@ -4,7 +4,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.xml;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;

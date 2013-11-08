@@ -36,8 +36,8 @@
       <!--<param name="path" value="${wsp.home}"/>-->
     </FileSystem>
     <PersistenceManager
-      class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
-      <param name="persistent" value="false"/>
+      class="org.apache.jackrabbit.core.persistence.bundle.BundleFsPersistenceManager">
+      <param name="blobFSBlockSize" value="1"/>
     </PersistenceManager>
     <SearchIndex
       class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
@@ -49,8 +49,8 @@
       <!--<param name="path" value="${rep.home}/versions"/>-->
     </FileSystem>
     <PersistenceManager
-      class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
-      <param name="persistent" value="false"/>
+      class="org.apache.jackrabbit.core.persistence.bundle.BundleFsPersistenceManager">
+      <param name="blobFSBlockSize" value="1"/>
     </PersistenceManager>
   </Versioning>
   <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">

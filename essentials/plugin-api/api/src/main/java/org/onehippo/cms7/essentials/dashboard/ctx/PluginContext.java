@@ -8,13 +8,12 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.Map;
 
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.PluginConfigService;
-
-import com.google.common.eventbus.EventBus;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 
 /**
  * Plugin context is passed to all HippoEssentials plugins.
@@ -47,7 +46,6 @@ public interface PluginContext extends Serializable, AutoCloseable {
      * @return directory of cms module
      */
     File getCmsDirectory();
-
 
     /**
      * Check if Hippo  Enterprise project
@@ -161,4 +159,12 @@ public interface PluginContext extends Serializable, AutoCloseable {
      * @return root of java file folder like {@code /home/user/project/site/src/main/java}
      */
     String getSiteJavaRoot();
+
+    /**
+     * returns pre-filled nr of key value pairs for replacement injection in templates etc.
+     *
+     * @return object containing a number of items which can be used to inject into templates etc.
+     *
+     */
+    Map<String, Object> getPlaceholderData();
 }

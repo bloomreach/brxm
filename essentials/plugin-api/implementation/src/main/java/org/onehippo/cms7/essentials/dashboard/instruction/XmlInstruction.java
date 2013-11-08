@@ -16,10 +16,34 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Set;
+
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.wicket.util.string.Strings;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
+import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * @version "$Id$"
@@ -27,20 +51,154 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 @XmlRootElement(name = "xml", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class XmlInstruction extends PluginInstruction {
 
-
+    public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
+            .add(COPY)
+            .add(DELETE)
+            .build();
+    private static final Logger log = LoggerFactory.getLogger(XmlInstruction.class);
     private String message;
-    private boolean override;
+    private boolean overwrite;
     private String source;
     private String target;
     private String action;
+    @Inject
+    private EventBus eventBus;
+    @Inject(optional = true)
+    @Named("instruction.message.xml.delete")
+    private String messageDelete;
+    @Inject(optional = true)
+    @Named("instruction.message.xml.copy")
+    private String messageCopy;
+    @Inject(optional = true)
+    @Named("instruction.message.xml.copy.error")
+    private String messageCopyError;
+    private PluginContext context;
 
-    @XmlAttribute
-    public boolean isOverride() {
-        return override;
+    @Override
+    public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+        this.context = context;
+        log.debug("executing XML Instruction {}", this);
+        if (!valid()) {
+            eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
+            return InstructionStatus.FAILED;
+        }
+        processPlaceholders(context.getPlaceholderData());
+        // check action:
+        if (action.equals(COPY)) {
+            return copy();
+        } else if (action.equals(DELETE)) {
+            return delete();
+        }
+
+        eventBus.post(new InstructionEvent(this));
+        return InstructionStatus.FAILED;
     }
 
-    public void setOverride(final boolean override) {
-        this.override = override;
+    private InstructionStatus copy() {
+        final Session session = context.getSession();
+        InputStream stream = null;
+        try {
+            if (!session.itemExists(target)) {
+                log.error("Target node doesn't exist {}", target);
+                return InstructionStatus.FAILED;
+            }
+            final Node destination = session.getNode(target);
+
+            stream = getClass().getClassLoader().getResourceAsStream(source);
+            if (stream == null) {
+                log.error("Source file not found {}", source);
+                message = messageCopyError;
+                eventBus.post(new InstructionEvent(this));
+                return InstructionStatus.FAILED;
+            }
+            session.importXML(destination.getPath(), stream, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+            session.save();
+            log.info("Added node to: {}", destination.getPath());
+            sendEvents();
+            return InstructionStatus.SUCCESS;
+        } catch (RepositoryException | IOException e) {
+            log.error("Error on copy node", e);
+        } finally {
+            IOUtils.closeQuietly(stream);
+            GlobalUtils.refreshSession(session, false);
+        }
+        return InstructionStatus.FAILED;
+
+    }
+
+
+
+    private InstructionStatus delete() {
+        final Session session = context.getSession();
+        try {
+            if (!session.itemExists(target)) {
+                log.error("Target node doesn't exist: {}", target);
+                return InstructionStatus.FAILED;
+            }
+            final Node node = session.getNode(target);
+            node.remove();
+            session.save();
+            sendEvents();
+            log.info("Deleted node: {}", target);
+            return   InstructionStatus.SUCCESS;
+        } catch (RepositoryException e) {
+            log.error("Error deleting node", e);
+        } finally {
+            GlobalUtils.refreshSession(session, false);
+        }
+        return InstructionStatus.FAILED;
+    }
+
+    @Override
+    public void processPlaceholders(final Map<String, Object> data) {
+        final String myTarget = TemplateUtils.replaceTemplateData(target, data);
+        if (myTarget != null) {
+            target = myTarget;
+        }
+        //
+        final String mySource = TemplateUtils.replaceTemplateData(source, data);
+        if (mySource != null) {
+            source = mySource;
+        }
+        // add local data
+        data.put(EssentialConst.PLACEHOLDER_SOURCE, source);
+        data.put(EssentialConst.PLACEHOLDER_TARGET, target);
+        // setup messages:
+
+        if (Strings.isEmpty(message)) {
+            // check message based on action:
+            if (action.equals(COPY)) {
+                message = messageCopy;
+            } else if (action.equals(DELETE)) {
+                message = messageDelete;
+            }
+        }
+
+        super.processPlaceholders(data);
+        //
+
+        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
+        message = TemplateUtils.replaceTemplateData(message, data);
+    }
+
+    private boolean valid() {
+        if (Strings.isEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isEmpty(target)) {
+            return false;
+        }
+
+        if (action.equals(COPY) && Strings.isEmpty(source)) {
+            return false;
+        }
+        return true;
+    }
+
+    @XmlAttribute
+    public boolean isOverwrite() {
+        return overwrite;
+    }
+
+    public void setOverwrite(final boolean overwrite) {
+        this.overwrite = overwrite;
     }
 
     @XmlAttribute
@@ -76,7 +234,7 @@ public class XmlInstruction extends PluginInstruction {
     public String toString() {
         final StringBuilder sb = new StringBuilder("XmlInstruction{");
         sb.append("message='").append(message).append('\'');
-        sb.append(", override=").append(override);
+        sb.append(", overwrite=").append(overwrite);
         sb.append(", source='").append(source).append('\'');
         sb.append(", target='").append(target).append('\'');
         sb.append(", action='").append(action).append('\'');

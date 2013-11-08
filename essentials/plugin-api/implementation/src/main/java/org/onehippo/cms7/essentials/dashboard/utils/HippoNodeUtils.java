@@ -1,5 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -254,7 +255,7 @@ public final class HippoNodeUtils {
         Map<String, Set<String>> types = new LinkedHashMap<>();
         try {
             QueryManager qmgr = session.getWorkspace().getQueryManager();
-            Vector<Node> foldertypes = new Vector<>();
+            AbstractList<Node> foldertypes = new Vector<>();
             Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
             for (String template : templates) {
                 if (hippoTemplates.hasNode(template)) {
@@ -307,7 +308,7 @@ public final class HippoNodeUtils {
         Map<String, Set<String>> types = new LinkedHashMap<>();
         try {
             QueryManager qmgr = session.getWorkspace().getQueryManager();
-            Vector<Node> foldertypes = new Vector<>();
+            AbstractList<Node> foldertypes = new Vector<>();
             Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
             for (String template : templates) {
                 if (hippoTemplates.hasNode(template)) {

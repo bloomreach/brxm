@@ -16,9 +16,20 @@
 
 package org.onehippo.cms7.essentials.components.info;
 
+import org.hippoecm.hst.core.parameters.Parameter;
+
 /**
  * @version "$Id$"
  */
 public interface EssentialsEventsComponentInfo extends EssentialsDocumentListComponentInfo {
+    /**
+     * Boolean flag which indicates if news items in that lay in the future will not be shown.
+     * @return {@code true} if items should be hidden, {@code false} otherwise
+     */
+    @Parameter(name = "hidePastEvents", defaultValue = "off", required = false, displayName = "Hide past events")
+    Boolean hidePastEvents();
+
+    @Parameter(name = "documentDateField", required = false, displayName = "Field that contains document date (for hiding)")
+    String getDocumentDateField();
 
 }

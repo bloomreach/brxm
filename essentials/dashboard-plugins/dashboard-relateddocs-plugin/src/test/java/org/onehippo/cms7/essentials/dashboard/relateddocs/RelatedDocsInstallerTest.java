@@ -9,7 +9,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.relateddocs.installer.RelatedDocsInstaller;
-import org.onehippo.cms7.essentials.dashboard.Installer;
+import org.onehippo.cms7.essentials.dashboard.installer.Installer;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
