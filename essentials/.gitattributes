@@ -116,7 +116,6 @@ dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cm
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/TemplatePanel.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/provider/ComponentProvider.java -text
 dashboard-plugins/components-plugin/components-gui/src/main/java/org/onehippo/cms7/essentials/components/gui/panel/render/ComponentChoiceRenderer.java -text
-dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-document.jsp -text
 dashboard-plugins/components-plugin/components-gui/src/main/resources/essentials-component-event-detail.jsp -text
