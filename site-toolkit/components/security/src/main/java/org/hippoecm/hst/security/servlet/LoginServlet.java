@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
@@ -271,7 +272,15 @@ public class LoginServlet extends HttpServlet {
         } else {
             resourceURL = getBaseURL(request)+response.encodeURL(resourcePath);
         }
+
+        final String token = UUID.randomUUID().toString();
+        if (resourceURL.contains("?")) {
+            resourceURL = resourceURL + "&token="+ token;
+        } else {
+            resourceURL = resourceURL + "?token="+ token;
+        }
         session.setAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR, resourceURL);
+        session.setAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN, token);
         response.sendRedirect(resourceURL);
     }
 

@@ -119,8 +119,6 @@ public class HstFilter implements Filter {
     private String [] prefixExclusions;
     private String [] suffixExclusions;
 
-    private String defaultLoginResourcePath;
-
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
 
@@ -135,8 +133,6 @@ public class HstFilter implements Filter {
         clientComponentManagerConfigurations = splitParamValue(getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null), ",");
 
         clientComponentManagerContextAttributeName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, clientComponentManagerContextAttributeName);
-
-        defaultLoginResourcePath = getInitParameter(filterConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
 
         prefixExclusions = splitParamValue(getConfigOrContextInitParameter(PREFIX_EXCLUSIONS_INIT_PARAM, null), ",");
         suffixExclusions = splitParamValue(getConfigOrContextInitParameter(SUFFIX_EXCLUSIONS_INIT_PARAM, null), ",");
@@ -305,11 +301,17 @@ public class HstFilter implements Filter {
              */
             if (doClientRedirectAfterJaasLoginBehindProxy) {
                 HttpSession session = req.getSession(false);
-                if (session != null && session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR) != null) {
-                    String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
-                    session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
-                    res.sendRedirect(resourceURL);
-                    return;
+                if (session != null && session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN) != null ) {
+                    if (session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN).equals(req.getParameter("token"))) {
+                        // we are dealing with client side redirect from the container after JAAS login. This redirect typically
+                        // fails in case of proxy taking care of the context path in front of the application.
+                        // hence we need another redirect.
+                        String resourceURL = (String)session.getAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                        session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR);
+                        session.removeAttribute(ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN);
+                        res.sendRedirect(resourceURL);
+                        return;
+                    }
                 }
     	    }
 
