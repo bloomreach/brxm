@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.HippoTester;
@@ -24,10 +25,9 @@ import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class AbstractDialogTest {
@@ -44,8 +44,8 @@ public class AbstractDialogTest {
             clicked = true;
         }
         
-        public IModel getTitle() {
-            return new Model("title");
+        public IModel<String> getTitle() {
+            return Model.of("title");
         }
 
     }
@@ -57,8 +57,8 @@ public class AbstractDialogTest {
             error("dialog submit failed");
         }
 
-        public IModel getTitle() {
-            return new Model("title");
+        public IModel<String> getTitle() {
+            return Model.of("title");
         }
 
     }
@@ -78,7 +78,7 @@ public class AbstractDialogTest {
     }
 
     @Test
-    public void okButtonIsHiddenAfterSubmit() {
+    public void dialogIsClosedAfterSuccessfulSubmit() {
         tester.runInAjax(home, new Runnable() {
 
             @Override
@@ -90,12 +90,11 @@ public class AbstractDialogTest {
         });
 
         tester.executeAjaxEvent(home.get("dialog:content:form:buttons:0:button"), "onclick");
-        Component button = home.get("dialog:content:form:buttons:0:button");
-        assertFalse("OK Button still visible after successful submit", button.isVisibleInHierarchy());
+        MarkupContainer content = (MarkupContainer) home.get("dialog:content");
+        assertEquals(0, content.size());
     }
 
     @Test
-    @Ignore // TODO: RE-ENABLE THIS TEST! TEMPORARILY DISABLED AT 2013-11-07 TO FIX THE HUDSON BUILD.
     public void okButtonIsPresentAfterFailure() {
         tester.runInAjax(home, new Runnable() {
 
