@@ -183,6 +183,7 @@
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
+        <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="#NAMESPACE#:documenttype" sv:type="String">
         <sv:value>event</sv:value>
