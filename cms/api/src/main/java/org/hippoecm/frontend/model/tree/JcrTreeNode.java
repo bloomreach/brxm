@@ -213,7 +213,16 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
             return true;
         }
         JcrTreeNode treeNode = (JcrTreeNode) object;
-        return nodeModel.equals(treeNode.getChainedModel());
+        if (!nodeModel.equals(treeNode.getChainedModel())) {
+            return false;
+        }
+        if (parent == treeNode.parent) {
+            return true;
+        } else if (parent == null || treeNode.parent == null) {
+            return false;
+        } else {
+            return parent.equals(treeNode.parent);
+        }
     }
 
     @Override
