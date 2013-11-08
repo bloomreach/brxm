@@ -113,6 +113,7 @@ public class XmlInstruction extends PluginInstruction {
                 return InstructionStatus.FAILED;
             }
 
+            // Import XML with replaced NAMESPACE placeholder
             session.importXML(destination.getPath(), replacePlaceHolders(stream), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Added node to: {}", destination.getPath());
