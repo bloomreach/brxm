@@ -49,7 +49,9 @@ import org.w3c.dom.Element;
  */
 public class AggregationValve extends AbstractBaseOrderableValve {
 
-    /** Flag request attribute name to indicate asynchronous component window rendering in an ancestor window already. */
+    /**
+     * Flag request attribute name to indicate asynchronous component window rendering in an ancestor window already.
+     */
     private static final String ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME = AggregationValve.class.getName() + ".asyncByAncestor";
 
     private Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap;
@@ -106,16 +108,16 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         // make hstRequest and hstResponse for each component window.
         // note that hstResponse is hierarchically created.
         createHstRequestResponseForWindows(rootWindow, rootRenderingWindow, requestContext, servletRequest, servletResponse,
-                requestMap, responseMap, null, rootWindow == rootRenderingWindow );
+                requestMap, responseMap, null, rootWindow == rootRenderingWindow);
 
         // to avoid recursive invocation from now, just make a list by hierarchical order.
         List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
 
         sortComponentWindowsByHierarchy(rootWindow, sortedComponentWindowList);
-        HstComponentWindow [] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[sortedComponentWindowList.size()]);
+        HstComponentWindow[] sortedComponentWindows = sortedComponentWindowList.toArray(new HstComponentWindow[sortedComponentWindowList.size()]);
 
         // the components that are actually rendered can be a sublist
-        HstComponentWindow [] sortedComponentRenderingWindows = sortedComponentWindows;
+        HstComponentWindow[] sortedComponentRenderingWindows = sortedComponentWindows;
 
         if (rootRenderingWindow != rootWindow) {
             // the rendering window is different than the rootWindow. Create a separate ordered list for the 
@@ -240,8 +242,12 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
             try {
                 // add the X-HST-VERSION as a response header if we are in preview:
-                if (rootWindow == rootRenderingWindow && requestContext.isPreview() && requestContext.getResolvedMount().getMount().isVersionInPreviewHeader()) {
-                    rootWindow.getResponseState().addHeader("X-HST-VERSION", HstServices.getImplementationVersion());
+                boolean isPreviewOrCmsRequest = requestContext.isPreview() || requestContext.isCmsRequest();
+                if (rootWindow == rootRenderingWindow && isPreviewOrCmsRequest) {
+                    setNoCacheHeaders(rootWindow.getResponseState());
+                    if (requestContext.getResolvedMount().getMount().isVersionInPreviewHeader()) {
+                        rootWindow.getResponseState().addHeader("X-HST-VERSION", HstServices.getImplementationVersion());
+                    }
                 }
                 // flush root component window content.
                 // note that the child component's contents are already flushed into the root component's response state.
@@ -259,6 +265,12 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         context.invokeNext();
     }
 
+    private static void setNoCacheHeaders(final HstResponseState response) {
+        response.setDateHeader("Expires", -1);
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+    }
+
     private void sendRedirect(final HttpServletResponse servletResponse, final String redirectLocation, final boolean permanent) throws IOException {
         if (permanent) {
             servletResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
@@ -270,29 +282,29 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     protected void createHstRequestResponseForWindows(
             final HstComponentWindow window,
-            final HstComponentWindow rootRenderingWindow, 
-            final HstRequestContext requestContext, 
+            final HstComponentWindow rootRenderingWindow,
+            final HstRequestContext requestContext,
             final ServletRequest servletRequest,
-            final ServletResponse servletResponse, 
+            final ServletResponse servletResponse,
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap,
             HstResponse topComponentHstResponse,
             boolean isComponentWindowRendered) {
 
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
-        HstResponse response = null;
-        HstResponseState responseState = null;
-        if(isComponentWindowRendered) {
+        HstResponse response;
+        HstResponseState responseState;
+        if (isComponentWindowRendered) {
             responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
                     (HttpServletResponse) servletResponse);
-                response= new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
+            response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
                     responseState, topComponentHstResponse);
         } else {
             // use a noop responseState and noop response
             responseState = new NoopHstServletResponseState();
             response = new NoopHstResponseImpl();
         }
-        
+
         if (topComponentHstResponse == null && isComponentWindowRendered) {
             topComponentHstResponse = response;
         }
@@ -307,7 +319,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         if (childWindowMap != null) {
             for (Map.Entry<String, HstComponentWindow> entry : childWindowMap.entrySet()) {
                 ServletResponse responseForChild;
-                if(isComponentWindowRendered) {
+                if (isComponentWindowRendered) {
                     responseForChild = response;
                 } else {
                     // as long as the componentWindow does not have its renderer invoked, we keep the 
@@ -317,15 +329,15 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                 }
                 boolean isChildComponentWindowRendered = isComponentWindowRendered || entry.getValue() == rootRenderingWindow;
                 createHstRequestResponseForWindows(entry.getValue(), rootRenderingWindow, requestContext, servletRequest, responseForChild,
-                        requestMap, responseMap, topComponentHstResponse, isChildComponentWindowRendered );
+                        requestMap, responseMap, topComponentHstResponse, isChildComponentWindowRendered);
             }
         }
     }
 
     protected void sortComponentWindowsByHierarchy(
-            final HstComponentWindow window, 
+            final HstComponentWindow window,
             final List<HstComponentWindow> sortedWindowList) {
-        
+
         sortedWindowList.add(window);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
@@ -336,18 +348,17 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             }
         }
     }
-    
+
     protected void processWindowsBeforeRender(
-            final HstContainerConfig requestContainerConfig, 
+            final HstContainerConfig requestContainerConfig,
             final HstComponentWindow rootWindow,
             final HstComponentWindow rootRenderingWindow,
-            final HstComponentWindow [] sortedComponentWindows,
-            final Map<HstComponentWindow, HstRequest> requestMap, 
+            final HstComponentWindow[] sortedComponentWindows,
+            final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap)
             throws ContainerException {
 
-        for (int i = 0; i < sortedComponentWindows.length; i++) {
-            HstComponentWindow window = sortedComponentWindows[i];
+        for (HstComponentWindow window : sortedComponentWindows) {
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
 
@@ -369,7 +380,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                             if (asynchronousComponentWindowRenderer == null) {
                                 log.warn("Unsupported asyncMode '{}' found for '{}'. Using default asyncMode '{}' instead. " +
                                         "Supported asyncModes are '{}'.",
-                                        new String[] { asyncMode, window.getComponentInfo().getId(), defaultAsynchronousComponentWindowRenderingMode, asynchronousComponentWindowRendererMap.keySet().toString() });
+                                        new String[]{asyncMode, window.getComponentInfo().getId(), defaultAsynchronousComponentWindowRenderingMode, asynchronousComponentWindowRendererMap.keySet().toString()});
                             }
                         }
 
@@ -390,7 +401,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             if (window.getResponseState().getRedirectLocation() != null) {
                 break;
             }
-            
+
             if (rootWindow.getResponseState().getForwardPathInfo() != null) {
                 break;
             }
@@ -426,7 +437,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                         if (!(childResponse instanceof HstResponseImpl)) {
                             continue;
                         }
-                        final HstResponseImpl childResponseImpl = (HstResponseImpl)childResponse;
+                        final HstResponseImpl childResponseImpl = (HstResponseImpl) childResponse;
                         if (!childWindow.getResponseState().isFlushed() && StringUtils.isNotBlank(getRenderer(childWindow, childResponseImpl))) {
                             if (childResponse.getHeadElements() == null || childResponse.getHeadElements().isEmpty()) {
                                 // there is a window with a renderer but the content is never included in its ancestor component : That
@@ -462,9 +473,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
     }
 
     /**
-     * returns <code>true</code> when the component window is marked as async. When the component is async
-     * due to a ancestor is async, we also set <code>{@link #ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME}</code> is <code>true</code> on
-     * the HstRequest to indicate async due to ancestor
+     * returns <code>true</code> when the component window is marked as async. When the component is async due to a
+     * ancestor is async, we also set <code>{@link #ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME}</code> is
+     * <code>true</code> on the HstRequest to indicate async due to ancestor
+     *
      * @param window
      * @param request
      * @return
@@ -473,7 +485,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         // in cms request context, we never load asynchronous
         if (request.getRequestContext().isCmsRequest()) {
             return false;
-        } 
+        }
         if (request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() != null) {
             return false;
         }
@@ -488,11 +500,8 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         // check whether the component itself is asyn
-        if (window.getComponentInfo().isAsync()) {
-            return true;
-        }
+        return window.getComponentInfo().isAsync();
 
-        return false;
     }
 
     private class NoopHstServletResponseState implements HstResponseState {
@@ -548,11 +557,13 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public void setWrapperElement(Element element) {}
         @Override public boolean isFlushed() { return true;}
     }
-    
-    private class NoopHstResponseImpl implements HstResponse {  /**
+
+    private class NoopHstResponseImpl implements HstResponse {
+        /**
          * the {@link NoopHstResponseImpl} always gets its renderer skipped
          */
-        @Override public boolean isRendererSkipped() {            
+        @Override
+        public boolean isRendererSkipped() {
             return true;
         }
         @Override public void addCookie(Cookie cookie) {}
