@@ -174,4 +174,7 @@ public interface ContainerConstants {
     String HST_FILTER_CHAIN = "org.hippoecm.hst.container.filter.chain";
 
     String HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR = "org.hippoecm.hst.security.servlet.LoginServlet.jaas_login_attempt_resource_url";
+
+    String HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN = "org.hippoecm.hst.security.servlet.LoginServlet.jaas_login_attempt_token";
+
 }
