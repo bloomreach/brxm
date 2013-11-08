@@ -1,0 +1,60 @@
+package org.onehippo.cms7.essentials.dashboard.wiki;
+
+import java.util.Properties;
+
+import javax.jcr.Node;
+
+import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * @version "$Id$"
+ */
+public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
+
+    private static Logger log = LoggerFactory.getLogger(NonWorkflowWikiImporterTest.class);
+
+    @Test
+    public void testNonWorkflowJCRImportAction() throws Exception {
+
+        NonWorkflowWikiImporter importer = new NonWorkflowWikiImporter();
+        Properties properties = new Properties();
+
+        final Node root = session.getRootNode();
+        assertFalse(root.hasNode("content"));
+        final Node content = root.addNode("content", "hippostd:folder");
+
+        final Node documents = content.addNode("documents", "hippostd:folder");
+        final Node gallery = content.addNode("gallery", "hippogallery:stdImageGallery");
+
+        final Node testDocuments = documents.addNode("test", "hippostd:folder");
+        final Node testGallery = gallery.addNode("test", "hippogallery:stdImageGallery");
+
+        session.save();
+
+        properties.put("amount", 99);
+        properties.put("offset", 0);
+        properties.put("maxSubFolder", 5);
+        properties.put("maxDocsPerFolder", 3);
+        properties.put("prefix", "wiki-");
+        properties.put("container", "wikipedia");
+        properties.put("simulation", "true");
+//        properties.put("filesystemLocation", null);
+        properties.put("siteContentBasePath", "/content/documents/test");
+        properties.put("imageContentBasePath", "/content/gallery/test");
+
+        importer.importAction(session, new NewsWikiStrategy(properties), properties);
+
+        assertTrue(session.getNode("/content/documents/test").getNodes().getSize() == 1);
+
+        assertTrue(session.nodeExists("/content/documents/test/wikipedia"));
+
+       // session.getNode("/content/documents/test/wikipedia").getNodes();
+
+    }
+}
