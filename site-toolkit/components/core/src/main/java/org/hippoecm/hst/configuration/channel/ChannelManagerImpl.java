@@ -217,29 +217,16 @@ public class ChannelManagerImpl implements MutableChannelManager {
         final HstSite previewHstSite = mount.getPreviewHstSite();
         channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
 
-        Set<String> mainConfigNodesLockedBySet = new HashSet<>();
 
         HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
-        if (channelRootConfigNode != null) {
-            for (HstNode mainConfigNode : channelRootConfigNode.getNodes()) {
-                final String lockedBy = mainConfigNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
-                if (lockedBy != null) {
-                    mainConfigNodesLockedBySet.add(lockedBy);
-                }
-            }
+        if (channelRootConfigNode == null) {
+            final Set<String> empty = Collections.emptySet();
+            channel.setChangedBySet(empty);
         } else {
-            log.error("Expected configuration node at '" + previewHstSite.getConfigurationPath() + "' but not found.");
+            channel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite));
         }
 
-        // TODO make lazy : fill in changedBySet only during REST call as normally not needed!!!!
-        Set<String> changedBySet = getAllUsersWithAContainerLock(previewHstSite);
-        changedBySet.addAll(mainConfigNodesLockedBySet);
-
-        // TODO make below lazy regarding mainConfigNodesLockedBySet &&& getAllUsersWithAContainerLock
-        channel.setChangedBySet(changedBySet);
-
         String mountPath = mount.getMountPath();
-
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
         channel.setMountPath(mountPath);
@@ -271,24 +258,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
         channel.setUrl(url.toString());
         mount.setChannel(channel);
-    }
-
-    private Set<String> getAllUsersWithAContainerLock(final HstSite previewHstSite) {
-        Set<String> usersWithLock = new HashSet<>();
-        final HstComponentsConfiguration componentsConfiguration = previewHstSite.getComponentsConfiguration();
-        for (HstComponentConfiguration hstComponentConfiguration : componentsConfiguration.getComponentConfigurations().values()) {
-            addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
-        }
-        return usersWithLock;
-    }
-
-    private void addUsersWithContainerLock(final HstComponentConfiguration config, final Set<String> usersWithLock) {
-        if (config.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT && config.getLockedBy() != null) {
-            usersWithLock.add(config.getLockedBy());
-        }
-        for (HstComponentConfiguration hstComponentConfiguration : config.getChildren().values()) {
-            addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
-        }
     }
 
     /**

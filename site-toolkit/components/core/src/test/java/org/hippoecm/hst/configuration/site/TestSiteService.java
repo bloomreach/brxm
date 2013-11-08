@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.configuration.site;
 
+import java.util.HashSet;
+
+import org.hippoecm.hst.configuration.channel.ChannelLazyLoadingChangedBySet;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -27,6 +32,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class TestSiteService extends AbstractTestConfigurations {
 
@@ -48,15 +54,69 @@ public class TestSiteService extends AbstractTestConfigurations {
 
         final HstSiteService hstSite1 = (HstSiteService)mount1.getMount().getHstSite();
         final HstSiteService hstSite2 = (HstSiteService)mount2.getMount().getHstSite();
-;
+
         assertNull(hstSite1.componentsConfiguration);
         assertNull(hstSite2.componentsConfiguration);
 
         hstSite1.getComponentsConfiguration();
         assertNotNull(hstSite1.componentsConfiguration);
         assertNull(hstSite2.componentsConfiguration);
-
         assertSame(hstSite2.getComponentsConfiguration(), hstSite1.componentsConfiguration.get());
+    }
+
+    @Test
+    public void previewSiteComponentsConfigurationLoadedLazilyAndInstancesShared() throws Exception {
+        final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("www.unit.test", "", "/");
+        final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+
+        final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
+        final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
+
+        assertNotSame(hstSite, previewHstSite);
+        assertNull(hstSite.componentsConfiguration);
+        assertNull(previewHstSite.componentsConfiguration);
+        hstSite.getComponentsConfiguration();
+        previewHstSite.getComponentsConfiguration();
+        assertNotNull(hstSite.componentsConfiguration);
+        assertNotNull(previewHstSite.componentsConfiguration);
+        assertSame(hstSite.componentsConfiguration.get(), previewHstSite.componentsConfiguration.get());
+    }
+
+    @Test
+    public void previewSiteComponentsConfigurationLoadedLazilyForCurrentHostGroup() throws Exception {
+        // via the channel manager, the channels for the current hostgroup get loaded. For this, some
+        // lazy loading is introduced in the channel manager. This test is for confirming that. The
+        // unittest content has
+        //
+        // +hst:hst
+        //    + hst:hosts (hst:channelmanagerhostgroup = dev-localhost)
+        //        + dev-localhost
+        //              + localhost
+        //                    + hst:root (hst:channelpath = /hst:hst/hst:channels/testchannel)
+        //
+
+        final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+
+        final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
+        final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
+
+        assertNotSame(hstSite, previewHstSite);
+        assertNull(hstSite.componentsConfiguration);
+        assertNull(previewHstSite.componentsConfiguration);
+
+        // through the channel coupled to previewHstSite, we should now see the componentsConfiguration being loaded
+        // when we invoke *ANY* method on Channel#getChangedBySet() : This is because the getChangedBySet is the
+        // set of users that have changes in the hst configuration, and contains a lazy self-loading set
+        ChannelManager channelMngr = getComponent(ChannelManager.class.getName());
+
+        //
+        assertTrue(channelMngr.getChannelById("testchannel").getChangedBySet() instanceof HashSet);
+
+        // after invoking a method on LazyFilteredAutoLoadingSet, the backing previewHstSite.componentsConfiguration
+        // gets populated
+        channelMngr.getChannelById("testchannel").getChangedBySet().size();
+        assertNotNull(previewHstSite.componentsConfiguration);
 
     }
 
@@ -138,7 +198,6 @@ public class TestSiteService extends AbstractTestConfigurations {
         assertNotSame(hstSite1.getSiteMap(), hstSite2.getSiteMap());
 
     }
-
 
     @Test
     public void locationMapLoadedLazily() throws Exception {

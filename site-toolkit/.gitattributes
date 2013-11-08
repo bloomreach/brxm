@@ -489,6 +489,7 @@ components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstNodeLoadin
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassProcessor.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelLazyLoadingChangedBySet.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapper.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/MutableChannelManager.java -text

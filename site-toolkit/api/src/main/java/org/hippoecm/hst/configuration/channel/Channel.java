@@ -230,6 +230,11 @@ public class Channel implements Serializable {
      * is returned
      */
     public Set<String> getChangedBySet() {
+        if (changedBySet instanceof HashSet) {
+            return changedBySet;
+        } else {
+            changedBySet = new HashSet<>(changedBySet);
+        }
         return changedBySet;
     }
 
