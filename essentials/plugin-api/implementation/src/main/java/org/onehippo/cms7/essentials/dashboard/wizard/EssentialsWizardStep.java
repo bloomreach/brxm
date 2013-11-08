@@ -27,8 +27,14 @@ public abstract class EssentialsWizardStep extends WizardStep {
         return processed;
     }
 
+
+
+
     public void setProcessed(final boolean processed) {
         this.processed = processed;
     }
 
+    public void applyState(final AjaxRequestTarget target) {
+        super.applyState();
+    }
 }

@@ -1,19 +1,11 @@
 package org.onehippo.cms7.essentials.dashboard.wizard;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.extensions.wizard.IWizard;
-import org.apache.wicket.extensions.wizard.IWizardModel;
-import org.apache.wicket.extensions.wizard.IWizardModelListener;
-import org.apache.wicket.extensions.wizard.IWizardStep;
-import org.apache.wicket.extensions.wizard.WizardModel;
+import org.apache.wicket.extensions.wizard.*;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -27,11 +19,15 @@ import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This Panel is used to create Wizards. It implements the apache Wicket wizard model interfaces.
  * @version "$Id$"
  */
-public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWizard {
+public abstract class AjaxWizardPanel extends Panel implements IWizardModelListener, IWizard {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(AjaxWizardPanel.class);
@@ -91,7 +87,7 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
                 final boolean nextAvailable = wizardModel.isNextAvailable();
                 final EssentialsWizardStep activeStep = (EssentialsWizardStep) wizardModel.getActiveStep();
                 activeStep.setProcessed(true);
-                activeStep.applyState();
+                activeStep.applyState(target);
                 final boolean complete = activeStep.isComplete();
                 if(!complete){
                     log.info("Current step not completed, stay: {}," , activeStep);
@@ -153,9 +149,7 @@ public class AjaxWizardPanel extends Panel implements IWizardModelListener, IWiz
      * Gets triggered whenever the wizard is finished, after the last page
      */
     @Override
-    public void onFinish() {
-        info("Form Finished");
-    }
+    public abstract void onFinish();
 
     public IModel<String> getNextButtonLabel() {
         return new StringResourceModel("next", this, null);

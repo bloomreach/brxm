@@ -16,10 +16,12 @@
 
 package org.onehippo.cms7.essentials.setup;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -28,26 +30,24 @@ import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
+import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
 import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import javax.servlet.ServletContext;
+import java.util.List;
 
 /**
  * @version "$Id$"
@@ -65,7 +65,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     };
     private static Logger log = LoggerFactory.getLogger(SetupPage.class);
 
-    final ImmutableList<Plugin> mainPlugins;
+    private final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
     @Inject
     private EventBus eventBus;
@@ -76,6 +76,9 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     @Inject
     private ValidationEventListener validationEventListener;
 
+    private final SelectPowerpackStep selectStep;
+    private final FinalStep finalStep;
+    final PluginContext dashboardPluginContext;
 
     @SuppressWarnings("unchecked")
     public SetupPage(final PageParameters parameters) {
@@ -92,7 +95,6 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         final List<Plugin> plugins = scanner.scan(libPath);
         for (Plugin plugin : plugins) {
             eventBus.post(new LogEvent(String.format("@@@Found plugin: %s", plugin)));
-            eventBus.post(new DisplayEvent(String.format("@@@Found plugin: %s", plugin)));
         }
 
 
@@ -102,25 +104,36 @@ public class SetupPage extends WebPage implements IHeaderContributor {
 
 
         Plugin plugin = getPluginByName("Settings");
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
+        dashboardPluginContext = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
         //############################################
         // INJECT PROJECT SETTINGS
         //############################################
-        final ConfigDocument document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+        final ConfigDocument document = dashboardPluginContext.getConfigService().read(ProjectSetupPlugin.class.getName());
         if (document != null) {
-            context.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
-            context.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
-            context.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
-            context.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
+            dashboardPluginContext.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
+            dashboardPluginContext.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
+            dashboardPluginContext.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
+            dashboardPluginContext.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
         }
 
 
         //############################################
         // WIZARD & STEPS
         //############################################
-        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard");
-        wizard.addWizard(new SelectPowerpackStep(getString("step.choose.powerpack")));
-        wizard.addWizard(new FinalStep(getString("step.overview")));
+        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard") {
+            @Override
+            public void onFinish() {
+                //TODO get the pack from selectStep
+                final PowerpackPackage powerpackPackage = new BasicPowerpack();
+                final InstructionStatus status = powerpackPackage.execute(dashboardPluginContext);
+                info("Installation finished with status: " + status);
+            }
+        };
+
+        selectStep = new SelectPowerpackStep(this, getString("step.choose.powerpack"));
+        finalStep = new FinalStep(this, getString("step.overview"));
+        wizard.addWizard(selectStep);
+        wizard.addWizard(finalStep);
         add(wizard);
 
     }
@@ -144,4 +157,11 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         }
     }
 
+    public FinalStep getFinalStep() {
+        return finalStep;
+    }
+
+    public SelectPowerpackStep getSelectStep() {
+        return selectStep;
+    }
 }

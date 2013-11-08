@@ -1,0 +1,25 @@
+<instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet name="JSP">
+    <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="${tmpFolder}/essentials/essentials-component-document.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="${tmpFolder}/essentials/essentials-component-events.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="${tmpFolder}/essentials/essentials-component-event-detail.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="${tmpFolder}/essentials/essentials-component-list.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-news.jsp" target="${tmpFolder}/essentials/essentials-component-news.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="${tmpFolder}/essentials/essentials-component-news-details.jsp"/>
+  </instructionSet>
+  <instructionSet name="SITE-MAPS">
+    <xml action="copy" source="xml/sitemap-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+  </instructionSet>
+  <instructionSet name="COMPONENTS">
+    <xml action="copy" source="xml/component-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
+  </instructionSet>
+  <instructionSet name="PAGES">
+    <xml action="copy" source="xml/page-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/page-newsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+  </instructionSet>
+  <instructionSet name="TEMPLATES">
+    <xml action="copy" source="xml/template-news-overview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+  </instructionSet>
+
+</instructions>

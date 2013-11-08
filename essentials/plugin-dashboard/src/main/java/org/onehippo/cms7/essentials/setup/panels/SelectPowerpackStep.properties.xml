@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="step.choose.powerpack.description">Step 1: Choose a Power Pack
-        Congratulations - you've successfully created ${name} and are almost ready to get coding!
+  <entry key="form.powerpackDropdown.null">Select a Power Pack</entry>
+  <entry key="step.choose.powerpack.description">
+    <![CDATA[
+        <div class="alert alert-success">Congratulations - you've successfully created ${name} and are almost ready to get coding!
         We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
-        project ${name} will be. We'll then add the relevant components and configuration to get you started.
-    </entry>
-    <entry key="powerpack.news.and.event.label">Basic News and Events site</entry>
-    <entry key="powerpack.news.and.event.description">A basic News and Events site that contains a homepage template, News and Agenda components and detail pages
-    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the most basic Power Pack to start with.
-    You can easily extend with more components later on</entry>
-    <entry key="powerpack.rest.label">Headless REST based content repository</entry>
-    <entry key="powerpack.rest.description">A REST only site that contains only REST services and no pages.</entry>
-    <entry key="powerpack.none.label">Don't install a Power Pack at this time</entry>
-    <entry key="powerpack.none.description">Just create the basic structure for the project, don't install anything yet.</entry>
-    <entry key="powerpack.select.label">Select a Power Pack</entry>
+        project ${name} will be. We'll then add the relevant components and configuration to get you started.</div>
+        
+      <p>&nbsp;</p>
+
+      <strong>Step 1:</strong>
+      ]]>
+  </entry>
+  <entry key="powerpack.news.and.event.label">Basic News and Events site</entry>
+  <entry key="powerpack.news.and.event.description">A basic News and Events site that contains a homepage template, News
+    and Agenda components and detail pages
+    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the
+    most basic Power Pack to start with.
+    You can easily extend with more components later on.
+  </entry>
+  <entry key="powerpack.rest.label">Headless REST based content repository.</entry>
+  <entry key="powerpack.rest.description">A REST only site that contains only REST services and no pages.</entry>
+  <entry key="powerpack.none.label">Don't install a Power Pack at this time</entry>
+  <entry key="powerpack.none.selected.label">No Power Pack will be installed at this time</entry>
+  <entry key="powerpack.none.description">Just create the basic structure for the project, don't install anything yet.
+  </entry>
+  <entry key="powerpack.select.description"></entry>
+  <entry key="templates.radio.jsp.filesystem">Generate JSP templates on filesystem.</entry>
+  <entry key="templates.radio.freemarker.filesystem">Generate Freemarker templates on filesystem.</entry>
+  <entry key="templates.radio.freemarker.repository">Generate Freemarker templates in repository.</entry>
+  <entry key="content.sample.add.label">Add sample content</entry>
 </properties>

@@ -3,7 +3,4 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>6009441a-1792-42a6-bfc2-744e5b475a75</sv:value>
-  </sv:property>
 </sv:node>

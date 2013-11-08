@@ -42,7 +42,6 @@ public class XmlInstructionTest extends BaseRepositoryTest {
      * See instruction_xml_file.xml file
      */
     private static final String NODE_NAME = "testNode";
-
     @Inject
     private InstructionExecutor executor;
     @Inject
@@ -58,11 +57,11 @@ public class XmlInstructionTest extends BaseRepositoryTest {
         //############################################
         addNodeInstruction.setAction(PluginInstruction.COPY);
         addNodeInstruction.setTarget("/");
-        addNodeInstruction.setSource("/instruction_xml_file.xml");
+        addNodeInstruction.setSource("instruction_xml_file.xml");
         final InstructionSet set = new PluginInstructionSet();
         set.addInstruction(addNodeInstruction);
         final InstructionStatus status = executor.execute(set, getContext());
-        assertTrue("Expected SUCCESS but got: " + status,status == InstructionStatus.SUCCESS);
+        assertTrue("Expected SUCCESS but got: " + status, status == InstructionStatus.SUCCESS);
         //############################################
         // DELETE
         //############################################

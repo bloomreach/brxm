@@ -30,6 +30,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 public class PluginInstructionExecutor implements InstructionExecutor {
 
 
+    @Override
     public InstructionStatus execute(final InstructionSet set, PluginContext context) {
 
         InstructionStatus status = InstructionStatus.SUCCESS;

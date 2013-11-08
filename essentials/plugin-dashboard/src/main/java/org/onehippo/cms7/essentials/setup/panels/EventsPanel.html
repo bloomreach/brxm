@@ -15,25 +15,15 @@
   limitations under the License.
   -->
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wicket="http://wicket.apache.org">
+<html xmlns:wicket="http://wicket.apache.org" xmlns="http://www.w3.org/1999/xhtml">
 <body>
 <wicket:panel>
     <form wicket:id="form">
         <fieldset>
-            <table class="table table-striped">
-
-                <tbody wicket:id="repeater">
-                <tr>
-                    <td>
-                        <input wicket:id="undoCheckbox" type="checkbox"  />
-                    </td>
-
-                    <td wicket:id="eventMessage"></td>
-                </tr>
-
-                </tbody>
-
-            </table>
+            <div wicket:id="repeater">
+                <div class="alert alert-success"><input wicket:id="undoCheckbox" type="checkbox"/>
+                    <span wicket:id="eventMessage"></span></div>
+            </div>
         </fieldset>
     </form>
 </wicket:panel>

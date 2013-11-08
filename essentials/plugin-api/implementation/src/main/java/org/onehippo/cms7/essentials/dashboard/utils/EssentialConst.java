@@ -30,6 +30,7 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_BEANS_FOLDER = "beansFolder";
     public static final String PLACEHOLDER_COMPONENTS_FOLDER = "componentsFolder";
     public static final String PLACEHOLDER_REST_FOLDER = "restFolder";
+    public static final String PLACEHOLDER_TMP_FOLDER = "tmpFolder";
     /**
      * @see org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated#internalName()
      */

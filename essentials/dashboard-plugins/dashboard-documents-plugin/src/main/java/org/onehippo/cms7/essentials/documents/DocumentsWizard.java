@@ -36,7 +36,11 @@ public class DocumentsWizard extends DashboardPlugin {
 
     public DocumentsWizard(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
-        final AjaxWizardPanel panel = new AjaxWizardPanel("wizard");
+        final AjaxWizardPanel panel = new AjaxWizardPanel("wizard") {
+            @Override
+            public void onFinish() {
+            }
+        };
         panel.addWizard(new DocumentsCndStep(this, "Register document types"));
         panel.addWizard(new DocumentsTemplateStep(this, "Register document templates"));
         panel.addWizard(new BeansWriterStep(this, "Write HST beans"));

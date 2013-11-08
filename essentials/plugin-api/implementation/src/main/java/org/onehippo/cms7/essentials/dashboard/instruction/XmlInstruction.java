@@ -69,6 +69,9 @@ public class XmlInstruction extends PluginInstruction {
     @Inject(optional = true)
     @Named("instruction.message.xml.copy")
     private String messageCopy;
+    @Inject(optional = true)
+    @Named("instruction.message.xml.copy.error")
+    private String messageCopyError;
     private PluginContext context;
 
     @Override
@@ -101,9 +104,11 @@ public class XmlInstruction extends PluginInstruction {
             }
             final Node destination = session.getNode(target);
 
-            stream = getClass().getResourceAsStream(source);
+            stream = getClass().getClassLoader().getResourceAsStream(source);
             if (stream == null) {
                 log.error("Source file not found {}", source);
+                message = messageCopyError;
+                eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.FAILED;
             }
             session.importXML(destination.getPath(), stream, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
@@ -171,6 +176,8 @@ public class XmlInstruction extends PluginInstruction {
 
         super.processPlaceholders(data);
         //
+
+        messageCopyError = TemplateUtils.replaceTemplateData(messageCopyError, data);
         message = TemplateUtils.replaceTemplateData(message, data);
     }
 

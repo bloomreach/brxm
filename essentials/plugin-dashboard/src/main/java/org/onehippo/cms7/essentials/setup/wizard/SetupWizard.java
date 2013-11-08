@@ -1,6 +1,5 @@
 package org.onehippo.cms7.essentials.setup.wizard;
 
-import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,5 +14,10 @@ public class SetupWizard extends AjaxWizardPanel {
 
     public SetupWizard(final String id) {
         super(id);
+    }
+
+    @Override
+    public void onFinish() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -180,6 +180,7 @@ public class DashboardPluginContext implements PluginContext {
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_COMPONENTS_PACKAGE
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_REST_PACKAGE
      * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_REST_FOLDER
+     * @see org.onehippo.cms7.essentials.dashboard.utils.EssentialConst#PLACEHOLDER_TMP_FOLDER
      */
     @Override
     public Map<String, Object> getPlaceholderData() {
@@ -197,6 +198,8 @@ public class DashboardPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getComponentsPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getRestPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_FOLDER, getRestPackagePath().toString());
+        placeholderData.put(EssentialConst.PLACEHOLDER_TMP_FOLDER, System.getProperty("java.io.tmpdir"));
 
         return placeholderData;
     }
