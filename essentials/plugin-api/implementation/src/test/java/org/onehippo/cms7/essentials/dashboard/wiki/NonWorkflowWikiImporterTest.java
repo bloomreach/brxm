@@ -1,18 +1,16 @@
 package org.onehippo.cms7.essentials.dashboard.wiki;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import java.util.Properties;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
+import javax.jcr.Node;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
@@ -22,12 +20,41 @@ public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
     private static Logger log = LoggerFactory.getLogger(NonWorkflowWikiImporterTest.class);
 
     @Test
-    public void testImportAction() throws Exception {
+    public void testNonWorkflowJCRImportAction() throws Exception {
+
         NonWorkflowWikiImporter importer = new NonWorkflowWikiImporter();
-        final Node content = session.getRootNode().addNode("content");
+        Properties properties = new Properties();
+
+        final Node root = session.getRootNode();
+        assertFalse(root.hasNode("content"));
+        final Node content = root.addNode("content", "hippostd:folder");
+
+        final Node documents = content.addNode("documents", "hippostd:folder");
+        final Node gallery = content.addNode("gallery", "hippogallery:stdImageGallery");
+
+        final Node testDocuments = documents.addNode("test", "hippostd:folder");
+        final Node testGallery = gallery.addNode("test", "hippogallery:stdImageGallery");
+
         session.save();
-        importer.importAction(session, 10, 0, 5, 2, 3, null, "/content", false, "mytestproject:newsdocument");
-        assertNotNull(content.getNodes().nextNode().getNodes().nextNode());
+
+        properties.put("amount", 99);
+        properties.put("offset", 0);
+        properties.put("maxSubFolder", 5);
+        properties.put("maxDocsPerFolder", 3);
+        properties.put("prefix", "wiki-");
+        properties.put("container", "wikipedia");
+        properties.put("simulation", "true");
+//        properties.put("filesystemLocation", null);
+        properties.put("siteContentBasePath", "/content/documents/test");
+        properties.put("imageContentBasePath", "/content/gallery/test");
+
+        importer.importAction(session, new NewsWikiStrategy(properties), properties);
+
+        assertTrue(session.getNode("/content/documents/test").getNodes().getSize() == 1);
+
+        assertTrue(session.nodeExists("/content/documents/test/wikipedia"));
+
+       // session.getNode("/content/documents/test/wikipedia").getNodes();
 
     }
 }
