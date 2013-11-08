@@ -183,7 +183,25 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             if ("draft".equals(state)) {
                 hints.put("addTranslation", Boolean.FALSE);
             } else {
-                hints.put("addTranslation", Boolean.TRUE);
+                NodeIterator siblings = rootSubject.getParent().getNodes(rootSubject.getName());
+                Node unpublished = null;
+                Node published = null;
+                while (siblings.hasNext()) {
+                    Node sibling = siblings.nextNode();
+                    if (sibling.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                        String siblingState = sibling.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                        if ("unpublished".equals(siblingState)) {
+                            unpublished = sibling;
+                        } else if ("published".equals(siblingState)) {
+                            published = sibling;
+                        }
+                    }
+                }
+                if (unpublished != null && published != null) {
+                    if ("published".equals(state)) {
+                        hints.put("addTranslation", Boolean.FALSE);
+                    }
+                }
             }
         }
 
