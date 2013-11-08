@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.form.Form;
 class MenuHierarchy implements Serializable {
 
     private final List<String> categories;
-    private Map<String, MenuDescription> menus = new LinkedHashMap<String, MenuDescription>();
+    private Map<String, List<MenuDescription>> menus = new LinkedHashMap<>();
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
     private List<ActionDescription> items = new LinkedList<ActionDescription>();
 
@@ -52,7 +52,10 @@ class MenuHierarchy implements Serializable {
     }
 
     public void put(String category, MenuDescription menu) {
-        menus.put(category, menu);
+        if (!menus.containsKey(category)) {
+            menus.put(category, new ArrayList<MenuDescription>(1));
+        }
+        menus.get(category).add(menu);
     }
 
     private void put(ActionDescription action) {

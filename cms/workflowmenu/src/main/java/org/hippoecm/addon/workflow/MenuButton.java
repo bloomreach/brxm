@@ -15,6 +15,8 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -40,11 +42,11 @@ class MenuButton extends Panel implements IContextMenu {
         this(id, name, menu, null);
     }
 
-    public MenuButton(final String item, final String key, final MenuDescription menuDescription, Form form) {
-        this(item, key, new MenuHierarchy(form), menuDescription);
+    public MenuButton(final String item, final String key, final List<MenuDescription> menuDescriptions, Form form) {
+        this(item, key, new MenuHierarchy(form), menuDescriptions);
     }
 
-    MenuButton(String id, String name, final MenuHierarchy menu, final MenuDescription description) {
+    MenuButton(String id, String name, final MenuHierarchy menu, final List<MenuDescription> descriptions) {
         super(id);
         setOutputMarkupId(true);
         add(content = new MenuList("item", menu));
@@ -62,14 +64,17 @@ class MenuButton extends Panel implements IContextMenu {
             }
 
             void updateContent() {
-                if (description != null) {
-                    MarkupContainer descriptionContent = description.getContent();
-                    if (descriptionContent != null) {
-                        menu.clear();
-                        descriptionContent.visitChildren(Panel.class, new MenuVisitor(menu, "list"));
-                        menu.flatten();
-                        content.update();
+                if (descriptions != null) {
+                    menu.clear();
+                    MenuVisitor visitor = new MenuVisitor(menu, "list");
+                    for (MenuDescription description : descriptions) {
+                        MarkupContainer descriptionContent = description.getContent();
+                        if (descriptionContent != null) {
+                            descriptionContent.visitChildren(Panel.class, visitor);
+                        }
                     }
+                    menu.flatten();
+                    content.update();
                 }
             }
 
@@ -87,8 +92,8 @@ class MenuButton extends Panel implements IContextMenu {
         });
 
         Component label = null;
-        if (description != null) {
-            label = description.getLabel();
+        if (descriptions != null) {
+            label = descriptions.get(0).getLabel();
         }
         if (label == null) {
             link.add(new Label("label", new StringResourceModel(name, MenuButton.this, null, name)));
