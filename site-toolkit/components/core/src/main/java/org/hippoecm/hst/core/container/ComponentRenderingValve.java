@@ -51,7 +51,7 @@ public class ComponentRenderingValve extends AbstractBaseOrderableValve {
             return;
         }
 
-        if (requestContext.isCmsRequest()) {
+        if (requestContext.isCmsRequest() || requestContext.isPreview()) {
             setNoCacheHeaders(servletResponse);
         }
 
