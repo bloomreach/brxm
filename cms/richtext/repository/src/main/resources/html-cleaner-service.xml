@@ -451,6 +451,7 @@
         <sv:property sv:name="hippohtmlcleaner:attributes" sv:type="String">
           <sv:value>src</sv:value>
           <sv:value>align</sv:value>
+          <sv:value>allowfullscreen</sv:value>
           <sv:value>class</sv:value>
           <sv:value>frameborder</sv:value>
           <sv:value>height</sv:value>
