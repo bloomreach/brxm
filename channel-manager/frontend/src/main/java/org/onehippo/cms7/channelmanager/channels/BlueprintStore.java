@@ -63,8 +63,8 @@ public class BlueprintStore extends ExtJsonStore<Object> {
 
     @Override
     protected long getTotal() {
-        List<Blueprint> blueprintList = getBlueprints();
         if (this.total == null) {
+            List<Blueprint> blueprintList = getBlueprints();
             if (blueprintList != null){
                 this.total = (long) blueprintList.size();
             } else {
@@ -115,7 +115,7 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     	if (blueprints == null) {
             if (restProxyService != null) {
                 BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
-                blueprints = blueprintService.getBlueprints();   
+                blueprints = blueprintService.getBlueprints();
             } else {
                 blueprints = Collections.emptyList();
             }
