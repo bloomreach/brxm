@@ -44,6 +44,9 @@ import java.util.List;
 public class SelectPowerpackStep extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
+    public static final String POWERPACK_NEWS_AND_EVENT_LABEL = "powerpack.news.and.event.label";
+    public static final String POWERPACK_REST_LABEL = "powerpack.rest.label";
+    public static final String POWERPACK_NONE_LABEL = "powerpack.none.label";
     private static Logger log = LoggerFactory.getLogger(SelectPowerpackStep.class);
     private final DropDownChoice<String> powerpackDropdown;
     private final SetupPage myParent;
@@ -74,12 +77,29 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         packDescription.setOutputMarkupId(true);
         form.add(packDescription);
 
-        final List<String> powerpackList = new ArrayList<>();
-        powerpackList.add("powerpack.news.and.event.label");
-        powerpackList.add("powerpack.none.label");
+        final List<String> selectOptionList = new ArrayList<>();
+        selectOptionList.add(POWERPACK_NEWS_AND_EVENT_LABEL);
+        selectOptionList.add(POWERPACK_REST_LABEL);
+        selectOptionList.add(POWERPACK_NONE_LABEL);
 
         final PropertyModel<String> powerpackModel = new PropertyModel<>(this, "selectedPowerpack");
-        powerpackDropdown = new DropDownChoice<String>("powerpackDropdown", powerpackModel, powerpackList);
+        powerpackDropdown = new DropDownChoice<String>("powerpackDropdown", powerpackModel, selectOptionList) {
+            @Override
+            protected boolean isDisabled(String object, int index, String selected) {
+                switch (object) {
+                    case POWERPACK_NEWS_AND_EVENT_LABEL:
+                        return false;
+                    case POWERPACK_REST_LABEL:
+                        return true;
+                    case POWERPACK_NONE_LABEL:
+                        return true;
+                    default:
+                        return false;
+                }
+
+            }
+        };
+
         powerpackDropdown.setNullValid(false);
         powerpackDropdown.add(new AjaxEventBehavior("onchange") {
             private static final long serialVersionUID = 1L;

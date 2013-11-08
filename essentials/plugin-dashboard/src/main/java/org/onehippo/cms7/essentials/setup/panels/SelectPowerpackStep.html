@@ -18,7 +18,11 @@
     <wicket:message key="step.choose.powerpack.description" />
 
     <form wicket:id="form">
-        <select wicket:id="powerpackDropdown">[POWERPACK DROPDOWN]</select>
+        <select wicket:id="powerpackDropdown">
+            <option value="newsAndEvent"></option>
+            <option value="headlessRest"></option>
+            <option value="none"></option>
+        </select>
         <div wicket:id="pack.description" />
 
         <br/><br/>

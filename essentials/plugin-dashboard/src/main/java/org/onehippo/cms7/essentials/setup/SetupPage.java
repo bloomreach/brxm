@@ -34,7 +34,9 @@ import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
+import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
@@ -47,7 +49,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @version "$Id$"
@@ -123,8 +127,16 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard") {
             @Override
             public void onFinish() {
-                //TODO get the pack from selectStep
-                final PowerpackPackage powerpackPackage = new BasicPowerpack();
+                log.debug("Selected Power Pack is {}", selectStep.getSelectedPowerpack());
+                final PowerpackPackage powerpackPackage;
+                switch (selectStep.getSelectedPowerpack()) {
+                    case SelectPowerpackStep.POWERPACK_NEWS_AND_EVENT_LABEL:
+                        powerpackPackage = new BasicPowerpack();
+                        break;
+                    default:
+                        powerpackPackage = new EmptyPowerPack();
+                        break;
+                }
                 final InstructionStatus status = powerpackPackage.execute(dashboardPluginContext);
                 info("Installation finished with status: " + status);
             }
@@ -163,5 +175,26 @@ public class SetupPage extends WebPage implements IHeaderContributor {
 
     public SelectPowerpackStep getSelectStep() {
         return selectStep;
+    }
+
+    private class EmptyPowerPack implements PowerpackPackage {
+        @Override
+        public Instructions getInstructions() {
+            return new Instructions() {
+                @Override
+                public Set<InstructionSet> getInstructionSets() {
+                    return Collections.emptySet();
+                }
+
+                @Override
+                public void setInstructionSets(Set<InstructionSet> instructionSets) {
+                }
+            };
+        }
+
+        @Override
+        public InstructionStatus execute(PluginContext context) {
+            return InstructionStatus.SUCCESS;
+        }
     }
 }
