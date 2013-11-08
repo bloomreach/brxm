@@ -17,6 +17,10 @@
 
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
+  <instructionSet name="NAMESPACE">
+    <xml action="copy" source="xml/namespace-news.xml" target="/hippo:namespaces/${namespace}/newsdocument"/>
+    <xml action="copy" source="xml/namespace-events.xml" target="/hippo:namespaces/${namespace}/eventsdocument"/>
+  </instructionSet>
   <instructionSet name="JSP">
     <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="${jspRoot}/essentials/essentials-component-document.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="${jspRoot}/essentials/essentials-component-events.jsp"/>
