@@ -14,6 +14,9 @@
   <instructionSet name="COMPONENTS">
     <xml action="copy" source="xml/component-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
   </instructionSet>
+  <instructionSet name="JAVA">
+    <file action="copy" overwrite="true" source="java/NewsDocumentBean.java" target="${tmpFolder}/${beansFolder}/NewsDocumentBean.java"/>
+  </instructionSet>
   <instructionSet name="PAGES">
     <xml action="copy" source="xml/page-news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
     <xml action="copy" source="xml/page-newsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>

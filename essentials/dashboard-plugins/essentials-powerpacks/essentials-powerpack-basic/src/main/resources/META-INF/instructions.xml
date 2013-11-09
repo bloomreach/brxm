@@ -49,6 +49,9 @@
     <xml action="copy"  source="xml/sitemap/news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
     <xml action="copy"  source="xml/sitemap/events.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
   </instructionSet>
+  <instructionSet name="JAVA">
+    <file action="copy"  overwrite="true" source="java/NewsDocumentBean.java" target="${beansFolder}/NewsDocumentBean.java"/>
+  </instructionSet>
   <instructionSet name="COMPONENTS">
     <xml action="copy" source="xml/components/list.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
     <xml action="copy" source="xml/components/content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>

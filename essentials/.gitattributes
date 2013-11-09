@@ -418,6 +418,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/pom.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpack.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/icons/new-folder-16.png -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/NewsDocumentBean.java -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-document.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-event-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/jsp/essentials-component-events.jsp -text

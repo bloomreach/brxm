@@ -111,6 +111,7 @@
           <include>**/*.xml</include>
           <include>**/*.MF</include>
           <include>**/*.properties</include>
+          <include>**/*.java</include>
         </includes>
       </resource>
     </resources>
