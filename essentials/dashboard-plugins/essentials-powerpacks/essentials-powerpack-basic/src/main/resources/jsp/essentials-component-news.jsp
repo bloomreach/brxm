@@ -3,7 +3,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<%@ taglib prefix="tag" tagdir="/WEB-INF/tags" %>
 <%--@elvariable id="pageable" type="EL_PAGEABLE"--%>
 <%--@elvariable id="bean" type="EL_BEAN"--%>
 
