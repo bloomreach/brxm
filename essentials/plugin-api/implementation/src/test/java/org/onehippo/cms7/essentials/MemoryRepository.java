@@ -63,6 +63,11 @@ public class MemoryRepository {
         if (!queryNode.hasNode("hippo:templates")) {
             queryNode.addNode("hippo:templates", "hipposys:queryfolder");
         }
+        // add content:
+        final Node content = rootNode.addNode("content", "hippostd:folder");
+
+        content.addNode("documents", "hippostd:folder").addNode("testnamespace", "hippostd:folder");
+
         session.save();
 
 

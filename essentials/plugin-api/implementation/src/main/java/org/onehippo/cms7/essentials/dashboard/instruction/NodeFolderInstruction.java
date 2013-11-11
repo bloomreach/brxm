@@ -67,11 +67,18 @@ public class NodeFolderInstruction extends PluginInstruction {
             log.error("Invalid instruction:", this);
             return InstructionStatus.FAILED;
         }
+        final Map<String, Object> data = context.getPlaceholderData();
+        super.processPlaceholders(data);
+        final String myPath = TemplateUtils.replaceTemplateData(path, data);
+        if (myPath != null) {
+            path = myPath;
+        }
         return createFolders();
 
     }
 
     private InstructionStatus createFolders() {
+
         final Session session = context.getSession();
 
         InputStream stream = null;
@@ -79,13 +86,14 @@ public class NodeFolderInstruction extends PluginInstruction {
             if (session.itemExists(path)) {
                 return InstructionStatus.SKIPPED;
             }
-            stream = getClass().getResourceAsStream(template);
+            stream = getClass().getClassLoader().getResourceAsStream(template);
             if (stream == null) {
                 log.error("Template was not found: {}", template);
                 return InstructionStatus.FAILED;
             }
-            final String content = GlobalUtils.readStreamAsText(stream).toString();
-
+            String content = GlobalUtils.readStreamAsText(stream).toString();
+            final Map<String, Object> data = context.getPlaceholderData();
+            content  = TemplateUtils.replaceTemplateData(content, data);
             final Iterable<String> pathParts = Splitter.on('/').omitEmptyStrings().split(path);
             Node parent = session.getRootNode();
             for (String part : pathParts) {
@@ -94,14 +102,13 @@ public class NodeFolderInstruction extends PluginInstruction {
                     continue;
                 }
                 // replace node name
-                final Map<String, Object> data = new HashMap<>();
+
                 data.put("name", part);
                 final String folderXml = TemplateUtils.replaceTemplateData(content, data);
                 session.importXML(parent.getPath(), new ByteArrayInputStream(folderXml.getBytes()), ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
                 parent = parent.getNode(part);
 
             }
-            final Map<String, Object> data = new HashMap<>();
             data.put("target", path);
             message = TemplateUtils.replaceTemplateData(messageSuccess, data);
             session.save();
@@ -110,7 +117,7 @@ public class NodeFolderInstruction extends PluginInstruction {
 
 
         } catch (RepositoryException | IOException e) {
-            log.error("Error creating folders", e);
+            log.error("Error creating folders" + this, e);
             GlobalUtils.refreshSession(session, false);
         } finally {
             IOUtils.closeQuietly(stream);

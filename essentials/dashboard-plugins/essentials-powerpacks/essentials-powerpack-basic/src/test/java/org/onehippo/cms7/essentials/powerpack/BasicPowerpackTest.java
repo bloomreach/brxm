@@ -48,7 +48,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_TMP_FOLDER) + File.separator + "essentials");
+        jspDirectory = new File(getContext().getPlaceholderData().get(EssentialConst.PLACEHOLDER_JSP_ROOT) + File.separator + "essentials");
         createHstRootConfig();
 
     }
@@ -66,7 +66,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
         final InstructionStatus status = powerpackPackage.execute(getContext());
         // create target node:
         assertEquals(InstructionStatus.SUCCESS, status);
-        assertEquals(jspDirectory.listFiles().length, 5);
+        assertEquals(jspDirectory.listFiles().length, 8);
 
 
     }

@@ -10,6 +10,10 @@
     <sv:value>new-news-folder</sv:value>
     <sv:value>new-news-document</sv:value>
   </sv:property>
+  <!-- NOTE: TEST ONLY-->
+  <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">
+    <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+  </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
     <sv:value>55b3284c-6da8-4249-88f7-49a17870ba90</sv:value>
   </sv:property>
