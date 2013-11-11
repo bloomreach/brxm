@@ -2,22 +2,40 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="hst" uri="http://www.hippoecm.org/jsp/hst/core" %>
-<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<%@ taglib prefix="tag" tagdir="/WEB-INF/tags" %>
-<%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
+<%--@elvariable id="document" type="${beanspackage}.EventsDocument"--%>
 
-<hst:link var="link" hippobean="\${item}"/>
+<hst:link var="link" hippobean="\${document}"/>
 <article>
-    <hst:cmseditlink hippobean="\${item}"/>
-    <h3><a href="\${link}"><c:out value="\${item.title}"/></a></h3>
-    <c:if test="\${hst:isReadable(item, 'date.time')}">
-        <p>
-            <fmt:formatDate value="\${item.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
-        </p>
-    </c:if>
-    <p><c:out value="\${item.number}"/></p>
-    <p><c:out value="\${item.street}"/></p>
-    <p><c:out value="\${item.city}"/></p>
-    <p><c:out value="\${item.province}"/></p>
-    <p><c:out value="\${item.country}"/></p>
+  <hst:cmseditlink hippobean="\${document}"/>
+  <h3><a href="\${link}"><c:out value="\${document.title}"/></a></h3>
+  <c:if test="\${hst:isReadable(document, 'date.time')}">
+    <p>
+      <fmt:formatDate value="\${document.date.time}" type="both" dateStyle="medium" timeStyle="short"/>
+    </p>
+  </c:if>
+  <c:if test="\${hst:isReadable(document, 'enddate.time')}">
+    <p>
+      <fmt:formatDate value="\${document.enddate.time}" type="both" dateStyle="medium" timeStyle="short"/>
+    </p>
+  </c:if>
+
+  <c:if test="\${not empty document.location}">
+    <p><c:out value="\${document.location}"/></p>
+  </c:if>
+
+  <c:if test="\${not empty document.introduction}">
+    <p><c:out value="\${document.introduction}"/></p>
+  </c:if>
+
+  <c:if test="\${hst:isReadable(document, 'image.original')}">
+    <hst:link var="img" hippobean="\${document.image.original}"/>
+    <figure>
+      <img src="\${img}" title="\${fn:escapeXml(document.image.fileName)}"
+           alt="\${fn:escapeXml(document.image.fileName)}"/>
+      <figcaption>\${fn:escapeXml(document.image.description)}</figcaption>
+    </figure>
+  </c:if>
+
+  <hst:html hippohtml="\${document.content}"/>
+
 </article>

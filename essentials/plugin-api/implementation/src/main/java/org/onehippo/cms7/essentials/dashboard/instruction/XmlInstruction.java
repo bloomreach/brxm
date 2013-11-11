@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 
@@ -111,7 +112,9 @@ public class XmlInstruction extends PluginInstruction {
                 eventBus.post(new InstructionEvent(this));
                 return InstructionStatus.FAILED;
             }
-            session.importXML(destination.getPath(), stream, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+
+            // Import XML with replaced NAMESPACE placeholder
+            session.importXML(destination.getPath(), replacePlaceHolders(stream), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Added node to: {}", destination.getPath());
             sendEvents();
@@ -124,6 +127,23 @@ public class XmlInstruction extends PluginInstruction {
         }
         return InstructionStatus.FAILED;
 
+    }
+
+    /**
+     * Replace the placeholders in the input stream. It replaces the the #NAMESPACE# placeholder
+     * with the project namespace prefix.
+     *
+     * TODO: verify this method and the mechanism of replacing placeholders in XML
+     *
+     * @param input an input stream containing placeholders
+     * @return an input stream with replaced namespace
+     * @throws IOException
+     */
+    private InputStream replacePlaceHolders(final InputStream input) throws IOException {
+        final StringWriter writer = new StringWriter();
+        IOUtils.copy(input, writer);
+        final String replacedData = GlobalUtils.replacePlaceholders(writer.toString(), "NAMESPACE", context.getProjectNamespacePrefix());
+        return IOUtils.toInputStream(replacedData);
     }
 
 
