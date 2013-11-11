@@ -479,9 +479,9 @@
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/skin.css</exclude>
                 <exclude>api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css</exclude>
-                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.2.js</exclude>
+                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.8.3.js</exclude>
                 <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.class.js</exclude>
-                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.16.js</exclude>
+                <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/DiffusionFilterOp.java</exclude>
                 <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFEncoder.java</exclude>
