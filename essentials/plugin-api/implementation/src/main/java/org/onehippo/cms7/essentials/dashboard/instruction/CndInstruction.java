@@ -16,12 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.util.Map;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeTypeExistsException;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -34,11 +33,11 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeExistsException;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Map;
 
 /**
  * @version "$Id$"
@@ -142,6 +141,7 @@ public class CndInstruction extends PluginInstruction {
         this.action = action;
     }
 
+    @XmlAttribute
     public String getDocumentType() {
         return documentType;
     }
@@ -151,7 +151,7 @@ public class CndInstruction extends PluginInstruction {
     }
 
 
-
+    @XmlAttribute
     public String getSuperType() {
         return superType;
     }
