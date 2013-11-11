@@ -32,10 +32,13 @@ import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private String rootPath;
 
     public void setRootPath(final String rootPath) {
@@ -68,13 +71,14 @@ public class RootResource extends AbstractConfigResource {
             HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
+            log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
 
         HandshakeResponse response = new HandshakeResponse();
         response.setCanWrite(canWrite);
         response.setSessionId(session.getId());
-
+        log.info("Composer-Mode successful");
         return ok("Composer-Mode successful", response);
     }
 
@@ -87,6 +91,7 @@ public class RootResource extends AbstractConfigResource {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
+        log.info("Preview-Mode successful");
         return ok("Preview-Mode successful", null);
     }
 
@@ -95,14 +100,16 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setVariant(@Context HttpServletRequest servletRequest, @FormParam("variant") String variant) {
         servletRequest.getSession().setAttribute(ContainerConstants.RENDER_VARIANT, variant);
+        log.info("Variant '{}' set", variant);
         return ok("Variant set");
     }
 
     @POST
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response clearVariant(@Context HttpServletRequest servletRequest, String variant) {
+    public Response clearVariant(@Context HttpServletRequest servletRequest) {
         servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
+        log.info("Variant cleared");
         return ok("Variant cleared");
     }
 

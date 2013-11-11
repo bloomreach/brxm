@@ -79,20 +79,24 @@ public class ContainerComponentResource extends AbstractConfigResource {
             try {
                 containerItem = session.getNodeByIdentifier(itemUUID);
             } catch (ItemNotFoundException e) {
+                log.warn("ItemNotFoundException: unknown uuid '{}'. Cannot create item", itemUUID);
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot create item");
             }
             if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                log.warn("The container component where the item should be created in is not of the correct type. Cannot create item '{}'", itemUUID);
                 return error("The container component where the item should be created in is not of the correct type. Cannot create item '"+itemUUID+"'");
             }
 
             Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             if (containerNode == null) {
+                log.warn("Exception during creating new container item : Could not find container node to add item to.");
                 return error("Exception during creating new container item : Could not find container node to add item to.");
             }
 
             try {
                 HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
+                log.warn("HstConfigurationUtils tryLockIfNeeded on '"+containerNode.getPath()+"' failed: ", e);
                 return error(e.getMessage());
             }
 
@@ -106,14 +110,10 @@ public class ContainerComponentResource extends AbstractConfigResource {
             HstConfigurationUtils.persistChanges(session);
 
             ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem, newLastModifiedTimestamp);
+            log.info("Successfully created item '{}' with path '{}'" , newItem.getName(), newItem.getPath());
             return ok("Successfully created item " + newItem.getName() + " with path " + newItem.getPath(), item);
-
         } catch (RepositoryException e) {
-            if(log.isDebugEnabled()) {
-                log.warn("Exception during creating new container item: {}", e);
-            } else {
-                log.warn("Exception during creating new container item: {}", e.getMessage());
-            }
+            log.warn("Exception during creating new container item: {}", e);
             return error("Exception during creating new container item : " + e.getMessage());
         }
     }
@@ -144,6 +144,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             try {
                 HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
+                log.warn("HstConfigurationUtils tryLockIfNeeded on '"+containerNode.getPath()+"' failed: ", e);
                 return error(e.getMessage());
             }
             List<String> children = container.getChildren();
@@ -171,6 +172,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                         --index;
                     }
                 } catch (ItemNotFoundException e) {
+                    log.warn("ItemNotFoundException: Cannot update item '{}' for containerNode '{}'.",itemUUID, containerNode.getPath());
                     return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
@@ -182,14 +184,11 @@ public class ContainerComponentResource extends AbstractConfigResource {
             } else {
                 HstConfigurationUtils.persistChanges(session);
             }
+            log.info("Item order for container[{}] has been updated.", container.getId());
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
         } catch (RepositoryException e) {
-            if(log.isDebugEnabled()) {
-                log.warn("Exception during updating container item: {}", e);
-            } else {
-                log.warn("Exception during updating container item: {}", e.getMessage());
-            }
+            log.warn("Exception during updating container item: {}", e);
             return error("Exception during updating container item: " + e.getMessage(), container);
         }
     }
@@ -208,32 +207,33 @@ public class ContainerComponentResource extends AbstractConfigResource {
             try {
                 containerItem = session.getNodeByIdentifier(itemUUID);
             } catch (ItemNotFoundException e) {
+                log.warn("ItemNotFoundException: unknown uuid '{}'. Cannot delete item", itemUUID);
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
             }
             if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                log.warn("The item to be deleted is not of the correct type. Cannot delete item '{}'", itemUUID);
                 return error("The item to be deleted is not of the correct type. Cannot delete item '"+itemUUID+"'");
             }
             Node containerNode = containerItem.getParent();
             if (!containerNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+                log.warn("The item to be deleted is not a child of a container component. Cannot delete item '{}'", itemUUID);
                 return error("The item to be deleted is not a child of a container component. Cannot delete item '"+itemUUID+"'");
             }
             try {
                 HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp);
             } catch (IllegalStateException e) {
+                log.warn("HstConfigurationUtils tryLockIfNeeded on '"+containerNode.getPath()+"' failed: ", e);
                 return error(e.getMessage());
             }
             HstConfigurationUtils.setLastModifiedTimestampForContainer(containerItem);
             containerItem.remove();
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
-            if(log.isDebugEnabled()) {
-                log.warn("Exception during delete container item: {}", e);
-            } else {
-                log.warn("Exception during delete container item: {}", e.getMessage());
-            }
+            log.warn("Exception during delete container item: {}", e);
             log.warn("Failed to delete node with id {}.", itemUUID);
             return error("Failed  to delete node with id '"+itemUUID+"': " + e.getMessage());
         }
+        log.info("Successfully removed node with UUID: {}", itemUUID);
         return ok("Successfully removed node with UUID: " + itemUUID);
     }
 
@@ -243,6 +243,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
         while (parent.hasNode(newName)) {
             newName = base + ++counter;
         }
+        log.debug("New child name '{}' for parent '{}'", newName, parent.getPath());
         return newName;
     }
 
@@ -259,9 +260,11 @@ public class ContainerComponentResource extends AbstractConfigResource {
             String name = childPath.substring(childPath.lastIndexOf('/') + 1);
             name = findNewName(name, parent);
             String newChildPath = parentPath + "/" + name;
+            log.debug("Move needed from '{}' to '{}'.", childPath, newChildPath);
             session.move(childPath, newChildPath);
             return true;
         }
+        log.debug("No Move needed for '{}' below '{}'", childId, parent.getPath());
         return false;
     }
 

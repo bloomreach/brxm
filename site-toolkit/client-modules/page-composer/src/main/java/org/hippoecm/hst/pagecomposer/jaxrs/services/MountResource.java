@@ -78,14 +78,11 @@ public class MountResource extends AbstractConfigResource {
                 return error("Could not get the editing site to create the page model representation.");
             }
             final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(editingPreviewHstSite, pageId, getEditingPreviewMount(requestContext));
+            log.info("PageModel loaded successfully");
             return ok("PageModel loaded successfully", pageModelRepresentation.getComponents().toArray());
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve page model.", e);
-            } else {
-                log.warn("Failed to retrieve page model. {}", e.toString());
-            }
-            return error(e.toString());
+            log.warn("Failed to retrieve page model.", e);
+            return error("Failed to retrieve page model: " + e.toString());
         }
     }
     
@@ -103,6 +100,7 @@ public class MountResource extends AbstractConfigResource {
         setCurrentMountCanonicalContentPath(servletRequest, editingMount.getCanonicalContentPath());
 
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
+        log.info("Toolkit items loaded successfully");
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
     }
 
@@ -124,22 +122,24 @@ public class MountResource extends AbstractConfigResource {
             for (String userId : usersWithLocks) {
                 usersWithChanges.add(new UserRepresentation(userId));
             }
-
+            log.info("Found " + usersWithChanges.size() + " users with changes");
             return ok("Found " + usersWithChanges.size() + " users with changes", usersWithChanges);
         } catch (LoginException e) {
+            log.warn("Could not get a JCR session. Cannot retrieve users with changes.", e);
             return error("Could not get a JCR session: " + e + ". Cannot retrieve users with changes.");
         } catch (RepositoryException e) {
+            log.warn("Could not retrieve users with changes: ", e);
             return error("Could not retrieve users with changes: " + e);
         }
     }
 
-    private Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
+    Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+        final String xpath = buildXPathQueryToFindLockedMainConfigNodesForUsers(previewConfigurationPath);
         return collectFromQueryUsersForLockedBy(session, xpath);
     }
 
-    private Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        final String xpath = buildXPathQueryToFindLockedMainConfigNodesForUsers(previewConfigurationPath);
+    Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+        final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
         return collectFromQueryUsersForLockedBy(session, xpath);
     }
 
@@ -162,6 +162,7 @@ public class MountResource extends AbstractConfigResource {
                 userIds.add(userId);
             }
         }
+        log.info("For query '{}' collected '{}' users that have a lock", xpath, userIds.toString());
         return userIds;
     }
 
@@ -189,15 +190,18 @@ public class MountResource extends AbstractConfigResource {
 
             createPreviewConfigurationNode(requestContext);
             HstConfigurationUtils.persistChanges(session);
+            log.info("Site '{}' can be edited now", ctxEditingPreviewSite.getConfigurationPath());
+            return ok("Site can be edited now");
         } catch (IllegalStateException e) {
+            log.warn("Cannot start editing : ", e);
             return error("Cannot start editing : " + e);
         } catch (LoginException e) {
+            log.warn("Could not get a jcr session. Cannot create a  preview configuration.", e);
             return error("Could not get a jcr session : " + e + ". Cannot create a  preview configuration.");
         } catch (RepositoryException e) {
+            log.warn("Could not create a preview configuration : ", e);
             return error("Could not create a preview configuration : " + e);
         }
-   
-        return ok("Site can be edited now");
     }
 
     private void createPreviewConfigurationNode(final HstRequestContext requestContext) throws RepositoryException {
@@ -228,6 +232,7 @@ public class MountResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
         if (!hasPreviewConfiguration(editingPreviewMount)) {
+            log.warn("Cannot discard changes of users in a non-preview site");
             return error("Cannot discard changes of users in a non-preview site");
         }
         return discardChanges(requestContext, ids.getData());
@@ -247,6 +252,7 @@ public class MountResource extends AbstractConfigResource {
         final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
 
         if (!hasPreviewConfiguration(editingPreviewMount)) {
+            log.warn("Cannot publish non preview site");
             return error("Cannot publish non preview site");
         }
         return publishChangesOfCurrentUser(requestContext);
@@ -260,6 +266,7 @@ public class MountResource extends AbstractConfigResource {
         final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
 
         if (!hasPreviewConfiguration(editingPreviewMount)) {
+            log.warn("Cannot publish non preview site");
             return error("Cannot publish non preview site");
         }
         return publishChangesOfUsers(requestContext, ids.getData());
@@ -271,6 +278,7 @@ public class MountResource extends AbstractConfigResource {
             String currentUserId = session.getUserID();
             return publishChangesOfUsers(requestContext, Collections.singletonList(currentUserId));
         } catch (RepositoryException e) {
+            log.warn("Could not publish preview configuration of the current user : ", e);
             return error("Could not publish preview configuration of the current user: " + e);
         }
     }
@@ -290,6 +298,7 @@ public class MountResource extends AbstractConfigResource {
             HstConfigurationUtils.persistChanges(session);
             return ok("Site is published");
         } catch (RepositoryException e) {
+            log.warn("Could not publish preview configuration : ", e);
             return error("Could not publish preview configuration : " + e);
         }
     }
@@ -409,8 +418,11 @@ public class MountResource extends AbstractConfigResource {
             copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
 
             HstConfigurationUtils.persistChanges(session);
+
+            log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), getEditingPreviewMount(requestContext).getHstSite().getName());
             return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
         } catch (RepositoryException e) {
+            log.warn("Could not discard preview configuration: ", e);
             return error("Could not discard preview configuration: " + e);
         }
     }
@@ -433,6 +445,8 @@ public class MountResource extends AbstractConfigResource {
             }
             relativePathsToRevert.add(containerToRevert.getPath().substring(previewConfigurationPath.length()));
         }
+        log.info("Changed containers for configuration '{}' for users '{}' are : {}",
+                new String[]{previewConfigurationPath, userIds.toString(), relativePathsToRevert.toString()});
         return relativePathsToRevert;
     }
 
@@ -453,7 +467,8 @@ public class MountResource extends AbstractConfigResource {
                 continue;
             }
             mainConfigNodeNamesToRevert.add(mainConfigNodeToRevert.getPath().substring(previewConfigurationPath.length() + 1));
-        }
+        }log.info("Changed main config nodes for configuration '{}' for users '{}' are : {}",
+                new String[]{previewConfigurationPath, userIds.toString(), mainConfigNodeNamesToRevert.toString()});
         return mainConfigNodeNamesToRevert;
     }
 
@@ -528,6 +543,7 @@ public class MountResource extends AbstractConfigResource {
                 // WARN DO NOT JUST DELETE OLD CONTAINER AS THIS INTRODUCES ORDERING ISSUES IN CASE OF SIBBLING CONTAINERS
                 // WHEN THE NEW CONTAINER IS COPIED BACK. INSTEAD, REMOVE CHILDREN AND ADD
                 for (Node oldNode : new NodeIterable(containerToRelaceChildrenFrom.getNodes())) {
+                    log.debug("Removing old node '{}'", oldNode.getPath());
                     oldNode.remove();
                 }
 
@@ -549,7 +565,10 @@ public class MountResource extends AbstractConfigResource {
                 containerToRelaceChildrenFrom.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
                 for (Node newNode : new NodeIterable(fromNode.getNodes())) {
                     session.copy(newNode, absToContainerPath + "/" + newNode.getName());
+                    log.debug("Added new node '{}'", absToContainerPath + "/" + newNode.getName());
                 }
+                log.info("Containers '{}' pushed succesfully from '{}' to '{}'.",
+                        new String[]{relativeContainerPaths.toString(), fromConfig, toConfig});
             } else {
                 log.warn("Cannot push node path '{}' because live or preview version for '{}' is not available.",
                         absToContainerPath, relativeContainerPath);
@@ -592,17 +611,13 @@ public class MountResource extends AbstractConfigResource {
                         absToPath, mainConfigNodeName);
             }
         }
+
+        log.info("Main config nodes '{}' pushed succesfully from '{}' to '{}'.",
+                new String[]{mainConfigNodeNames.toString(), fromConfig, toConfig});
     }
 
     private boolean hasPreviewConfiguration(final Mount editingPreviewMount) {
         return editingPreviewMount.getHstSite().hasPreviewConfiguration();
-    }
-
-    private void assertCorrectNodeType(final Node node, String nodeType) throws RepositoryException {
-        if (!node.isNodeType(nodeType)) {
-            throw new IllegalArgumentException("Unexpected nodetype for '"+node.getPath()+"'. Expected a node" +
-                    "of type '"+nodeType+"'");
-        }
     }
 
 }

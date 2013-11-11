@@ -87,6 +87,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             Set<String> variants = doGetVariants(containerItem);
+            log.info("Available variants: {}", variants.toString());
             return ok("Available variants: ", variants);
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component", e);
@@ -115,6 +116,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             Set<String> removedVariants = doRetainVariants(containerItem, variants, lastModifiedTimestamp);
+            log.info("Removed variants: {}", removedVariants.toString());
             return ok("Removed variants:", removedVariants);
         } catch (RepositoryException e) {
             log.error("Unable to cleanup the variants of the component", e);
@@ -151,7 +153,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         if (!removed.isEmpty()) {
             componentParameters.save(lastModifiedTimestamp);
         }
-
+        log.info("Removed variants '{}'", removed.toString());
         return removed;
     }
 
@@ -181,11 +183,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
             return doGetParameters(getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant, currentMountCanonicalContentPath);
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Failed to retrieve parameters.", e);
-            } else {
-                log.warn("Failed to retrieve parameters . {}", e.toString());
-            }
+            log.debug("Failed to retrieve parameters.", e);
         }
         return null;
     }
@@ -256,13 +254,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             doSetParameters(componentParameters, variant, params, lastModifiedTimestamp);
+            log.info("Parameters for '{}' saved successfully.", variant);
             return ok("Parameters for '" + variant + "' saved successfully.", null);
         } catch (IllegalStateException e) {
+            log.warn("Could not save parameters for variant '"+variant+"'", e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
+            log.warn("Could not save parameters for variant '"+variant+"'", e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to set the parameters of component", e);
+            log.warn("Could not save parameters for variant '"+variant+"'", e);
             throw new WebApplicationException(e);
         }
     }
@@ -290,6 +291,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
             componentParameters.removePrefix(oldVariant);
             doSetParameters(componentParameters, newVariant, params, lastModifiedTimestamp);
+            log.info("Parameters renamed from '{}' to '{}' and saved successfully.", oldVariant, newVariant);
             return ok("Parameters renamed from '" + oldVariant + "' to '" + newVariant + "' and saved successfully.", null);
         } catch (IllegalStateException e) {
             logParameterSettingFailed(e);
@@ -305,11 +307,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     private void logParameterSettingFailed(final Exception e) {
-        if (log.isDebugEnabled()) {
-            log.warn("Unable to set the parameters of component", e);
-        } else {
-            log.warn("Unable to set the parameters of component: {}", e.toString());
-        }
+        log.warn("Unable to set the parameters of component", e);
     }
 
     void doSetParameters(HstComponentParameters componentParameters, String prefix, MultivaluedMap<String, String> parameters,
@@ -325,6 +323,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             }
         }
         componentParameters.save(lastModifiedTimestamp);
+        log.info("Succesfully set componentParameters.");
     }
 
     /**
@@ -355,6 +354,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 return conflict("Cannot create variant '" + variant + "' because it already exists");
             }
             doCreateVariant(containerItem, componentParameters, variant, lastModifiedTimestamp);
+            log.info("Variant '{}' created successfully", variant);
             return created("Variant '" + variant + "' created successfully");
         } catch (IllegalStateException e) {
             log.warn("Could not create variant ", e);
@@ -363,7 +363,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             log.warn("Could not create variant ", e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to create new variant " + e, e);
+            log.error("Unable to create new variant ", e);
             throw new WebApplicationException(e);
         }
     }
@@ -402,6 +402,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 return conflict("Cannot delete variant '" + variant + "' because it does not exist");
             }
             doDeleteVariant(componentParameters, variant, lastModifiedTimestamp);
+
+            log.info("Variant '{}' deleted successfully", variant);
             return ok("Variant '" + variant + "' deleted successfully");
         } catch (IllegalStateException e) {
             log.warn("Could not delete variant '" + variant + "'", e);
