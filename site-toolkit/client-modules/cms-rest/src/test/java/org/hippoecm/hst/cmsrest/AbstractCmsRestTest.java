@@ -44,6 +44,7 @@ public abstract class AbstractCmsRestTest extends RepositoryTestCase {
         super.tearDown();
         componentManager.stop();
         componentManager.close();
+        HstServices.setComponentManager(null);
     }
 
     protected ComponentManager getComponentManager() {
