@@ -392,6 +392,7 @@ public class TestHstNodeLoadingCache extends AbstractHstLoadingCacheTestCase {
             if (session.nodeExists("/hst-backup")) {
                 session.removeItem("/hst:hst");
                 JcrUtils.copy(session, "/hst-backup", "/hst:hst");
+                session.removeItem("/hst-backup");
                 session.save();
             }
         }
@@ -414,6 +415,5 @@ public class TestHstNodeLoadingCache extends AbstractHstLoadingCacheTestCase {
                     false);
             return configurationEventListener;
         }
-
     }
 }
