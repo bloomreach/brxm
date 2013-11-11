@@ -52,11 +52,8 @@
     <xml action="copy"  source="xml/sitemap/events.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
   </instructionSet>
   <instructionSet name="JAVA">
-    <file action="copy"  overwrite="true" source="java/NewsDocumentBean.java" target="${beansFolder}/NewsDocumentBean.java"/>
-<!--
-    <file action="copy"  overwrite="true" source="java/NewsDocument.java" target="${beansFolder}/NewsDocument.java"/>
-    <file action="copy"  overwrite="true" source="java/EventsDocument.java" target="${beansFolder}/EventsDocument.java"/>
--->
+    <file action="copy"  overwrite="true" source="java/NewsDocument.txt" target="${beansFolder}/NewsDocument.java"/>
+    <file action="copy"  overwrite="true" source="java/EventsDocument.txt" target="${beansFolder}/EventsDocument.java"/>
   </instructionSet>
   <instructionSet name="COMPONENTS">
     <xml action="copy" source="xml/components/list.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
@@ -79,4 +76,10 @@
     <xml action="copy" source="xml/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
     <xml action="copy" source="xml/templates/events-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
   </instructionSet>
+
+  <instructionSet name="SAMPLE_DOCUMENTS">
+    <xml action="copy" source="xml/samples-docs.xml" target="/content/documents/"/>
+    <xml action="copy" source="xml/samples-assets.xml" target="/content/assets/"/>
+  </instructionSet>
+
 </instructions>

@@ -7,21 +7,22 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@Node(jcrType=EventsDocument.DOCUMENT_TYPE)
-public class EventsDocument extends HippoDocument {
+@Node(jcrType=NewsDocument.DOCUMENT_TYPE)
+public class NewsDocument extends HippoDocument {
 
     /**
      * The document type of the news document.
      */
-    public final static String DOCUMENT_TYPE = "essentialsdemo:eventsdocument";
+    public final static String DOCUMENT_TYPE = "${namespace}:newsdocument";
 
-    private final static String TITLE = "essentialsdemo:title";
-    private final static String DATE = "essentialsdemo:date";
-    private final static String INTRODUCTION = "essentialsdemo:introduction";
-    private final static String IMAGE = "essentialsdemo:image";
-    private final static String CONTENT = "essentialsdemo:content";
-    private final static String LOCATION = "essentialsdemo:location";
-    private final static String END_DATE = "essentialsdemo:enddate";
+    private final static String TITLE = "${namespace}:title";
+    private final static String DATE = "${namespace}:date";
+    private final static String INTRODUCTION = "${namespace}:introduction";
+    private final static String IMAGE = "${namespace}:image";
+    private final static String CONTENT = "${namespace}:content";
+    private final static String LOCATION = "${namespace}:location";
+    private final static String AUTHOR = "${namespace}:author";
+    private final static String SOURCE = "${namespace}:source";
 
     /**
      * Get the title of the document.
@@ -33,9 +34,9 @@ public class EventsDocument extends HippoDocument {
     }
 
     /**
-     * Get the date of the document, i.e. the start date of the event.
+     * Get the date of the document.
      *
-     * @return the (start) date
+     * @return the date
      */
     public Calendar getDate() {
         return getProperty(DATE);
@@ -78,12 +79,21 @@ public class EventsDocument extends HippoDocument {
     }
 
     /**
-     * Get the end date of the document, i.e. the end date of the event.
+     * Get the author of the document.
      *
-     * @return the end date
+     * @return the author
      */
-    public Calendar getEndDate() {
-        return getProperty(END_DATE);
+    public String getAuthor() {
+        return getProperty(AUTHOR);
+    }
+
+    /**
+     * Get the source of the document.
+     *
+     * @return the source
+     */
+    public String getSource() {
+        return getProperty(SOURCE);
     }
 
 }

@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
-import java.io.File;
-
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -30,8 +30,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,7 +57,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
     public void testParseInstructions() throws Exception {
         final PowerpackPackage powerpackPackage = new BasicPowerpack();
         final Instructions instructions = powerpackPackage.getInstructions();
-        assertEquals(6, instructions.getInstructionSets().size());
+        assertEquals(5, instructions.getInstructionSets().size());
     }
 
     @Test
@@ -67,7 +66,7 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
         final InstructionStatus status = powerpackPackage.execute(getContext());
         // create target node:
         assertEquals(InstructionStatus.SUCCESS, status);
-        assertEquals(jspDirectory.listFiles().length, 6);
+        assertEquals(jspDirectory.listFiles().length, 5);
 
 
     }
