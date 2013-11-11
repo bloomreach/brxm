@@ -50,6 +50,7 @@ public class CndInstruction extends PluginInstruction {
     private static Logger log = LoggerFactory.getLogger(CndInstruction.class);
     @Inject
     private EventBus eventBus;
+    // TODO implement possibility to add custom namespace, currently only project namespaces is used
     private String namespace;
     private String superType;
     private String documentType;
@@ -63,6 +64,8 @@ public class CndInstruction extends PluginInstruction {
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
+
+        namespace = context.getProjectNamespacePrefix();
         final Map<String, Object> data = context.getPlaceholderData();
         processAllPlaceholders(data);
         //
@@ -92,11 +95,14 @@ public class CndInstruction extends PluginInstruction {
             GlobalUtils.refreshSession(context.getSession(), false);
         }
 
+        message = messageRegisterError;
         eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
     private void processAllPlaceholders(final Map<String, Object> data) {
+        data.put("documentType", documentType);
+        data.put("superType", superType);
         processPlaceholders(data);
         final String mySupertype = TemplateUtils.replaceTemplateData(superType, data);
         if (mySupertype != null) {
@@ -144,13 +150,7 @@ public class CndInstruction extends PluginInstruction {
         this.documentType = documentType;
     }
 
-    public String getNamespace() {
-        return namespace;
-    }
 
-    public void setNamespace(final String namespace) {
-        this.namespace = namespace;
-    }
 
     public String getSuperType() {
         return superType;
