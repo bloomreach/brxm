@@ -51,6 +51,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
     private final DropDownChoice<String> powerpackDropdown;
     private final SetupPage myParent;
     private String selectedPowerpack;
+    private boolean installSampleContent = false;
     private String selectedTemplatesType;
     @Inject
     private EventBus eventBus;
@@ -139,8 +140,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
 
         form.add(powerpackDropdown);
 
-        CheckBox sampleContentCheckBox = new CheckBox("sampleContentCheckbox", Model.of(Boolean.TRUE));
-        sampleContentCheckBox.setEnabled(false);
+        CheckBox sampleContentCheckBox = new CheckBox("sampleContentCheckbox", new PropertyModel<Boolean>(this, "installSampleContent"));
         form.add(sampleContentCheckBox);
 
         RadioGroup<String> radioGroup = new RadioGroup<String>("templatesRadioGroup", new PropertyModel<String>(this, "selectedTemplatesType"));
@@ -180,5 +180,9 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
 
     public String getSelectedPowerpack() {
         return selectedPowerpack;
+    }
+
+    public boolean isInstallSampleContentChecked() {
+        return installSampleContent;
     }
 }

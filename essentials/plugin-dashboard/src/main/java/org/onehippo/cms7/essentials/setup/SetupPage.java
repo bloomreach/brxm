@@ -43,6 +43,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
+import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
 import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
 import org.slf4j.Logger;
@@ -131,7 +132,11 @@ public class SetupPage extends WebPage implements IHeaderContributor {
                 final PowerpackPackage powerpackPackage;
                 switch (selectStep.getSelectedPowerpack()) {
                     case SelectPowerpackStep.POWERPACK_NEWS_AND_EVENT_LABEL:
-                        powerpackPackage = new BasicPowerpack();
+                        if (selectStep.isInstallSampleContentChecked()) {
+                            powerpackPackage = new BasicPowerpackWithSamples();
+                        } else {
+                            powerpackPackage = new BasicPowerpack();
+                        }
                         break;
                     default:
                         powerpackPackage = new EmptyPowerPack();
@@ -139,6 +144,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
                 }
                 final InstructionStatus status = powerpackPackage.execute(dashboardPluginContext);
                 info("Installation finished with status: " + status);
+
             }
         };
 

@@ -414,6 +414,8 @@ dashboard-plugins/dashboard-xinha-plugin/src/test/java/org/onehippo/cms7/essenti
 dashboard-plugins/dashboard-xinha-plugin/src/test/resources/root.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/pom.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpack.java -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/java/org/onehippo/cms7/essentials/powerpack/BasicPowerpackWithSamples.java -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/instructions-with-samples.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/META-INF/instructions.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/icons/new-folder-16.png -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/main/resources/java/EventsDocument.txt -text

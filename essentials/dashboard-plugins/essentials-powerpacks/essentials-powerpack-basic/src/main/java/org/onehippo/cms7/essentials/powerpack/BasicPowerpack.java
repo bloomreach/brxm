@@ -40,7 +40,7 @@ public class BasicPowerpack implements PowerpackPackage {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
     public static final String PACK_ID = "";
-    private Instructions instructions;
+    protected Instructions instructions;
     @Inject
     private EventBus eventBus;
 
