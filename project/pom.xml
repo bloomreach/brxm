@@ -83,7 +83,7 @@
     <maven.plugin.changelog.version>2.2</maven.plugin.changelog.version>
     <maven.plugin.clean.version>2.5</maven.plugin.clean.version>
     <maven.plugin.compiler.version>2.5.1</maven.plugin.compiler.version>
-    <maven.plugin.dependency.version>2.6</maven.plugin.dependency.version>
+    <maven.plugin.dependency.version>2.8</maven.plugin.dependency.version>
     <maven.plugin.deploy.version>2.7</maven.plugin.deploy.version>
     <maven.plugin.eclipse.version>2.8</maven.plugin.eclipse.version>
     <maven.plugin.install.version>2.3.1</maven.plugin.install.version>
