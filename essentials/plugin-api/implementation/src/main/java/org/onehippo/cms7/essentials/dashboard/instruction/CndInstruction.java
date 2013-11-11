@@ -16,17 +16,16 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -37,6 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * @version "$Id$"
@@ -44,16 +46,24 @@ import com.google.common.collect.Iterables;
 @XmlRootElement(name = "cnd", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class CndInstruction extends PluginInstruction {
 
+    //private static final String DEFAULT_URL = "http://www.onehippo.org/${namespace}/nt/1.0";
     private static Logger log = LoggerFactory.getLogger(CndInstruction.class);
+    @Inject
+    private EventBus eventBus;
     private String namespace;
     private String superType;
     private String documentType;
+    @Inject(optional = true)
+    @Named("instruction.message.cnd.register.failed")
+    private String messageRegisterError;
+    @Inject(optional = true)
+    @Named("instruction.message.cnd.register")
     private String message;
     private String action;
 
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
-        final Map<String,Object> data = context.getPlaceholderData();
+        final Map<String, Object> data = context.getPlaceholderData();
         processAllPlaceholders(data);
         //
 
@@ -62,15 +72,16 @@ public class CndInstruction extends PluginInstruction {
         try {
             // TODO extend so we can define supertypes
             String[] superTypes;
-            if(!Strings.isEmpty(superType)){
+            if (!Strings.isEmpty(superType)) {
                 final Iterable<String> split = Splitter.on(",").omitEmptyStrings().trimResults().split(superType);
                 superTypes = Iterables.toArray(split, String.class);
-            }else{
+            } else {
                 superTypes = ArrayUtils.EMPTY_STRING_ARRAY;
             }
             CndUtils.registerDocumentType(context, prefix, documentType, true, false, superTypes);
             context.getSession().save();
             // TODO add message
+            eventBus.post(new InstructionEvent(this));
             return InstructionStatus.SUCCESS;
         } catch (NodeTypeExistsException e) {
             // just add already exiting ones:
@@ -81,6 +92,7 @@ public class CndInstruction extends PluginInstruction {
             GlobalUtils.refreshSession(context.getSession(), false);
         }
 
+        eventBus.post(new InstructionEvent(this));
         return InstructionStatus.FAILED;
     }
 
@@ -90,7 +102,6 @@ public class CndInstruction extends PluginInstruction {
         if (mySupertype != null) {
             superType = mySupertype;
         }
-
         final String myNamespace = TemplateUtils.replaceTemplateData(namespace, data);
         if (myNamespace != null) {
             namespace = myNamespace;
@@ -98,6 +109,10 @@ public class CndInstruction extends PluginInstruction {
         final String myDocumentType = TemplateUtils.replaceTemplateData(documentType, data);
         if (myDocumentType != null) {
             documentType = myDocumentType;
+        }
+        final String myErrorMessage = TemplateUtils.replaceTemplateData(messageRegisterError, data);
+        if (myErrorMessage != null) {
+            messageRegisterError = myErrorMessage;
         }
     }
 
@@ -108,7 +123,7 @@ public class CndInstruction extends PluginInstruction {
 
     @Override
     public void setMessage(final String message) {
-       this.message = message;
+        this.message = message;
     }
 
     @Override

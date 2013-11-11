@@ -26,12 +26,12 @@
   </xs:simpleType>
 
   <xs:complexType name="instructionsSetType" mixed="true">
-    <xs:sequence>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded" />
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
+    </xs:choice>
     <xs:attribute use="optional" name="name" type="xs:string"/>
   </xs:complexType>
 
@@ -42,7 +42,7 @@
 
   -->
   <xs:complexType name="fileType" mixed="true">
-    <xs:attribute use="required" name="action" type="fileActionType" default="copy"/>
+    <xs:attribute use="required" name="action" type="fileActionType"/>
     <xs:attribute use="optional" name="source" type="xs:string">
       <xs:annotation>
         <xs:documentation>Source file. We'll first try to check if file exist on a file system and copy it, if not, we'll try to fetch it from the classpath</xs:documentation>
@@ -54,14 +54,14 @@
   </xs:complexType>
 
   <xs:complexType name="xmlType" mixed="true">
-    <xs:attribute use="required" name="action" type="fileActionType" default="copy"/>
+    <xs:attribute use="required" name="action" type="fileActionType"/>
     <xs:attribute use="optional" name="source" type="xs:string"/>
     <xs:attribute use="required" name="target" type="xs:string"/>
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
   <xs:complexType name="cndType" mixed="true">
-    <xs:attribute use="required" name="name" type="xs:string"/>
+    <xs:attribute use="required" name="documentType" type="xs:string"/>
     <xs:attribute use="required" name="superType" type="xs:string"/>
     <xs:attribute use="optional" name="namespaceUrl" type="xs:string">
       <xs:annotation>
