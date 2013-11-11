@@ -1,4 +1,4 @@
-package java;
+package package ${beansPackage};
 
 import java.util.Calendar;
 
