@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.login.Configuration;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +33,7 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.eclipse.jface.text.templates.TemplateException;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -39,9 +41,7 @@ import org.onehippo.cms7.essentials.dashboard.ui.PluginFeedbackPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+
 
 /**
  * @version "$Id: RestServicesPlugin.java 169748 2013-07-05 12:03:01Z dvandiepen $"
@@ -173,10 +173,11 @@ public class RestServicesPlugin extends DashboardPlugin {
 
         final File springXmlFile = new File(assemblyOverridesFolder, getSpringXmlFileName());
         try {
-            final Template template = loadResourceTemplate(getClass(), getSpringRestXmlTemplateName());
+            // TODO fix me
+            //final Template template = loadResourceTemplate(getClass(), getSpringRestXmlTemplateName());
             final Map<String, String> parameterMap = new HashMap<>();
             parameterMap.put(HST_REST_PACKAGE_PLACEHOLDER, getRestPackage());
-            saveTemplateToFile(template, parameterMap, springXmlFile);
+            saveTemplateToFile(parameterMap, springXmlFile);
         } catch (IOException e) {
             log.error("Unable to write file", e);
         } catch (TemplateException e) {
@@ -257,10 +258,12 @@ public class RestServicesPlugin extends DashboardPlugin {
 
         File resourceProviderBeanFile = new File(restPackageFolder, getResourceProviderBeanName());
         try {
-            final Template template = loadResourceTemplate(getClass(), getResourceProviderTemplateName());
+            // TODO fixme
+
+            //final Template template = loadResourceTemplate(getClass(), getResourceProviderTemplateName());
             final Map<String, String> parameterMap = new HashMap<>();
             parameterMap.put(HST_REST_PACKAGE_PLACEHOLDER, getRestPackage());
-            saveTemplateToFile(template, parameterMap, resourceProviderBeanFile);
+            saveTemplateToFile(parameterMap, resourceProviderBeanFile);
         } catch (IOException e) {
             log.error("Unable to write file", e);
         } catch (TemplateException e) {
@@ -304,14 +307,14 @@ public class RestServicesPlugin extends DashboardPlugin {
      * @return a freemarker template
      * @throws IOException when the template can't be loaded
      */
-    private static Template loadResourceTemplate(final Class clazz, final String resourceFile) throws IOException {
+  /*  private static Template loadResourceTemplate(final Class clazz, final String resourceFile) throws IOException {
         //Freemarker configuration object
         Configuration cfg = new Configuration();
         cfg.setClassForTemplateLoading(clazz, "/");
 
         //Load template from source folder
         return cfg.getTemplate(resourceFile);
-    }
+    }*/
 
     /**
      * Process a Freemarker template with the provided data and save the processed template to a file.
@@ -322,13 +325,14 @@ public class RestServicesPlugin extends DashboardPlugin {
      * @throws IOException       when the template can not be saved
      * @throws TemplateException when te template can not be processed
      */
-    private static void saveTemplateToFile(final Template template, final Map<String, String> data, final File file) throws IOException, TemplateException {
-        Writer writer = new FileWriter(file);
+    private static void saveTemplateToFile( final Map<String, String> data, final File file) throws IOException, TemplateException {
+        // TODO fix me
+       /* Writer writer = new FileWriter(file);
         try {
             template.process(data, writer);
         } finally {
             IOUtils.closeQuietly(writer);
-        }
+        }*/
     }
 
     /**

@@ -21,6 +21,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
+import javax.security.auth.login.Configuration;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.eclipse.jface.text.templates.TemplateException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -61,14 +63,13 @@ import org.onehippo.cms7.essentials.dashboard.taxonomy.util.HasTaxonomyMatcher;
 import org.onehippo.cms7.essentials.dashboard.taxonomy.util.TaxonomyQueryBuilder;
 import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.wicket.SortedTypeChoiceRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+
 
 /**
  * @author Jeroen Reijn
@@ -408,12 +409,17 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
 
     }
 
+    /**
+     * TODO refactor this and change template injection, probably broken right now....
+     * @param toAdd
+     * @param toRemove
+     */
     private void addOrRemoveClassifiableMixin(final List<String> toAdd, final List<String> toRemove) {
         if (selectedTaxonomy == null) {
             throw new IllegalArgumentException("Taxonomy should not be empty");
         }
         InputStream in = null;
-        Writer out = null;
+
         for (String nodeType : toAdd) {
             try {
                 Node docType;
@@ -442,14 +448,9 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
                         if (PluginType.UNKNOWN.equals(pluginType)) {
                             throw new IllegalArgumentException();
                         }
-                        //Freemarker configuration object
-                        Configuration cfg = new Configuration();
-                        cfg.setDirectoryForTemplateLoading(new File(getClass().getResource("/taxonomy.xml").getFile()).getParentFile());
-                        //Load template from source folder
-                        Template template = cfg.getTemplate("taxonomy.xml");
 
                         // Build the data-model
-                        Map<String, String> data = new HashMap<>();
+                        Map<String, Object> data = new HashMap<>();
                         String fieldType = "${cluster.id}.field";
 
                         if (pluginType.equals(PluginType.TWOCOLUMN)) {
@@ -463,13 +464,13 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
                             }
                         }
 
+
                         data.put("fieldType", fieldType);
                         //if (selectedTaxonomy != null) {
                         data.put("name", selectedTaxonomy.getName());
                         // }
-                        out = new StringWriter();
-                        template.process(data, out);
-                        in = new ByteArrayInputStream(out.toString().getBytes("UTF-8"));
+                        final String parsed = TemplateUtils.injectTemplate("taxonomy.xml", data, getClass());
+                        in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
                         ((HippoSession) session).importDereferencedXML(defaultNode.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                                 ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
                     }
@@ -481,14 +482,12 @@ public class TaxonomyPlugin extends InstallablePlugin<TaxonomyInstaller> {
                 log.error("Impossible to add the mixin to the following node: {}", nodeType, e);
             } catch (IOException e) {
                 log.error("Error opening taxonomy.xml file", e);
-            } catch (TemplateException e) {
-                log.error("Template exception {}", e);
             } catch (IllegalArgumentException e) {
                 error("Impossible to add the mixin to the following node: " + nodeType);
                 log.error("not able to add the nodetype");
             } finally {
                 IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(out);
+
             }
         }
 

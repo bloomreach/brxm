@@ -21,14 +21,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.github.httl</groupId>
-      <artifactId>httl</artifactId>
-      <version>1.0.11</version>
-    </dependency>
-    <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>${freemarker.version}</version>
+      <groupId>org.rythmengine</groupId>
+      <artifactId>rythm-engine</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>

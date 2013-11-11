@@ -28,6 +28,7 @@
     <hippo.addon-channel-manager.version>2.24.06</hippo.addon-channel-manager.version>
     <!-- ***END temporary override of versions*** -->
 
+    <rythm-engine.version>1.0-b9</rythm-engine.version>
     <guice.version>3.0</guice.version>
     <junit.version>4.11</junit.version>
     <wicket.version>6.11.0</wicket.version>
@@ -38,7 +39,6 @@
     <commons-lang.version>2.6</commons-lang.version>
     <guava.version>12.0.1</guava.version>
     <jaxb-impl.version>2.2.6</jaxb-impl.version>
-    <freemarker.version>2.3.18</freemarker.version>
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
     <geronimo-jta_1.1_spec.version>1.1.1</geronimo-jta_1.1_spec.version>
   </properties>
@@ -71,6 +71,11 @@
             <groupId>org.apache.tika</groupId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.rythmengine</groupId>
+        <artifactId>rythm-engine</artifactId>
+        <version>${rythm-engine.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>

@@ -74,7 +74,7 @@ public class TemplateUtilsTest extends BaseTest {
     public void testReplaceTemplateDataHttl() throws Exception {
         final Map<String, Object> data = new HashMap<>();
         data.put("beanReference", "com.foo.bar");
-        final String result = TemplateUtils.replaceTemplateDataHttl("test_template_httl.ftl", data);
+        final String result = TemplateUtils.replaceTemplateData("test_template_httl.ftl", data);
         log.info("result {}", result);
 
     }

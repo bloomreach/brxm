@@ -11,16 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.Configuration;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.text.templates.TemplateException;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * @version "$Id$"
@@ -71,31 +72,21 @@ public class TaxonomyQueryBuilder {
     }
 
     public void addToRegistry(PluginContext context) {
-        Writer out = null;
-        InputStream is = null;
 
+        InputStream is = null;
         try {
-            //Freemarker configuration object
-            Configuration cfg = new Configuration();
-            cfg.setDirectoryForTemplateLoading(new File(getClass().getResource("/taxonomy-doc-updater.xml").getFile()).getParentFile());
-            //Load template from source folder
-            Template template = cfg.getTemplate("taxonomy-doc-updater.xml");
 
             // Build the data-model
-            Map<String, String> data = new HashMap<>();
+            Map<String, Object> data = new HashMap<>();
             data.put("query", getQuery());
-
-            out = new StringWriter();
-            template.process(data, out);
-            is = new ByteArrayInputStream(out.toString().getBytes("UTF-8"));
+            final String parsed  = TemplateUtils.injectTemplate("taxonomy-doc-updater.xml",data,getClass());
+            is = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
             UpdateUtils.addToRegistry(context, is);
         } catch (IOException e) {
             log.error("IO exception while trying to add related doc updater to registry");
-        } catch (TemplateException e) {
-            log.error("Freemarker template exception while trying to add related doc updater to registry");
         } finally {
-            IOUtils.closeQuietly(out);
+
             IOUtils.closeQuietly(is);
         }
     }

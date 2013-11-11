@@ -1,11 +1,9 @@
 package org.onehippo.cms7.essentials.dashboard.contentblocks;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,26 +30,24 @@ import org.apache.wicket.markup.html.form.ListChoice;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.PropertyModel;
+import org.eclipse.jface.text.templates.TemplateException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.installer.ContentBlocksInstaller;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.model.ContentBlockModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.wicket.SortedTypeChoiceRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 
 /**
@@ -61,7 +57,6 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(ContentBlocksPlugin.class);
-
     private Prefer selected = Prefer.RIGHT;
     private Type type = Type.DROPDOWN;
     private String name;
@@ -108,6 +103,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
         final DropDownChoice<Prefer> prefer = new DropDownChoice<>("prefer", new PropertyModel<Prefer>(this, "selected"), Arrays.asList(Prefer.RIGHT, Prefer.LEFT), new IChoiceRenderer<Prefer>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public Object getDisplayValue(final Prefer object) {
                 return object;
@@ -134,6 +130,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
         final DropDownChoice<Type> myType = new DropDownChoice<>("type", new PropertyModel<Type>(this, "type"), Arrays.asList(Type.DROPDOWN, Type.LINKS), new IChoiceRenderer<Type>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public Object getDisplayValue(final Type object) {
                 return object;
@@ -260,11 +257,12 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         return false;
     }
 
+    // TODO refactor this
     private boolean addContentBlockToType(final ContentBlockModel contentBlockModel) {
         final String documentType = contentBlockModel.getDocumentType();
         final Session session = getContext().getSession();
         InputStream in = null;
-        Writer out = null;
+
         try {
             Node docType;
             if (documentType.contains(":")) {
@@ -272,9 +270,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
             } else {
                 docType = session.getNode("/hippo:namespaces/system/" + documentType);
             }
-            //Freemarker configuration object
-            Configuration cfg = new Configuration();
-            cfg.setDirectoryForTemplateLoading(new File(getClass().getResource("/nodetype.xml").getFile()).getParentFile());
+
             Node nodeType = null;
             if (docType.hasNode("hipposysedit:nodetype/hipposysedit:nodetype")) {
                 nodeType = docType.getNode("hipposysedit:nodetype/hipposysedit:nodetype");
@@ -288,10 +284,10 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 }
                 if (pluginType != null) {
                     //Load template from source folder
-                    Template template = cfg.getTemplate("nodetype.xml");
-                    Template template2 = cfg.getTemplate("template.xml");
+                    /*Template template = cfg.getTemplate("nodetype.xml");
+                    Template template2 = cfg.getTemplate("template.xml");*/
                     // Build the data-model
-                    Map<String, String> data = new HashMap<>();
+                    Map<String, Object> data = new HashMap<>();
 
                     data.put("name", contentBlockModel.getName());
                     data.put("path", new StringCodecFactory.UriEncoding().encode(contentBlockModel.getName()));
@@ -314,17 +310,15 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                     }
                     data.put("fieldType", fieldType);
 
-                    out = new StringWriter();
-                    template.process(data, out);
-                    in = new ByteArrayInputStream(out.toString().getBytes("UTF-8"));
+                    String parsed = TemplateUtils.injectTemplate("nodetype.xml", data, getClass());
+
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
 
-
-                    out = new StringWriter();
-                    template2.process(data, out);
-                    in = new ByteArrayInputStream(out.toString().getBytes("UTF-8"));
+                    parsed = TemplateUtils.injectTemplate("template.xml", data, getClass());
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
@@ -333,12 +327,11 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 }
             }
 
-        } catch (RepositoryException | TemplateException | IOException e) {
+        } catch (RepositoryException  | IOException e) {
             GlobalUtils.refreshSession(session, false);
             log.error("Error in content bocks plugin", e);
         } finally {
             IOUtils.closeQuietly(in);
-            IOUtils.closeQuietly(out);
         }
         return false;
     }
@@ -377,7 +370,6 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
     public enum Prefer implements Serializable {
         LEFT("left"), RIGHT("right");
-
         String prefer;
 
         private Prefer(String prefer) {
@@ -391,7 +383,6 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
     public enum Type implements Serializable {
         LINKS("links"), DROPDOWN("dropdown");
-
         String type;
 
         private Type(String type) {
@@ -406,15 +397,10 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
     public enum PluginType {
 
         LISTVIEWPLUGIN("org.hippoecm.frontend.service.render.ListViewPlugin"), TWOCOLUMN("org.hippoecm.frontend.editor.layout.TwoColumn"), UNKNOWN("unknown");
-
         String clazz;
 
         PluginType(String clazz) {
             this.clazz = clazz;
-        }
-
-        public String getClazz() {
-            return clazz;
         }
 
         public static PluginType get(String clazz) {
@@ -426,20 +412,19 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
             return UNKNOWN;
         }
 
+        public String getClazz() {
+            return clazz;
+        }
+
     }
 
 
     public enum WicketId {
         LEFT("${cluster.id}.left.item"), RIGHT("${cluster.id}.right.item"), DEFAULT("${cluster.id}.field");
-
         private String wicketId;
 
         WicketId(final String wicketId) {
             this.wicketId = wicketId;
-        }
-
-        private String getWicketId() {
-            return wicketId;
         }
 
         public static WicketId get(String id) {
@@ -449,6 +434,10 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 }
             }
             return DEFAULT;
+        }
+
+        private String getWicketId() {
+            return wicketId;
         }
 
     }
