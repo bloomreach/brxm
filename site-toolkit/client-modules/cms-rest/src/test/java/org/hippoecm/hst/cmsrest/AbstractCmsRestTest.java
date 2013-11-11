@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.cmsrest;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
