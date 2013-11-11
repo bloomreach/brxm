@@ -40,7 +40,7 @@ public class NodeFolderInstructionTest extends BaseRepositoryTest {
     @Test
     public void testInstruction() throws Exception {
         instruction.setPath("/foo/bar/foobar");
-        instruction.setTemplate("/my_folder_template.xml");
+        instruction.setTemplate("my_folder_template.xml");
         final InstructionSet instructionSet = new PluginInstructionSet();
         instructionSet.addInstruction(instruction);
         final InstructionStatus execute = executor.execute(instructionSet, getContext());

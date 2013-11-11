@@ -86,13 +86,14 @@ public class FileInstruction extends PluginInstruction {
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         log.debug("executing FILE Instruction {}", this);
+        processPlaceholders(context.getPlaceholderData());
         this.context = context;
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
             eventBus.post(new InstructionEvent(this));
             return InstructionStatus.FAILED;
         }
-        processPlaceholders(context.getPlaceholderData());
+
         // check action:
         if (action.equals(COPY)) {
             return copy();

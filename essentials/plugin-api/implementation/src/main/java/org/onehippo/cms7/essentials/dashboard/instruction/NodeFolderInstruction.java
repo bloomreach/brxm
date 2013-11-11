@@ -93,7 +93,6 @@ public class NodeFolderInstruction extends PluginInstruction {
             }
             String content = GlobalUtils.readStreamAsText(stream).toString();
             final Map<String, Object> data = context.getPlaceholderData();
-            content  = TemplateUtils.replaceTemplateData(content, data);
             final Iterable<String> pathParts = Splitter.on('/').omitEmptyStrings().split(path);
             Node parent = session.getRootNode();
             for (String part : pathParts) {

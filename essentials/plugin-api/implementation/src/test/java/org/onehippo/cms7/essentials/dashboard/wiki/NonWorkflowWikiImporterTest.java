@@ -26,10 +26,11 @@ public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
         Properties properties = new Properties();
 
         final Node root = session.getRootNode();
-        assertFalse(root.hasNode("content"));
-        final Node content = root.addNode("content", "hippostd:folder");
+        // already created in MemoryRepository
+        assertTrue(root.hasNode("content"));
+        final Node content = root.getNode("content");
 
-        final Node documents = content.addNode("documents", "hippostd:folder");
+        final Node documents = content.getNode("documents");
         final Node gallery = content.addNode("gallery", "hippogallery:stdImageGallery");
 
         final Node testDocuments = documents.addNode("test", "hippostd:folder");
