@@ -25,6 +25,7 @@ import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -142,7 +143,9 @@ public class TestLoginServlet {
         assertEquals("/site/welcome.html", request.getSession().getAttribute(LoginServlet.DESTINATION_ATTR_NAME));
         assertEquals("charley", request.getSession().getAttribute(LoginServlet.USERNAME_ATTR_NAME));
         assertEquals("brown", request.getSession().getAttribute(LoginServlet.PASSWORD_ATTR_NAME));
-        assertEquals("http://localhost/site/login/resource", response.getRedirectedUrl());
+        final String redirectedUrl = response.getRedirectedUrl();
+        assertTrue(redirectedUrl.contains("?token="));
+        assertEquals("http://localhost/site/login/resource", StringUtils.substringBefore(redirectedUrl, "?"));
     }
     
     @Test
