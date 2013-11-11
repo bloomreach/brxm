@@ -527,6 +527,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/h
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/ConfigType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/NodeType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/hstconfigwriter/model/types/PropertyType.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstruction.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/InstructionNamespaceMapper.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstruction.java -text
@@ -619,6 +620,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginC
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/MemoryPluginEventListenerTest.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/CndInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/FileInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/NodeFolderInstructionTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/instruction/PluginInstructionExecutorTest.java -text

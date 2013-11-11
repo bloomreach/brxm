@@ -18,11 +18,18 @@
       <xs:enumeration value="copy"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:simpleType name="cndActionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="delete"/>
+      <xs:enumeration value="copy"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="instructionsSetType" mixed="true">
     <xs:sequence>
       <xs:element type="fileType" name="file" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="xmlType" name="xml" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element type="cndType" name="cnd" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element type="folderType" name="folder" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute use="optional" name="name" type="xs:string"/>
@@ -53,10 +60,17 @@
     <xs:attribute use="optional" name="overwrite" type="xs:boolean" default="false"/>
     <xs:attribute use="optional" name="message" type="xs:string" default="false"/>
   </xs:complexType>
-  <xs:annotation>
-    <xs:documentation source="xmlTe">This is the business description</xs:documentation>
-    <xs:documentation source="TechnicalDescription">This is the business description</xs:documentation>
-  </xs:annotation>
+  <xs:complexType name="cndType" mixed="true">
+    <xs:attribute use="required" name="name" type="xs:string"/>
+    <xs:attribute use="required" name="superType" type="xs:string"/>
+    <xs:attribute use="optional" name="namespaceUrl" type="xs:string">
+      <xs:annotation>
+        <!--TODO: NOT IMPLEMENTED YET -->
+        <xs:documentation>If not defined essentials template namespace will be used (TODO: NOT IMPLEMENTED YET)</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
   <xs:complexType name="folderType" mixed="true">
     <xs:attribute use="required" name="path" type="xs:string">
       <xs:annotation>
@@ -88,7 +102,7 @@
   -->
   <xs:complexType name="instructionsType">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
-      <xs:element type="instructionsSetType" name="instructionSet"  />
+      <xs:element type="instructionsSetType" name="instructionSet"/>
     </xs:sequence>
   </xs:complexType>
 
