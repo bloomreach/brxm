@@ -199,17 +199,6 @@ li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-tree div.wicket-tree div.row-selected a {font-weight: normal; color: black;}
 
 
-.hippo-projectexport-tree .hippo-tree {height: 305px; margin: 20px 20px 20px 20px; padding: 4px 4px 4px 4px; border-width: 2px; border-style: solid; font-size: 13px; width: 780px; }
-.hippo-projectexport-tree .wicket-tree a{color: #666666}
-.hippo-projectexport-tree .wicket-tree a:hover{color: #32629b}
-.hippo-projectexport-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
-.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
-.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
-.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
-  background: transparent;
-}
-.hippo-projectexport-tree .hippo-tree-dropdown-icon:hover {background-position: 0 0;}
-
 .wicket-modal .hippo-root { padding: 10px; }
 
 .wicket-modal .hippo-modal-feedback ul { margin-left: 10px; margin-right: 10px; }
