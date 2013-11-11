@@ -157,6 +157,13 @@ public class NodeDialog extends AbstractDialog<Node> {
                 }
                 return result.iterator();
             }
+
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                super.renderHead(response);
+                response.render(CssHeaderItem.forReference(new CssResourceReference(
+                        DefaultCssAutoCompleteTextField.class, "DefaultCssAutoCompleteTextField.css")));
+            }
         };
         add(typeField);
 
