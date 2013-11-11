@@ -31,10 +31,11 @@
         },
 
         openPicker: function(currentValue, pickerConfig, cb) {
-            pickerConfig.rootPath = encodeURI(pickerConfig.rootPath);
-            pickerConfig.initialPath = encodeURI(pickerConfig.initialPath);
+            var config = JSON.parse(JSON.stringify(pickerConfig));
+            config.rootPath = encodeURI(pickerConfig.rootPath);
+            config.initialPath = encodeURI(pickerConfig.initialPath);
             this.on('picked', cb, this, {single: true});
-            this.fireEvent('pick', currentValue, Ext.util.JSON.encode(pickerConfig));
+            this.fireEvent('pick', currentValue, Ext.util.JSON.encode(config));
         }
     });
 

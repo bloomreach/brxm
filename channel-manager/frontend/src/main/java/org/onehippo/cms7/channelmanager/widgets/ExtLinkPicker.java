@@ -99,7 +99,7 @@ public class ExtLinkPicker extends ExtObservable {
                     try {
                         rootPath = URLDecoder.decode(pickerConfigObject.optString("rootPath", DEFAULT_PICKER_ROOT_PATH), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
-                        log.debug("Error decoding the root path for the dialog picker.", e);
+                        log.warn("Error decoding the root path for the dialog picker.", e);
                     }
                 }
 
@@ -137,7 +137,7 @@ public class ExtLinkPicker extends ExtObservable {
             try {
                 initialPath = URLDecoder.decode(json.optString("initialPath", DEFAULT_PICKER_INITIAL_PATH), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                log.error("Error decoding the initialPath property of the link picker config.", e);
+                log.warn("Error decoding the initialPath property of the link picker config.", e);
             }
             if (isRelativePath) {
                 initialPath = rootPath + (initialPath.startsWith("/") ? "" : "/") + initialPath;
