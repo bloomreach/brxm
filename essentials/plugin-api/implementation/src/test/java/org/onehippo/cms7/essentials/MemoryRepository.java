@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryRepository {
 
-    public static final String[] CND_FILE_NAMES = {"/test_cnd.cnd", "/test_hippo.cnd", "/test_hippostd.cnd", "/test_hst.cnd", "/test_hippo_sys_edit.cnd", "/test_hippotranslation.cnd", "/test_hippo_gal.cnd", "/mytestproject.cnd" };
+    public static final String[] CND_FILE_NAMES = {"/test_cnd.cnd", "/test_hippo.cnd", "/test_hippostd.cnd", "/test_hst.cnd", "/test_hippo_sys_edit.cnd", "/test_hippotranslation.cnd", "/test_hippo_gal.cnd", "/mytestproject.cnd","/tesnamespace.cnd" };
     private static Logger log = LoggerFactory.getLogger(MemoryRepository.class);
     private static String configFileName = "repository.xml";
     private static URL resource = MemoryRepository.class.getClassLoader().getResource(configFileName);
