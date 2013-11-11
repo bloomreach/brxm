@@ -38,6 +38,10 @@ public class TextAreaWidget extends AjaxUpdatingWidget<String> {
         textArea = new TextArea<String>("widget", model) {
             private static final long serialVersionUID = 1L;
 
+            {
+                setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
+            }
+
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 String rows = getRows();

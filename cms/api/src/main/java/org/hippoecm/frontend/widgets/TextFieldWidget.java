@@ -42,6 +42,10 @@ public class TextFieldWidget extends AjaxUpdatingWidget<String> {
         addFormField(t = new TextField<String>("widget", model) {
             private static final long serialVersionUID = 1L;
 
+            {
+                setFlag(FLAG_CONVERT_EMPTY_INPUT_STRING_TO_NULL, false);
+            }
+
             @Override
             protected void onComponentTag(final ComponentTag tag) {
                 if (getMaxlength() != null) {
