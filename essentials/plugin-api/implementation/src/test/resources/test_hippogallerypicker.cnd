@@ -1,0 +1,5 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
+
+[hippogallerypicker:imagelink] > hippo:facetselect
+

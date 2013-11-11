@@ -1,0 +1,25 @@
+<'editor'='http://www.hippoecm.org/editor/nt/1.0'>
+<'frontend'='http://www.onehippo.org/jcr/frontend/nt/2.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[editor:mimetype] > nt:base
+  - editor:subtype (string) mandatory
+  - editor:mediatype (string) mandatory
+  - editor:extension (string) multiple
+  + editor:icon (hippo:resource)
+
+[editor:mimetypefolder] > nt:base
+  + * (editor:mimetype)
+
+[editor:configuration] > nt:base
+  + editor:mimetypes (editor:mimetypefolder)
+
+[editor:templateset] > nt:base
+  orderable
+  + * (frontend:plugincluster)
+
+[editor:editable]
+  mixin
+  + editor:templates (editor:templateset)
+

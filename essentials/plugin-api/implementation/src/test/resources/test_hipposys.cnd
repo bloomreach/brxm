@@ -1,0 +1,281 @@
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hipposys'='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[hipposys:accessmanager] > nt:base
+  - hipposys:permissioncachesize (long) = '20000' mandatory autocreated
+
+[hipposys:applicationfolder] > nt:unstructured
+  orderable
+
+[hipposys:authrole] > nt:base
+  - hipposys:role (string) mandatory
+  - hipposys:groups (string) multiple
+  - hipposys:description (string)
+  - hipposys:users (string) multiple
+
+[hipposys:autoexport] > nt:base
+  - hipposys:location (string)
+  - hipposys:excluded (string) multiple
+  - hipposys:enabled (boolean) = 'true' mandatory autocreated
+
+[hipposys:propertyreference] > nt:base
+
+[hipposys:builtinpropertyreference] > hipposys:propertyreference
+  - hipposys:method (string) mandatory < 'ancestors'
+
+[hipposys:facetrule] > nt:base
+  - hipposys:filter (boolean) = 'false' mandatory autocreated
+  - hipposys:description (string)
+  - hipposys:equals (boolean) = 'true' mandatory autocreated
+  - hipposys:type (string) = 'String' mandatory < 'String', 'Name', 'Reference'
+  - hipposys:facet (string) mandatory
+  - hipposys:value (string) mandatory
+
+[hipposys:domainrule] > nt:base
+  - hipposys:description (string)
+  + * (hipposys:facetrule) = hipposys:facetrule multiple
+
+[hipposys:domain] > nt:base
+  - hipposys:description (string)
+  + * (hipposys:domainrule) = hipposys:domainrule multiple
+  + * (hipposys:authrole) = hipposys:authrole multiple
+
+[hipposys:domainfolder] > nt:base
+  + * (hipposys:domain) = hipposys:domain
+
+[hipposys:type] > nt:base
+  - hipposys:display (string) mandatory
+  - hipposys:classname (string) mandatory
+  - hipposys:nodetype (string) mandatory
+
+[hipposys:types] > nt:base
+  + * (hipposys:type) = hipposys:type
+
+[hipposys:workflow] > hipposys:type
+  - hipposys:privileges (string) multiple
+  + hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
+  + hipposys:config (nt:unstructured) = nt:unstructured
+
+[hipposys:workflowcategory] > nt:base
+  orderable
+  + * (hipposys:workflow) = hipposys:workflow
+
+[hipposys:workflowfolder] > mix:referenceable, nt:base
+  + * (hipposys:workflowcategory) = hipposys:workflowcategory
+
+[hipposys:ocmquery] > hippo:query
+  - hipposys:classname (string) mandatory
+  + hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
+
+[hipposys:ocmqueryfolder] > nt:base
+  + * (nt:query) = hipposys:ocmquery
+
+[hipposys:updaterinfo] > nt:base
+  - hipposys:skippedcount (long)
+  - hipposys:batchsize (long)
+  - hipposys:class (string)
+  - hipposys:cancelled (boolean)
+  - hipposys:throttle (long)
+  - hipposys:starttime (date)
+  - hipposys:dryrun (boolean)
+  - hipposys:logtail (string)
+  - hipposys:finishtime (date)
+  - hipposys:updatedcount (long)
+  - hipposys:language (string)
+  - hipposys:log (binary)
+  - hipposys:query (string)
+  - hipposys:startedby (string)
+  - hipposys:cancelledby (string)
+  - hipposys:updated (binary)
+  - hipposys:failedcount (long)
+  - hipposys:failed (binary)
+  - hipposys:skipped (binary)
+  - hipposys:script (string)
+  - hipposys:path (string)
+  - hipposys:revert (boolean)
+
+[hipposys:updaterfolder] > nt:base
+  + * (hipposys:updaterinfo)
+
+[hipposys:update] > mix:lockable, nt:base
+  + hippo:registry (hipposys:updaterfolder)
+  + hippo:queue (hipposys:updaterfolder)
+  + hippo:history (hipposys:updaterfolder)
+
+[hipposys:role] > nt:base
+  - hipposys:jcrwrite (boolean)
+  - hipposys:jcrread (boolean)
+  - hipposys:privileges (string) multiple
+  - hipposys:jcrremove (boolean)
+  - hipposys:roles (string) multiple
+
+[hipposys:rolefolder] > nt:base
+  + * (hipposys:role) = hipposys:role
+
+[hipposys:propertyreferences] > nt:base
+  orderable
+  + * (hipposys:propertyreference)
+
+[hipposys:deriveddefinition] > nt:base
+  - hipposys:serialver (long)
+  - hipposys:classname (string) mandatory
+  - hipposys:nodetype (string) mandatory
+  + hipposys:accessed (hipposys:propertyreferences) = hipposys:propertyreferences autocreated
+  + hipposys:derived (hipposys:propertyreferences) = hipposys:propertyreferences autocreated
+
+[hipposys:derivativesfolder] > nt:base
+  orderable
+  + * (hipposys:deriveddefinition) = hipposys:deriveddefinition multiple
+
+[hipposys:userprovider] > nt:base
+  - hipposys:dirlevels (long) = '0' autocreated
+
+[hipposys:groupprovider] > nt:base
+  - hipposys:dirlevels (long) = '0' autocreated
+
+[hipposys:roleprovider] > nt:base
+
+[hipposys:securityprovider] > nt:base
+  orderable
+  - hipposys:classname (string) mandatory
+  + hipposys:roleprovider (hipposys:roleprovider) = hipposys:roleprovider
+  + hipposys:userprovider (hipposys:userprovider) = hipposys:userprovider
+  + hipposys:groupprovider (hipposys:groupprovider) = hipposys:groupprovider
+
+[hipposys:securityfolder] > nt:base
+  - hipposys:rolespath (string) mandatory
+  - hipposys:groupspath (string) mandatory
+  - hipposys:passwordmaxagedays (double)
+  - hipposys:userspath (string) mandatory
+  - hipposys:passwordmaxagedays (long)
+  - hipposys:domainspath (string) mandatory
+  + * (hipposys:securityprovider) = hipposys:securityprovider
+  + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
+
+[hipposys:temporaryfolder] > nt:unstructured
+  orderable
+
+[hipposys:user] > nt:base
+  - hipposys:previouspasswords (string) multiple
+  - hipposys:password (string)
+  - hipposys:passwordlastmodified (date)
+  - hipposys:lastlogin (date)
+  - hipposys:passkey (string)
+  - hipposys:email (string)
+  - hipposys:system (boolean)
+  - hipposys:securityprovider (string) = 'internal' mandatory autocreated
+  - hipposys:active (boolean) = 'true' mandatory autocreated
+  - hipposys:firstname (string)
+  - hipposys:lastname (string)
+
+[hipposys:userfolder] > nt:base
+  + * (hipposys:userfolder) = hipposys:userfolder
+  + * (hipposys:user) = hipposys:user
+
+[hipposys:queryfolder] > nt:base
+  + * (nt:query) = hippo:query
+  + * (hipposys:queryfolder)
+
+[hipposys:group] > nt:base
+  - hipposys:system (boolean)
+  - hipposys:description (string)
+  - hipposys:securityprovider (string) = 'internal' mandatory autocreated
+  - hipposys:groups (string) multiple
+  - hipposys:members (string) multiple
+
+[hipposys:groupfolder] > nt:base
+  + * (hipposys:group) = hipposys:group
+  + * (hipposys:groupfolder) = hipposys:groupfolder
+
+[hipposys:module] > nt:base
+  - hipposys:className (string)
+  + hippo:moduleconfig (nt:base)
+
+[hipposys:modulefolder] > nt:base
+  + * (hipposys:module) = hipposys:module
+
+[hipposys:configuration] > nt:base
+  + hippo:frontend (hipposys:applicationfolder) = hipposys:applicationfolder
+  + hippo:groups (hipposys:groupfolder) = hipposys:groupfolder
+  + hippo:temporary (hipposys:temporaryfolder) = hipposys:temporaryfolder autocreated
+  + hippo:users (hipposys:userfolder) = hipposys:userfolder
+  + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
+  + hippo:documents (hipposys:ocmqueryfolder) = hipposys:ocmqueryfolder mandatory
+  + hippo:update (hipposys:update) = hipposys:update autocreated
+  + hippo:roles (hipposys:rolefolder) = hipposys:rolefolder
+  + hippo:domains (hipposys:domainfolder) = hipposys:domainfolder
+  + hippo:initialize (hippo:initializefolder) = hippo:initializefolder
+  + hippo:workflows (hipposys:workflowfolder) = hipposys:workflowfolder mandatory
+  + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
+  + hippo:derivatives (hipposys:derivativesfolder) = hipposys:derivativesfolder mandatory autocreated
+  + hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
+
+[hipposys:externalgroup] > hipposys:group
+  - hipposys:syncdate (date)
+  - * (string)
+
+[hipposys:externalrole] > hipposys:role
+  - hipposys:securityprovider (string) = 'internal' mandatory autocreated
+
+[hipposys:externaluser] > hipposys:user
+  - * (string)
+  - hipposys:lastsync (date)
+
+[hipposys:facetsubsearch] > hippo:facetbasesearch
+  - hipposys:search (string) multiple
+  - hippo:facets (string) mandatory multiple
+  - hippo:docbase (string) mandatory
+  + hippo:resultset (hippo:facetresult) = hippo:facetresult
+
+[hipposys:implementation]
+  mixin
+  - hipposys:classname (string) mandatory
+  - hipposys:serialver (long)
+
+[hipposys:initializeitem] > hippo:initializeitem
+  - hipposys:extensionversion (string)
+  - hipposys:extensionsource (string)
+  - hipposys:extensionbuild (long)
+
+[hipposys:relativepropertyreference] > hipposys:propertyreference
+  - hipposys:relPath (string) mandatory
+
+[hipposys:request] > mix:versionable, hippo:request
+  - * (string) multiple
+  - * (string)
+  + * (nt:base) = nt:unstructured
+
+[hipposys:resolvepropertyreference] > hipposys:propertyreference
+  - hipposys:relPath (string) mandatory
+
+[hipposys:softdocument]
+  mixin
+  - hippo:paths (string) mandatory multiple
+  - hippo:uuid (string) mandatory
+
+[hipposys:softhandle]
+  mixin
+  - hippo:paths (string) mandatory multiple
+  - hippo:uuid (string) mandatory
+
+[hipposys:unstructured]
+  mixin
+  + * (nt:base) multiple
+
+[hipposys:workflowevent] > hipposys:workflow
+
+[hipposys:workflowboundmethodevent] > hipposys:workflowevent
+  - hipposys:eventdocument (path)
+  - hipposys:eventconditioncategory (string)
+  - hipposys:eventconditionmethod (string)
+  + hipposys:eventdocument (nt:query)
+
+[hipposys:workflowsimplequeryevent] > hipposys:workflowevent
+  - hipposys:eventdocument (path)
+  - hipposys:eventconditionoperator (string) mandatory
+  + hipposys:eventdocument (nt:query)
+  + hipposys:eventpostcondition (nt:query)
+  + hipposys:eventprecondition (nt:query)
+

@@ -187,9 +187,9 @@ public class DashboardPluginContext implements PluginContext {
         final Map<String, Object> placeholderData = new HashMap<>();
         placeholderData.put(EssentialConst.PLACEHOLDER_NAMESPACE, getProjectNamespacePrefix());
         placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_ROOT, ProjectUtils.getBaseProjectDirectory());
-        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite());
+        placeholderData.put(EssentialConst.PLACEHOLDER_SITE_ROOT, ProjectUtils.getSite().getAbsolutePath());
         placeholderData.put(EssentialConst.PLACEHOLDER_JSP_ROOT, ProjectUtils.getSiteJspFolder());
-        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms());
+        placeholderData.put(EssentialConst.PLACEHOLDER_CMS_ROOT, ProjectUtils.getCms().getAbsolutePath());
         // packages
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_PACKAGE, componentsPackage);

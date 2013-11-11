@@ -41,7 +41,10 @@
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>aa36f998-6ab4-4527-ab19-26cafc090281</sv:value>
       </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+      <!-- NOTE: TEST ONLY-->
+      <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">
+        <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
+      </sv:property>
       <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
         <sv:value>new-news-folder</sv:value>
         <sv:value>new-news-document</sv:value>

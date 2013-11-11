@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -23,7 +24,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MemoryRepository {
 
-    public static final String[] CND_FILE_NAMES = {"/test_cnd.cnd", "/test_hippo.cnd", "/test_hippostd.cnd", "/test_hst.cnd", "/test_hippo_sys_edit.cnd", "/test_hippotranslation.cnd", "/test_hippo_gal.cnd", "/mytestproject.cnd","/tesnamespace.cnd" };
+    public static final String[] CND_FILE_NAMES = {"/test_cnd.cnd", "/test_hippo.cnd",
+            "/test_hippostd.cnd", "/test_hst.cnd",
+            "/test_hippo_sys_edit.cnd", "/test_hippotranslation.cnd",
+            "/test_hipposys.cnd", "/test_frontend.cnd",
+            "/test_editor.cnd", "/test_hippogallerypicker.cnd",
+            "/test_hippo_gal.cnd", "/mytestproject.cnd", "/testnamespace.cnd"};
     private static Logger log = LoggerFactory.getLogger(MemoryRepository.class);
     private static String configFileName = "repository.xml";
     private static URL resource = MemoryRepository.class.getClassLoader().getResource(configFileName);
@@ -39,6 +45,27 @@ public class MemoryRepository {
             InputStream stream = getClass().getResourceAsStream(fileName);
             mgr.registerNodeTypes(stream, "text/x-jcr-cnd");
         }
+        //add namespace:
+        final Node rootNode = session.getRootNode();
+        final Node namespaceNode = rootNode.addNode("hippo:namespaces", "hipposysedit:namespacefolder");
+        namespaceNode.addNode("testnamespace", "hipposysedit:namespace");
+        // add  hippoconfig
+        final Node config = rootNode.addNode("hippo:configuration", "hipposys:configuration");
+        config.addNode("hippo:workflows", "hipposys:workflowfolder");
+        config.addNode("hippo:documents", "hipposys:ocmqueryfolder");
+
+        Node queryNode;
+        if (!config.hasNode("hippo:queries")) {
+            queryNode = config.addNode("hippo:queries", "hipposys:queryfolder");
+        } else{
+            queryNode = config.getNode("hippo:queries");
+        }
+        if (!queryNode.hasNode("hippo:templates")) {
+            queryNode.addNode("hippo:templates", "hipposys:queryfolder");
+        }
+        session.save();
+
+
     }
 
     public MemoryRepository(String[] cnds) throws Exception {

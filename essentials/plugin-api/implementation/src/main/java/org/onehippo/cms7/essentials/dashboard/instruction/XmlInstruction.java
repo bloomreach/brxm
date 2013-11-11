@@ -78,12 +78,13 @@ public class XmlInstruction extends PluginInstruction {
     @Override
     public InstructionStatus process(final PluginContext context, final InstructionStatus previousStatus) {
         this.context = context;
+        processPlaceholders(context.getPlaceholderData());
         log.debug("executing XML Instruction {}", this);
         if (!valid()) {
             eventBus.post(new MessageEvent("Invalid instruction descriptor: " + toString()));
             return InstructionStatus.FAILED;
         }
-        processPlaceholders(context.getPlaceholderData());
+        /*processPlaceholders(context.getPlaceholderData());*/
         // check action:
         if (action.equals(COPY)) {
             return copy();
