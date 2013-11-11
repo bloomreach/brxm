@@ -116,6 +116,21 @@ final class Exporter {
     
     private void exportContentResource(InitializeItem item) {
         log.info("Exporting " + item.getContentResource() + " to module " + module.getModulePath());
+        try {
+            doExportContentResource(item);
+        } catch (RepositoryException e) {
+            // concurrent modifications may have caused this exception
+            // so try once more
+            try {
+                session.refresh(false);
+                doExportContentResource(item);
+            } catch (RepositoryException e1) {
+                log.error("Exporting " + item.getContentResource() + " failed.", e);
+            }
+        }
+    }
+
+    private void doExportContentResource(final InitializeItem item) throws RepositoryException {
         OutputStream out = null;
         try {
             File file = new File(module.getExportDir(), item.getContentResource());
@@ -137,8 +152,6 @@ final class Exporter {
                 exportDereferencedView(item, handler);
             }
         } catch (IOException e) {
-            log.error("Exporting " + item.getContentResource() + " failed.", e);
-        } catch (RepositoryException e) {
             log.error("Exporting " + item.getContentResource() + " failed.", e);
         } catch (TransformerConfigurationException e) {
             log.error("Exporting " + item.getContentResource() + " failed.", e);
