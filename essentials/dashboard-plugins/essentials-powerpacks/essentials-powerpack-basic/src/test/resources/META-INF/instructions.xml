@@ -18,8 +18,8 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet name="NAMESPACE">
-    <cnd documentType="newsdocument" superType="${namespace}:baseDocument,hippostd:relaxed,hippotranslation:translated" />
-    <cnd documentType="eventsdocument" superType="${namespace}:baseDocument,hippostd:relaxed,hippotranslation:translated" />
+    <cnd documentType="newsdocument" superType="${namespace}:basedocument,hippostd:relaxed,hippotranslation:translated" />
+    <cnd documentType="eventsdocument" superType="${namespace}:basedocument,hippostd:relaxed,hippotranslation:translated" />
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/${namespace}"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/${namespace}"/>
   </instructionSet>

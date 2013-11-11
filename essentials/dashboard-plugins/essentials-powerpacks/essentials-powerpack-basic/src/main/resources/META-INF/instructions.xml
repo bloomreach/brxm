@@ -18,8 +18,8 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet name="NAMESPACE">
-    <cnd documentType="newsdocument" superType="${namespace}:baseDocument,hippostd:relaxed,hippotranslation:translated" />
-    <cnd documentType="eventsdocument" superType="${namespace}:baseDocument,hippostd:relaxed,hippotranslation:translated" />
+    <cnd documentType="newsdocument" superType="${namespace}:basedocument,hippostd:relaxed,hippotranslation:translated" />
+    <cnd documentType="eventsdocument" superType="${namespace}:basedocument,hippostd:relaxed,hippotranslation:translated" />
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/${namespace}"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/${namespace}"/>
   </instructionSet>
@@ -48,32 +48,32 @@
     <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="${jspRoot}/essentials/essentials-component-event-detail.jsp"/>
   </instructionSet>
   <instructionSet name="SITE-MAPS">
-    <xml action="copy"  source="xml/sitemap/news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
-    <xml action="copy"  source="xml/sitemap/events.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+    <xml action="copy"  source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+    <xml action="copy"  source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
   </instructionSet>
   <instructionSet name="JAVA">
     <file action="copy"  overwrite="true" source="java/NewsDocument.txt" target="${beansFolder}/NewsDocument.java"/>
     <file action="copy"  overwrite="true" source="java/EventsDocument.txt" target="${beansFolder}/EventsDocument.java"/>
   </instructionSet>
   <instructionSet name="COMPONENTS">
-    <xml action="copy" source="xml/components/list.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
-    <xml action="copy" source="xml/components/content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
+    <xml action="copy" source="xml/hst/components/list.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
+    <xml action="copy" source="xml/hst/components/content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
   </instructionSet>
   <instructionSet name="PAGES">
-    <xml action="copy" source="xml/pages/standard.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
-    <xml action="copy" source="xml/pages/newsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
-    <xml action="copy" source="xml/pages/newspage.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
-    <xml action="copy" source="xml/pages/eventsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
-    <xml action="copy" source="xml/pages/eventspage.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/standard.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/newsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/eventsoverview.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
+    <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/${namespace}/hst:pages"/>
   </instructionSet>
   <instructionSet name="TEMPLATES">
-    <xml action="copy" source="xml/templates/layout-webpage.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/standard-main.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/standard-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/standard-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/news-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/news-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
-    <xml action="copy" source="xml/templates/events-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/layout-webpage.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/standard-main.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/standard-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/standard-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/news-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/news-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
+    <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
   </instructionSet>
 </instructions>

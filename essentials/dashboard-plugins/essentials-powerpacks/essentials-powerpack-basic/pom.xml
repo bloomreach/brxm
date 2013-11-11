@@ -99,6 +99,8 @@
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.js</include>
+          <include>**/*.png</include>
+          <include>**/*.txt</include>
           <include>**/*.properties</include>
         </includes>
       </resource>
@@ -112,6 +114,8 @@
           <include>**/*.MF</include>
           <include>**/*.properties</include>
           <include>**/*.java</include>
+          <include>**/*.png</include>
+          <include>**/*.txt</include>
         </includes>
       </resource>
     </resources>
