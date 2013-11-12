@@ -481,8 +481,6 @@ components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIVarsPlaceholderResol
 components/core/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/CompositeConfigurationNodes.java -text svneol=unset#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/cache/EventCache.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/cache/EventCacheKeyRegistry.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstConfigurationLoadingCache.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEvent.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventConsumer.java -text
@@ -490,6 +488,8 @@ components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventsColl
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstEventsDispatcher.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/cache/HstNodeLoadingCache.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/WeakKeyTagRegistry.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/cache/WeakTaggedCache.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassProcessor.java -text

@@ -48,8 +48,8 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(HstConfigurationLoadingCache.class);
 
-    private EventCache<List<UUID>, HstComponentsConfiguration, String> componentsConfigurationCache = new EventCache<>();
-    private EventCache<List<UUID>, HstSiteMapItemHandlersConfiguration, String> siteMapItemHandlerConfigurationCache = new EventCache<>();
+    private WeakTaggedCache<List<UUID>, HstComponentsConfiguration, String> componentsConfigurationCache = new WeakTaggedCache<>();
+    private WeakTaggedCache<List<UUID>, HstSiteMapItemHandlersConfiguration, String> siteMapItemHandlerConfigurationCache = new WeakTaggedCache<>();
 
     private HstNodeLoadingCache hstNodeLoadingCache;
     private String rootConfigurationsPrefix;
@@ -92,8 +92,8 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             }
         }
         for (String eventPath : eventPaths) {
-            componentsConfigurationCache.handleEvent(eventPath);
-            siteMapItemHandlerConfigurationCache.handleEvent(eventPath);
+            componentsConfigurationCache.evictKeysByTag(eventPath);
+            siteMapItemHandlerConfigurationCache.evictKeysByTag(eventPath);
         }
     }
 

@@ -21,6 +21,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,44 +36,44 @@ import org.slf4j.LoggerFactory;
  *   Note that this class is <strong>not</strong> thread-safe : It should not be accessed by concurrent threads
  * </p>
  */
-public class EventCacheKeyRegistry<Event, CacheKey> {
+public class WeakKeyTagRegistry<U, K> {
 
-    private static final Logger log = LoggerFactory.getLogger(EventCacheKeyRegistry.class);
+    private static final Logger log = LoggerFactory.getLogger(WeakKeyTagRegistry.class);
 
-    final Map<Event, List<WeakReference<CacheKey>>> eventCacheKeysMap = new HashMap<>();
-    final Map<WeakReference<CacheKey>, Event> cacheKeyEventMap = new IdentityMap();
-    private final ReferenceQueue<CacheKey> cleanupQueue = new ReferenceQueue<>();
+    final Map<U, List<WeakReference<K>>> tagKeysMap = new HashMap<>();
+    final Map<WeakReference<K>, List<U>> keyTagsMap = new IdentityMap();
+    private final ReferenceQueue<K> cleanupQueue = new ReferenceQueue<>();
 
-    public void put(Event key, CacheKey value) {
-        put((Event[])new Object[]{key}, value);
+    public void put(U tag, K key) {
+        put((U[])new Object[]{tag}, key);
     }
 
-    public void put(Event[] events, CacheKey value) {
-        WeakReference<CacheKey> weakCacheKey = new WeakReference<>(value, cleanupQueue);
-        for (Event event : events) {
-            log.debug("Register event '{}' to cachekey '{}'", event, value);
-            List<WeakReference<CacheKey>> cacheKeys = eventCacheKeysMap.get(event);
+    public void put(U[] tags, K key) {
+        expungeStaleEntries();
+        WeakReference<K> weakCacheKey = new WeakReference<>(key, cleanupQueue);
+        for (U tag : tags) {
+            log.debug("Register tag '{}' to key '{}'", tag, key);
+            List<WeakReference<K>> cacheKeys = tagKeysMap.get(tag);
             if (cacheKeys == null) {
                 cacheKeys = new ArrayList<>();
                 cacheKeys.add(weakCacheKey);
-                eventCacheKeysMap.put(event, cacheKeys);
+                tagKeysMap.put(tag, cacheKeys);
             } else {
                 cacheKeys.add(weakCacheKey);
             }
-            cacheKeyEventMap.put(weakCacheKey, event);
         }
-        cleanup();
+        keyTagsMap.put(weakCacheKey, Arrays.asList(tags));
     }
 
-    public List<CacheKey> get(Event event) {
-        cleanup();
-        final List<WeakReference<CacheKey>> weakReferences = eventCacheKeysMap.get(event);
+    public List<K> get(U tag) {
+        expungeStaleEntries();
+        final List<WeakReference<K>> weakReferences = tagKeysMap.get(tag);
         if (weakReferences == null) {
             return Collections.emptyList();
         }
-        List<CacheKey> result = new ArrayList<>(weakReferences.size());
-        for (WeakReference<CacheKey> weakReference : weakReferences) {
-            final CacheKey v = weakReference.get();
+        List<K> result = new ArrayList<>(weakReferences.size());
+        for (WeakReference<K> weakReference : weakReferences) {
+            final K v = weakReference.get();
             if (v != null) {
                 result.add(v);
             }
@@ -80,17 +81,19 @@ public class EventCacheKeyRegistry<Event, CacheKey> {
         return result;
     }
 
-    private void cleanup() {
-        Reference<? extends CacheKey> garbaged;
+    private void expungeStaleEntries() {
+        Reference<? extends K> garbaged;
         while ((garbaged = cleanupQueue.poll()) != null) {
             // remove gc-ed weak reference from maps
-            Event event = cacheKeyEventMap.remove(garbaged);
-            if (event != null) {
-                List<WeakReference<CacheKey>> list = eventCacheKeysMap.get(event);
-                if (list != null) {
-                    list.remove(garbaged);
-                    if (list.isEmpty()) {
-                        eventCacheKeysMap.remove(event);
+            List<U> tags = keyTagsMap.remove(garbaged);
+            if (tags != null) {
+                for (U tag : tags) {
+                    List<WeakReference<K>> list = tagKeysMap.get(tag);
+                    if (list != null) {
+                        list.remove(garbaged);
+                        if (list.isEmpty()) {
+                            tagKeysMap.remove(tag);
+                        }
                     }
                 }
             }

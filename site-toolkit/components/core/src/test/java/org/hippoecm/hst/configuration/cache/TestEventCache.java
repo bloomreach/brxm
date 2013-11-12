@@ -61,17 +61,17 @@ public class TestEventCache {
 
     @Test
     public void testEventCache() throws InterruptedException {
-        final EventCache<FinalizableTinyKey, FinalizableTinyObject, String> eventCache = new EventCache<>();
+        final WeakTaggedCache<FinalizableTinyKey, FinalizableTinyObject, String> weakTaggedCache = new WeakTaggedCache<>();
         final Counter finalizedObjectsCounter = new Counter();
         final Counter finalizedKeyCounter = new Counter();
         final int numberOfObjects = 1000;
         for (int i = 0 ; i < numberOfObjects; i++) {
-            eventCache.put(new FinalizableTinyKey("key"+i, finalizedKeyCounter), new FinalizableTinyObject(finalizedObjectsCounter), "event"+i);
+            weakTaggedCache.put(new FinalizableTinyKey("key"+i, finalizedKeyCounter), new FinalizableTinyObject(finalizedObjectsCounter), "event"+i);
         }
 
         // this one should not be able to be GC-ed
         FinalizableTinyObject tinyObject =  new FinalizableTinyObject(finalizedObjectsCounter);
-        eventCache.put(new FinalizableTinyKey("unGarbagableKey", finalizedKeyCounter), tinyObject, "unGarbagableEvent");
+        weakTaggedCache.put(new FinalizableTinyKey("unGarbagableKey", finalizedKeyCounter), tinyObject, "unGarbagableTag");
         while (finalizedObjectsCounter.finalized.get() != numberOfObjects) {
             System.out.println(finalizedObjectsCounter.finalized.get());
             System.gc();
@@ -80,27 +80,27 @@ public class TestEventCache {
         }
 
         // the cache is only cleaned on next access
-        assertTrue(eventCache.keyToValueMap.size() == numberOfObjects + 1);
-        assertTrue(eventCache.valueKeyMap.size() == numberOfObjects + 1);
+        assertTrue(weakTaggedCache.keyValueMap.size() == numberOfObjects + 1);
+        assertTrue(weakTaggedCache.valueKeyMap.size() == numberOfObjects + 1);
 
-        // since the cachekey are strongly referenced in the EventCache and the EventCache did not yet had a cleanup()
+        // since the cachekey are strongly referenced in the WeakTaggedCache and the WeakTaggedCache did not yet had a cleanup()
         // there still can't be finalized a single cachekey
         Assert.assertTrue(finalizedKeyCounter.finalized.get() == 0);
 
         // access the cache for force cleanup
-        eventCache.get(new FinalizableTinyKey("foo", null));
+        weakTaggedCache.get(new FinalizableTinyKey("foo", null));
 
-        assertTrue(eventCache.keyToValueMap.size() == 1);
-        assertTrue(eventCache.valueKeyMap.size() == 1);
+        assertTrue(weakTaggedCache.keyValueMap.size() == 1);
+        assertTrue(weakTaggedCache.valueKeyMap.size() == 1);
 
         // now, all items should have been evicted *EXCEPT* the one we still reference
         for (int i = 0 ; i < numberOfObjects; i++) {
-            assertNull("since object is gc-ed, it should not be present any more",eventCache.get(new FinalizableTinyKey("key" + i, null)));
+            assertNull("since object is gc-ed, it should not be present any more", weakTaggedCache.get(new FinalizableTinyKey("key" + i, null)));
         }
 
         // the registry is only cleaned on next access when all keys have been GC-ed
-        assertTrue(eventCache.eventCacheKeyRegistry.cacheKeyEventMap.size() == numberOfObjects + 1);
-        assertTrue(eventCache.eventCacheKeyRegistry.eventCacheKeysMap.size() == numberOfObjects + 1);
+        assertTrue(weakTaggedCache.weakKeyTagRegistry.keyTagsMap.size() == numberOfObjects + 1);
+        assertTrue(weakTaggedCache.weakKeyTagRegistry.tagKeysMap.size() == numberOfObjects + 1);
 
         while (finalizedKeyCounter.finalized.get() != numberOfObjects) {
             System.gc();
@@ -108,21 +108,21 @@ public class TestEventCache {
             System.gc();
         }
 
-        // only AFTER eventCache.get("foo") the STRONG KEYS have been removed from eventCache and now
-        // have become available for the garbage collector. After they have been GC-ed, the eventCacheKeyRegistry
+        // only AFTER weakTaggedCache.get("foo") the STRONG KEYS have been removed from weakTaggedCache and now
+        // have become available for the garbage collector. After they have been GC-ed, the weakKeyTagRegistry
         // should be cleaned up
 
         // access the cache for force cleanup
-        eventCache.eventCacheKeyRegistry.get("foo");
-        assertTrue(eventCache.eventCacheKeyRegistry.cacheKeyEventMap.size() ==  1);
-        assertTrue(eventCache.eventCacheKeyRegistry.eventCacheKeysMap.size() == 1);
+        weakTaggedCache.weakKeyTagRegistry.get("foo");
+        assertTrue(weakTaggedCache.weakKeyTagRegistry.keyTagsMap.size() ==  1);
+        assertTrue(weakTaggedCache.weakKeyTagRegistry.tagKeysMap.size() == 1);
 
 
-        assertNotNull(eventCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
-        assertTrue(tinyObject == eventCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
+        assertNotNull(weakTaggedCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
+        assertTrue(tinyObject == weakTaggedCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
 
-        eventCache.handleEvent("unGarbagableEvent");
-        assertNull(eventCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
+        weakTaggedCache.evictKeysByTag("unGarbagableTag");
+        assertNull(weakTaggedCache.get(new FinalizableTinyKey("unGarbagableKey", null)));
 
     }
 
@@ -132,11 +132,11 @@ public class TestEventCache {
      */
     @Test
     public void testEventCacheMemoryUsage() {
-        final EventCache<FinalizableBigKey, FinalizableBigObject, String> eventCache = new EventCache<>();
+        final WeakTaggedCache<FinalizableBigKey, FinalizableBigObject, String> weakTaggedCache = new WeakTaggedCache<>();
         // per key and per object about 10 Mbyte, so 1000 * 20 Mbyte = 20 Gbyte should expose memory issues
         final int numberOfObjects = 1000;
         for (int i = 0 ; i < numberOfObjects; i++) {
-            eventCache.put(new FinalizableBigKey("key"+i), new FinalizableBigObject(), "event"+i);
+            weakTaggedCache.put(new FinalizableBigKey("key"+i), new FinalizableBigObject(), "event"+i);
         }
         assertTrue("No OOM", true);
     }

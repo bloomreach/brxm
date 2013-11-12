@@ -33,55 +33,54 @@ import org.slf4j.LoggerFactory;
  *   Note that this class is <strong>not</strong> thread-safe : It should not be accessed by concurrent threads
  * </p>
  */
-public class EventCache<CacheKey, CachedObj, Event> {
+public class WeakTaggedCache<K, V, U> {
 
-    private static final Logger log = LoggerFactory.getLogger(EventCache.class);
+    private static final Logger log = LoggerFactory.getLogger(WeakTaggedCache.class);
 
-    Map<CacheKey, WeakReference<CachedObj>> keyToValueMap = new HashMap<>();
-    Map<WeakReference<CachedObj>, CacheKey> valueKeyMap = new IdentityMap();
-    private ReferenceQueue<CachedObj> cleanupQueue = new ReferenceQueue<>();
-    EventCacheKeyRegistry<Event, CacheKey> eventCacheKeyRegistry = new EventCacheKeyRegistry();
+    Map<K, WeakReference<V>> keyValueMap = new HashMap<>();
+    Map<WeakReference<V>, K> valueKeyMap = new IdentityMap();
+    private ReferenceQueue<V> cleanupQueue = new ReferenceQueue<>();
+    WeakKeyTagRegistry<U, K> weakKeyTagRegistry = new WeakKeyTagRegistry();
 
-    public void handleEvent(final Event event) {
+    public void evictKeysByTag(final U tag) {
         try {
-            final List<CacheKey> evictKeys = eventCacheKeyRegistry.get(event);
-            for (CacheKey evictKey : evictKeys) {
-                final CachedObj remove = remove(evictKey);
+            final List<K> evictKeys = weakKeyTagRegistry.get(tag);
+            for (K evictKey : evictKeys) {
+                final V remove = remove(evictKey);
                 if (remove != null) {
-                    log.debug("Succesfully removed '{}' from cache BY event '{}'", remove, event);
+                    log.debug("Succesfully removed '{}' from cache BY tag '{}'", remove, tag);
                 }
             }
         } catch (Exception e) {
-            log.warn("Exception during processing event '"+event.toString()+"'. Skip event.", e);
+            log.warn("Exception during processing tag '"+tag.toString()+"'. Skip tag.", e);
         }
     }
 
-    public void put(CacheKey key, CachedObj value, Event event) {
+    public void put(K key, V value, U event) {
         expungeStaleEntries();
         store(key, value);
-        eventCacheKeyRegistry.put(event, key);
+        weakKeyTagRegistry.put(event, key);
     }
 
 
-    public void put(CacheKey key, CachedObj value, Event[] events) {
+    public void put(K key, V value, U[] events) {
         expungeStaleEntries();
         store(key, value);
-        eventCacheKeyRegistry.put(events, key);
+        weakKeyTagRegistry.put(events, key);
     }
 
-    public CachedObj get(CacheKey key) {
-
-        expungeStaleEntries();;
-        final WeakReference<CachedObj> weakRef = keyToValueMap.get(key);
+    public V get(K key) {
+        expungeStaleEntries();
+        final WeakReference<V> weakRef = keyValueMap.get(key);
         if (weakRef == null) {
             return null;
         }
         return weakRef.get();
     }
 
-    public CachedObj remove (CacheKey key) {
+    public V remove(K key) {
         expungeStaleEntries();
-        final WeakReference<CachedObj> weakRef = keyToValueMap.remove(key);
+        final WeakReference<V> weakRef = keyValueMap.remove(key);
         if (weakRef == null) {
             return null;
         }
@@ -90,19 +89,19 @@ public class EventCache<CacheKey, CachedObj, Event> {
     }
 
 
-    private void store(final CacheKey key, final CachedObj value) {
-        WeakReference<CachedObj> weakCachedObj = new WeakReference<>(value, cleanupQueue);
-        keyToValueMap.put(key, weakCachedObj);
+    private void store(final K key, final V value) {
+        WeakReference<V> weakCachedObj = new WeakReference<>(value, cleanupQueue);
+        keyValueMap.put(key, weakCachedObj);
         valueKeyMap.put(weakCachedObj, key);
     }
 
     private void expungeStaleEntries() {
-        Reference<? extends CachedObj> cleaned;
+        Reference<? extends V> cleaned;
         while ((cleaned = cleanupQueue.poll()) != null) {
             // remove gc-ed weak reference from maps
-            CacheKey weakRefMapKey = valueKeyMap.remove(cleaned);
+            K weakRefMapKey = valueKeyMap.remove(cleaned);
             if (weakRefMapKey != null) {
-                keyToValueMap.remove(weakRefMapKey);
+                keyValueMap.remove(weakRefMapKey);
             }
         }
     }
