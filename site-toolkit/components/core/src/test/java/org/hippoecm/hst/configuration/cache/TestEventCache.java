@@ -36,12 +36,12 @@ public class TestEventCache {
 
     @Test
     public void testReferenceQueue() throws Exception {
-        Map<String, WeakReference<FinalizableTinyObject>> configurationObjectEventRegistry = new HashMap<>();
+        Map<String, WeakReference<FinalizableTinyObject>> configurationObjectTagRegistry = new HashMap<>();
         final ReferenceQueue<FinalizableTinyObject> integerReferenceQueue = new ReferenceQueue<>();
         Counter finalizedObjectsCounter = new Counter();
         final int numberOfObjects = 1000;
         for (int i = 0 ; i < numberOfObjects; i++) {
-            configurationObjectEventRegistry.put("test" + i, new WeakReference<>(new FinalizableTinyObject(finalizedObjectsCounter), integerReferenceQueue));
+            configurationObjectTagRegistry.put("test" + i, new WeakReference<>(new FinalizableTinyObject(finalizedObjectsCounter), integerReferenceQueue));
         }
 
         // make sure all WeakReference referents are GC-ed
@@ -60,13 +60,13 @@ public class TestEventCache {
     }
 
     @Test
-    public void testEventCache() throws InterruptedException {
+    public void testWeakTaggedCache() throws InterruptedException {
         final WeakTaggedCache<FinalizableTinyKey, FinalizableTinyObject, String> weakTaggedCache = new WeakTaggedCache<>();
         final Counter finalizedObjectsCounter = new Counter();
         final Counter finalizedKeyCounter = new Counter();
         final int numberOfObjects = 1000;
         for (int i = 0 ; i < numberOfObjects; i++) {
-            weakTaggedCache.put(new FinalizableTinyKey("key"+i, finalizedKeyCounter), new FinalizableTinyObject(finalizedObjectsCounter), "event"+i);
+            weakTaggedCache.put(new FinalizableTinyKey("key"+i, finalizedKeyCounter), new FinalizableTinyObject(finalizedObjectsCounter), "tag"+i);
         }
 
         // this one should not be able to be GC-ed
@@ -131,12 +131,23 @@ public class TestEventCache {
      * not lead to memory issues when the keys/objects are ready for gc
      */
     @Test
-    public void testEventCacheMemoryUsage() {
+    public void testWeakTaggedCacheMemoryUsage() {
         final WeakTaggedCache<FinalizableBigKey, FinalizableBigObject, String> weakTaggedCache = new WeakTaggedCache<>();
         // per key and per object about 10 Mbyte, so 1000 * 20 Mbyte = 20 Gbyte should expose memory issues
         final int numberOfObjects = 1000;
         for (int i = 0 ; i < numberOfObjects; i++) {
-            weakTaggedCache.put(new FinalizableBigKey("key"+i), new FinalizableBigObject(), "event"+i);
+            weakTaggedCache.put(new FinalizableBigKey("key"+i), new FinalizableBigObject(), "tag"+i);
+        }
+        assertTrue("No OOM", true);
+    }
+
+    @Test
+    public void testDummy() {
+        final WeakTaggedCache<FinalizableBigKey, FinalizableBigObject, String> weakTaggedCache = new WeakTaggedCache<>();
+        // per key and per object about 10 Mbyte, so 1000 * 20 Mbyte = 20 Gbyte should expose memory issues
+        final int numberOfObjects = 5;
+        for (int i = 0 ; i < numberOfObjects; i++) {
+            weakTaggedCache.put(new FinalizableBigKey("key"+i), new FinalizableBigObject(), "tag"+i);
         }
         assertTrue("No OOM", true);
     }
@@ -200,7 +211,7 @@ public class TestEventCache {
                 return false;
             }
 
-            final FinalizableTinyKey that = (FinalizableTinyKey) o;
+            final FinalizableBigKey that = (FinalizableBigKey) o;
 
             if (!key.equals(that.key)) {
                 return false;
