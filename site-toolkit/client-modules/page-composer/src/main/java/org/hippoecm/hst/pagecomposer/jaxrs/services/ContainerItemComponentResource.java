@@ -183,7 +183,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
             return doGetParameters(getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant, currentMountCanonicalContentPath);
         } catch (Exception e) {
-            log.debug("Failed to retrieve parameters.", e);
+            log.warn("Failed to retrieve parameters.", e);
         }
         return null;
     }
