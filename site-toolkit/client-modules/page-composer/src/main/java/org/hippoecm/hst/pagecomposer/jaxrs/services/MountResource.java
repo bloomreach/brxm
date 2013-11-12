@@ -464,7 +464,8 @@ public class MountResource extends AbstractConfigResource {
                 continue;
             }
             mainConfigNodeNamesToRevert.add(mainConfigNodeToRevert.getPath().substring(previewConfigurationPath.length() + 1));
-        }log.info("Changed main config nodes for configuration '{}' for users '{}' are : {}",
+        }
+        log.info("Changed main config nodes for configuration '{}' for users '{}' are : {}",
                 new String[]{previewConfigurationPath, userIds.toString(), mainConfigNodeNamesToRevert.toString()});
         return mainConfigNodeNamesToRevert;
     }
