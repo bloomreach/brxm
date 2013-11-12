@@ -23,6 +23,16 @@
       <type>pom</type>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-components-plugin-library</artifactId>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-components-plugin-gui</artifactId>
+      <version>${dollar}{essentials.version}</version>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <scope>runtime</scope>
