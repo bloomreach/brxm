@@ -41,6 +41,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -141,15 +142,6 @@ public class MountResource extends AbstractConfigResource {
     Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
         final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
         return collectFromQueryUsersForLockedBy(session, xpath);
-    }
-
-    private String buildXPathQueryToFindLockedMainConfigNodesForUsers(String previewConfigurationPath) {
-        return "/jcr:root" + previewConfigurationPath + "/*[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
-    }
-
-    private String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
-        return "/jcr:root" + previewConfigurationPath + "//element(*," + HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT + ")"
-                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
     }
 
     private Set<String> collectFromQueryUsersForLockedBy(final HippoSession session, final String xpath) throws RepositoryException {
@@ -472,13 +464,24 @@ public class MountResource extends AbstractConfigResource {
         return mainConfigNodeNamesToRevert;
     }
 
-    private String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
+
+    static String buildXPathQueryToFindLockedMainConfigNodesForUsers(String previewConfigurationPath) {
+        return "/jcr:root" + ISO9075.encodePath(previewConfigurationPath) + "/*[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
+    }
+
+    static String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
+        return "/jcr:root" + ISO9075.encodePath(previewConfigurationPath) + "//element(*," + HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT + ")"
+                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
+    }
+
+
+    static String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
         StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(previewConfigurationPath);
+        xpath.append(ISO9075.encodePath(previewConfigurationPath));
         xpath.append("//element(*,");
         xpath.append(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         xpath.append(")[");
@@ -498,13 +501,13 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    private String buildXPathQueryToFindMainfConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
+    static String buildXPathQueryToFindMainfConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
         }
 
         StringBuilder xpath = new StringBuilder("/jcr:root");
-        xpath.append(previewConfigurationPath);
+        xpath.append(ISO9075.encodePath(previewConfigurationPath));
         xpath.append("/*[");
 
         String concat = "";

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -119,7 +120,30 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
     }
 
-    @Ignore
+    @Test
+    public void testXpathQueries(){
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview//element(*,hst:containercomponent)[@hst:lockedby != '']",
+                MountResource.buildXPathQueryToFindLockedContainersForUsers("/hst:hst/hst:configurations/myproject-preview"));
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview//element(*,hst:containercomponent)[@hst:lockedby != '']",
+                MountResource.buildXPathQueryToFindLockedContainersForUsers("/hst:hst/hst:configurations/7_8-preview"));
+
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@hst:lockedby != '']",
+                MountResource.buildXPathQueryToFindLockedMainConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview"));
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@hst:lockedby != '']",
+                MountResource.buildXPathQueryToFindLockedMainConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview"));
+
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview//element(*,hst:containercomponent)[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+                MountResource.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin","editor"})));
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview//element(*,hst:containercomponent)[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+                MountResource.buildXPathQueryToFindContainersForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin","editor"})));
+
+        assertEquals("/jcr:root/hst:hst/hst:configurations/myproject-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+                MountResource.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/myproject-preview", Arrays.asList(new String[]{"admin","editor"})));
+        assertEquals("/jcr:root/hst:hst/hst:configurations/_x0037__8-preview/*[@hst:lockedby = 'admin' or @hst:lockedby = 'editor']",
+                MountResource.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin","editor"})));
+    }
+
+
     @Test
     public void testEditAndPublishProjectThatStartsWithNumber() throws Exception {
 
