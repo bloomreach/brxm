@@ -60,6 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -528,11 +529,20 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("    </ul>");
 
 
-            String queryString = null;
+            String queryString;
             if ((queryString = req.getParameter("xpath")) != null || (queryString = req.getParameter("sql")) != null) {
                 QueryManager qmgr = session.getWorkspace().getQueryManager();
-                Query query = qmgr.createQuery(queryString, (req.getParameter("xpath") != null ? Query.XPATH
-                        : Query.SQL));
+
+                String language = (req.getParameter("xpath") != null ? Query.XPATH: Query.SQL);
+                Query query;
+                if (language.equals(Query.XPATH)) {
+                    // we encode xpath queries to support queries like /jcr:root/7_8//*
+                    // the 7 needs to be encode
+                    query = qmgr.createQuery(ISO9075.encodePath(queryString), language);
+                } else {
+                    query = qmgr.createQuery(queryString, language);
+                }
+
                 String strLimit = req.getParameter("limit");
                 if (strLimit != null && !strLimit.isEmpty()) {
                     query.setLimit(Long.parseLong(strLimit));
