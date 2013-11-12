@@ -17,10 +17,8 @@
 package org.hippoecm.hst.configuration.cache;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +32,6 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfigurationServi
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemapitemhandler.HstSiteMapItemHandlersConfigurationService;
-import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,12 +120,16 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
 
     /**
-     * check wether we already a an instance that would result in the very same HstComponentsConfiguration instance. If so, set that value
-     * the cachekey is the set of all HstNode identifiers that make a HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
+     * check wether we already a an instance that would result in the very same HstComponentsConfiguration instance. If
+     * so, set that value the cachekey is the set of all HstNode identifiers that make a
+     * HstComponentsConfigurationService unique: thus, pages, components, catalog and templates.
      *
-     * @param configurationPath
-     *@param createIfNotInCache when <code>true</code> a {@link org.hippoecm.hst.configuration.components.HstComponentsConfigurationService} will be created when missing. When <code>false</code>
-     *                        only a {@link org.hippoecm.hst.configuration.components.HstComponentsConfigurationService} will be returned if present in cache  @return a {@link HstComponentsConfigurationService} instance or <code>null</code> when no found for <code>configurationPath</code>
+     * @param configurationPath  the configurationPath for which the {@link HstComponentsConfiguration} is requested
+     * @param createIfNotInCache when <code>true</code> a {@link org.hippoecm.hst.configuration.components.HstComponentsConfigurationService}
+     *                           will be created when missing. When <code>false</code> only a {@link
+     *                           org.hippoecm.hst.configuration.components.HstComponentsConfigurationService} will be
+     *                           returned if present in cache  @return a {@link HstComponentsConfigurationService}
+     *                           instance or <code>null</code> when no found for <code>configurationPath</code>
      */
     public HstComponentsConfiguration getComponentsConfiguration(final String configurationPath,
                                                                  final boolean createIfNotInCache) throws ModelLoadingException {
@@ -180,17 +181,11 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                 HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
 
         final CompositeConfigurationNodes.CompositeConfigurationNode compositeSiteMapItemHandlersNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAPITEMHANDLERS);
+        // if the compositeSiteMapItemHandlersNode is null, we do not even need to check the cache or register the NOOP with
+        // tags: Namely, if later on a sitemap item handler node is added, we will have a compositeSiteMapItemHandlersNode that is
+        // not null. It is more efficient to directly return the NOOP
         if (compositeSiteMapItemHandlersNode == null) {
-            return new HstSiteMapItemHandlersConfiguration() {
-                @Override
-                public Map<String, HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
-                    return Collections.EMPTY_MAP;
-                }
-                @Override
-                public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(final String id) {
-                    return null;
-                }
-            };
+            return HstSiteMapItemHandlersConfiguration.NOOP;
         }
         List<UUID> cachekey = ccn.getCacheKey();
         HstSiteMapItemHandlersConfiguration siteMapItemHandlerConfiguration = siteMapItemHandlerConfigurationCache.get(cachekey);

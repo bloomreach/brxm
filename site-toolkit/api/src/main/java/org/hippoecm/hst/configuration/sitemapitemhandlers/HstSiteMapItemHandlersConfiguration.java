@@ -15,11 +15,23 @@
  */
 package org.hippoecm.hst.configuration.sitemapitemhandlers;
 
+import java.util.Collections;
 import java.util.Map;
 
 public interface HstSiteMapItemHandlersConfiguration {
 
-    
+    static final HstSiteMapItemHandlersConfiguration NOOP = new HstSiteMapItemHandlersConfiguration() {
+        @Override
+        public Map<String, HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
+            return Collections.EMPTY_MAP;
+        }
+
+        @Override
+        public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(final String id) {
+            return null;
+        }
+    };
+
     /**
      * Return the map of all <code>HstSiteMapItemHandlerConfiguration</code>'s where the keys are the the <code>HstSiteMapItemHandlerConfiguration</code>'s 
      * ({@link HstSiteMapItemHandlerConfiguration#getId()}).
