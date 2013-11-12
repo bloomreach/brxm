@@ -78,7 +78,8 @@
     <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
   </instructionSet>
   <instructionSet name="SAMPLE_DOCUMENTS">
-    <xml action="copy" source="xml/samples-docs.xml" target="/content/documents/"/>
-    <xml action="copy" source="xml/samples-assets.xml" target="/content/assets/"/>
+    <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/${namespace}/events"/>
+    <xml action="copy" source="xml/samples/content/documents/news.xml" target="/content/documents/${namespace}/news"/>
+    <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/${namespace}"/>
   </instructionSet>
 </instructions>
