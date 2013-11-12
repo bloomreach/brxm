@@ -398,6 +398,7 @@ public class MountResource extends AbstractConfigResource {
             String currentUserId = session.getUserID();
             return discardChanges(requestContext, Collections.singletonList(currentUserId));
         } catch (RepositoryException e) {
+            log.warn("Could not discard preview configuration of the current user: ", e);
             return error("Could not discard preview configuration of the current user: " + e);
         }
     }
