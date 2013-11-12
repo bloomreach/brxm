@@ -326,6 +326,8 @@ client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/test/java/org/hippoecm/hst/pagecomposer/jaxrs/services/MountResourceTest.java -text
 client-modules/page-composer/src/test/resources/log4j.dtd -text
 client-modules/page-composer/src/test/resources/log4j.xml -text
+client-modules/page-composer/src/test/resources/org/hippoecm/hst/pagecomposer/jaxrs/AbstractPageComposerTest.xml -text
+client-modules/page-composer/src/test/resources/org/hippoecm/hst/pagecomposer/jaxrs/services/MountResourceTest.xml -text
 client-modules/pom.xml -text svneol=unset#text/plain
 client-modules/src/site/site.xml -text
 client/pom.xml svneol=native#text/plain
