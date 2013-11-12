@@ -288,6 +288,7 @@ public class MountResource extends AbstractConfigResource {
             copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
 
             HstConfigurationUtils.persistChanges(session);
+            log.info("Site is published");
             return ok("Site is published");
         } catch (RepositoryException e) {
             log.warn("Could not publish preview configuration : ", e);
@@ -326,6 +327,8 @@ public class MountResource extends AbstractConfigResource {
             log.warn("Exception happened while trying to create the document " + e, e);
             return error("Exception happened while trying to create the document " + e);
         }
+
+        log.info("Successfully created a document");
         return ok("Successfully created a document", null);
     }
 
@@ -380,6 +383,7 @@ public class MountResource extends AbstractConfigResource {
             log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);
             return error("Exception happened while trying to fetch documents of type '" + docType + "': " + e.getMessage());
         }
+        log.info("Document list found");
         return ok("Document list", documentLocations);
     }
 
