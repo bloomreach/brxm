@@ -70,13 +70,11 @@ public class HstNodeImpl implements HstNode {
     private boolean staleChildren = false;
     private boolean childOrderedReload = false;
 
-    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChildren) throws RepositoryException {
+    public HstNodeImpl(Node jcrNode, HstNode parent) throws RepositoryException {
         this.parent = parent;
         provider = new JCRValueProviderImpl(jcrNode, false, true, false);
         nodeTypeName = jcrNode.getPrimaryNodeType().getName();
-        if(loadChildren) {
-            loadChildren(jcrNode);
-        }
+        loadChildren(jcrNode);
         // detach the backing jcr node now we are done.       
         stale = false;
         provider.detach();
@@ -87,7 +85,7 @@ public class HstNodeImpl implements HstNode {
         long iteratorSizeBeforeLoop = nodes.getSize();
         while (nodes.hasNext()) {
             Node child = nodes.nextNode();
-            HstNode childRepositoryNode = createNew(child, this, true);
+            HstNode childRepositoryNode = new HstNodeImpl(child, this);
             if(children == null) {
                 children = new LinkedHashMap<>((int)iteratorSizeBeforeLoop * 4 / 3);
             }
@@ -106,11 +104,7 @@ public class HstNodeImpl implements HstNode {
             throw new ModelLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
         }
     }
-    
-    protected HstNode createNew(Node jcrNode,  HstNode parent, boolean loadChilds) throws RepositoryException{
-        return new HstNodeImpl(jcrNode, parent, loadChilds);
-    }
-    
+
     @Override
     public String getName() {
         return provider.getName();
@@ -310,7 +304,7 @@ public class HstNodeImpl implements HstNode {
             String childName = jcrChildNode.getName();
             final HstNode existing = getChild(childName);
             if (existing == null) {
-                newChildren.put(childName, new HstNodeImpl(jcrChildNode, this, true));
+                newChildren.put(childName, new HstNodeImpl(jcrChildNode, this));
             } else {
                 newChildren.put(childName, existing);
                 // one of its descendants might still be stale, hence continue updating the child node
@@ -342,7 +336,7 @@ public class HstNodeImpl implements HstNode {
         }
         log.debug("Reloading all children for '{}'.", getValueProvider().getPath());
         for (Node jcrChildNode : new NodeIterable(jcrNode.getNodes())) {
-            HstNode hstChildNode = new HstNodeImpl(jcrChildNode, this, true);
+            HstNode hstChildNode = new HstNodeImpl(jcrChildNode, this);
             addNode(hstChildNode.getName(), hstChildNode);
         }
 
