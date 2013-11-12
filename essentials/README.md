@@ -23,22 +23,18 @@ Hub. In order to make use of your SSH key, you have to make sure you use the fol
 ```
 $ git clone git@github.com:onehippo/essentials.git
 ```
+### Build the essentials components:
+```
+$ cd essentials
+$ mvn clean install
+```
 
-
-### Create empty project:
+### Create and install archetype locally :
 ```
 $ cd essentials/archetype
+$ mvn clean install
 ```
-### Install archetype locally:
 
-```
-$ mvn clean install
-```
-### Install dashboard module
-```
-$ cd ..
-$ mvn clean install
-```
 ### run archetype
 ```
 mvn archetype:generate \
