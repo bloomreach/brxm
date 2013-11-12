@@ -43,7 +43,7 @@
     <file action="copy" overwrite="true" source="jsp/essentials-component-list.jsp" target="${jspRoot}/essentials/essentials-component-list.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-document.jsp" target="${jspRoot}/essentials/essentials-component-document.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-news.jsp" target="${jspRoot}/essentials/essentials-component-news.jsp"/>
-    <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="${jspRoot}/essentials/essentials-component-news-details.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="${jspRoot}/essentials/essentials-component-news-detail.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="${jspRoot}/essentials/essentials-component-events.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="${jspRoot}/essentials/essentials-component-event-detail.jsp"/>
   </instructionSet>
