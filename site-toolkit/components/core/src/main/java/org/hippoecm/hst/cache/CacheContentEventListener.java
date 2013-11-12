@@ -19,7 +19,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl;
-import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.hippoecm.repository.api.HippoNodeType;

@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.slf4j.LoggerFactory;
 
 public class CompositeConfigurationNodes {

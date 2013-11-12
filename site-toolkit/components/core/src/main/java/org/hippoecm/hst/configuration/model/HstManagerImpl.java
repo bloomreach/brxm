@@ -18,8 +18,6 @@ package org.hippoecm.hst.configuration.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.base.Stopwatch;
-
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;

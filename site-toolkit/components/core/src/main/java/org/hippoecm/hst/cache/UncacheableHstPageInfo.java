@@ -20,8 +20,6 @@ import java.util.Collection;
 
 import net.sf.ehcache.constructs.web.Header;
 
-import org.hippoecm.hst.cache.HstPageInfo;
-
 
 /**
  * UncacheableHstPageInfo

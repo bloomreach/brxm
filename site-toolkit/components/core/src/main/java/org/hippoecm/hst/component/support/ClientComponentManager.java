@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
+import com.google.common.eventbus.EventBus;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.ArrayUtils;
@@ -42,8 +44,6 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import com.google.common.eventbus.EventBus;
 
 public class ClientComponentManager implements ComponentManager, ServletContextAware, BeanPostProcessor {
 

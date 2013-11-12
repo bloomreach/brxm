@@ -18,8 +18,6 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,10 +23,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.internal.CollectionOptimizer;
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;

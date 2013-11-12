@@ -21,8 +21,6 @@ import java.util.List;
 
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration {
 

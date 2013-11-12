@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.site.container;
 
+import org.springframework.cache.ehcache.EhCacheFactoryBean;
+
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.constructs.blocking.BlockingCache;
-
-import org.springframework.cache.ehcache.EhCacheFactoryBean;
 
 public class BlockingEhCacheFactoryBean extends EhCacheFactoryBean {
     

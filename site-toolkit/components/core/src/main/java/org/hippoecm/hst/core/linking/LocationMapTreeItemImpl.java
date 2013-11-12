@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
 public class LocationMapTreeItemImpl implements LocationMapTreeItem {
 

@@ -18,10 +18,8 @@ package org.hippoecm.hst.core.container;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstComponentMetadataReader;

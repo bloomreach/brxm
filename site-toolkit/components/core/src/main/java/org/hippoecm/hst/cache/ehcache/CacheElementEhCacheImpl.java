@@ -15,9 +15,9 @@
  */
 package org.hippoecm.hst.cache.ehcache;
 
-import net.sf.ehcache.Element;
-
 import org.hippoecm.hst.cache.CacheElement;
+
+import net.sf.ehcache.Element;
 
 /**
  * CacheElementEhCacheImpl

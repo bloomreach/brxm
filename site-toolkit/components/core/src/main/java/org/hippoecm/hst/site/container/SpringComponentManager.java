@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
+import com.google.common.eventbus.EventBus;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
@@ -41,8 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
-
-import com.google.common.eventbus.EventBus;
 
 /**
  * SpringComponentManager

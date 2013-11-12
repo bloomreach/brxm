@@ -26,7 +26,6 @@ import org.hippoecm.hst.addon.module.ModuleInstance;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ComponentsException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ApplicationContextUtils;
 import org.hippoecm.hst.site.container.DefaultComponentManagerApplicationContext;

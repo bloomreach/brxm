@@ -20,7 +20,6 @@ package org.hippoecm.hst.configuration.cache;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;

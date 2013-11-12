@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.cache;
 
-import org.hippoecm.hst.cache.HstPageInfo;
-
-
 /**
  * ForwardPlaceHolderHstPageInfo
  */

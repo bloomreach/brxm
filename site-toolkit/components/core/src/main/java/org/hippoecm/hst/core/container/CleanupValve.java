@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
+import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 
 /**
  * CleanupValve

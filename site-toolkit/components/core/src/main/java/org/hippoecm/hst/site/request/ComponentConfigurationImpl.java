@@ -16,7 +16,6 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

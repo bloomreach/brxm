@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.cache.ehcache;
 
-import net.sf.ehcache.CacheManager;
+import com.google.common.eventbus.Subscribe;
 
 import org.hippoecm.hst.container.event.ComponentManagerBeforeReplacedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.eventbus.Subscribe;
+import net.sf.ehcache.CacheManager;
 
 /**
  * EhCacheManagerShuttingDownListener

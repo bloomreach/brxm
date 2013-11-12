@@ -26,10 +26,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

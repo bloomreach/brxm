@@ -23,8 +23,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.constructs.web.GenericResponseWrapper;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.ForwardPlaceHolderHstPageInfo;
 import org.hippoecm.hst.cache.HstPageInfo;
@@ -52,6 +50,8 @@ import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
 /**
  * AbstractBaseOrderableValve

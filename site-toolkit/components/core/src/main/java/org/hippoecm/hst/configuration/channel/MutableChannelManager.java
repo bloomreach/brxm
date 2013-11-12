@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 
 /**

@@ -27,11 +27,9 @@ import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.service.Service;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.LoggerFactory;
 

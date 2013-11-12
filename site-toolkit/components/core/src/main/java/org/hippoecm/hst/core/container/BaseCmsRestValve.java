@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.container.Valve;
-import org.hippoecm.hst.core.container.ValveContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

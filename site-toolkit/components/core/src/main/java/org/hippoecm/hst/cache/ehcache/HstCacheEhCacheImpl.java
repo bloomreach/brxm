@@ -17,13 +17,13 @@ package org.hippoecm.hst.cache.ehcache;
 
 import java.util.concurrent.Callable;
 
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
 
 /**
  * HstCacheEhCacheImpl
