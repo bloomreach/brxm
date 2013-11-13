@@ -15,26 +15,10 @@
  */
 package org.onehippo.repository;
 
-import javax.jcr.Credentials;
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.Repository;
 
 import org.onehippo.cms7.services.SingletonService;
 
 @SingletonService
-public interface RepositoryService {
-
-    /**
-     * Authenticates the user using the supplied <code>credentials</code>.
-     * If authentication succeeds the a {@link Session} object is returned that
-     * supplies access to the default workspace.
-     *
-     * @param credentials  the credentials of the user
-     * @return  a valid session for the user to access the repository.
-     * @throws LoginException  if authentication or authorization for the specified workspace fails.
-     * @throws RepositoryException  if another error occurs.
-     */
-    Session login(Credentials credentials) throws LoginException, RepositoryException;
-
+public interface RepositoryService extends Repository {
 }

@@ -37,11 +37,13 @@ import java.util.StringTokenizer;
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
+import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -213,12 +215,8 @@ public class RepositoryServlet extends HttpServlet {
                 }
             }
 
-            HippoServiceRegistry.registerService(repositoryService = new RepositoryService() {
-                @Override
-                public Session login(final Credentials credentials) throws LoginException, RepositoryException {
-                    return repository.login(credentials);
-                }
-            }, RepositoryService.class);
+            HippoServiceRegistry.registerService(repositoryService =
+                    new RepositoryServiceImpl(repository.getRepository()), RepositoryService.class);
             HippoServiceRegistry.registerService(repositoryClusterService = new RepositoryClusterService() {
                 @Override
                 public boolean isExternalEvent(final Event event) {
@@ -698,4 +696,62 @@ public class RepositoryServlet extends HttpServlet {
         }
     }
 
+    private static class RepositoryServiceImpl implements RepositoryService {
+
+        private final Repository repository;
+
+        private RepositoryServiceImpl(final Repository repository) {
+            this.repository = repository;
+        }
+
+        @Override
+        public String[] getDescriptorKeys() {
+            return repository.getDescriptorKeys();
+        }
+
+        @Override
+        public boolean isStandardDescriptor(final String key) {
+            return repository.isStandardDescriptor(key);
+        }
+
+        @Override
+        public boolean isSingleValueDescriptor(final String key) {
+            return repository.isSingleValueDescriptor(key);
+        }
+
+        @Override
+        public Value getDescriptorValue(final String key) {
+            return repository.getDescriptorValue(key);
+        }
+
+        @Override
+        public Value[] getDescriptorValues(final String key) {
+            return repository.getDescriptorValues(key);
+        }
+
+        @Override
+        public String getDescriptor(final String key) {
+            return repository.getDescriptor(key);
+        }
+
+        @Override
+        public Session login(final Credentials credentials, final String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+            return repository.login();
+        }
+
+        @Override
+        public Session login(final Credentials credentials) throws LoginException, RepositoryException {
+            return repository.login(credentials);
+        }
+
+        @Override
+        public Session login(final String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+            return repository.login(workspaceName);
+        }
+
+        @Override
+        public Session login() throws LoginException, RepositoryException {
+            return repository.login();
+        }
+    }
 }
