@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst.client-modules</groupId>
     <artifactId>hst-google-analytics</artifactId>
-    <version>2.27.03-iteration-5</version>
+    <version>2.27.03-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Client Module Google Analytics Repository</name>
