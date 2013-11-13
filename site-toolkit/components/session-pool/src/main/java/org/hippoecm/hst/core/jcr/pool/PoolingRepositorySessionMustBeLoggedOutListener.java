@@ -50,9 +50,11 @@ public class PoolingRepositorySessionMustBeLoggedOutListener extends GenericEven
 
         while (events.hasNext()) {
             Event event = events.nextEvent();
-
             try {
                 if (isEventOnSkippedPath(event)) {
+                    continue;
+                }
+                if (eventIgnorable(event)) {
                     continue;
                 }
             } catch (RepositoryException e) {

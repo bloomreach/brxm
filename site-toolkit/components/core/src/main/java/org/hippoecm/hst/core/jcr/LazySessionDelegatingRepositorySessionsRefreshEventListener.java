@@ -44,6 +44,9 @@ public class LazySessionDelegatingRepositorySessionsRefreshEventListener extends
                 if (isEventOnSkippedPath(event)) {
                     continue;
                 }
+                if (eventIgnorable(event)) {
+                    continue;
+                }
             } catch (RepositoryException e) {
                 continue;
             }

@@ -20,6 +20,10 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
+import org.hippoecm.repository.api.HippoNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The <CODE>GenericEventListener</CODE> class provides a default implementation for
  * the {@link EventListener} interface.
@@ -28,7 +32,8 @@ import javax.jcr.observation.EventListener;
  * its own interests.
  */
 public class GenericEventListener implements EventListener {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(GenericEventListener.class);
     // By default, not interested in events from the logging in the repository or the version environment
     protected String [] skipPaths = new String [] { "/jcr:system", "/hippo:log" };
     
@@ -50,20 +55,29 @@ public class GenericEventListener implements EventListener {
             System.arraycopy(skipPaths, 0, this.skipPaths, 0, skipPaths.length);
         }
     }
-    
+
     protected boolean isEventOnSkippedPath(Event event) throws RepositoryException {
         if (skipPaths == null || skipPaths.length == 0) {
             return false;
         }
-        
+
         String eventPath = event.getPath();
-        
+
         for (String skipPath : skipPaths) {
             if (eventPath.startsWith(skipPath)) {
                 return true;
             }
         }
-        
+
+        return false;
+    }
+
+    protected boolean eventIgnorable(Event event) throws RepositoryException {
+        if (HippoNodeType.HIPPO_IGNORABLE.equals(event.getUserData())) {
+            log.debug("Ignore event '{}' because user data is equal to {}",
+                    event.getPath(), HippoNodeType.HIPPO_IGNORABLE);
+            return true;
+        }
         return false;
     }
     
@@ -73,6 +87,9 @@ public class GenericEventListener implements EventListener {
 
             try {
                 if (isEventOnSkippedPath(event)) {
+                    continue;
+                }
+                if (eventIgnorable(event)) {
                     continue;
                 }
             } catch (RepositoryException e) {

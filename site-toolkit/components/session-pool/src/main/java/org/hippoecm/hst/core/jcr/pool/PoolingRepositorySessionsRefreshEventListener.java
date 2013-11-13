@@ -61,6 +61,9 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
                 if (isEventOnSkippedPath(event)) {
                     continue;
                 }
+                if (eventIgnorable(event)) {
+                    continue;
+                }
             } catch (RepositoryException e) {
                 continue;
             }

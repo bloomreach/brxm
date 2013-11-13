@@ -21,7 +21,6 @@ import javax.jcr.observation.EventIterator;
 import org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +39,12 @@ public class CacheContentEventListener extends GenericEventListener implements E
         // we cannot do better than flush entire cache on content changes.
         while (events.hasNext()) {
             try {
-                if (!HippoNodeType.HIPPO_IGNORABLE.equals(events.nextEvent().getUserData())) {
-                    pageCache.clear();
-                    return;
+                if (eventIgnorable(events.nextEvent())) {
+                    continue;
                 }
+                pageCache.clear();
+                return;
+
             } catch (RepositoryException e) {
                log.error("Error processing event");
             }
