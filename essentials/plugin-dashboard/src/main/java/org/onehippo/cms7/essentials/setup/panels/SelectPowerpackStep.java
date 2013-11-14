@@ -16,13 +16,23 @@
 
 package org.onehippo.cms7.essentials.setup.panels;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
+
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
+import org.apache.wicket.markup.html.form.Radio;
+import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -33,10 +43,6 @@ import org.onehippo.cms7.essentials.setup.SetupPage;
 import org.onehippo.cms7.essentials.setup.panels.model.ProjectModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @version "$Id$"
@@ -51,7 +57,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
     private final DropDownChoice<String> powerpackDropdown;
     private final SetupPage myParent;
     private String selectedPowerpack;
-    private boolean installSampleContent = false;
+    private boolean installSampleContent = true;
     private String selectedTemplatesType;
     @Inject
     private EventBus eventBus;
