@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
@@ -113,6 +114,11 @@ public class CKEditorPanel extends Panel {
             // always use the language of the current CMS locale
             final Locale locale = getLocale();
             editorConfig.put(CKEditorConstants.CONFIG_LANGUAGE, locale.getLanguage());
+
+            // convert Hippo-specific 'declarative' keystrokes to numeric ones
+            final JSONArray declarativeAndNumericKeystrokes = editorConfig.optJSONArray(CKEditorConstants.CONFIG_KEYSTROKES);
+            final JSONArray numericKeystrokes = DeclarativeKeystrokesConverter.convertToNumericKeystrokes(declarativeAndNumericKeystrokes);
+            editorConfig.putOpt(CKEditorConstants.CONFIG_KEYSTROKES, numericKeystrokes);
 
             // load the localized hippo styles if no other styles are specified
             JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));

@@ -46,7 +46,6 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +72,8 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  dialog_buttonsOrder: 'ltr',"
             + "  keystrokes: ["
-            + "    [ " + (CKEditorConstants.CTRL + asciiCode('M')) + ", 'maximize' ],"
-            + "    [ " + (CKEditorConstants.ALT + asciiCode('B')) + ", 'showblocks' ]"
+            + "    [ 'Ctrl', 'm', 'maximize' ],"
+            + "    [ 'Alt', 'b', 'showblocks' ]"
             + "  ],"
             + "  linkShowAdvancedTab: false,"
             + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tabletools,toolbar,undo,youtube',"
@@ -235,10 +234,6 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         config.put(NodePickerControllerSettings.LAST_VISITED_NODETYPES, lastVisitedNodeTypes);
         config.makeImmutable();
         return config;
-    }
-
-    private static final int asciiCode(char c) {
-        return (int)c;
     }
 
 }

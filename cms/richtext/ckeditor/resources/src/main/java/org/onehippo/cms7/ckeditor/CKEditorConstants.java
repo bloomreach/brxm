@@ -50,6 +50,7 @@ public class CKEditorConstants {
     public static final String CONFIG_CONTENTS_CSS = "contentsCss";
     public static final String CONFIG_CUSTOM_CONFIG = "customConfig";
     public static final String CONFIG_EXTRA_PLUGINS = "extraPlugins";
+    public static final String CONFIG_KEYSTROKES = "keystrokes";
     public static final String CONFIG_LANGUAGE = "language";
     public static final String CONFIG_STYLES_SET = "stylesSet";
 
