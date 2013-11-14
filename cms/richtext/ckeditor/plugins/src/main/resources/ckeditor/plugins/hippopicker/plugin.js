@@ -192,9 +192,9 @@
     function initImagePicker(editor, callbackUrl) {
         var IMAGE_ATTRIBUTE_PARAMETER_MAP = {
                 'data-facetselect': 'f_facetselect',
+                'data-type': 'f_type',
                 'data-uuid': 'f_uuid',
                 src: 'f_url',
-                type: 'f_type',
                 alt: 'f_alt',
                 align: 'f_align',
                 width: 'f_width',
