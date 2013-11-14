@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -48,22 +49,27 @@ public class ComponentRepresentation {
         id = componentConfiguration.getCanonicalIdentifier();
         name = componentConfiguration.getName();
         path = componentConfiguration.getCanonicalStoredLocation();
-        if(componentConfiguration.getParent() != null) {
-            parentId = componentConfiguration.getParent().getCanonicalIdentifier();
+
+        final HstComponentConfiguration parent = componentConfiguration.getParent();
+        if (parent != null) {
+            parentId = parent.getCanonicalIdentifier();
         }
+
         componentClassName = componentConfiguration.getComponentClassName();
         template = componentConfiguration.getRenderPath();
         type = componentConfiguration.getComponentType().toString();
         xtype = componentConfiguration.getXType();
         label = componentConfiguration.getLabel();
         iconPath = componentConfiguration.getIconPath();
+
         // still need to create the iconURL from the iconPath
-        if(iconPath != null) {
+        if (StringUtils.isNotBlank(iconPath)) {
             HstRequestContext requestContext = RequestContextProvider.get();
             iconURL = requestContext.getHstLinkCreator().create(iconPath, mount, true).toUrlForm(requestContext, false);
         }
-        if(componentConfiguration.getParent() != null && componentConfiguration.getParent().getLastModified() != null) {
-            lastModifiedTimestamp = componentConfiguration.getParent().getLastModified().getTimeInMillis();
+
+        if (parent != null && parent.getLastModified() != null) {
+            lastModifiedTimestamp = parent.getLastModified().getTimeInMillis();
         }
 
         return this;
