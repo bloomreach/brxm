@@ -101,6 +101,8 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
                 return;
             }
 
+            log.info("Trying to augment custom hostName '{}' with mount '{}' and pipeline '{}'",
+                    new String[]{customHostName,customMountName,customMountNamedPipeline});
             // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
             String[] hostSegments = customHostName.split("\\.");
             reverse(hostSegments);
@@ -150,8 +152,9 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
                             log.info("There is an implicit '{}' mount configured, hence no programmatic added custom mount", customMountName);
                         } else if (rootMount instanceof MutableMount) {
                             // add a customMount to the root mount
-                            MutableMount newCmsRestMount = new CustomMount(customMountName, customMountNamedPipeline, customMountType, rootMount, customHost);
-                            ((MutableMount) rootMount).addMount(newCmsRestMount);
+                            MutableMount mountToAugment = new CustomMount(customMountName, customMountNamedPipeline, customMountType, rootMount, customHost);
+                            ((MutableMount) rootMount).addMount(mountToAugment);
+                            log.info("Successfully augmented mount {}", mountToAugment,toString());
                         } else {
                             log.error("Unable to add the custom mount {} for pipeline {}.", customMountName, customMountNamedPipeline);
                         }

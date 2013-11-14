@@ -95,6 +95,8 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         if (!validateState()) {
             return;
         }
+        log.info("Trying to augment to cms host custom mount '{}' of type '{}'and pipeline '{}'",
+                new String[]{mountName,mountType,mountNamedPipeline});
         // first we try to find all the cmsLocations that need to be added.
         // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured
         // on the hst:virtualhostgroup node, it is inherited in every virtualhost
@@ -227,6 +229,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                         }
                         customMount = new CustomMount(mountName, mountType, mountNamedPipeline, rootMount, host);
                         ((MutableMount) rootMount).addMount((MutableMount) customMount);
+                        log.info("Successfully augmented mount {}", customMount,toString());
                     } else {
                         log.info("There is an explicit custom Mount '{}' for CMS location '{}'. This mount can be removed from configuration" +
                                 " as it will be auto-created by the HST", mountName, cmsLocation);
