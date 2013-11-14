@@ -55,8 +55,8 @@
     function initInternalLinkPicker(editor, callbackUrl) {
 
         var LINK_ATTRIBUTES_PARAMETER_MAP = {
+                'data-uuid': 'f_uuid',
                 href: 'f_href',
-                uuid: 'f_uuid',
                 title: 'f_title',
                 target: 'f_target'
             },
@@ -130,8 +130,8 @@
             label: LANG.internalLinkTooltip,
             command: 'pickInternalLink',
             toolbar: 'links,5',
-            allowedContent: 'a[!uuid,!href,title,target]',
-            requiredContent: 'a[!uuid,!href]'
+            allowedContent: 'a[!data-uuid,!href,title,target]',
+            requiredContent: 'a[!data-uuid,!href]'
         });
 
         editor.addCommand('pickInternalLink', {
@@ -191,10 +191,10 @@
 
     function initImagePicker(editor, callbackUrl) {
         var IMAGE_ATTRIBUTE_PARAMETER_MAP = {
+                'data-facetselect': 'f_facetselect',
+                'data-uuid': 'f_uuid',
                 src: 'f_url',
                 type: 'f_type',
-                facetselect: 'f_facetselect',
-                uuid: 'f_uuid',
                 alt: 'f_alt',
                 align: 'f_align',
                 width: 'f_width',
@@ -206,8 +206,8 @@
             label: LANG.imageTooltip,
             command: 'pickImage',
             toolbar: 'insert,5',
-            allowedContent: 'img[!src,!facetselect,!type,!uuid,alt,align,width,height]',
-            requiredContent: 'img[!src,!facetselect,!type,!uuid]'
+            allowedContent: 'img[!data-facetselect,!data-type,!data-uuid,!src,alt,align,width,height]',
+            requiredContent: 'img[!data-facetselect,!data-type,!data-uuid,!src]'
         });
 
         editor.addCommand('pickImage', {

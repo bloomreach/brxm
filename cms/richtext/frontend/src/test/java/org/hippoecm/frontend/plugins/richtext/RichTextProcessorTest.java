@@ -43,7 +43,7 @@ public class RichTextProcessorTest {
                 return "test-prefix/" + name;
             }
         });
-        assertEquals("testing 1 2 3 <img src=\"test-prefix/link\" facetselect=\"link\"/>", processed);
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/link\" data-facetselect=\"link\"/>", processed);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class RichTextProcessorTest {
                 return "test-prefix/" + name;
             }
         });
-        assertEquals("testing 1 2 3 <img src=\"test-prefix/link/{_document}/hippogallery:original\" facetselect=\"link/{_document}/hippogallery:original\" type=\"hippogallery:original\"/>", processed);
+        assertEquals("testing 1 2 3 <img src=\"test-prefix/link/{_document}/hippogallery:original\" data-facetselect=\"link/{_document}/hippogallery:original\" data-type=\"hippogallery:original\"/>", processed);
     }
 
     @Test
@@ -70,9 +70,9 @@ public class RichTextProcessorTest {
 
     @Test
     public void testGetInternalLinks() {
-        String text = "testing 1 2 3 <a uuid=\"1234\">link 1</a>\n"+
+        String text = "testing 1 2 3 <a data-uuid=\"1234\">link 1</a>\n"+
             "more text <a href=\"http://test\">test</a>\n"+
-            "and an image <img src=\"link-2/subnode\" uuid=\"5678\"/>";
+            "and an image <img src=\"link-2/subnode\" data-uuid=\"5678\"/>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertTrue("Links should contain 1234", links.contains("1234"));
         assertTrue("Links should contain 5678", links.contains("5678"));
@@ -81,7 +81,7 @@ public class RichTextProcessorTest {
 
     @Test
     public void testMultilineGetInternalLinks() throws Exception {
-        String text="testing 1 2 3 <a\nuuid=\"1234\">link</a>";
+        String text="testing 1 2 3 <a\ndata-uuid=\"1234\">link</a>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertTrue(links.contains("1234"));
         assertEquals(1, links.size());
@@ -89,14 +89,14 @@ public class RichTextProcessorTest {
 
     @Test
     public void externalLinksWithUuidAreNotInternalLinks() {
-        String text = "<a href=\"http://www.example.com\" uuid=\"1234\">link</a>";
+        String text = "<a href=\"http://www.example.com\" data-uuid=\"1234\">link</a>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertEquals(0, links.size());
     }
 
     @Test
     public void linkWithUuidAndHrefSetToOnlyHttpIsAnInternalLink() {
-        String text = "<a href=\"http://\" uuid=\"1234\">link</a>";
+        String text = "<a href=\"http://\" data-uuid=\"1234\">link</a>";
         Set<String> links = RichTextProcessor.getInternalLinkUuids(text);
         assertTrue(links.contains("1234"));
         assertEquals(1, links.size());
@@ -104,7 +104,7 @@ public class RichTextProcessorTest {
 
     @Test
     public void testFacetRestore() {
-        String text="<img src=\"horriblyterriblelinkencoding\" facetselect=\"facet\" />";
+        String text="<img src=\"horriblyterriblelinkencoding\" data-facetselect=\"facet\" />";
         String restored = RichTextProcessor.restoreFacets(text);
         assertEquals("<img src=\"facet\"/>", restored);
     }

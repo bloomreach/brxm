@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
  * the node model to the UUIDs referred to by these facetselects.
  *
  * For links (HTML tag 'a'), the 'href' attribute can contain the name of a child node of type 'hippo:facetselect'.
- * When this model's object will remove the 'href' attribute of those links and add a 'uuid' attribute with the UUID
- * referred to by the facetselect (i.e. its hippo:docbase property). Setting links with a 'uuid' attribute in this
- * model's object will work the other way around: the 'uuid' attribute will be removed, and replaced by an 'href'
+ * When this model's object will remove the 'href' attribute of those links and add a 'data-uuid' attribute with the UUID
+ * referred to by the facetselect (i.e. its hippo:docbase property). Setting links with a 'data-uuid' attribute in this
+ * model's object will work the other way around: the 'data-uuid' attribute will be removed, and replaced by an 'href'
  * attribute that refers to a facet child node.
  *
  * For images (HTML tag 'img'), the 'src' attribute can also contain the name of a facetselect child node, together
- * with more information about the image after the first slash. Similar to links, this model will add 'uuid' attribute
+ * with more information about the image after the first slash. Similar to links, this model will add 'data-uuid' attribute
  * with the docbase of the facetselect. However, the 'src' attribute will be left as-is.
  *
  * All facetselect child nodes are managed by this model: new ones will be created when referred to, and unused ones

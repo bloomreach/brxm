@@ -18,11 +18,9 @@ package org.hippoecm.frontend.plugins.richtext.jcr;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Decorator for the 'href' attribute of link ('a') tags that replaces the 'uuid' attribute of internal links
+ * Decorator for the 'href' attribute of link ('a') tags that replaces the 'data-uuid' attribute of internal links
  * with an 'href' attribute set to the name of the child hippo:facetselect node of the document node.
  * When no such facetselect node exists, the 'href' attribute will be removed.
  */

@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.mock.MockHomePage;
 import org.apache.wicket.model.IModel;
-import org.easymock.classextension.EasyMock;
 import org.hippoecm.frontend.HippoTester;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -83,7 +82,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
 
         assertEquals(htmlEncode("<html>text "
                 + "<span class=\"diff-html-added\" id=\"added-null-0\" previous=\"first-null\" changeId=\"added-null-0\" next=\"last-null\">"
-                + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" facetselect=\"image.jpg/{_document}/hippogallery:thumbnail\" type=\"hippogallery:thumbnail\" changeType=\"diff-added-image\">"
+                + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" data-facetselect=\"image.jpg/{_document}/hippogallery:thumbnail\" data-type=\"hippogallery:thumbnail\" changeType=\"diff-added-image\">"
                 + "</span>\n"
                 + "</html>\n"), diff);
     }
@@ -101,7 +100,7 @@ public class RichTextDiffWithLinksAndImagesPanelTest {
 
         assertEquals(htmlEncode("<html>text"
                 + "<span class=\"diff-html-removed\" id=\"removed-null-0\" previous=\"first-null\" changeId=\"removed-null-0\" next=\"last-null\">"
-                + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" facetselect=\"image.jpg/{_document}/hippogallery:thumbnail\" type=\"hippogallery:thumbnail\" changeType=\"diff-removed-image\">"
+                + "<img src=\"binaries/image.jpg/image.jpg/hippogallery:thumbnail\" data-facetselect=\"image.jpg/{_document}/hippogallery:thumbnail\" data-type=\"hippogallery:thumbnail\" changeType=\"diff-removed-image\">"
                 + "</span>\n"
                 + "</html>\n"), diff);
     }

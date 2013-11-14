@@ -20,7 +20,6 @@ import java.util.Collections;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.easymock.EasyMock;
@@ -35,7 +34,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -58,37 +56,37 @@ public class RichTextImageMetaDataModelTest {
     @Test
     public void getTextChangesSrcAndAddsFacetSelectAndType() {
         delegate.setObject("<img src=\"image.png/{_document}/hippogallery:original\"/>");
-        assertEquals("<img src=\"binaries/image.png/{_document}/hippogallery:original\" facetselect=\"image.png/{_document}/hippogallery:original\" type=\"hippogallery:original\"/>", model.getObject());
+        assertEquals("<img src=\"binaries/image.png/{_document}/hippogallery:original\" data-facetselect=\"image.png/{_document}/hippogallery:original\" data-type=\"hippogallery:original\"/>", model.getObject());
     }
 
     @Test
     public void setTextRestoresSrcAndRemovesFacetSelectAndType() {
-        model.setObject("<img src=\"binaries/image.png/{_document}/hippogallery:original\" facetselect=\"image.png/{_document}/hippogallery:original\" type=\"hippogallery:original\"/>");
+        model.setObject("<img src=\"binaries/image.png/{_document}/hippogallery:original\" data-facetselect=\"image.png/{_document}/hippogallery:original\" data-type=\"hippogallery:original\"/>");
         assertEquals("<img src=\"image.png/{_document}/hippogallery:original\"/>", delegate.getObject());
     }
 
     @Test
     public void getSrcWithoutVariantOmitsType() {
         delegate.setObject("<img src=\"image.png\"/>");
-        assertEquals("<img src=\"binaries/image.png\" facetselect=\"image.png\"/>", model.getObject());
+        assertEquals("<img src=\"binaries/image.png\" data-facetselect=\"image.png\"/>", model.getObject());
     }
 
     @Test
     public void setSrcWithoutVariantRemovesFacetSelect() {
-        model.setObject("<img src=\"binaries/image.png\" facetselect=\"image.png\"/>");
+        model.setObject("<img src=\"binaries/image.png\" data-facetselect=\"image.png\"/>");
         assertEquals("<img src=\"image.png\"/>", delegate.getObject());
     }
 
     @Test
     public void getAdditionalImgAttributesAreNotChanged() {
-        delegate.setObject("<img src=\"image.png/{_document}/hippogallery:original\" align=\"right\" uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>");
-        assertEquals("<img src=\"binaries/image.png/{_document}/hippogallery:original\" facetselect=\"image.png/{_document}/hippogallery:original\" type=\"hippogallery:original\" align=\"right\" uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>", model.getObject());
+        delegate.setObject("<img src=\"image.png/{_document}/hippogallery:original\" align=\"right\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>");
+        assertEquals("<img src=\"binaries/image.png/{_document}/hippogallery:original\" data-facetselect=\"image.png/{_document}/hippogallery:original\" data-type=\"hippogallery:original\" align=\"right\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>", model.getObject());
     }
 
     @Test
     public void setAdditionalImgAttributesAreNotChanged() {
-        model.setObject("<img src=\"binaries/image.png/{_document}/hippogallery:original\" facetselect=\"image.png/{_document}/hippogallery:original\" type=\"hippogallery:original\" align=\"right\" uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>");
-        assertEquals("<img src=\"image.png/{_document}/hippogallery:original\" align=\"right\" uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>", delegate.getObject());
+        model.setObject("<img src=\"binaries/image.png/{_document}/hippogallery:original\" data-facetselect=\"image.png/{_document}/hippogallery:original\" data-type=\"hippogallery:original\" align=\"right\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>");
+        assertEquals("<img src=\"image.png/{_document}/hippogallery:original\" align=\"right\" data-uuid=\"0e8a928c-b83f-4bb9-9e52-1a22b7e9ee21\"/>", delegate.getObject());
     }
 
     @Test
@@ -140,8 +138,7 @@ public class RichTextImageMetaDataModelTest {
         model = new RichTextImageMetaDataModel(delegate, urlProvider);
         delegate.setObject("<img src=\"image.png/{_document}/hippogallery:original\"/>");
 
-        assertEquals("<img src=\"binaries/content/gallery/image.png/image.png/hippogallery:original\" facetselect=\"image.png/{_document}/hippogallery:original\" type=\"hippogallery:original\"/>", model.getObject());
-
+        assertEquals("<img src=\"binaries/content/gallery/image.png/image.png/hippogallery:original\" data-facetselect=\"image.png/{_document}/hippogallery:original\" data-type=\"hippogallery:original\"/>", model.getObject());
     }
 
     private class PrefixingImageUrlProvider implements IImageURLProvider {

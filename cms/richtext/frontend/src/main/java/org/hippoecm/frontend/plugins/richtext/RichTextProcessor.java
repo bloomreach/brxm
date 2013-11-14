@@ -38,11 +38,11 @@ public class RichTextProcessor {
 
     /**
      * @param tag the HTML tag to match
-     * @return a pattern for matching tags with at least a 'uuid' attribute, e.g. <a href="link.html" uuid="1234">
-     *         for 'a' tags, or <img src="image.png" uuid="5678"/> for 'img' tags.
+     * @return a pattern for matching tags with at least a 'data-uuid' attribute, e.g. <a href="link.html" data-uuid="1234">
+     *         for 'a' tags, or <img src="image.png" data-uuid="5678"/> for 'img' tags.
      */
     private static Pattern startTagWithUuidPattern(final String tag) {
-        return Pattern.compile("<" + tag + "[^>]+uuid=\"[^\"]+\"[^>]*>", Pattern.CASE_INSENSITIVE);
+        return Pattern.compile("<" + tag + "[^>]+data-uuid=\"[^\"]+\"[^>]*>", Pattern.CASE_INSENSITIVE);
     }
 
     /**
@@ -63,10 +63,10 @@ public class RichTextProcessor {
 
     private static Pattern HREF_PATTERN = attributePattern("href");
     private static Pattern SRC_PATTERN = attributePattern("src");
-    private static Pattern UUID_PATTERN = attributePattern("uuid");
+    private static Pattern UUID_PATTERN = attributePattern("data-uuid");
 
-    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
-    private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(facetselect|type|src)=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
+    private static Pattern FACET_SELECT_PATTERN = Pattern.compile("data-facetselect=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
+    private static Pattern FACET_SELECT_OR_TYPE_OR_SRC_PATTERN = Pattern.compile("(data-facetselect|data-type|src)=\"([^\"]+)\"\\s*", Pattern.CASE_INSENSITIVE);
 
     private static Pattern EXTERNAL_LINK_HREF_PATTERN = Pattern.compile("^[a-z]+://.+?", Pattern.CASE_INSENSITIVE);
 
@@ -101,13 +101,13 @@ public class RichTextProcessor {
                     }
                     appendEscapedReplacement(sourceMatcher, newImg, "src=\"" + url + "\"");
                     newImg.append(' ');
-                    newImg.append("facetselect=\"");
+                    newImg.append("data-facetselect=\"");
                     newImg.append(link);
                     newImg.append("\"");
                     Matcher resourceDefinitionMatcher = RESOURCE_DEFINITION_PATTERN.matcher(link);
                     if (resourceDefinitionMatcher.find()) {
                         String type = resourceDefinitionMatcher.group(1);
-                        newImg.append(" type=\"");
+                        newImg.append(" data-type=\"");
                         newImg.append(type);
                         newImg.append("\"");
                     }
@@ -144,7 +144,7 @@ public class RichTextProcessor {
                 String facetOrTypeOrSrc = s.group();
                 if (facetOrTypeOrSrc.startsWith("src")) {
                     src = facetOrTypeOrSrc;
-                } else if (facetOrTypeOrSrc.startsWith("facetselect")) {
+                } else if (facetOrTypeOrSrc.startsWith("data-facetselect")) {
                     facet = facetOrTypeOrSrc;
                 }
                 s.appendReplacement(newImg, "");

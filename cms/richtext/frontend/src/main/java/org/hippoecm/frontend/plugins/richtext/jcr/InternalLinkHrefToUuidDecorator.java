@@ -22,8 +22,8 @@ import org.hippoecm.repository.api.NodeNameCodec;
 /**
  * Decorator for the 'href' attribute of link ('a') tags that replaces the 'href' attribute of internal links.
  * The 'href' attribute should be the name of a child hippo:facetselect node of the document node. The href attribute
- * will be replaced with 'http://' an a 'uuid' attribute will be added that contains the docbase of the facetselect
- * (i.e. the node it refers to). When no such facetselect node exists, the 'uuid' attribute is set to an empty string.
+ * will be replaced with 'http://' an a 'data-uuid' attribute will be added that contains the docbase of the facetselect
+ * (i.e. the node it refers to). When no such facetselect node exists, the 'data-uuid' attribute is set to an empty string.
  */
 class InternalLinkHrefToUuidDecorator extends InternalLinkDecorator {
 
@@ -44,7 +44,7 @@ class InternalLinkHrefToUuidDecorator extends InternalLinkDecorator {
             return "href=\"" + href + "\"";
         }
 
-        return "href=\"http://\" uuid=\"" + uuidOrNull + "\"";
+        return "href=\"http://\" data-uuid=\"" + uuidOrNull + "\"";
     }
 
 }

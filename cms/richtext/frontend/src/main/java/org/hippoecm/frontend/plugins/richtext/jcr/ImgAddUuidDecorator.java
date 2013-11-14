@@ -20,10 +20,10 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Decorator for 'img' tags that adds a 'uuid' attribute based on the provided 'src' attribute of the image.
+ * Decorator for 'img' tags that adds a 'data-uuid' attribute based on the provided 'src' attribute of the image.
  * The part of the 'src' attribute before the first slash ('/') is supposed to be the name of a child node of the
- * provided document node of type 'hippo:facetselect'. If such a child node exists, the 'uuid' attribute will be set
- * to the docbase of that facetselect node (i.e. the UUID of the node it refers to). Otherwise, the 'uuid' attribute
+ * provided document node of type 'hippo:facetselect'. If such a child node exists, the 'data-uuid' attribute will be set
+ * to the docbase of that facetselect node (i.e. the UUID of the node it refers to). Otherwise, the 'data-uuid' attribute
  * will be empty.
  */
 class ImgAddUuidDecorator extends InternalLinkDecorator {
@@ -45,7 +45,7 @@ class ImgAddUuidDecorator extends InternalLinkDecorator {
             return "src=\"" + src + "\"";
         }
 
-        return "src=\"" + src + "\" uuid=\"" + uuidOrNull + "\"";
+        return "src=\"" + src + "\" data-uuid=\"" + uuidOrNull + "\"";
     }
 
 }
