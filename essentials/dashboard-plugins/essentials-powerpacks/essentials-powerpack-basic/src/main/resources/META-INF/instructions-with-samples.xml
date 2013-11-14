@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2013 Hippo B.V. (http://www.onehippo.com)
@@ -49,12 +48,12 @@
     <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="${jspRoot}/essentials/essentials-component-event-detail.jsp"/>
   </instructionSet>
   <instructionSet name="SITE-MAPS">
-    <xml action="copy"  source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
-    <xml action="copy"  source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+    <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
+    <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/${namespace}/hst:sitemap"/>
   </instructionSet>
   <instructionSet name="JAVA">
-    <file action="copy"  overwrite="true" source="java/NewsDocument.txt" target="${beansFolder}/NewsDocument.java"/>
-    <file action="copy"  overwrite="true" source="java/EventsDocument.txt" target="${beansFolder}/EventsDocument.java"/>
+    <file action="copy" overwrite="true" source="java/NewsDocument.txt" target="${beansFolder}/NewsDocument.java"/>
+    <file action="copy" overwrite="true" source="java/EventsDocument.txt" target="${beansFolder}/EventsDocument.java"/>
   </instructionSet>
   <instructionSet name="COMPONENTS">
     <xml action="copy" source="xml/hst/components/list.xml" target="/hst:hst/hst:configurations/${namespace}/hst:components"/>
@@ -78,8 +77,8 @@
     <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/${namespace}/hst:templates"/>
   </instructionSet>
   <instructionSet name="SAMPLE_DOCUMENTS">
-    <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/${namespace}/events"/>
-    <xml action="copy" source="xml/samples/content/documents/news.xml" target="/content/documents/${namespace}/news"/>
+    <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/${namespace}"/>
+    <xml action="copy" source="xml/samples/content/documents/news.xml" target="/content/documents/${namespace}"/>
     <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/${namespace}"/>
   </instructionSet>
 </instructions>

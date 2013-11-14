@@ -6,6 +6,9 @@
     <sv:value>hippo:harddocument</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>5e81c718-35bd-48f4-b715-34f53acdf8b6</sv:value>
+  </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
     <sv:value>new-events-folder</sv:value>
     <sv:value>new-events-document</sv:value>

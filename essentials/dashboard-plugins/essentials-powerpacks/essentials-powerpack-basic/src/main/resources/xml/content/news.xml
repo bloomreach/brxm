@@ -6,6 +6,9 @@
     <sv:value>hippo:harddocument</sv:value>
     <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>5f23ded9-d96b-420d-821a-2fd807062693</sv:value>
+  </sv:property>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
     <sv:value>new-news-folder</sv:value>
     <sv:value>new-news-document</sv:value>
