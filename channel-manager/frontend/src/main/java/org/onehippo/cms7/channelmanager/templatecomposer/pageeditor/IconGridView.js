@@ -37,8 +37,11 @@
                 '</ul>',
                 '</li>'),
 
+        defaultIconUrl: null,
+
         constructor: function(config) {
             Ext.apply(this, config);
+            this.defaultIconUrl = config.defaultIconUrl || null;
             this.addEvents('beforerefresh', 'refresh');
             Hippo.ChannelManager.TemplateComposer.IconGridView.superclass.constructor.call(this, config);
         },
@@ -164,8 +167,7 @@
                 }
                 meta.icon = record.get('iconURL');
                 if (!meta.icon || meta.icon === '') {
-                    // FIXME: let wicket generate URL
-                    meta.icon = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.PageEditor/component.png';
+                    meta.icon = this.defaultIconUrl;
                 }
 
                 if (Ext.isEmpty(meta.value)) {

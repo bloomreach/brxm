@@ -257,7 +257,8 @@
                         id: 'icon-toolbar-window',
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IconToolbarWindow',
                         alignToElementId: 'pageEditorToolbar',
-                        resources: config.resources
+                        resources: config.resources,
+                        defaultIconUrl: config.defaultToolkitIconUrl
                     }
                 ]
             });

@@ -50,7 +50,8 @@ Hippo.ChannelManager.TemplateComposer.IconToolbarWindow = Ext.extend(Ext.Window,
             ],
             plugins: [
                 Hippo.ChannelManager.TemplateComposer.DragDropOne
-            ]
+            ],
+            defaultIconUrl: config.defaultIconUrl
         });
 
         Hippo.ChannelManager.TemplateComposer.IconToolbarWindow.superclass.constructor.apply(this, arguments);

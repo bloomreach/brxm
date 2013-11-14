@@ -40,6 +40,7 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandler;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -88,6 +89,7 @@ public class PageEditor extends ExtPanel {
 
     private static final PackageResourceReference ERROR_HTML = new PackageResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML);
     private static final PackageResourceReference CHANNEL_MANAGER_IFRAME_CSS = new PackageResourceReference(IFrameBundle.class, IFrameBundle.CHANNEL_MANAGER_IFRAME_CSS);
+    private final static ResourceReference DEFAULT_TOOLKIT_ICON = new PackageResourceReference(PageEditor.class, "component.png");
 
     private static final PackageResourceReference[] DEVELOPMENT_REFERENCES;
     private static final PackageResourceReference[] DEPLOYMENT_REFERENCES;
@@ -419,6 +421,8 @@ public class PageEditor extends ExtPanel {
             headContributionUrls.add(rc.urlFor(new ResourceReferenceRequestHandler(reference)).toString());
         }
         properties.put("iFrameJsHeadContributions", headContributionUrls);
+
+        properties.put("defaultToolkitIconUrl", rc.urlFor(DEFAULT_TOOLKIT_ICON, null));
     }
 
     private JSONArray createToolbarPluginConfigs() throws JSONException {

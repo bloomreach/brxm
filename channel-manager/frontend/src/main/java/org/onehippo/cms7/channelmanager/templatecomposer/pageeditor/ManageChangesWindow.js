@@ -265,6 +265,6 @@
 
     });
 
-    Ext.reg('Hippo.ChannelManager.TemplateComposer.IconToolbarWindow', Hippo.ChannelManager.TemplateComposer.IconToolbarWindow);
+    Ext.reg('Hippo.ChannelManager.TemplateComposer.ManageChangesWindow', Hippo.ChannelManager.TemplateComposer.ManageChangesWindow);
 
 }());
