@@ -58,8 +58,8 @@ public class VirtualHost127001AugmentedTest extends AbstractCmsRestTest {
         // Rename the 'localhost' host to 127.0.0.1 for hostgroup dev-localhost :
         // then, the _cmsrest should be added to the existing host, and thus 'live' in dev-localhost
         // instead of hostgroup with name 'CustomMountAndVirtualHostAugmenter.class.getName()'
-        Session session = getSession();
-        getSession().move("/hst:hst/hst:hosts/dev-localhost/localhost", "/hst:hst/hst:hosts/dev-localhost/127.0.0.1");
+        Session session = createSession();
+        session.move("/hst:hst/hst:hosts/dev-localhost/localhost", "/hst:hst/hst:hosts/dev-localhost/127.0.0.1");
         session.save();
         final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
         final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost("127.0.0.1");

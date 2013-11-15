@@ -61,7 +61,7 @@ public abstract class AbstractCmsRestTest {
     }
 
 
-    protected Session getSession() throws RepositoryException {
+    protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }

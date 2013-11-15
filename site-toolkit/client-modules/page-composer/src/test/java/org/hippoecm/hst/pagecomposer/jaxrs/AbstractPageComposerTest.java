@@ -95,7 +95,7 @@ public class AbstractPageComposerTest {
     }
 
 
-    protected Session getSession() throws RepositoryException {
+    protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
@@ -167,7 +167,7 @@ public class AbstractPageComposerTest {
         public EventListener listener;
 
         public CommonHstConfigSetup() throws RepositoryException {
-            session = getSession();
+            session = createSession();
             listener = registerConfigListener();
             createHstConfigBackup();
         }

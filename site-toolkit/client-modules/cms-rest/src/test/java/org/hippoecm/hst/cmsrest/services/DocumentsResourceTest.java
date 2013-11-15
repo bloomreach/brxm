@@ -59,7 +59,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         this.linkCreator = getComponentManager().getComponent(HstLinkCreator.class.getName());
         this.siteMapMatcher = getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponentManager().getComponent(HstURLFactory.class.getName());
-        this.session = getSession();
+        this.session = createSession();
     }
 
     @Override
