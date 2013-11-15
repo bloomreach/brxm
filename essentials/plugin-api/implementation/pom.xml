@@ -23,6 +23,12 @@
     <dependency>
       <groupId>org.rythmengine</groupId>
       <artifactId>rythm-engine</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>ecj</artifactId>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
