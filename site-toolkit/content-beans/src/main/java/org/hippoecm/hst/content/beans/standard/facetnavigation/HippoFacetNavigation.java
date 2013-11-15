@@ -97,7 +97,7 @@ public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavig
             }
             bean = bean.getParentBean();
         }
-        log.warn("Unable to return the HippoFacetNavigationBean for the current HippoFacetChildNavigationBean at '{}'. Return null", this.getPath());
+        log.info("Unable to return the HippoFacetNavigationBean for the current HippoFacetChildNavigationBean at '{}'. Return null", this.getPath());
         return null;
     }
 }

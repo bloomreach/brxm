@@ -51,22 +51,18 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator {
         Node n = null;
         try {
             n = nodeIterator.nextNode();
-            if(n != null) {
-                if (HDC.isStarted()) {
-                    AtomicInteger iterCount = (AtomicInteger) HDC.getCurrentTask().getAttribute("HippoBeanIterationCount");
-                    if (iterCount == null) {
-                        HDC.getCurrentTask().setAttribute("HippoBeanIterationCount", new AtomicInteger(1));
-                    } else {
-                        iterCount.incrementAndGet();
-                    }
+            if (HDC.isStarted()) {
+                AtomicInteger iterCount = (AtomicInteger) HDC.getCurrentTask().getAttribute("HippoBeanIterationCount");
+                if (iterCount == null) {
+                    HDC.getCurrentTask().setAttribute("HippoBeanIterationCount", new AtomicInteger(1));
+                } else {
+                    iterCount.incrementAndGet();
                 }
-                return (HippoBean)objectConverter.getObject(n);
-            } else {
-                log.warn("Node in node iterator is null. Cannot return a HippoStdNode");
             }
+            return (HippoBean)objectConverter.getObject(n);
         } catch (ObjectBeanManagerException  e) {
             String path = getPath(n);
-            log.warn("ObjectContentManagerException. Return null for '"+path+"'" , e);
+            log.info("ObjectContentManagerException. Return null for '"+path+"'" , e);
         }
         return null;
     }

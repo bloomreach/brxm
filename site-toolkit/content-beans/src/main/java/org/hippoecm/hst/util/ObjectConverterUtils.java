@@ -260,21 +260,21 @@ public class ObjectConverterUtils {
                 try {
                     clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
                 } catch (ClassNotFoundException e) {
-                    log.warn("ObjectConverterUtils skipped annotated class registration. The class cannot be loaded: {}.", className);
+                    log.info("ObjectConverterUtils skipped annotated class registration. The class cannot be loaded: {}.", className);
                     continue;
                 }
 
                 int mod = clazz.getModifiers();
 
                 if (!Modifier.isPublic(mod)) {
-                    log.warn("ObjectConverterUtils skipped annotated class registration. The class must be a *public* class: {}.", className);
+                    log.info("ObjectConverterUtils skipped annotated class registration. The class must be a *public* class: {}.", className);
                     continue;
                 }
 
                 if (HippoBean.class.isAssignableFrom(clazz)) {
                     annotatedClasses.add((Class<? extends HippoBean>) clazz);
                 } else {
-                    log.warn("ObjectConverterUtils skipped annotated class registration. The class must be type of {}: {}.", HippoBean.class, className);
+                    log.info("ObjectConverterUtils skipped annotated class registration. The class must be type of {}: {}.", HippoBean.class, className);
                 }
             }
         }

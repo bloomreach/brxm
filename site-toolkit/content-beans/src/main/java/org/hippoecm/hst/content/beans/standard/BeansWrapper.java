@@ -52,7 +52,7 @@ public class BeansWrapper<B extends HippoBean> {
                 wrappedBeans.put(relPath, wrapped);
                 return wrapped.getBean();
             } else {
-                log.warn("Cannot get '"+beanMappingClass.getName()+"' bean for relPath '{}' at '{}' because returned bean is of type '"+o.getClass().getName()+"'", relPath, bean.getPath());
+                log.info("Cannot get '"+beanMappingClass.getName()+"' bean for relPath '{}' at '{}' because returned bean is of type '"+o.getClass().getName()+"'", relPath, bean.getPath());
                 // even when null, put it in the map to avoid being refetched
                 wrapped = new BeanWrapper<B>(null);
                 wrappedBeans.put(relPath, wrapped);

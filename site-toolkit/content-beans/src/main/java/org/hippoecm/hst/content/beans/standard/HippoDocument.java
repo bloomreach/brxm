@@ -91,7 +91,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
         }
         
         if(this.getNode() == null) {
-            log.warn("Cannot get handle uuid for detached node '{}'", this.getPath());
+            log.info("Cannot get handle uuid for detached node '{}'", this.getPath());
             return null;
         }
         try {
@@ -99,7 +99,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
             // canonical node of the document, and then fetch the parent
             javax.jcr.Node canonical = ((HippoNode)getNode()).getCanonicalNode();
             if(canonical == null) {
-                log.error("We cannot get the canonical handle uuid for a document that does not have a canonical version. Node '{}'. Return null", getNode().getPath());
+                log.info("We cannot get the canonical handle uuid for a document that does not have a canonical version. Node '{}'. Return null", getNode().getPath());
                 return null;
             }
             canonicalHandleNode = canonical.getParent();
@@ -118,7 +118,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
         try {
             return LocaleUtils.toLocale(localeString);
         } catch (IllegalArgumentException e) {
-            log.warn("Invalid locale '{}' for document '{}' : {}", new Object[] { localeString, getPath(), e.toString() });
+            log.info("Invalid locale '{}' for document '{}' : {}", new Object[] { localeString, getPath(), e.toString() });
             return null;
         }
     }

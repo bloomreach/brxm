@@ -157,9 +157,9 @@ public class HstLinkTag extends ParamContainerTag {
                 if(this.link == null && this.path == null && hippoBean == null && siteMapItemRefId == null) {
                     String dispatcher = (String)servletRequest.getAttribute("javax.servlet.include.servlet_path");
                     if(dispatcher == null) {
-                        log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
+                        log.info("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link");
                     } else {
-                        log.warn("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template '"+dispatcher+"'");
+                        log.info("Cannot get a link because no link , path, node or sitemapItemRefId is set for a hst:link in template '"+dispatcher+"'");
                     }
                     return EVAL_PAGE;
                 }
@@ -195,13 +195,13 @@ public class HstLinkTag extends ParamContainerTag {
                            writeOrSetVar(path);
                        }
                    } else {
-                       log.warn("There is no VirtualHost on the request. Link will include the contextPath as we cannot do a lookup in a virtual host whether the contextPath should be included or not.");
+                       log.info("There is no VirtualHost on the request. Link will include the contextPath as we cannot do a lookup in a virtual host whether the contextPath should be included or not.");
                        writeOrSetVar(servletRequest.getContextPath() + path);
                    }
                    return EVAL_PAGE;
                }
 
-               log.warn("There is no HstRequestContext on the request. Cannot create an HstLink outside the hst request processing. Return");
+               log.info("There is no HstRequestContext on the request. Cannot create an HstLink outside the hst request processing. Return");
                return EVAL_PAGE;
            }
 
@@ -222,11 +222,8 @@ public class HstLinkTag extends ParamContainerTag {
                    mount = reqContext.getMount(reqContext.getResolvedMount().getMount().getAlias(), mountType);
                }
                if(mount == null) {
-                   if (log.isWarnEnabled()) {
-                       String logMsg = MessageFormatter.arrayFormat("Cannot resolve mount with alias '{}' (type '{}') for current request. Cannot create a link for '{}'. Return page not found Link for current Mount",
-                               new Object [] { mountAlias, mountType, path }).getMessage();
-                       log.warn(logMsg);
-                   }
+                   log.info("Cannot resolve mount with alias '{}' (type '{}') for current request. Cannot create a link for '{}'. Return page not found Link for current Mount",
+                               new String[] { mountAlias, mountType, path });
                    Mount requestedMount = reqContext.getResolvedMount().getMount();
                    this.link = reqContext.getHstLinkCreator().create(HstSiteMapUtils.getPath(requestedMount, requestedMount.getPageNotFound()), requestedMount);
                }
@@ -236,7 +233,7 @@ public class HstLinkTag extends ParamContainerTag {
 
            if(this.link == null && hippoBean != null) {
                 if(hippoBean.getNode() == null) {
-                    log.warn("Cannot get a link for a detached node");
+                    log.info("Cannot get a link for a detached node");
                     return EVAL_PAGE;
                 }
                 if(mountAliasOrTypeSet) {
@@ -260,7 +257,7 @@ public class HstLinkTag extends ParamContainerTag {
             }
 
             if(this.link == null) {
-                log.warn("Unable to rewrite link. Return EVAL_PAGE");
+                log.info("Unable to rewrite link. Return EVAL_PAGE");
                 return EVAL_PAGE;
             }
 

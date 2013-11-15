@@ -495,11 +495,11 @@ public class ContentBeanUtils {
     public static <T extends  HippoBean> T getFacetedNavigationResultDocument(final String query, final String absBasePath, final String relPath,
                                                                               final Class<T> beanMappingClass)  {
         if(StringUtils.isBlank(relPath)|| StringUtils.isBlank(absBasePath)) {
-            log.warn("Cannot return a content bean for absolute base path or relative path empty. Return null");
+            log.info("Cannot return a content bean for absolute base path or relative path empty. Return null");
             return null;
         }
         if (relPath.startsWith("/")) {
-            log.warn("relative path is not allowed to start with /. Return null");
+            log.info("relative path is not allowed to start with /. Return null");
             return null;
         }
         String absPath = absBasePath + "/" + relPath;

@@ -50,7 +50,7 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
     public HippoBean getReferencedBean(){
 
         if(this.getNode() == null) {
-            log.warn("Can not dereference this HippoMirror because it is detached. Return null");
+            log.info("Can not dereference this HippoMirror because it is detached. Return null");
             return null;
         }
         javax.jcr.Node deref = NodeUtils.getDeref(this.getNode());
@@ -75,7 +75,7 @@ public class HippoMirror extends HippoFolder implements HippoMirrorBean {
         } catch (RepositoryException e) {
             log.warn("Cannot get a derefenced HippoBean: {}. Return null", e);
         } catch (ObjectBeanManagerException e) {
-            log.warn("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
+            log.info("Cannot get a derefenced HippoBean: {}. Return null", e.toString());
         }
         return null;
     }

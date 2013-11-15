@@ -75,7 +75,7 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
 
     public long getLength() {
         if (this.getNode() == null) {
-            log.warn("Cannot get length for detached node");
+            log.info("Cannot get length for detached node");
             return 0;
         }
         // a hippo:resource has a mandatory jcr:data property by cnd definition so not testing needed

@@ -71,11 +71,11 @@ public class ObjectConverterImpl implements ObjectConverter {
 
     public Object getObject(Node node, String relPath) throws ObjectBeanManagerException {
         if(StringUtils.isEmpty(relPath) || relPath.startsWith("/")) {
-            log.warn("'{}' is not a valid relative path. Return null.", relPath);
+            log.info("'{}' is not a valid relative path. Return null.", relPath);
             return null;
         }
         if(node == null) {
-            log.warn("Node is null. Cannot get document with relative path '{}'", relPath);
+            log.info("Node is null. Cannot get document with relative path '{}'", relPath);
             return null;
         }
         String nodePath = null;
@@ -182,7 +182,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (Exception e) {
             throw new ObjectBeanManagerException("Impossible to convert the node", e);
         }
-        log.warn("No Descriptor found for node '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
+        log.info("No Descriptor found for node '{}'. Cannot return a Bean for '{}'.", path , jcrPrimaryNodeType);
         return null;
     }
 
@@ -231,7 +231,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         } catch (Exception e) {
             throw new ObjectBeanManagerException("Impossible to determine node type for node", e);
         }
-        log.warn("No Descriptor found for node '{}'. Cannot return a matching node type for '{}'.", path , jcrPrimaryNodeType);
+        log.info("No Descriptor found for node '{}'. Cannot return a matching node type for '{}'.", path , jcrPrimaryNodeType);
         return null;
     }
     

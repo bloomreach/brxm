@@ -45,13 +45,13 @@ public class HippoStdPubWfRequest extends HippoItem implements HippoRequestBean 
                     javax.jcr.Node documentNode = prop.getNode();
                     document = (HippoBean) getObjectConverter().getObject(documentNode);
                 } else {
-                    log.error("Unexpected property type for 'hippostdpubwf:document'");
+                    log.warn("Unexpected property type for 'hippostdpubwf:document'");
                 }
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("Failed to retrieve document node.", e);
+                    log.info("Failed to retrieve document node.", e);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Failed to retrieve document node. {}", e.getMessage());
+                    log.info("Failed to retrieve document node. {}", e.getMessage());
                 }
             } 
         }
