@@ -26,33 +26,14 @@ import java.util.ResourceBundle;
 public interface ChannelManager {
 
     /**
-     * List all managed channels, identified by their channel IDs
-     * @return
-     */
-    Map<String, Channel> getChannels() throws ChannelException;
-
-    /**
-     * Returns the channel configured at the given JCR path.
-     */
-    Channel getChannelByJcrPath(String channelPath) throws ChannelException;
-
-    /**
-     * Get a {@link Channel} given its id
-     * 
-     * @param id - {@link Channel} id
-     * @return {@link Channel} which has this id
-     * @throws ChannelException - When an error happens while retrieving the {@link Channel}
-     */
-    Channel getChannelById(String id) throws ChannelException;
-
-    /**
      * Persists a channel. Will create the mounts, sites and configuration when the channel is new.
      * <p>
      * When invoking this method, an HstSubject context must be provided with the credentials necessary
      * to persist the channel.
      * </p>
      * <p>
-     * The persisted channel can be retrieved again via {@link #getChannels#get(String)} with the returned channel ID.
+     * The persisted channel can be retrieved again via {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelById(String)}
+     * with the returned channel ID.
      * </p>
      *
      * @param blueprintId blueprint that contains prototypes for mount, site and hst configuration
@@ -83,17 +64,48 @@ public interface ChannelManager {
      */
     void save(Channel channel) throws ChannelException;
 
+
+    /**
+     * List all managed channels, identified by their channel IDs
+     * @return
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannels()}
+     */
+    @Deprecated
+    Map<String, Channel> getChannels() throws ChannelException;
+
+    /**
+     * @return the channel configured at the given <code>channelPath</code> and <code>null</code> if no such channel exists
+     * @throws ChannelException in case of invalid <code>channelPath</code>
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelByJcrPath(String)}
+     */
+    @Deprecated
+    Channel getChannelByJcrPath(String channelPath) throws ChannelException;
+
+    /**
+     * Get a {@link Channel} given its id
+     * @param id - {@link Channel} id
+     * @return {@link Channel} which has this id
+     * @throws ChannelException - When an error happens while retrieving the {@link Channel}
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelById(String)}
+     */
+    @Deprecated
+    Channel getChannelById(String id) throws ChannelException;
+
     /**
      * The list of available blueprints
      * @return
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getBlueprints()}
      */
+    @Deprecated
     List<Blueprint> getBlueprints() throws ChannelException;
 
     /**
      * Retrieve a blue print from it's ID.
      * @param id
      * @return
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getBlueprint(String)}
      */
+    @Deprecated
     Blueprint getBlueprint(String id) throws ChannelException;
 
     /**
@@ -102,7 +114,9 @@ public interface ChannelManager {
      *
      * @param channel - {@link Channel} for which {@link ChannelInfo} is going to be retrieved
      * @return The {@link ChannelInfo} {@link Class} type of {@link Channel}
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelInfoClass(Channel)}
      */
+    @Deprecated
     Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException;
 
     /**
@@ -110,7 +124,9 @@ public interface ChannelManager {
      *
      * @param id - {@link Channel} id
      * @return The {@link ChannelInfo} {@link Class} type of {@link Channel} identified by id
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelInfoClass(String)}
      */
+    @Deprecated
     Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException;
 
     /**
@@ -120,29 +136,37 @@ public interface ChannelManager {
      * @param <T>
      * @return
      * @throws ChannelException
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getChannelInfo(Channel)}
      */
+    @Deprecated
     <T extends ChannelInfo> T getChannelInfo(Channel channel) throws ChannelException;
 
     /**
      * The resource bundle for the channel info.  It contains the display names for fields
      * and values.
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getResourceBundle(Channel, Locale)}
      */
+    @Deprecated
     ResourceBundle getResourceBundle(Channel channel, Locale locale);
 
     /**
      * Get {@link Channel} property definitions given a {@link Channel} object instance
-     * 
+     *
      * @param channel - {@link Channel} for which property definitions are going to be retrieved
      * @return {@link List} of {@link HstPropertyDefinition}
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getPropertyDefinitions(Channel)}
      */
+    @Deprecated
     List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
 
     /**
      * Get {@link Channel} property definitions given a {@link Channel} id
-     * 
+     *
      * @param channelId - {@link Channel} id for which property definitions are going to be retrieved
      * @return {@link List} of {@link HstPropertyDefinition}
+     * @deprecated sine 7.9.0 use {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#getPropertyDefinitions(String)}
      */
+    @Deprecated
     List<HstPropertyDefinition> getPropertyDefinitions(String channelId);
 
     /**

@@ -23,8 +23,6 @@ import javax.jcr.Node;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
@@ -36,30 +34,17 @@ import org.hippoecm.hst.rest.beans.ChannelDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsResource implements DocumentService {
+public class DocumentsResource extends BaseResource  implements DocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsResource.class);
 
-    private ChannelManager channelManager;
     private HstLinkCreator hstLinkCreator;
-
-    public void setChannelManager(final ChannelManager channelManager) {
-        this.channelManager = channelManager;
-    }
 
     public void setHstLinkCreator(HstLinkCreator hstLinkCreator) {
         this.hstLinkCreator = hstLinkCreator;
     }
 
     public List<ChannelDocument> getChannels(String uuid) {
-        if (channelManager == null) {
-            log.warn("Cannot look up channels for document '{}' because the channel manager is null", uuid);
-            return Collections.emptyList();
-        }
-        if (hstLinkCreator == null) {
-            log.warn("Cannot look up channels for document '{}' because hstLinkCreator is null", uuid);
-            return Collections.emptyList();
-        }
 
         HstRequestContext requestContext = RequestContextProvider.get();
 
@@ -80,11 +65,10 @@ public class DocumentsResource implements DocumentService {
             }
 
             try {
-                final Channel channel = channelManager.getChannelByJcrPath(channelPath);
+                final Channel channel = getVirtualHosts().getChannelByJcrPath(channelPath);
                 if (channel == null) {
                     log.warn("Skipping link for mount '{}' since its channel path '{}' does not point to a channel",
                             linkMount.getName(), channelPath);
-
                     continue;
                 }
 
@@ -121,7 +105,7 @@ public class DocumentsResource implements DocumentService {
                 document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
                 
                 channelDocuments.add(document);
-            } catch (ChannelException e) {
+            } catch (IllegalArgumentException e) {
                 log.warn("Error getting channel with path '" + channelPath + "'", e);
             }
         }

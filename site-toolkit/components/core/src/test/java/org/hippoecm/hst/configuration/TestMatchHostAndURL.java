@@ -28,7 +28,6 @@ import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.MountDecoratorImpl;
-import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Test;

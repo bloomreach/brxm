@@ -16,8 +16,16 @@
 package org.hippoecm.hst.configuration.hosting;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
+import org.hippoecm.hst.configuration.channel.Blueprint;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -197,4 +205,86 @@ public interface VirtualHosts {
      * @return <code>true</code> when the channel manager can skip authentication required for mounts or sitemapitems.
      */
     boolean isChannelMngrSiteAuthenticationSkipped();
+
+    /**
+     * @return all managed channels for the current {@link #getChannelManagerHostGroupName()}, identified by their channel IDs
+     */
+    Map<String, Channel> getChannels();
+
+    /**
+     * @return the channel configured at the given <code>channelPath</code> and <code>null</code> if no such channel exists
+     * @throws IllegalArgumentException in case of invalid <code>channelPath</code>
+     */
+    Channel getChannelByJcrPath(String channelPath);
+
+    /**
+     * Get a {@link Channel} given its id
+     * @param id - {@link Channel} id
+     * @return {@link Channel} which has this id or <code>null</code>
+     */
+    Channel getChannelById(String id);
+
+    /**
+     * The list of available blueprints
+     * @return
+     */
+    List<Blueprint> getBlueprints();
+
+    /**
+     * Retrieve a blue print from it's ID.
+     * @param id
+     * @return
+     */
+    Blueprint getBlueprint(String id);
+
+    /**
+     * The channel info class for this channel.  Since this class comes from a separate
+     * context, it cannot be deserialized.
+     *
+     * @param channel - {@link Channel} for which {@link org.hippoecm.hst.configuration.channel.ChannelInfo} is going to be retrieved
+     * @return The {@link org.hippoecm.hst.configuration.channel.ChannelInfo} {@link Class} type of {@link Channel}
+     */
+    Class<? extends ChannelInfo> getChannelInfoClass(Channel channel) throws ChannelException;
+
+    /**
+     * The channel info class for this channel identified by id.
+     *
+     * @param id - {@link Channel} id
+     * @return The {@link ChannelInfo} {@link Class} type of {@link Channel} identified by id
+     */
+    Class<? extends ChannelInfo> getChannelInfoClass(String id) throws ChannelException;
+
+    /**
+     * The channel info for this channel.  It is an instance of the {@link #getChannelInfoClass} class.
+     *
+     * @param channel
+     * @param <T>
+     * @return
+     * @throws ChannelException
+     */
+    <T extends ChannelInfo> T getChannelInfo(Channel channel) throws ChannelException;
+
+    /**
+     * The resource bundle for the channel info.  It contains the display names for fields
+     * and values.
+     */
+    ResourceBundle getResourceBundle(Channel channel, Locale locale);
+
+    /**
+     * Get {@link Channel} property definitions given a {@link Channel} object instance
+     *
+     * @param channel - {@link Channel} for which property definitions are going to be retrieved
+     * @return {@link List} of {@link org.hippoecm.hst.configuration.channel.HstPropertyDefinition}
+     */
+    List<HstPropertyDefinition> getPropertyDefinitions(Channel channel);
+
+    /**
+     * Get {@link Channel} property definitions given a {@link Channel} id
+     *
+     * @param channelId - {@link Channel} id for which property definitions are going to be retrieved
+     * @return {@link List} of {@link HstPropertyDefinition}
+     */
+    List<HstPropertyDefinition> getPropertyDefinitions(String channelId);
+
+
 }

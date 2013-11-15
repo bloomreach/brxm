@@ -17,8 +17,7 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.HashSet;
 
-import org.hippoecm.hst.configuration.channel.ChannelLazyLoadingChangedBySet;
-import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -105,17 +104,12 @@ public class TestSiteService extends AbstractTestConfigurations {
         assertNull(hstSite.componentsConfiguration);
         assertNull(previewHstSite.componentsConfiguration);
 
-        // through the channel coupled to previewHstSite, we should now see the componentsConfiguration being loaded
-        // when we invoke *ANY* method on Channel#getChangedBySet() : This is because the getChangedBySet is the
-        // set of users that have changes in the hst configuration, and contains a lazy self-loading set
-        ChannelManager channelMngr = getComponent(ChannelManager.class.getName());
-
-        //
-        assertTrue(channelMngr.getChannelById("testchannel").getChangedBySet() instanceof HashSet);
+        final VirtualHosts virtualHosts = resMount.getResolvedVirtualHost().getVirtualHost().getVirtualHosts();
+        assertTrue(virtualHosts.getChannelById("testchannel").getChangedBySet() instanceof HashSet);
 
         // after invoking a method on LazyFilteredAutoLoadingSet, the backing previewHstSite.componentsConfiguration
         // gets populated
-        channelMngr.getChannelById("testchannel").getChangedBySet().size();
+        virtualHosts.getChannelById("testchannel").getChangedBySet().size();
         assertNotNull(previewHstSite.componentsConfiguration);
 
     }

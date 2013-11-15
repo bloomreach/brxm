@@ -17,10 +17,8 @@ package org.hippoecm.hst.core.hosting;
 
 import java.util.List;
 
-import org.hippoecm.hst.configuration.hosting.MutableVirtualHost;
 import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
-import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;

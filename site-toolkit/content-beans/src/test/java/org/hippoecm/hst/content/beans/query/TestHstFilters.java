@@ -16,28 +16,24 @@
 package org.hippoecm.hst.content.beans.query;
 
 
-import static org.junit.Assert.assertEquals;
-
-import javax.jcr.Session;
-
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.repository.util.DateTools;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class TestHstFilters extends AbstractBeanTestCase {
 
     @Test
     public void testEmptyFilter() throws Exception {
-        Session session = getSession();
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         assertEquals(null,mainFilter.getJcrExpression());
     }
     
     @Test
     public void testSimpleFilter() throws Exception {
-        Session session = getSession();
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addEqualTo("@a", "a");
         assertEquals("@a = 'a'",mainFilter.getJcrExpression());
@@ -52,7 +48,6 @@ public class TestHstFilters extends AbstractBeanTestCase {
      */
     @Test
     public void testANDedChildFilters() throws Exception {
-        Session session = getSession();
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addContains(".", "contains");
         Filter subAnd1a = new FilterImpl(session, DateTools.Resolution.DAY);
@@ -74,7 +69,6 @@ public class TestHstFilters extends AbstractBeanTestCase {
      */
     @Test
     public void testANDedChildFiltersWithEmptyParent() throws Exception {
-        Session session = getSession();
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         Filter subAnd1a = new FilterImpl(session, DateTools.Resolution.DAY);
         Filter subAnd1b = new FilterImpl(session, DateTools.Resolution.DAY);
@@ -94,7 +88,6 @@ public class TestHstFilters extends AbstractBeanTestCase {
      */
     @Test
     public void testORedChildFilters() throws Exception {
-        Session session = getSession();
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         mainFilter.addContains(".", "contains");
         Filter subOr1a = new FilterImpl(session, DateTools.Resolution.DAY);
@@ -115,7 +108,6 @@ public class TestHstFilters extends AbstractBeanTestCase {
     */
    @Test
    public void testORedChildFiltersWithEmptyParent() throws Exception {
-       Session session = getSession();
        Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
        Filter subOr1a = new FilterImpl(session, DateTools.Resolution.DAY);
        Filter subOr1b = new FilterImpl(session, DateTools.Resolution.DAY);
@@ -135,7 +127,6 @@ public class TestHstFilters extends AbstractBeanTestCase {
      */
     @Test
     public void testNested_AND_OR_ChildFilters() throws Exception {
-        Session session = getSession();
         Filter mainFilter = new FilterImpl(session, DateTools.Resolution.DAY);
         Filter subFilter1 = new FilterImpl(session, DateTools.Resolution.DAY);
         Filter sub1a = new FilterImpl(session, DateTools.Resolution.DAY);

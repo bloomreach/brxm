@@ -23,16 +23,10 @@ import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.PersistableTextPageCopy;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.hippoecm.hst.util.ObjectConverterUtils;
- 
-/**
- * <p>
- * AbstractBeanSpringTestCase
- * </p> 
- * 
- */ 
-public abstract class AbstractBeanTestCase extends AbstractHstTestCase{
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+public abstract class AbstractBeanTestCase extends RepositoryTestCase {
 
     protected ObjectConverter getObjectConverter() {
         return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);

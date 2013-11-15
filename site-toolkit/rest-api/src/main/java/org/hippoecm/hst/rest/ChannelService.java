@@ -52,7 +52,7 @@ public interface ChannelService {
      */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Channel> getChannels() throws ChannelException;
+	public List<Channel> getChannels();
 
     /**
      * Get a {@link Channel} given it id

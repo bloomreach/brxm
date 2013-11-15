@@ -17,46 +17,26 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.container.RequestContextProvider;
 
 /**
  * An abstract base class represents functionality common among different RESTful resources
  */
 public abstract class BaseResource {
 
-    private static final Logger log = LoggerFactory.getLogger(BaseResource.class);
-
 	protected ChannelManager channelManager;
+
+    protected static VirtualHosts getVirtualHosts() {
+        return RequestContextProvider.get().getVirtualHost().getVirtualHosts();
+    }
 
     /**
      * {@link ChannelManager} setter method
-     * 
      * @param channelManager
      */
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
     }
-
-	/**
-	 * Validate some constraints before going further with Resource request processing
-	 * 
-	 * @throws ResourceRequestValidationException When any/all constraint(s) is/are violated
-	 */
-	protected void validate() throws  ResourceRequestValidationException {
-        if (channelManager == null) {
-        	log.warn("Cannot look up channels because the channel manager is null");
-            throw new ResourceRequestValidationException("Cannot look up channels because the channel manager is null");
-        }
-	}
-
-	@SuppressWarnings("serial")
-	protected class ResourceRequestValidationException extends Exception {
-
-		public ResourceRequestValidationException(String message) {
-			super(message);
-		}
-
-	}
 
 }

@@ -38,16 +38,19 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -66,7 +69,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 	private enum Job {
 		GET_VIRTUALHOSTS_SYNC,
 		GET_VIRTUALHOSTS_ASYNC,
-		GET_CHANNELS,
 		MODIFY_CHANNEL,
 		MODIFY_HSTHOSTS
 	}
@@ -172,80 +174,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		}
 	}
 
-
-	@Test
-	public void testConcurrentSyncAndAsyncHstManagerAndChannelManagerLoad() throws Exception {
-		try {
-			Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(100);
-			final Random random = new Random();
-			for (int i = 0; i < 100; i++) {
-				int rand = random.nextInt(3);
-				Job randomJob = enumJobs[rand];
-				switch (randomJob) {
-					case GET_VIRTUALHOSTS_SYNC:
-						jobs.add(new Callable<Object>() {
-							@Override
-							public VirtualHosts call() throws Exception {
-								return hstManager.getVirtualHosts();
-							}
-						});
-						break;
-					case GET_VIRTUALHOSTS_ASYNC:
-						jobs.add(new Callable<Object>() {
-							@Override
-							public VirtualHosts call() throws Exception {
-								return hstManager.getVirtualHosts(true);
-							}
-						});
-						break;
-					case GET_CHANNELS:
-						jobs.add(new Callable<Object>() {
-							@Override
-							public Object call() throws Exception {
-								return channelManager.getChannels();
-							}
-						});
-						break;
-					default :
-						break;
-				}
-			}
-			final Collection<Future<Object>> futures = executeAllJobs(jobs, 50);
-			VirtualHosts currentHost = null;
-			VirtualHosts nextHost;
-			Channel currentChannel = null;
-			Channel nextChannel;
-
-			for (Future<Object> future : futures) {
-				if (!future.isDone()) {
-					fail("unfinished jobs");
-				}
-				Object o = future.get();
-				if (o instanceof VirtualHosts) {
-					nextHost = (VirtualHosts) o;
-					if (currentHost == null) {
-						currentHost = nextHost;
-						continue;
-					}
-					assertTrue(currentHost == nextHost);
-				} else {
-					Map<String, Channel> channelMap = (Map<String, Channel>) o;
-					assertTrue("Expected only one channel configured in unit test data ",channelMap.size() == 1);
-					nextChannel = channelMap.values().iterator().next();
-					if (currentChannel == null) {
-						currentChannel = nextChannel;
-						continue;
-					}
-					assertTrue(currentChannel == nextChannel);
-				}
-			}
-		} catch (AssertionError e) {
-			throw e;
-		} catch (Throwable e) {
-			fail(e.toString());
-		}
-	}
-
 	@Test
 	public void testHstManagerLoadingAfterConfigChanges() throws Exception {
 		populateSessions(2);
@@ -305,36 +233,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		}
 	}
 
-    @Ignore
-	@Test
-	public void testChannelsLoadingAfterSaving() throws Exception {
-		final AtomicLong channelModCount = new AtomicLong(0);
-		final Map<String, Channel> channels = channelManager.getChannels();
-		final Channel existingChannel = channels.values().iterator().next();
-		try {
-			final int synchronousJobCount = 1000;
-			for (int i = 0; i < synchronousJobCount; i++) {
-				Long newTestValue = channelModCount.incrementAndGet();
-				CmsJcrSessionThreadLocal.setJcrSession(getSession2());
-				// need to set the channel info to be able to store properties
-				existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadTest.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
-				existingChannel.getProperties().put(TEST_PROP, newTestValue);
-				channelManager.save(existingChannel);
-				CmsJcrSessionThreadLocal.clearJcrSession();
-
-				// getChannels must always reflect LATEST version.
-				final Map<String, Channel> loadedChannels = channelManager.getChannels();
-				assertTrue(newTestValue.equals(loadedChannels.values().iterator().next().getProperties().get(TEST_PROP)));
-			}
-		} finally {
-			existingChannel.getProperties().remove(TEST_PROP);
-			CmsJcrSessionThreadLocal.setJcrSession(getSession1());
-			channelManager.save(existingChannel);
-			CmsJcrSessionThreadLocal.clearJcrSession();
-		}
-	}
-
-    @Ignore
 	@Test
 	public void testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges() throws Exception {
 		populateSessions(2);
@@ -343,7 +241,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		mountNode.setProperty(TEST_PROP, "testVal"+counter);
 		mountNode.getSession().save();
 
-		final Map<String, Channel> channels = channelManager.getChannels();
+		final Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
 		assertTrue(channels.size() == 1);
 		final Channel existingChannel = channels.values().iterator().next();
         final EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
@@ -355,7 +253,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 			final Object MUTEX = new Object();
 			final Object MUTEX2 = new Object();
 			for (int i = 0; i < jobCount; i++) {
-				int rand = random.nextInt(5);
+				int rand = random.nextInt(4);
 				Job randomJob = enumJobs[rand];
 				switch (randomJob) {
 					case GET_VIRTUALHOSTS_SYNC:
@@ -376,15 +274,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 							}
 						});
 						break;
-					case GET_CHANNELS:
-						jobs.add(new Callable<Object>() {
-							@Override
-							public Boolean call() throws Exception {
-								channelManager.getChannels();
-								return Boolean.TRUE;
-							}
-						});
-						break;
 					case MODIFY_CHANNEL:
 						jobs.add(new Callable<Object>() {
 							@Override
@@ -395,13 +284,15 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 									existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadTest.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
 									existingChannel.getProperties().put(TEST_PROP, newTestValue);
 									CmsJcrSessionThreadLocal.setJcrSession(getSession2());
-									channelManager.save(existingChannel);
+                                    try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+									    channelManager.save(existingChannel);
+                                    }
 									CmsJcrSessionThreadLocal.clearJcrSession();
 									// get channel must always reflect LATEST version. Since this MODIFY_CHANNEL is
 									// called concurrently, we can only guarantee that the loaded value for TEST_PROP
 									// is AT LEAST AS big as newTestValue
 
-									final Map<String, Channel> loadedChannels = channelManager.getChannels();
+									final Map<String, Channel> loadedChannels = hstManager.getVirtualHosts().getChannels();
 
 									JobResultWrapperModifyChannel result = new JobResultWrapperModifyChannel();
 									result.loadedChannels = loadedChannels;
@@ -476,7 +367,9 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		} finally {
 			existingChannel.getProperties().remove(TEST_PROP);
 			CmsJcrSessionThreadLocal.setJcrSession(getSession1());
-			channelManager.save(existingChannel);
+            try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+			    channelManager.save(existingChannel);
+            }
 			CmsJcrSessionThreadLocal.clearJcrSession();
 			mountNode.getProperty(TEST_PROP).remove();
 			mountNode.getSession().save();
@@ -534,6 +427,21 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 			session.logout();
 		}
 	}
+
+    private static class ClosableMockHstRequestContext implements AutoCloseable {
+
+        ClosableMockHstRequestContext(HstManager manager) throws ContainerException {
+            MockHstRequestContext ctx = new MockHstRequestContext();
+            final VirtualHost dummyHost = manager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
+            ctx.setVirtualHost(dummyHost);
+            ModifiableRequestContextProvider.set(ctx);
+        }
+
+        @Override
+        public void close() throws Exception {
+            ModifiableRequestContextProvider.clear();
+        }
+    }
 
 	private class JobResultWrapperModifyMount {
 		private String testPropAfterChange;

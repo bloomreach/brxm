@@ -16,6 +16,7 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
 import org.hippoecm.hst.cmsrest.AbstractCmsRestTest;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -33,6 +34,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -42,12 +44,14 @@ import static junit.framework.Assert.assertEquals;
 
 public class DocumentsResourceTest extends AbstractCmsRestTest {
     private HstManager hstManager;
+    private Session session;
     private HstURLFactory hstURLFactory;
     private HstLinkCreator linkCreator;
     private HstSiteMapMatcher siteMapMatcher;
     private DocumentsResource documentsResource;
     private String homePageNodeId;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -55,6 +59,16 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
         this.linkCreator = getComponentManager().getComponent(HstLinkCreator.class.getName());
         this.siteMapMatcher = getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
         this.hstURLFactory = getComponentManager().getComponent(HstURLFactory.class.getName());
+        this.session = getSession();
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (session != null) {
+        session.logout();
+        }
     }
 
     protected void initRequest() throws Exception {

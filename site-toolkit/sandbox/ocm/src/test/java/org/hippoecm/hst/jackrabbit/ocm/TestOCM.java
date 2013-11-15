@@ -15,16 +15,9 @@
  */
 package org.hippoecm.hst.jackrabbit.ocm;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
-
-import javax.jcr.Session;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.query.Filter;
@@ -33,22 +26,26 @@ import org.apache.jackrabbit.ocm.query.QueryManager;
 import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdDocument;
 import org.hippoecm.hst.jackrabbit.ocm.hippo.HippoStdFolder;
 import org.hippoecm.hst.jackrabbit.ocm.util.OCMUtils;
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestOCM
  * 
  * @version $Id$
  */
-public class TestOCM extends AbstractHstTestCase{
+public class TestOCM extends RepositoryTestCase {
     
     private String [] fallbackHippoBeans = { "hippo:document" };
     private Class [] annotatedBeans = { TextPage.class };
     
     @Test
     public void testTextPage() throws Exception {
-        Session session = getSession();
         
         ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
@@ -83,13 +80,10 @@ public class TestOCM extends AbstractHstTestCase{
         for (HippoStdDocument childDoc : childDocs) {
             assertEquals("/testcontent/documents/testproject/Products", childDoc.getParentFolder().getPath());
         }
-        
-        session.logout();
     }
     
     @Test
     public void testCollection() throws Exception {
-        Session session = getSession();
         
         ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
@@ -125,13 +119,10 @@ public class TestOCM extends AbstractHstTestCase{
         for (HippoStdDocument childDoc : childDocs) {
             assertEquals("/testcontent/documents/testproject/Products", childDoc.getParentFolder().getPath());
         }
-
-        session.logout();
     }
     
     @Test
     public void testCollectionWithDigesterMapper() throws Exception {
-        Session session = getSession();
         
         ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, new InputStream [] { getClass().getResourceAsStream("jackrabbit-ocm-descriptor.xml") } );
         
@@ -169,13 +160,10 @@ public class TestOCM extends AbstractHstTestCase{
         for (HippoStdDocument childDoc : childDocs) {
             assertEquals("/testcontent/documents/testproject/Products", childDoc.getParentFolder().getPath());
         }
-
-        session.logout();
     }
     
     @Test
     public void testQueryManager() throws Exception {
-        Session session = getSession();
         
         ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
@@ -217,13 +205,10 @@ public class TestOCM extends AbstractHstTestCase{
         for (TextPage textPage : textPages) {
             assertTrue(textPage.getPath().startsWith("/testcontent/documents/testproject/Products"));
         }
-        
-        session.logout();
     }
     
     @Test
     public void testTextPageUpdate() throws Exception {
-        Session session = getSession();
         
         ObjectContentManager ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, annotatedBeans);
         
@@ -257,7 +242,5 @@ public class TestOCM extends AbstractHstTestCase{
         productsPageUpdated.setTitle(oldTitle);
         ocm.update(productsPageUpdated);
         ocm.save();
-        
-        session.logout();
     }
 }

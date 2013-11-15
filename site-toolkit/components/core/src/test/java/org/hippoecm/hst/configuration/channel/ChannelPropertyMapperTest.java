@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +27,9 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -38,7 +37,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
-public class ChannelPropertyMapperTest extends AbstractHstTestCase {
+public class ChannelPropertyMapperTest extends RepositoryTestCase {
 
     public static interface TestInfo extends ChannelInfo{
         @Parameter(name = "test-name")
@@ -99,11 +98,11 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        Node root = getSession().getRootNode();
+        Node root = session.getRootNode();
         root.addNode("test", "nt:unstructured");
-        getSession().save();
+        session.save();
         hstNodeLoadingCache = new HstNodeLoadingCache();
-        hstNodeLoadingCache.setRepository(getRepository());
+        hstNodeLoadingCache.setRepository(server.getRepository());
         hstNodeLoadingCache.setRootPath("/test");
         hstNodeLoadingCache.setPassword("admin");
         hstNodeLoadingCache.setUsername("admin");
@@ -114,8 +113,8 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class);
 
         HstPropertyDefinition nameDef = definitions.get(0);
-        getSession().getNode("/test").setProperty("test-name", "aap");
-        getSession().save();
+        session.getNode("/test").setProperty("test-name", "aap");
+        session.save();
 
         Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(hstNodeLoadingCache.getNode("/test"), definitions);
         assertTrue(values.containsKey(nameDef));
@@ -138,10 +137,10 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class);
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("test-name", "aap");
-        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+        ChannelPropertyMapper.saveProperties(session.getNode("/test"), definitions, values);
 
-        assertTrue(getSession().itemExists("/test/test-name"));
-        Property nameProperty = (Property) getSession().getItem("/test/test-name");
+        assertTrue(session.itemExists("/test/test-name"));
+        Property nameProperty = (Property) session.getItem("/test/test-name");
         assertEquals("aap", nameProperty.getString());
     }
 
@@ -150,10 +149,10 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoInteger.class);
         Map<String, Object> values = new HashMap<String, Object>();
         values.put("test-integer", 42);
-        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+        ChannelPropertyMapper.saveProperties(session.getNode("/test"), definitions, values);
 
-        assertTrue(getSession().itemExists("/test/test-integer"));
-        Property integerProperty = (Property) getSession().getItem("/test/test-integer");
+        assertTrue(session.itemExists("/test/test-integer"));
+        Property integerProperty = (Property) session.getItem("/test/test-integer");
         assertEquals(42, integerProperty.getLong());
     }
 
@@ -163,10 +162,10 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         Map<String, Object> values = new HashMap<String, Object>();
         // foo is not a correct integer
         values.put("test-integer", "foo");
-        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+        ChannelPropertyMapper.saveProperties(session.getNode("/test"), definitions, values);
 
-        assertTrue(getSession().itemExists("/test/test-integer"));
-        Property integerProperty = (Property) getSession().getItem("/test/test-integer");
+        assertTrue(session.itemExists("/test/test-integer"));
+        Property integerProperty = (Property) session.getItem("/test/test-integer");
         // we should get the default value for the integer which is 0 because not present in
         // @Parameter(name = "test-integer")
         assertEquals(0, integerProperty.getLong());
@@ -188,10 +187,10 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         Map<String, Object> values = new HashMap<String, Object>();
         // foo is not a correct integer
         values.put("test-integer", "foo");
-        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+        ChannelPropertyMapper.saveProperties(session.getNode("/test"), definitions, values);
 
-        assertTrue(getSession().itemExists("/test/test-integer"));
-        Property integerProperty = (Property) getSession().getItem("/test/test-integer");
+        assertTrue(session.itemExists("/test/test-integer"));
+        Property integerProperty = (Property) session.getItem("/test/test-integer");
         // we should get the default value for the integer which is 4 because of
         //  @Parameter(name = "test-integer", defaultValue = "4")
         assertEquals(4L, integerProperty.getLong());

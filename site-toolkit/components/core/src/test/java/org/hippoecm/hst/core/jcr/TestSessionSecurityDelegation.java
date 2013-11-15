@@ -28,18 +28,18 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TestSessionSecurityDelegation extends AbstractHstTestCase {
+public class TestSessionSecurityDelegation extends RepositoryTestCase {
 
 
     private static final String PREVIEW_USER_ID = "previewUser";
@@ -55,15 +55,15 @@ public class TestSessionSecurityDelegation extends AbstractHstTestCase {
     public void setUp() throws Exception {
         super.setUp();
         ModifiableRequestContextProvider.set(new MockHstRequestContext());
-        Node config = getSession().getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
+        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
         Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
         // create test user
         createUserAndGroup(users, groups);
-        getSession().save();
+        session.save();
         sessionSecurityDelegation = new SessionSecurityDelegationImpl();
         sessionSecurityDelegation.setSecurityDelegationEnabled(true);
-        sessionSecurityDelegation.setRepository(getRepository());
+        sessionSecurityDelegation.setRepository(server.getRepository());
         sessionSecurityDelegation.setPreviewCredentials(new SimpleCredentials(PREVIEW_USER_ID, PREVIEW_USER_PASS.toCharArray()));
         sessionSecurityDelegation.setLiveCredentials(new SimpleCredentials(LIVE_USER_ID, LIVE_USER_PASS.toCharArray()));
     }
@@ -71,11 +71,11 @@ public class TestSessionSecurityDelegation extends AbstractHstTestCase {
     @Override
     @After
     public void tearDown() throws  Exception {
-        Node config = getSession().getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
+        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
         Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
         cleanupUserAndGroup(users, groups);
-        getSession().save();
+        session.save();
         ModifiableRequestContextProvider.clear();
         super.tearDown();
     }

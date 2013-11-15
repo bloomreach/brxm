@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.security.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.Set;
 
 import javax.jcr.Credentials;
@@ -30,16 +25,20 @@ import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.TransientRole;
 import org.hippoecm.hst.security.User;
-import org.hippoecm.hst.test.AbstractHstTestCase;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * TestJcrAuthenticationProvider
  * @version $Id$
  */
-public class TestJcrAuthenticationProvider extends AbstractHstTestCase {
+public class TestJcrAuthenticationProvider extends RepositoryTestCase {
     
     private AuthenticationProvider authenticationProvider;
 
@@ -48,17 +47,11 @@ public class TestJcrAuthenticationProvider extends AbstractHstTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        Repository systemRepo = getRepository();
+        Repository systemRepo = server.getRepository();
         Credentials systemCreds = new SimpleCredentials("admin", "admin".toCharArray());
-        Repository userRepo = getRepository();
+        Repository userRepo = server.getRepository();
         
         authenticationProvider = new JcrAuthenticationProvider(systemRepo, systemCreds, userRepo);
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

@@ -30,10 +30,14 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
+import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
@@ -112,10 +116,10 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     }
 
     @Test
-    public void channelsAreReadCorrectly() throws ChannelException, RepositoryException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+    public void channelsAreReadCorrectly() throws Exception {
+        final HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
-        Map<String, Channel> channels = manager.getChannels();
+        Map<String, Channel> channels = manager.getVirtualHosts().getChannels();
         assertEquals(1, channels.size());
         assertEquals("testchannel", channels.keySet().iterator().next());
 
@@ -126,52 +130,67 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     }
 
     @Test
-    public void channelPropertiesSaved() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+    public void channelPropertiesSaved() throws Exception {
+        final ChannelManagerImpl channelMngr= HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            assertEquals(1, channels.size());
+            final Channel channel = channels.values().iterator().next();
+            channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
+            channel.getProperties().put("title", "test title");
+            channelMngr.save(channel);
+            // give jcr events time to invalidate the model
+            Thread.sleep(200);
 
-        Map<String, Channel> channels = manager.getChannels();
-        assertEquals(1, channels.size());
+            channels =  hstManager.getVirtualHosts().getChannels();
 
-        final Channel channel = channels.values().iterator().next();
-        channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
-        channel.getProperties().put("title", "test title");
-        manager.save(channel);
-        channels = manager.getChannels();
-        assertEquals(1, channels.size());
-        Channel savedChannel = channels.values().iterator().next();
+            assertEquals(1, channels.size());
+            Channel savedChannel = channels.values().iterator().next();
 
-        Map<String, Object> savedProperties = savedChannel.getProperties();
-        assertTrue(savedProperties.containsKey("title"));
-        assertEquals("test title", savedProperties.get("title"));
+            Map<String, Object> savedProperties = savedChannel.getProperties();
+            assertTrue(savedProperties.containsKey("title"));
+            assertEquals("test title", savedProperties.get("title"));
+
+        }
 
     }
 
+
     @Test
-    public void channelsAreNotClonedWhenRetrieved() throws ChannelException, RepositoryException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        Map<String, Channel> channels = manager.getChannels();
-        Map<String, Channel> channelsAgain = manager.getChannels();
+    public void channelsAreNotClonedWhenRetrieved() throws Exception {
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels();
         assertTrue(channelsAgain == channels);
     }
 
     @Test
-    public void channelsMapIsNewInstanceWhenReloadedAfterChange() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        Map<String, Channel> channels = manager.getChannels();
-        final Channel channel = channels.values().iterator().next();
-        channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
-        channel.getProperties().put("title", "test title");
-        manager.save(channel);
-        Map<String, Channel> channelsAgain = manager.getChannels();
-        assertTrue("After a change, getChannels should return different instance for the Map",channelsAgain != channels);
+    public void channelsMapIsNewInstanceWhenReloadedAfterChange() throws Exception {
+        final ChannelManagerImpl channelMngr= HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            final Channel channel = channels.values().iterator().next();
+            channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
+            channel.getProperties().put("title", "test title");
+            channelMngr.save(channel);
+            // give jcr events time to invalidate the model
+            Thread.sleep(200);
+
+            Map<String, Channel> channelsAgain = hstManager.getVirtualHosts().getChannels();
+            assertTrue("After a change, getChannels should return different instance for the Map",channelsAgain != channels);
+        }
     }
 
 
     @Test
-    public void channelIsCreatedFromBlueprint() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+    public void channelIsCreatedFromBlueprint() throws Exception {
+        final ChannelManagerImpl channelMngr= HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
-        List<Blueprint> bluePrints = manager.getBlueprints();
+        List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
 
@@ -181,30 +200,33 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         channel.setContentRoot("/unittestcontent/documents");
         channel.setLocale("nl_NL");
 
-        String channelId = manager.persist(blueprint.getId(), channel);
-        final String encodedChannelName = "cmit-test-channel-with-special-and-or-specific-characters";
-        assertEquals(encodedChannelName, channelId);
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            String channelId = channelMngr.persist(blueprint.getId(), channel);
+            final String encodedChannelName = "cmit-test-channel-with-special-and-or-specific-characters";
+            assertEquals(encodedChannelName, channelId);
 
-        Node channelNode = getSession().getNode("/hst:hst/hst:channels/" + channelId);
-        assertEquals("CMIT Test Channel: with special and/or specific characters", channelNode.getProperty("hst:name").getString());
+            Node channelNode = getSession().getNode("/hst:hst/hst:channels/" + channelId);
+            assertEquals("CMIT Test Channel: with special and/or specific characters", channelNode.getProperty("hst:name").getString());
 
-        Node hostNode = getSession().getNode("/hst:hst/hst:hosts/dev-localhost");
-        assertTrue(hostNode.hasNode("cmit-myhost/hst:root"));
+            Node hostNode = getSession().getNode("/hst:hst/hst:hosts/dev-localhost");
+            assertTrue(hostNode.hasNode("cmit-myhost/hst:root"));
 
-        Node mountNode = hostNode.getNode("cmit-myhost/hst:root");
-        assertEquals("nl_NL", mountNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE).getString());
-        String sitePath = "/hst:hst/hst:sites/" + channelId;
-        assertEquals(sitePath, mountNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString());
-        assertTrue(getSession().itemExists(sitePath));
+            Node mountNode = hostNode.getNode("cmit-myhost/hst:root");
+            assertEquals("nl_NL", mountNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE).getString());
+            String sitePath = "/hst:hst/hst:sites/" + channelId;
+            assertEquals(sitePath, mountNode.getProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT).getString());
+            assertTrue(getSession().itemExists(sitePath));
 
-        Node siteNode = getSession().getNode(sitePath);
-        assertEquals("/unittestcontent/documents", siteNode.getProperty(HstNodeTypes.SITE_CONTENT).getString());
+            Node siteNode = getSession().getNode(sitePath);
+            assertEquals("/unittestcontent/documents", siteNode.getProperty(HstNodeTypes.SITE_CONTENT).getString());
+        }
     }
 
     @Test
-    public void channelsAreReloadedAfterAddingOne() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        int numberOfChannels = manager.getChannels().size();
+    public void channelsAreReloadedAfterAddingOne() throws Exception {
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        int numberOfChannels = channels.size();
 
         Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
         Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
@@ -223,9 +245,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         invalidator.eventPaths(pathsToBeChanged);
 
         // manager should reload
-
-        Map<String, Channel> channels = manager.getChannels();
-
+        channels =  hstManager.getVirtualHosts().getChannels();
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey("cmit-test-channel"));
 
@@ -244,8 +264,9 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
     @Test
     public void channelsThatAreNotReferencedByAMountAreDiscarded() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-        int numberOfChannerBeforeAddingAnOrphanOne = manager.getChannels().size();
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        Map<String, Channel> channels = hstManager.getVirtualHosts().getChannels();
+        int numberOfChannerBeforeAddingAnOrphanOne = channels.size();
 
         Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
         Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
@@ -259,7 +280,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         getSession().save();
         invalidator.eventPaths(pathsToBeChanged);
 
-        Map<String, Channel> channels = manager.getChannels();
+        channels = hstManager.getVirtualHosts().getChannels();
 
         assertEquals(numberOfChannerBeforeAddingAnOrphanOne , channels.size());
         assertFalse(channels.containsKey("cmit-test-channel"));
@@ -267,17 +288,21 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     }
 
     @Test(expected = ChannelException.class)
-    public void ancestorMountsMustExist() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+    public void ancestorMountsMustExist() throws Exception {
+        final ChannelManagerImpl channelMngr= HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
-        List<Blueprint> bluePrints = manager.getBlueprints();
+        List<Blueprint> bluePrints = hstManager.getVirtualHosts().getBlueprints();
         assertEquals(1, bluePrints.size());
         final Blueprint blueprint = bluePrints.get(0);
 
         final Channel channel = blueprint.getPrototypeChannel();
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost/newmount");
-        manager.persist(blueprint.getId(), channel);
+
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            channelMngr.persist(blueprint.getId(), channel);
+        }
     }
 
     public static interface TestInfoClass extends ChannelInfo {
@@ -286,7 +311,9 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
     }
 
     @Test
-    public void blueprintDefaultValuesAreCopied() throws RepositoryException, ChannelException, PrivilegedActionException {
+    public void blueprintDefaultValuesAreCopied() throws Exception {
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+
         Node configNode = getSession().getRootNode().getNode("hst:hst");
         Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
 
@@ -300,20 +327,27 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
         final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
-        final Channel channel = manager.getBlueprint("cmit-test-bp").getPrototypeChannel();
+        final Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp").getPrototypeChannel();
         channel.setName("cmit-channel");
         channel.setUrl("http://cmit-myhost");
         channel.setContentRoot("/");
         Map<String, Object> properties = channel.getProperties();
         assertTrue(properties.containsKey("getme"));
         assertEquals("noot", properties.get("getme"));
-        manager.persist("cmit-test-bp", channel);
-        TestInfoClass channelInfo = manager.getChannelInfo(channel);
-        assertEquals("noot", channelInfo.getGetme());
+
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            manager.persist("cmit-test-bp", channel);
+            Thread.sleep(200);
+            TestInfoClass channelInfo = hstManager.getVirtualHosts().getChannelInfo(channel);
+            assertEquals("noot", channelInfo.getGetme());
+        }
     }
 
     @Test
-    public void testChannelManagerEventListeners() throws RepositoryException, ChannelException, PrivilegedActionException {
+    public void testChannelManagerEventListeners() throws Exception {
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        final ChannelManagerImpl channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+
         Node configNode = getSession().getRootNode().getNode("hst:hst");
         Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
 
@@ -327,9 +361,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         defaultChannelInfo.setProperty("getme", "noot");
         getSession().save();
 
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
-
-        Channel channel = manager.getBlueprint("cmit-test-bp2").getPrototypeChannel();
+        Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp2").getPrototypeChannel();
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
@@ -341,12 +373,14 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         MyChannelManagerEventListener listener2 = new MyChannelManagerEventListener();
         MyChannelManagerEventListener listener3 = new MyChannelManagerEventListener();
         
-        manager.addChannelManagerEventListeners(listener1, listener2, listener3);
+        channelMngr.addChannelManagerEventListeners(listener1, listener2, listener3);
 
         final Channel channelToPersist = channel;
-        
-        String channelId =  manager.persist("cmit-test-bp2", channelToPersist);
 
+        String channelId;
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            channelId =  channelMngr.persist("cmit-test-bp2", channelToPersist);
+        }
         assertEquals(1, listener1.getCreatedCount());
         assertEquals(1, listener2.getCreatedCount());
         assertEquals(1, listener3.getCreatedCount());
@@ -354,15 +388,17 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertEquals(0, listener2.getUpdatedCount());
         assertEquals(0, listener3.getUpdatedCount());
 
-
-        channel = manager.getChannels().get(channelId);
+        // give jcr events time to invalidate the model
+        Thread.sleep(200);
+        channel = hstManager.getVirtualHosts().getChannels().get(channelId);
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
         final Channel channelToSave = channel;
 
-        manager.save(channelToSave);
-
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            channelMngr.save(channelToSave);
+        }
         assertEquals(1, listener1.getCreatedCount());
         assertEquals(1, listener2.getCreatedCount());
         assertEquals(1, listener3.getCreatedCount());
@@ -370,27 +406,27 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertEquals(1, listener2.getUpdatedCount());
         assertEquals(1, listener3.getUpdatedCount());
 
-        manager.removeChannelManagerEventListeners(listener1, listener2, listener3);
+        channelMngr.removeChannelManagerEventListeners(listener1, listener2, listener3);
 
-        manager.getChannels();
-
-        channel = manager.getChannels().get(channelId);
+        channel = hstManager.getVirtualHosts().getChannels().get(channelId);
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
         final Channel channelToSave2 = channel;
-        manager.save(channelToSave2);
-
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            channelMngr.save(channelToSave2);
+        }
         assertEquals(1, listener1.getCreatedCount());
         assertEquals(1, listener2.getCreatedCount());
         assertEquals(1, listener3.getCreatedCount());
         assertEquals(1, listener1.getUpdatedCount());
         assertEquals(1, listener2.getUpdatedCount());
         assertEquals(1, listener3.getUpdatedCount());
+
     }
 
     @Test(expected = ChannelException.class)
-    public void testChannelManagerShortCircuitingEventListeners() throws RepositoryException, ChannelException, PrivilegedActionException {
+    public void testChannelManagerShortCircuitingEventListeners() throws Exception {
         Node configNode = getSession().getRootNode().getNode("hst:hst");
         Node bpFolder = configNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
     
@@ -402,9 +438,10 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         defaultChannelInfo.setProperty("getme", "noot");
         getSession().save();
 
-        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final ChannelManagerImpl channelMngr = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
 
-        Channel channel = manager.getBlueprint("cmit-test-bp2").getPrototypeChannel();
+        Channel channel = hstManager.getVirtualHosts().getBlueprint("cmit-test-bp2").getPrototypeChannel();
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
         channel.setContentRoot("/");
@@ -413,11 +450,13 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertEquals("noot", properties.get("getme"));
         
         ChannelManagerEventListener shortCircuitingListener = new MyShortCircuitingEventListener();
-        
-        manager.addChannelManagerEventListeners(shortCircuitingListener);
+
+        channelMngr.addChannelManagerEventListeners(shortCircuitingListener);
 
         final Channel channelToPersist = channel;
-        manager.persist("cmit-test-bp2", channelToPersist);
+        try (ClosableMockHstRequestContext cmrc = new ClosableMockHstRequestContext(hstManager)) {
+            channelMngr.persist("cmit-test-bp2", channelToPersist);
+        }
     }
 
     private void propagateJcrSession(Credentials credentials) throws LoginException, RepositoryException {
@@ -472,7 +511,22 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
             return updatedCount;
         }
     }
-    
+
+    private static class ClosableMockHstRequestContext implements AutoCloseable {
+
+        ClosableMockHstRequestContext(HstManager manager) throws ContainerException {
+            MockHstRequestContext ctx = new MockHstRequestContext();
+            final VirtualHost dummyHost = manager.getVirtualHosts().getMountsByHostGroup("dev-localhost").get(0).getVirtualHost();
+            ctx.setVirtualHost(dummyHost);
+            ModifiableRequestContextProvider.set(ctx);
+        }
+
+        @Override
+        public void close() throws Exception {
+            ModifiableRequestContextProvider.clear();
+        }
+    }
+
     private static class MyShortCircuitingEventListener implements ChannelManagerEventListener {
 
         @Override

@@ -496,7 +496,6 @@ components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfo
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelLazyLoadingChangedBySet.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelPropertyMapper.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelUtils.java -text
-components/core/src/main/java/org/hippoecm/hst/configuration/channel/MutableChannelManager.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/components/DelegatingHstComponentInfo.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/components/HstComponentsConfigurationService.java svneol=native#text/plain
@@ -1113,9 +1112,6 @@ solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestExplic
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestIgnoredSuperFieldsAddress.java -text
 src/site/site.xml svneol=native#text/plain
 test/pom.xml -text
-test/src/main/java/org/hippoecm/hst/test/AbstractHstTestCase.java svneol=native#text/plain
-test/src/main/java/org/hippoecm/hst/test/JcrHippoRepository.java svneol=native#text/plain
-test/src/main/java/org/hippoecm/hst/test/basic/BasicHstTestCase.java svneol=native#text/plain
 test/src/site/site.xml -text
 toolkit-resources/addon/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/pom.xml svneol=native#text/plain

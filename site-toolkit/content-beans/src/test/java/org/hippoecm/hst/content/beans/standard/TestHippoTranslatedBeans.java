@@ -15,39 +15,22 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import static org.junit.Assert.assertEquals;
-
-import javax.jcr.Session;
-
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestHippoTranslatedBeans extends AbstractBeanTestCase {
+import static org.junit.Assert.assertEquals;
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        
-    }
-    
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        
-    }
+public class TestHippoTranslatedBeans extends AbstractBeanTestCase {
 
     @Test
     public void testTranslatedBeans() throws Exception {
              
         ObjectConverter objectConverter = getObjectConverter();
-        
-        Session session = this.getSession();
+
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
@@ -57,8 +40,6 @@ public class TestHippoTranslatedBeans extends AbstractBeanTestCase {
         HippoDocument homePage =  (HippoDocument) obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
         assertEquals("en_US", homePage.getLocaleString());
         assertEquals(LocaleUtils.toLocale("en_US"), homePage.getLocale());
-        
-        session.logout();
     }
     
 }

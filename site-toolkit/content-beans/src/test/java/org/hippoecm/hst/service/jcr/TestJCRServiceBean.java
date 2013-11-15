@@ -15,44 +15,27 @@
  */
 package org.hippoecm.hst.service.jcr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.Serializable;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceFactory;
-import org.hippoecm.hst.test.basic.BasicHstTestCase;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class TestJCRServiceBean extends AbstractBeanTestCase {
-    
-    private static final String TESTPROJECT_EXISTING_NODE = BasicHstTestCase.TEST_SITE_CONTENT_PATH + "/common/homepage/homepage";
 
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        
-    }
-    
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        
-    }
+    public final static String TEST_SITE_CONTENT_PATH = "/unittestcontent/documents/unittestproject";
+    private static final String TESTPROJECT_EXISTING_NODE = TEST_SITE_CONTENT_PATH + "/common/homepage/homepage";
     
     @Test
     public void testServiceBeanProxy() throws Exception {
-        Session session = this.getSession();
         Node node = (Node)session.getItem(TESTPROJECT_EXISTING_NODE);
         TextPage t = ServiceFactory.create(node, TextPage.class);
         
@@ -74,9 +57,7 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         
     @Test
     public void testServiceBeanProxyWithClass() throws Exception {
-        
-        Session session = this.getSession();
-        
+
         Node node = (Node)session.getItem(TESTPROJECT_EXISTING_NODE);
         TextPage t = ServiceFactory.create(node, TextPageImpl.class);
         

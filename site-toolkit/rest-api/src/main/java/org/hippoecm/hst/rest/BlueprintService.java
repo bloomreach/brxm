@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 
 /**
  * JAX-RS service implementation which is responsible for interacting with {@link Blueprint} resources
@@ -50,6 +51,6 @@ public interface BlueprintService {
 	@GET
 	@Path("/{id}/")
 	@Produces(MediaType.APPLICATION_JSON)
-    Blueprint getBlueprint(@PathParam("id") String id);
+    Blueprint getBlueprint(@PathParam("id") String id) throws ChannelException;
 
 }

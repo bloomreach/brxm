@@ -17,7 +17,6 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -40,44 +39,16 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
 
 	@Override
-	public List<Channel> getChannels() throws ChannelException {
-		try {
-			validate();
-	        return Collections.unmodifiableList(new ArrayList<Channel>(channelManager.getChannels().values()));
-		} catch (ResourceRequestValidationException rrve) {
-		    if (log.isDebugEnabled()) {
-		        log.warn("Error while processing channels resource request", rrve);
-		    } else {
-		        log.warn("Error while processing channels resource request - {}", rrve.toString());
-		    }
-
-            throw new ChannelException("Validation error while retrieving channels. Details: " + rrve.getMessage()
-                    , rrve, ChannelException.Type.SERVER_ERROR);
-
-		} catch (ChannelException ce) {
-		    log.warn("Error while retrieving channels - {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
-			throw ce;
-		}
+	public List<Channel> getChannels() {
+		return new ArrayList(getVirtualHosts().getChannels().values());
 	}
 
     @Override
     public void save(Channel channel) throws ChannelException {
         try {
-            validate();
             channelManager.save(channel);
-        } catch (ResourceRequestValidationException rrve) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while processing channels resource request for channel '" + channel.getId() + "'", rrve);
-            } else {
-                log.warn("Error while processing channels resource request for channel '{}' - {}", channel.getId(), rrve.toString());
-            }
-
-            throw new ChannelException("Validation error while saving channel with id '" + channel.getId() + "'."
-                    + " Details: " + rrve.getMessage()
-                    , rrve, ChannelException.Type.SERVER_ERROR);
-
         } catch (ChannelException ce) {
-            log.warn("Error while saving a channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
+            log.warn("Error while saving a channel - Channel: {} - {} : {}", new Object[]{channel, ce.getClass().getName(), ce.toString()});
             throw ce;
         }
     }
@@ -85,58 +56,26 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     @Override
     public String persist(String blueprintId, Channel channel) throws ChannelException {
         try {
-            validate();
             return channelManager.persist(blueprintId, channel);
-        } catch (ResourceRequestValidationException rrve) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while processing channels resource request for channel '" + channel.getId() + "'", rrve);
-            } else {
-                log.warn("Error while processing channels resource request for channel '{}' - {}", channel.getId(), rrve.toString());
-            }
-
-            throw new ChannelException("Validation error while persisting channel with id '" + channel.getId() + "'"
-                    + " using blueprint with id '" + blueprintId + "'."
-                    + " Details: " + rrve.getMessage()
-                    , rrve, ChannelException.Type.SERVER_ERROR);
-
         } catch (ChannelException ce) {
-            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
+            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", new Object[]{channel, ce.getClass().getName(), ce.toString()});
             throw ce;
         }
     }
 
     @Override
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(String id) {
-        return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(channelManager.getPropertyDefinitions(id));
+        return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(getVirtualHosts().getPropertyDefinitions(id));
     }
 
     @Override
     public Channel getChannel(String id) throws ChannelException {
-        try {
-            validate();
-            return channelManager.getChannelById(id);
-        } catch (ResourceRequestValidationException rrve) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while processing channels resource request of retrieving a channel with id '" + id + "'", rrve);
-            } else {
-                log.warn("Error while processing channels resource request of retrieving a channel with id,'{}' - {}", id
-                        ,  rrve.toString());
-
-            }
-
-            throw new ChannelException("Validation error while retrieving details of channel with id '" + id + "'."
-                    + " Details: " + rrve.getMessage()
-                    , rrve , ChannelException.Type.SERVER_ERROR);
-
-        } catch (ChannelException ce) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve a channel with id '" + id + "'", ce);
-            } else {
-                log.warn("Failed to retrieve a channel with id '{}' - {}", id, ce.toString());
-            }
-
-            throw ce;
+        final Channel channel = getVirtualHosts().getChannelById(id);
+        if (channel == null) {
+            log.warn("Failed to retrieve a channel with id '{}'",id);
+            throw new ChannelException("Failed to retrieve a channel with id '" + id + "'");
         }
+        return channel;
     }
 
     @Override
@@ -146,74 +85,27 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     @Override
     public ChannelInfoClassInfo getChannelInfoClassInfo(String id) throws ChannelException {
-        ChannelInfoClassInfo channelInfoClassInfo = null;
-
         try {
-            validate();
-            Class<? extends ChannelInfo> channelInfoClass = channelManager.getChannelInfoClass(id);
-
+            Class<? extends ChannelInfo> channelInfoClass = getVirtualHosts().getChannelInfoClass(id);
+            ChannelInfoClassInfo channelInfoClassInfo = null;
             if (channelInfoClass != null) {
                 channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
             }
-
             return channelInfoClassInfo;
-        } catch (ResourceRequestValidationException rrve) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while processing channels resource request of retrieving information of channel with id '" + id + "'", rrve);
-            } else {
-                log.warn("Error while processing channels resource request of retrieving information of channel with id,'{}' - {}", id
-                        ,  rrve.toString());
-
-            }
-
-            throw new ChannelException("Validation error while retrieving information of channel with id '" + id + "'."
-                    + " Details: " + rrve.getMessage()
-                    , rrve , ChannelException.Type.SERVER_ERROR);
-
-        } catch (ChannelException ce) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve channel info class for channel with id '" + id + "'", ce);
-            } else {
-                log.warn("Failed to retrieve channel info class for channel with id '{}' - {}", id, ce.toString());
-            }
-
-            throw ce;
+        } catch (ChannelException e) {
+            log.warn("Failed to retrieve channel info class for channel with id '" + id + "'", e);
+            throw e;
         }
     }
 
     @Override
     public Properties getChannelResourceValues(String id, String language) throws ChannelException {
-        try {
-            validate();
-            Channel channel = channelManager.getChannelById(id);
-            return InformationObjectsBuilder.buildResourceBundleProperties(channelManager.getResourceBundle(channel, new Locale(language)));
-        } catch (ResourceRequestValidationException rrve) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while processing channels resource request of retrieving resource values of channel with id '" + id + "'"
-                        + " for language '" + language + "'", rrve);
-
-            } else {
-                log.warn("Error while processing channels resource request of retrieving resource values of channel with id '{}' for language '{}' - {}"
-                        , new String[] {id, language, rrve.toString()});
-
-            }
-
-            throw new ChannelException("Validation error while retrieving resource values of channel with id '" + id + "'"
-                    + " for language '" + language + "'. "+ "Details: " + rrve.getMessage()
-                    , rrve , ChannelException.Type.SERVER_ERROR);
-
-        } catch (ChannelException ce) {
-            if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve channel resource values for channel with id '" + id + "'"
-                        + " for language '" + language + "'", ce);
-
-            } else {
-                log.warn("Failed to retrieve channel resource values for channel with id '{}' for language '{}' - {}"
-                        , new String[] {id, language, ce.toString()});
-            }
-
-            throw ce;
+        Channel channel = getVirtualHosts().getChannelById(id);
+        if (channel == null) {
+            log.warn("Cannot find channel for id '{}'", id);
+            throw new ChannelException("Cannot find channel for id '"+id+"'");
         }
+        return InformationObjectsBuilder.buildResourceBundleProperties(getVirtualHosts().getResourceBundle(channel, new Locale(language)));
     }
 
 }

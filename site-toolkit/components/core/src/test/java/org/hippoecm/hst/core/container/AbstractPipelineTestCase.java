@@ -16,15 +16,8 @@
 package org.hippoecm.hst.core.container;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.container.HstContainerConfigImpl;
-import org.hippoecm.hst.core.component.GenericHstComponent;
-import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Before;

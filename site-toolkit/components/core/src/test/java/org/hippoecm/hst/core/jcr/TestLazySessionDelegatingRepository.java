@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.core.jcr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.Serializable;
 
 import javax.jcr.Credentials;
@@ -27,11 +23,14 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TestLazySessionDelegatingRepository  extends RepositoryTestCase {
     
     private LazySessionDelegatingRepository repository;
     
@@ -40,7 +39,7 @@ public class TestLazySessionDelegatingRepository  extends AbstractHstTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
-        Repository delegatee = getRepository();
+        Repository delegatee = server.getRepository();
         repository = new LazySessionDelegatingRepository(delegatee);
         repository.setLogoutOnSessionUnbound(true);
     }

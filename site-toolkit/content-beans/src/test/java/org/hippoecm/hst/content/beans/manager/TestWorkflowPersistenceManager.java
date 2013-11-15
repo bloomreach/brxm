@@ -69,333 +69,262 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
 
     @Test
     public void testNewDocumentIsPreviewAvailable() throws Exception {
-        Session session = null;
+
+        ObjectConverter objectConverter = getObjectConverter();
+
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+
+        HippoFolderBean newFolder = null;
 
         try {
-            ObjectConverter objectConverter = getObjectConverter();
+            // create a document with type and name
+            String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
+            // retrieves the document created just before
+            PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(newPage);
 
-            session = this.getSession();
-
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-
-            HippoFolderBean newFolder = null;
+            String[] availability =  newPage.getValueProvider().getStrings("hippo:availability");
+            // the wpm createAndReturn must have created a document that has 'hippo:availability = preview'
+            assertEquals( "String[] availability should contain 1 string", 1, availability.length);
+            assertEquals( "availability[0] should equal 'preview'", "preview", availability[0]);
+        } finally {
+            PersistableTextPage newPage = null;
 
             try {
-                // create a document with type and name 
-                String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
-                // retrieves the document created just before
-                PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
-                assertNotNull(newPage);
-
-                String[] availability =  newPage.getValueProvider().getStrings("hippo:availability");
-                // the wpm createAndReturn must have created a document that has 'hippo:availability = preview'
-                assertEquals( "String[] availability should contain 1 string", 1, availability.length);
-                assertEquals( "availability[0] should equal 'preview'", "preview", availability[0]);
-            } finally {
-                PersistableTextPage newPage = null;
-
-                try {
-                    newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
-                } catch (Exception e) {
-                }
-
-                if (newPage != null) {
-                    wpm.remove(newPage);
-                }
+                newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+            } catch (Exception e) {
             }
 
-        } finally {
-            if (session != null) {
-                session.logout();
+            if (newPage != null) {
+                wpm.remove(newPage);
             }
         }
     }
     
     @Test
     public void testDocumentManipulation() throws Exception {
-        Session session = null;
+        ObjectConverter objectConverter = getObjectConverter();
+
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+            public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
+                fraw.requestPublication();
+            }
+        });
+
+        // basic object retrieval from the content
+        PersistableTextPage page = (PersistableTextPage) wpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
+        assertNotNull(page);
 
         try {
-            ObjectConverter objectConverter = getObjectConverter();
+            // create a document with type and name
+            String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
 
-            session = this.getSession();
+            // retrieves the document created just before
+            PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(newPage);
 
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-            wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
-                    FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                    fraw.requestPublication();
-                }
-            });
+            newPage.setTitle("Title of the about page");
+            newPage.setBodyContent("<h1>Welcome to the about page!</h1>");
 
-            // basic object retrieval from the content
-            PersistableTextPage page = (PersistableTextPage) wpm.getObject(TEST_EXISTING_DOCUMENT_NODE_PATH);
-            assertNotNull(page);
+            // custom mapping binder is already provided during WPM instantiation.
+            // but you can also provide your custom binder as the second parameter.
+            // if any binder is not found and the first parameter (newPage) is instanceof ContentPersistenceBinder,
+            // then the POJO object in the first parameter will be used as a binder.
+            wpm.update(newPage);
+
+            // retrieves the document created just before
+            newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+            assertEquals("Title of the about page", newPage.getTitle());
+            assertEquals("<h1>Welcome to the about page!</h1>", newPage.getBodyContent());
+
+        } finally {
+            PersistableTextPage newPage = null;
 
             try {
-                // create a document with type and name 
-                String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
-
-                // retrieves the document created just before
-                PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
-                assertNotNull(newPage);
-
-                newPage.setTitle("Title of the about page");
-                newPage.setBodyContent("<h1>Welcome to the about page!</h1>");
-
-                // custom mapping binder is already provided during WPM instantiation.
-                // but you can also provide your custom binder as the second parameter.
-                // if any binder is not found and the first parameter (newPage) is instanceof ContentPersistenceBinder,
-                // then the POJO object in the first parameter will be used as a binder. 
-                wpm.update(newPage);
-
-                // retrieves the document created just before
                 newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
-                assertEquals("Title of the about page", newPage.getTitle());
-                assertEquals("<h1>Welcome to the about page!</h1>", newPage.getBodyContent());
-
-            } finally {
-                PersistableTextPage newPage = null;
-
-                try {
-                    newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
-                } catch (Exception e) {
-                }
-
-                if (newPage != null) {
-                    wpm.remove(newPage);
-                }
+            } catch (Exception e) {
             }
-        } finally {
-            if (session != null) {
-                session.logout();
+
+            if (newPage != null) {
+                wpm.remove(newPage);
             }
         }
-
     }
 
     @Test
     public void testFolderCreateRemove() throws Exception {
-        Session session = null;
+       ObjectConverter objectConverter = getObjectConverter();
+       wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+
+        HippoFolderBean newFolder = null;
 
         try {
-            ObjectConverter objectConverter = getObjectConverter();
+            // create a document with type and name
+            String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, TEST_NEW_FOLDER_NODE_NAME, false);
 
-            session = this.getSession();
+            // retrieves the document created just before
+            newFolder = (HippoFolderBean) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(newFolder);
 
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-
-            HippoFolderBean newFolder = null;
-
-            try {
-                // create a document with type and name 
-                String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, TEST_NEW_FOLDER_NODE_NAME, false);
-
-                // retrieves the document created just before
-                newFolder = (HippoFolderBean) wpm.getObject(absoluteCreatedDocumentPath);
-                assertNotNull(newFolder);
-
-            } finally {
-                if (newFolder != null) {
-                    wpm.remove(newFolder);
-                }
-            }
-
-            wpm.save();
         } finally {
-            if (session != null) {
-                session.logout();
+            if (newFolder != null) {
+                wpm.remove(newFolder);
             }
         }
 
+        wpm.save();
     }
 
     @Test
     public void testFolderAutoCreateRemove() throws Exception {
-        Session session = null;
+
+        ObjectConverter objectConverter = getObjectConverter();
+
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+
+        HippoFolderBean newFolder = null;
 
         try {
-            ObjectConverter objectConverter = getObjectConverter();
+            // create a document with type and name
+            String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, "testfolder", true);
 
-            session = this.getSession();
-
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-
-            HippoFolderBean newFolder = null;
-
-            try {
-                // create a document with type and name 
-                String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, "testfolder", true);
-
-                // retrieves the document created just before
-                newFolder = (HippoFolderBean) wpm.getObject(absoluteCreatedDocumentPath);
-                assertNotNull(newFolder);
-            } finally {
-                if (newFolder != null) {
-                    wpm.remove(newFolder);
-                }
-            }
-
-            wpm.save();
+            // retrieves the document created just before
+            newFolder = (HippoFolderBean) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(newFolder);
         } finally {
-            if (session != null) {
-                session.logout();
+            if (newFolder != null) {
+                wpm.remove(newFolder);
             }
         }
+
+        wpm.save();
+
     }
 
     @Test
     public void testCreateDocumentUnderFolderHavingSameNameDocumentSibling() throws Exception {
-        Session session = null;
+        ObjectConverter objectConverter = getObjectConverter();
 
-        try {
-            ObjectConverter objectConverter = getObjectConverter();
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
 
-            session = this.getSession();
+        String docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, "node-a", true);
+        HippoDocumentBean newDocument = (HippoDocumentBean) wpm.getObject(docPath);
+        assertNotNull(newDocument);
 
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/node-a", TEST_DOCUMENT_NODE_TYPE, "node-b", true);
+        newDocument = (HippoDocumentBean) wpm.getObject(docPath);
+        assertNotNull(newDocument);
 
-            String docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, "node-a", true);
-            HippoDocumentBean newDocument = (HippoDocumentBean) wpm.getObject(docPath);
-            assertNotNull(newDocument);
+        docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/node-a", TEST_DOCUMENT_NODE_TYPE, "node-c", true);
+        newDocument = (HippoDocumentBean) wpm.getObject(docPath);
+        assertNotNull(newDocument);
 
-            docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/node-a", TEST_DOCUMENT_NODE_TYPE, "node-b", true);
-            newDocument = (HippoDocumentBean) wpm.getObject(docPath);
-            assertNotNull(newDocument);
-
-            docPath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/node-a", TEST_DOCUMENT_NODE_TYPE, "node-c", true);
-            newDocument = (HippoDocumentBean) wpm.getObject(docPath);
-            assertNotNull(newDocument);
-
-            wpm.save();
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
-        }
+        wpm.save();
     }
 
     @Test
     public void testCreateLocalizedName() throws Exception {
-        Session session = null;
+       ObjectConverter objectConverter = getObjectConverter();
+       wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        HippoFolderBean newFolder = null;
         try {
-            ObjectConverter objectConverter = getObjectConverter();
-            session = this.getSession();
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-            HippoFolderBean newFolder = null;
-            try {
-                String folderName = "Test Folder1";
-                String expectedNodeName = "test-folder1";
+            String folderName = "Test Folder1";
+            String expectedNodeName = "test-folder1";
 
-                // create a document with type and name
-                String absoluteDocumentHandlePath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
+            // create a document with type and name
+            String absoluteDocumentHandlePath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
 
-                // retrieves the document created just before
-                newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
+            // retrieves the document created just before
+            newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
 
-                // test localized name
-                assert !newFolder.getLocalizedName().equals(newFolder.getName());
-                assert newFolder.getLocalizedName().equals(folderName);
-                assert expectedNodeName.equals(newFolder.getName());
+            // test localized name
+            assert !newFolder.getLocalizedName().equals(newFolder.getName());
+            assert newFolder.getLocalizedName().equals(folderName);
+            assert expectedNodeName.equals(newFolder.getName());
 
-                // test jcr low level
-                Item item = session.getItem(absoluteDocumentHandlePath);
-                assert expectedNodeName.equals(item.getName());
-                assert item instanceof Node;
-                assert ((Node) item).hasNode("hippo:translation");
-                assert ((Node) item).getNode("hippo:translation").getProperty("hippo:message").getString().equals(folderName);
-            } finally {
-                if (newFolder != null) {
-                    wpm.remove(newFolder);
-                }
-            }
-            wpm.save();
+            // test jcr low level
+            Item item = session.getItem(absoluteDocumentHandlePath);
+            assert expectedNodeName.equals(item.getName());
+            assert item instanceof Node;
+            assert ((Node) item).hasNode("hippo:translation");
+            assert ((Node) item).getNode("hippo:translation").getProperty("hippo:message").getString().equals(folderName);
         } finally {
-            if (session != null) {
-                session.logout();
+            if (newFolder != null) {
+                wpm.remove(newFolder);
             }
         }
+        wpm.save();
+
     }
 
     @Test
     public void testCreateNoLocalizedName() throws Exception {
-        Session session = null;
+
+        ObjectConverter objectConverter = getObjectConverter();
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        HippoFolderBean newFolder = null;
         try {
-            ObjectConverter objectConverter = getObjectConverter();
-            session = this.getSession();
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-            HippoFolderBean newFolder = null;
-            try {
-                String folderName = "test-folder2";
+            String folderName = "test-folder2";
 
-                // create a document with type and name
-                String absoluteDocumentHandlePath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
+            // create a document with type and name
+            String absoluteDocumentHandlePath = wpm.createAndReturn(TEST_AUTO_NEW_FOLDER_NODE_PATH, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
 
-                // retrieves the document created just before
-                newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
-                assert folderName.equals(newFolder.getName());
+            // retrieves the document created just before
+            newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
+            assert folderName.equals(newFolder.getName());
 
-                // the created node shouldn't have a translation child, the passed node name should be sufficient
-                Item item = session.getItem(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/" + folderName);
-                assert folderName.equals(item.getName());
-                assert item instanceof Node;
-                assert !((Node) item).hasNode("hippo:translation");
-            } finally {
-                if (newFolder != null) {
-                    wpm.remove(newFolder);
-                }
-            }
-            wpm.save();
+            // the created node shouldn't have a translation child, the passed node name should be sufficient
+            Item item = session.getItem(TEST_AUTO_NEW_FOLDER_NODE_PATH + "/" + folderName);
+            assert folderName.equals(item.getName());
+            assert item instanceof Node;
+            assert !((Node) item).hasNode("hippo:translation");
         } finally {
-            if (session != null) {
-                session.logout();
+            if (newFolder != null) {
+                wpm.remove(newFolder);
             }
         }
+        wpm.save();
+
     }
 
     @Test
     public void testLocalizedFolderCreation() throws Exception {
-        Session session = null;
+        ObjectConverter objectConverter = getObjectConverter();
+
+        wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+        HippoFolderBean newFolder = null;
         try {
-            ObjectConverter objectConverter = getObjectConverter();
-            session = this.getSession();
+            String folderName = "new folder4";
+            String newFolderPath = TEST_CONTENTS_PATH + "/new Folder1/NEW Folder2/new FOLDER3";
 
-            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
-            HippoFolderBean newFolder = null;
-            try {
-                String folderName = "new folder4";
-                String newFolderPath = TEST_CONTENTS_PATH + "/new Folder1/NEW Folder2/new FOLDER3";
+            // create a document with type and name
+            String absoluteDocumentHandlePath = wpm.createAndReturn(newFolderPath, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
 
-                // create a document with type and name
-                String absoluteDocumentHandlePath = wpm.createAndReturn(newFolderPath, HIPPOSTD_FOLDER_NODE_TYPE, folderName, true);
+            // retrieves the document created just before
+            newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
 
-                // retrieves the document created just before
-                newFolder = (HippoFolderBean) wpm.getObject(absoluteDocumentHandlePath);
-
-                HippoFolderBean newTmpFolder = newFolder;
-                // check the created folder names
-                assert "new-folder4".equals(newTmpFolder.getName());
-                assert "new folder4".equals(newTmpFolder.getLocalizedName());
-                newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
-                assert "new-folder3".equals(newTmpFolder.getName());
-                assert "new FOLDER3".equals(newTmpFolder.getLocalizedName());
-                newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
-                assert "new-folder2".equals(newTmpFolder.getName());
-                assert "NEW Folder2".equals(newTmpFolder.getLocalizedName());
-                newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
-                assert "new-folder1".equals(newTmpFolder.getName());
-                assert "new Folder1".equals(newTmpFolder.getLocalizedName());
-            } finally {
-                if (newFolder != null) {
-                    wpm.remove(newFolder);
-                }
-            }
-            wpm.save();
+            HippoFolderBean newTmpFolder = newFolder;
+            // check the created folder names
+            assert "new-folder4".equals(newTmpFolder.getName());
+            assert "new folder4".equals(newTmpFolder.getLocalizedName());
+            newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
+            assert "new-folder3".equals(newTmpFolder.getName());
+            assert "new FOLDER3".equals(newTmpFolder.getLocalizedName());
+            newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
+            assert "new-folder2".equals(newTmpFolder.getName());
+            assert "NEW Folder2".equals(newTmpFolder.getLocalizedName());
+            newTmpFolder = (HippoFolderBean) newTmpFolder.getParentBean();
+            assert "new-folder1".equals(newTmpFolder.getName());
+            assert "new Folder1".equals(newTmpFolder.getLocalizedName());
         } finally {
-            if (session != null) {
-                session.logout();
+            if (newFolder != null) {
+                wpm.remove(newFolder);
             }
         }
+        wpm.save();
+
     }
 
     private class PersistableTextPageBinder implements ContentNodeBinder {

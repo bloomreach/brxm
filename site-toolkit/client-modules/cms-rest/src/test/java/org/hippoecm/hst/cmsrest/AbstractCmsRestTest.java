@@ -15,52 +15,60 @@
  */
 package org.hippoecm.hst.cmsrest;
 
+
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public abstract class AbstractCmsRestTest extends RepositoryTestCase {
+public abstract class AbstractCmsRestTest {
 
-    private SpringComponentManager componentManager;
+    protected ComponentManager componentManager;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
+        this.componentManager = new SpringComponentManager(getContainerConfiguration());
+        this.componentManager.setConfigurationResources(getConfigurations());
 
-        componentManager = new SpringComponentManager(getContainerConfiguration());
-        componentManager.setConfigurationResources(getConfigurations());
-        componentManager.initialize();
-        componentManager.start();
-        HstServices.setComponentManager(componentManager);
-
+        this.componentManager.initialize();
+        this.componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
     }
 
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
-        componentManager.stop();
-        componentManager.close();
+        this.componentManager.stop();
+        this.componentManager.close();
         HstServices.setComponentManager(null);
     }
 
-    protected ComponentManager getComponentManager() {
-        return componentManager;
-    }
-
-    protected org.apache.commons.configuration.Configuration getContainerConfiguration() {
-        return new PropertiesConfiguration();
-    }
-
-    /**
-     * required specification of spring configurations the derived class can override this.
-     */
     protected String[] getConfigurations() {
-        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
-        return new String[]{classXmlFileName, classXmlFileName2};
+        String classXmlFileName = AbstractCmsRestTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractCmsRestTest.class.getName().replace(".", "/") + "-*.xml";
+        return new String[] { classXmlFileName, classXmlFileName2 };
     }
+
+    protected ComponentManager getComponentManager() {
+        return this.componentManager;
+    }
+
+
+    protected Session getSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+    }
+
+    protected Configuration getContainerConfiguration() {
+        PropertiesConfiguration propConf = new PropertiesConfiguration();
+        return propConf;
+    }
+
 }

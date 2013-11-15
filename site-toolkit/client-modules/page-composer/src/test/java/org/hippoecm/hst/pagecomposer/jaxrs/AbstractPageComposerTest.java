@@ -22,6 +22,7 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
 
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.configuration.cache.HstEventsCollector;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -40,18 +41,16 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-public class AbstractPageComposerTest extends RepositoryTestCase {
+public class AbstractPageComposerTest {
 
     protected SpringComponentManager componentManager;
     protected HstManager hstManager;
@@ -63,63 +62,64 @@ public class AbstractPageComposerTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        componentManager = new SpringComponentManager(getContainerConfiguration());
-        componentManager.setConfigurationResources(getConfigurations());
-        componentManager.initialize();
-        componentManager.start();
-        HstServices.setComponentManager(componentManager);
-        this.hstManager = getComponent(HstManager.class.getName());
-        this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
-        this.hstURLFactory = getComponent(HstURLFactory.class.getName());
-        this.hstEventsCollector = getComponent("hstEventsCollector");
-        this.hstModelMutex = getComponent("hstModelMutex");
-        this.mountDecorator = getComponent(MountDecorator.class.getName());
+        this.componentManager = new SpringComponentManager(getContainerConfiguration());
+        this.componentManager.setConfigurationResources(getConfigurations());
+
+        this.componentManager.initialize();
+        this.componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
+        this.hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        this.siteMapMatcher = HstServices.getComponentManager().getComponent(HstSiteMapMatcher.class.getName());
+        this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
+        this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
+        this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
+        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
     }
 
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
-        componentManager.stop();
-        componentManager.close();
+        this.componentManager.stop();
+        this.componentManager.close();
         HstServices.setComponentManager(null);
         ModifiableRequestContextProvider.clear();
     }
 
-    protected ComponentManager getComponentManager() {
-        return componentManager;
-    }
-
-    protected <T> T getComponent(String name) {
-        return getComponentManager().<T>getComponent(name);
-    }
-
-    protected org.apache.commons.configuration.Configuration getContainerConfiguration() {
-        return new PropertiesConfiguration();
-    }
-
-    /**
-     * required specification of spring configurations the derived class can override this.
-     */
     protected String[] getConfigurations() {
-        String classXmlFileName = getClass().getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = getClass().getName().replace(".", "/") + "-*.xml";
-        return new String[]{classXmlFileName, classXmlFileName2};
+        String classXmlFileName = AbstractPageComposerTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractPageComposerTest.class.getName().replace(".", "/") + "-*.xml";
+        return new String[] { classXmlFileName, classXmlFileName2 };
     }
+
+    protected ComponentManager getComponentManager() {
+        return this.componentManager;
+    }
+
+
+    protected Session getSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+    }
+
+    protected Configuration getContainerConfiguration() {
+        PropertiesConfiguration propConf = new PropertiesConfiguration();
+        return propConf;
+    }
+
+
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request, String hostAndPort, String requestURI) throws Exception {
         return getRequestContextWithResolvedSiteMapItemAndContainerURL(request, null, hostAndPort, requestURI, null);
     }
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final MockHttpServletRequest request,String scheme, String hostAndPort, String requestURI, String queryString) throws Exception {
-        HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
+        HstRequestContextComponent rcc = HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName());
         HstMutableRequestContext requestContext = rcc.create();
         HstContainerURL containerUrl = createContainerUrl(request, scheme, hostAndPort, requestURI, requestContext, queryString);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
         requestContext.setResolvedMount(resolvedSiteMapItem.getResolvedMount());
-        HstURLFactory hstURLFactory = getComponent(HstURLFactory.class.getName());
+        HstURLFactory hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         requestContext.setURLFactory(hstURLFactory);
         requestContext.setSiteMapMatcher(siteMapMatcher);
 
@@ -160,12 +160,6 @@ public class AbstractPageComposerTest extends RepositoryTestCase {
     protected ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
         VirtualHosts vhosts = hstManager.getVirtualHosts();
         return vhosts.matchSiteMapItem(url);
-    }
-
-
-    protected Session getSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     public class CommonHstConfigSetup implements AutoCloseable {

@@ -22,7 +22,6 @@
     <property name="hstModelMutex" ref="hstModelMutex"/>
     <property name="hstNodeLoadingCache" ref="org.hippoecm.hst.configuration.cache.HstNodeLoadingCache" />
     <property name="contentRoot" value="${channel.manager.contentRoot}"/>
-    <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
     <property name="eventPathsInvalidator" ref="org.hippoecm.hst.configuration.model.EventPathsInvalidator"/>
   </bean>
 

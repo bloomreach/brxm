@@ -16,8 +16,6 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
@@ -33,61 +31,19 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 
     private static final Logger log = LoggerFactory.getLogger(BlueprintsResource.class);
 
-	/* (non-Javadoc)
-	 * @see org.hippoecm.hst.rest.BlueprintService#getBlueprints()
-	 */
-	@Override
-	public List<Blueprint> getBlueprints() {
-		try {
-			validate();
-	        return Collections.unmodifiableList(new ArrayList<Blueprint>(channelManager.getBlueprints()));
-		} catch (ResourceRequestValidationException rrve) {
-		    if (log.isDebugEnabled()) {
-		        log.warn("Error while processing blueprints resource request", rrve);
-		    } else {
-		        log.warn("Error while processing blueprints resource request - {}", rrve.toString());
-		    }
-			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			// For now return empty list
-			// throw rrve;
-			return Collections.emptyList();
-		} catch (ChannelException ce) {
-		    log.warn("Error while retrieving blueprints");
-			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			// For now return empty list
-			// throw ce;
-			return Collections.emptyList();
-		}
-	}
+    @Override
+    public List<Blueprint> getBlueprints() {
+        return getVirtualHosts().getBlueprints();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.hippoecm.hst.rest.BlueprintService#getBlueprint(java.lang.String)
-	 */
-	@Override
-	public Blueprint getBlueprint(String id) {
-		try {
-			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// We should use a proper validation framework!
-			validate();
-			return channelManager.getBlueprint(id);
-		} catch (ResourceRequestValidationException rrve) {
-		    if (log.isDebugEnabled()) {
-		        log.warn("Error while processing blueprints resource request for blueprint '" + id + "'", rrve);
-		    } else {
-		        log.warn("Error while processing blueprints resource request for blueprint '{}' - {}", id, rrve.toString());
-		    }
-			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			// For now return empty list
-			// throw rrve;
-			// I know returning 'null' is not clean at all but thats *only* for now!
-			return null;
-		} catch (ChannelException ce) {
-		    log.error("Exception while retrieving blueprint of id '{}' : {} : {}", new String[] {id, ce.getClass().getName(), ce.toString()});
-		    // - I know returning 'null' is not clean at all but thats *only* for now!
-		    // - Also see the above comment
-		    // throw ce
-		    return null;
+    @Override
+    public Blueprint getBlueprint(String id) throws ChannelException {
+        final Blueprint blueprint = getVirtualHosts().getBlueprint(id);
+        if (blueprint == null) {
+            log.warn("Cannot find blueprint of id '{}'", id);
+            throw new ChannelException("Cannot find blueprint of id '" + id + "'");
         }
-	}
+        return blueprint;
+    }
 
 }

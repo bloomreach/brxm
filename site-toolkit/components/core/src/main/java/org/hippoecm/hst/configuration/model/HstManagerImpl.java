@@ -21,7 +21,6 @@ import java.util.List;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.configuration.channel.MutableChannelManager;
 import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
@@ -90,8 +89,6 @@ public class HstManagerImpl implements MutableHstManager {
      * has been created
      */
     List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
-
-    private MutableChannelManager channelManager;
 
     public void setHstModelMutex(Object hstModelMutex) {
         this.hstModelMutex = hstModelMutex;
@@ -168,10 +165,6 @@ public class HstManagerImpl implements MutableHstManager {
     
     public void setPathSuffixDelimiter(String pathSuffixDelimiter) {
         this.pathSuffixDelimiter = pathSuffixDelimiter;
-    }
-
-    public void setChannelManager(MutableChannelManager channelManager) {
-        this.channelManager = channelManager;
     }
 
     public void setHstFilterPrefixExclusions(final String[] hstFilterPrefixExclusions) {
@@ -338,9 +331,9 @@ public class HstManagerImpl implements MutableHstManager {
             virtualHostsModel = new VirtualHostsService(this, hstNodeLoadingCache);
 
             for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
+                log.info("Configuration augmenter '{}' will be augmented.", configurationAugmenter.getClass().getName());
                 configurationAugmenter.augment((MutableVirtualHosts) virtualHostsModel);
             }
-            this.channelManager.load(virtualHostsModel);
 
             componentRegistry.unregisterAllComponents();
             siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();

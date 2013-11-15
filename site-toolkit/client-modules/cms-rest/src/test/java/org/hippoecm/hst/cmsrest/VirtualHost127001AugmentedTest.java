@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.cmsrest;
 
+import javax.jcr.Session;
+
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.hosting.CustomMountAndVirtualHostAugmenter;
@@ -56,8 +58,8 @@ public class VirtualHost127001AugmentedTest extends AbstractCmsRestTest {
         // Rename the 'localhost' host to 127.0.0.1 for hostgroup dev-localhost :
         // then, the _cmsrest should be added to the existing host, and thus 'live' in dev-localhost
         // instead of hostgroup with name 'CustomMountAndVirtualHostAugmenter.class.getName()'
-
-        session.move("/hst:hst/hst:hosts/dev-localhost/localhost", "/hst:hst/hst:hosts/dev-localhost/127.0.0.1");
+        Session session = getSession();
+        getSession().move("/hst:hst/hst:hosts/dev-localhost/localhost", "/hst:hst/hst:hosts/dev-localhost/127.0.0.1");
         session.save();
         final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
         final ResolvedVirtualHost resolvedVirtualHost = virtualHosts.matchVirtualHost("127.0.0.1");
@@ -74,6 +76,7 @@ public class VirtualHost127001AugmentedTest extends AbstractCmsRestTest {
         // move 127.0.0.1 back to localhost
         session.move("/hst:hst/hst:hosts/dev-localhost/127.0.0.1", "/hst:hst/hst:hosts/dev-localhost/localhost");
         session.save();
+        session.logout();
     }
 
 }

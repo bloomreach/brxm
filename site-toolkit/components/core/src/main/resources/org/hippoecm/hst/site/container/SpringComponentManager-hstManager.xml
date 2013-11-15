@@ -84,7 +84,6 @@
     <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
     <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
     <property name="pageCache" ref="pageCache"/>
-    <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />
     <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
   </bean>
   

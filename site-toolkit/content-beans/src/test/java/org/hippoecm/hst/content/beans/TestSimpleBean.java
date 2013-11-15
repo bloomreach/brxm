@@ -18,8 +18,6 @@ package org.hippoecm.hst.content.beans;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.Session;
-
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -34,8 +32,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.repository.util.DateTools;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -44,24 +40,12 @@ import static org.junit.Assert.assertTrue;
 
 public class TestSimpleBean extends AbstractBeanTestCase {
 
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        
-    }
-    
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        
-    }
 
     @Test
     public void testSimpleObjectGetting() throws Exception {
              
         ObjectConverter objectConverter = getObjectConverter();
-        
-        Session session = this.getSession();
+
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
 
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
@@ -80,16 +64,12 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         
         assertNotNull(homePage);
         assertNotNull(homePage.getNode());
-        
-        session.logout();
     }
     
     @Test
     public void testSimpleObjectQuery() throws Exception {
         ObjectConverter objectConverter = getObjectConverter();
-        
-        Session session = this.getSession();
-      
+
         ObjectBeanManager obm = new ObjectBeanManagerImpl(session, objectConverter);
         
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
@@ -113,8 +93,6 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         
         resultBeans = doQuery(hstQuery);
         assertTrue("The query should not find any result with stopwords '" + query + "'.", resultBeans.isEmpty());
-        
-        session.logout();
     }
     
     private static List<HippoBean> doQuery(HstQuery hstQuery) throws Exception {
