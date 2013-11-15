@@ -1333,9 +1333,13 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/js
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin$BrowserTree.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.properties -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin_nl.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/add-node.png -text svneol=unset#image/png
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/add-property.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/copy-node.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/delete-node.png -text svneol=unset#image/png
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/derived.png -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/move-node.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/rename-node.png -text svneol=unset#image/png
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/t9ids.png -text

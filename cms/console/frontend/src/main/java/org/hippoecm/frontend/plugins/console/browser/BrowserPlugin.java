@@ -62,6 +62,7 @@ import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
+import org.hippoecm.frontend.plugins.console.menu.property.PropertyDialog;
 import org.hippoecm.frontend.plugins.console.menu.recompute.RecomputeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
@@ -263,7 +264,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("add-node", new Model<String>("Add node"), dialogFactory, getDialogService()));
+                    new DialogLink("add-node", new Model<String>(getString("add.node")), dialogFactory, getDialogService()));
             // add node icon
             Image iconAddNode = new Image("icon-add-node") {
                 private static final long serialVersionUID = 1L;
@@ -284,7 +285,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("delete-node", new Model<String>("Delete node"), dialogFactory, getDialogService()));
+                    new DialogLink("delete-node", new Model<String>(getString("delete.node")), dialogFactory, getDialogService()));
             // delete node icon
             Image iconDeleteNode = new Image("icon-delete-node") {
                 private static final long serialVersionUID = 1L;
@@ -296,6 +297,27 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             };
             menuContainer.add(iconDeleteNode);
 
+            // add property
+            dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+
+                public AbstractDialog<Node> createDialog() {
+                    return new PropertyDialog(new NodeModelReference(BrowserPlugin.this, model));
+                }
+            };
+            menuContainer.add(
+                    new DialogLink("add-property", new Model<String>(getString("add.property")), dialogFactory, getDialogService()));
+            // add property icon
+            Image addProperty = new Image("icon-add-property") {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new PackageResourceReference(BrowserPlugin.class, "add-property.png");
+                }
+            };
+            menuContainer.add(addProperty);
+
             // copy node
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
@@ -305,7 +327,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("copy-node", new Model<String>("Copy node"), dialogFactory, getDialogService()));
+                    new DialogLink("copy-node", new Model<String>(getString("copy.node")), dialogFactory, getDialogService()));
             // copy node icon
             Image iconCopyNode = new Image("icon-copy-node") {
                 private static final long serialVersionUID = 1L;
@@ -326,7 +348,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("move-node", new Model<String>("Move node"), dialogFactory, getDialogService()));
+                    new DialogLink("move-node", new Model<String>(getString("move.node")), dialogFactory, getDialogService()));
             // copy node icon
             Image iconMoveNode = new Image("icon-move-node") {
                 private static final long serialVersionUID = 1L;
@@ -347,7 +369,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("rename-node", new Model<String>("Rename node"), dialogFactory, getDialogService()));
+                    new DialogLink("rename-node", new Model<String>(getString("rename.node")), dialogFactory, getDialogService()));
             // copy node icon
             Image iconRenameNode = new Image("icon-rename-node") {
                 private static final long serialVersionUID = 1L;
@@ -368,7 +390,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("xml-export", new Model<String>("XML Export"), dialogFactory, getDialogService()));
+                    new DialogLink("xml-export", new Model<String>(getString("xml.export")), dialogFactory, getDialogService()));
             // xml export icon
             Image iconXmlExport = new Image("icon-xml-export") {
                 private static final long serialVersionUID = 1L;
@@ -388,7 +410,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
             };
             menuContainer.add(
-                    new DialogLink("xml-import", new Model<String>("XML Import"), dialogFactory, getDialogService()));
+                    new DialogLink("xml-import", new Model<String>(getString("xml.import")), dialogFactory, getDialogService()));
             // xml import icon
             Image iconXmlImport = new Image("icon-xml-import") {
                 private static final long serialVersionUID = 1L;
@@ -409,7 +431,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 }
 
             };
-            menuContainer.add(new DialogLink("t9ids", new Model<String>("New translation ids"), dialogFactory,
+            menuContainer.add(new DialogLink("t9ids", new Model<String>(getString("new.translation.ids")), dialogFactory,
                                              getDialogService()));
             // generate t9ids icon
             Image iconT9ids = new Image("icon-t9ids") {
@@ -430,14 +452,14 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new RecomputeDialog(model);
                 }
             };
-            menuContainer.add(new DialogLink("recompute", new Model<String>("Recompute derived"), dialogFactory,
+            menuContainer.add(new DialogLink("recompute", new Model<String>(getString("recompute.derived")), dialogFactory,
                                              getDialogService()));
             Image iconHippoPaths = new Image("icon-recompute") {
                 private static final long serialVersionUID = 1L;
 
                 @Override
                 protected ResourceReference getImageResourceReference() {
-                    return new PackageResourceReference(BrowserPlugin.class, "t9ids.png");
+                    return new PackageResourceReference(BrowserPlugin.class, "derived.png");
                 }
             };
             menuContainer.add(iconHippoPaths);

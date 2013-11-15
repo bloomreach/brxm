@@ -47,6 +47,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -78,19 +79,20 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private String value = "";
     private Boolean isMultiple = Boolean.FALSE;
     private String type = PropertyType.TYPENAME_STRING;
-    private MenuPlugin plugin;
     private IModel<Map<String, List<PropertyDefinition>>> choiceModel;
+    private final IModelReference modelReference;
 
-    public PropertyDialog(final MenuPlugin plugin) {
-        this.plugin = plugin;
-        
+    public PropertyDialog(IModelReference modelReference) {
+        this.modelReference = modelReference;
+        final JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
+
         // list defined properties for automatic completion
         choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {
             private static final long serialVersionUID = 1L;
 
             protected Map<String, List<PropertyDefinition>> load() {
                 Map<String, List<PropertyDefinition>> choices = new HashMap<String, List<PropertyDefinition>>();
-                Node node = ((JcrNodeModel) plugin.getDefaultModel()).getNode();
+                Node node = model.getNode();
                 try {
                     NodeType pnt = node.getPrimaryNodeType();
                     for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
@@ -252,7 +254,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+            JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
             Node node = nodeModel.getNode();
 
             final int propertyType = PropertyType.valueFromName(type);
@@ -264,7 +266,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 node.setProperty(name, value, propertyType);
             }
             JcrNodeModel newNodeModel = new JcrNodeModel(node);
-            plugin.setDefaultModel(newNodeModel);
+            modelReference.setModel(newNodeModel);
         } catch (RepositoryException e) {
             error(e.toString());
             log.error(e.getClass().getName() + " : " + e.getMessage(), e);

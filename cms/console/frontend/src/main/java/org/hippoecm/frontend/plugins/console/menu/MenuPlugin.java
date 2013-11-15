@@ -100,7 +100,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
             private static final long serialVersionUID = 1L;
 
             public AbstractDialog<Node> createDialog() {
-                return new PropertyDialog(MenuPlugin.this);
+                return new PropertyDialog(new NodeModelReference(MenuPlugin.this,  (JcrNodeModel) getDefaultModel()));
             }
         };
         add(new DialogLink("property-dialog", new Model<String>("Add Property"), dialogFactory, dialogService, Shortcuts.CTRL_P));
