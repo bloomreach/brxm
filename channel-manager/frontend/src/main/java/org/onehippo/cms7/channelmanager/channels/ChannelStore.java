@@ -485,14 +485,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         List<Channel> channelsList;
-        try {
-            channelsList = channelService.getChannels();
-        } catch (ChannelException ce) {
-            log.error("Failed to retrieve channels", ce);
-            channels = Collections.emptyMap();
-            return;
-        }
-
+        channelsList = channelService.getChannels();
         channels = new HashMap<String, Channel>(channelsList.size());
         for (Channel channel : channelsList) {
             if (StringUtils.isEmpty(channel.getType())) {
@@ -512,9 +505,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (blueprintService == null) {
             throw new ActionFailedException("Could not get blueprint REST service!");
         }
-
-        newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();
-
+        try {
+            newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();
+        } catch (ChannelException e) {
+            throw new ActionFailedException("ChannelException : ", e);
+        }
         // Set channel parameters
         final String channelName = record.getString("name");
         newChannel.setName(channelName);
