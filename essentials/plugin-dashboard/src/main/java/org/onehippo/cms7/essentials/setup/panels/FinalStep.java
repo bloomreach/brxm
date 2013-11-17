@@ -17,7 +17,6 @@
 package org.onehippo.cms7.essentials.setup.panels;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.onehippo.cms7.essentials.setup.SetupPage;
 import org.slf4j.Logger;
@@ -30,13 +29,10 @@ public class FinalStep extends EssentialsWizardStep {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(FinalStep.class);
-    private final SetupPage myParent;
     private final EventsPanel eventsPanel;
 
     public FinalStep(final SetupPage components, final String title) {
         super(title);
-        myParent = components;
-
         eventsPanel = new EventsPanel("events");
         add(eventsPanel);
         setOutputMarkupId(true);
@@ -44,14 +40,7 @@ public class FinalStep extends EssentialsWizardStep {
 
     @Override
     public void applyState() {
-        final String selectedPowerpack = myParent.getSelectStep().getSelectedPowerpack();
-        if(Strings.isEmpty(selectedPowerpack)){
-            log.warn("NO powerpack selected");
-            return;
-        }
-        log.info("selectedPowerpack {}", selectedPowerpack);
     }
-
 
     public EventsPanel getEventsPanel() {
         return eventsPanel;

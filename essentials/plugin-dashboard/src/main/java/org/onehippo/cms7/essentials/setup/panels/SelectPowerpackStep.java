@@ -91,6 +91,8 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
 
         final PropertyModel<String> powerpackModel = new PropertyModel<>(this, "selectedPowerpack");
         powerpackDropdown = new DropDownChoice<String>("powerpackDropdown", powerpackModel, selectOptionList) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected boolean isDisabled(String object, int index, String selected) {
                 switch (object) {
@@ -115,7 +117,7 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
             protected void onEvent(final AjaxRequestTarget target) {
                 final String selectedInput = powerpackDropdown.getInput();
 
-                if (!(selectedInput == null && selectedInput.isEmpty())) {
+                if (!(selectedInput == null || selectedInput.isEmpty())) {
                     selectedPowerpack = powerpackDropdown.getChoices().get(Integer.valueOf(selectedInput));
                     log.debug("#selected powerpack: {}", selectedPowerpack);
                     setComplete(true);
@@ -152,13 +154,13 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
         RadioGroup<String> radioGroup = new RadioGroup<String>("templatesRadioGroup", new PropertyModel<String>(this, "selectedTemplatesType"));
         radioGroup.setRequired(true);
 
-        radioGroup.add(new Radio<Boolean>("jspFilesystemRadio", Model.of(Boolean.TRUE)));
-        radioGroup.add(new Radio<Boolean>("freemarkerFilesystemRadio", Model.of(Boolean.FALSE)).
+        radioGroup.add(new Radio<>("jspFilesystemRadio", Model.of(Boolean.TRUE)));
+        radioGroup.add(new Radio<>("freemarkerFilesystemRadio", Model.of(Boolean.FALSE)).
 
                 setEnabled(false)
 
         );
-        radioGroup.add(new Radio<Boolean>("freemarkerRepositoryRadio", Model.of(Boolean.FALSE)).
+        radioGroup.add(new Radio<>("freemarkerRepositoryRadio", Model.of(Boolean.FALSE)).
 
                 setEnabled(false)
 
@@ -180,8 +182,8 @@ public class SelectPowerpackStep extends EssentialsWizardStep {
             eventBus.post(new DisplayEvent(getString("powerpack.news.and.event.description")));
         }
 
-        final FinalStep finalStep = myParent.getFinalStep();
-        finalStep.displayEvents(target);
+        final ExecutionStep executionStep = myParent.getExecutionStep();
+        executionStep.displayEvents(target);
     }
 
     public String getSelectedPowerpack() {
