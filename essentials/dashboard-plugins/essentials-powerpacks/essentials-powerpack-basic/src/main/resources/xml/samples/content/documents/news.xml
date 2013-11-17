@@ -38,7 +38,7 @@
     </sv:property>
     <sv:node sv:name="the-gastropoda-news">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>@namespace:newsdocument</sv:value>
+        <sv:value>{{namespace}}:newsdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
@@ -83,25 +83,25 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:author" sv:type="String">
+      <sv:property sv:name="{{namespace}}:author" sv:type="String">
         <sv:value>OBO</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:date" sv:type="Date">
+      <sv:property sv:name="{{namespace}}:date" sv:type="Date">
         <sv:value>2013-11-12T12:50:38.322+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:documenttype" sv:type="String">
+      <sv:property sv:name="{{namespace}}:documenttype" sv:type="String">
         <sv:value>news</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:introduction" sv:type="String">
+      <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:location" sv:type="String">
+      <sv:property sv:name="{{namespace}}:location" sv:type="String">
         <sv:value>AMS</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:source" sv:type="String">
+      <sv:property sv:name="{{namespace}}:source" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="@namespace:title" sv:type="String">
+      <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value>The gastropoda news</sv:value>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -109,7 +109,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:content">
+      <sv:node sv:name="{{namespace}}:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -142,7 +142,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
 &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:image">
+      <sv:node sv:name="{{namespace}}:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>
@@ -190,7 +190,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
     </sv:node>
     <sv:node sv:name="the-medusa-news">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>@namespace:newsdocument</sv:value>
+        <sv:value>{{namespace}}:newsdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
@@ -235,25 +235,25 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:author" sv:type="String">
+      <sv:property sv:name="{{namespace}}:author" sv:type="String">
         <sv:value>OBO</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:date" sv:type="Date">
+      <sv:property sv:name="{{namespace}}:date" sv:type="Date">
         <sv:value>2013-11-12T13:03:59.719+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:documenttype" sv:type="String">
+      <sv:property sv:name="{{namespace}}:documenttype" sv:type="String">
         <sv:value>news</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:introduction" sv:type="String">
+      <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:location" sv:type="String">
+      <sv:property sv:name="{{namespace}}:location" sv:type="String">
         <sv:value>AMS</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:source" sv:type="String">
+      <sv:property sv:name="{{namespace}}:source" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="@namespace:title" sv:type="String">
+      <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value>The medusa news</sv:value>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -261,7 +261,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:content">
+      <sv:node sv:name="{{namespace}}:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -298,7 +298,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
 &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:image">
+      <sv:node sv:name="{{namespace}}:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>
@@ -324,7 +324,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
     </sv:property>
     <sv:node sv:name="2013-harvest">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>@namespace:newsdocument</sv:value>
+        <sv:value>{{namespace}}:newsdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
@@ -369,25 +369,25 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:author" sv:type="String">
+      <sv:property sv:name="{{namespace}}:author" sv:type="String">
         <sv:value>obo</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:date" sv:type="Date">
+      <sv:property sv:name="{{namespace}}:date" sv:type="Date">
         <sv:value>2013-11-12T14:31:15.466+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:documenttype" sv:type="String">
+      <sv:property sv:name="{{namespace}}:documenttype" sv:type="String">
         <sv:value>news</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:introduction" sv:type="String">
+      <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:location" sv:type="String">
+      <sv:property sv:name="{{namespace}}:location" sv:type="String">
         <sv:value>AMS</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:source" sv:type="String">
+      <sv:property sv:name="{{namespace}}:source" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="@namespace:title" sv:type="String">
+      <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value>2013 harvest</sv:value>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -395,7 +395,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:content">
+      <sv:node sv:name="{{namespace}}:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -428,7 +428,7 @@ sunt in culpa qui officia deserunt mollit anim id est laborum &lt;/p&gt;
 &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:image">
+      <sv:node sv:name="{{namespace}}:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>

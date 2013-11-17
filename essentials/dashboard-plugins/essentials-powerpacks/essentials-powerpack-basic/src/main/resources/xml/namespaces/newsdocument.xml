@@ -30,13 +30,13 @@
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hipposysedit:supertype" sv:type="String">
-        <sv:value>@namespace:basedocument</sv:value>
+        <sv:value>{{namespace}}:basedocument</sv:value>
         <sv:value>hippostd:relaxed</sv:value>
         <sv:value>hippotranslation:translated</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
         <!-- TODO: change namespace uri?-->
-        <sv:value>http://www.onehippo.org/@namespace/nt/1.0</sv:value>
+        <sv:value>http://www.onehippo.org/{{namespace}}/nt/1.0</sv:value>
       </sv:property>
       <sv:node sv:name="title">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -52,7 +52,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:title</sv:value>
+          <sv:value>{{namespace}}:title</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -75,7 +75,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:introduction</sv:value>
+          <sv:value>{{namespace}}:introduction</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -98,7 +98,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:content</sv:value>
+          <sv:value>{{namespace}}:content</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -121,7 +121,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:date</sv:value>
+          <sv:value>{{namespace}}:date</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -144,7 +144,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:image</sv:value>
+          <sv:value>{{namespace}}:image</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -167,7 +167,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:author</sv:value>
+          <sv:value>{{namespace}}:author</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -190,7 +190,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:source</sv:value>
+          <sv:value>{{namespace}}:source</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -213,7 +213,7 @@
           <sv:value>false</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>@namespace:location</sv:value>
+          <sv:value>{{namespace}}:location</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:primary" sv:type="Boolean">
           <sv:value>false</sv:value>
@@ -230,7 +230,7 @@
     </sv:property>
     <sv:node sv:name="hipposysedit:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>@namespace:newsdocument</sv:value>
+        <sv:value>{{namespace}}:newsdocument</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -239,7 +239,7 @@
       <sv:property sv:multiple="true" sv:name="hippo:paths" sv:type="String">
         <sv:value>cafebabe-cafe-babe-cafe-babecafebabe</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:documenttype" sv:type="String">
+      <sv:property sv:name="{{namespace}}:documenttype" sv:type="String">
         <sv:value>news</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
@@ -269,10 +269,10 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>document-type-locale</sv:value>
       </sv:property>
-      <sv:property sv:name="@namespace:introduction" sv:type="String">
+      <sv:property sv:name="{{namespace}}:introduction" sv:type="String">
         <sv:value/>
       </sv:property>
-      <sv:property sv:name="@namespace:title" sv:type="String">
+      <sv:property sv:name="{{namespace}}:title" sv:type="String">
         <sv:value/>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -280,7 +280,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:content">
+      <sv:node sv:name="{{namespace}}:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -288,7 +288,7 @@
           <sv:value>&lt;html&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="@namespace:image">
+      <sv:node sv:name="{{namespace}}:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>
@@ -323,7 +323,7 @@
         <sv:value>validator.id</sv:value>
       </sv:property>
       <sv:property sv:name="type" sv:type="String">
-        <sv:value>@namespace:newsdocument</sv:value>
+        <sv:value>{{namespace}}:newsdocument</sv:value>
       </sv:property>
       <sv:node sv:name="root">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

@@ -1,4 +1,4 @@
-package @beansPackage;
+package {{beansPackage}};
 
 import java.util.Calendar;
 
@@ -7,7 +7,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-@@Node(jcrType=NewsDocument.DOCUMENT_TYPE)
+@Node(jcrType=NewsDocument.DOCUMENT_TYPE)
 public class NewsDocument extends HippoDocument {
 
     /**
@@ -27,7 +27,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the title of the document.
      *
-     * @@ return the title
+     * @return the title
      */
     public String getTitle() {
         return getProperty(TITLE);
@@ -36,7 +36,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the date of the document.
      *
-     * @@ return the date
+     * @return the date
      */
     public Calendar getDate() {
         return getProperty(DATE);
@@ -45,7 +45,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the introduction of the document.
      *
-     * @@ return the introduction
+     * @return the introduction
      */
     public String getIntroduction() {
         return getProperty(INTRODUCTION);
@@ -54,7 +54,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the image of the document.
      *
-     * @@ return the image
+     * @return the image
      */
     public HippoGalleryImageSet getImage() {
         return getLinkedBean(IMAGE, HippoGalleryImageSet.class);
@@ -63,7 +63,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the main content of the document.
      *
-     * @@ return the content
+     * @return the content
      */
     public HippoHtml getContent() {
         return getHippoHtml(CONTENT);
@@ -72,7 +72,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the location of the document.
      *
-     * @@ return the location
+     * @return the location
      */
     public String getLocation() {
         return getProperty(LOCATION);
@@ -81,7 +81,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the author of the document.
      *
-     * @@ return the author
+     * @return the author
      */
     public String getAuthor() {
         return getProperty(AUTHOR);
@@ -90,7 +90,7 @@ public class NewsDocument extends HippoDocument {
     /**
      * Get the source of the document.
      *
-     * @@ return the source
+     * @return the source
      */
     public String getSource() {
         return getProperty(SOURCE);

@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Path;
@@ -135,7 +136,8 @@ public final class TemplateUtils {
         try {
             final Writer writer = new StringWriter();
             final MustacheFactory mf = new DefaultMustacheFactory();
-            final Mustache mustache = mf.compile(content);
+            final StringReader reader = new StringReader(content);
+            final Mustache mustache = mf.compile(reader, content);
             mustache.execute(writer, data);
             writer.flush();
             return writer.toString();

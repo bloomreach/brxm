@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node sv:name="@name" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="{{name}}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
   </sv:property>

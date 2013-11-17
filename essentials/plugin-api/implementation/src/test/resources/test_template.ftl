@@ -1,4 +1,4 @@
-<%--@elvariable id="document" type="@beanReference"--%>
+<%--@elvariable id="document" type="{{beanReference}}"--%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -6,6 +6,6 @@
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="tag" tagdir="/WEB-INF/tags" %>
 
-@for(item : repeatable){
-    @item
-}
+{{#repeatable}}
+{{name}}
+{{/repeatable}}

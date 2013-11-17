@@ -53,7 +53,6 @@ public class TemplateUtilsTest extends BaseTest {
 
     }
 
-
     @Test
     public void testJavaParsing() throws Exception {
 
@@ -94,7 +93,7 @@ public class TemplateUtilsTest extends BaseTest {
 
         final Map<String, Object> data = new HashMap<>();
         data.put("namespace", "myNamespace");
-        String result = TemplateUtils.replaceTemplateData("test @namespace", data);
+        String result = TemplateUtils.replaceTemplateData("test {{namespace}}", data);
         log.info("result {}", result);
         assertTrue(result.contains("myNamespace"));
 
@@ -105,12 +104,12 @@ public class TemplateUtilsTest extends BaseTest {
 
         final Map<String, Object> data = new HashMap<>();
         data.put("beanReference", BEAN_REF);
-        final Collection<String> listObject = new ArrayList<>();
-        listObject.add("repeatable item");
+        final Collection<TemplateObject> listObject = new ArrayList<>();
+        listObject.add(new TemplateObject("repeatable item"));
         data.put("repeatable", listObject);
         String result = TemplateUtils.injectTemplate("test_template.ftl", data, getClass());
         log.info("result {}", result);
-        assertTrue(result.contains(BEAN_REF));
+        assertTrue("Expected " + BEAN_REF, result.contains(BEAN_REF));
         assertTrue(result.contains("repeatable item"));
        /* result = TemplateUtils.injectTemplate("test_template_freemarker.ftl", data, getClass());
         log.info("result {}", result);
@@ -125,4 +124,19 @@ public class TemplateUtilsTest extends BaseTest {
 
     }
 
+    public class TemplateObject {
+        private String name;
+
+        public TemplateObject(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+    }
 }
