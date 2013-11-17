@@ -62,6 +62,11 @@ public class ExecutionStep extends EssentialsWizardStep {
 
         final SelectPowerpackStep selectStep = myParent.getSelectStep();
         log.debug("Selected Power Pack is {}", selectStep.getSelectedPowerpack());
+        if (selectStep.getSelectedPowerpack() == null) {
+            eventBus.post(new DisplayEvent(getString("powerpack.none.selected")));
+            myParent.getFinalStep().displayEvents(target);
+            return;
+        }
         final PowerpackPackage powerpackPackage;
         switch (selectStep.getSelectedPowerpack()) {
             case SelectPowerpackStep.POWERPACK_NEWS_AND_EVENT_LABEL:

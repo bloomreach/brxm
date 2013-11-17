@@ -751,6 +751,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/EventsP
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/EventsPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ExecutionStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ExecutionStep.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/ExecutionStep.properties.xml -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalStep.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/FinalStep.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/SelectPowerpackStep.html -text

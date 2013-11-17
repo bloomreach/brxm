@@ -23,6 +23,7 @@
   <entry key="powerpack.rest.label">Headless REST based content repository.</entry>
   <entry key="powerpack.rest.description">A REST only site that contains only REST services and no pages.</entry>
   <entry key="powerpack.none.label">Don't install a Power Pack at this time</entry>
+  <entry key="powerpack.none.selected">Power Pack will not be installed at this time</entry>
   <entry key="powerpack.none.selected.label">No Power Pack will be installed at this time</entry>
   <entry key="powerpack.none.description">Just create the basic structure for the project, don't install anything yet.
   </entry>
