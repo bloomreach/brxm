@@ -49,7 +49,7 @@
     </sv:node>
     <sv:node sv:name="breakfast">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>#NAMESPACE#:eventsdocument</sv:value>
+        <sv:value>@namespace:eventsdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
@@ -94,22 +94,22 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:date" sv:type="Date">
+      <sv:property sv:name="@namespace:date" sv:type="Date">
         <sv:value>2013-11-12T08:00:43.459+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:documenttype" sv:type="String">
+      <sv:property sv:name="@namespace:documenttype" sv:type="String">
         <sv:value>event</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:enddate" sv:type="Date">
+      <sv:property sv:name="@namespace:enddate" sv:type="Date">
         <sv:value>2013-11-12T09:30:50.309+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:introduction" sv:type="String">
+      <sv:property sv:name="@namespace:introduction" sv:type="String">
         <sv:value>Start the day with a nice breakfast.</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:location" sv:type="String">
+      <sv:property sv:name="@namespace:location" sv:type="String">
         <sv:value>Room 101</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:title" sv:type="String">
+      <sv:property sv:name="@namespace:title" sv:type="String">
         <sv:value>Breakfast</sv:value>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -117,7 +117,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="#NAMESPACE#:content">
+      <sv:node sv:name="@namespace:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -131,7 +131,7 @@
 &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="#NAMESPACE#:image">
+      <sv:node sv:name="@namespace:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>
@@ -190,7 +190,7 @@
     </sv:node>
     <sv:node sv:name="introduction-speech">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>#NAMESPACE#:eventsdocument</sv:value>
+        <sv:value>@namespace:eventsdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
@@ -235,22 +235,22 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:date" sv:type="Date">
+      <sv:property sv:name="@namespace:date" sv:type="Date">
         <sv:value>2013-11-12T10:00:03.997+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:documenttype" sv:type="String">
+      <sv:property sv:name="@namespace:documenttype" sv:type="String">
         <sv:value>event</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:enddate" sv:type="Date">
+      <sv:property sv:name="@namespace:enddate" sv:type="Date">
         <sv:value>2013-11-12T12:00:04.813+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:introduction" sv:type="String">
+      <sv:property sv:name="@namespace:introduction" sv:type="String">
         <sv:value>After breakfast there will be an introductory speech.</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:location" sv:type="String">
+      <sv:property sv:name="@namespace:location" sv:type="String">
         <sv:value>Room 400</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:title" sv:type="String">
+      <sv:property sv:name="@namespace:title" sv:type="String">
         <sv:value>Introduction speech</sv:value>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -258,7 +258,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="#NAMESPACE#:content">
+      <sv:node sv:name="@namespace:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -272,7 +272,7 @@
 &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="#NAMESPACE#:image">
+      <sv:node sv:name="@namespace:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>
@@ -297,7 +297,7 @@
     </sv:property>
     <sv:node sv:name="workshop">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>#NAMESPACE#:eventsdocument</sv:value>
+        <sv:value>@namespace:eventsdocument</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
@@ -342,22 +342,22 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>en</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:date" sv:type="Date">
+      <sv:property sv:name="@namespace:date" sv:type="Date">
         <sv:value>2013-11-12T13:00:52.216+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:documenttype" sv:type="String">
+      <sv:property sv:name="@namespace:documenttype" sv:type="String">
         <sv:value>event</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:enddate" sv:type="Date">
+      <sv:property sv:name="@namespace:enddate" sv:type="Date">
         <sv:value>2013-11-12T17:00:52.958+01:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:introduction" sv:type="String">
+      <sv:property sv:name="@namespace:introduction" sv:type="String">
         <sv:value>Workshop starts at 1:00</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:location" sv:type="String">
+      <sv:property sv:name="@namespace:location" sv:type="String">
         <sv:value>Room 600</sv:value>
       </sv:property>
-      <sv:property sv:name="#NAMESPACE#:title" sv:type="String">
+      <sv:property sv:name="@namespace:title" sv:type="String">
         <sv:value>Workshop</sv:value>
       </sv:property>
       <sv:node sv:name="hippotranslation:translations">
@@ -365,7 +365,7 @@
           <sv:value>hippotranslation:translations</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="#NAMESPACE#:content">
+      <sv:node sv:name="@namespace:content">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -380,7 +380,7 @@ week.&lt;/p&gt;
 &lt;/html&gt;</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="#NAMESPACE#:image">
+      <sv:node sv:name="@namespace:image">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippogallerypicker:imagelink</sv:value>
         </sv:property>

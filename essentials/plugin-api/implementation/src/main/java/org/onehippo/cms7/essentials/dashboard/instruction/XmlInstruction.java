@@ -115,7 +115,8 @@ public class XmlInstruction extends PluginInstruction {
             }
 
             // Import XML with replaced NAMESPACE placeholder
-            session.importXML(destination.getPath(), replacePlaceHolders(stream), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+            final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream).toString(), context.getPlaceholderData());
+            session.importXML(destination.getPath(), IOUtils.toInputStream(myData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Added node to: {}", destination.getPath());
             sendEvents();
@@ -130,22 +131,7 @@ public class XmlInstruction extends PluginInstruction {
 
     }
 
-    /**
-     * Replace the placeholders in the input stream. It replaces the the #NAMESPACE# placeholder
-     * with the project namespace prefix.
-     *
-     * TODO: verify this method and the mechanism of replacing placeholders in XML
-     *
-     * @param input an input stream containing placeholders
-     * @return an input stream with replaced namespace
-     * @throws IOException
-     */
-    private InputStream replacePlaceHolders(final InputStream input) throws IOException {
-        final StringWriter writer = new StringWriter();
-        IOUtils.copy(input, writer);
-        final String replacedData = GlobalUtils.replacePlaceholders(writer.toString(), "NAMESPACE", context.getProjectNamespacePrefix());
-        return IOUtils.toInputStream(replacedData);
-    }
+
 
 
 

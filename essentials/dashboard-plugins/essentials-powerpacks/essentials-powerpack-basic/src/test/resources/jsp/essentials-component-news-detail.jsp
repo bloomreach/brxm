@@ -1,1 +1,1 @@
-${beansPackage}
+@beansPackage
