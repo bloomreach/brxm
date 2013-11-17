@@ -130,6 +130,9 @@ public final class TemplateUtils {
         if (Strings.isEmpty(content)) {
             return content;
         }
+        if(content.indexOf('@') ==-1){
+            return content;
+        }
         return Rythm.render(content, data);
     }
 

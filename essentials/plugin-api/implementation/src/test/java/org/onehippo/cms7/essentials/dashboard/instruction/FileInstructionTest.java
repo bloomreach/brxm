@@ -42,7 +42,7 @@ public class FileInstructionTest extends BaseTest {
     private FileInstruction deleteInstruction;
 
     private static String createPlaceHolder(final String placeholderProjectRoot) {
-        return "${" + placeholderProjectRoot + '}';
+        return '@' + placeholderProjectRoot;
     }
 
     @Test
@@ -54,7 +54,7 @@ public class FileInstructionTest extends BaseTest {
         set.addInstruction(copyInstruction);
         InstructionStatus status = executor.execute(set, getContext());
         assertTrue(status == InstructionStatus.SUCCESS || status == InstructionStatus.SKIPPED);
-        assertTrue(copyInstruction.getMessage().indexOf('$') == -1);
+        assertTrue(copyInstruction.getMessage().indexOf('@') == -1);
         //############################################
         // DELETE
         //############################################
@@ -64,7 +64,7 @@ public class FileInstructionTest extends BaseTest {
         deleteSet.addInstruction(deleteInstruction);
         status = executor.execute(deleteSet, getContext());
         assertTrue(status == InstructionStatus.SUCCESS);
-        assertTrue(deleteInstruction.getMessage().indexOf('$') == -1);
+        assertTrue(deleteInstruction.getMessage().indexOf('@') == -1);
 
 
     }
