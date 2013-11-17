@@ -138,7 +138,7 @@ public class FileInstruction extends PluginInstruction {
                         Files.createFile(destination.toPath());
                     }
                     // replace file placeholders:
-                    final String replacedData = TemplateUtils.replaceTemplateDataHttl(source, context.getPlaceholderData());
+                    final String replacedData = TemplateUtils.replaceTemplateData(source, context.getPlaceholderData());
                     FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData), destination);
                     sendEvents();
                     return InstructionStatus.SUCCESS;
