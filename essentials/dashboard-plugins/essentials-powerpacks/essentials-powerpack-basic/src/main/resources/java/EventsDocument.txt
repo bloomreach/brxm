@@ -7,7 +7,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
-\@Node(jcrType=EventsDocument.DOCUMENT_TYPE)
+@@Node(jcrType=EventsDocument.DOCUMENT_TYPE)
 public class EventsDocument extends HippoDocument {
 
     /**
@@ -26,7 +26,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the title of the document.
      *
-     * \@return the title
+     * @@ return the title
      */
     public String getTitle() {
         return getProperty(TITLE);
@@ -35,7 +35,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the date of the document, i.e. the start date of the event.
      *
-     * @return the (start) date
+     * @@ return the (start) date
      */
     public Calendar getDate() {
         return getProperty(DATE);
@@ -44,7 +44,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the introduction of the document.
      *
-     * \@return the introduction
+     * @@ return the introduction
      */
     public String getIntroduction() {
         return getProperty(INTRODUCTION);
@@ -53,7 +53,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the image of the document.
      *
-     * \@return the image
+     * @@ return the image
      */
     public HippoGalleryImageSet getImage() {
         return getLinkedBean(IMAGE, HippoGalleryImageSet.class);
@@ -62,7 +62,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the main content of the document.
      *
-     * \@return the content
+     * @@ return the content
      */
     public HippoHtml getContent() {
         return getHippoHtml(CONTENT);
@@ -71,7 +71,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the location of the document.
      *
-     * \@return the location
+     * @@ return the location
      */
     public String getLocation() {
         return getProperty(LOCATION);
@@ -80,7 +80,7 @@ public class EventsDocument extends HippoDocument {
     /**
      * Get the end date of the document, i.e. the end date of the event.
      *
-     * \@return the end date
+     * @@ return the end date
      */
     public Calendar getEndDate() {
         return getProperty(END_DATE);

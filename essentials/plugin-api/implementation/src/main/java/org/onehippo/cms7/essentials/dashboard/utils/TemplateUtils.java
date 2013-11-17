@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.file.Path;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +36,12 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.Type;
 import org.onehippo.cms7.essentials.dashboard.utils.code.ExistingMethodsVisitor;
-import org.rythmengine.Rythm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import com.google.common.collect.ImmutableSet;
 
 
@@ -125,15 +127,22 @@ public final class TemplateUtils {
         return identifier.startsWith("get") || identifier.startsWith("is");
     }
 
-
     public static String replaceTemplateData(final String content, final Map<String, Object> data) {
         if (Strings.isEmpty(content)) {
             return content;
         }
-        if(content.indexOf('@') ==-1){
-            return content;
+
+        try {
+            final Writer writer = new StringWriter();
+            final MustacheFactory mf = new DefaultMustacheFactory();
+            final Mustache mustache = mf.compile(content);
+            mustache.execute(writer, data);
+            writer.flush();
+            return writer.toString();
+        } catch (IOException e) {
+            log.error("Error flushing template", e);
         }
-        return Rythm.render(content, data);
+        return content;
     }
 
     public static String injectTemplate(final String templateName, final Map<String, Object> data, final Class<?> clazz) {
@@ -142,10 +151,11 @@ public final class TemplateUtils {
             return null;
         }
         try {
-            return Rythm.render(GlobalUtils.readStreamAsText(stream).toString(), data);
+            final String content = GlobalUtils.readStreamAsText(stream).toString();
+            return replaceTemplateData(content, data);
         } catch (Exception e) {
             log.error("Error processing template", e);
-        }finally {
+        } finally {
             IOUtils.closeQuietly(stream);
         }
         return null;

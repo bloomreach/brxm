@@ -1,4 +1,3 @@
-@macro("template"){
 package @beansPackage;
 
 import java.util.Calendar;
@@ -98,5 +97,3 @@ public class NewsDocument extends HippoDocument {
     }
 
 }
-}
-@nocompact("template")

@@ -53,6 +53,16 @@ public class TemplateUtilsTest extends BaseTest {
 
     }
 
+
+    @Test
+    public void testJavaParsing() throws Exception {
+
+        String result = TemplateUtils.injectTemplate("test_java_parsing.txt", getContext().getPlaceholderData(), getClass());
+        final Object beansPackage = getContext().getPlaceholderData().get("beansPackage");
+        assertTrue(result.contains((CharSequence) beansPackage));
+        log.info("{}", result);
+    }
+
     @Test
     public void testParseBeanProperties() throws Exception {
         assertTrue(memoryBeans != null);

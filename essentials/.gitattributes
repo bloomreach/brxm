@@ -703,6 +703,7 @@ plugin-api/implementation/src/test/resources/test_hippostdpubwf.cnd -text
 plugin-api/implementation/src/test/resources/test_hipposys.cnd -text
 plugin-api/implementation/src/test/resources/test_hippotranslation.cnd -text
 plugin-api/implementation/src/test/resources/test_hst.cnd -text
+plugin-api/implementation/src/test/resources/test_java_parsing.txt -text
 plugin-api/implementation/src/test/resources/test_template.ftl -text
 plugin-api/implementation/src/test/resources/test_template_freemarker.ftl -text
 plugin-api/implementation/src/test/resources/test_template_httl.ftl -text
