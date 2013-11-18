@@ -34,8 +34,8 @@
     <file action="copy" overwrite="true" source="icons/new-folder-16.png" target="{{cmsRoot}}/src/main/resources/org/hippoecm/frontend/plugins/standardworkflow/new-events-folder-16.png"/>
   </instructionSet>
   <instructionSet name="CONTENT">
-    <folder path="/content/documents/{{namespace}}/news" template="xml/content/news.xml"/>
-    <folder path="/content/documents/{{namespace}}/events" template="xml/content/events.xml"/>
+    <folder path="/content/documents/{{namespace}}" template="xml/content/news.xml"/>
+    <folder path="/content/documents/{{namespace}}" template="xml/content/events.xml"/>
   </instructionSet>
   <instructionSet name="JSP">
     <file action="copy" overwrite="true" source="jsp/essentials-layout-webpage.jsp" target="{{jspRoot}}/essentials/essentials-layout-webpage.jsp"/>
