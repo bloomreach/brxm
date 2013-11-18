@@ -276,9 +276,6 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         request.setRequestURI("/site" + requestURI);
 
         requestContext.setCmsRequest(true);
-        // set the magic attributes that are used to indicate that some request is triggered by cms (channel manager)
-        //  since 2.24.11 / 2.26.01  unused and replaced by requestContext.setCmsRequest(true);
-        request.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
         if (renderingHost != null) {
             request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
         }

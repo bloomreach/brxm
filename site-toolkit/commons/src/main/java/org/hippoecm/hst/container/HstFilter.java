@@ -367,8 +367,6 @@ public class HstFilter implements Filter {
                             HttpSession session = containerRequest.getSession(false);
                             if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
                                 requestContext.setCmsRequest(true);
-                                // from 2.28.00 and onwards, this REQUEST_COMES_FROM_CMS attr won't be set any more
-                                req.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
                                 session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
                                 if (resolvedMount instanceof MutableResolvedMount) {
                                     Mount mount = resolvedMount.getMount();

@@ -153,16 +153,6 @@ public interface ContainerConstants {
     String RENDER_VARIANT = "org.hippoecm.hst.container.render_variant";
 
     /**
-     * The attribute used on the request to indicate that the request is from a cms context : This can be a REST call,
-     * or a request for the preview website in a cms environment (host)
-     *
-     * @deprecated since 2.24.11 / 2.26.01 : use directly {@link org.hippoecm.hst.core.request.HstRequestContext#isCmsRequest()}
-     *             and {@link org.hippoecm.hst.core.internal.HstMutableRequestContext#setCmsRequest(boolean)}
-     */
-    @Deprecated
-    String REQUEST_COMES_FROM_CMS = "org.hippoecm.hst.container.request_comes_from_cms";
-
-    /**
      * The 'default' prefix of HST component parameters. This prefix is used when no other prefix is set or the
      * configured prefix is empty.
      */
