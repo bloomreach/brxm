@@ -536,7 +536,7 @@ public class RepositoryServlet extends HttpServlet {
                 if (language.equals(Query.XPATH)) {
                     // we encode xpath queries to support queries like /jcr:root/7_8//*
                     // the 7 needs to be encode
-                    query = qmgr.createQuery(ISO9075.encodePath(queryString), language);
+                    query = qmgr.createQuery(encodeXpath(queryString), language);
                 } else {
                     query = qmgr.createQuery(queryString, language);
                 }
@@ -753,5 +753,42 @@ public class RepositoryServlet extends HttpServlet {
         public Session login() throws LoginException, RepositoryException {
             return repository.login();
         }
+    }
+
+    private static String encodeXpath(String xpath) {
+        final int whereClauseIndexStart = xpath.indexOf("[");
+        final int whereClauseIndexEnd =xpath.lastIndexOf("]");
+        if (whereClauseIndexStart > -1 && whereClauseIndexEnd > -1) {
+            String beforeWhere = xpath.substring(0, whereClauseIndexStart);
+            String afterWhere = xpath.substring(whereClauseIndexEnd + 1, xpath.length());
+            // in where clause we can have path constraints
+            String whereClause = "[" + encodeXpath(xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd)) + "]";
+            return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
+        } else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
+            // only path
+            return encodePathConstraint(xpath);
+        } else {
+            // most likely incorrect query
+            return xpath;
+        }
+
+    }
+
+    private static String encodePathConstraint(final String path) {
+        String[] segments = path.split("/");
+        StringBuilder builder = new StringBuilder();
+        for (String segment : segments) {
+            if (segment.startsWith("element(")) {
+                builder.append(segment);
+            } else if (segment.equals("*")) {
+                builder.append(segment);
+            } else if (segment.startsWith("@")) {
+                builder.append(segment);
+            } else {
+                builder.append(ISO9075.encode(segment));
+            }
+            builder.append("/");
+        }
+        return builder.substring(0, builder.length() -1).toString();
     }
 }

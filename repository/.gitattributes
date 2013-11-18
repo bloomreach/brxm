@@ -331,6 +331,7 @@ test/src/test/java/org/hippoecm/repository/FacetedNavigationNamespaceTest.java s
 test/src/test/java/org/hippoecm/repository/FacetedNavigationPerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/ISO9075EncodePathTest.java -text
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/SecurityDelegationTest.java -text
 test/src/test/java/org/hippoecm/repository/VersioningWorkflowTest.java -text
