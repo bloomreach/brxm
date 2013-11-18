@@ -51,6 +51,7 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.JcrSessionUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -76,6 +77,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 	final Job[] enumJobs = Job.values();
 
 	@Override
+    @Before
 	public void setUp() throws Exception {
 		super.setUp();
 		this.hstManager = getComponent(HstManager.class.getName());

@@ -369,7 +369,7 @@ public class TestHstNodeLoadingCache extends AbstractHstLoadingCacheTestCase {
         EventListener listener;
 
         CommonHstConfigSetup() throws RepositoryException {
-            session = getSession();
+            session = createSession();
             listener = registerConfigListener();
             createHstConfigBackup();
         }

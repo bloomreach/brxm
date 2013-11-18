@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.request.MountDecoratorImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -46,6 +47,7 @@ public class TestMatchHostAndURL extends AbstractTestConfigurations {
         private HstURLFactory hstURLFactory;
 
         @Override
+        @Before
         public void setUp() throws Exception {
             super.setUp();
             this.hstSitesManager = getComponent(HstManager.class.getName());

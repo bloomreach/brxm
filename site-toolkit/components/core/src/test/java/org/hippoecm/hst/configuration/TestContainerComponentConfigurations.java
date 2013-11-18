@@ -30,6 +30,8 @@ import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -45,6 +47,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     private Node testComponent;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         this.hstSitesManager = getComponent(HstManager.class.getName());
@@ -53,6 +56,7 @@ public class TestContainerComponentConfigurations extends AbstractTestConfigurat
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         removeTestComponent();
         session.logout();

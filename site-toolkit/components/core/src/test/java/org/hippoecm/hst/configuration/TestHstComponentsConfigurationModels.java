@@ -41,6 +41,7 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
 
     private HstManager hstManager;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

@@ -37,7 +37,7 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
     @Test
     public void assertPendingChangescorrectForMovesWithinSameParent() throws RepositoryException {
 
-        Session session = getSession();
+        Session session = createSession();
 
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:components/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:components/header2");
@@ -55,7 +55,7 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
 
     @Test
     public void assertPendingChangesIncorrectForMovesBetweenDifferentParents() throws RepositoryException {
-        Session session = getSession();
+        Session session = createSession();
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage/header");
 
@@ -74,7 +74,7 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
     @Test
     public void assertPendingChangesCorrectForCopyDelete() throws RepositoryException {
         // instead of move, use copy / delete and assert pending changes are then correct
-        Session session = getSession();
+        Session session = createSession();
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage/header");
 
@@ -92,7 +92,7 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
 
     @Test
     public void assertPendingChangesCorrectForReordering()  throws RepositoryException {
-        Session session = getSession();
+        Session session = createSession();
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header1");
         JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",

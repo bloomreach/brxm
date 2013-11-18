@@ -44,7 +44,7 @@ public abstract class AbstractHstLoadingCacheTestCase extends AbstractTestConfig
         this.hstModelMutex = getComponent("hstModelMutex");
     }
 
-    protected Session getSession() throws RepositoryException {
+    protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
