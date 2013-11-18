@@ -52,6 +52,10 @@
         return parameters;
     }
 
+    function disableRegisteredCKEditorDialog(ckeditorEvent) {
+        ckeditorEvent.data.dialog = null;
+    }
+
     function initInternalLinkPicker(editor, callbackUrl) {
 
         var LINK_ATTRIBUTES_PARAMETER_MAP = {
@@ -71,6 +75,10 @@
                 }
             });
             return pairs;
+        }
+
+        function isInternalLink(element) {
+            return !element.isReadOnly() && element.is('a') && element.hasAttribute('data-uuid');
         }
 
         function isSelectionEmpty(selection) {
@@ -97,6 +105,15 @@
                 }
             }
             return null;
+        }
+
+        function openInternalLinkPickerDialog(selectedLink) {
+            var callbackParameters = getElementParameters(selectedLink, LINK_ATTRIBUTES_PARAMETER_MAP);
+
+            Wicket.Ajax.post({
+                u: callbackUrl,
+                ep: callbackParameters
+            });
         }
 
         function createLinkFromSelection(selection, linkParameters) {
@@ -139,13 +156,8 @@
             startDisabled: true,
 
             exec: function(editor) {
-                var selectedLink = getSelectedLinkOrNull(editor.getSelection()),
-                    callbackParameters = getElementParameters(selectedLink, LINK_ATTRIBUTES_PARAMETER_MAP);
-
-                Wicket.Ajax.post({
-                    u: callbackUrl,
-                    ep: callbackParameters
-                });
+                var selectedLink = getSelectedLinkOrNull(editor.getSelection());
+                openInternalLinkPickerDialog(selectedLink);
             }
         });
 
@@ -173,6 +185,15 @@
                 }
             }
         });
+
+        editor.on('doubleclick', function(event) {
+            var clickedLink = getSelectedLinkOrNull(editor.getSelection()) || event.data.element;
+
+            if (isInternalLink(clickedLink)) {
+                disableRegisteredCKEditorDialog(event);
+                openInternalLinkPickerDialog(clickedLink);
+            }
+        }, null, null, 20);  // use a higher priority than 10 to overwrite the external link dialog
 
         // update the toolbar button state whenever the selection changes (copied from the 'clipboard' plugin)
         editor.on('contentDom', function() {
@@ -202,6 +223,27 @@
             },
             LANG = editor.lang.hippopicker;
 
+        function  isInternalImage(element) {
+            return !element.isReadOnly()
+                    && element.is('img')
+                    && element.hasAttribute('data-facetselect')
+                    && element.hasAttribute('data-type')
+                    && element.hasAttribute('data-uuid');
+        }
+
+        function openImagePickerDialog(element) {
+            var callbackParameters = {};
+
+            if (element.getName() === 'img') {
+                callbackParameters = getElementParameters(element, IMAGE_ATTRIBUTE_PARAMETER_MAP);
+            }
+
+            Wicket.Ajax.post({
+                u: callbackUrl,
+                ep: callbackParameters
+            });
+        }
+
         editor.ui.addButton('PickImage', {
             label: LANG.imageTooltip,
             command: 'pickImage',
@@ -212,17 +254,8 @@
 
         editor.addCommand('pickImage', {
             exec: function(editor) {
-                var selectedImage = editor.getSelection().getStartElement(),
-                    callbackParameters = {};
-
-                if (selectedImage.getName() === 'img') {
-                    callbackParameters = getElementParameters(selectedImage, IMAGE_ATTRIBUTE_PARAMETER_MAP);
-                }
-
-                Wicket.Ajax.post({
-                    u: callbackUrl,
-                    ep: callbackParameters
-                });
+                var selectedImage = editor.getSelection().getStartElement();
+                openImagePickerDialog(selectedImage);
             }
         });
 
@@ -233,6 +266,16 @@
                 editor.insertElement(img);
             }
         });
+
+        editor.on('doubleclick', function(event) {
+            var clickedElement = event.data.element;
+
+            if (isInternalImage(clickedElement)) {
+                disableRegisteredCKEditorDialog(event);
+                openImagePickerDialog(clickedElement);
+            }
+        }, null, null, 20); // use a higher priority than 10 to overwrite the external image dialog
+
     }
 
     CKEDITOR.plugins.add('hippopicker', {
