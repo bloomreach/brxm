@@ -244,8 +244,7 @@ public class MountResource extends AbstractConfigResource {
         final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
 
         if (!hasPreviewConfiguration(editingPreviewMount)) {
-            log.warn("Cannot publish non preview site");
-            return error("Cannot publish non preview site");
+            return cannotPublishNotPreviewSite();
         }
         return publishChangesOfCurrentUser(requestContext);
     }
@@ -258,11 +257,16 @@ public class MountResource extends AbstractConfigResource {
         final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
 
         if (!hasPreviewConfiguration(editingPreviewMount)) {
-            log.warn("Cannot publish non preview site");
-            return error("Cannot publish non preview site");
+            return cannotPublishNotPreviewSite();
         }
         return publishChangesOfUsers(requestContext, ids.getData());
     }
+
+    private Response cannotPublishNotPreviewSite() {
+        log.warn("Cannot publish non preview site");
+        return error("Cannot publish non preview site");
+    }
+
 
     private Response publishChangesOfCurrentUser(final HstRequestContext requestContext) {
         try {
@@ -320,10 +324,7 @@ public class MountResource extends AbstractConfigResource {
             WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
                     getObjectConverter(requestContext));
             workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
-        } catch (RepositoryException e) {
-            log.warn("Exception happened while trying to create the document " + e, e);
-            return error("Exception happened while trying to create the document " + e);
-        } catch (ObjectBeanPersistenceException e) {
+        } catch (RepositoryException | ObjectBeanPersistenceException e) {
             log.warn("Exception happened while trying to create the document " + e, e);
             return error("Exception happened while trying to create the document " + e);
         }

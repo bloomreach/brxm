@@ -264,7 +264,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             session.move(childPath, newChildPath);
             return true;
         }
-        log.debug("No Move needed for '{}' below '{}'", childId, parent.getPath());
+        log.debug("No Move needed for '{}' below '{}'", childId, parentPath);
         return false;
     }
 

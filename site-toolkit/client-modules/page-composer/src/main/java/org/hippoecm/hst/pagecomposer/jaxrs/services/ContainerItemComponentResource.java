@@ -87,7 +87,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             Set<String> variants = doGetVariants(containerItem);
-            log.info("Available variants: {}", variants.toString());
+            log.info("Available variants: {}", variants);
             return ok("Available variants: ", variants);
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component", e);
@@ -257,13 +257,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             log.info("Parameters for '{}' saved successfully.", variant);
             return ok("Parameters for '" + variant + "' saved successfully.", null);
         } catch (IllegalStateException e) {
-            log.warn("Could not save parameters for variant '"+variant+"'", e);
+            log.warn("Could not save parameters for variant '{}'", variant, e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.warn("Could not save parameters for variant '"+variant+"'", e);
+            log.warn("Could not save parameters for variant '{}'", variant, e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.warn("Could not save parameters for variant '"+variant+"'", e);
+            log.warn("Could not save parameters for variant '{}'", variant, e);
             throw new WebApplicationException(e);
         }
     }
@@ -357,13 +357,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             log.info("Variant '{}' created successfully", variant);
             return created("Variant '" + variant + "' created successfully");
         } catch (IllegalStateException e) {
-            log.warn("Could not create variant ", e);
+            log.warn("Could not create variant '{}'", variant, e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.warn("Could not create variant ", e);
+            log.warn("Could not create variant '{}'", variant, e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to create new variant ", e);
+            log.error("Unable to create new variant '{}'", variant, e);
             throw new WebApplicationException(e);
         }
     }
@@ -406,13 +406,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             log.info("Variant '{}' deleted successfully", variant);
             return ok("Variant '" + variant + "' deleted successfully");
         } catch (IllegalStateException e) {
-            log.warn("Could not delete variant '" + variant + "'", e);
+            log.warn("Could not delete variant '{}'", variant,  e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.warn("Could not delete variant '" + variant + "'", e);
+            log.warn("Could not delete variant '{}'", variant, e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to create new variant '" + variant + "'", e);
+            log.error("Could not delete variant '{}'", variant, e);
             throw new WebApplicationException(e);
         }
     }
