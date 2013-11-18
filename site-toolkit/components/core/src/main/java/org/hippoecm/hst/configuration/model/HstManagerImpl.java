@@ -328,17 +328,18 @@ public class HstManagerImpl implements MutableHstManager {
 
         try {
             long start = System.currentTimeMillis();
-            virtualHostsModel = new VirtualHostsService(this, hstNodeLoadingCache);
+            VirtualHostsService newModel = new VirtualHostsService(this, hstNodeLoadingCache);
 
             for (HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters) {
                 log.info("Configuration augmenter '{}' will be augmented.", configurationAugmenter.getClass().getName());
-                configurationAugmenter.augment((MutableVirtualHosts) virtualHostsModel);
+                configurationAugmenter.augment(newModel);
             }
 
             componentRegistry.unregisterAllComponents();
             siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
 
             log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
+            virtualHostsModel = newModel;
         } catch (ServiceException e) {
             throw new ModelLoadingException("Exception during building HST model", e);
         } catch (ModelLoadingException e) {
