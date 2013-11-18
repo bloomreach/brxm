@@ -664,6 +664,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/TestConfigurationUt
 components/core/src/test/java/org/hippoecm/hst/configuration/TestContainerComponentConfigurations.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestHstComponentsConfigurationModels.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/configuration/TestNoChannelsOrBlueprints.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/AbstractHstLoadingCacheTestCase.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/cache/TestEventCache.java -text

@@ -17,3 +17,5 @@
 Unknown channel /hst:hst/hst:channels/cmit-channel2
 There is no preview version '/hst:hst/hst:sites/subsub1-preview' for mount
 Error in dependency cycle
+Cannot load channels because node '/hst:hst/hst:channels' does not exist
+Unknown channel /hst:hst/hst:channels/testchannel, ignoring mount hst:root
