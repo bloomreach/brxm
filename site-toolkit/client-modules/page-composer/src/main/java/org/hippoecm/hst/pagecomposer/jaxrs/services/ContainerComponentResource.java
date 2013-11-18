@@ -178,7 +178,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             }
             HstConfigurationUtils.setLastModifiedTimestampForContainer(containerNode);
             if (nodeMoved) {
-                // HippoSession#pendingChanges has a bug in case of node moves between different parents. In that
+                // HippoSession#pendingChanges has a bug (REPO-684) in case of node moves between different parents. In that
                 // case we should not dispatch events from HippoSession#pendingChanges
                 HstConfigurationUtils.persistChanges(session, false);
             } else {
