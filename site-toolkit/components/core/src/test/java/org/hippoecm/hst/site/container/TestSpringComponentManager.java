@@ -137,6 +137,8 @@ public class TestSpringComponentManager {
         
         componentManager.stop();
         componentManager.close();
+        System.clearProperty("props.greeting");
+        System.clearProperty("props.greeting.nonexisting");
     }
     
     @Test
