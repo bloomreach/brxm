@@ -471,7 +471,7 @@ public class HippoItem implements HippoBean {
             if (o instanceof HippoBean) {
                 return (HippoBean) o;
             } else {
-                log.info("Bean is not an instance of HippoBean. Return null : ", o);
+                log.info("Bean is not an instance of HippoBean but '{}'. Return null : ", o.getClass().getName());
             }
         } catch (ObjectBeanManagerException e) {
             log.warn("Failed to get parent object for '{}'", this.getPath());

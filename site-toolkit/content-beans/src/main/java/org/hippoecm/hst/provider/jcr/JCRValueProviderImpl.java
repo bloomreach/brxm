@@ -198,7 +198,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     public boolean isNodeType(String nodeType) {
         if(isDetached()){
-            log.info("Jcr Node is detatched. Cannot execute method");
+            log.info("Jcr Node is detached. Cannot execute method");
             return false;
         } 
         try {
@@ -223,7 +223,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         }
         
         if(isDetached()){
-            log.info("Jcr Node is detatched. Cannot execute method");
+            log.info("Jcr Node is detached. Cannot execute method");
             return false;
         }
         try {
@@ -432,7 +432,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
           return; 
         }
         if(isDetached()){
-            log.info("Jcr Node is detatched. Cannot execute method");
+            log.info("Jcr Node is detached. Cannot execute method");
             return;
         }
         try { 
@@ -440,7 +440,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 
                 Property prop = jcrNode.getProperty(propertyName);
                 if(prop.getType() != propertyType) {
-                    if (log.isWarnEnabled()) log.info("Cannot return property '{}' for node '{}' because it is of the wrong type. Return null", propertyName, this.nodePath);
+                    log.info("Cannot return property '{}' for node '{}' because it is of the wrong type. Return null", propertyName, this.nodePath);
                     return;
                 }
                 PropertyDefinition propDef = prop.getDefinition();
@@ -450,7 +450,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 }
                 
                 else {
-                    if (log.isWarnEnabled()) log.info("Cannot return property '{}' for node '{}'. Return null", propertyName, this.nodePath);
+                    log.info("Cannot return property '{}' for node '{}'. Return null", propertyName, this.nodePath);
                     return;
                 }
             }
@@ -566,7 +566,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 }    
                 
             default: 
-                if (log.isWarnEnabled()) log.info("getPropObject is only support for boolean, long, double, date and strings. Return null");
+                log.info("getPropObject is only support for boolean, long, double, date and strings. Return null");
                 return ;
             }
         } catch (ValueFormatException e) {
@@ -586,7 +586,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
 
     private void populate() {
         if(isDetached()){
-            log.info("Jcr Node is detatched. Return already loaded properties ");
+            log.info("Jcr Node is detached. Return already loaded properties ");
             return;
         }
         try {
@@ -612,7 +612,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private void populateCanonicalPath(){
         if(isDetached()){
-            log.info("Jcr Node is detatched. Cannot get canonical path");
+            log.info("Jcr Node is detached. Cannot get canonical path");
             return;
         } 
         this.canonicalPath = this.nodePath;
@@ -635,7 +635,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private void populateIdentifier(){
         if(isDetached()){
-            log.info("Jcr Node is detatched. Cannot get identifier");
+            log.info("Jcr Node is detached. Cannot get identifier");
             return;
         } 
         if(jcrNode instanceof HippoNode) {
