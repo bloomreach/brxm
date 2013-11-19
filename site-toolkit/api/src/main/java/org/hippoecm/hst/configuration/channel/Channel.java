@@ -233,6 +233,8 @@ public class Channel implements Serializable {
         if (changedBySet instanceof HashSet) {
             return changedBySet;
         } else {
+            // the changed by set might be some custom Set<String> implementation which cannot be
+            // correctly deserialized when used by rest calls. Hence, we explicitly make it a HashSet now
             changedBySet = new HashSet<>(changedBySet);
         }
         return changedBySet;
