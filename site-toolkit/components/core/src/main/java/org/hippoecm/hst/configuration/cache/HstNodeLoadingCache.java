@@ -200,6 +200,9 @@ public class HstNodeLoadingCache implements HstEventConsumer {
         Session session;
 
         public Session getSession() {
+            if (session != null) {
+                return session;
+            }
             try {
                 session = repository.login(new SimpleCredentials(username, password.toCharArray()));
             } catch (RepositoryException e) {
