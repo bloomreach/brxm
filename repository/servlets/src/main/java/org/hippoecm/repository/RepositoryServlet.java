@@ -762,7 +762,7 @@ public class RepositoryServlet extends HttpServlet {
             String beforeWhere = xpath.substring(0, whereClauseIndexStart);
             String afterWhere = xpath.substring(whereClauseIndexEnd + 1, xpath.length());
             // in where clause we can have path constraints
-            String whereClause = "[" + encodeXpath(xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd)) + "]";
+            String whereClause = "[" + xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd) + "]";
             return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
         } else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
             // only path

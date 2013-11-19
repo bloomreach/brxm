@@ -30,7 +30,8 @@ public class ISO9075EncodePathTest {
         assertEquals("/jcr:root/foo/_x0037_8[@my:project = '456']", encodeXpath("/jcr:root/foo/78[@my:project = '456']"));
         assertEquals("/jcr:root/foo/_x0037_8[test/@my:project = '456']", encodeXpath("/jcr:root/foo/78[test/@my:project = '456']"));
 
-        assertEquals("/jcr:root/foo/_x0037_8[_x0039_9/@my:project = '456']", encodeXpath("/jcr:root/foo/78[99/@my:project = '456']"));
+        // we do not encode *IN* where clauses
+        assertEquals("/jcr:root/foo/_x0037_8[99/@my:project = '456']", encodeXpath("/jcr:root/foo/78[99/@my:project = '456']"));
 
 
         assertEquals("//element(*,hippo:document)", encodeXpath("//element(*,hippo:document)"));
@@ -41,11 +42,13 @@ public class ISO9075EncodePathTest {
         assertEquals("/jcr:root/foo/_x0037_8//element(*,hippo:document)[@my:project = 'test']",
                 encodeXpath("/jcr:root/foo/78//element(*,hippo:document)[@my:project = 'test']"));
 
-        assertEquals("/jcr:root/foo/_x0037_8//element(*,hippo:document)[_x0039_9/@my:project = 'test']",
+        // we do not encode *IN* where clauses
+        assertEquals("/jcr:root/foo/_x0037_8//element(*,hippo:document)[99/@my:project = 'test']",
                 encodeXpath("/jcr:root/foo/78//element(*,hippo:document)[99/@my:project = 'test']"));
 
 
         assertEquals("//*", encodeXpath("//*"));
+        assertEquals("//*[jcr:contains(.,'test')]", encodeXpath("//*[jcr:contains(.,'test')]"));
         assertEquals("//element(*,hippo:document)", encodeXpath("//element(*,hippo:document)"));
 
     }
@@ -58,7 +61,7 @@ public class ISO9075EncodePathTest {
             String beforeWhere = xpath.substring(0, whereClauseIndexStart);
             String afterWhere = xpath.substring(whereClauseIndexEnd + 1, xpath.length());
             // in where clause we can have path constraints
-            String whereClause = "[" + encodeXpath(xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd)) + "]";
+            String whereClause = "[" + xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd) + "]";
             return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
         } else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
             // only path
