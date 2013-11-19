@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -67,12 +69,23 @@ public class FolderTreePlugin extends RenderPlugin {
     protected JcrTreeNode rootNode;
     private JcrNodeModel rootModel;
 
+    private static final String DEFAULT_START_PATH = "/content";
+
     private WicketTreeHelperBehavior treeHelperBehavior;
 
     public FolderTreePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        String startingPath = config.getString("path", "/");
+        String startingPath = config.getString("path", DEFAULT_START_PATH);
+        try {
+            Session session = getSession().getJcrSession();
+            if (!session.itemExists(startingPath)) {
+                startingPath = DEFAULT_START_PATH;
+            }
+        } catch (RepositoryException exception) {
+            log.warn("The configured path '"+startingPath+"' does not exist, using '"+DEFAULT_START_PATH+"' instead.");
+            startingPath = DEFAULT_START_PATH;
+        }
         rootModel = new JcrNodeModel(startingPath);
 
         DocumentListFilter folderTreeConfig = new DocumentListFilter(config);
