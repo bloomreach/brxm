@@ -59,14 +59,11 @@ public class HstConfigurationUtils {
         if (!session.hasPendingChanges()) {
             return;
         }
-        String[] pathsToBeChanged = null;
-        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-        if (invalidator != null) {
             // never prune for getting changes since needed for hstNode model reloading
-            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        }
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
         if (dispatchPendingChanges) {
+            EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
             // after the save the paths need to be send, not before!
             if (invalidator != null && pathsToBeChanged != null) {
                 invalidator.eventPaths(pathsToBeChanged);
