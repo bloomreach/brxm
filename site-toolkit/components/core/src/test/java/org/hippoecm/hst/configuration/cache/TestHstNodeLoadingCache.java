@@ -18,16 +18,24 @@ package org.hippoecm.hst.configuration.cache;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstConfigurationEventListener;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.provider.ValueProvider;
+import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -70,6 +78,47 @@ public class TestHstNodeLoadingCache extends AbstractHstLoadingCacheTestCase {
         assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:sites/global"));
     }
 
+    @Test
+    public void testHstNodeValueProviderDoesNotContainProtectedProperties() throws RepositoryException {
+        final HstNode hstHostsNode = hstNodeLoadingCache.getNode("/hst:hst/hst:hosts");
+        Session session = createSession();
+        final Node hostsNode = session.getNode("/hst:hst/hst:hosts");
+        final ValueProvider lazyValueProviderWithAllProps = new JCRValueProviderImpl(hostsNode);
+        final ValueProvider nonLazyValueProviderWithAllProps = new JCRValueProviderImpl(hostsNode, false);
+        final ValueProvider nonLazyValueProviderWithoutProtectedProps = new JCRValueProviderImpl(hostsNode, false, true, false);
+        boolean protectedPropCheckDone = false;
+        boolean normalPropCheckDone = false;
+        for (Property property : new PropertyIterable(hostsNode.getProperties())) {
+            String propName = property.getName();
+            final PropertyDefinition definition = property.getDefinition();
+            if (definition.isProtected()) {
+                if(PropertyType.STRING == property.getType() ||
+                        PropertyType.BOOLEAN  == property.getType() ||
+                        PropertyType.DATE  == property.getType() ||
+                        PropertyType.DOUBLE  == property.getType() ||
+                        PropertyType.LONG == property.getType()) {
+
+                    protectedPropCheckDone = true;
+                    assertFalse(hstHostsNode.getValueProvider().hasProperty(propName));
+                    assertTrue(lazyValueProviderWithAllProps.hasProperty(propName));
+                    assertTrue(nonLazyValueProviderWithAllProps.hasProperty(propName));
+                    assertFalse(nonLazyValueProviderWithoutProtectedProps.hasProperty(propName));
+                }
+
+            } else {
+                normalPropCheckDone = true;
+                assertTrue(hstHostsNode.getValueProvider().hasProperty(propName));
+                assertTrue(lazyValueProviderWithAllProps.hasProperty(propName));
+                assertTrue(nonLazyValueProviderWithAllProps.hasProperty(propName));
+                assertTrue(nonLazyValueProviderWithoutProtectedProps.hasProperty(propName));
+            }
+        }
+
+        assertTrue(protectedPropCheckDone);
+        assertTrue(normalPropCheckDone);
+
+        session.logout();
+    }
 
     @Test
     public void testHstNodeRemoval() throws Exception {
