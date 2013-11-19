@@ -74,6 +74,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private final static String WILDCARD = "_default_";
 
     private HstManagerImpl hstManager;
+    private HstNodeLoadingCache hstNodeLoadingCache;
     private Map<String, Map<String, MutableVirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<>();
 
     private Map<String, List<Mount>> mountByHostGroup = new HashMap<>();
@@ -166,13 +167,14 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     public VirtualHostsService(final HstManagerImpl hstManager, final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
         long start = System.currentTimeMillis();
+        this.hstNodeLoadingCache = hstNodeLoadingCache;
+        this.hstManager = hstManager;
+        channelsRoot = hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
+        virtualHostsConfigured = true;
         HstNode vhostsNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath()+"/hst:hosts");
         if (vhostsNode == null) {
             throw new ModelLoadingException("No hst node found for '"+hstNodeLoadingCache.getRootPath()+"/hst:hosts'. Cannot load model.'");
         }
-        this.hstManager = hstManager;
-        channelsRoot = hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
-        virtualHostsConfigured = true;
         ValueProvider vHostConfValueProvider = vhostsNode.getValueProvider();
         contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
@@ -983,7 +985,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if (bluePrintsPrototypeChecked) {
             return;
         }
-        HstNodeLoadingCache hstNodeLoadingCache = HstServices.getComponentManager().getComponent(HstNodeLoadingCache.class.getName());
         try (HstNodeLoadingCache.LazyCloseableSession session = hstNodeLoadingCache.createLazyCloseableSession()) {
             for (Blueprint blueprint : blueprints.values()) {
                 String prototypePath = BlueprintHandler.SUBSITE_TEMPLATES_PATH + blueprint.getId();
