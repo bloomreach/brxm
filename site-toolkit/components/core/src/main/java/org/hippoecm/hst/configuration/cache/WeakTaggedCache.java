@@ -56,17 +56,17 @@ public class WeakTaggedCache<K, V, U> {
         }
     }
 
-    public void put(K key, V value, U event) {
+    public void put(K key, V value, U tag) {
         expungeStaleEntries();
         store(key, value);
-        weakKeyTagRegistry.put(event, key);
+        weakKeyTagRegistry.put(tag, key);
     }
 
 
-    public void put(K key, V value, U[] events) {
+    public void put(K key, V value, U[] tags) {
         expungeStaleEntries();
         store(key, value);
-        weakKeyTagRegistry.put(events, key);
+        weakKeyTagRegistry.put(tags, key);
     }
 
     public V get(K key) {
