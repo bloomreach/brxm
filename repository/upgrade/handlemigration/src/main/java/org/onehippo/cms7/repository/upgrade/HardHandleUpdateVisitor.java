@@ -73,7 +73,20 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
     }
 
     @Override
-    public boolean doUpdate(final Node handle) throws RepositoryException {
+    public void destroy() {
+        if (defaultSession != null && defaultSession.isLive()) {
+            defaultSession.logout();
+        }
+        if (migrationSession != null && migrationSession.isLive()) {
+            migrationSession.logout();
+        }
+    }
+
+    @Override
+    public boolean doUpdate(Node handle) throws RepositoryException {
+        if (handle.getSession() != defaultSession) {
+            handle = defaultSession.getNodeByIdentifier(handle.getIdentifier());
+        }
         try {
             final VersionHistory handleVersionHistory = getHandleVersionHistory(handle);
             final List<Version> versions = getDocumentVersions(handleVersionHistory);
