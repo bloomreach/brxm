@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -33,8 +34,12 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.update.NodeUpdateVisitor;
+import org.onehippo.repository.update.UpdaterRegistry;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +62,7 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
         Node node = nodeModel.getObject();
         try {
             if (JcrHelper.isNodeType(node, HippoNodeType.NT_HANDLE)) {
+                update(node);
                 Set<Node> docs = EditorHelper.getDocuments(node);
                 if (docs.size() == 0) {
                     throw new EditorException("Document has been deleted");
@@ -80,4 +86,25 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
         return null;
     }
 
+    private void update(final Node item) {
+        final UpdaterRegistry updaterRegistry = HippoServiceRegistry.getService(UpdaterRegistry.class);
+        if (updaterRegistry != null) {
+            try {
+                final List<Class<? extends NodeUpdateVisitor>> updaters = updaterRegistry.getUpdaters(item);
+                for (Class<? extends NodeUpdateVisitor> updaterClass : updaters) {
+                    final NodeUpdateVisitor updater = updaterClass.newInstance();
+                    updater.initialize(UserSession.get().getJcrSession());
+                    try {
+                        updater.doUpdate(item);
+                    } finally {
+                        updater.destroy();
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("Error updating document", e);
+            } catch (InstantiationException | IllegalAccessException e) {
+                log.error("Failed to instantiate updater for document: {}", e.toString());
+            }
+        }
+    }
 }
