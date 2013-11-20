@@ -64,11 +64,6 @@ public class UpdaterRegistryImpl implements UpdaterRegistry, EventListener {
             log.error(e.getClass().getName() + ": " + e.getMessage());
         }
         session.logout();
-        for (List<UpdaterInfo> updaterInfos : updaters.values()) {
-            for (UpdaterInfo updaterInfo : updaterInfos) {
-                updaterInfo.getUpdater().destroy();
-            }
-        }
         updaters.clear();
     }
 
@@ -111,8 +106,29 @@ public class UpdaterRegistryImpl implements UpdaterRegistry, EventListener {
                 for (UpdaterInfo updaterInfo : entry.getValue()) {
                     try {
                         final NodeUpdateVisitor updater = updaterInfo.getUpdaterClass().newInstance();
-                        updater.initialize(session.impersonate(new SimpleCredentials("system", new char[] {})));
-                        result.add(updater);
+                        final Session system = session.impersonate(new SimpleCredentials("system", new char[]{}));
+                        updater.initialize(system);
+                        result.add(new NodeUpdateVisitor() {
+                            @Override
+                            public void initialize(final Session session) throws RepositoryException {
+                            }
+
+                            @Override
+                            public boolean doUpdate(final Node node) throws RepositoryException {
+                                return updater.doUpdate(node);
+                            }
+
+                            @Override
+                            public boolean undoUpdate(final Node node) throws RepositoryException, UnsupportedOperationException {
+                                return false;
+                            }
+
+                            @Override
+                            public void destroy() {
+                                updater.destroy();
+                                system.logout();
+                            }
+                        });
                     } catch (InstantiationException | IllegalAccessException e) {
                         log.error("Failed to create updater: {}", e.toString());
                     }

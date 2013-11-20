@@ -49,9 +49,6 @@ public abstract class BaseContentUpdateVisitor extends BaseNodeUpdateVisitor {
 
     @Override
     public void destroy() {
-        if (session != null && session.isLive()) {
-            session.logout();
-        }
     }
 
 

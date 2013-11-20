@@ -74,9 +74,6 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
 
     @Override
     public void destroy() {
-        if (defaultSession != null && defaultSession.isLive()) {
-            defaultSession.logout();
-        }
         if (migrationSession != null && migrationSession.isLive()) {
             migrationSession.logout();
         }
