@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -100,15 +101,21 @@ public class UpdaterRegistryImpl implements UpdaterRegistry, EventListener {
     }
 
     @Override
-    public List<Class<? extends NodeUpdateVisitor>> getUpdaters(final Node node) throws RepositoryException {
+    public List<NodeUpdateVisitor> getUpdaters(final Node node) throws RepositoryException {
         if (updaters.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Class<? extends NodeUpdateVisitor>> result = new ArrayList<>();
+        List<NodeUpdateVisitor> result = new ArrayList<>();
         for (Map.Entry<String, List<UpdaterInfo>> entry : updaters.entrySet()) {
             if (node.isNodeType(entry.getKey())) {
                 for (UpdaterInfo updaterInfo : entry.getValue()) {
-                    result.add(updaterInfo.getUpdaterClass());
+                    try {
+                        final NodeUpdateVisitor updater = updaterInfo.getUpdaterClass().newInstance();
+                        updater.initialize(session.impersonate(new SimpleCredentials("system", new char[] {})));
+                        result.add(updater);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        log.error("Failed to create updater: {}", e.toString());
+                    }
                 }
             }
         }

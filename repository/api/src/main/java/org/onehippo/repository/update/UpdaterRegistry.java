@@ -26,12 +26,13 @@ import org.onehippo.cms7.services.SingletonService;
 public interface UpdaterRegistry {
 
     /**
-     * Get the list of updaters that are registered for this node.
+     * Get the list of updaters that are registered for this node. After using the updater, the client must call
+     * destroy on the updater.
      *
      * @param node  the node to get the updaters for
-     * @return  the list classes of the updaters, empty list if no updaters for this node.
+     * @return  the list the updaters that should be applied to this node, empty list if no updaters for this node.
      * @throws RepositoryException
      */
-    List<Class<? extends NodeUpdateVisitor>> getUpdaters(final Node node) throws RepositoryException;
+    List<NodeUpdateVisitor> getUpdaters(final Node node) throws RepositoryException;
 
 }
