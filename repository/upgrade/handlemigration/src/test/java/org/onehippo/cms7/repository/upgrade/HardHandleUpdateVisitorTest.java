@@ -65,6 +65,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
     @Override
     public void tearDown() throws Exception {
         removeDocuments();
+        clearAttic();
         super.tearDown();
     }
 
@@ -115,7 +116,7 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
                 if (JcrUtils.isVirtual(node)) {
                     return;
                 }
-                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (node.isNodeType(HippoNodeType.NT_HARDHANDLE)) {
                     handles.add(node);
                     return;
                 }
@@ -205,6 +206,13 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
     private void removeDocuments() throws RepositoryException {
         for (Node document : new NodeIterable(documents.getNodes())) {
             document.remove();
+        }
+        session.save();
+    }
+
+    private void clearAttic() throws RepositoryException {
+        for (Node node : new NodeIterable(session.getNode("/content/attic").getNodes())) {
+            node.remove();
         }
         session.save();
     }
