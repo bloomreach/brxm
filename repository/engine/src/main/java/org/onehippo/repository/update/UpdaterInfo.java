@@ -24,12 +24,9 @@ import java.util.NoSuchElementException;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.tika.io.IOUtils;
-import org.apache.xmlbeans.impl.common.IOUtil;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
@@ -62,6 +59,8 @@ class UpdaterInfo {
     private final String startedBy;
     private final NodeUpdateVisitor updater;
     private final Binary updatedNodes;
+    private final String nodeType;
+    private final Class<? extends NodeUpdateVisitor> updaterClass;
 
     /**
      * @param node  a node of type <code>hipposys:updaterinfo</code> carrying the meta data of the {@link NodeUpdateVisitor}
@@ -101,46 +100,21 @@ class UpdaterInfo {
         if ((script == null || script.isEmpty()) && (klass == null || klass.isEmpty())) {
             throw new IllegalArgumentException("Either script or class property must be present");
         }
-        Class clazz;
-        if (klass != null && !klass.isEmpty()) {
-            clazz = Class.forName(klass);
-        } else {
-            final GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
-            final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
-            clazz = gcl.parseClass(gcs, false);
-        }
-        final Object o = clazz.newInstance();
-        if (!(o instanceof NodeUpdateVisitor)) {
+        try {
+            if (klass != null && !klass.isEmpty()) {
+                updaterClass = (Class<? extends NodeUpdateVisitor>) Class.forName(klass);
+            } else {
+                final GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
+                final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
+                updaterClass = gcl.parseClass(gcs, false);
+            }
+        } catch (ClassCastException e) {
             throw new IllegalArgumentException("Class must implement " + NodeUpdateVisitor.class.getName());
         }
+        final Object o = updaterClass.newInstance();
         updater = (NodeUpdateVisitor) o;
         updatedNodes = JcrUtils.getBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, null);
-    }
-
-    /**
-     *
-     * @param id  the unique identifier of this updater configuration in the updater registry
-     * @param path  the path that should be visited
-     * @param query  the query that should be visited
-     * @param updater  the {@link NodeUpdateVisitor} to execute
-     * @throws IllegalArgumentException if both <code>path</code> and <code>query</code> are undefined
-     */
-    UpdaterInfo(String id, String path, String query, boolean revert, NodeUpdateVisitor updater) throws IllegalArgumentException {
-        this.identifier = id;
-        this.name = id;
-        this.updater = updater;
-        this.path = path;
-        this.query = query;
-        this.language = DEFAULT_QUERY_LANGUAGE;
-        this.revert = revert;
-        this.throttle = DEFAULT_THROTTLE;
-        this.batchSize = DEFAULT_BATCH_SIZE;
-        this.dryRun = false;
-        this.startedBy = null;
-        if ((path == null || path.isEmpty()) && (query == null || query.isEmpty())) {
-            throw new IllegalArgumentException("Either path or query property must be defined");
-        }
-        this.updatedNodes = null;
+        nodeType = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_NODETYPE, null);
     }
 
     /**
@@ -226,6 +200,17 @@ class UpdaterInfo {
      */
     String getStartedBy() {
         return startedBy;
+    }
+
+    /**
+     * @return the node type the updater updates
+     */
+    String getNodeType() {
+        return nodeType;
+    }
+
+    Class<? extends NodeUpdateVisitor> getUpdaterClass() {
+        return updaterClass;
     }
 
     Iterator<String> getUpdatedNodes() {

@@ -61,7 +61,7 @@ class UpdaterExecutionReport {
         failedStream = new PrintStream(failedFile);
         skippedFile = File.createTempFile("updater-skipped", "txt.tmp", null);
         skippedStream = new PrintStream(skippedFile);
-        updated = new ArrayList<String>();
+        updated = new ArrayList<>();
     }
 
     void start() {
