@@ -62,13 +62,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.jackrabbit.api.observation.JackrabbitEvent;
-import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
+import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
@@ -536,7 +536,7 @@ public class RepositoryServlet extends HttpServlet {
                 if (language.equals(Query.XPATH)) {
                     // we encode xpath queries to support queries like /jcr:root/7_8//*
                     // the 7 needs to be encode
-                    query = qmgr.createQuery(encodeXpath(queryString), language);
+                    query = qmgr.createQuery(RepoUtils.encodeXpath(queryString), language);
                 } else {
                     query = qmgr.createQuery(queryString, language);
                 }
@@ -755,40 +755,4 @@ public class RepositoryServlet extends HttpServlet {
         }
     }
 
-    private static String encodeXpath(String xpath) {
-        final int whereClauseIndexStart = xpath.indexOf("[");
-        final int whereClauseIndexEnd =xpath.lastIndexOf("]");
-        if (whereClauseIndexStart > -1 && whereClauseIndexEnd > -1) {
-            String beforeWhere = xpath.substring(0, whereClauseIndexStart);
-            String afterWhere = xpath.substring(whereClauseIndexEnd + 1, xpath.length());
-            // in where clause we can have path constraints
-            String whereClause = "[" + xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd) + "]";
-            return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
-        } else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
-            // only path
-            return encodePathConstraint(xpath);
-        } else {
-            // most likely incorrect query
-            return xpath;
-        }
-
-    }
-
-    private static String encodePathConstraint(final String path) {
-        String[] segments = path.split("/");
-        StringBuilder builder = new StringBuilder();
-        for (String segment : segments) {
-            if (segment.startsWith("element(")) {
-                builder.append(segment);
-            } else if (segment.equals("*")) {
-                builder.append(segment);
-            } else if (segment.startsWith("@")) {
-                builder.append(segment);
-            } else {
-                builder.append(ISO9075.encode(segment));
-            }
-            builder.append("/");
-        }
-        return builder.substring(0, builder.length() -1).toString();
-    }
 }

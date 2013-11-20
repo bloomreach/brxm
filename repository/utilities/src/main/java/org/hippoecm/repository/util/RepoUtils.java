@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.jar.Manifest;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.util.ISO9075;
 
 /**
  * Utility methods used by the repository
@@ -98,6 +99,43 @@ public class RepoUtils {
             }
         }
         return null;
+    }
+
+    public static String encodeXpath(String xpath) {
+        final int whereClauseIndexStart = xpath.indexOf("[");
+        final int whereClauseIndexEnd =xpath.lastIndexOf("]");
+        if (whereClauseIndexStart > -1 && whereClauseIndexEnd > -1) {
+            String beforeWhere = xpath.substring(0, whereClauseIndexStart);
+            String afterWhere = xpath.substring(whereClauseIndexEnd + 1, xpath.length());
+            // in where clause we can have path constraints
+            String whereClause = "[" + xpath.substring(whereClauseIndexStart + 1, whereClauseIndexEnd) + "]";
+            return encodePathConstraint(beforeWhere) + whereClause + afterWhere;
+        } else if (whereClauseIndexStart == -1 && whereClauseIndexEnd == -1) {
+            // only path
+            return encodePathConstraint(xpath);
+        } else {
+            // most likely incorrect query
+            return xpath;
+        }
+
+    }
+
+    private static String encodePathConstraint(final String path) {
+        String[] segments = path.split("/");
+        StringBuilder builder = new StringBuilder();
+        for (String segment : segments) {
+            if (segment.startsWith("element(")) {
+                builder.append(segment);
+            } else if (segment.equals("*")) {
+                builder.append(segment);
+            } else if (segment.startsWith("@")) {
+                builder.append(segment);
+            } else {
+                builder.append(ISO9075.encode(segment));
+            }
+            builder.append("/");
+        }
+        return builder.substring(0, builder.length() - 1);
     }
 
 }
