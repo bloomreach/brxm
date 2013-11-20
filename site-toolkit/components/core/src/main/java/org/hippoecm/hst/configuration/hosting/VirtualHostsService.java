@@ -698,7 +698,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if (StringUtils.isBlank(channelPath) || !channelPath.startsWith(channelsRoot)) {
             throw new IllegalArgumentException("Expected a valid channel JCR path which should start with '" + channelsRoot + "', but got '" + channelPath + "' instead");
         }
-        final String channelId = channelPath.substring(channelPath.length());
+        final String channelId = channelPath.substring(channelsRoot.length());
         return channels.get(channelId);
     }
 
