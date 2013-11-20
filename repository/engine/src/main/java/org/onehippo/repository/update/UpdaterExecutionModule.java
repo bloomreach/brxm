@@ -36,6 +36,7 @@ import javax.jcr.observation.EventListener;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,11 +53,15 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
     private final ExecutorService updaterExecutor = Executors.newSingleThreadExecutor();
     private Session session;
+    private UpdaterRegistryImpl updaterRegistry;
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
         this.session = session;
         session.getWorkspace().getObservationManager().addEventListener(this, Event.NODE_ADDED, UPDATE_QUEUE_PATH, false, null, null, false);
+        updaterRegistry = new UpdaterRegistryImpl(session.impersonate(new SimpleCredentials("system", new char[] {})));
+        updaterRegistry.start();
+        HippoServiceRegistry.registerService(updaterRegistry, UpdaterRegistry.class);
         // check if any updaters are queued and execute them on startup
         runExecuteUpdatersTask();
     }
@@ -69,6 +74,10 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
             log.error(e.getClass().getName() + ": " + e.getMessage(), e);
         }
         updaterExecutor.shutdown();
+        if (updaterRegistry != null) {
+            HippoServiceRegistry.unregisterService(updaterRegistry, UpdaterRegistry.class);
+            updaterRegistry.stop();
+        }
     }
 
     @Override
@@ -137,17 +146,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 session = UpdaterExecutionModule.this.session.impersonate(new SimpleCredentials("system", new char[] {}));
                 updaterExecutor = new UpdaterExecutor(updaterNode, session);
                 updaterExecutor.execute();
-            } catch (RepositoryException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-            } catch (IllegalAccessException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-            } catch (InstantiationException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-            } catch (ClassNotFoundException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-            } catch (IllegalArgumentException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-            } catch (CompilationFailedException e) {
+            } catch (RepositoryException | IllegalAccessException | InstantiationException | ClassNotFoundException | IllegalArgumentException | CompilationFailedException e) {
                 log.error(e.getClass().getName() + ": " + e.getMessage(), e);
             } catch (IOException e) {
                 log.error("Could not execute updater: log initialization failed", e);

@@ -66,6 +66,7 @@
 
       <param name="supportSimilarityOnStrings" value="true"/>
       <param name="supportSimilarityOnBinaries" value="false"/>
+      <param name="slowAlwaysExactSizedQueryResult" value="false"/>
 
       <!-- optional cache parameters for faceted engine. The default size when not configured is 1000 for both parameters -->
       <!-- param name="docIdSetCacheSize" value="1000"/>

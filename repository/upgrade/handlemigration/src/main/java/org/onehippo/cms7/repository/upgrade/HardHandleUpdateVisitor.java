@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.repository.upgrade;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,52 +51,39 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
-/**
- * Queries for all nodes of type hippo:hardhandle and for each node found:
- * - migrates the version history:
- *   - merge version histories into one
- * - migrates the handle:
- *   - remove hippo:hardhandle and replace with mix:referenceable
- *   - remove mix:versionable from draft and live variants and replace with mix:referenceable
- * - removes the orphaned version histories
- */
-class HandleMigrator extends AbstractMigrator {
+public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
 
-    private static final Logger log = LoggerFactory.getLogger(HandleMigrator.class);
     private static final String HANDLE_MIGRATION_WORKSPACE = "handlemigration";
     private static final String JCR_FROZEN_PRIMARY_TYPE = "jcr:frozenPrimaryType";
     private static final String ATTIC_PATH = "/content/attic";
 
     private static final int VERSIONS_RETAIN_COUNT = Integer.getInteger("org.onehippo.cms7.migration.versions_retain_count", Integer.MAX_VALUE);
 
-    private final Session defaultSession;
+    private Session defaultSession;
     private Session migrationSession;
 
-    HandleMigrator(final Session session) {
-        super(session);
+    @Override
+    public void initialize(final Session session) throws RepositoryException {
+        super.initialize(session);
         this.defaultSession = session;
-    }
-
-    void init() throws RepositoryException {
         createMigrationWorkspaceIfNotExists();
         migrationSession = loginToMigrationWorkspace();
-        defaultSession.getWorkspace().getObservationManager().setUserData(HippoNodeType.HIPPO_IGNORABLE);
-        super.init();
-    }
-
-    void shutdown() {
-        if (migrationSession != null && migrationSession.isLive()) {
-            migrationSession.logout();
-        }
-        super.shutdown();
     }
 
     @Override
-    protected void migrate(final Node handle) throws RepositoryException {
+    public void destroy() {
+        if (migrationSession != null && migrationSession.isLive()) {
+            migrationSession.logout();
+        }
+    }
+
+    @Override
+    public boolean doUpdate(Node handle) throws RepositoryException {
+        if (handle.getSession() != defaultSession) {
+            handle = defaultSession.getNodeByIdentifier(handle.getIdentifier());
+        }
         try {
             final VersionHistory handleVersionHistory = getHandleVersionHistory(handle);
             final List<Version> versions = getDocumentVersions(handleVersionHistory);
@@ -110,11 +96,7 @@ class HandleMigrator extends AbstractMigrator {
             defaultSession.refresh(false);
             migrationSession.refresh(false);
         }
-    }
-
-    @Override
-    protected String getNodeType() {
-        return "hippo:hardhandle";
+        return true;
     }
 
     private void migrateHandle(final Node handle) throws RepositoryException {

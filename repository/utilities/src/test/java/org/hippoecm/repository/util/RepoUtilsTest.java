@@ -23,6 +23,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import static org.hippoecm.repository.util.RepoUtils.encodeXpath;
+
 public class RepoUtilsTest {
 
     @Test
@@ -31,4 +33,33 @@ public class RepoUtilsTest {
         assertNotNull(manifest);
         assertEquals("Repository API", manifest.getMainAttributes().getValue("Implementation-Title"));
     }
+
+    @Test
+    public void testISO9075EncodeXPaths() {
+        assertEquals("/jcr:root/foo/bar", encodeXpath("/jcr:root/foo/bar"));
+        assertEquals("/jcr:root/foo/_x0037_8", encodeXpath("/jcr:root/foo/78"));
+        assertEquals("/jcr:root/foo/bar[@my:project = '456']", encodeXpath("/jcr:root/foo/bar[@my:project = '456']"));
+        assertEquals("/jcr:root/foo/_x0037_8[@my:project = '456']", encodeXpath("/jcr:root/foo/78[@my:project = '456']"));
+        assertEquals("/jcr:root/foo/_x0037_8[test/@my:project = '456']", encodeXpath("/jcr:root/foo/78[test/@my:project = '456']"));
+
+        // we do not encode *IN* where clauses
+        assertEquals("/jcr:root/foo/_x0037_8[99/@my:project = '456']", encodeXpath("/jcr:root/foo/78[99/@my:project = '456']"));
+
+        assertEquals("//element(*,hippo:document)", encodeXpath("//element(*,hippo:document)"));
+        assertEquals("/jcr:root/foo/bar//element(*,hippo:document)", encodeXpath("/jcr:root/foo/bar//element(*,hippo:document)"));
+        assertEquals("/jcr:root/foo/_x0037_8//element(*,hippo:document)",  encodeXpath("/jcr:root/foo/78//element(*,hippo:document)"));
+
+        assertEquals("/jcr:root/foo/_x0037_8//element(*,hippo:document)[@my:project = 'test']",
+                encodeXpath("/jcr:root/foo/78//element(*,hippo:document)[@my:project = 'test']"));
+
+        // we do not encode *IN* where clauses
+        assertEquals("/jcr:root/foo/_x0037_8//element(*,hippo:document)[99/@my:project = 'test']",
+                encodeXpath("/jcr:root/foo/78//element(*,hippo:document)[99/@my:project = 'test']"));
+
+        assertEquals("//*", encodeXpath("//*"));
+        assertEquals("//*[jcr:contains(.,'test')]", encodeXpath("//*[jcr:contains(.,'test')]"));
+        assertEquals("//element(*,hippo:document)", encodeXpath("//element(*,hippo:document)"));
+
+    }
+
 }

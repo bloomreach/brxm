@@ -46,6 +46,8 @@ public class HippoQueryResult extends QueryResultImpl {
 
     protected final String[] orderFuncs;
 
+    private boolean slowAlwaysExactSizedQueryResult = false;
+
     public HippoQueryResult(SearchIndex index,
                             SessionContext sessionContext,
                             AbstractQueryImpl queryImpl,
@@ -61,6 +63,9 @@ public class HippoQueryResult extends QueryResultImpl {
         this.orderProps = orderProps;
         this.orderSpecs = orderSpecs;
         this.orderFuncs = orderFuncs;
+        if (index instanceof ServicingSearchIndex) {
+            slowAlwaysExactSizedQueryResult = ((ServicingSearchIndex)index).getSlowAlwaysExactSizedQueryResult();
+        }
         // if document order is requested get all results right away
         getResults(docOrder ? Integer.MAX_VALUE : index.getResultFetchSize());
     }
@@ -77,7 +82,10 @@ public class HippoQueryResult extends QueryResultImpl {
     }
 
     @Override
-    protected boolean isAccessGranted(ScoreNode[] nodes) {
+    protected boolean isAccessGranted(ScoreNode[] nodes) throws RepositoryException {
+        if (slowAlwaysExactSizedQueryResult) {
+            return super.isAccessGranted(nodes);
+        }
         return true;
     }
 

@@ -18,7 +18,6 @@ package org.onehippo.cms7.repository.upgrade;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
 
@@ -27,23 +26,10 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
-/**
- * Queries for all nodes of type hippo:harddocument and for each node found:
- * - replaces hippo:harddocument mixin with mix:referenceable
- */
-class DocumentMigrator extends AbstractMigrator {
-
-    DocumentMigrator(final Session session) {
-        super(session);
-    }
+public class HardDocumentUpdateVisitor extends BaseContentUpdateVisitor {
 
     @Override
-    protected String getNodeType() {
-        return "hippo:harddocument";
-    }
-
-    @Override
-    protected void migrate(final Node node) throws RepositoryException {
+    public boolean doUpdate(final Node node) throws RepositoryException {
         log.debug("Migrating {}", node.getPath());
         try {
             final VersionHistory versionHistory = getVersionHistory(node);
@@ -55,6 +41,7 @@ class DocumentMigrator extends AbstractMigrator {
         } finally {
             session.refresh(false);
         }
+        return true;
     }
 
     /**

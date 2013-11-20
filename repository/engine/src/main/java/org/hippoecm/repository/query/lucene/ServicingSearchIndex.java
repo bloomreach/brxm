@@ -104,6 +104,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     private boolean supportSimilarityOnStrings = true;
     private boolean supportSimilarityOnBinaries = false;
 
+    private boolean slowAlwaysExactSizedQueryResult = false;
+
     /**
      * Whether similarity searches on String properties are supported.Supporting similarity on
      * Strings increases the Lucene index. If no similarity searches are needed, it is better
@@ -132,6 +134,14 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     // of org.apache.commons.collections.BeanMap#keyIterator
     public boolean getSupportSimilarityOnBinaries() {
         return supportSimilarityOnBinaries;
+    }
+
+    public boolean getSlowAlwaysExactSizedQueryResult() {
+        return slowAlwaysExactSizedQueryResult;
+    }
+
+    public void setSlowAlwaysExactSizedQueryResult(final boolean slowAlwaysExactSizedQueryResult) {
+        this.slowAlwaysExactSizedQueryResult = slowAlwaysExactSizedQueryResult;
     }
 
     private final Cache<String, CachingMultiReaderQueryFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
