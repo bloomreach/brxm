@@ -246,7 +246,25 @@ public class BrokenLinksTest extends RepositoryTestCase {
         new BrokenLinksCheckingJob().execute(jobContext);
 
         session.refresh(false);
-        assertEquals(total, countBrokenDocuments(session.getRootNode().getNode("test")));
+        final int brokenCount = countBrokenDocuments(session.getRootNode().getNode("test"));
+        try {
+            assertEquals(total, brokenCount);
+        } catch (AssertionError e) {
+            System.out.println("testManyFaultyLinks failed. Found '"+brokenCount+"' documents with broken links instead of expected '"+total+"'");
+            System.out.println("Computing number of documents with broken links again.....");
+            final int brokenCountSecondTime = countBrokenDocuments(session.getRootNode().getNode("test"));
+            System.out.println("Second round found '"+brokenCountSecondTime+"' documents with broken links.");
+
+            if (brokenCountSecondTime != total) {
+                final Node testNode = session.getRootNode().getNode("test");
+                // search number of documents through hippostd:html node
+                final Query query = session.getWorkspace().getQueryManager().createQuery("/jcr:root/test//element(*,hippostd:html) order by @jcr:score", "xpath");
+                query.setLimit(100000);
+                final QueryResult execute = query.execute();
+                System.out.println("Expected to find '"+total+"' documents. Found number of documents with hippostd:html node:" + execute.getNodes().getSize());
+            }
+            throw e;
+        }
     }
 
 
