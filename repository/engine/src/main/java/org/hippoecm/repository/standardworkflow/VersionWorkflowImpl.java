@@ -18,6 +18,7 @@ package org.hippoecm.repository.standardworkflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -363,9 +364,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     public SortedMap<Calendar, Set<String>> list() throws WorkflowException, RepositoryException {
-        Node handle = getVersionableHandle(subject);
-        if (handle == null) {
-            SortedMap<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
+        if (subject.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            final SortedMap<Calendar, Set<String>> listing = new TreeMap<>();
             VersionHistory versionHistory = subject.getVersionHistory();
 
             for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext();) {
@@ -375,53 +375,13 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                 }
                 Set<String> labelsSet = new TreeSet<String>();
                 String[] labels = versionHistory.getVersionLabels();
-                for (String label : labels) {
-                    labelsSet.add(label);
-                }
+                Collections.addAll(labelsSet, labels);
                 labelsSet.add(version.getName());
                 listing.put(version.getCreated(), labelsSet);
             }
             return listing;
-        } else {
-            boolean placeholder = true;
-            Calendar previous = null;
-            SortedMap<Calendar, Set<String>> listing = new TreeMap<Calendar, Set<String>>();
-            Map<String, String> criteria = getCriteria(subject, handle);
-            VersionHistory handleHistory = handle.getVersionHistory();
-            for (VersionIterator iter = handleHistory.getAllVersions(); iter.hasNext();) {
-                Version handleVersion = iter.nextVersion();
-                if (!handleVersion.getName().equals("jcr:rootVersion")) {
-                    for (NodeIterator children = handleVersion.getNode("jcr:frozenNode").getNodes(); children.hasNext();) {
-                        Node child = children.nextNode();
-                        if (child.isNodeType("nt:versionedChild")) {
-                            String ref = child.getProperty("jcr:childVersionHistory").getString();
-                            VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(ref);
-                            Set<String> labelsSet = new TreeSet<String>();
-                            String[] labels = variantHistory.getVersionLabels();
-                            for (String label : labels) {
-                                labelsSet.add(label);
-                            }
-                            for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext();) {
-                                Version version = childIter.nextVersion();
-                                if (!version.getName().equals("jcr:rootVersion")) {
-                                    if (matches(version.getNode("jcr:frozenNode"), criteria)) {
-                                        if (previous == null || !previous.equals(version.getCreated())) {
-                                            listing.put(version.getCreated(), labelsSet);
-                                            placeholder = false;
-                                            previous = version.getCreated();
-                                        }
-                                    } else if (!placeholder) {
-                                        placeholder = true;
-                                        listing.put(version.getCreated(), labelsSet);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return listing;
         }
+        return new TreeMap<>();
     }
 
     public Document retrieve(Calendar historic) throws WorkflowException, RepositoryException {
