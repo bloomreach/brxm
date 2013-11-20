@@ -90,10 +90,8 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
         final UpdaterRegistry updaterRegistry = HippoServiceRegistry.getService(UpdaterRegistry.class);
         if (updaterRegistry != null) {
             try {
-                final List<Class<? extends NodeUpdateVisitor>> updaters = updaterRegistry.getUpdaters(item);
-                for (Class<? extends NodeUpdateVisitor> updaterClass : updaters) {
-                    final NodeUpdateVisitor updater = updaterClass.newInstance();
-                    updater.initialize(UserSession.get().getJcrSession());
+                final List<NodeUpdateVisitor> updaters = updaterRegistry.getUpdaters(item);
+                for (NodeUpdateVisitor updater : updaters) {
                     try {
                         updater.doUpdate(item);
                     } finally {
@@ -102,8 +100,6 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
                 }
             } catch (RepositoryException e) {
                 log.error("Error updating document", e);
-            } catch (InstantiationException | IllegalAccessException e) {
-                log.error("Failed to instantiate updater for document: {}", e.toString());
             }
         }
     }
