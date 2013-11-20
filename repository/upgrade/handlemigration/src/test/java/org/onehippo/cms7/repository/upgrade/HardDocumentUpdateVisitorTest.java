@@ -27,7 +27,7 @@ import org.onehippo.repository.util.JcrConstants;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-public class DocumentMigratorTest extends RepositoryTestCase {
+public class HardDocumentUpdateVisitorTest extends RepositoryTestCase {
 
     private Node documents;
 
@@ -46,8 +46,10 @@ public class DocumentMigratorTest extends RepositoryTestCase {
 
         folder.checkin();
 
-        final DocumentMigrator migrator = new DocumentMigrator(session);
-        migrator.migrate(folder);
+        final HardDocumentUpdateVisitor migrator = new HardDocumentUpdateVisitor();
+        migrator.initialize(session);
+        migrator.setLogger(log);
+        migrator.doUpdate(folder);
 
         assertFalse(folder.isNodeType(HippoNodeType.NT_HARDDOCUMENT));
         assertTrue(folder.isNodeType(JcrConstants.MIX_REFERENCEABLE));

@@ -15,7 +15,6 @@
  */
 package org.onehippo.cms7.repository.upgrade;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +45,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-public class HandleMigratorTest extends RepositoryTestCase {
+public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
 
     private static int NO_OF_DOCS = 1;
     private static int NO_OF_VERSIONS = 4;
@@ -140,15 +139,16 @@ public class HandleMigratorTest extends RepositoryTestCase {
     }
 
     private void migrate() throws RepositoryException {
-        final HandleMigrator handleMigrator = new HandleMigrator(session);
-        handleMigrator.init();
+        final HardHandleUpdateVisitor handleMigrator = new HardHandleUpdateVisitor();
+        handleMigrator.initialize(session);
+        handleMigrator.setLogger(log);
         for (Node handle : new NodeIterable(documents.getNodes())) {
             if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                handleMigrator.migrate(handle);
+                handleMigrator.doUpdate(handle);
             }
         }
         for (Node handle : getAtticHandles()) {
-            handleMigrator.migrate(handle);
+            handleMigrator.doUpdate(handle);
         }
 
     }

@@ -23,117 +23,34 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 
-import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.update.BaseNodeUpdateVisitor;
 import org.onehippo.repository.util.JcrConstants;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractMigrator {
+public abstract class BaseContentUpdateVisitor extends BaseNodeUpdateVisitor {
 
-    private int count;
-    private long totalSize;
-    protected final Session session;
-    protected boolean cancelled = false;
-    protected Logger log = LoggerFactory.getLogger(getClass());
+    protected Session session;
 
-
-    AbstractMigrator(final Session session) {
+    @Override
+    public void initialize(final Session session) throws RepositoryException {
         this.session = session;
-    }
-
-    void init() throws RepositoryException {
         session.getWorkspace().getObservationManager().setUserData(HippoNodeType.HIPPO_IGNORABLE);
+        setLogger(LoggerFactory.getLogger(getClass()));
     }
 
-    void cancel() {
-        cancelled = true;
+    @Override
+    public boolean undoUpdate(final Node node) throws RepositoryException, UnsupportedOperationException {
+        throw new UnsupportedOperationException();
     }
 
-    void shutdown() {
-        if (session != null && session.isLive()) {
-            session.logout();
-        }
+    @Override
+    public void destroy() {
     }
 
-    void migrate() throws RepositoryException {
-        log.debug("Running migration tool");
-
-        HippoNodeIterator nodes = getNodes();
-        totalSize = nodes.getTotalSize();
-
-        if (totalSize <= 0) {
-            log.debug("No " + getNodeType() + "s to migrate");
-            return;
-        }
-
-        log.info("{} {}s to migrate", totalSize, getNodeType());
-
-        long size = totalSize;
-        while (size > 0) {
-            if (cancelled) {
-                break;
-            }
-            migrate(nodes);
-            nodes = getNodes();
-            size = nodes.getTotalSize();
-        }
-        log.info("Finished migrating {}s to new model", getNodeType());
-    }
-
-    private void migrate(final HippoNodeIterator nodes) {
-        for (Node node : new NodeIterable(nodes)) {
-            if (cancelled) {
-                break;
-            }
-            try {
-                log.debug("Migrating {}", node.getPath());
-                migrate(node);
-                count++;
-                throttle();
-                if (count % ((totalSize + 99) / 100) == 0) {
-                    long progress = Math.round(100.0 * count / totalSize);
-                    log.info("Progress: {} %", progress);
-                }
-                if (count % 100 == 0) {
-                    log.info("Migrated {} nodes", count);
-                    return;
-                }
-            } catch (RepositoryException e) {
-                log.error("Failed to migrate " + JcrUtils.getNodePathQuietly(node), e);
-            }
-        }
-    }
-
-    private void throttle() {
-        if (count % 10 == 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ignore) {
-            }
-        } else {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException ignore) {
-            }
-        }
-    }
-
-    private HippoNodeIterator getNodes() throws RepositoryException {
-        final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final Query query = queryManager.createQuery("SELECT * FROM " + getNodeType() + " ORDER BY jcr:name", Query.SQL);
-        return (HippoNodeIterator) query.execute().getNodes();
-    }
-
-    protected abstract String getNodeType();
-
-    protected abstract void migrate(final Node node) throws RepositoryException;
 
     protected void removeMixin(final Node node, final String mixin) throws RepositoryException {
         if (node.isNodeType(mixin)) {
