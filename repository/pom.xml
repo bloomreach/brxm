@@ -63,6 +63,7 @@
     <module>resources</module>
     <module>dependencies</module>
     <module>servlets</module>
+    <module>scripts</module>
     <module>workflow</module>
   </modules>
 

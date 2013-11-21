@@ -126,6 +126,7 @@ resources/.classpath
 resources/.project
 resources/.settings
 resources/target
+scripts/hippo-repository-scripts.iml
 servlets/*.iml
 servlets/*.tmp
 servlets/.classpath
