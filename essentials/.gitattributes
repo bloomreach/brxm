@@ -461,6 +461,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/jsp/essentials-component-news-detail.jsp -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/log4j.xml -text
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/project/site/dummy.txt -text
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/pom.xml -text
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/pom.xml -text
 plugin-api/api/pom.xml -text

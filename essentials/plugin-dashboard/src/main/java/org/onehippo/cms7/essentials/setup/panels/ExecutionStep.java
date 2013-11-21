@@ -109,6 +109,16 @@ public class ExecutionStep extends EssentialsWizardStep {
         public Instructions getInstructions() {
             return new Instructions() {
                 @Override
+                public int totalInstructions() {
+                    return 0;
+                }
+
+                @Override
+                public int totalInstructionSets() {
+                    return 0;
+                }
+
+                @Override
                 public Set<InstructionSet> getInstructionSets() {
                     return Collections.emptySet();
                 }

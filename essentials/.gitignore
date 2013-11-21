@@ -2014,6 +2014,12 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/reso
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/resources/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/src/test/target
 dashboard-plugins/essentials-powerpacks/essentials-powerpack-basic/target
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/*.iml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/.DS_Store
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/.idea
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/atlassian-ide-plugin.xml
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/hippo-plugins.iws
+dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/target
 dashboard-plugins/essentials-powerpacks/hippo-plugins.iws
 dashboard-plugins/essentials-powerpacks/target
 dashboard-plugins/hippo-plugins.iws
