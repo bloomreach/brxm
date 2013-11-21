@@ -16,6 +16,9 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Item;
 import javax.jcr.Session;
 
@@ -57,7 +60,12 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
         // POPULATE TREE:
         //############################################
         final HstConfiguration hstConfiguration = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
-        hstConfiguration.addTemplate(new HstTemplate("main.test", "/JSP/somepath.jsp"));
+        final HstTemplate template = new HstTemplate("main.test", "/JSP/somepath.jsp");
+        final List<String> containers = new ArrayList<>();
+        containers.add("foo");
+        containers.add("bar");
+        template.setContainers(containers);
+        hstConfiguration.addTemplate(template);
 
         //############################################
         //

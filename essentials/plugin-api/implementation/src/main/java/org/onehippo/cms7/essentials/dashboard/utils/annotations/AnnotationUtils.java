@@ -38,20 +38,23 @@ public final class AnnotationUtils {
     private static Logger log = LoggerFactory.getLogger(AnnotationUtils.class);
 
 
+    private AnnotationUtils() {
+    }
+
     /**
      * Return annotation of specific type
-     * @param clazz class file we are scanning
-     * @param annotationClass  annotation type we are interested in
-     * @param <T> Annotation type
-     * @return  null if no annotation found, annotation otherwise
+     *
+     * @param clazz           class file we are scanning
+     * @param annotationClass annotation type we are interested in
+     * @param <T>             Annotation type
+     * @return null if no annotation found, annotation otherwise
      */
-    public static  <T extends Annotation> T getClassAnnotation(final Class<?> clazz, final Class<T> annotationClass){
-        if(!clazz.isAnnotationPresent(annotationClass)){
+    public static <T extends Annotation> T getClassAnnotation(final Class<?> clazz, final Class<T> annotationClass) {
+        if (!clazz.isAnnotationPresent(annotationClass)) {
             return null;
         }
         return clazz.getAnnotation(annotationClass);
     }
-
 
     /**
      * Get fields of an class which are annotated with specific
@@ -115,7 +118,6 @@ public final class AnnotationUtils {
         return fields.values();
     }
 
-
     /**
      * Scans class for declared methods
      *
@@ -140,10 +142,6 @@ public final class AnnotationUtils {
             clazz = clazz.getSuperclass();
         }
         return returnValue.values();
-    }
-
-
-    private AnnotationUtils() {
     }
 }
 

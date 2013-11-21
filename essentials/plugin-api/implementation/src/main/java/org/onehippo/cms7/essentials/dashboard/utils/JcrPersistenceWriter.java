@@ -30,6 +30,7 @@ import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
 import org.slf4j.Logger;
@@ -105,6 +106,28 @@ public class JcrPersistenceWriter {
             }
         }
         // TODO write multi properties:
+        final PersistentMultiProperty.ProcessAnnotation multiWriter = PersistentMultiProperty.ProcessAnnotation.MULTI_PROPERTY_WRITER;
+        final Collection<Field> multiFields = AnnotationUtils.getAnnotatedFields(model.getClass(), PersistentMultiProperty.class);
+        for (Field multiField : multiFields) {
+            try {
+                final Object value =multiField.get(model);
+                if(value !=null){
+                    final PersistentMultiProperty p = multiField.getAnnotation(PersistentMultiProperty.class);
+                    final String name = p.name();
+                    final JcrModel myModel = new SimplePropertyModel(value);
+                    myModel.setParentPath(jcrNode.getPath());
+                    myModel.setName(name);
+                    // write single property:
+                    multiWriter.execute(context, myModel, p);
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Error processing value", e);
+            } catch (RepositoryException e) {
+                log.error("Error fetching parent path", e);
+            }
+        }
+
+
         // process kids:
         final List<JcrModel> children = model.getChildren();
         for (JcrModel child : children) {

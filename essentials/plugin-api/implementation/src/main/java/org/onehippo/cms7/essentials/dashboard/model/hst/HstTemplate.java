@@ -6,6 +6,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
 
@@ -21,9 +22,11 @@ public class HstTemplate extends BaseJcrModel{
     private static final String HST_IS_NAMED = "hst:isnamed";
 
 
+    @PersistentMultiProperty(name=HST_CONTAINERS)
     private List<String> containers = new ArrayList<>();
     @PersistentProperty(name = HST_RENDER_PATH)
     private String renderPath = null;
+    @PersistentProperty(name = HST_SCRIPT)
     private String script = null;
     private boolean isNamed = false;
 
