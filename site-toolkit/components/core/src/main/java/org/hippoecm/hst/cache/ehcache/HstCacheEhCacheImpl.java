@@ -33,6 +33,7 @@ public class HstCacheEhCacheImpl implements HstCache {
 
     private static final Logger log = LoggerFactory.getLogger(HstCacheEhCacheImpl.class);
     private Ehcache ehcache;
+    private volatile int invalidationCounter;
 
     public HstCacheEhCacheImpl(Ehcache ehcache) {
         this.ehcache = ehcache;
@@ -60,6 +61,7 @@ public class HstCacheEhCacheImpl implements HstCache {
             return cached;
         }
 
+        int preCallInvalidationCounter = invalidationCounter;
         // to make sure the lock is freed in case of blocking cache, make sure we start with an non null element,
         CacheElement element = null;
         try {
@@ -69,12 +71,13 @@ public class HstCacheEhCacheImpl implements HstCache {
                         "return null for key '{}'",valueLoader.getClass().getName(), key);
             }
         } finally {
+            int postCallInvalidationCounter = invalidationCounter;
             // if exceptions (also unchecked) happened or the CacheElement is uncacheable, we put an empty element (createElement(key,null))
             // to make sure that if a blocking cache is used, the lock on the key is freed. Also see ehcache BlockingCache
-            if (element == null){
+            if (element == null) {
                 element = createElement(key, null);
                 put(element);
-            } else if (!element.isCacheable()){
+            } else if (!element.isCacheable() || postCallInvalidationCounter != preCallInvalidationCounter){
                 put(createElement(key, null));
             } else {
                 put(element);
@@ -114,6 +117,7 @@ public class HstCacheEhCacheImpl implements HstCache {
     }
 
     public void clear() {
+        invalidationCounter++;
         ehcache.removeAll();
     }
 
