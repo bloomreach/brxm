@@ -21,6 +21,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -55,7 +56,7 @@ public @interface PersistentNode {
     String[] mixins() default {"mix:referenceable", "hst:descriptive", "mix:simpleVersionable"};
 
     enum ProcessAnnotation implements PersistentHandler<PersistentNode, Node> {
-        INSTANCE;
+        NODE_WRITER;
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
 
         @Override
@@ -75,7 +76,6 @@ public @interface PersistentNode {
                     for (String mixin : mixins) {
                         node.addMixin(mixin);
                     }
-                    session.save();
                     return node;
                 } else {
                     log.error("Parent doesn't exist: {}", parentPath);

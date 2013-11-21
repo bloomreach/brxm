@@ -17,10 +17,14 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import javax.jcr.Item;
+import javax.jcr.Session;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstConfiguration;
+import org.onehippo.cms7.essentials.dashboard.model.hst.HstTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,17 +38,32 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriterTest.class);
 
+    private Session session;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        session = getContext().getSession();
+        session.getRootNode().addNode("hst:hst", "hst:hst").addNode("hst:configurations", "hst:configurations");
+        session.save();
+
+    }
+
     @Test
     public void testWrite() throws Exception {
         JcrPersistenceWriter writer = new JcrPersistenceWriter(getContext());
+        //############################################
+        // POPULATE TREE:
+        //############################################
         final HstConfiguration hstConfiguration = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
-        Item config = writer.write(hstConfiguration);
-        // no parent yet:
-        assertTrue(config == null);
-        session.getRootNode().addNode("hst:hst", "hst:hst").addNode("hst:configurations", "hst:configurations");
-        session.save();
-        // expect object to be saved:
-        config = writer.write(hstConfiguration);
+        hstConfiguration.addTemplate(new HstTemplate("main.test", "/JSP/somepath.jsp"));
+
+        //############################################
+        //
+        //############################################
+        final Item config = writer.write(hstConfiguration);
+
         assertNotNull("Expected saved object", config);
     }
 }

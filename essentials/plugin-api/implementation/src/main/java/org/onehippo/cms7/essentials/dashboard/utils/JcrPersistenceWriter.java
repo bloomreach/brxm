@@ -16,20 +16,26 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.List;
+
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
+import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-
-import static org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode.*;
 
 /**
  * @version "$Id$"
@@ -44,6 +50,22 @@ public class JcrPersistenceWriter {
     }
 
     public Item write(final JcrModel model) {
+        final Node rootNode = writeNode(model);
+        if (rootNode == null) {
+            return null;
+        }
+        //save changes
+        try {
+            context.getSession().save();
+            return rootNode;
+        } catch (RepositoryException e) {
+            log.error("Error saving model", e);
+            GlobalUtils.refreshSession(context, false);
+        }
+        return null;
+    }
+
+    private Node writeNode(final JcrModel model) {
         final PersistentNode node = AnnotationUtils.getClassAnnotation(model.getClass(), PersistentNode.class);
         if (node == null) {
             log.error("No @PersistentNode annotation found for object: {}", model);
@@ -51,12 +73,46 @@ public class JcrPersistenceWriter {
         }
 
         final String type = node.type();
-        if(Strings.isNullOrEmpty(type)){
+        if (Strings.isNullOrEmpty(type)) {
             log.error("@PersistentNode type must have a value but was empty");
             return null;
         }
 
-        PersistentHandler<PersistentNode, Node> handler = ProcessAnnotation.INSTANCE;
-        return handler.execute(context, model, node);
+        final PersistentHandler<PersistentNode, Node> nodeWriter = PersistentNode.ProcessAnnotation.NODE_WRITER;
+        final Node jcrNode = nodeWriter.execute(context, model, node);
+        if (jcrNode == null) {
+            return null;
+        }
+        // process single properties:
+        final PersistentHandler<PersistentProperty, Property> propWriter = PersistentProperty.ProcessAnnotation.PROPERTY_WRITER;
+        final Collection<Field> fields = AnnotationUtils.getAnnotatedFields(model.getClass(), PersistentProperty.class);
+        for (Field field : fields) {
+            try {
+                final Object value = field.get(model);
+                if (value != null) {
+                    final PersistentProperty property = field.getAnnotation(PersistentProperty.class);
+                    final String name = property.name();
+                    final JcrModel myModel = new SimplePropertyModel(value);
+                    myModel.setParentPath(jcrNode.getPath());
+                    myModel.setName(name);
+                    // write single property:
+                    propWriter.execute(context, myModel, property);
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Error processing value", e);
+            } catch (RepositoryException e) {
+                log.error("Error fetching parent path", e);
+            }
+        }
+        // TODO write multi properties:
+        // process kids:
+        final List<JcrModel> children = model.getChildren();
+        for (JcrModel child : children) {
+            writeNode(child);
+        }
+
+        return jcrNode;
     }
+
 }
+

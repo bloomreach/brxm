@@ -177,7 +177,9 @@ public class GlobalUtils {
     @SuppressWarnings("HippoHstCallNodeRefreshInspection")
     public static void refreshSession(final Session session, final boolean keepChanges) {
         try {
-            session.refresh(keepChanges);
+            if (session != null) {
+                session.refresh(keepChanges);
+            }
         } catch (RepositoryException e) {
             log.error("Error refreshing session", e);
         }

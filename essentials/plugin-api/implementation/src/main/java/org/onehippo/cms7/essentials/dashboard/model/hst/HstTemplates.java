@@ -16,36 +16,17 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
-
-import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@PersistentNode(type = "hst:configuration")
-public class HstConfiguration extends BaseJcrModel {
+@PersistentNode(type = "hst:templates")
+public class HstTemplates extends BaseJcrModel {
 
-
-    private JcrModel templates = new HstTemplates();
-
-    public HstConfiguration() {
-        addChild(templates);
+    public HstTemplates() {
+        setName("hst:templates");
     }
-
-    public HstConfiguration(final String name, final String parentPath) {
-        this();
-        setName(name);
-        setParentPath(parentPath);
-        templates.setParentPath("/hst:hst/hst:configurations/" + getName());
-    }
-
-
-    public void addTemplate(final JcrModel template) {
-        template.setParentPath(templates.getParentPath());
-        templates.addChild(template);
-    }
-
-
 }

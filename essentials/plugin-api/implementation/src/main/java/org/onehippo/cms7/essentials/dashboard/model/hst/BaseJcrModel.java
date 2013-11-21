@@ -56,7 +56,7 @@ public class BaseJcrModel implements JcrModel {
     @Override
     public JcrModel addChild(final JcrModel model) {
         children.add(model);
-        model.setParentPath(this.parentPath);
+        model.setParentPath(this.parentPath +'/' + getName());
         return model;
     }
 
