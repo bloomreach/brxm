@@ -25,11 +25,12 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.RepositoryService;
 
 /**
  * Simple {@link Repository Repository} decorator.
  */
-public class RepositoryDecorator extends org.hippoecm.repository.decorating.RepositoryDecorator implements Repository {
+public class RepositoryDecorator extends org.hippoecm.repository.decorating.RepositoryDecorator implements RepositoryService {
 
     private Repository repository;
 
