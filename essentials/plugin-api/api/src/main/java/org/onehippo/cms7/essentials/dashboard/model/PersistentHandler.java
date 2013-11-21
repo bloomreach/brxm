@@ -21,7 +21,10 @@ import javax.jcr.Item;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
+ * Persists JcrModel objects
+ *
  * @version "$Id$"
+ * @see org.onehippo.cms7.essentials.dashboard.model.JcrModel
  */
 public interface PersistentHandler<T, E extends Item> {
 

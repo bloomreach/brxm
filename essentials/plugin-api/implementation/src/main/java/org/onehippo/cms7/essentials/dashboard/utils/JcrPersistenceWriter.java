@@ -17,11 +17,19 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import javax.jcr.Item;
+import javax.jcr.Node;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
+import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+
+import static org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode.*;
 
 /**
  * @version "$Id$"
@@ -29,15 +37,26 @@ import org.slf4j.LoggerFactory;
 public class JcrPersistenceWriter {
 
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriter.class);
-
     private final PluginContext context;
 
     public JcrPersistenceWriter(final PluginContext context) {
         this.context = context;
     }
 
+    public Item write(final JcrModel model) {
+        final PersistentNode node = AnnotationUtils.getClassAnnotation(model.getClass(), PersistentNode.class);
+        if (node == null) {
+            log.error("No @PersistentNode annotation found for object: {}", model);
+            return null;
+        }
 
-    public Item write(final JcrModel model){
-        return null;
+        final String type = node.type();
+        if(Strings.isNullOrEmpty(type)){
+            log.error("@PersistentNode type must have a value but was empty");
+            return null;
+        }
+
+        PersistentHandler<PersistentNode, Node> handler = ProcessAnnotation.INSTANCE;
+        return handler.execute(context, model, node);
     }
 }

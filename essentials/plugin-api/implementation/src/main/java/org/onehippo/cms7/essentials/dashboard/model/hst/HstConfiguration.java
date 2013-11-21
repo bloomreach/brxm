@@ -23,24 +23,19 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
  * @version "$Id$"
  */
 @PersistentNode(type = "hst:configuration")
-public class HstConfiguration implements JcrModel {
+public class HstConfiguration extends BaseJcrModel {
 
-
-    private String name;
 
     public HstConfiguration() {
     }
 
-    public HstConfiguration(final String name) {
-        this.name = name;
+    public HstConfiguration(final String name, final String parentPath) {
+        setName(name);
+        setParentPath(parentPath);
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+
+
+
 }

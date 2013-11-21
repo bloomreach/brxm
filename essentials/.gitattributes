@@ -537,6 +537,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginAsset.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginScreenshot.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/BaseJcrModel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfiguration.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstTemplate.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/TemplateExistsException.java -text

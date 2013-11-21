@@ -16,19 +16,35 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils;
 
+import javax.jcr.Item;
+
 import org.junit.Test;
+import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.dashboard.model.hst.HstConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
  */
-public class JcrPersistenceWriterTest {
+public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriterTest.class);
 
     @Test
     public void testWrite() throws Exception {
-
+        JcrPersistenceWriter writer = new JcrPersistenceWriter(getContext());
+        final HstConfiguration hstConfiguration = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
+        Item config = writer.write(hstConfiguration);
+        // no parent yet:
+        assertTrue(config == null);
+        session.getRootNode().addNode("hst:hst", "hst:hst").addNode("hst:configurations", "hst:configurations");
+        session.save();
+        // expect object to be saved:
+        config = writer.write(hstConfiguration);
+        assertNotNull("Expected saved object", config);
     }
 }

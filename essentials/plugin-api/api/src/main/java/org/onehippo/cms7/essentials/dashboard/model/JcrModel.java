@@ -16,11 +16,27 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
+import java.util.List;
+
 /**
+ * Memory model representation of an JCR Item (Node or Property)
+ *
  * @version "$Id$"
  */
 public interface JcrModel {
 
     String getName();
 
+    void setName(String name);
+
+    JcrModel addChild(JcrModel model);
+
+
+    String getParentPath();
+
+    void setParentPath(String parentPath);
+
+    List<JcrModel> getChildren();
+
+    void setChildren(List<JcrModel> children);
 }
