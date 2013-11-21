@@ -556,6 +556,13 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/p
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/panels/MultiSelectBoxPanel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/EssentialsFeedbackPanel.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/PluginFeedbackPanel.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/ProgressBar.css -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/ProgressBar.html -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/ProgressBar.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/ProgressBarUpdatingBehavior.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/Progression.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/ProgressionModel.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/package-info.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtils.java -text

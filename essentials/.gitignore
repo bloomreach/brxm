@@ -2270,6 +2270,12 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/.idea
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/atlassian-ide-plugin.xml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/*.iml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/.DS_Store
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/.idea
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/atlassian-ide-plugin.xml
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/hippo-plugins.iws
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/progress/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ui/target
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/*.iml
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/.DS_Store

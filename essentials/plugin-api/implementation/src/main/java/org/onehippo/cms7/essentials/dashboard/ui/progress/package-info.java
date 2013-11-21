@@ -14,25 +14,8 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.instructions;
-
-import java.util.Set;
-
-import javax.xml.bind.annotation.XmlTransient;
+package org.onehippo.cms7.essentials.dashboard.ui.progress;
 
 /**
- * @version "$Id$"
+ * ProgressBar classes is stripped down version of https://github.com/wicketstuff PorgressBar
  */
-@XmlTransient
-public interface Instructions {
-
-
-    int totalInstructions();
-
-    int totalInstructionSets();
-
-    Set<InstructionSet> getInstructionSets();
-
-    void setInstructionSets(Set<InstructionSet> instructionSets);
-
-}

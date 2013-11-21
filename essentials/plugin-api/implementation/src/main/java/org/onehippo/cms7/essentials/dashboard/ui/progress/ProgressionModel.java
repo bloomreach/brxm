@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.instructions;
+package org.onehippo.cms7.essentials.dashboard.ui.progress;
 
-import java.util.Set;
-
-import javax.xml.bind.annotation.XmlTransient;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@XmlTransient
-public interface Instructions {
+public abstract class ProgressionModel extends AbstractReadOnlyModel<Progression> {
 
+    private static final long serialVersionUID = 1L;
 
-    int totalInstructions();
+    @Override
+    public final Progression getObject() {
+        return getProgression();
+    }
 
-    int totalInstructionSets();
-
-    Set<InstructionSet> getInstructionSets();
-
-    void setInstructionSets(Set<InstructionSet> instructionSets);
+    /**
+     * Return the progress in form of a Progression value object.
+     *
+     * @return the progress
+     */
+    protected abstract Progression getProgression();
 
 }

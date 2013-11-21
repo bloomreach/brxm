@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.instructions.Instruction;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -35,6 +36,28 @@ public class PluginInstructions implements Instructions {
 
 
     private Set<InstructionSet> instructionSets = new LinkedHashSet<>();
+
+    @Override
+    public int totalInstructions() {
+        int total = 0;
+        if (instructionSets != null) {
+            for (InstructionSet instructionSet : instructionSets) {
+                final Set<Instruction> instructions = instructionSet.getInstructions();
+                if(instructions !=null){
+                    total += instructions.size();
+                }
+            }
+        }
+        return total;
+    }
+
+    @Override
+    public int totalInstructionSets() {
+        if(instructionSets !=null){
+            return instructionSets.size();
+        }
+        return 0;
+    }
 
     @XmlElementRefs({@XmlElementRef(type = PluginInstructionSet.class, name = "instructionSet")})
     @Override

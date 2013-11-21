@@ -62,6 +62,9 @@ public class InstructionParserTest {
         assertEquals(1, iset.size());
         final InstructionSet inSet = iset.iterator().next();
         assertEquals(5, inSet.getInstructions().size());
+        assertEquals(5, myInstructions.totalInstructions());
+        assertEquals(1, myInstructions.totalInstructionSets());
+
 
 
 

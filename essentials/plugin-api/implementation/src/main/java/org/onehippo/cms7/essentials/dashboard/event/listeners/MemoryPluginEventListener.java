@@ -45,6 +45,12 @@ public class MemoryPluginEventListener implements PluginEventListener<DisplayEve
         events.add(event);
     }
 
+
+    public Queue<DisplayEvent> pollEvents() {
+        return new LinkedList<>(events);
+
+    }
+
     public Queue<DisplayEvent> consumeEvents() {
         final Queue<DisplayEvent> pluginEvents = new LinkedList<>(events);
         events.clear();
