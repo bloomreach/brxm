@@ -33,6 +33,7 @@
   <packaging>pom</packaging>
 
   <modules>
+       <module>essentials-powerpack-themes</module>
        <module>essentials-powerpack-basic</module>
   </modules>
 

@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.event;
+package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 import java.util.Queue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.event.ValidationEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
 
@@ -30,11 +33,11 @@ import static org.junit.Assert.assertEquals;
 /**
  * @version "$Id$"
  */
-public class MemoryPluginEventListenerTest {
+public class ValidationEventListenerTest {
 
-
-    private final EventBus bus  = new EventBus();
-    private final MemoryPluginEventListener listener  = new MemoryPluginEventListener();
+    private static Logger log = LoggerFactory.getLogger(ValidationEventListenerTest.class);
+    private final EventBus bus = new EventBus();
+    private final ValidationEventListener listener = new ValidationEventListener();
 
     @Before
     public void setUp() throws Exception {
@@ -45,17 +48,17 @@ public class MemoryPluginEventListenerTest {
     @Test
     public void testOnPluginEvent() throws Exception {
 
-        final int maxItems = MemoryPluginEventListener.MAX_ITEMS + 10;
+        final int maxItems = ValidationEventListener.MAX_ITEMS + 10;
         for (int i = 0; i < maxItems; i++) {
-             bus.post(new DisplayEvent(String.valueOf(i)));
+            bus.post(new ValidationEvent(String.valueOf(i)));
         }
-        Queue<DisplayEvent> pluginEvents = listener.consumeEvents();
-        assertEquals(MemoryPluginEventListener.MAX_ITEMS, pluginEvents.size());
+        Queue<ValidationEvent> pluginEvents = listener.consumeEvents();
+        assertEquals(ValidationEventListener.MAX_ITEMS, pluginEvents.size());
         // above consume should remove all events:
         pluginEvents = listener.consumeEvents();
         assertEquals(0, pluginEvents.size());
         // add
-        bus.post(new DisplayEvent("test"));
+        bus.post(new ValidationEvent("test"));
         pluginEvents = listener.consumeEvents();
         assertEquals(1, pluginEvents.size());
         // consume again:
@@ -69,3 +72,4 @@ public class MemoryPluginEventListenerTest {
         bus.unregister(listener);
     }
 }
+

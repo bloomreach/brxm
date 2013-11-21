@@ -52,7 +52,7 @@ public class ValidationEventListener implements PluginEventListener<ValidationEv
         return events.size();
     }
 
-    public Queue<ValidationEvent> consume() {
+    public Queue<ValidationEvent> consumeEvents() {
         final Queue<ValidationEvent> validationEvents = new LinkedList<>(events);
         events.clear();
         return validationEvents;

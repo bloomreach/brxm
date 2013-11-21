@@ -3,6 +3,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
@@ -27,6 +28,17 @@ public class XmlUtilsTest extends BaseTest {
 
         final List<XmlNode> templateDocuments = XmlUtils.findTemplateDocuments(getProjectRoot(), getContext());
         assertEquals("expected " + NAMESPACES_TEST_SET.size() + " templates", NAMESPACES_TEST_SET.size(), templateDocuments.size());
+    }
+
+    @Test
+    public void testParseXml() throws Exception {
+        final List<XmlNode> templateDocuments = XmlUtils.findTemplateDocuments(getProjectRoot(), getContext());
+
+        final XmlNode xmlNode = findPluginNode(templateDocuments);
+        final String xml = XmlUtils.xmlNodeToString(xmlNode);
+        assertNotNull(xml);
+        final XmlNode myXml = XmlUtils.parseXml(IOUtils.toInputStream(xml));
+        assertNotNull(myXml);
     }
 
     @Test
