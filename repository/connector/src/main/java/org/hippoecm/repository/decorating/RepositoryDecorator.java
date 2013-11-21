@@ -23,10 +23,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
+import org.onehippo.repository.RepositoryService;
+
 /**
  * Simple {@link Repository Repository} decorator.
  */
-public class RepositoryDecorator implements Repository {
+public class RepositoryDecorator implements RepositoryService {
 
     private DecoratorFactory factory;
 

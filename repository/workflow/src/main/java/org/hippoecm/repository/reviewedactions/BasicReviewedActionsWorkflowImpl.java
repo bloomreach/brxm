@@ -413,11 +413,12 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             if (!equals(draftDocument.getNode(), unpublishedDocument.getNode())) {
                 copyDocumentTo(draftDocument, unpublishedDocument);
                 unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
-                unpublishedDocument.setAvailability(new String[]{"preview"});
-                if (publishedDocument != null && publishedDocument.isAvailable("live")) {
-                    publishedDocument.setAvailability(new String[]{"live"});
-                }
             }
+            unpublishedDocument.setAvailability(new String[]{"preview"});
+            if (publishedDocument != null && publishedDocument.isAvailable("live")) {
+                publishedDocument.setAvailability(new String[]{"live"});
+            }
+
             return toUserDocument(unpublishedDocument);
         } catch (RepositoryException ex) {
             throw new WorkflowException("failed to commit editable instance", ex);
