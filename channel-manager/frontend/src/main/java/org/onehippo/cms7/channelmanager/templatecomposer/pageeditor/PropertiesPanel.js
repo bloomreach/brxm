@@ -852,7 +852,7 @@
                         listeners: {
                             change: function() {
                                 var value = this.getValue();
-                                if (!value || value.length === 0 || value === this.defaultValue) {
+                                if (typeof(value) === 'undefined' || (typeof(value) === 'string' && value.length === 0) || value === this.defaultValue) {
                                     this.addClass('default-value');
                                     this.setValue(this.defaultValue);
                                 } else {
