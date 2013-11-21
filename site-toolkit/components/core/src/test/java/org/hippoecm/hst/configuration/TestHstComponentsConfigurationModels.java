@@ -15,18 +15,25 @@
  */
 package org.hippoecm.hst.configuration;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -378,6 +385,48 @@ public class TestHstComponentsConfigurationModels extends AbstractTestConfigurat
         session.logout();
     }
 
+    @Test
+    public void testHstComponentConfigurationFromCommonAreInherited() throws Exception {
+        // since all hst:pages and hst:components are inherited through hst:inheritsfrom = ../unittestcommon, we expect
+        // all HstComponentConfiguration instances to be marked as 'inherited'
+        // there is one explicit non inherited component, and that is
+        // hst:hst/hst:configurations/unittestsubproject/hst:pages/homepage
+
+
+        final String explicitNonInheritedComponent = "/hst:hst/hst:configurations/unittestsubproject/hst:pages/homepage";
+        final VirtualHosts virtualHosts = hstManager.getVirtualHosts();
+        final List<String> hostGroupNames = virtualHosts.getHostGroupNames();
+        for (String hostGroupName : hostGroupNames) {
+            final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroupName);
+            for (Mount mount : mountsByHostGroup) {
+                if (mount.getHstSite() == null) {
+                    continue;
+                }
+                if (mount.getHstSite().getComponentsConfiguration() == null) {
+                    continue;
+                }
+                for (HstComponentConfiguration hstComponentConfiguration : mount.getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
+                    assertAllComponentsAreInheriterd(hstComponentConfiguration, explicitNonInheritedComponent, mount.getHstSite().getConfigurationPath());
+                }
+            }
+        }
+
+    }
+
+    private void assertAllComponentsAreInheriterd(final HstComponentConfiguration compConfig,
+                                                  final String explicitNonInheritedComponent,
+                                                  final String siteConfigurationPath) {
+
+        if (explicitNonInheritedComponent.equals(compConfig.getCanonicalStoredLocation()) && siteConfigurationPath.equals("/hst:hst/hst:configurations/unittestsubproject")) {
+            assertFalse(compConfig.isInherited());
+        } else {
+            assertTrue(compConfig.isInherited());
+        }
+
+        for (HstComponentConfiguration child : compConfig.getChildren().values()) {
+            assertAllComponentsAreInheriterd(child, explicitNonInheritedComponent, siteConfigurationPath);
+        }
+    }
 
     protected Session getSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
