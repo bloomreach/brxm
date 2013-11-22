@@ -218,20 +218,34 @@ public interface Filter extends BaseFilter {
     void addLessThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
     /**
-     * <b>Try to not use this method as it blows up searches. This is Lucene (inverted indexes) related</b>
-     * Set a constraint that <code>fieldAttributeName</code> matches *<code>value</code>* where * is a <b>any</b> pattern
+     * <p>
+     *      This function is based on the LIKE predicate found in SQL. This method maps to <code>jcr:like</code> as
+     *      <code>jcr:like($property as attribute(), $pattern as xs:string)</code>. Also see JCR spec 1.0 6.6.5.1 jcr:like
+     * </p>
+     * <p>
+     *     <strong>usage:</strong> For example, the query “Find all documents whose <code>myproject:title</code> property starts with
+     *     <code>hip</code>”,  is expressed as: <code>addLike("myproject:title","hip%")</code>.
+     *     The <code>%</code> after <code>hip</code> is the wildcard.
+     * </p>
+     * <p>
+     *     This method is particularly helpful in <i>key</i> kind of fields, where the <i>key</i> values contain chars on which
+     *     Lucene text indexing tokenizes.For example, give me all the documents that have a key that start with JIRA key
+     *     <code>HSTTW0-23</code> can be expressed as <code>addLike("myproject:key","HSTTW0-23%")</code>.
+     *     This results in documents having key <code>HSTTW0-2345</code>, <code>HSTTW0-2357</code>, etc.
+     * </p>
+     * <p>
+     *     <strong>STRONGLY RECOMMENDED TO NOT USE PREFIX '%'</strong>. Thus do not use a query like
+     *     <code>addLike("myproject:key","%HSTTW0-23%")</code>. Note the prefix '%'. Prefix wildcard blow up in memory and cpu
+     *     as they cannot be efficiently done in Lucene
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:author"
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value object that must be of type String
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     void addLike(String fieldAttributeName, Object value) throws FilterException ;
     
     /**
-     * <b>Try to not use this method as it blows up searches. This is Lucene (inverted indexes) related</b>
-     * Set a constraint that <code>fieldAttributeName</code> does not match *<code>value</code>* where * is a <b>any</b> pattern
-     * @param fieldAttributeName the name of the attribute, eg "example:author"
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
+     * @see {@link #addLike(String, Object)} only now inverted
      *
      */
     void addNotLike(String fieldAttributeName, Object value) throws FilterException ;

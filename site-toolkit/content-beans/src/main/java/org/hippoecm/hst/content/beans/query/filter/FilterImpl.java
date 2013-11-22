@@ -288,11 +288,13 @@ public class FilterImpl implements Filter {
     }
 
     private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
-        log.warn("addLike or addNotLike for FilterImpl is used. " +
-        		" It is strongly recommended to not use this because it blows up queries memory and cpu wise");
-        
         if(value == null ) {
             throw new FilterException("Not allowed to search on 'null'.");
+        }
+        if (value.toString().startsWith("%")) {
+            log.warn("Method '{}' is used with value '{}' but like methods should not be used with a prefix wildcard '%' because this " +
+                    "blows up queries memory and cpu wise.", (isNot ? "addNotLike" : "addLike"), value);
+
         }
         fieldAttributeName = toXPathProperty(fieldAttributeName, false, "addLike");
         String jcrExpression = "jcr:like(" + fieldAttributeName + ", '"
