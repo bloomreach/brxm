@@ -62,21 +62,16 @@ public class GlobalUtils {
         return buffer.toString();
     }
 
-    public static StringBuilder readStreamAsText(final InputStream stream) {
-        final StringBuilder builder = new StringBuilder();
+    public static String readStreamAsText(final InputStream stream) {
         try {
-            final List<String> lines = IOUtils.readLines(stream);
-            for (String line : lines) {
-                builder.append(line);
-
-            }
+            return IOUtils.toString(stream);
         } catch (IOException e) {
             log.error("Error reading files", e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
 
-        return builder;
+        return "";
     }
 
     public static void populateDirectories(final Path startPath, final List<Path> existing) {

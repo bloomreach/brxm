@@ -117,11 +117,10 @@ public class DocumentsTemplateStep extends EssentialsWizardStep {
                 final String resourceName = String.format("%s%s.xml", '/', selectedDocument);
                 final InputStream stream = getClass().getResourceAsStream(resourceName);
                 if (stream != null) {
-                    final StringBuilder builder = GlobalUtils.readStreamAsText(stream);
                     final PluginContext context = parent.getContext();
 
                     try {
-                        String input = builder.toString();
+                        String input = GlobalUtils.readStreamAsText(stream);
                         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
                         input = GlobalUtils.replacePlaceholders(input, "DOCUMENT_NAME", selectedDocument);
                         input = GlobalUtils.replacePlaceholders(input, "NAMESPACE", projectNamespacePrefix);
