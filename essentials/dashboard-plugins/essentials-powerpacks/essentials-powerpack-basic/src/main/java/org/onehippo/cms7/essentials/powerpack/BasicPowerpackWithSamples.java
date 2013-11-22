@@ -16,8 +16,7 @@ public class BasicPowerpackWithSamples extends BasicPowerpack {
     public Instructions getInstructions() {
         if (instructions == null) {
             final InputStream resourceAsStream = getClass().getResourceAsStream("/META-INF/instructions-with-samples.xml");
-            final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
-            final String content = myBuilder.toString();
+            final String content = GlobalUtils.readStreamAsText(resourceAsStream);
             instructions = InstructionParser.parseInstructions(content);
         }
         return instructions;

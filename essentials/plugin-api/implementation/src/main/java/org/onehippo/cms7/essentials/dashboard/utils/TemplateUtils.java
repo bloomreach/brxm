@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -136,8 +137,10 @@ public final class TemplateUtils {
         try {
             final Writer writer = new StringWriter();
             final MustacheFactory mf = new DefaultMustacheFactory();
+
             final StringReader reader = new StringReader(content);
             final Mustache mustache = mf.compile(reader, content);
+
             mustache.execute(writer, data);
             writer.flush();
             return writer.toString();
@@ -154,6 +157,7 @@ public final class TemplateUtils {
         }
         try {
             final String content = GlobalUtils.readStreamAsText(stream).toString();
+            log.info("content {}", content);
             return replaceTemplateData(content, data);
         } catch (Exception e) {
             log.error("Error processing template", e);

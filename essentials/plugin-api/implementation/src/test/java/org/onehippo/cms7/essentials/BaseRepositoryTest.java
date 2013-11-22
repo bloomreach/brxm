@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id: BaseRepositoryTest.java 172679 2013-08-02 14:21:12Z mmilicevic $"
  */
-public class BaseRepositoryTest extends BaseTest {
+public abstract class BaseRepositoryTest extends BaseTest {
 
     private static final Logger log = LoggerFactory.getLogger(BaseRepositoryTest.class);
     protected MemoryRepository repository;

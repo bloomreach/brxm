@@ -6,9 +6,14 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
+
 /**
  */
-public class HstTemplate {
+@PersistentNode(type = "hst:template")
+public class HstTemplate extends BaseJcrModel{
     private static final String HST_TEMPLATES = "hst:templates";
     private static final String HST_TEMPLATE = "hst:template";
     private static final String HST_CONTAINERS = "hst:containers";
@@ -16,23 +21,22 @@ public class HstTemplate {
     private static final String HST_SCRIPT = "hst:script";
     private static final String HST_IS_NAMED = "hst:isnamed";
 
-    private final String name;
+
+    @PersistentMultiProperty(name=HST_CONTAINERS)
     private List<String> containers = new ArrayList<>();
+    @PersistentProperty(name = HST_RENDER_PATH)
     private String renderPath = null;
+    @PersistentProperty(name = HST_SCRIPT)
     private String script = null;
     private boolean isNamed = false;
 
     public HstTemplate(final String name) {
-        this.name = name;
+        setName(name);
     }
 
     public HstTemplate(final String name, final String renderPath) {
         this(name);
         this.renderPath = renderPath;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<String> getContainers() {

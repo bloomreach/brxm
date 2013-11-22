@@ -41,7 +41,7 @@ public class MemoryRepository {
         initialize();
         NodeTypeManagerImpl mgr = (NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager();
         for (String fileName : CND_FILE_NAMES) {
-            log.info("Registering CND file *{}*", fileName);
+            log.debug("Registering CND file *{}*", fileName);
             InputStream stream = getClass().getResourceAsStream(fileName);
             mgr.registerNodeTypes(stream, "text/x-jcr-cnd");
         }

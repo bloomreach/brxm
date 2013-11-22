@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitModules({EventBusModule.class, PropertiesModule.class})
-public class BaseTest {
+public abstract class BaseTest {
     public static final int NONE_EXISTING_BEANS_SIZE = 2;
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
@@ -107,8 +107,4 @@ public class BaseTest {
         return context;
     }
 
-    @Test
-    public void initTest() {
-        assertTrue(true);
-    }
 }

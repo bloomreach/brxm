@@ -55,8 +55,7 @@ public class InstructionParserTest {
         // READ FROM FILE
         //############################################
         final InputStream resourceAsStream = getClass().getResourceAsStream("/instructions.xml");
-        final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
-        final String content = myBuilder.toString();
+        final String content = GlobalUtils.readStreamAsText(resourceAsStream);
         final Instructions myInstructions = InstructionParser.parseInstructions(content);
         final Set<InstructionSet> iset = myInstructions.getInstructionSets();
         assertEquals(1, iset.size());

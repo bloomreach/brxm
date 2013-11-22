@@ -21,10 +21,8 @@ public class GlobalUtilsTest {
     @Test
     public void testReplacePlaceholders() throws Exception {
         final InputStream resourceAsStream = getClass().getResourceAsStream("/news_template.xml");
-        final StringBuilder myBuilder = GlobalUtils.readStreamAsText(resourceAsStream);
-        assertTrue("expected valid String", myBuilder != null);
-
-        String input = myBuilder.toString();
+        String input = GlobalUtils.readStreamAsText(resourceAsStream);
+        assertTrue("expected valid String", input != null);
         String output = input;
         assertEquals(input, output);
         output = GlobalUtils.replacePlaceholders(input, "NAMESPACE", REPLACE_NAMESPACE);
