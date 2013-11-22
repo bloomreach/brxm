@@ -307,13 +307,23 @@ public class FilterImpl implements Filter {
     }
 
     @Override
+    @Deprecated
     public void addLike(String fieldAttributeName, Object value) throws FilterException{
-        
         addLike(fieldAttributeName, value, false);
     }
 
     @Override
-    public void addNotLike(String fieldAttributeName, Object value) throws FilterException{
+    public void addLike(String fieldAttributeName, String value) throws FilterException{
+        addLike(fieldAttributeName, value, false);
+    }
+
+    @Override
+    public void addNotLike(String fieldAttributeName, String value) throws FilterException{
+        addLike(fieldAttributeName, value, true);
+    }
+    @Override
+     @Deprecated
+     public void addNotLike(String fieldAttributeName, Object value) throws FilterException{
         addLike(fieldAttributeName, value, true);
     }
 
