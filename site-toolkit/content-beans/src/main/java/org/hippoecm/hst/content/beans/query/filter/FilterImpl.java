@@ -53,17 +53,6 @@ public class FilterImpl implements Filter {
         OR, AND
     }
 
-    /**
-     * @deprecated since 2.24.13 / 2.26.01 : Use {@link #FilterImpl(javax.jcr.Session, DateTools.Resolution)}
-     * instead
-     */
-    @Deprecated
-    public FilterImpl(Session session ){
-        this(session, DateTools.Resolution.MILLISECOND);
-        log.warn("Use HstQuery#createFilter() or FilterImpl(Session, Resolution) instead of this deprecated constructor. Fast Date Range " +
-                "Searches are not supported with this constructor");
-    }
-
     public FilterImpl(final Session session, final DateTools.Resolution resolution) {
         this.session = session;
         if (resolution == null) {
