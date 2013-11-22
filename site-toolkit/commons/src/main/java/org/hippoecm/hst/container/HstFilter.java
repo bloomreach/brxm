@@ -484,16 +484,16 @@ public class HstFilter implements Filter {
     	}
     	catch (MatchException e) {
     	    if(log.isDebugEnabled()) {
-                log.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+                log.info(e.getClass().getName() + " for '{}':", req.getRequestURI() , e);
             } else {
-                log.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+                log.info(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerNotFoundException e) {
            if(log.isDebugEnabled()) {
-               log.warn(e.getClass().getName() + " for '"+req.getRequestURI()+"':" , e);
+               log.info(e.getClass().getName() + " for '{}':", req.getRequestURI() , e);
             } else {
-               log.warn(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
+               log.info(e.getClass().getName() + " for '{}': '{}'" , req.getRequestURI(),  e.toString());
             }
            sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
         } catch (ContainerException e) {
