@@ -80,6 +80,7 @@ public class FolderTreePlugin extends RenderPlugin {
         try {
             Session session = getSession().getJcrSession();
             if (!session.itemExists(startingPath)) {
+                log.warn("The configured path '"+startingPath+"' does not exist, using '"+DEFAULT_START_PATH+"' instead.");
                 startingPath = DEFAULT_START_PATH;
             }
         } catch (RepositoryException exception) {
