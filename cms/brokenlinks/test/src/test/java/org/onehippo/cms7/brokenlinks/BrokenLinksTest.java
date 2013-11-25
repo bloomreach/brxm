@@ -260,8 +260,16 @@ public class BrokenLinksTest extends RepositoryTestCase {
                 // search number of documents through hippostd:html node
                 final Query query = session.getWorkspace().getQueryManager().createQuery("/jcr:root/test//element(*,hippostd:html) order by @jcr:score", "xpath");
                 query.setLimit(100000);
-                final QueryResult execute = query.execute();
-                System.out.println("Expected to find '"+total+"' documents. Found number of documents with hippostd:html node:" + execute.getNodes().getSize());
+                final QueryResult result = query.execute();
+                System.out.println("Expected to find '"+total+"' documents. Found number of documents with hippostd:html node:" + result.getNodes().getSize());
+
+                // search number of brokenlinks nodes
+
+                final Query query2 = session.getWorkspace().getQueryManager().createQuery("/jcr:root/test//element(*,brokenlinks:brokenlinks) order by @jcr:score", "xpath");
+                query.setLimit(100000);
+                final QueryResult result2 = query2.execute();
+                System.out.println("Expected to find '"+total+"' brokenlinks nodes. Found number of brokenlinks nodes::" + result2.getNodes().getSize());
+
             }
             throw e;
         }
