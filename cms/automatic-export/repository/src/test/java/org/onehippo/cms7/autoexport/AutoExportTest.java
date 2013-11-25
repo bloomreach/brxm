@@ -39,6 +39,7 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.ElementQualifier;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -74,7 +75,6 @@ public class AutoExportTest extends RepositoryTestCase {
 
     // /export-test
     private Node testRoot;
-
 
     @Before
     @Override
@@ -127,6 +127,13 @@ public class AutoExportTest extends RepositoryTestCase {
         session.save();
         testRoot = session.getRootNode();
 
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        System.clearProperty("project.basedir");
+        super.tearDown();
     }
 
     @Test
