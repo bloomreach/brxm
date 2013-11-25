@@ -18,8 +18,8 @@
 <instructions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.onehippo.org/essentials/instructions /instructions.xsd" xmlns="http://www.onehippo.org/essentials/instructions">
   <instructionSet name="NAMESPACE">
-    <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated" />
-    <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated" />
+    <cnd documentType="newsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
+    <cnd documentType="eventsdocument" superType="{{namespace}}:basedocument,hippostd:relaxed,hippotranslation:translated"/>
     <xml action="copy" source="xml/namespaces/newsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/eventsdocument.xml" target="/hippo:namespaces/{{namespace}}"/>
   </instructionSet>
@@ -46,10 +46,14 @@
     <file action="copy" overwrite="true" source="jsp/essentials-component-news-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-news-detail.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="{{jspRoot}}/essentials/essentials-component-events.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-event-detail.jsp"/>
+    <!--todo temporary:-->
+    <file action="copy" overwrite="true" source="jsp/essentials-home-example.jsp" target="{{jspRoot}}/essentials/essentials-home-example.jsp"/>
   </instructionSet>
   <instructionSet name="SITE-MAPS">
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
     <xml action="copy" source="xml/hst/sitemap/events.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
+    <!--todo temporary:-->
+    <xml action="copy" source="xml/hst/sitemap/root.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
   </instructionSet>
   <instructionSet name="JAVA">
     <file action="copy" overwrite="true" source="java/NewsDocument.txt" target="{{beansFolder}}/NewsDocument.java"/>
@@ -65,6 +69,8 @@
     <xml action="copy" source="xml/hst/pages/newspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventsoverview.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
     <xml action="copy" source="xml/hst/pages/eventspage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
+    <!--todo temporary:-->
+    <xml action="copy" source="xml/hst/pages/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:pages"/>
   </instructionSet>
   <instructionSet name="TEMPLATES">
     <xml action="copy" source="xml/hst/templates/layout-webpage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
@@ -75,10 +81,7 @@
     <xml action="copy" source="xml/hst/templates/news-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/events-main-overview-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <xml action="copy" source="xml/hst/templates/events-main-content.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-  </instructionSet>
-  <instructionSet name="SAMPLE_DOCUMENTS">
-    <xml action="copy" source="xml/samples/content/documents/events.xml" target="/content/documents/{{namespace}}"/>
-    <xml action="copy" source="xml/samples/content/documents/news.xml" target="/content/documents/{{namespace}}"/>
-    <xml action="copy" source="xml/samples/content/gallery/samples.xml" target="/content/gallery/{{namespace}}"/>
+    <!--todo temporary:-->
+    <xml action="copy" source="xml/hst/templates/homepage.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
   </instructionSet>
 </instructions>
