@@ -300,31 +300,37 @@ public class HstLinkImpl implements HstLink {
              * siteMapItem would be.
              */
 
+            final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest());
             if (siteMapItem != null) {
                 if (siteMapItem.isSchemeAgnostic()) {
                     scheme = SCHEME_AGNOSTIC;
                     return false;
                 }
-                if (!HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest()).equals(siteMapItem.getScheme())) {
+                if (!farthestRequestScheme.equals(siteMapItem.getScheme())) {
                     scheme = siteMapItem.getScheme();
                     return true;
                 }
             }
 
-            if (mount.containsMultipleSchemes() || requestMount.containsMultipleSchemes()) {
+            if (mount.containsMultipleSchemes()
+                    || requestMount.containsMultipleSchemes()
+                    || (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))) {
+                // in case (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))
+                // is true: currently link is over https. This might be the result of custom https support. Hence, create
+                // http link in case the mount/sitemap item indicates http
                 final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
                 if (resolvedSiteMapItem != null) {
                     if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
                         scheme = SCHEME_AGNOSTIC;
                         return false;
                     }
-                    if (!HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest()).equals(resolvedSiteMapItem.getHstSiteMapItem().getScheme())) {
+                    if (!farthestRequestScheme.equals(resolvedSiteMapItem.getHstSiteMapItem().getScheme())) {
                         scheme = resolvedSiteMapItem.getHstSiteMapItem().getScheme();
                         return true;
                     }
                 }
             }
-
+            
             if (mount.isSchemeAgnostic()) {
                 scheme = SCHEME_AGNOSTIC;
                 return false;
