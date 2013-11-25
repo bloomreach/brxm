@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2011 Hippo Licensed under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License. You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+  applicable law or agreed to in writing, software distributed under
+  the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+  OR CONDITIONS OF ANY KIND, either express or implied. See the
+  License for the specific language governing permissions and
+  limitations under the License.
+-->
+<scxml xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:test="http://www.example.com/scxml/test"
+       version="1.0"
+       initial="handle">
+
+  <parallel id="handle">
+
+    <onentry>
+      <log expr="'handle: ' + handle" />
+    </onentry>
+
+    <transition event="workflow.event.document.delete" target="deleted">
+    </transition>
+
+    <state id="draft-variant" initial="draft-variant-init">
+
+      <state id="draft-variant-init">
+        <transition cond="not empty(handle.variants['draft'].holder)" target="draft-variant-editing" />
+        <transition cond="not empty(handle.variants['draft'])" target="draft-variant-nonediting" />
+        <transition target="draft-variant-unavailable" />
+      </state>
+
+      <state id="draft-variant-unavailable">
+        <transition event="workflow.event.document.edit.obtain" target="draft-variant-editing">
+          <test:variantcopy target="draft" />
+          <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="'editor'" />
+          <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'new'" />
+        </transition>
+      </state>
+
+      <state id="draft-variant-nonediting" initial="draft-variant-nonediting-init">
+
+        <state id="draft-variant-nonediting-init">
+          <transition cond="handle.variants['draft'].stateSummary == 'new'" target="draft-variant-nonediting-new" />
+          <transition cond="handle.variants['draft'].stateSummary == 'live'" target="draft-variant-nonediting-live" />
+          <transition cond="handle.variants['draft'].stateSummary == 'changed'" target="draft-variant-nonediting-changed" />
+          <transition target="draft-variant-unavailable" />
+        </state>
+
+        <state id="draft-variant-nonediting-new">
+          <transition event="workflow.event.document.edit.obtain" target="draft-variant-editing">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="'editor'" />
+          </transition>
+          <transition event="workflow.event.document.edit.dispose">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="null" />
+          </transition>
+          <transition event="workflow.event.document.publish"
+                      target="draft-variant-init">
+            <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'live'" />
+          </transition>
+        </state>
+
+        <state id="draft-variant-nonediting-live">
+          <transition event="workflow.event.document.edit.obtain" target="draft-variant-editing">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="'editor'" />
+          </transition>
+          <transition event="workflow.event.document.edit.dispose" target="draft-variant-nonediting-changed">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="null" />
+          </transition>
+        </state>
+
+        <state id="draft-variant-nonediting-changed">
+          <transition event="workflow.event.document.edit.obtain" target="draft-variant-editing">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="'editor'" />
+          </transition>
+          <transition event="workflow.event.document.edit.dispose">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="null" />
+          </transition>
+          <transition event="workflow.event.document.publish"
+                      target="draft-variant-init">
+            <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'live'" />
+          </transition>
+        </state>
+
+      </state>
+
+      <state id="draft-variant-editing" initial="draft-variant-editing-init">
+
+        <onentry>
+          <log expr="'handle in draft-variant-editing: ' + handle" />
+        </onentry>
+
+        <state id="draft-variant-editing-init">
+          <transition cond="handle.variants['draft'].stateSummary == 'new'" target="draft-variant-editing-new" />
+          <transition cond="handle.variants['draft'].stateSummary == 'live'" target="draft-variant-editing-live" />
+          <transition cond="handle.variants['draft'].stateSummary == 'changed'" target="draft-variant-editing-changed" />
+          <transition target="draft-variant-unavailable" />
+        </state>
+
+        <state id="draft-variant-editing-new">
+          <transition event="workflow.event.document.edit.commit" target="draft-variant-editing-changed">
+            <if cond="not empty(handle.variant['published']) and handle.variant['published'].stateSummary == 'live'">
+              <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'changed'" />
+              <else/>
+              <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'new'" />
+            </if>
+          </transition>
+          <transition event="workflow.event.document.edit.dispose" target="draft-variant-nonediting">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="null" />
+          </transition>
+        </state>
+
+        <state id="draft-variant-editing-live">
+          <transition event="workflow.event.document.edit.commit" target="draft-variant-editing-changed">
+            <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'changed'" />
+          </transition>
+          <transition event="workflow.event.document.edit.dispose" target="draft-variant-nonediting">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="null" />
+          </transition>
+        </state>
+
+        <state id="draft-variant-editing-changed">
+          <transition event="workflow.event.document.edit.commit">
+            <test:beanprop beanExpr="handle.variants['draft']" property="stateSummary" valueExpr="'changed'" />
+          </transition>
+          <transition event="workflow.event.document.edit.dispose" target="draft-variant-nonediting">
+            <test:beanprop beanExpr="handle.variants['draft']" property="holder" valueExpr="null" />
+          </transition>
+        </state>
+
+      </state>
+
+    </state>
+
+    <state id="unpublished-variant" initial="unpublished-variant-init">
+
+      <transition event="workflow.event.document.edit.commit"
+                  target="unpublished-variant-init">
+        <test:variantcopy source="draft" target="unpublished" />
+        <test:beanprop beanExpr="handle.variants['unpublished']" property="availabilitiesByArray" valueExpr="['preview']" />
+        <test:beanprop beanExpr="handle.variants['unpublished']" property="stateSummary" valueExpr="'new'" />
+        <if cond="In('unpublished-variant-live')">
+          <test:beanprop beanExpr="handle.variants['unpublished']" property="stateSummary" valueExpr="'changed'" />
+        </if>
+      </transition>
+
+      <transition event="workflow.event.document.publish"
+                  target="unpublished-variant-init">
+        <test:beanprop beanExpr="handle.variants['unpublished']" property="stateSummary" valueExpr="'live'" />
+        <test:beanprop beanExpr="handle.variants['unpublished']" property="availabilitiesByArray" valueExpr="['']" />
+      </transition>
+
+      <transition event="workflow.event.document.depublish"
+                  target="unpublished-variant-init">
+        <test:variantcopy source="unpublished" target="published" />
+        <test:beanprop beanExpr="handle.variants['unpublished']" property="stateSummary" valueExpr="'new'" />
+        <test:beanprop beanExpr="handle.variants['unpublished']" property="availabilitiesByArray" valueExpr="['']" />
+      </transition>
+
+      <state id="unpublished-variant-init">
+        <transition cond="handle.variants['unpublished'].stateSummary == 'live'" target="unpublished-variant-live" />
+        <transition cond="handle.variants['unpublished'].stateSummary == 'new'" target="unpublished-variant-new" />
+        <transition cond="handle.variants['unpublished'].stateSummary == 'changed'" target="unpublished-variant-changed" />
+        <transition target="unpublished-variant-unavailable" />
+      </state>
+
+      <state id="unpublished-variant-unavailable">
+      </state>
+
+      <state id="unpublished-variant-live">
+      </state>
+
+      <state id="unpublished-variant-changed">
+      </state>
+
+      <state id="unpublished-variant-new">
+      </state>
+
+    </state>
+
+    <state id="published-variant" initial="published-variant-init">
+
+      <transition event="workflow.event.document.edit.commit"
+                  target="unpublished-variant-init">
+        <if cond="In('published-variant-live')">
+          <test:beanprop beanExpr="handle.variants['published']" property="stateSummary" valueExpr="'changed'" />
+        </if>
+      </transition>
+
+      <transition event="workflow.event.document.publish"
+                  target="published-variant-init">
+        <test:variantcopy source="unpublished" target="published" />
+        <test:beanprop beanExpr="handle.variants['published']" property="stateSummary" valueExpr="'live'" />
+        <test:beanprop beanExpr="handle.variants['published']" property="availabilitiesByArray" valueExpr="['preview','live']" />
+      </transition>
+
+      <transition event="workflow.event.document.depublish"
+                  target="published-variant-init">
+        <test:beanprop beanExpr="handle.variants['published']" property="stateSummary" valueExpr="'new'" />
+        <test:beanprop beanExpr="handle.variants['published']" property="availabilitiesByArray" valueExpr="['']" />
+      </transition>
+
+      <state id="published-variant-init">
+        <transition cond="handle.variants['published'].stateSummary == 'live'" target="published-variant-live" />
+        <transition cond="handle.variants['published'].stateSummary == 'new'" target="published-variant-new" />
+        <transition cond="handle.variants['published'].stateSummary == 'changed'" target="published-variant-changed" />
+        <transition target="published-variant-unavailable" />
+      </state>
+
+      <state id="published-variant-unavailable">
+      </state>
+
+      <state id="published-variant-live">
+      </state>
+
+      <state id="published-variant-changed">
+      </state>
+
+      <state id="published-variant-new">
+      </state>
+
+    </state>
+
+    <state id="request">
+
+      <initial>
+        <transition target="request-init" />
+      </initial>
+
+      <state id="request-init">
+        <transition cond="handle.request.type == 'publish'" target="request-publication" />
+        <transition cond="handle.request.type == 'depublish'" target="request-depublication" />
+        <transition cond="handle.request.type == 'schedule-publish'" target="request-schedule-publication" />
+        <transition cond="handle.request.type == 'schedule-depublish'" target="request-schedule-depublication" />
+        <transition target="request-unavailable" />
+      </state>
+
+      <state id="request-unavailable">
+      </state>
+
+      <state id="request-publication">
+      </state>
+
+      <state id="request-depublication">
+      </state>
+
+      <state id="request-schedule-publication">
+      </state>
+
+      <state id="request-schedule-depublication">
+      </state>
+
+    </state>
+
+  </parallel>
+
+  <final id="deleted" />
+
+</scxml>

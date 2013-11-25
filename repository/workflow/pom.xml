@@ -26,11 +26,22 @@
   <artifactId>hippo-repository-workflow</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <commons-scxml2.version>2.0-SNAPSHOT</commons-scxml2.version>
+    <commons-jexl.version>2.1.2-SNAPSHOT</commons-jexl.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <version>${hippo.services.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -56,11 +67,39 @@
       <version>${hippo.commons.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- SCXML -->
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
-      <version>${hippo.services.version}</version>
-      <scope>test</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-scxml2</artifactId>
+      <version>${commons-scxml2.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-jexl</artifactId>
+      <version>${commons-jexl.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <!-- test -->
