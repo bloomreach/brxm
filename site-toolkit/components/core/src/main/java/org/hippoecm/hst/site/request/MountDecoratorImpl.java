@@ -30,10 +30,10 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,8 +72,9 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        @Deprecated
         public String getCanonicalContentPath() {
-            return delegatee.getCanonicalContentPath();
+            return delegatee.getContentPath();
         }
 
         @Override
@@ -376,7 +377,7 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
+        public void addMount(MutableMount mount) throws IllegalArgumentException, ModelLoadingException {
             throw  new UnsupportedOperationException("addMount not allowed on decorated mounts");
         }
     }

@@ -163,7 +163,9 @@ public interface Mount {
      * value as {@link #getContentPath()}
      *
      * @return The absolute absolute content path for this {@link Mount}.
+     * @deprecated since 7.9.0 : returns same as {@link #getContentPath()} : Use {@link #getContentPath()} instead
      */
+    @Deprecated
     String getCanonicalContentPath();
 
 

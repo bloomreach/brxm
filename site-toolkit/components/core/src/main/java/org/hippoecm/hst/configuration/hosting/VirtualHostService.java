@@ -28,8 +28,8 @@ import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public class VirtualHostService implements MutableVirtualHost {
                               final String hostGroupName,
                               final String cmsLocation,
                               final int defaultPort,
-                              final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+                              final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
 
         this.parentHost = parentHost;
         this.virtualHosts = virtualHosts;
@@ -247,7 +247,7 @@ public class VirtualHostService implements MutableVirtualHost {
                    Integer.parseInt(segment);
                } catch (NumberFormatException e) {
                    // one of the segments was not an integer. This is not a valid hostname
-                   throw new ServiceException("Node hst:virtualhost is not allowed to be '"+fullName+"'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
+                   throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '"+fullName+"'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
                }
             }
 
@@ -263,7 +263,7 @@ public class VirtualHostService implements MutableVirtualHost {
             }
             while(depth > -1) {
                 if(attachPortMountToHost == null) {
-                    throw new ServiceException("Something went wrong because attachMountToHost should never be possible to be null.");
+                    throw new ModelLoadingException("Something went wrong because attachMountToHost should never be possible to be null.");
                 }
                 attachPortMountToHost = (VirtualHostService)attachPortMountToHost.getChildHost(nameSegments[depth]);
                 depth--;
@@ -283,15 +283,11 @@ public class VirtualHostService implements MutableVirtualHost {
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(mountNode.getNodeTypeName())) {
                 try {
                     Mount mount = new MountService(mountNode, null, attachPortMountToHost, hstNodeLoadingCache, defaultPort);
-                    MutablePortMount portMount = new PortMountService(mount, this);
+                    MutablePortMount portMount = new PortMountService(mount);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     String path = mountNode.getValueProvider().getPath();
-                    if (log.isDebugEnabled()) {
-                        log.warn("Skipping incorrect mount or port mount for mount node '"+path+"'. " ,e);
-                    } else {
-                        log.warn("Skipping incorrect mount or port mount for mount node '{}' because of '{}'. ", path, e.toString());
-                    }
+                    log.error("Skipping incorrect mount or port mount for mount node '"+path+"'. " ,e);
                 }
             } else {
                 log.error("Expected a node of type '{}' at '{}' but was of type '"+mountNode.getNodeTypeName()+"'", HstNodeTypes.NODETYPE_HST_MOUNT, mountNode.getValueProvider().getPath());
@@ -303,7 +299,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 try {
                     VirtualHostService childHost = new VirtualHostService(virtualHosts, child, attachPortMountToHost, hostGroupName, cmsLocation, defaultPort, hstNodeLoadingCache);
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
                 }
 
@@ -311,8 +307,8 @@ public class VirtualHostService implements MutableVirtualHost {
                 try {
                 MutablePortMount portMount = new PortMountService(child, attachPortMountToHost, hstNodeLoadingCache);
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
-                } catch (ServiceException e) {
-                    log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
+                } catch (ModelLoadingException e) {
+                    log.error("The host '"+attachPortMountToHost.getHostName()+"' for port '"+child.getName()+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing", e);
                 }
             }
         }

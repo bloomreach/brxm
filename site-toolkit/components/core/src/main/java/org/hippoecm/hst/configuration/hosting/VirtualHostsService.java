@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -59,8 +58,6 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.provider.ValueProvider;
-import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
@@ -165,12 +162,15 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private final Map<String, Blueprint> blueprints = new HashMap<>();
     private boolean bluePrintsPrototypeChecked;
 
-    public VirtualHostsService(final HstManagerImpl hstManager, final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+    public VirtualHostsService(final HstManagerImpl hstManager, final HstNodeLoadingCache hstNodeLoadingCache) {
         long start = System.currentTimeMillis();
         this.hstNodeLoadingCache = hstNodeLoadingCache;
         this.hstManager = hstManager;
         channelsRoot = hstNodeLoadingCache.getRootPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
         virtualHostsConfigured = true;
+
+        // quick check if the basic mandatory hst nodes are available. If not, we throw a runtime model loading exception
+        quickModelCheck();
         HstNode vhostsNode = hstNodeLoadingCache.getNode(hstNodeLoadingCache.getRootPath()+"/hst:hosts");
         if (vhostsNode == null) {
             throw new ModelLoadingException("No hst node found for '"+hstNodeLoadingCache.getRootPath()+"/hst:hosts'. Cannot load model.'");
@@ -255,13 +255,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
         for(HstNode hostGroupNode : vhostsNode.getNodes()) {
             // assert node is of type virtualhostgroup
             if(!HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP.equals(hostGroupNode.getNodeTypeName())) {
-                throw new ServiceException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
+                throw new ModelLoadingException("Expected a hostgroup node of type '"+HstNodeTypes.NODETYPE_HST_VIRTUALHOSTGROUP+"' but found a node of type '"+hostGroupNode.getNodeTypeName()+"' at '"+hostGroupNode.getValueProvider().getPath()+"'");
             }
             Map<String, MutableVirtualHost> rootVirtualHosts =  virtualHostHashMap();
             try {
                 rootVirtualHostsByGroup.put(hostGroupNode.getValueProvider().getName(), rootVirtualHosts);
             } catch (IllegalArgumentException e) {
-                throw new ServiceException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
+                throw new ModelLoadingException("It should not be possible to have two hostgroups with the same name. We found duplicate group with name '"+hostGroupNode.getValueProvider().getName()+"'");
             }
 
             String cmsLocation = hostGroupNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION);
@@ -291,20 +291,29 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 try {
                     VirtualHostService virtualHost = new VirtualHostService(this, virtualHostNode, null, hostGroupNode.getValueProvider().getName(), cmsLocation , defaultPort, hstNodeLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
                     // continue to next virtualHost
                 } catch (IllegalArgumentException e) {
                     log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
                             + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
                             + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)");
-                   throw e;
                }
             }
         }
 
         loadChannelsAndBluePrints(hstNodeLoadingCache);
         log.info("VirtualHostsService loading took '{}' ms.", String.valueOf(System.currentTimeMillis() - start));
+    }
+
+    private void quickModelCheck() {
+        final String rootPath = hstNodeLoadingCache.getRootPath();
+        String[] mandatoryNodes = new String[]{rootPath +"/hst:hosts", rootPath +"/hst:sites", rootPath +"/hst:configurations"};
+        for (String mandatoryNode : mandatoryNodes) {
+            if (hstNodeLoadingCache.getNode(mandatoryNode) == null) {
+                throw new ModelLoadingException("Hst Model cannot be loaded because missing node '"+mandatoryNode+"'");
+            }
+        }
     }
 
     public HstManager getHstManager() {
@@ -351,7 +360,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * Add this mount for lookup through {@link #getMountByGroupAliasAndType(String, String, String)}
      * @param mount
      */
-    public void addMount(Mount mount) throws ServiceException {
+    public void addMount(Mount mount) {
         if(registeredMounts.contains(mount)) {
             log.debug(" Mount '{}' already added. Return", mount);
             return;
@@ -796,7 +805,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
         HstNode blueprintsNode = rootConfigNode.getNode(HstNodeTypes.NODENAME_HST_BLUEPRINTS);
         if (blueprintsNode != null) {
             for (HstNode blueprintNode : blueprintsNode.getNodes()) {
+                try {
                 blueprints.put(blueprintNode.getName(), BlueprintHandler.buildBlueprint(blueprintNode));
+                } catch (ModelLoadingException e) {
+                    log.error("Cannot load blueprint '{}' :", blueprintNode.getValueProvider().getPath(), e);
+                }
             }
         }
     }
@@ -808,7 +821,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 loadChannel(channelNode);
             }
         } else {
-            log.warn("Cannot load channels because node '{}' does not exist",
+            log.info("Cannot load channels because node '{}' does not exist",
                     rootConfigNode.getValueProvider().getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNELS);
         }
     }
@@ -857,7 +870,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         String mountPoint = mount.getMountPoint();
         if (mountPoint != null) {
             channel.setHstMountPoint(mountPoint);
-            channel.setContentRoot(mount.getCanonicalContentPath());
+            channel.setContentRoot(mount.getContentPath());
             String configurationPath = mount.getHstSite().getConfigurationPath();
             if (configurationPath != null) {
                 channel.setHstConfigPath(configurationPath);
@@ -919,7 +932,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if (channelMngrVirtualHostGroupNodeName == null) {
             log.warn("Cannot load the Channel Manager because no host group configured on hst:hosts node");
         } else if (!getHostGroupNames().contains(channelMngrVirtualHostGroupNodeName)) {
-            log.warn("Configured channel manager host group name {} does not exist", channelMngrVirtualHostGroupNodeName);
+            log.warn("Configured channel manager host group name {} does not exist or does not have " +
+                    "correctly loaded mounts", channelMngrVirtualHostGroupNodeName);
         } else {
             // in channel manager only the mounts for at most ONE single hostGroup are shown
             mountsForCurrentHostGroup = getMountsByHostGroup(channelMngrVirtualHostGroupNodeName);
@@ -971,7 +985,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         List<String> channelsToDiscard = new ArrayList<String>();
         for (Map.Entry<String, Channel> entry : channels.entrySet()) {
             if (entry.getValue().getMountId() == null) {
-                log.warn("Channel '{}' is not referred by any mount for hostgroup '{}'. Discarding this channel",
+                log.info("Channel '{}' is not referred by any mount for hostgroup '{}'. Discarding this channel",
                         entry.getValue().getId(), channelMngrVirtualHostGroupNodeName);
                 channelsToDiscard.add(entry.getKey());
             }

@@ -961,7 +961,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             }
             renderPath = StringPool.get(templateRenderPath);
             if(renderPath == null) {
-                log.warn("renderer '{}' for component '{}' can not be found. This component will not have a renderer.", getHstTemplate(), id);
+                log.info("renderer '{}' for component '{}' can not be found. This component will not have a renderer " +
+                        "by default. It can be set runtime or this component is used without renderer.", getHstTemplate(), id);
             }
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {

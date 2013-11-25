@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.hosting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +42,6 @@ import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,8 +162,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             } else {
                 log.error("Unable to add the custom mount {} for pipeline {}.", customMountName, customMountNamedPipeline);
             }
-        } catch (ServiceException e) {
-            log.error("Unable to add the custom mount " + customMountName + "  for pipeline " + customMountNamedPipeline + ".", e);
         } catch (IllegalArgumentException e) {
             log.error("Unable to add the custom mount " + customMountName + "  for pipeline " + customMountNamedPipeline + ". It might already be explicitly configured.", e);
         }
@@ -185,7 +180,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         private String hostName;
         private MutablePortMount portMount;
 
-        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, int position) throws ServiceException {
+        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, int position) {
             this.virtualHosts = virtualHosts;
             name = hostSegments[position];
             int i = position;
@@ -359,7 +354,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         private static final int PORT = 0;
         private Mount rootMount;
 
-        private CustomPortMount(VirtualHost virtualHost) throws ServiceException {
+        private CustomPortMount(VirtualHost virtualHost) {
             rootMount = new CustomMount(virtualHost, noopPipeline);
         }
 
@@ -402,7 +397,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         private List<String> types;
 
         // the hst:root mount constructor
-        private CustomMount(VirtualHost virtualHost, String namedPipeline) throws ServiceException {
+        private CustomMount(VirtualHost virtualHost, String namedPipeline) {
             this.virtualHost = virtualHost;
             name = HstNodeTypes.MOUNT_HST_ROOTNAME;
             mountPath = "";
@@ -416,7 +411,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         // the custom mount constructor
-        public CustomMount(String name, String namedPipeline, String type, Mount parent, VirtualHost virtualHost) throws ServiceException {
+        public CustomMount(String name, String namedPipeline, String type, Mount parent, VirtualHost virtualHost) {
             this.name = name;
             this.namedPipeline = namedPipeline;
             this.type = type;
@@ -428,7 +423,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
-        public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
+        public void addMount(MutableMount mount) throws IllegalArgumentException {
             if (childs.containsKey(mount.getName())) {
                 throw new IllegalArgumentException("Cannot add Mount with name '" + mount.getName() + "' because it already exists for " + this.toString());
             }
@@ -547,6 +542,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        @Deprecated
         public String getCanonicalContentPath() {
             return fakeNonExistingPath;
         }

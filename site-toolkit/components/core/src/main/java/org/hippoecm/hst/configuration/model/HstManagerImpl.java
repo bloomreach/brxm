@@ -21,7 +21,6 @@ import java.util.List;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.cache.HstEventsDispatcher;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
-import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -30,7 +29,6 @@ import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
-import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +42,7 @@ public class HstManagerImpl implements MutableHstManager {
     private volatile VirtualHosts virtualHostsModel;
 
 
-    private volatile BuilderState state = BuilderState.UNDEFINED;
+    volatile BuilderState state = BuilderState.UNDEFINED;
 
     enum BuilderState {
         UNDEFINED,
@@ -55,7 +53,7 @@ public class HstManagerImpl implements MutableHstManager {
         RUNNING,
     }
     
-    private volatile int consecutiveBuildFailCounter = 0;
+    volatile int consecutiveBuildFailCounter = 0;
 
     private boolean staleConfigurationSupported = false;
 
@@ -340,8 +338,6 @@ public class HstManagerImpl implements MutableHstManager {
 
             log.info("Finished build in memory hst configuration model in '{}' ms.", (System.currentTimeMillis() - start));
             virtualHostsModel = newModel;
-        } catch (ServiceException e) {
-            throw new ModelLoadingException("Exception during building HST model", e);
         } catch (ModelLoadingException e) {
             throw e;
         } catch (Exception e) {

@@ -17,15 +17,13 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.Map;
 
-import org.hippoecm.hst.service.ServiceException;
-
 public interface MutableVirtualHosts extends VirtualHosts {
 
     /**
      * Add this mount for lookup through {@link #getMountByGroupAliasAndType(String, String, String)}
      * @param mount
      */
-    void addMount(Mount mount) throws ServiceException;
+    void addMount(Mount mount);
     
     /**
      * Adds the <code>virtualHost</code> as child to this {@link MutableVirtualHosts}

@@ -19,9 +19,9 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.internal.StringPool;
-import org.hippoecm.hst.service.ServiceException;
 
 public class HstSiteMapItemHandlerConfigurationService implements HstSiteMapItemHandlerConfiguration {
 
@@ -32,12 +32,12 @@ public class HstSiteMapItemHandlerConfigurationService implements HstSiteMapItem
     private String sitemapItemHandlerClassName;
     private Map<String, Object> properties;
      
-    public HstSiteMapItemHandlerConfigurationService(HstNode handleNode) throws ServiceException {
+    public HstSiteMapItemHandlerConfigurationService(HstNode handleNode) throws ModelLoadingException {
         id = StringPool.get(handleNode.getValueProvider().getName());
         name = StringPool.get(handleNode.getValueProvider().getName());
         sitemapItemHandlerClassName = handleNode.getValueProvider().getString(HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME);
         if(sitemapItemHandlerClassName == null || "".equals(sitemapItemHandlerClassName)) {
-            throw new ServiceException("Invalid sitemap item handler because property '"+HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME+"' is missing or empty ");
+            throw new ModelLoadingException("Invalid sitemap item handler because property '"+HstNodeTypes.SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME+"' is missing or empty ");
         }
         sitemapItemHandlerClassName = StringPool.get(sitemapItemHandlerClassName.trim());
         

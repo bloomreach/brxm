@@ -25,7 +25,6 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
-import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.LoggerFactory;
 
 public class HstSiteMapItemHandlersConfigurationService implements HstSiteMapItemHandlersConfiguration {
@@ -41,7 +40,7 @@ public class HstSiteMapItemHandlersConfigurationService implements HstSiteMapIte
                 try {
                     HstSiteMapItemHandlerConfiguration siteMapItemHandler = new HstSiteMapItemHandlerConfigurationService(handlerNode);
                     siteMapItemHanderConfigurations.put(siteMapItemHandler.getId(), siteMapItemHandler);
-                } catch (ServiceException e) {
+                } catch (ModelLoadingException e) {
                     log.warn("Skipping handle '{}' because '{}'", handlerNode.getValueProvider().getPath(), e.getMessage());
                 }
             }else {

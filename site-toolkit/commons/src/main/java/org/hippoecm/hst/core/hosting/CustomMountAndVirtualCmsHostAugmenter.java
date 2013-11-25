@@ -19,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +45,6 @@ import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,8 +242,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 log.warn("'{}' is an invalid cmsLocation. The mount '{}' won't be available for hosts in that hostGroup.",
                         cmsLocation, mountName);
                 continue;
-            } catch (ServiceException e) {
-                log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
             } catch (IllegalArgumentException e) {
                 log.error("Unable to add custom cms host mount '" + mountName + "'.", e);
             }
@@ -282,7 +278,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         private String cmsLocation;
         private final String hostGroupName;
 
-        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position, String hostGroupName) throws ServiceException {
+        private CustomVirtualHost(VirtualHosts virtualHosts, String[] hostSegments, String cmsLocation, int position, String hostGroupName) {
             this.virtualHosts = virtualHosts;
             this.hostGroupName = hostGroupName;
             name = hostSegments[position];
@@ -456,7 +452,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         private int port;
         private Mount rootMount;
 
-        private CustomPortMount(int port) throws ServiceException {
+        private CustomPortMount(int port) {
             this.port = port;
         }
 
@@ -502,9 +498,8 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
          * Creates a hst:root Mount + the child custom mount
          * @param virtualHost
          * @param namedPipeline
-         * @throws org.hippoecm.hst.service.ServiceException
          */
-        private CustomMount(VirtualHost virtualHost, String type, String namedPipeline) throws ServiceException {
+        private CustomMount(VirtualHost virtualHost, String type, String namedPipeline) {
             this.virtualHost = virtualHost;
             name = HstNodeTypes.MOUNT_HST_ROOTNAME;
             mountPath = "";
@@ -523,9 +518,8 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
          * @param namedPipeline
          * @param parent
          * @param virtualHost
-         * @throws org.hippoecm.hst.service.ServiceException
          */
-        public CustomMount(String name, String type, String namedPipeline, Mount parent, VirtualHost virtualHost) throws ServiceException {
+        public CustomMount(String name, String type, String namedPipeline, Mount parent, VirtualHost virtualHost) {
            this.name = name;
            this.namedPipeline = namedPipeline;
            this.parent = parent;
@@ -536,7 +530,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
+        public void addMount(MutableMount mount) throws IllegalArgumentException {
            if(childs.containsKey(mount.getName())) {
                 throw new IllegalArgumentException("Cannot add Mount with name '"+mount.getName()+"' because already exists for " + this.toString());
             }
@@ -655,6 +649,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        @Deprecated
         public String getCanonicalContentPath() {
             return fakeNonExistingPath;
         }

@@ -175,14 +175,14 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
         for (HstLink link : canonicalLinks) {
             Mount mount = link.getMount();
 
-            if (mount.getCanonicalContentPath().length() == bestPathLength) {
+            if (mount.getContentPath().length() == bestPathLength) {
                 // equally well as already found ones. Add to the candidates.
                 candidateLinks.add(link);
-            } else if (mount.getCanonicalContentPath().length() > bestPathLength) {
+            } else if (mount.getContentPath().length() > bestPathLength) {
                 // this is a better one than the ones already found. Clear the candidates first.
                 candidateLinks.clear();
                 candidateLinks.add(link);
-                bestPathLength = mount.getCanonicalContentPath().length();
+                bestPathLength = mount.getContentPath().length();
             } else {
                 // ignore, we already have a better link
             }

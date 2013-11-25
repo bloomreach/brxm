@@ -15,11 +15,8 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import java.util.Calendar;
-
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.service.ServiceException;
 
 /**
  * Mount extension that decouples channel info retrieval from the mount service construction.
@@ -47,9 +44,8 @@ public interface MutableMount extends Mount {
      * 
      * @param mount the {@link MutableMount} to add
      * @throws IllegalArgumentException if the <code>mount</code> could not be added
-     * @throws ServiceException if the <code>mount</code> could not be added
      */
-    void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException;
+    void addMount(MutableMount mount) throws IllegalArgumentException;
     
     /**
      * @return the cms location (fully qualified URL) or <code>null</code> if not configured

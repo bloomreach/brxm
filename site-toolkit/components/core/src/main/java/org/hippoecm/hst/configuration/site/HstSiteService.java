@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
+import org.hippoecm.hst.configuration.sitemap.HstNoopSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
@@ -127,67 +128,54 @@ public class HstSiteService implements HstSite {
 
     public HstComponentsConfiguration getComponentsConfiguration() {
         if (componentsConfiguration != null) {
-            if (componentsConfiguration.isPresent()) {
-                return componentsConfiguration.get();
-            }
-            throw new ModelLoadingException("HstComponentsConfiguration for '"+configurationPath+"' could not be correctly" +
-                    " loaded earlier.");
+            return componentsConfiguration.get();
         }
         log.debug("Loading HstComponentsConfiguration for '{}'", configurationPath);
 
         synchronized (hstModelMutex) {
             if (componentsConfiguration != null) {
-                if (componentsConfiguration.isPresent()) {
-                    return componentsConfiguration.get();
-                }
-                throw new ModelLoadingException("HstComponentsConfiguration for '"+configurationPath+"' could not be correctly" +
-                        " loaded earlier.");
+                return componentsConfiguration.get();
             }
             try {
                 long start = System.currentTimeMillis();
                 HstComponentsConfiguration ccs = configLoadingCache.getComponentsConfiguration(configurationPath, true);
                 componentsConfiguration = Optional.of(ccs);
-                if (siteMap != null && siteMap.isPresent()) {
+                if (siteMap != null) {
                     checkAndLogAccessibleRootComponents(ccs, siteMap.get());
                 }
                 log.info("Loading HstComponentsConfiguration for '{}' took '{}' ms.", configurationPath,
                         String.valueOf(System.currentTimeMillis() - start));
                 return ccs;
-            } catch (ModelLoadingException e) {
+            } catch (Exception e) {
                 // avoid same model being incorrectly loaded over and over
-                componentsConfiguration = Optional.absent();
-                throw new ModelLoadingException("Could not load HstComponentsConfiguration for '"+configurationPath+"'.", e);
+                componentsConfiguration = Optional.of(HstComponentsConfiguration.NOOP);
+                log.warn("Could not load HstComponentsConfiguration for '{}'. Return a NOOP HstComponentsConfiguration instance", configurationPath, e);
+                return HstComponentsConfiguration.NOOP;
             }
         }
     }
 
     public HstSiteMap getSiteMap() {
         if (siteMap != null) {
-            if (siteMap.isPresent()) {
-                return siteMap.get();
-            }
-            throw new ModelLoadingException("HstSiteMap for '"+configurationPath+"' could not be correctly" +
-                    " loaded earlier.");
+            return siteMap.get();
         }
         synchronized (hstModelMutex) {
             if (siteMap != null) {
-                if (siteMap.isPresent()) {
-                    return siteMap.get();
-                }
-                throw new ModelLoadingException("HstSiteMap for '"+configurationPath+"' could not be correctly" +
-                        " loaded earlier.");
+                 return siteMap.get();
             }
             try {
                 long start = System.currentTimeMillis();
                 final CompositeConfigurationNodes ccn = configLoadingCache.getCompositeConfigurationNodes(configurationPath, HstNodeTypes.NODENAME_HST_SITEMAP);
                 final CompositeConfigurationNodes.CompositeConfigurationNode siteMapNode = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_SITEMAP);
                 if (siteMapNode == null) {
-                    siteMap = Optional.absent();
-                    throw new ModelLoadingException("There is no sitemap configured");
+                    HstSiteMap sm = new HstNoopSiteMap(this);
+                    siteMap = Optional.of(sm);
+                    log.warn("Could not load HstSiteMap for '{}'. Return a NOOP sitemap for this site config", configurationPath);
+                    return sm;
                 }
                 HstSiteMap sm = new HstSiteMapService(this, siteMapNode, mountSiteMapConfiguration, getSiteMapItemHandlersConfiguration());
                 siteMap = Optional.of(sm);
-                if (componentsConfiguration != null && componentsConfiguration.isPresent()) {
+                if (componentsConfiguration != null) {
                     checkAndLogAccessibleRootComponents(componentsConfiguration.get(), sm);
                 }
                 log.info("Loading HstSiteMap for '{}' took '{}' ms.", configurationPath,
@@ -195,33 +183,26 @@ public class HstSiteService implements HstSite {
                 return sm;
             } catch (ModelLoadingException e) {
                 // avoid same model being incorrectly loaded over and over
-                siteMap = Optional.absent();
-                throw new ModelLoadingException("Could not load HstSiteMap for '" + configurationPath + "'.", e);
+                HstSiteMap sm = new HstNoopSiteMap(this);
+                siteMap = Optional.of(sm);
+                log.warn("Could not load HstSiteMap for '{}'. Return a NOOP sitemap for this site config", configurationPath, e);
+                return sm;
             }
         }
     }
 
     public HstSiteMapItemHandlersConfiguration getSiteMapItemHandlersConfiguration() {
         if (siteMapItemHandlersConfigurationService != null) {
-            if (siteMapItemHandlersConfigurationService.isPresent()) {
-                return siteMapItemHandlersConfigurationService.get();
-            }
-            throw new ModelLoadingException("HstSiteMapItemHandlersConfiguration for '"+configurationPath+"' could not be correctly" +
-                    " loaded earlier.");
+            return siteMapItemHandlersConfigurationService.get();
         }
         log.debug("Loading HstComponentsConfiguration for '{}'", configurationPath);
 
         synchronized (hstModelMutex) {
             if (siteMapItemHandlersConfigurationService != null) {
-                if (siteMapItemHandlersConfigurationService.isPresent()) {
-                    return siteMapItemHandlersConfigurationService.get();
-                }
-                throw new ModelLoadingException("HstSiteMapItemHandlersConfiguration for '"+configurationPath+"' could not be correctly" +
-                        " loaded earlier.");
+                return siteMapItemHandlersConfigurationService.get();
             }
             try {
                 long start = System.currentTimeMillis();
-
                 HstSiteMapItemHandlersConfiguration hsihcs = configLoadingCache.getSiteMapItemHandlersConfiguration(configurationPath, true);
                 siteMapItemHandlersConfigurationService = Optional.of(hsihcs);
                 log.info("Loading HstSiteMapItemHandlersConfiguration for '{}' took '{}' ms.", configurationPath,
@@ -229,8 +210,9 @@ public class HstSiteService implements HstSite {
                 return hsihcs;
             } catch (ModelLoadingException e) {
                 // avoid same model being incorrectly loaded over and over
-                siteMapItemHandlersConfigurationService = Optional.absent();
-                throw new ModelLoadingException("Could not load HstComponentsConfigurationService for '"+configurationPath+"'.", e);
+                siteMapItemHandlersConfigurationService = Optional.of(HstSiteMapItemHandlersConfiguration.NOOP);
+                log.warn("Could not load HstComponentsConfigurationService for '{}'. Return HstSiteMapItemHandlersConfiguration NOOP instance", configurationPath, e);
+                return HstSiteMapItemHandlersConfiguration.NOOP;
             }
         }
     }

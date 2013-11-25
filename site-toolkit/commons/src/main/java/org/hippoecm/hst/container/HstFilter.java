@@ -651,15 +651,15 @@ public class HstFilter implements Filter {
                 // not a sitemap
                 continue;
             }
-            if (mount.getType().equals(type) && (nodePath.startsWith(mount.getCanonicalContentPath() + "/") || nodePath.equals(mount.getCanonicalContentPath()))) {
-                if(mount.getCanonicalContentPath().length() == bestPathLength) {
+            if (mount.getType().equals(type) && (nodePath.startsWith(mount.getContentPath() + "/") || nodePath.equals(mount.getContentPath()))) {
+                if(mount.getContentPath().length() == bestPathLength) {
                     // Equally well as already found ones. Add to candidateMounts
                     candidateMounts.add(mount);
-                } else if (mount.getCanonicalContentPath().length() > bestPathLength) {
+                } else if (mount.getContentPath().length() > bestPathLength) {
                     // this is a better one than the ones already found. Clear the candidateMounts first
                     candidateMounts.clear();
                     candidateMounts.add(mount);
-                    bestPathLength = mount.getCanonicalContentPath().length();
+                    bestPathLength = mount.getContentPath().length();
                 } else {
                     // ignore, we already have a better mount
                 }

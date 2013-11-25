@@ -116,6 +116,9 @@ public class CompositeConfigurationNodes {
                     }
                 }
             }
+            if (mainConfigNode == null) {
+                continue;
+            }
             // do the actual composite: start with 'mainConfigNode' and then merge in the nodes from inheritanceListForMainConfigNode
             CompositeConfigurationNode compositeConfigurationNode = new CompositeConfigurationNode(mainConfigNode, fallbackMainConfigNodes);
             compositeConfigurationNodes.put(compositeConfigurationNodeName, compositeConfigurationNode);

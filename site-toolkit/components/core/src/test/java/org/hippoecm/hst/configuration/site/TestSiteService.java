@@ -17,10 +17,13 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.HashSet;
 
+import com.google.common.base.Optional;
+
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
@@ -315,4 +318,8 @@ public class TestSiteService extends AbstractTestConfigurations {
 
     }
 
+
+    public static Optional<HstSiteMap> getSiteMapInstanceVariable(HstSiteService siteService) {
+        return siteService.siteMap;
+    }
 }

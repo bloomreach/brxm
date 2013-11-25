@@ -36,6 +36,7 @@ import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
@@ -43,7 +44,6 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
-import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,20 +142,9 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String contentPath;
 
     /**
-     * The absolute canonical path of the content
-     */
-    private String canonicalContentPath;
-
-    /**
      * The path where the {@link Mount} is pointing to
      */
     private String mountPoint;
-
-    /**
-     * The path where the preview equivalent of this {@link Mount} is pointing to. If this {@link Mount} is
-     * a preview. the previewMountPoint is the same as mountPoint
-     */
-    private String previewMountPoint;
 
     /**
      * <code>true</code> (default) when this {@link Mount} is used as a site. False when used only as content mount point and possibly a namedPipeline
@@ -240,7 +229,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                         final Mount parent,
                         final VirtualHost virtualHost,
                         final HstNodeLoadingCache hstNodeLoadingCache,
-                        final int port) throws ServiceException {
+                        final int port) throws ModelLoadingException {
         this.virtualHost = virtualHost;
         this.parent = parent;
         this.port = port;
@@ -454,13 +443,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
-        if(Mount.PREVIEW_NAME.equals(type)) {
-            previewMountPoint = mountPoint;
-        } else {
-            previewMountPoint = mountPoint + "-" + Mount.PREVIEW_NAME;
-        }
-
-
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED)) {
             this.authenticated = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_AUTHENTICATED);
         } else if (parent != null){
@@ -535,59 +517,63 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
-        if(mountPoint == null ){
-            log.info("Mount '{}' at '{}' does have an empty mountPoint. This means the Mount is not using a HstSite and does not have a content path", getName(), mount.getValueProvider().getPath());
-        } else if(!mountPoint.startsWith("/")) {
-            throw new ServiceException("Mount at '"+mount.getValueProvider().getPath()+"' has an invalid mountPoint '"+mountPoint+"'. A mount point is absolute and must start with a '/'");
-        } else if(!isMapped()){
-            log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured to not use a HstSiteMap because isMapped() is false", getName(), mount.getValueProvider().getPath());
+        try {
+            if (mountPoint == null) {
+                log.info("Mount '{}' at '{}' does have an empty mountPoint. This means the Mount is not using a HstSite and does not have a content path", getName(), mount.getValueProvider().getPath());
+            } else if (!mountPoint.startsWith("/")) {
+                throw new ModelLoadingException("Mount at '" + mount.getValueProvider().getPath() + "' has an invalid mountPoint '" + mountPoint + "'. A mount point is absolute and must start with a '/'");
+            } else if (!isMapped()) {
+                log.info("Mount '{}' at '{}' does contain a mountpoint, but is configured to not use a HstSiteMap because isMapped() is false", getName(), mount.getValueProvider().getPath());
 
-            // check if the mountpoint points to a hst:site node:
-            if (mountPoint.startsWith(hstNodeLoadingCache.getRootPath())) {
-                HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
-                if (hstSiteNodeForMount != null && hstSiteNodeForMount.getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITE)) {
-                    canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
-                    contentPath = canonicalContentPath;
+                // check if the mountpoint points to a hst:site node:
+                if (mountPoint.startsWith(hstNodeLoadingCache.getRootPath())) {
+                    HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
+                    if (hstSiteNodeForMount != null && hstSiteNodeForMount.getNodeTypeName().equals(HstNodeTypes.NODETYPE_HST_SITE)) {
+                        contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+                    } else {
+                        this.contentPath = mountPoint;
+                    }
                 } else {
+                    // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
                     this.contentPath = mountPoint;
-                    this.canonicalContentPath = mountPoint;
                 }
+                assertContentPathNotEmpty(mount, contentPath);
+                // add this Mount to the maps in the VirtualHostsService
+                ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
             } else {
-                // when not mapped we normally do not need the mount for linkrewriting. Hence we just take it to be the same as the contentPath.
-                this.contentPath = mountPoint;
-                this.canonicalContentPath = mountPoint;
+
+                if (!mountPoint.startsWith(hstNodeLoadingCache.getRootPath())) {
+                    mountException(mount);
+                }
+
+                HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
+                if (hstSiteNodeForMount == null) {
+                    mountException(mount);
+                }
+
+                MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
+                long start = System.currentTimeMillis();
+                hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
+                contentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
+
+                assertContentPathNotEmpty(mount, contentPath);
+                log.info("Successfull initialized hstSite '{}' for Mount '{}' in '{}' ms.",
+                        new String[]{hstSite.getName(), getName(), String.valueOf(System.currentTimeMillis() - start)});
+                // add this Mount to the maps in the VirtualHostsService
+                ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
             }
-        } else {
-            if (!mountPoint.startsWith(hstNodeLoadingCache.getRootPath())) {
-                mountException(mount);
-            }
-
-            HstNode hstSiteNodeForMount = hstNodeLoadingCache.getNode(mountPoint);
-            if(hstSiteNodeForMount == null) {
-                mountException(mount);
-            }
-
-            MountSiteMapConfiguration mountSiteMapConfiguration = new MountSiteMapConfiguration(this);
-            long start = System.currentTimeMillis();
-            hstSite = HstSiteService.createLiveSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
-            previewHstSite = HstSiteService.createPreviewSiteService(hstSiteNodeForMount, mountSiteMapConfiguration, hstNodeLoadingCache);
-            canonicalContentPath = hstSiteNodeForMount.getValueProvider().getString(HstNodeTypes.SITE_CONTENT);
-            contentPath = canonicalContentPath;
-
-            log.info("Successfull initialized hstSite '{}' for Mount '{}' in '{}' ms.",
-                    new String[]{hstSite.getName(), getName(), String.valueOf(System.currentTimeMillis() - start)});
-
+        } catch (ModelLoadingException e) {
+            log.warn("Configured Mount '{}' is incorrect. Possible child mounts will still be loaded.", jcrLocation, e);
         }
 
         for (HstNode childMount : mount.getNodes()) {
             if (HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
                 try {
                     MountService childMountService = new MountService(childMount, this, virtualHost, hstNodeLoadingCache, port);
-                    MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
-                    if (prevValue != null) {
-                        log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
-                    }
-                } catch (ServiceException e) {
+                    childMountServices.put(childMountService.getName(), childMountService);
+
+                } catch (ModelLoadingException e) {
                     String path = childMount.getValueProvider().getPath();
                     if (log.isDebugEnabled()) {
                         log.warn("Skipping incorrect mount for mount node '" + path + "'. ", e);
@@ -598,15 +584,21 @@ public class MountService implements ContextualizableMount, MutableMount {
 
             }
         }
-
-        // add this Mount to the maps in the VirtualHostsService
-       ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
     }
 
-    private void mountException(final HstNode mount) throws ServiceException {
-        throw new ServiceException("mountPoint '" + mountPoint
+    private void assertContentPathNotEmpty(final HstNode mount, final String contentPath) throws ModelLoadingException {
+        if (StringUtils.isEmpty(contentPath)) {
+            throw new ModelLoadingException("Mount '"+mount.getValueProvider().getPath()+"' does have an empty or null contentPath, " +
+                    "hence has broken configuration. Fix the hst:content property when the mountpoint points to a hst:site node, or make sure" +
+                    " hst:ismapped = false if this mount does not need a mountpoint to a hst:site node. Possible child mounts will still be loaded");
+        }
+    }
+
+    private void mountException(final HstNode mount) throws ModelLoadingException {
+        throw new ModelLoadingException("mountPoint '" + mountPoint
                 + "' does not point to a hst:site node for Mount '" + mount.getValueProvider().getPath()
-                + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' if this mount is not meant to have a mount point");
+                + "'. Cannot create HstSite for Mount. Either fix the mountpoint or add 'hst:ismapped=false' " +
+                "if this mount is not meant to have a mount point");
     }
 
     /**
@@ -631,9 +623,9 @@ public class MountService implements ContextualizableMount, MutableMount {
 
 
     @Override
-    public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
+    public void addMount(MutableMount mount) throws ModelLoadingException {
         if(childMountServices.containsKey(mount.getName())) {
-            throw new IllegalArgumentException("Cannot add Mount with name '"+mount.getName()+"' because already exists for " + this.toString());
+            throw new ModelLoadingException("Cannot add Mount with name '"+mount.getName()+"' because already exists for " + this.toString());
         }
         childMountServices.put(mount.getName(), mount);
         ((MutableVirtualHosts)virtualHost.getVirtualHosts()).addMount(mount);
@@ -678,8 +670,9 @@ public class MountService implements ContextualizableMount, MutableMount {
         return contentPath;
     }
 
+    @Deprecated
     public String getCanonicalContentPath() {
-        return canonicalContentPath;
+        return getContentPath();
     }
 
 

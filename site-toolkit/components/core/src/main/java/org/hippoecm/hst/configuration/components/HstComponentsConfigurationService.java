@@ -278,7 +278,8 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
     private Map<String, HstNode> getTemplateResourceMap(CompositeConfigurationNodes.CompositeConfigurationNode templateNodes) throws ModelLoadingException {
         if(templateNodes == null) {
-            throw new ModelLoadingException("Mandatory '"+HstNodeTypes.NODENAME_HST_TEMPLATES+"' missing'");
+            log.info("Configuration for '{}' does not have hst:templates. Model will be loaded without templates", id);
+            return Collections.emptyMap();
         }
         Map<String, HstNode> templateResourceMap = new HashMap<String, HstNode>();
 

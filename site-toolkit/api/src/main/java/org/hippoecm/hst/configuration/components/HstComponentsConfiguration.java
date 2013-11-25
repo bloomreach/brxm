@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,23 @@ import org.hippoecm.hst.core.component.HstComponent;
  * should be therefor unmodifiable.  
  */
 public interface HstComponentsConfiguration {
+
+    static final HstComponentsConfiguration NOOP = new HstComponentsConfiguration() {
+        @Override
+        public Map<String, HstComponentConfiguration> getComponentConfigurations() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public HstComponentConfiguration getComponentConfiguration(final String id) {
+            return null;
+        }
+
+        @Override
+        public List<HstComponentConfiguration> getAvailableContainerItems() {
+            return null;
+        }
+    };
 
     /**
      * Return the map of all root <code>HstComponentConfiguration</code>'s where the keys are the the <code>HstComponentConfiguration</code>'s 

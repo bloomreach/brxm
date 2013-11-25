@@ -432,7 +432,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                            }
                          
                            // (a)
-                           if(nodePath.startsWith(candidateMount.getCanonicalContentPath() + "/") || nodePath.equals(candidateMount.getCanonicalContentPath())) {
+                           if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
                               // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                               // (b)
                               if(!Collections.disjoint(candidateMount.getTypes(), mount.getTypes())) {
@@ -595,7 +595,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                    }
                  
                    // (a)
-                   if(nodePath.startsWith(candidateMount.getCanonicalContentPath() + "/") || nodePath.equals(candidateMount.getCanonicalContentPath())) {
+                   if(nodePath.startsWith(candidateMount.getContentPath() + "/") || nodePath.equals(candidateMount.getContentPath())) {
                       // check whether one of the types of this Mount matches the types of the currentMount: if so, we have a possible hit.
                       // (b)
                       if(type != null) {
@@ -675,13 +675,13 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          * @return LinkInfo for <code>tryMount</code>and <code>nodePath</code> or <code>null</code>
          */
         private LinkInfo resolveToLinkInfo(String nodePath, Mount tryMount, ResolverProperties resolverProperties){
-            if(!resolverProperties.virtual && nodePath.equals(tryMount.getCanonicalContentPath())) {
+            if(!resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) {
                 // the root node of the site. Return the homepage
                 String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
                 return pathInfo == null ? null : new LinkInfo(pathInfo, false, tryMount);
             }
-            if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getCanonicalContentPath() + "/")) {
-                String relPath = nodePath.substring(tryMount.getCanonicalContentPath().length());
+            if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath() + "/")) {
+                String relPath = nodePath.substring(tryMount.getContentPath().length());
                 ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
                 return (resolvedLocation == null || resolvedLocation.getPath() == null) ? null : new LinkInfo(resolvedLocation, false, tryMount);
             } else if (resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) { 
@@ -827,8 +827,8 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             }
             
             // Algorithm step 4: order the mounts to have the ones that have the deepest (most slashes) #getCanonicalContentPath() first
-            int depth1 = mount1.getCanonicalContentPath().split("/").length;
-            int depth2 = mount2.getCanonicalContentPath().split("/").length;
+            int depth1 = mount1.getContentPath().split("/").length;
+            int depth2 = mount2.getContentPath().split("/").length;
             if(depth1 != depth2) {
                // if depth2 > depth1, then the order must be flipped (return +1). Otherwise, keep as is and return -1
                if(depth2 > depth1) {

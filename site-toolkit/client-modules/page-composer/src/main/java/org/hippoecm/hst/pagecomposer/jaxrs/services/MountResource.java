@@ -98,7 +98,7 @@ public class MountResource extends AbstractConfigResource {
             return error("Could not get the editing site to create the toolkit representation.");
         }
 
-        setCurrentMountCanonicalContentPath(servletRequest, editingMount.getCanonicalContentPath());
+        setCurrentMountCanonicalContentPath(servletRequest, editingMount.getContentPath());
 
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         log.info("Toolkit items loaded successfully");
@@ -320,7 +320,7 @@ public class MountResource extends AbstractConfigResource {
                 log.warn("Could not get the editing mount to get the content path for creating the document.");
                 return error("Could not get the editing mount to get the content path for creating the document.");
             }
-            String canonicalContentPath = editingPreviewMount.getCanonicalContentPath();
+            String canonicalContentPath = editingPreviewMount.getContentPath();
             WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
                     getObjectConverter(requestContext));
             workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
@@ -354,7 +354,7 @@ public class MountResource extends AbstractConfigResource {
             return error("Could not get the editing mount to get the content path for listing documents.");
         }
         List<DocumentRepresentation> documentLocations = new ArrayList<DocumentRepresentation>();
-        String canonicalContentPath = editingHstMount.getCanonicalContentPath();
+        String canonicalContentPath = editingHstMount.getContentPath();
         try {
             Session session = requestContext.getSession();
 

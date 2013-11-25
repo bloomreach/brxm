@@ -18,7 +18,7 @@ package org.hippoecm.hst.configuration.hosting;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,29 +36,24 @@ public class PortMountService implements MutablePortMount {
      */
     private Mount rootMount;
     
-    public PortMountService(final HstNode portMount, final VirtualHost virtualHost, final HstNodeLoadingCache hstNodeLoadingCache) throws ServiceException {
+    public PortMountService(final HstNode portMount, final VirtualHost virtualHost, final HstNodeLoadingCache hstNodeLoadingCache) throws ModelLoadingException {
         String nodeName = portMount.getValueProvider().getName();
         try {
             portNumber = Integer.parseInt(nodeName);
             if(portNumber < 1) {
-                throw new ServiceException("Not allowed PortMount name '"+nodeName+"' : PortMount must be a positive integer larger than 0");
+                throw new ModelLoadingException("Not allowed PortMount name '"+nodeName+"' : PortMount must be a positive integer larger than 0");
             }
         } catch(NumberFormatException e) {
-            throw new ServiceException("Not allowed PortMount name '"+nodeName+"' : PortMount must be a positive integer larger than 0");
+            throw new ModelLoadingException("Not allowed PortMount name '"+nodeName+"' : PortMount must be a positive integer larger than 0");
         }
         
         HstNode mount = portMount.getNode(HstNodeTypes.MOUNT_HST_ROOTNAME);
         if(mount != null && HstNodeTypes.NODETYPE_HST_MOUNT.equals(mount.getNodeTypeName())) {
-            try {
-                rootMount = new MountService(mount, null, virtualHost, hstNodeLoadingCache, portNumber);
-            } catch (ServiceException e) {
-                log.error("The host '"+virtualHost.getHostName()+"' for port '"+portNumber+"' contains an incorrect configured Mount. The host with port cannot be used for hst request processing", e);
-            } 
+            rootMount = new MountService(mount, null, virtualHost, hstNodeLoadingCache, portNumber);
         }
-        
     }
     
-    public PortMountService(Mount rootMount, VirtualHost virtualHost) throws ServiceException {
+    public PortMountService(Mount rootMount) {
         this.rootMount = rootMount;
         // the default portnumber is 0 by definition, which means port agnostic
         this.portNumber = 0;
