@@ -53,6 +53,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private static final String SCXML_SOURCE = "hipposcxml:source";
     private static final String SCXML_ACTION_NAMESPACE = "hipposcxml:namespace";
     private static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
+    private static final String SCXML_ACTION = "hipposcxml:action";
 
     private Map<String,SCXML> scxmlMap = Collections.emptyMap();
 
@@ -80,10 +81,12 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                     } else {
                         final List<CustomAction> actions = new ArrayList<>();
                         for (final Node actionNode : new NodeIterable(scxmlNode.getNodes())) {
-                            String namespace = actionNode.getProperty(SCXML_ACTION_NAMESPACE).getString();
-                            className = actionNode.getProperty(SCXML_ACTION_CLASSNAME).getString();
-                            Class<? extends Action> actionClass = (Class<Action>) getClass().forName(className);
-                            actions.add(new CustomAction(namespace, actionNode.getName(), actionClass));
+                            if (actionNode.isNodeType(SCXML_ACTION)) {
+                                String namespace = actionNode.getProperty(SCXML_ACTION_NAMESPACE).getString();
+                                className = actionNode.getProperty(SCXML_ACTION_CLASSNAME).getString();
+                                Class<? extends Action> actionClass = (Class<Action>) getClass().forName(className);
+                                actions.add(new CustomAction(namespace, actionNode.getName(), actionClass));
+                            }
                         }
                         XMLReporter reporter = null;
                         PathResolver pathResolver = null;
