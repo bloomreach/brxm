@@ -67,7 +67,7 @@ public class RootPlugin extends RenderPlugin {
             ModelReference modelService = new ModelReference(modelId, new JcrNodeModel("/"));
             modelService.init(context);
 
-            pathHistoryBehavior = new PathHistoryBehavior(null, modelService);
+            pathHistoryBehavior = new PathHistoryBehavior(modelService);
             context.registerService(pathHistoryBehavior, IObserver.class.getName());
             add(pathHistoryBehavior);
         }

@@ -138,9 +138,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jslint-maven-plugin</artifactId>
         <configuration>
-          <excludes>
-            <exclude>org/hippoecm/frontend/plugins/console/behavior/js/init.js</exclude>
-          </excludes>
           <predefinedVars>
             Hippo,
             shortcut,

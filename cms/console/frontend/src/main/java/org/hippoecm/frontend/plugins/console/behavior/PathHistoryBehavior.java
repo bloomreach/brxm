@@ -16,63 +16,75 @@
 
 package org.hippoecm.frontend.plugins.console.behavior;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
-import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.util.string.*;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnLoadHeaderItem;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
-import org.hippoecm.frontend.plugins.yui.IAjaxSettings;
-import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
-import org.onehippo.yui.YuiNamespace;
 
-public class PathHistoryBehavior extends AbstractYuiAjaxBehavior implements YuiNamespace, IObserver {
+public class PathHistoryBehavior extends AbstractDefaultAjaxBehavior implements IObserver {
+
+    private static final String PATH_PARAMETER = "path";
 
     private IModelReference reference;
+    private transient boolean myUpdate;
 
-    public PathHistoryBehavior(IAjaxSettings settings, IModelReference reference) {
-        super(settings);
-
-        this.reference  = reference;
+    public PathHistoryBehavior(IModelReference reference) {
+        this.reference = reference;
 
         setPathFromRequest();
     }
 
     private void setPathFromRequest() {
         final RequestCycle requestCycle = RequestCycle.get();
-        StringValue path = requestCycle.getRequest().getQueryParameters().getParameterValue("path");
+        StringValue path = requestCycle.getRequest().getQueryParameters().getParameterValue(PATH_PARAMETER);
         if (!path.isNull()) {
-            reference.setModel(new JcrNodeModel(path.toString()));
+            try {
+                myUpdate = true;
+                reference.setModel(new JcrNodeModel(path.toString()));
+            } finally {
+                myUpdate = false;
+            }
         }
     }
 
     @Override
-    public void addHeaderContribution(final IYuiContext context) {
-        context.addModule(this, "pathhistory");
-        context.addTemplate(PathHistoryBehavior.class, "js/init.js", getParameters());
+    public void renderHead(final Component component, final IHeaderResponse response) {
+        super.renderHead(component, response);
+
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(PathHistoryBehavior.class, "js/pathhistory/pathhistory.js")));
+
+        String attributesAsJson = renderAjaxAttributes(component).toString();
+        response.render(OnLoadHeaderItem.forScript(
+                "Hippo.PathHistory.init(function(path) {\n"
+                        + "    var call = new Wicket.Ajax.Call(),"
+                        + "        attributes = jQuery.extend({}, " + attributesAsJson + ");\n"
+                        + "    call.ajax(attributes);\n"
+                        + "});"));
     }
 
-    private Map<String, Object> getParameters() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("callbackUrl", getCallbackUrl());
-        params.put("callbackFunction", getCallbackFunction());
-        return params;
+    @Override
+    protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
+        super.updateAjaxAttributes(attributes);
+        final List<CharSequence> dep = attributes.getDynamicExtraParameters();
+        dep.add("return { " + PATH_PARAMETER + ": path };");
     }
 
     @Override
     protected void respond(final AjaxRequestTarget target) {
         setPathFromRequest();
-    }
-
-    @Override
-    public String getPath() {
-        return "js/";
     }
 
     @Override
@@ -82,9 +94,11 @@ public class PathHistoryBehavior extends AbstractYuiAjaxBehavior implements YuiN
 
     @Override
     public void onEvent(final Iterator events) {
-        JcrNodeModel nodeModel = (JcrNodeModel) reference.getModel();
-        String path = nodeModel.getItemModel().getPath();
-        AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
-        ajax.appendJavaScript("YAHOO.hippo.PathHistory.setPath('" + path + "')");
+        if (!myUpdate) {
+            JcrNodeModel nodeModel = (JcrNodeModel) reference.getModel();
+            String path = nodeModel.getItemModel().getPath();
+            AjaxRequestTarget ajax = RequestCycle.get().find(AjaxRequestTarget.class);
+            ajax.appendJavaScript("Hippo.PathHistory.setPath('" + path + "')");
+        }
     }
 }

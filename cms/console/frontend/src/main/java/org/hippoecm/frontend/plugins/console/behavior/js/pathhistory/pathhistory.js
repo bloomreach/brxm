@@ -13,73 +13,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * @description
- * <p>
- * Todo
- * </p>
- * @namespace YAHOO.hippo
- * @requires hippoajax, hashmap, hippodom
- * @module pathhistory
- */
-(function() {
+(function () {
     "use strict";
 
-    YAHOO.namespace('hippo');
+    window.Hippo = window.Hippo || {};
 
-    if (!YAHOO.hippo.PathHistory) {
+    if (!Hippo.PathHistory) {
 
-        var Lang = YAHOO.lang;
-
-        YAHOO.hippo.PathHistoryImpl = function() {
+        var PathHistoryImpl = function () {
             this.initialized = false;
         };
 
-        YAHOO.hippo.PathHistoryImpl.prototype = {
+        PathHistoryImpl.prototype = {
 
-            init : function(url, callback) {
+            init: function (callback) {
                 if (this.initialized) {
                     return;
                 }
 
-                var handleUrlChange = jQuery.proxy(function() {
+                var handleUrlChange = jQuery.proxy(function () {
                     this.onUrlChange();
                 }, this);
                 window.addEventListener('popstate', handleUrlChange);
 
-                this.url = url;
                 this.callback = callback;
 
                 this.initialized = true;
             },
 
-            setPath : function(path) {
+            setPath: function (path) {
                 var url = '?path=' + path;
                 history.pushState(null, null, url);
             },
 
-            onUrlChange : function() {
-                var path, url;
+            onUrlChange: function () {
+                var path;
                 path = this.getParameter('path');
-                if (Lang.isUndefined(path)) {
+                if (path === undefined) {
                     path = "/";
                 }
-                url = this.url + "&path=" + path;
-                this.callback(url);
+                this.callback(path);
             },
 
-            getParameter : function(name) {
-                name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search);
+            getParameter: function (name) {
+                name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search);
                 if (name) {
                     return decodeURIComponent(name[1]);
+                } else {
+                    return undefined;
                 }
             }
         };
 
-        YAHOO.hippo.PathHistory = new YAHOO.hippo.PathHistoryImpl();
-        YAHOO.register("pathhistory", YAHOO.hippo.PathHistory, {
-            version : "2.7.0", build : "1799"
-        });
+        Hippo.PathHistory = new PathHistoryImpl();
     }
 
 }());

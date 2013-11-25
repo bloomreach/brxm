@@ -1328,7 +1328,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/Shortcuts.j
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/TopPlugin.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/TopPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/PathHistoryBehavior.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/js/init.js -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/js/pathhistory/pathhistory.js -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin$BrowserTree.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.html svneol=native#text/plain
