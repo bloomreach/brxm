@@ -36,18 +36,20 @@ public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected void doConfigure(Node moduleConfig) throws RepositoryException {
-        scxmlRegistry.doConfigure(moduleConfig);
-    }
-
-    @Override
-    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
-        scxmlRegistry.onConfigurationChange();
+        scxmlRegistry.reconfigure(moduleConfig);
     }
 
     @Override
     protected void doInitialize(Session session) throws RepositoryException {
+        scxmlRegistry.initialize();
         HippoServiceRegistry.registerService(scxmlRegistry, SCXMLRegistry.class);
         HippoServiceRegistry.registerService(scxmlExecutorFactory, SCXMLExecutorFactory.class);
+    }
+
+    @Override
+    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
+        super.onConfigurationChange(moduleConfig);
+        scxmlRegistry.refresh();
     }
 
     @Override

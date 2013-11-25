@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.stream.StreamSource;
@@ -55,90 +56,203 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
     private static final String SCXML_ACTION = "hipposcxml:action";
 
-    private Map<String,SCXML> scxmlMap = Collections.emptyMap();
+    private Map<String, SCXML> scxmlDefsMap;
 
     private Session session;
     private String scxmlTypesPath;
 
-    public RepositorySCXMLRegistry() {}
+    private XMLReporter xmlReporter;
+    private PathResolver pathResolver;
 
-    synchronized protected Map<String, SCXML> loadMap(Map<String, SCXML> oldMap) {
-        try {
-            final Map<String, SCXML> newMap = new HashMap<>();
-
-            final Node definitionsNode = session.getNode(scxmlTypesPath);
-            for (final Node scxmlNode : new NodeIterable(definitionsNode.getNodes())) {
-                final String scxmlName = scxmlNode.getName();
-                final String scxmlPath = scxmlNode.getPath();
-                String className = null;
-                // saveguard / reuse old SCXML definition if something fails
-                SCXML scxml = oldMap.get(scxmlName);
-                try {
-                    final String source = scxmlNode.getProperty(SCXML_SOURCE).getString();
-
-                    if (StringUtils.isBlank(source)) {
-                        scxml = new SCXML();
-                    } else {
-                        final List<CustomAction> actions = new ArrayList<>();
-                        for (final Node actionNode : new NodeIterable(scxmlNode.getNodes())) {
-                            if (actionNode.isNodeType(SCXML_ACTION)) {
-                                String namespace = actionNode.getProperty(SCXML_ACTION_NAMESPACE).getString();
-                                className = actionNode.getProperty(SCXML_ACTION_CLASSNAME).getString();
-                                Class<? extends Action> actionClass = (Class<Action>) getClass().forName(className);
-                                actions.add(new CustomAction(namespace, actionNode.getName(), actionClass));
-                            }
-                        }
-                        XMLReporter reporter = null;
-                        PathResolver pathResolver = null;
-                        Configuration configuration = new Configuration(reporter, pathResolver, actions);
-                        scxml = SCXMLReader.read(new StreamSource(new StringReader(source)), configuration);
-                    }
-                }
-                catch (ClassNotFoundException e) {
-                    log.warn("Failed to load custom SCXML action class "+className+". SCXML document {} not loaded", scxmlPath, e);
-                }
-                catch (ModelException e) {
-                    log.warn("Failed to parse SCXML document {}. Document not loaded", scxmlPath, e);
-                }
-                catch (XMLStreamException e) {
-                    log.warn("Failed to parse SCXML document {}. Document not loaded", scxmlPath, e);
-                }
-                catch (IOException e) {
-                    log.warn("Failed to load SCXML document {}. Document not loaded", scxmlPath, e);
-                }
-                newMap.put(scxmlName, scxml);
-            }
-            return newMap;
-        }
-        catch (RepositoryException e) {
-            log.warn("Unexpected error", e);
-            return Collections.emptyMap();
-        }
+    public RepositorySCXMLRegistry() {
     }
 
-    public void doConfigure(Node configRootNode) throws RepositoryException {
+    void reconfigure(Node configRootNode) throws RepositoryException {
         this.session = configRootNode.getSession();
         Node typesNode = configRootNode.getNode(SCXML_DEFINITIONS);
         this.scxmlTypesPath = typesNode.getPath();
-        if (!typesNode.getPrimaryNodeType().getName().equals(SCXML_DEFINITIONS)) {
-            throw new IllegalStateException("SCXMLRegistry configuration node at path: "+scxmlTypesPath+" is not of required primary type: "+ SCXML_DEFINITIONS);
-        }
-        scxmlMap = loadMap(scxmlMap);
-    }
 
-    public void onConfigurationChange()
-    {
-        // TODO: very crude, should handle change events (override #onEvent()) for more fine-grained reloading of individual documents
-        scxmlMap = loadMap(scxmlMap);
+        if (!typesNode.getPrimaryNodeType().getName().equals(SCXML_DEFINITIONS)) {
+            throw new IllegalStateException("SCXMLRegistry configuration node at path: " + scxmlTypesPath + " is not of required primary type: " + SCXML_DEFINITIONS);
+        }
     }
 
     @Override
-    public SCXML getSCXML(String name) {
-        return scxmlMap.get(name);
+    public void initialize() {
+        xmlReporter = new XMLReporterImpl();
+        pathResolver = new RepositoryPathResolver(scxmlTypesPath, null);
+
+        refresh();
     }
 
+    @Override
+    public SCXML getSCXML(String id) {
+        if (scxmlDefsMap != null) {
+            return scxmlDefsMap.get(id);
+        }
+
+        return null;
+    }
+
+    @Override
     public void destroy() {
-        scxmlMap.clear();
+        if (scxmlDefsMap != null) {
+            scxmlDefsMap.clear();
+        }
+
         session = null;
     }
+
+    void refresh() {
+        if (scxmlDefsMap == null) {
+            scxmlDefsMap = Collections.synchronizedMap(new HashMap<String, SCXML>());
+        }
+
+        Node scxmlDefsNode = null;
+
+        try {
+            String relScxmlDefsNodePath = StringUtils.removeStart(scxmlTypesPath, "/");
+
+            if (session.getRootNode().hasNode(relScxmlDefsNodePath)) {
+                scxmlDefsNode = session.getRootNode().getNode(relScxmlDefsNodePath);
+            } else {
+                log.error("SCXML Definitions Node doesn't exist at '{}'.", scxmlTypesPath);
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to read SCXML definitions node.", e);
+        }
+
+        if (scxmlDefsNode != null) {
+            try {
+                // first add or update
+                if (scxmlDefsNode.hasNodes()) {
+                    for (final Node scxmlDefNode : new NodeIterable(scxmlDefsNode.getNodes())) {
+                        final String scxmlDefId = scxmlDefNode.getName();
+                        SCXML newScxml = null;
+
+                        try {
+                            newScxml = readSCXML(scxmlDefNode);
+                        } catch (SCXMLException e) {
+                            log.error("Invalid SCXML at " + scxmlDefNode.getPath(), e);
+                        }
+
+                        if (newScxml != null && validateSCXML(newScxml)) {
+                            SCXML oldScxml = scxmlDefsMap.put(scxmlDefId, newScxml);
+
+                            if (oldScxml == null) {
+                                log.info("SCXML definition added. Id: '{}'.", scxmlDefId);
+                            } else {
+                                log.info("SCXML definition updated. Id: '{}'.", scxmlDefId);
+                            }
+                        }
+                    }
+                }
+
+                // remove if no definition node found
+                synchronized (scxmlDefsMap) {
+                    for (Map.Entry<String, SCXML> entry : scxmlDefsMap.entrySet()) {
+                        String scxmlDefId = entry.getKey();
+
+                        if (!scxmlDefsNode.hasNode(scxmlDefId)) {
+                            scxmlDefsMap.remove(scxmlDefId);
+                            log.info("SCXML definition removed. Id: '{}'.", scxmlDefId);
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.warn("Failed to parse SCXML definition node.", e);
+            }
+        }
+    }
+
+    private SCXML readSCXML(final Node scxmlDefNode) throws SCXMLException {
+        String scxmlDefPath = null;
+        String scxmlSource = null;
+        final List<CustomAction> actions = new ArrayList<CustomAction>();
+        String className = null;
+
+        try {
+            scxmlDefPath = scxmlDefNode.getPath();
+            scxmlSource = scxmlDefNode.getProperty(SCXML_SOURCE).getString();
+
+            if (StringUtils.isBlank(scxmlSource)) {
+                log.error("SCXML definition source is blank at '{}'. '{}'.", scxmlDefNode.getPath(), scxmlSource);
+            }
+
+            for (final Node actionNode : new NodeIterable(scxmlDefNode.getNodes())) {
+                if (!actionNode.isNodeType(SCXML_ACTION)) {
+                    continue;
+                }
+
+                String namespace = actionNode.getProperty(SCXML_ACTION_NAMESPACE).getString();
+                className = actionNode.getProperty(SCXML_ACTION_CLASSNAME).getString();
+                @SuppressWarnings("unchecked")
+                Class<? extends Action> actionClass = (Class<Action>) Thread.currentThread().getContextClassLoader().loadClass(className);
+                actions.add(new CustomAction(namespace, actionNode.getName(), actionClass));
+            }
+        } catch (ClassNotFoundException e) {
+            throw new SCXMLException("Failed to find the custom action class: " + className, e);
+        } catch (RepositoryException e) {
+            throw new SCXMLException("Failed to read custom actions from repository.", e);
+        } catch (Exception e) {
+            throw new SCXMLException("Failed to load custom actions.", e);
+        }
+
+        try {
+            Configuration configuration = new Configuration(xmlReporter, pathResolver, actions);
+            return SCXMLReader.read(new StreamSource(new StringReader(scxmlSource)), configuration);
+        } catch (IOException e) {
+            throw new SCXMLException("IO error while reading SCXML definition at '" + scxmlDefPath + "'.", e);
+        } catch (ModelException e) {
+            throw new SCXMLException("Invalid SCXML model definition at '" + scxmlDefPath + "'.", e);
+        } catch (XMLStreamException e) {
+            throw new SCXMLException("Failed to read SCXML XML stream at '" + scxmlDefPath + "'.", e);
+        }
+    }
+
+    private boolean validateSCXML(final SCXML scxml) {
+        return true;
+    }
+
+    private static class XMLReporterImpl implements XMLReporter {
+        @Override
+        public void report(String message, String errorType, Object relatedInformation, Location location)
+                throws XMLStreamException {
+            log.warn("SCXML parse error: [{}] {} {} ({}:{})", new Object [] { errorType, message, relatedInformation, location.getLineNumber(), location.getColumnNumber() });
+        }
+    }
+
+    private static class RepositoryPathResolver implements PathResolver {
+
+        private final String scxmlDefsPath;
+        private final String relativeBasePath;
+
+        private RepositoryPathResolver(final String scxmlDefsPath, String relativeBasePath) {
+            this.scxmlDefsPath = scxmlDefsPath;
+            this.relativeBasePath = relativeBasePath;
+        }
+
+        @Override
+        public String resolvePath(String ctxPath) {
+            StringBuilder sbTemp = new StringBuilder(scxmlDefsPath);
+
+            if (StringUtils.isNotEmpty(relativeBasePath)) {
+                sbTemp.append('/');
+                sbTemp.append(StringUtils.removeStart(relativeBasePath, "/"));
+            }
+
+            if (StringUtils.isNotEmpty(ctxPath)) {
+                sbTemp.append('/');
+                sbTemp.append(StringUtils.removeStart(ctxPath, "/"));
+            }
+
+            return sbTemp.toString();
+        }
+
+        @Override
+        public PathResolver getResolver(String ctxPath) {
+            return new RepositoryPathResolver(scxmlDefsPath, ctxPath);
+        }
+    }
+
 }
