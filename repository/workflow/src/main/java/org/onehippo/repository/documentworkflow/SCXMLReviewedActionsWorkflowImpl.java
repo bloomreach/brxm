@@ -66,8 +66,8 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     protected Document eventResultToUserDocument(Object obj) throws RepositoryException {
         Document document = null;
         if (obj != null) {
-            if (obj instanceof DocumentVariant) {
-                document = ((DocumentVariant)obj).getDocument();
+            if (obj instanceof PublishableDocument) {
+                document = (PublishableDocument)obj;
             }
             if (obj instanceof Document) {
                 document = (Document)obj;
@@ -134,19 +134,19 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             handle = new DocumentHandle(super.getWorkflowContext().getUserIdentity(), JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, ""));
 
             if (draftDocument != null) {
-                handle.setDraft(new DocumentVariant(draftDocument));
+                handle.setDraft(draftDocument);
             }
 
             if (unpublishedDocument != null) {
-                handle.setUnpublished(new DocumentVariant(unpublishedDocument));
+                handle.setUnpublished(unpublishedDocument);
             }
 
             if (publishedDocument != null) {
-                handle.setPublished(new DocumentVariant(publishedDocument));
+                handle.setPublished(publishedDocument);
             }
 
             if (current != null) {
-                handle.setRequest(new DocumentRequest(current));
+                handle.setRequest(current);
             }
 
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());

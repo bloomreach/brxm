@@ -101,22 +101,22 @@ public class CopyDocumentAction extends AbstractDocumentAction {
 
         try {
             if (handle.getUnpublished() == null) {
-                Document folder = WorkflowUtils.getContainingFolder(handle.getPublished().getDocument());
+                Document folder = WorkflowUtils.getContainingFolder(handle.getPublished());
                 Workflow workflow = getWorkflowContext(null).getWorkflow(folderWorkflowCategory, destination);
     
                 if (workflow instanceof EmbedWorkflow) {
-                    Document copy = ((EmbedWorkflow) workflow).copyTo(folder, handle.getPublished().getDocument(), newName, null);
+                    Document copy = ((EmbedWorkflow) workflow).copyTo(folder, handle.getPublished(), newName, null);
                     FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext(null).getWorkflow("default", copy);
                     copiedDocumentWorkflow.depublish();
                 } else {
                     throw new ModelException("cannot copy document which is not contained in a folder");
                 }
             } else {
-                Document folder = WorkflowUtils.getContainingFolder(handle.getUnpublished().getDocument());
+                Document folder = WorkflowUtils.getContainingFolder(handle.getUnpublished());
                 Workflow workflow = getWorkflowContext(scInstance).getWorkflow(folderWorkflowCategory, destination);
     
                 if (workflow instanceof EmbedWorkflow) {
-                    ((EmbedWorkflow) workflow).copyTo(folder, handle.getUnpublished().getDocument(), newName, null);
+                    ((EmbedWorkflow) workflow).copyTo(folder, handle.getUnpublished(), newName, null);
                 } else {
                     throw new ModelException("cannot copy document which is not contained in a folder");
                 }

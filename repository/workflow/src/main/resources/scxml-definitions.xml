@@ -156,9 +156,9 @@
             handle.published.publicationDate = new("java.util.Date");
             handle.unpublished.availability = null;
             // must save JCR session first before checkin
-            handle.unpublished.document.node.session.save();
+            handle.unpublished.node.session.save();
             // now make version
-            handle.unpublished.document.node.checkin();
+            handle.unpublished.node.checkin();
           </script>
         </transition>
 
@@ -191,9 +191,9 @@
             handle.unpublished.availability = ["preview"];
             handle.unpublished.modified = handle.user;
             // must save JCR session first before checkin
-            handle.unpublished.document.node.session.save();
+            handle.unpublished.node.session.save();
             // now make version
-            handle.unpublished.document.node.checkin();
+            handle.unpublished.node.checkin();
           </script>
         </transition>
 

@@ -106,8 +106,8 @@ public class CopyVariantAction extends AbstractDocumentAction {
 
         DocumentHandle handle = getDocumentHandle(scInstance);
 
-        DocumentVariant sourceDoc = handle.getDocumentVariantByState(getSourceState());
-        DocumentVariant targetDoc = handle.getDocumentVariantByState(getTargetState());
+        PublishableDocument sourceDoc = handle.getDocumentVariantByState(getSourceState());
+        PublishableDocument targetDoc = handle.getDocumentVariantByState(getTargetState());
 
         if (sourceDoc == null || sourceDoc.getNode() == null) {
             throw new ModelException("Source document variant (node) is not available.");
@@ -131,9 +131,8 @@ public class CopyVariantAction extends AbstractDocumentAction {
                 }
             }
 
-            PublishableDocument variant = new PublishableDocument(targetNode);
-            variant.setState(getTargetState());
-            targetDoc = new DocumentVariant(variant);
+            targetDoc = new PublishableDocument(targetNode);
+            targetDoc.setState(getTargetState());
         }
         else {
             targetNode = targetDoc.getNode();

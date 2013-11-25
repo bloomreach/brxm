@@ -27,10 +27,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class DocumentHandle {
 
     private Map<String, Serializable> hints = new HashMap<String, Serializable>();
-    private DocumentRequest request;
-    private DocumentVariant draft;
-    private DocumentVariant unpublished;
-    private DocumentVariant published;
+    private PublicationRequest request;
+    private PublishableDocument draft;
+    private PublishableDocument unpublished;
+    private PublishableDocument published;
     private String user;
     private String workflowState;
 
@@ -47,15 +47,15 @@ public class DocumentHandle {
         return workflowState;
     }
 
-    public DocumentRequest getRequest() {
+    public PublicationRequest getRequest() {
         return request;
     }
 
-    public void setRequest(final DocumentRequest request) {
+    public void setRequest(final PublicationRequest request) {
         this.request = request;
     }
 
-    public void putDocumentVariant(DocumentVariant variant) throws RepositoryException {
+    public void putDocumentVariant(PublishableDocument variant) throws RepositoryException {
         String state = variant.getState();
 
         if (PublishableDocument.DRAFT.equals(state)) {
@@ -67,7 +67,7 @@ public class DocumentHandle {
         }
     }
 
-    public DocumentVariant getDocumentVariantByState(String state) {
+    public PublishableDocument getDocumentVariantByState(String state) {
         if (PublishableDocument.DRAFT.equals(state)) {
             return draft;
         } else if (PublishableDocument.UNPUBLISHED.equals(state)) {
@@ -79,27 +79,27 @@ public class DocumentHandle {
         return null;
     }
 
-    public DocumentVariant getDraft() {
+    public PublishableDocument getDraft() {
         return draft;
     }
 
-    public void setDraft(final DocumentVariant draft) {
+    public void setDraft(final PublishableDocument draft) {
         this.draft = draft;
     }
 
-    public DocumentVariant getUnpublished() {
+    public PublishableDocument getUnpublished() {
         return unpublished;
     }
 
-    public void setUnpublished(final DocumentVariant unpublished) {
+    public void setUnpublished(final PublishableDocument unpublished) {
         this.unpublished = unpublished;
     }
 
-    public DocumentVariant getPublished() {
+    public PublishableDocument getPublished() {
         return published;
     }
 
-    public void setPublished(final DocumentVariant published) {
+    public void setPublished(final PublishableDocument published) {
         this.published = published;
     }
 

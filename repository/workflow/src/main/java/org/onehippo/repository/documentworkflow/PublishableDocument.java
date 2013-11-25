@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.util.JcrUtils;
 
 public class PublishableDocument extends Document {
 
@@ -44,6 +45,15 @@ public class PublishableDocument extends Document {
         return getStringProperty("hippostd:state");
     }
 
+    public String getStateSummary() throws RepositoryException {
+        Node node = getNode();
+        if (node != null) {
+            return JcrUtils.getStringProperty(node, "hippostd:stateSummary", null);
+        }
+
+        return null;
+    }
+
     public void setPublicationDate(Date date) throws RepositoryException {
         setDateProperty("hippostdpubwf:publicationDate", date);
     }
@@ -61,7 +71,12 @@ public class PublishableDocument extends Document {
     }
 
     public void setAvailability(String[] availability) throws RepositoryException {
-        setStringsProperty("hippo:availability", availability);
+        if (availability != null) {
+            setStringsProperty("hippo:availability", availability);
+        }
+        else {
+            setStringsProperty("hippo:availability", new String[0]);
+        }
     }
 
     public String[] getAvailability() throws RepositoryException {

@@ -72,18 +72,18 @@ public class RenameDocumentAction extends AbstractDocumentAction {
         PublishableDocument document = null;
 
         if (handle.getUnpublished() != null) {
-            document = handle.getUnpublished().getDocument();
+            document = handle.getUnpublished();
         }
 
         if (document == null) {
             if (handle.getPublished() != null) {
-                document = handle.getPublished().getDocument();
+                document = handle.getPublished();
             }
         }
 
         if (document == null) {
             if (handle.getDraft() != null) {
-                document = handle.getDraft().getDocument();
+                document = handle.getDraft();
             }
         }
 

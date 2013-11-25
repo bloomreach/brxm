@@ -91,7 +91,7 @@ public class RequestAction extends AbstractDocumentAction {
                 }
 
                 req.getNode().getSession().save();
-                handle.setRequest(new DocumentRequest(req));
+                handle.setRequest(req);
             } catch (RepositoryException e) {
                 throw new ModelException("request publication failure", e);
             }
