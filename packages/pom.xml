@@ -26,14 +26,14 @@
   <name>Hippo Product Packages</name>
   <description>Hippo Product Packages</description>
   <artifactId>hippo-packages</artifactId>
-  <version>2.25.02-SNAPSHOT</version>
+  <version>2.25.02-iteration-6</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/tags/hippo-packages-2.25.02-iteration-6</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/tags/hippo-packages-2.25.02-iteration-6</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/tags/hippo-packages-2.25.02-iteration-6</url>
   </scm>
 
   <properties>
