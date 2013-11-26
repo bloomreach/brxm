@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-iteration-6</version>
+    <version>24.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -39,19 +39,19 @@
   </scm>
 
   <properties>
-    <hippo.addon-hst-configuration-editor.version>1.12.03-iteration-6</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>2.25.03-iteration-6</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>1.02.01-iteration-6</hippo.addon-search-service.version>
-    <hippo.commons.version>1.03.01-iteration-6</hippo.commons.version>
-    <hippo.cms.version>2.25.04-iteration-6</hippo.cms.version>
-    <hippo.hst.version>2.27.03-iteration-6</hippo.hst.version>
-    <hippo.packages.version>2.25.02-iteration-6</hippo.packages.version>
-    <hippo.release.version>7.9.0-iteration-6</hippo.release.version>
-    <hippo.repository.version>2.25.05-iteration-6</hippo.repository.version>
-    <hippo.services.version>1.03.04-iteration-6</hippo.services.version>
-    <hippo.services.eventbus.version>1.03.04-iteration-6</hippo.services.eventbus.version>
-    <hippo.services.contenttype.version>1.03.02-iteration-6</hippo.services.contenttype.version>
-    <hippo.utilities.version>1.02.01-iteration-6</hippo.utilities.version>
+    <hippo.addon-hst-configuration-editor.version>1.12.03-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>2.25.03-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-search-service.version>1.02.01-SNAPSHOT</hippo.addon-search-service.version>
+    <hippo.commons.version>1.03.01-SNAPSHOT</hippo.commons.version>
+    <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
+    <hippo.packages.version>2.25.02-SNAPSHOT</hippo.packages.version>
+    <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
+    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>1.03.04-SNAPSHOT</hippo.services.version>
+    <hippo.services.eventbus.version>1.03.04-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.services.contenttype.version>1.03.02-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.10.01-SNAPSHOT</forge.content-blocks.version>
     <forge.dashboard-document-wizard.version>1.04.01-SNAPSHOT</forge.dashboard-document-wizard.version>
