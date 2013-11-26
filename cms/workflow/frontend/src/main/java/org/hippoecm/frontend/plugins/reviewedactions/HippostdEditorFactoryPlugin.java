@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -34,12 +33,10 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.update.NodeUpdateVisitor;
-import org.onehippo.repository.update.UpdaterRegistry;
+import org.onehippo.repository.update.NodeUpdaterService;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,19 +84,11 @@ public class HippostdEditorFactoryPlugin extends Plugin implements IEditorFactor
     }
 
     private void update(final Node item) {
-        final UpdaterRegistry updaterRegistry = HippoServiceRegistry.getService(UpdaterRegistry.class);
-        if (updaterRegistry != null) {
-            try {
-                final List<NodeUpdateVisitor> updaters = updaterRegistry.getUpdaters(item);
-                for (NodeUpdateVisitor updater : updaters) {
-                    try {
-                        updater.doUpdate(item);
-                    } finally {
-                        updater.destroy();
-                    }
-                }
-            } catch (RepositoryException e) {
-                log.error("Error updating document", e);
+        final NodeUpdaterService updaterService = HippoServiceRegistry.getService(NodeUpdaterService.class);
+        if (updaterService != null) {
+            final NodeUpdaterService.NodeUpdaterResult nodeUpdaterResult = updaterService.updateNode(item);
+            if (nodeUpdaterResult == NodeUpdaterService.NodeUpdaterResult.UPDATE_FAILED) {
+                log.warn("Node update failed; the CMS editor may behave erratically");
             }
         }
     }
