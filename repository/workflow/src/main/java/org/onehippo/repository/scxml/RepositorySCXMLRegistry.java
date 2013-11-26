@@ -124,6 +124,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
             if (scxmlDefsNode.hasNodes()) {
                 for (final Node scxmlDefNode : new NodeIterable(scxmlDefsNode.getNodes())) {
                     final String scxmlDefId = scxmlDefNode.getName();
+                    // NOTE: in order to keep the existing SCXML instance in case the new SCXML definition has error(s),
+                    //       find the existing old SCXML instance here to restore later if necessary.
                     SCXML oldScxml = (scxmlMap != null ? scxmlMap.get(scxmlDefId) : null);
                     SCXML newScxml = null;
 
@@ -139,6 +141,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                     }
 
                     if (newScxml == null) {
+                        // NOTE: The new SCXML instance has error(s) so it's null here.
+                        //       Now, let put the old existing SCXML instance back into the map if there's any.
                         newScxml = oldScxml;
                         log.info("The existing SCXML definition was kept due to invalid SCXML. Id: '{}'.", scxmlDefId);
                     }
