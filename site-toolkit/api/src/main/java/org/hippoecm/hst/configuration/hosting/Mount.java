@@ -463,6 +463,7 @@ public interface Mount {
     /**
      * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
      * @return the first item of default resource bundle IDs or null if not configured or empty.
+     * @deprecated since 2.28.00. Use {@link #getDefaultResourceBundleIds()} instead
      */
     @Deprecated
     String getDefaultResourceBundleId();
