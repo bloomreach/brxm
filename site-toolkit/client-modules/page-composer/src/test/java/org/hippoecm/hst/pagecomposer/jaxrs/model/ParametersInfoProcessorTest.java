@@ -30,6 +30,7 @@ import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -125,6 +126,27 @@ public class ParametersInfoProcessorTest {
         final ContainerItemComponentPropertyRepresentation hideInChannelManagerProperty = properties.get(15);
         assertTrue(hideInChannelManagerProperty.isHiddenInChannelManager());
 
+    }
+
+    @Test
+    @Ignore // Hudson doesn't load the NewstyleInterface resource bundle
+    public void dropDownResourceBundleProcessing() {
+        final String currentMountCanonicalContentPath = "/content/documents/testchannel";
+
+        ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        assertEquals(16, properties.size());
+
+        // sort properties alphabetically by name to ensure a deterministic order
+        Collections.sort(properties, new PropertyComparator());
+
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(14);
+        assertEquals("combo", dropDownProperty.getType());
+
+        String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
+        assertEquals(3, displayValues.length);
+        assertEquals("Value 1", displayValues[0]);
+        assertEquals("Value 2", displayValues[1]);
     }
 
 
