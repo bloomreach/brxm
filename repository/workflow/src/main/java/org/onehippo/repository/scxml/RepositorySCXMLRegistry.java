@@ -206,6 +206,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     }
 
     private boolean validateSemantics(final SCXML scxml) {
+        // TODO: Add more validation logic against Hippo specific semantics.
         return true;
     }
 
