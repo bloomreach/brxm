@@ -27,7 +27,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.repository.api.HippoSession;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -72,7 +71,6 @@ public class MountResourceTest extends AbstractPageComposerTest {
             ((HstMutableRequestContext) ctx).setSession(setup.session);
 
             MountResource mountResource = new MountResource();
-            mountResource.setMountDecorator(mountDecorator);
             mountResource.startEdit(request);
 
             assertTrue("Live config node should exist",
@@ -95,7 +93,6 @@ public class MountResourceTest extends AbstractPageComposerTest {
             secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
-            containerComponentResource.setMountDecorator(mountDecorator);
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
             usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
@@ -188,7 +185,6 @@ public class MountResourceTest extends AbstractPageComposerTest {
             ((HstMutableRequestContext) ctx).setSession(setup.session);
 
             MountResource mountResource = new MountResource();
-            mountResource.setMountDecorator(mountDecorator);
             mountResource.startEdit(request);
 
             assertTrue("Live config node should exist",
@@ -211,7 +207,6 @@ public class MountResourceTest extends AbstractPageComposerTest {
             secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
-            containerComponentResource.setMountDecorator(mountDecorator);
             containerComponentResource.createContainerItem(secondRequest, catalogItemUUID, System.currentTimeMillis());
 
             usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) setup.session, previewConfigurationPath);

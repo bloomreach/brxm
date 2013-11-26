@@ -36,7 +36,6 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
-import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -57,7 +56,6 @@ public class AbstractPageComposerTest {
     protected HstURLFactory hstURLFactory;
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstEventsCollector hstEventsCollector;
-    protected MountDecorator mountDecorator;
     protected Object hstModelMutex;
 
     @Before
@@ -73,7 +71,6 @@ public class AbstractPageComposerTest {
         this.hstURLFactory = HstServices.getComponentManager().getComponent(HstURLFactory.class.getName());
         this.hstEventsCollector = HstServices.getComponentManager().getComponent("hstEventsCollector");
         this.hstModelMutex = HstServices.getComponentManager().getComponent("hstModelMutex");
-        this.mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
     }
 
     @After

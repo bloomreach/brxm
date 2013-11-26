@@ -44,7 +44,6 @@ import javax.ws.rs.core.Response;
 import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
@@ -78,7 +77,10 @@ public class MountResource extends AbstractConfigResource {
                 log.error("Could not get the editing site to create the page model representation.");
                 return error("Could not get the editing site to create the page model representation.");
             }
-            final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(editingPreviewHstSite, pageId, getEditingPreviewMount(requestContext));
+            final PageModelRepresentation pageModelRepresentation = new PageModelRepresentation().represent(
+                    editingPreviewHstSite,
+                    pageId,
+                    getEditingMount(requestContext));
             log.info("PageModel loaded successfully");
             return ok("PageModel loaded successfully", pageModelRepresentation.getComponents().toArray());
         } catch (Exception e) {
@@ -92,14 +94,13 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final Mount editingMount = getEditingPreviewMount(requestContext);
+        final Mount editingMount = getEditingMount(requestContext);
         if (editingMount == null) {
             log.error("Could not get the editing site to create the toolkit representation.");
             return error("Could not get the editing site to create the toolkit representation.");
         }
 
         setCurrentMountCanonicalContentPath(servletRequest, editingMount.getContentPath());
-
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         log.info("Toolkit items loaded successfully");
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
@@ -112,7 +113,7 @@ public class MountResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
+            String previewConfigurationPath = getEditingPreviewSite(requestContext).getConfigurationPath();
 
             Set<String> usersWithLockedMainConfigNode = findUsersWithLockedMainConfigNodes(session, previewConfigurationPath);
             Set<String> usersWithLockedContainers = findUsersWithLockedContainers(session, previewConfigurationPath);
@@ -171,18 +172,15 @@ public class MountResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
 
         try {
-            final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
-            final HstSite ctxEditingPreviewSite = editingPreviewMount.getHstSite();
-            
+            final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
             Session session = requestContext.getSession();
-            
-            if (ctxEditingPreviewSite.hasPreviewConfiguration()) {
+            if (editingPreviewSite.hasPreviewConfiguration()) {
                 return ok("Site can be edited now");
             }
 
             createPreviewConfigurationNode(requestContext);
             HstConfigurationUtils.persistChanges(session);
-            log.info("Site '{}' can be edited now", ctxEditingPreviewSite.getConfigurationPath());
+            log.info("Site '{}' can be edited now", editingPreviewSite.getConfigurationPath());
             return ok("Site can be edited now");
         } catch (IllegalStateException e) {
             log.warn("Cannot start editing : ", e);
@@ -197,8 +195,8 @@ public class MountResource extends AbstractConfigResource {
     }
 
     private void createPreviewConfigurationNode(final HstRequestContext requestContext) throws RepositoryException {
-        HstSite ctxEditingLiveMountSite = getEditingLiveMount(requestContext).getHstSite();
-        String liveConfigurationPath = ctxEditingLiveMountSite.getConfigurationPath();
+        HstSite editingLiveSite = getEditingLiveSite(requestContext);
+        String liveConfigurationPath = editingLiveSite.getConfigurationPath();
         String previewConfigurationPath = liveConfigurationPath + "-preview";
         Session session = requestContext.getSession();
         JcrUtils.copy(session, liveConfigurationPath, previewConfigurationPath);
@@ -222,8 +220,8 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response discardChangesOfUsers(@Context HttpServletRequest servletRequest, ExtIdsRepresentation ids) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
-        if (!hasPreviewConfiguration(editingPreviewMount)) {
+        final Mount editingMount = getEditingMount(requestContext);
+        if (!hasPreviewConfiguration(editingMount)) {
             log.warn("Cannot discard changes of users in a non-preview site");
             return error("Cannot discard changes of users in a non-preview site");
         }
@@ -241,9 +239,9 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response publish(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+        final Mount editingMount = getEditingMount(requestContext);
 
-        if (!hasPreviewConfiguration(editingPreviewMount)) {
+        if (!hasPreviewConfiguration(editingMount)) {
             return cannotPublishNotPreviewSite();
         }
         return publishChangesOfCurrentUser(requestContext);
@@ -254,9 +252,9 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response publishChangesOfUsers(@Context HttpServletRequest servletRequest, ExtIdsRepresentation ids) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+        final Mount editingMount = getEditingMount(requestContext);
 
-        if (!hasPreviewConfiguration(editingPreviewMount)) {
+        if (!hasPreviewConfiguration(editingMount)) {
             return cannotPublishNotPreviewSite();
         }
         return publishChangesOfUsers(requestContext, ids.getData());
@@ -281,8 +279,8 @@ public class MountResource extends AbstractConfigResource {
 
     private Response publishChangesOfUsers(final HstRequestContext requestContext, List<String> userIds) {
         try {
-            String liveConfigurationPath = getEditingLiveMount(requestContext).getHstSite().getConfigurationPath();
-            String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
+            String liveConfigurationPath = getEditingLiveSite(requestContext).getConfigurationPath();
+            String previewConfigurationPath = getEditingPreviewSite(requestContext).getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             List<String> relativeContainerPathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
@@ -315,12 +313,12 @@ public class MountResource extends AbstractConfigResource {
 
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
-            final Mount editingPreviewMount = getEditingPreviewMount(requestContext);
-            if (editingPreviewMount == null) {
+            final Mount editingMount = getEditingMount(requestContext);
+            if (editingMount == null) {
                 log.warn("Could not get the editing mount to get the content path for creating the document.");
                 return error("Could not get the editing mount to get the content path for creating the document.");
             }
-            String canonicalContentPath = editingPreviewMount.getContentPath();
+            String canonicalContentPath = editingMount.getContentPath();
             WorkflowPersistenceManagerImpl workflowPersistenceManager = new WorkflowPersistenceManagerImpl(requestContext.getSession(),
                     getObjectConverter(requestContext));
             workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
@@ -348,13 +346,13 @@ public class MountResource extends AbstractConfigResource {
                                        @PathParam("docType") String docType) {
 
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final Mount editingHstMount = getEditingPreviewMount(requestContext);
-        if (editingHstMount == null) {
+        final Mount editingMount = getEditingMount(requestContext);
+        if (editingMount == null) {
             log.warn("Could not get the editing mount to get the content path for listing documents.");
             return error("Could not get the editing mount to get the content path for listing documents.");
         }
         List<DocumentRepresentation> documentLocations = new ArrayList<DocumentRepresentation>();
-        String canonicalContentPath = editingHstMount.getContentPath();
+        String canonicalContentPath = editingMount.getContentPath();
         try {
             Session session = requestContext.getSession();
 
@@ -406,8 +404,9 @@ public class MountResource extends AbstractConfigResource {
 
     private Response discardChanges(final HstRequestContext requestContext, List<String> userIds) {
         try {
-            String liveConfigurationPath = getEditingLiveMount(requestContext).getHstSite().getConfigurationPath();
-            String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
+            String liveConfigurationPath = getEditingLiveSite(requestContext).getConfigurationPath();
+            final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
+            String previewConfigurationPath = editingPreviewSite.getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             List<String> relativeContainerPathsToRevert = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
@@ -417,8 +416,8 @@ public class MountResource extends AbstractConfigResource {
 
             HstConfigurationUtils.persistChanges(session);
 
-            log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), getEditingPreviewMount(requestContext).getHstSite().getName());
-            return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
+            log.info("Changes of user '{}' for site '{}' are discarded.", session.getUserID(), editingPreviewSite.getName());
+            return ok("Changes of user '"+session.getUserID()+"' for site '"+editingPreviewSite.getName()+"' are discarded.");
         } catch (RepositoryException e) {
             log.warn("Could not discard preview configuration: ", e);
             return error("Could not discard preview configuration: " + e);
@@ -624,10 +623,6 @@ public class MountResource extends AbstractConfigResource {
 
         log.info("Main config nodes '{}' pushed succesfully from '{}' to '{}'.",
                 new String[]{mainConfigNodeNames.toString(), fromConfig, toConfig});
-    }
-
-    private boolean hasPreviewConfiguration(final Mount editingPreviewMount) {
-        return editingPreviewMount.getHstSite().hasPreviewConfiguration();
     }
 
 }

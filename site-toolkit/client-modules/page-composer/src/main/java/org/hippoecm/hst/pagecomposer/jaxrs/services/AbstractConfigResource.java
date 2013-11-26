@@ -27,7 +27,6 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
@@ -37,13 +36,8 @@ import org.slf4j.LoggerFactory;
 public class AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
-    private MountDecorator mountDecorator;
 
     private static final String CURRENT_MOUNT_CANONICAL_CONTENT_PATH = AbstractConfigResource.class.getName() + "-CurrentMountCanonicalContentPath";
-
-    public void setMountDecorator(MountDecorator mountDecorator) {
-        this.mountDecorator = mountDecorator;
-    }
 
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
@@ -54,32 +48,28 @@ public class AbstractConfigResource {
     }
 
     protected HstSite getEditingLiveSite(final HstRequestContext requestContext) {
-        final Mount mount = getEditingLiveMount(requestContext);
+        final Mount mount = getEditingMount(requestContext);
         return mount.getHstSite();
     }
 
     protected HstSite getEditingPreviewSite(final HstRequestContext requestContext) {
-        final Mount mount = getEditingPreviewMount(requestContext);
-        return mount.getHstSite();
+        final Mount liveMount = getEditingMount(requestContext);
+        assertIsContextualizableMount(liveMount);
+        return ((ContextualizableMount)liveMount).getPreviewHstSite();
     }
 
-    protected Mount getEditingLiveMount(final HstRequestContext requestContext) {
+    protected boolean hasPreviewConfiguration(final Mount mount) {
+        assertIsContextualizableMount(mount);
+        return  ((ContextualizableMount)mount).getPreviewHstSite().hasPreviewConfiguration();
+    }
+
+    protected Mount getEditingMount(final HstRequestContext requestContext) {
         final String hstMountIdentifier = getRequestConfigIdentifier(requestContext);
         Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
         if (mount == null) {
             throw new IllegalStateException("Cound not find a Mount for identifier + '"+hstMountIdentifier+"'");
         }
         return mount;
-    }
-    
-    protected Mount getEditingPreviewMount(final HstRequestContext requestContext) {
-        Mount mount =  getEditingLiveMount(requestContext);
-        if(!(mount instanceof ContextualizableMount )) {
-            log.warn("Mount must be an instance of ContextualizableMount. Cannot create a preview. Return mount as is");
-            return mount;
-        }
-        Mount previewMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)mount);
-        return previewMount;
     }
 
     protected void setCurrentMountCanonicalContentPath(HttpServletRequest servletRequest, String canonicalContentPath) {
@@ -152,5 +142,12 @@ public class AbstractConfigResource {
 
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         return requestContext.getContentBeansTool().getObjectConverter();
+    }
+
+    private void assertIsContextualizableMount(final Mount liveMount) throws IllegalArgumentException{
+        if (!(liveMount instanceof  ContextualizableMount)) {
+            throw new IllegalArgumentException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
+                    " but found '"+liveMount.toString()+"' which is of type " + liveMount.getClass().getName());
+        }
     }
 }
