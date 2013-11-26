@@ -18,6 +18,7 @@ package org.hippoecm.frontend.dialog;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -143,7 +144,7 @@ public class ButtonWrapper implements IClusterable {
 
     public void setEnabled(boolean isset) {
         enabled = isset;
-        if (button != null) {
+        if (button != null && button.findParent(Page.class) != null) {
             button.setEnabled(isset);
             if (ajax) {
                 AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
