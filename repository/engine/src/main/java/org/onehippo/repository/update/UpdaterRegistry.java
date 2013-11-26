@@ -35,16 +35,16 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdaterRegistryImpl implements UpdaterRegistry, EventListener {
+public class UpdaterRegistry implements EventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(UpdaterRegistryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(UpdaterRegistry.class);
 
     private static final String UPDATE_REGISTRY_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/hippo:update/hippo:registry";
 
     private final Session session;
     private volatile Map<String, List<UpdaterInfo>> updaters = new HashMap<>();
 
-    UpdaterRegistryImpl(final Session session) throws RepositoryException {
+    UpdaterRegistry(final Session session) throws RepositoryException {
         this.session = session;
     }
 
@@ -68,8 +68,8 @@ public class UpdaterRegistryImpl implements UpdaterRegistry, EventListener {
     }
 
     private void buildRegistry() {
+        Map<String, List<UpdaterInfo>> updatedUpdaters = new HashMap<>();
         try {
-            Map<String, List<UpdaterInfo>> updatedUpdaters = new HashMap<>();
             final Node registry = JcrUtils.getNodeIfExists(UPDATE_REGISTRY_PATH, session);
             if (registry != null) {
                 for (final Node node : new NodeIterable(registry.getNodes())) {
@@ -88,14 +88,21 @@ public class UpdaterRegistryImpl implements UpdaterRegistry, EventListener {
                         log.error("Failed to register updater '{}': {}", updaterName, e.toString());
                     }
                 }
-                updaters = updatedUpdaters;
             }
         } catch (RepositoryException e) {
             log.error("Failed to build updater registry", e);
         }
+        updaters = updatedUpdaters;
     }
 
-    @Override
+    /**
+     * Get the list of updaters that are registered for this node. After using the updater, the client must call
+     * destroy on the updater.
+     *
+     * @param node  the node to get the updaters for
+     * @return  the list the updaters that should be applied to this node, empty list if no updaters for this node.
+     * @throws RepositoryException
+     */
     public List<NodeUpdateVisitor> getUpdaters(final Node node) throws RepositoryException {
         if (updaters.isEmpty()) {
             return Collections.emptyList();
