@@ -674,6 +674,8 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             return false;
         }
 
+
+        @Deprecated
         @Override
         public String getDefaultResourceBundleId() {
             return null;

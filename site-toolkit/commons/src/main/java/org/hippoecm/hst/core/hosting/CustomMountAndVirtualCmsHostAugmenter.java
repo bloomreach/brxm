@@ -783,6 +783,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return false;
         }
 
+        @Deprecated
         @Override
         public String getDefaultResourceBundleId() {
             return null;

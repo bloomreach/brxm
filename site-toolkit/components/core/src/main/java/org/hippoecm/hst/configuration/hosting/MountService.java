@@ -858,6 +858,8 @@ public class MountService implements ContextualizableMount, MutableMount {
         return cacheable;
     }
 
+
+    @Deprecated
     @Override
     public String getDefaultResourceBundleId() {
         if (defaultResourceBundleIds == null || defaultResourceBundleIds.length == 0) {

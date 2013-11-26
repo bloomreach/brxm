@@ -195,6 +195,8 @@ public class MountDecoratorImpl implements MountDecorator {
             return false;
         }
 
+
+        @Deprecated
         @Override
         public String getDefaultResourceBundleId() {
             return delegatee.getDefaultResourceBundleId();
