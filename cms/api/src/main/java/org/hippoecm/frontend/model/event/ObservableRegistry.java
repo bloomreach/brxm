@@ -67,7 +67,7 @@ public class ObservableRegistry implements IPlugin {
 
         void dispose() {
             for (IObserver observer : registered) {
-                removeObserver(observer);
+                ObservableRegistry.this.removeObserver(observer);
             }
         }
 

@@ -405,7 +405,6 @@ public class TabsPlugin extends RenderPlugin {
     public void hide() {
         previousSelectedTabIndex = tabbedPanel.getSelectedTab();
         tabbedPanel.setSelectedTab(-1);
-        tabbedPanel.setDefaultModel(new Model<Integer>(-1));
         tabbedPanel.redraw();
     }
 
@@ -482,6 +481,8 @@ public class TabsPlugin extends RenderPlugin {
                 lastTab.lastSelected = ++TabsPlugin.this.selectCount;
                 lastTab.renderer.focus(null);
                 getTabbedPanel().redraw();
+            } else {
+                getTabbedPanel().setSelectedTab(-1);
             }
         }
 

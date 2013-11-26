@@ -31,7 +31,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
@@ -329,19 +328,6 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     @Override
     public void removeTreeModelListener(TreeModelListener l) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ObservableTreeModel) {
-            return root.equals(((ObservableTreeModel) obj).root);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 67).append(root).toHashCode();
     }
 
     private class ObservableTreeStateListener implements ITreeStateListener, Serializable {

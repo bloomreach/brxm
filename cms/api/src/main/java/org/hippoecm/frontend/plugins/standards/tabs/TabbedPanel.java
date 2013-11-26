@@ -412,7 +412,7 @@ public class TabbedPanel extends WebMarkupContainer {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
-        if (!hasBeenRendered() && getSelectedTab() == -1) {
+        if (!hasBeenRendered() && getSelectedTab() == -1 && tabs.size() > 0) {
             // select the first tab by default
             setSelectedTab(0);
         }
@@ -423,12 +423,17 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     public void setSelectedTab(int index) {
-        if (index < 0 || index >= tabs.size()) {
+        if (index >= tabs.size()) {
 //            panelContainer.replace(plugin.getEmptyPanel());
             return;
         }
 
         setDefaultModelObject(index);
+
+        if (index < 0) {
+            cardView.select(null);
+            return;
+        }
 
         ITab tab = tabs.get(index);
 
@@ -479,12 +484,14 @@ public class TabbedPanel extends WebMarkupContainer {
         @Override
         public boolean isActive(Component component) {
             Component container = component;
-            MarkupContainer selectedPanel = selected.getPanel(TAB_PANEL_ID);
-            while (container != null) {
-                if (container == selectedPanel) {
-                    return true;
+            if (selected != null) {
+                MarkupContainer selectedPanel = selected.getPanel(TAB_PANEL_ID);
+                while (container != null) {
+                    if (container == selectedPanel) {
+                        return true;
+                    }
+                    container = container.getParent();
                 }
-                container = container.getParent();
             }
             return false;
         }
