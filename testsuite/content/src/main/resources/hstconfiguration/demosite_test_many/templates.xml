@@ -24,23 +24,29 @@
       <sv:value>hst:template</sv:value>
     </sv:property>
     <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value>&lt;#assign
-            hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
-            &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
-            &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html 
-            hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;
-            &lt;#if "${document.resource!}" != ""&gt;
-            &lt;@hst.link var="resource"
-            hippobean=document.resource /&gt; &lt;#if
-            "${resource!}" != ""&gt; &lt;a
-            href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
-            &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
-            &lt;/div&gt; &lt;div class="bannersHome"&gt; &lt;@hst.include
-            ref="banners"/&gt; &lt;/div&gt; &lt;div class="bannersHome"&gt;
-            &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; 
-           
-            &lt;p
-            style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
+      <sv:value>&lt;#assign&#xd;
+        hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
+        &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;&#xd;
+        &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html &#xd;
+        hippohtml=document.html/&gt; &lt;p&gt; &lt;/p&gt;&#xd;
+        &lt;#if "${document.resource!}" != ""&gt;&#xd;
+        &lt;@hst.link var="resource"&#xd;
+        hippobean=document.resource /&gt; &lt;#if&#xd;
+        "${resource!}" != ""&gt; &lt;a&#xd;
+        href="${resource}"&gt;${document.resource.name}&lt;/a&gt;&#xd;
+        &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;&#xd;
+        &lt;/div&gt; &lt;div class="bannersHome"&gt; &lt;@hst.include&#xd;
+        ref="banners"/&gt; &lt;/div&gt; &lt;div class="bannersHome"&gt;&#xd;
+        &lt;@hst.include ref="morebanners"/&gt; &lt;/div&gt; &#xd;
+        &lt;div class="bannersHome" id="container-1"&gt;&#xd;
+        &lt;@hst.include ref="container-1"/&gt;&#xd;
+        &lt;/div&gt;&#xd;
+        &lt;div class="bannersHome" id="container-2"&gt;&#xd;
+        &lt;@hst.include ref="container-2"/&gt;&#xd;
+        &lt;/div&gt;&#xd;
+        &lt;hr/&gt;&#xd;
+        &lt;p&#xd;
+        style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
     </sv:property>
   </sv:node>
   
