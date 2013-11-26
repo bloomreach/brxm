@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,9 +44,6 @@ import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class WorkflowAuthorizationTest extends RepositoryTestCase {
 

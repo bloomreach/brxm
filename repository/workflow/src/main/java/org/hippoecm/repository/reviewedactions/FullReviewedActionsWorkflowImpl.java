@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -35,8 +37,6 @@ import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 
 public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflowImpl implements FullReviewedActionsWorkflow {

@@ -15,6 +15,8 @@
  */
 package org.onehippo.repository.documentworkflow;
 
+import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
+
 import java.rmi.RemoteException;
 import java.util.Collection;
 
@@ -35,8 +37,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 /**
  * Custom action for moving document.

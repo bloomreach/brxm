@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -34,9 +37,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class VersioningWorkflowTest extends ReviewedActionsWorkflowAbstractTest {
 

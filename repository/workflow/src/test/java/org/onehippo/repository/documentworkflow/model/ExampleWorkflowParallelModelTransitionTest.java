@@ -15,6 +15,10 @@
  */
 package org.onehippo.repository.documentworkflow.model;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
@@ -24,21 +28,17 @@ import org.onehippo.repository.scxml.SCXMLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 /**
- * CurrentFullWorkflowParallelModelTransitionTest
+ * ExampleWorkflowParallelModelTransitionTest
  */
-public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurrentFullWorkflowModelTest {
+public class ExampleWorkflowParallelModelTransitionTest extends AbstractExampleWorkflowModelTest {
 
-    private static Logger log = LoggerFactory.getLogger(CurrentFullWorkflowParallelModelTransitionTest.class);
+    private static Logger log = LoggerFactory.getLogger(ExampleWorkflowParallelModelTransitionTest.class);
 
     @Test
     public void testCreateDocument() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, null, null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, null, null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -62,7 +62,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testEditDraft() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", null, null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", null, null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -86,7 +86,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testCommitAndCloseDraft() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dne", null, null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dne", null, null, null);
         assertNull(handle.getVariants().get("unpublished"));
         executor.getRootContext().set("handle", handle);
         executor.go();
@@ -113,7 +113,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testEditDraftUnpublished() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -137,7 +137,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testPublish() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -161,7 +161,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testChangeOnPublishedDocument() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dl", "Ul", "Pl", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dl", "Ul", "Pl", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -203,7 +203,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testPublishAgain() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -227,7 +227,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testDepublish() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Ul", "Pl", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Ul", "Pl", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -251,7 +251,7 @@ public class CurrentFullWorkflowParallelModelTransitionTest extends AbstractCurr
     @Test
     public void testRemoveDocument() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Un", null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Un", null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 

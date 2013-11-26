@@ -25,9 +25,9 @@ import org.junit.Before;
 import org.onehippo.repository.scxml.SCXMLUtils;
 
 /**
- * AbstractCurrentFullWorkflowModelTest
+ * AbstractExampleWorkflowModelTest
  */
-public abstract class AbstractCurrentFullWorkflowModelTest {
+public abstract class AbstractExampleWorkflowModelTest {
 
     protected SCXML scxml;
 
@@ -39,7 +39,7 @@ public abstract class AbstractCurrentFullWorkflowModelTest {
         customActions.add(new CustomAction("http://www.example.com/scxml/test", "variantcopy", VariantCopyAction.class));
 
         Configuration configuration = new Configuration(null, null, customActions);
-        scxml = SCXMLUtils.loadSCXML(getClass().getResource("current-full-workflow-parallel-model.scxml.xml"), configuration);
+        scxml = SCXMLUtils.loadSCXML(getClass().getResource("example-workflow-parallel-model.scxml.xml"), configuration);
     }
 
 }

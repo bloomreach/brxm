@@ -17,7 +17,6 @@ package org.hippoecm.repository.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-
 import java.util.Map;
 
 import javax.jcr.Node;

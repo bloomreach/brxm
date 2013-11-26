@@ -18,9 +18,9 @@ package org.onehippo.repository.documentworkflow.model;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * CurrentModelCreationUtils
+ * ExampleModelCreationUtils
  */
-public class CurrentModelCreationUtils {
+public class ExampleModelCreationUtils {
 
     public static final String VARIANT_KEY_DRAFT = "draft";
     public static final String VARIANT_KEY_UNPUBLISHED = "unpublished";
@@ -57,7 +57,7 @@ public class CurrentModelCreationUtils {
     public static final String AVAILABILITY_LIVE = "live";
     public static final String AVAILABILITY_PREVIEW = "preview";
 
-    private CurrentModelCreationUtils() {
+    private ExampleModelCreationUtils() {
     }
 
     public static Handle createHandleByVariantStateNotations(String draftStates, String unpublishedStates, String publishedStates, String requestStates) {

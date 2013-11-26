@@ -15,6 +15,9 @@
  */
 package org.hippoecm.faceteddate;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -26,9 +29,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class DerivedDateTest extends RepositoryTestCase {
 

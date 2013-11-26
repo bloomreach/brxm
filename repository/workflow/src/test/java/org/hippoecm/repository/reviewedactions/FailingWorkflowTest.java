@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,9 +33,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class FailingWorkflowTest extends RepositoryTestCase {
 

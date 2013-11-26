@@ -15,6 +15,10 @@
  */
 package org.hippoecm.repository.translation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,10 +42,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class TranslationWorkflowTest extends RepositoryTestCase {
     private static final String INVALID_ID = "invalid id - to be overwritten by folderworkflow";

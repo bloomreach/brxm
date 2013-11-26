@@ -484,6 +484,6 @@ workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
 workflow/src/test/resources/log4j-filters.txt -text
-workflow/src/test/resources/org/onehippo/repository/documentworkflow/model/current-full-workflow-parallel-model.scxml.xml svneol=native#text/plain
+workflow/src/test/resources/org/onehippo/repository/documentworkflow/model/example-workflow-parallel-model.scxml.xml svneol=native#text/plain
 workflow/src/test/resources/repository-test.cnd -text
 workflow/src/test/resources/reviewedaction-test.cnd -text

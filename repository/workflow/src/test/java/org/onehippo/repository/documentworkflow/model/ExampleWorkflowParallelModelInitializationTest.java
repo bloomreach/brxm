@@ -15,6 +15,9 @@
  */
 package org.onehippo.repository.documentworkflow.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
@@ -24,20 +27,17 @@ import org.onehippo.repository.scxml.SCXMLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 /**
- * CurrentFullWorkflowParallelModelInitializationTest
+ * ExampleWorkflowParallelModelInitializationTest
  */
-public class CurrentFullWorkflowParallelModelInitializationTest extends AbstractCurrentFullWorkflowModelTest {
+public class ExampleWorkflowParallelModelInitializationTest extends AbstractExampleWorkflowModelTest {
 
-    private static Logger log = LoggerFactory.getLogger(CurrentFullWorkflowParallelModelInitializationTest.class);
+    private static Logger log = LoggerFactory.getLogger(ExampleWorkflowParallelModelInitializationTest.class);
 
     @Test
     public void testInitModel__Dn___() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", null, null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", null, null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -55,7 +55,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dne___() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dne", null, null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dne", null, null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -73,7 +73,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dn_Un__() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -91,7 +91,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dne_Un__() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dne", "Un", null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dne", "Un", null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -109,7 +109,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dl_Ul_Pl_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dl", "Ul", "Pl", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dl", "Ul", "Pl", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -127,7 +127,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dle_Ul_Pl_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dle", "Ul", "Pl", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dle", "Ul", "Pl", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -145,7 +145,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dc_Uc_Pc_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -163,7 +163,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dce_Uc_Pc_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dce", "Uc", "Pc", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dce", "Uc", "Pc", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -181,7 +181,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dn_Un_Pn_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", "Pn", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", "Pn", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -199,7 +199,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dne_Un_Pn_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dne", "Un", "Pn", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dne", "Un", "Pn", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -217,7 +217,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Un__() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Un", null, null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Un", null, null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -235,7 +235,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Ul_Pl_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Ul", "Pl", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Ul", "Pl", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -253,7 +253,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Uc_Pc_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Uc", "Pc", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Uc", "Pc", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -271,7 +271,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Un_Pn_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Un", "Pn", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Un", "Pn", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -289,7 +289,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Un__Rp() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Un", null, "Rp");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Un", null, "Rp");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -307,7 +307,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dn_Un__Rp() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, "Rp");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", null, "Rp");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -325,7 +325,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Uc_Pc_Rp() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Uc", "Pc", "Rp");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Uc", "Pc", "Rp");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -343,7 +343,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dc_Uc_Pc_Rp() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", "Rp");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", "Rp");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -361,7 +361,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Ul_Pl_Ru() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Ul", "Pl", "Ru");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Ul", "Pl", "Ru");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -379,7 +379,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dl_Ul_Pl_Ru() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dl", "Ul", "Pl", "Ru");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dl", "Ul", "Pl", "Ru");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -397,7 +397,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dc_Uc_Pc_Ru() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", "Ru");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dc", "Uc", "Pc", "Ru");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -415,7 +415,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel___Un_Pn_Rp() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, "Un", "Pn", "Rp");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, "Un", "Pn", "Rp");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -433,7 +433,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel__Dn_Un_Pn_Rp() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", "Pn", "Rp");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations("Dn", "Un", "Pn", "Rp");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -451,7 +451,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel____Pl_() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, null, "Pl", null);
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, null, "Pl", null);
         executor.getRootContext().set("handle", handle);
         executor.go();
 
@@ -469,7 +469,7 @@ public class CurrentFullWorkflowParallelModelInitializationTest extends Abstract
     @Test
     public void testInitModel____Pl_Ru() throws Exception {
         SCXMLExecutor executor = SCXMLUtils.createSCXMLExecutor(scxml);
-        Handle handle = CurrentModelCreationUtils.createHandleByVariantStateNotations(null, null, "Pl", "Ru");
+        Handle handle = ExampleModelCreationUtils.createHandleByVariantStateNotations(null, null, "Pl", "Ru");
         executor.getRootContext().set("handle", handle);
         executor.go();
 
