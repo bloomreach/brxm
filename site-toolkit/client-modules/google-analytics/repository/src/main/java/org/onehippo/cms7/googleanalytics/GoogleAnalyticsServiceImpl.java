@@ -21,10 +21,10 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
+import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
