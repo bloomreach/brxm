@@ -32,7 +32,7 @@ public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
     private static Logger log = LoggerFactory.getLogger(SCXMLRegistryModule.class);
 
     private RepositorySCXMLRegistry scxmlRegistry = new RepositorySCXMLRegistry();
-    private SCXMLExecutorFactory scxmlExecutorFactory = new RepositorySCXMLExecutorFactory();
+    private RepositorySCXMLExecutorFactory scxmlExecutorFactory = new RepositorySCXMLExecutorFactory();
 
     @Override
     protected void doConfigure(Node moduleConfig) throws RepositoryException {
@@ -43,6 +43,8 @@ public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
     protected void doInitialize(Session session) throws RepositoryException {
         scxmlRegistry.initialize();
         HippoServiceRegistry.registerService(scxmlRegistry, SCXMLRegistry.class);
+
+        scxmlExecutorFactory.initialize();
         HippoServiceRegistry.registerService(scxmlExecutorFactory, SCXMLExecutorFactory.class);
     }
 

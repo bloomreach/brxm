@@ -26,10 +26,6 @@ import org.onehippo.cms7.services.SingletonService;
 @SingletonService
 public interface SCXMLExecutorFactory {
 
-    public void initialize() throws SCXMLException;
-
     public SCXMLExecutor createSCXMLExecutor(SCXML scxml) throws SCXMLException;
-
-    public void destroy();
 
 }

@@ -25,10 +25,6 @@ import org.onehippo.cms7.services.SingletonService;
 @SingletonService
 public interface SCXMLRegistry {
 
-    public void initialize();
-
     public SCXML getSCXML(String id);
-
-    public void destroy();
 
 }

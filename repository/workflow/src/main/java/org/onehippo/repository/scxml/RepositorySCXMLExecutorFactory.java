@@ -27,8 +27,7 @@ import org.apache.commons.scxml2.model.SCXML;
  */
 public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
 
-    @Override
-    public void initialize() throws SCXMLException {
+    void initialize() {
     }
 
     @Override
@@ -40,8 +39,7 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
         return executor;
     }
 
-    @Override
-    public void destroy() {
+    void destroy() {
     }
 
 }

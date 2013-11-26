@@ -18,7 +18,6 @@ package org.onehippo.repository.scxml;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
     private static final String SCXML_ACTION = "hipposcxml:action";
 
-    private Map<String, SCXML> scxmlDefsMap;
+    private Map<String, SCXML> scxmlMap;
 
     private Session session;
     private String scxmlTypesPath;
@@ -77,8 +76,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
-    @Override
-    public void initialize() {
+    void initialize() {
         xmlReporter = new XMLReporterImpl();
         pathResolver = new RepositoryPathResolver(scxmlTypesPath, null);
 
@@ -87,27 +85,22 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
 
     @Override
     public SCXML getSCXML(String id) {
-        if (scxmlDefsMap != null) {
-            return scxmlDefsMap.get(id);
+        if (scxmlMap != null) {
+            return scxmlMap.get(id);
         }
 
         return null;
     }
 
-    @Override
-    public void destroy() {
-        if (scxmlDefsMap != null) {
-            scxmlDefsMap.clear();
+    void destroy() {
+        if (scxmlMap != null) {
+            scxmlMap.clear();
         }
 
         session = null;
     }
 
     void refresh() {
-        if (scxmlDefsMap == null) {
-            scxmlDefsMap = Collections.synchronizedMap(new HashMap<String, SCXML>());
-        }
-
         Node scxmlDefsNode = null;
 
         try {
@@ -115,53 +108,51 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
 
             if (session.getRootNode().hasNode(relScxmlDefsNodePath)) {
                 scxmlDefsNode = session.getRootNode().getNode(relScxmlDefsNodePath);
-            } else {
-                log.error("SCXML Definitions Node doesn't exist at '{}'.", scxmlTypesPath);
             }
         } catch (RepositoryException e) {
             log.error("Failed to read SCXML definitions node.", e);
         }
 
-        if (scxmlDefsNode != null) {
-            try {
-                // first add or update
-                if (scxmlDefsNode.hasNodes()) {
-                    for (final Node scxmlDefNode : new NodeIterable(scxmlDefsNode.getNodes())) {
-                        final String scxmlDefId = scxmlDefNode.getName();
-                        SCXML newScxml = null;
+        if (scxmlDefsNode == null) {
+            log.error("SCXML Definitions Node doesn't exist at '{}'.", scxmlTypesPath);
+            return;
+        }
 
-                        try {
-                            newScxml = readSCXML(scxmlDefNode);
-                        } catch (SCXMLException e) {
-                            log.error("Invalid SCXML at " + scxmlDefNode.getPath(), e);
+        Map<String, SCXML> newScxmlMap = new HashMap<String, SCXML>();
+
+        try {
+            if (scxmlDefsNode.hasNodes()) {
+                for (final Node scxmlDefNode : new NodeIterable(scxmlDefsNode.getNodes())) {
+                    final String scxmlDefId = scxmlDefNode.getName();
+                    SCXML oldScxml = (scxmlMap != null ? scxmlMap.get(scxmlDefId) : null);
+                    SCXML newScxml = null;
+
+                    try {
+                        newScxml = readSCXML(scxmlDefNode);
+
+                        if (!validateSemantics(newScxml)) {
+                            log.error("Invalid SCXML at '{}'. This will be ignored with keeping old one if exists.", scxmlDefNode.getPath());
+                            newScxml = null;
                         }
+                    } catch (SCXMLException e) {
+                        log.error("Invalid SCXML at " + scxmlDefNode.getPath(), e);
+                    }
 
-                        if (newScxml != null && validateSCXML(newScxml)) {
-                            SCXML oldScxml = scxmlDefsMap.put(scxmlDefId, newScxml);
+                    if (newScxml == null) {
+                        newScxml = oldScxml;
+                        log.info("The existing SCXML definition was kept due to invalid SCXML. Id: '{}'.", scxmlDefId);
+                    }
 
-                            if (oldScxml == null) {
-                                log.info("SCXML definition added. Id: '{}'.", scxmlDefId);
-                            } else {
-                                log.info("SCXML definition updated. Id: '{}'.", scxmlDefId);
-                            }
-                        }
+                    if (newScxml != null) {
+                        newScxmlMap.put(scxmlDefId, newScxml);
+                        log.info("Registering SCXML definition. Id: '{}'.", scxmlDefId);
                     }
                 }
-
-                // remove if no definition node found
-                synchronized (scxmlDefsMap) {
-                    for (Map.Entry<String, SCXML> entry : scxmlDefsMap.entrySet()) {
-                        String scxmlDefId = entry.getKey();
-
-                        if (!scxmlDefsNode.hasNode(scxmlDefId)) {
-                            scxmlDefsMap.remove(scxmlDefId);
-                            log.info("SCXML definition removed. Id: '{}'.", scxmlDefId);
-                        }
-                    }
-                }
-            } catch (RepositoryException e) {
-                log.warn("Failed to parse SCXML definition node.", e);
             }
+
+            scxmlMap = newScxmlMap;
+        } catch (RepositoryException e) {
+            log.warn("Failed to parse SCXML definition node.", e);
         }
     }
 
@@ -210,7 +201,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
-    private boolean validateSCXML(final SCXML scxml) {
+    private boolean validateSemantics(final SCXML scxml) {
         return true;
     }
 
