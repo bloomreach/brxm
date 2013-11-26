@@ -47,4 +47,9 @@
     <appender-ref ref="root"/>
   </root>
 
+  <category additivity="true" name="org.onehippo.cms7.brokenlinks">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+
 </log4j:configuration>

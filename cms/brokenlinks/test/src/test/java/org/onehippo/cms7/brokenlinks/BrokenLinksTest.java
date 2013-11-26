@@ -123,7 +123,6 @@ public class BrokenLinksTest extends RepositoryTestCase {
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
         int countDocuments = 0;
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
             ++countDocuments;
         }
         assertEquals(0, countDocuments);
@@ -242,6 +241,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
+
 
         new BrokenLinksCheckingJob().execute(jobContext);
 

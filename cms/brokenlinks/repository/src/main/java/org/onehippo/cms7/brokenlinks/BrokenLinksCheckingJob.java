@@ -66,13 +66,12 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
         try {
             session = context.getSystemSession();
-
+            session.refresh(false);
             Map<String, String> params = new HashMap<String, String>();
 
             for (String attrName : context.getAttributeNames()) {
                 params.put(attrName, context.getAttribute(attrName));
             }
-
             checkBrokenLinks(session, new CheckExternalBrokenLinksConfig(params));
         } finally {
             if (session != null) {
