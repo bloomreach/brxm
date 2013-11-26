@@ -60,28 +60,19 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         if (component == null) {
             boolean initialized = false;
             String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
-            
-            ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
-            ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
+             try {
 
-            try {
-                if (containerClassloader != currentClassloader) {
-                    Thread.currentThread().setContextClassLoader(containerClassloader);
-                }
-                
                 Class<?> compClass = null;
                 
                 if (!StringUtils.isEmpty(componentClassName)) {
-                    compClass = containerClassloader.loadClass(componentClassName);
+                    compClass = Class.forName(componentClassName);
                 } else {
                     compClass = defaultHstComponentClass;
                     componentClassName = defaultHstComponentClassName;
                 }
                 
                 component = (HstComponent) compClass.newInstance();
-                
-                ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig); 
-                
+                ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig);
                 component.init(requestContainerConfig.getServletContext(), compConfigImpl);
                 
                 initialized = true;
@@ -91,10 +82,6 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
                 throw new HstComponentException("Cannot instantiate the class of " + componentId + ": " + componentClassName);
             } catch (IllegalAccessException e) {
                 throw new HstComponentException("Illegal access to the class of " + componentId + ": " + componentClassName);
-            } finally {
-                if (containerClassloader != currentClassloader) {
-                    Thread.currentThread().setContextClassLoader(currentClassloader);
-                }                
             }
             
             if (initialized) {
@@ -113,31 +100,16 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
 
     @SuppressWarnings("unchecked")
     public <T> T getObjectInstance(HstContainerConfig requestContainerConfig, String className) throws HstComponentException {
-        T object = null;
-        
-        ClassLoader containerClassloader = requestContainerConfig.getContextClassLoader();
-        ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
-
         try {
-            if (containerClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(containerClassloader);
-            }
-            
-            Class<T> clazz = (Class<T>) containerClassloader.loadClass(className);
-            object = (T) clazz.newInstance();
+            Class<T> clazz = (Class<T>) Class.forName(className);
+            return (T) clazz.newInstance();
         } catch (ClassNotFoundException e) {
             throw new HstComponentException("Cannot find the class of " + className);
         } catch (InstantiationException e) {
             throw new HstComponentException("Cannot instantiate the class of " + className);
         } catch (IllegalAccessException e) {
             throw new HstComponentException("Illegal access to the class of " + className);
-        } finally {
-            if (containerClassloader != currentClassloader) {
-                Thread.currentThread().setContextClassLoader(currentClassloader);
-            }                
         }
-        
-        return object;
     }
     
     private String getComponentId(HstComponentConfiguration compConfig, Mount mount) {
