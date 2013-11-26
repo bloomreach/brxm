@@ -162,8 +162,8 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
         }
 
         // Determine the 'best' canonical link: the one whose mount has the closest content path
-        // {@link Mount#getCanonicalContentPath()} to the path of the document handle. If multiple {@link Mount}'s have
-        // an equally well suited {@link Mount#getCanonicalContentPath()}, we pick the mount with the fewest types.
+        // {@link Mount#getContentPath()} to the path of the document handle. If multiple {@link Mount}'s have
+        // an equally well suited {@link Mount#getContentPath()}, we pick the mount with the fewest types.
         // These mounts are in general the most generic ones.
         // If this still results in multiple mounts, we pick the one which has the most ancestors : The deeper the mountPath,
         // the more specific the mount can be considered
@@ -209,6 +209,9 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
         HstLink bestLink = secondCandidateList.get(0);
         if (secondCandidateList.size() > 1) {
             for (HstLink link : secondCandidateList) {
+                if (link == secondCandidateList) {
+                    continue;
+                }
                 if (hasLinkMoreMountAncestorsThanBestLink(link, bestLink)) {
                     bestLink = link;
                 }
@@ -219,7 +222,7 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
 
     private boolean hasLinkMoreMountAncestorsThanBestLink(final HstLink testLink, final HstLink bestLink) {
         int nrOfAncestorsTestLink = getNumberOfMountAncestors(testLink);
-        int nrOfAncestorsBestLink = getNumberOfMountAncestors(testLink);
+        int nrOfAncestorsBestLink = getNumberOfMountAncestors(bestLink);
         return nrOfAncestorsTestLink > nrOfAncestorsBestLink;
     }
 
