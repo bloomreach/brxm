@@ -122,7 +122,6 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         mount = EasyMock.createNiceMock(Mount.class);
         EasyMock.expect(mount.getMountPoint()).andReturn(MOUNT_POINT).anyTimes();
         EasyMock.expect(mount.getContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
-        EasyMock.expect(mount.getContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
         EasyMock.expect(mount.isMapped()).andReturn(true).anyTimes();
         EasyMock.expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
         EasyMock.expect(mount.getTypes()).andReturn(new ArrayList<String>()).anyTimes();
