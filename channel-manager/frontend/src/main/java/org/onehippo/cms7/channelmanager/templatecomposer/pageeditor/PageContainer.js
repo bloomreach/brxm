@@ -343,11 +343,19 @@
                             self.refreshIframe.call(self, null);
                         },
                         failure: function(result) {
-                            var jsonData = Ext.util.JSON.decode(result.responseText);
-                            console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
-                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                                self.initComposer.call(self);
-                            });
+                            if (result.isTimeout) {
+                                console.error(self.resources['preview-hst-config-creation-timeout-title']);
+                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-timeout-title'],
+                                        self.resources['preview-hst-config-creation-timeout'] + self.resources['increase-timeout-location-helper-message'],function() {
+                                            self.initComposer.call(self);
+                                        });
+                            } else {
+                                var jsonData = Ext.util.JSON.decode(result.responseText);
+                                console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
+                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
+                                    self.initComposer.call(self);
+                                });
+                            }
                         }
                     });
                 }
@@ -371,10 +379,19 @@
                     },
                     failure: function(result) {
                         var jsonData = Ext.util.JSON.decode(result.responseText);
-                        console.error(self.resources['published-hst-config-failed-message'] + ' ' + jsonData.message);
-                        Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message'], function() {
-                            self.initComposer.call(self);
-                        });
+                        if (result.isTimeout) {
+                            console.error(self.resources['published-hst-config-timeout-message']);
+                            Hippo.Msg.alert(self.resources['published-hst-config-timeout-message-title'],
+                                    self.resources['published-hst-config-timeout-message'] + self.resources['increase-timeout-location-helper-message'],function() {
+                                self.initComposer.call(self);
+                            });
+                        } else {
+                            console.error(self.resources['published-hst-config-failed-message'] + ' ' + jsonData.message);
+                            Hippo.Msg.alert(self.resources['published-hst-config-failed-message-title'], self.resources['published-hst-config-failed-message'], function() {
+                                self.initComposer.call(self);
+                            });
+                        }
+
                     }
                 });
             });

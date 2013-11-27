@@ -54,6 +54,9 @@
       <sv:property sv:name="initialHstConnectionTimeout" sv:type="Long">
         <sv:value>60000</sv:value>
       </sv:property>
+      <sv:property sv:name="extAjaxTimeoutMillis" sv:type="Long">
+        <sv:value>30000</sv:value>
+      </sv:property>
       <sv:property sv:name="previewMode" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>

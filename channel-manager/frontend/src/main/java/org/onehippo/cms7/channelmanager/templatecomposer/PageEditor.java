@@ -84,6 +84,8 @@ public class PageEditor extends ExtPanel {
     // default initial connection timeout in milliseconds
     private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
 
+    private static final long DEFAULT_EXT_AJAX_TIMEOUT = 30000L;
+
     private static final Boolean DEFAULT_PREVIEW_MODE = Boolean.TRUE;
     private static final Boolean DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT = Boolean.TRUE;
 
@@ -159,6 +161,10 @@ public class PageEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private Long extAjaxTimeout = DEFAULT_EXT_AJAX_TIMEOUT;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private String locale;
 
     @ExtProperty
@@ -191,6 +197,7 @@ public class PageEditor extends ExtPanel {
             this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
             this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
+            this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
             this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
