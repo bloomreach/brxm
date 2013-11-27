@@ -155,6 +155,7 @@
         constructor: function(config) {
             if (config.extAjaxTimeout) {
                 Ext.Ajax.timeout = config.extAjaxTimeout;
+                console.log("Set Ext.Ajax.timeout to " + config.extAjaxTimeout + " ms.");
             }
             this.title = config.title;
             this.resources = config.resources;
