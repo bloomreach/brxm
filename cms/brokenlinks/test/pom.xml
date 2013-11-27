@@ -110,7 +110,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>once</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
     </plugins>

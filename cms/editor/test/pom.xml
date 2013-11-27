@@ -107,7 +107,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
             <exclude>**/JcrTypeDescriptorTest.java</exclude>
             <exclude>**/ValidationPluginTest.java</exclude>

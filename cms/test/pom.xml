@@ -172,7 +172,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
           <excludes>
             <exclude>**/*$*</exclude>
             <exclude>**/PluginConfigTest.java</exclude>

@@ -72,7 +72,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
    </plugins>
