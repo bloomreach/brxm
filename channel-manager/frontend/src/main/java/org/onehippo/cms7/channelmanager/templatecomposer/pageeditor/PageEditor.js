@@ -153,7 +153,6 @@
         fullscreen: false,
 
         constructor: function(config) {
-            console.log(config);
             if (config.extAjaxTimeout) {
                 Ext.Ajax.timeout = config.extAjaxTimeout;
             }
