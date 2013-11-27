@@ -144,9 +144,9 @@ public class AbstractConfigResource {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
 
-    private void assertIsContextualizableMount(final Mount liveMount) throws IllegalArgumentException{
+    private void assertIsContextualizableMount(final Mount liveMount) throws IllegalStateException{
         if (!(liveMount instanceof  ContextualizableMount)) {
-            throw new IllegalArgumentException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
+            throw new IllegalStateException("Expected a mount of type "+ContextualizableMount.class.getName()+"" +
                     " but found '"+liveMount.toString()+"' which is of type " + liveMount.getClass().getName());
         }
     }
