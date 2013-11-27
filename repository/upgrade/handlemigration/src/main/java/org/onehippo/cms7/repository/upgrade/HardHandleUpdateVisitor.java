@@ -44,10 +44,10 @@ import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.OverwritingCopyHandler;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
@@ -220,21 +220,9 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
     }
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
-        final NodeType primaryNodeType = JcrUtils.getPrimaryNodeType(srcNode);
-        if (!destNode.isNodeType(primaryNodeType.getName())) {
-            destNode.setPrimaryType(primaryNodeType.getName());
-        }
-        for (NodeType nodeType : JcrUtils.getMixinNodeTypes(srcNode)) {
-            if (!nodeType.getName().equals(HippoNodeType.NT_HARDDOCUMENT)) {
-                destNode.addMixin(nodeType.getName());
-            } else {
-                destNode.addMixin(JcrConstants.MIX_VERSIONABLE);
-            }
-        }
-        JcrUtils.copyToChain(srcNode, new DefaultCopyHandler(destNode) {
+        JcrUtils.copyTo(srcNode, new OverwritingCopyHandler(destNode) {
 
-            @Override
-            public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
+            protected void replaceMixins(final Node node, final NodeInfo nodeInfo) throws RepositoryException {
                 String[] oldMixins = nodeInfo.getMixinNames();
                 Set<String> mixins = new HashSet<>();
                 for (String mixin : oldMixins) {
@@ -246,7 +234,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
                 }
                 String[] newMixins = mixins.toArray(new String[mixins.size()]);
                 NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
-                super.startNode(newInfo);
+                super.replaceMixins(node, newInfo);
             }
 
             @Override
