@@ -200,6 +200,8 @@ public class HardHandleUpdateVisitorTest extends RepositoryTestCase {
             String path = createTestDocument(i);
             Node node = session.getNode(path).getParent();
             node.addMixin(HippoNodeType.NT_HARDHANDLE);
+            node.addMixin("testcontent:mixin");
+            node.addNode("testcontent:html");
         }
     }
 

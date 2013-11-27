@@ -34,3 +34,6 @@
 [testcontent:event] > testcontent:basedocument, hippostd:relaxed
 
 [testcontent:overview] > testcontent:basedocument, hippostd:relaxed
+
+[testcontent:mixin] mixin
++ testcontent:html (hippostd:html)

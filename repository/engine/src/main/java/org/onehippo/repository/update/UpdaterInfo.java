@@ -100,17 +100,17 @@ class UpdaterInfo {
         if ((script == null || script.isEmpty()) && (klass == null || klass.isEmpty())) {
             throw new IllegalArgumentException("Either script or class property must be present");
         }
-        try {
-            if (klass != null && !klass.isEmpty()) {
-                updaterClass = (Class<? extends NodeUpdateVisitor>) Class.forName(klass);
-            } else {
-                final GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
-                final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
-                updaterClass = gcl.parseClass(gcs, false);
-            }
-        } catch (ClassCastException e) {
+        if (klass != null && !klass.isEmpty()) {
+            updaterClass = (Class<? extends NodeUpdateVisitor>) Class.forName(klass);
+        } else {
+            final GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
+            final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
+            updaterClass = gcl.parseClass(gcs, false);
+        }
+        if (!NodeUpdateVisitor.class.isAssignableFrom(updaterClass)) {
             throw new IllegalArgumentException("Class must implement " + NodeUpdateVisitor.class.getName());
         }
+
         final Object o = updaterClass.newInstance();
         updater = (NodeUpdateVisitor) o;
         updatedNodes = JcrUtils.getBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, null);

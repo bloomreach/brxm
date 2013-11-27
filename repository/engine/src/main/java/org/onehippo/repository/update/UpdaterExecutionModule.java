@@ -16,6 +16,7 @@
 package org.onehippo.repository.update;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,15 +54,41 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
     private final ExecutorService updaterExecutor = Executors.newSingleThreadExecutor();
     private Session session;
-    private UpdaterRegistryImpl updaterRegistry;
+    private UpdaterRegistry updaterRegistry;
+    private NodeUpdaterService updaterService;
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
         this.session = session;
         session.getWorkspace().getObservationManager().addEventListener(this, Event.NODE_ADDED, UPDATE_QUEUE_PATH, false, null, null, false);
-        updaterRegistry = new UpdaterRegistryImpl(session.impersonate(new SimpleCredentials("system", new char[] {})));
+        updaterRegistry = new UpdaterRegistry(session.impersonate(new SimpleCredentials("system", new char[] {})));
         updaterRegistry.start();
-        HippoServiceRegistry.registerService(updaterRegistry, UpdaterRegistry.class);
+        updaterService = new NodeUpdaterService() {
+
+            @Override
+            public NodeUpdaterResult updateNode(final Node node) {
+                String uuid = null;
+                try {
+                    uuid = node.getIdentifier();
+                    final List<NodeUpdateVisitor> updaters = updaterRegistry.getUpdaters(node);
+                    if (updaters.size() == 0) {
+                        return NodeUpdaterResult.NO_UPDATE_NEEDED;
+                    }
+                    for (NodeUpdateVisitor updater : updaters) {
+                        try {
+                            updater.doUpdate(node);
+                        } finally {
+                            updater.destroy();
+                        }
+                    }
+                    return NodeUpdaterResult.UPDATE_SUCCEEDED;
+                } catch (RepositoryException ex) {
+                    log.error("Unable to update node " + uuid, ex);
+                    return NodeUpdaterResult.UPDATE_FAILED;
+                }
+            }
+        };
+        HippoServiceRegistry.registerService(updaterService, NodeUpdaterService.class);
         // check if any updaters are queued and execute them on startup
         runExecuteUpdatersTask();
     }
@@ -75,7 +102,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         }
         updaterExecutor.shutdown();
         if (updaterRegistry != null) {
-            HippoServiceRegistry.unregisterService(updaterRegistry, UpdaterRegistry.class);
+            HippoServiceRegistry.unregisterService(updaterService, NodeUpdaterService.class);
             updaterRegistry.stop();
         }
     }

@@ -15,24 +15,27 @@
  */
 package org.onehippo.repository.update;
 
-import java.util.List;
-
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.onehippo.cms7.services.SingletonService;
 
+/**
+ * The node updater service runs registered &amp; not-net-completed updater visitors.
+ * It is intended to be used by code that assumes the content to have been updated.
+ * <p>
+ * Since updater visitors run asynchronously, potentially taking a long time when
+ * there is a lot of content, a node may not yet have been updated by a background
+ * process.
+ */
 @SingletonService
-public interface UpdaterRegistry {
+public interface NodeUpdaterService {
 
-    /**
-     * Get the list of updaters that are registered for this node. After using the updater, the client must call
-     * destroy on the updater.
-     *
-     * @param node  the node to get the updaters for
-     * @return  the list the updaters that should be applied to this node, empty list if no updaters for this node.
-     * @throws RepositoryException
-     */
-    List<NodeUpdateVisitor> getUpdaters(final Node node) throws RepositoryException;
+    enum NodeUpdaterResult {
+        NO_UPDATE_NEEDED,
+        UPDATE_SUCCEEDED,
+        UPDATE_FAILED
+    }
+
+    NodeUpdaterResult updateNode(final Node node);
 
 }

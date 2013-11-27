@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node sv:name="VersionsCleaner" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:updaterinfo</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:batchsize" sv:type="Long">
+    <sv:value>10</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
+    <sv:value>false</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:query" sv:type="String">
+    <sv:value>//element(*, mix:versionable)</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:script" sv:type="String">
+<sv:value>
+package org.hippoecm.frontend.plugins.cms.dev.updater&#xd;
+&#xd;
+import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
+&#xd;
+import javax.jcr.Node&#xd;
+import javax.jcr.version.Version&#xd;
+import javax.jcr.version.VersionManager&#xd;
+import javax.jcr.version.VersionHistory&#xd;
+&#xd;
+import java.util.ArrayList&#xd;
+import java.util.Collections&#xd;
+import java.util.List&#xd;
+&#xd;
+/**&#xd;
+ * Truncates the version history, retaining only the latest&#xd;
+ * ${retainCount} versions.&#xd;
+ */&#xd;
+class VersionsCleaner extends BaseNodeUpdateVisitor {&#xd;
+&#xd;
+  /** The number of versions to retain */&#xd;
+  int retainCount = 2;&#xd;
+  &#xd;
+  boolean doUpdate(Node node) {&#xd;
+    log.debug "Updating node ${node.path}"&#xd;
+    &#xd;
+    // gather versions&#xd;
+    List versions = new ArrayList()&#xd;
+    VersionManager versionManager = node.getSession().getWorkspace().getVersionManager()&#xd;
+    Version baseVersion = versionManager.getBaseVersion(node.getPath())&#xd;
+    VersionHistory versionHistory = versionManager.getVersionHistory(node.getPath())&#xd;
+    VersionIterator allVersions = versionHistory.getAllVersions()&#xd;
+    while (allVersions.hasNext()) {&#xd;
+      Version version = allVersions.nextVersion()&#xd;
+      if (!version.isSame(baseVersion) &amp;&amp; !version.getName().equals("jcr:rootVersion")) {&#xd;
+        versions.add(version);&#xd;
+      }&#xd;
+    }&#xd;
+    Collections.reverse(versions)&#xd;
+    &#xd;
+    // remove versions&#xd;
+    int removeCount = versions.size() - retainCount&#xd;
+    boolean remove = removeCount &gt; 0&#xd;
+    if (remove) {&#xd;
+      log.info "Removing ${removeCount} versions of node ${node.path}"&#xd;
+    }&#xd;
+    while (removeCount &gt; 0) {&#xd;
+      Version version = versions.remove(0);&#xd;
+      log.debug "Removing version ${version.getName()}"&#xd;
+      versionHistory.removeVersion(version.getName())&#xd;
+      removeCount--;&#xd;
+    }&#xd;
+    return remove&#xd;
+  }&#xd;
+  &#xd;
+  boolean undoUpdate(Node node) {&#xd;
+    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
+  }&#xd;
+&#xd;
+}</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:throttle" sv:type="Long">
+    <sv:value>1000</sv:value>
+  </sv:property>
+</sv:node>

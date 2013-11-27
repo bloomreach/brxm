@@ -44,10 +44,10 @@ import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
 import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.OverwritingCopyHandler;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.util.JcrConstants;
@@ -81,22 +81,34 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
 
     @Override
     public boolean doUpdate(Node handle) throws RepositoryException {
+        final String identifier = handle.getIdentifier();
         if (handle.getSession() != defaultSession) {
-            handle = defaultSession.getNodeByIdentifier(handle.getIdentifier());
+            handle = defaultSession.getNodeByIdentifier(identifier);
+        }
+        if (!handle.isNodeType(HippoNodeType.NT_HARDHANDLE)) {
+            return false;
         }
         try {
-            final VersionHistory handleVersionHistory = getHandleVersionHistory(handle);
-            final List<Version> versions = getDocumentVersions(handleVersionHistory);
-            if (!versions.isEmpty()) {
-                migrateVersionHistory(handle, versions);
+            if (createTemporaryNode(identifier)) {
+                try {
+                    final VersionHistory handleVersionHistory = getHandleVersionHistory(handle);
+                    final List<Version> versions = getDocumentVersions(handleVersionHistory);
+                    if (!versions.isEmpty()) {
+                        migrateVersionHistory(handle, versions);
+                    }
+                    migrateHandle(handle);
+                    cleanVersionHistory(handleVersionHistory);
+                } finally {
+                    removeTemporaryNode(identifier);
+                }
+                return true;
+            } else {
+                return false;
             }
-            migrateHandle(handle);
-            cleanVersionHistory(handleVersionHistory);
         } finally {
             defaultSession.refresh(false);
             migrationSession.refresh(false);
         }
-        return true;
     }
 
     private void migrateHandle(final Node handle) throws RepositoryException {
@@ -113,19 +125,16 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
 
     private void migrateVersionHistory(final Node handle, final List<Version> versions) throws RepositoryException {
         log.debug("Migrating version history of {}", handle.getPath());
-        try {
-            final Node tmp  = createTemporaryNode(versions);
-            replayHistory(tmp, versions);
-            setPreview(handle, tmp.getIdentifier());
-        } finally {
-            removeTemporaryNode();
-        }
+        final String identifier = handle.getIdentifier();
+        Node tmp = migrationSession.getNode("/" + identifier);
+        replayHistory(tmp, versions);
+        setPreview(handle, tmp.getIdentifier());
     }
 
     private void setPreview(final Node handle, final String identifier) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(handle, false);
         final String docPath = handle.getPath() + "/" + handle.getName();
-        defaultSession.getWorkspace().clone(HANDLE_MIGRATION_WORKSPACE, "/tmp", docPath, true);
+        defaultSession.getWorkspace().clone(HANDLE_MIGRATION_WORKSPACE, "/" + handle.getIdentifier(), docPath, true);
         final Node newPreview = defaultSession.getNodeByIdentifier(identifier);
         boolean deleted = handle.getPath().startsWith(ATTIC_PATH);
         if (deleted) {
@@ -159,30 +168,33 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
         while (versions.size() > VERSIONS_RETAIN_COUNT) {
             versions.remove(0);
         }
+        String tmpPath = tmp.getPath();
         for (Version version : versions) {
             copy(version.getFrozenNode(), tmp);
             tmp.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED);
             migrationSession.save();
-            versionManager.checkin("/tmp", version.getCreated());
-            versionManager.checkout("/tmp");
+            versionManager.checkin(tmpPath, version.getCreated());
+            versionManager.checkout(tmpPath);
             count++;
         }
         log.debug("Replayed {} versions", count);
     }
 
-    private Node createTemporaryNode(final List<Version> versions) throws RepositoryException {
-        final Version latest = versions.get(versions.size() - 1);
-        final String primaryType = latest.getFrozenNode().getProperty(JCR_FROZEN_PRIMARY_TYPE).getString();
-        final Node tmp = migrationSession.getRootNode().addNode("tmp", primaryType);
-        tmp.addMixin(JcrConstants.MIX_VERSIONABLE);
-        return tmp;
+    private boolean createTemporaryNode(final String identifier) throws RepositoryException {
+        final Node tmp = migrationSession.getRootNode().addNode(identifier);
+        if (tmp.getIndex() == 1) {
+            tmp.addMixin(JcrConstants.MIX_VERSIONABLE);
+            migrationSession.save();
+            return true;
+        } else {
+            tmp.remove();
+            return false;
+        }
     }
 
-    private void removeTemporaryNode() {
+    private void removeTemporaryNode(String identifier) {
         try {
-            while (migrationSession.nodeExists("/tmp")) {
-                migrationSession.getNode("/tmp").remove();
-            }
+            migrationSession.getNode("/" + identifier).remove();
             migrationSession.save();
         } catch (RepositoryException e) {
             log.error("Error while removing temporary node", e);
@@ -208,17 +220,9 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
     }
 
     private void copy(final Node srcNode, final Node destNode) throws RepositoryException {
-        for (NodeType nodeType : JcrUtils.getMixinNodeTypes(srcNode)) {
-            if (!nodeType.getName().equals(HippoNodeType.NT_HARDDOCUMENT)) {
-                destNode.addMixin(nodeType.getName());
-            } else {
-                destNode.addMixin(JcrConstants.MIX_VERSIONABLE);
-            }
-        }
-        JcrUtils.copyToChain(srcNode, new DefaultCopyHandler(destNode) {
+        JcrUtils.copyTo(srcNode, new OverwritingCopyHandler(destNode) {
 
-            @Override
-            public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
+            protected void replaceMixins(final Node node, final NodeInfo nodeInfo) throws RepositoryException {
                 String[] oldMixins = nodeInfo.getMixinNames();
                 Set<String> mixins = new HashSet<>();
                 for (String mixin : oldMixins) {
@@ -230,7 +234,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
                 }
                 String[] newMixins = mixins.toArray(new String[mixins.size()]);
                 NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
-                super.startNode(newInfo);
+                super.replaceMixins(node, newInfo);
             }
 
             @Override

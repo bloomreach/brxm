@@ -31,6 +31,9 @@ public class HardDocumentUpdateVisitor extends BaseContentUpdateVisitor {
     @Override
     public boolean doUpdate(final Node node) throws RepositoryException {
         log.debug("Migrating {}", node.getPath());
+        if (node.getParent().isNodeType(HippoNodeType.NT_HARDHANDLE)) {
+            return false;
+        }
         try {
             final VersionHistory versionHistory = getVersionHistory(node);
             JcrUtils.ensureIsCheckedOut(node, true);

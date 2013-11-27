@@ -45,7 +45,7 @@ api/src/main/java/org/onehippo/repository/security/domain/DomainRuleExtension.ja
 api/src/main/java/org/onehippo/repository/security/domain/FacetRule.java -text
 api/src/main/java/org/onehippo/repository/update/BaseNodeUpdateVisitor.java -text
 api/src/main/java/org/onehippo/repository/update/NodeUpdateVisitor.java -text
-api/src/main/java/org/onehippo/repository/update/UpdaterRegistry.java -text
+api/src/main/java/org/onehippo/repository/update/NodeUpdaterService.java -text
 api/src/main/java/org/onehippo/repository/util/JcrConstants.java -text
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 builtin/pom.xml svneol=native#text/plain
@@ -219,7 +219,7 @@ engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionModule.java 
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionReport.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterInfo.java -text
-engine/src/main/java/org/onehippo/repository/update/UpdaterRegistryImpl.java -text
+engine/src/main/java/org/onehippo/repository/update/UpdaterRegistry.java -text
 engine/src/main/java/org/onehippo/repository/util/AnnotationUtils.java -text
 engine/src/main/resources/hippo.cnd -text
 engine/src/main/resources/hippofacnav.cnd -text
@@ -317,6 +317,9 @@ provider/src/main/java/org/hippoecm/repository/dataprovider/IFilterNodeId.java s
 resources/pom.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
+scripts/pom.xml -text
+scripts/src/main/resources/hippoecm-extension.xml -text
+scripts/src/main/resources/versions-cleaner.xml -text
 servlets/pom.xml svneol=native#text/plain
 test/README -text
 test/config/h2-repository.xml -text
@@ -426,12 +429,15 @@ testutils/src/main/java/org/onehippo/repository/mock/MockPropertyDefinition.java
 testutils/src/main/java/org/onehippo/repository/testutils/ExecuteOnLogLevel.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/JcrState.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/log4j/StringMatchFilter.java -text
+testutils/src/main/java/org/onehippo/repository/testutils/slf4j/LogRecord.java -text
+testutils/src/main/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapper.java -text
 testutils/src/main/java/org/onehippo/repository/util/GlobCompiler.java -text
 testutils/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml -text
 testutils/src/main/resources/org/hippoecm/repository/repository.xml -text
 testutils/src/test/java/org/onehippo/repository/mock/MockSessionTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/ExecuteOnLogLevelTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilterTest.java -text
+testutils/src/test/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapperTest.java -text
 testutils/src/test/resources/log4j-filters.txt -text
 upgrade/handlemigration/pom.xml -text
 upgrade/handlemigration/src/main/java/org/apache/jackrabbit/core/version/VersionHistoryRemover.java -text

@@ -601,6 +601,92 @@ public class MockNodeTest {
         assertEquals(new BigDecimal("4.56E3"), values[1].getDecimal());
     }
 
+    @Test
+    public void testGetNodeWithRelPath() throws Exception {
+        MockNode root = MockNode.root();
+        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
+        folder.addMockNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        node21.setProperty("tag", "node21");
+        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        node22.setProperty("tag", "node22");
+        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        node22sns.setProperty("tag", "node22sns");
+
+        assertNotNull(root.getNode("folder1"));
+        assertNotNull(folder.getNode("node1"));
+        assertNotNull(folder.getNode("node2"));
+        assertNotNull(folder.getNode("node2/node21"));
+        assertEquals("node21", folder.getNode("node2/node21").getProperty("tag").getString());
+        assertNotNull(folder.getNode("node2/node22"));
+        assertEquals("node22", folder.getNode("node2/node22").getProperty("tag").getString());
+        assertNotNull(folder.getNode("node2/node22[1]"));
+        assertEquals("node22", folder.getNode("node2/node22[1]").getProperty("tag").getString());
+        assertNotNull(folder.getNode("node2/node22[2]"));
+        assertEquals("node22sns", folder.getNode("node2/node22[2]").getProperty("tag").getString());
+    }
+
+    @Test
+    public void testHasNodeWithRelPath() throws Exception {
+        MockNode root = MockNode.root();
+        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
+        folder.addMockNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        node21.setProperty("tag", "node21");
+        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        node22.setProperty("tag", "node22");
+        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        node22sns.setProperty("tag", "node22sns");
+
+        assertTrue(root.hasNode("folder1"));
+        assertTrue(folder.hasNode("node1"));
+        assertTrue(folder.hasNode("node2"));
+        assertTrue(folder.hasNode("node2/node21"));
+        assertTrue(folder.hasNode("node2/node22"));
+        assertTrue(folder.hasNode("node2/node22[1]"));
+        assertTrue(folder.hasNode("node2/node22[2]"));
+    }
+
+    @Test
+    public void testGetPropertyWithRelPath() throws Exception {
+        MockNode root = MockNode.root();
+        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
+        folder.addMockNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        node21.setProperty("tag", "node21");
+        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        node22.setProperty("tag", "node22");
+        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        node22sns.setProperty("tag", "node22sns");
+
+        assertEquals("node21", folder.getProperty("node2/node21/tag").getString());
+        assertEquals("node22", folder.getProperty("node2/node22/tag").getString());
+        assertEquals("node22", folder.getProperty("node2/node22[1]/tag").getString());
+        assertEquals("node22sns", folder.getProperty("node2/node22[2]/tag").getString());
+    }
+
+    @Test
+    public void testHasPropertyWithRelPath() throws Exception {
+        MockNode root = MockNode.root();
+        MockNode folder = root.addMockNode("folder1", "nt:unstructured");
+        folder.addMockNode("node1", "nt:unstructured");
+        MockNode node2 = folder.addMockNode("node2", "nt:unstructured");
+        MockNode node21 = node2.addMockNode("node21", "nt:unstructured");
+        node21.setProperty("tag", "node21");
+        MockNode node22 = node2.addMockNode("node22", "nt:unstructured");
+        node22.setProperty("tag", "node22");
+        MockNode node22sns = node2.addMockNode("node22", "nt:unstructured");
+        node22sns.setProperty("tag", "node22sns");
+
+        assertTrue(folder.hasProperty("node2/node21/tag"));
+        assertTrue(folder.hasProperty("node2/node22/tag"));
+        assertTrue(folder.hasProperty("node2/node22[1]/tag"));
+        assertTrue(folder.hasProperty("node2/node22[2]/tag"));
+    }
+
     private static void assertNoParent(String message, Item item) throws RepositoryException {
         try {
             item.getParent();
