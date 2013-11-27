@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RepositorySCXMLRegistry implements SCXMLRegistry {
 
-    private static Logger log = LoggerFactory.getLogger(RepositorySCXMLRegistry.class);
+    static Logger log = LoggerFactory.getLogger(RepositorySCXMLRegistry.class);
 
     private static final String SCXML_DEFINITIONS = "hipposcxml:definitions";
     private static final String SCXML_SOURCE = "hipposcxml:source";
@@ -58,7 +58,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private Map<String, SCXML> scxmlMap;
 
     private Session session;
-    private String scxmlTypesPath;
+    private String scxmlDefinitionsNodePath;
 
     private XMLReporter xmlReporter;
     private PathResolver pathResolver;
@@ -68,17 +68,17 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
 
     void reconfigure(Node configRootNode) throws RepositoryException {
         this.session = configRootNode.getSession();
-        Node typesNode = configRootNode.getNode(SCXML_DEFINITIONS);
-        this.scxmlTypesPath = typesNode.getPath();
+        Node scxmlDefinitionsNode = configRootNode.getNode(SCXML_DEFINITIONS);
+        this.scxmlDefinitionsNodePath = scxmlDefinitionsNode.getPath();
 
-        if (!typesNode.getPrimaryNodeType().getName().equals(SCXML_DEFINITIONS)) {
-            throw new IllegalStateException("SCXMLRegistry configuration node at path: " + scxmlTypesPath + " is not of required primary type: " + SCXML_DEFINITIONS);
+        if (!scxmlDefinitionsNode.getPrimaryNodeType().getName().equals(SCXML_DEFINITIONS)) {
+            throw new IllegalStateException("SCXMLRegistry configuration node at path: " + scxmlDefinitionsNodePath + " is not of required primary type: " + SCXML_DEFINITIONS);
         }
     }
 
     void initialize() {
         xmlReporter = new XMLReporterImpl();
-        pathResolver = new RepositoryPathResolver(scxmlTypesPath, null);
+        pathResolver = new RepositoryPathResolver(scxmlDefinitionsNodePath, null);
 
         refresh();
     }
@@ -104,7 +104,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         Node scxmlDefsNode = null;
 
         try {
-            String relScxmlDefsNodePath = StringUtils.removeStart(scxmlTypesPath, "/");
+            String relScxmlDefsNodePath = StringUtils.removeStart(scxmlDefinitionsNodePath, "/");
 
             if (session.getRootNode().hasNode(relScxmlDefsNodePath)) {
                 scxmlDefsNode = session.getRootNode().getNode(relScxmlDefsNodePath);
@@ -114,7 +114,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
 
         if (scxmlDefsNode == null) {
-            log.error("SCXML Definitions Node doesn't exist at '{}'.", scxmlTypesPath);
+            log.error("SCXML Definitions Node doesn't exist at '{}'.", scxmlDefinitionsNodePath);
             return;
         }
 
