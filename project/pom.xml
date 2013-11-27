@@ -543,9 +543,6 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven.plugin.surefire.version}</version>
           <inherited>true</inherited>
-          <configuration>
-            <workingDirectory>target</workingDirectory>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
