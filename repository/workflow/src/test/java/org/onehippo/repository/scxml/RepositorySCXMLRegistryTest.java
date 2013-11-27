@@ -62,7 +62,16 @@ public class RepositorySCXMLRegistryTest {
             "  </state>\n" +
             "</scxml>";
 
-    private static final String SCXML_HELLO_INVALID2 = // execution without onentry
+    private static final String SCXML_HELLO_INVALID2 = // nonexisting initial attribute
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"nonexisting\">\n" +
+            "  <state id=\"hello-invalid\">\n" +
+            "    <onentry>\n" +
+            "      <log expr=\"'Hello, Invalid World'\"/>\n" +
+            "    </onentry>\n" +
+            "  </state>\n" +
+            "</scxml>";
+
+    private static final String SCXML_HELLO_INVALID3 = // execution without onentry
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello-invalid2\">\n" +
             "  <state id=\"hello-invalid2\">\n" +
             "    <log expr=\"'Hello, Invalid World'\"/>\n" +
@@ -119,6 +128,8 @@ public class RepositorySCXMLRegistryTest {
         scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_INVALID);
         scxmlDefNode = scxmlDefsNode.addMockNode("hello-invalid2", "hipposcxml:scxml");
         scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_INVALID2);
+        scxmlDefNode = scxmlDefsNode.addMockNode("hello-invalid3", "hipposcxml:scxml");
+        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_INVALID3);
         registry.reconfigure(scxmlConfigNode);
         registry.initialize();
 
@@ -129,11 +140,9 @@ public class RepositorySCXMLRegistryTest {
         assertNull(registry.getSCXML("hello-invalid"));
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
         assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-invalid'."));
-        assertTrue(containsLogMessage(logRecords, "org.apache.commons.scxml2.model.ModelException"));
-        assertTrue(containsLogMessage(logRecords, "illegal initialstate for SCXML document"));
-
-        assertTrue(containsLogMessage(logRecords, "SCXML parse error"));
-        assertTrue(containsLogMessage(logRecords, "Ignoring element <log> in namespace"));
+        assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"null\" found; illegal initialstate for SCXML document"));
+        assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"nonexisting\" found; illegal initialstate for SCXML document"));
+        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-invalid3 (L3:C41): [COMMONS_SCXML] Ignoring element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state>"));
     }
 
     private boolean containsLogMessage(final List<LogRecord> logRecords, String message) {

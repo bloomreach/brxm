@@ -60,9 +60,6 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private Session session;
     private String scxmlDefinitionsNodePath;
 
-    private XMLReporter xmlReporter;
-    private PathResolver pathResolver;
-
     public RepositorySCXMLRegistry() {
     }
 
@@ -77,9 +74,6 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     }
 
     void initialize() {
-        xmlReporter = new XMLReporterImpl();
-        pathResolver = new RepositoryPathResolver(scxmlDefinitionsNodePath, null);
-
         refresh();
     }
 
@@ -194,6 +188,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
 
         try {
+            XMLReporter xmlReporter = new XMLReporterImpl(scxmlDefPath);
+            PathResolver pathResolver = new RepositoryPathResolver(scxmlDefinitionsNodePath, null);
             Configuration configuration = new Configuration(xmlReporter, pathResolver, actions);
             return SCXMLReader.read(new StreamSource(new StringReader(scxmlSource)), configuration);
         } catch (IOException e) {
@@ -211,10 +207,18 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     }
 
     private static class XMLReporterImpl implements XMLReporter {
+
+        private final String ctxPath;
+
+        public XMLReporterImpl(final String ctxPath) {
+            this.ctxPath = ctxPath;
+        }
+
         @Override
         public void report(String message, String errorType, Object relatedInformation, Location location)
                 throws XMLStreamException {
-            log.warn("SCXML parse error: [{}] {} {} ({}:{})", new Object [] { errorType, message, relatedInformation, location.getLineNumber(), location.getColumnNumber() });
+            // TODO: what's relatedInformation for?
+            log.warn("SCXML model error in {} (L{}:C{}): [{}] {} {}", new Object [] { ctxPath, location.getLineNumber(), location.getColumnNumber(), errorType, message, relatedInformation });
         }
     }
 
