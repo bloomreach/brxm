@@ -74,8 +74,6 @@ public class MockNode extends MockItem implements HippoNode {
     static final String NAMESPACE_JCR_SV = "http://www.jcp.org/jcr/sv/1.0";
     static final String ROOT_IDENTIFIER = "cafebabe-cafe-babe-cafe-babecafebabe";
 
-    private static final Pattern PATH_NAME_WITH_INDEX_PATTERN = Pattern.compile("^([^\\[\\]]+)(\\[(\\d+)\\])?$");
-
     private static boolean defaultSameNameSiblingSupported = true;
     private boolean sameNameSiblingSupported = defaultSameNameSiblingSupported;
 
@@ -249,40 +247,12 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     @Override
-    public Property getProperty(String relPath) throws PathNotFoundException {
-        if (relPath == null) {
-            throw new IllegalArgumentException("Non-null relative path is required.");
+    public Property getProperty(final String relPath) throws PathNotFoundException {
+        checkRelativePathIsName(relPath);
+        if (!properties.containsKey(relPath)) {
+            throw new PathNotFoundException("Path not found: " + relPath);
         }
-
-        String nodeRelPath = null;
-        String propName = null;
-        int lastOffset = relPath.lastIndexOf('/');
-
-        if (lastOffset == relPath.length() - 1) {
-            relPath = relPath.substring(0, relPath.length() - 1);
-            lastOffset = relPath.lastIndexOf('/');
-        }
-
-        if (lastOffset == -1) {
-            propName = relPath;
-        } else {
-            nodeRelPath = relPath.substring(0, lastOffset);
-            propName = relPath.substring(lastOffset + 1);
-        }
-
-        if (propName == null || "".equals(propName)) {
-            throw new IllegalStateException("Failed to resolve the property name from the relative path: '" + relPath + "'.");
-        }
-
-        if (nodeRelPath == null || "".equals(nodeRelPath)) {
-            if (!properties.containsKey(relPath)) {
-                throw new PathNotFoundException("Path not found: " + relPath);
-            }
-
-            return properties.get(relPath);
-        } else {
-            return getMockNode(nodeRelPath).getProperty(propName);
-        }
+        return properties.get(relPath);
     }
 
     private MockProperty getPropertyOrAddNew(final String name, final int type) {
@@ -297,10 +267,13 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public boolean hasProperty(final String relPath) {
-        try {
-            return (getProperty(relPath) != null);
-        } catch (PathNotFoundException e) {
-            return false;
+        checkRelativePathIsName(relPath);
+        return properties.containsKey(relPath);
+    }
+
+    private void checkRelativePathIsName(final String relPath) {
+        if (relPath.contains("/")) {
+            throw new UnsupportedOperationException("MockNode does not support relative path '" + relPath + "', only names");
         }
     }
 
@@ -311,11 +284,8 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public boolean hasNode(final String relPath) {
-        try {
-            return (getMockNode(relPath) != null);
-        } catch (PathNotFoundException e) {
-            return false;
-        }
+        checkRelativePathIsName(relPath);
+        return children.containsKey(relPath);
     }
 
     @Override
@@ -324,58 +294,15 @@ public class MockNode extends MockItem implements HippoNode {
     }
 
     MockNode getMockNode(final String relPath) throws PathNotFoundException {
-        if (relPath == null) {
-            throw new IllegalArgumentException("Non-null relative path is required.");
-        }
-
-        int offset = relPath.indexOf('/');
-
-        if (offset == 0) {
-            throw new IllegalArgumentException("Not a relative path: " + relPath);
-        }
-
-        String nodeName = null;
-        int nodeIndex = 1;
-        String subRelPath = null;
-
-        if (offset == -1) {
-            nodeName = relPath;
-        } else if (offset == relPath.length() - 1) {
-            nodeName = relPath.substring(0, relPath.length() - 1);
-        } else {
-            nodeName = relPath.substring(0, offset);
-            subRelPath = relPath.substring(offset + 1);
-        }
-
-        Matcher m = PATH_NAME_WITH_INDEX_PATTERN.matcher(nodeName);
-
-        if (!m.matches()) {
-            throw new IllegalStateException("Node name not matched against the pattern: " + PATH_NAME_WITH_INDEX_PATTERN.pattern());
-        }
-
-        nodeName = m.group(1);
-        String nodeIndexValue = m.group(3);
-
-        if (nodeIndexValue != null) {
-            nodeIndex = Integer.parseInt(nodeIndexValue);
-        }
-
-        if (!children.containsKey(nodeName)) {
+        checkRelativePathIsName(relPath);
+        if (!children.containsKey(relPath)) {
             throw new PathNotFoundException("Node does not exist: '" + relPath + "'");
         }
-
-        List<MockNode> childList = children.get(nodeName);
-
-        if (childList.isEmpty() || childList.size() < nodeIndex) {
-            throw new PathNotFoundException("Node does not exist: '" + relPath + "'");
+        List<MockNode> childList = children.get(relPath);
+        if (!childList.isEmpty()) {
+            return childList.get(0);
         }
-
-        if (subRelPath == null) {
-            return childList.get(nodeIndex - 1);
-        }
-
-        MockNode child = childList.get(nodeIndex - 1);
-        return child.getMockNode(subRelPath);
+        throw new PathNotFoundException("Node does not exist: '" + relPath + "'");
     }
 
     @Override
