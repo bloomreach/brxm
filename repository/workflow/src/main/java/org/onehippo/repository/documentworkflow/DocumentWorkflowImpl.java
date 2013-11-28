@@ -23,19 +23,82 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.scxml2.SCXMLExecutor;
+import org.apache.commons.scxml2.model.ModelException;
+import org.apache.commons.scxml2.model.SCXML;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.scxml.SCXMLException;
+import org.onehippo.repository.scxml.SCXMLExecutorFactory;
+import org.onehippo.repository.scxml.SCXMLRegistry;
+import org.onehippo.repository.scxml.SCXMLUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkflow {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowImpl.class);
+
+    private static final long serialVersionUID = 1L;
+
+    private static final String SCXML_DEFINITION_ID = "document-workflow";
+
+    private SCXMLExecutor scxmlExecutor;
+    private DocumentHandle handle;
+
+    protected PublishableDocument draftDocument;
+    protected PublishableDocument unpublishedDocument;
+    protected PublishableDocument publishedDocument;
+    protected PublicationRequest current;
+
 
     public DocumentWorkflowImpl() throws RemoteException {
     }
 
     // Workflow implementation / WorkflowImpl override
+
+    @Override
+    public void setNode(final Node node) throws RepositoryException {
+        super.setNode(node);
+
+        handle = new DocumentHandle(getWorkflowContext(), node);
+
+        try {
+            SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
+            SCXML scxml = scxmlRegistry.getSCXML(SCXML_DEFINITION_ID);
+
+            if (scxml == null) {
+                throw new WorkflowException("SCXML definition not found by id, '" + SCXML_DEFINITION_ID + "'.");
+            }
+
+            SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
+            scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxml);
+
+            scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
+            scxmlExecutor.getRootContext().set("handle", handle);
+            scxmlExecutor.getRootContext().set("eventResult", null);
+
+            try {
+                scxmlExecutor.go();
+                log.info("scmxl.current.targets: {}", SCXMLUtils.getCurrentTransitionTargetIdList(scxmlExecutor));
+                log.info("scmxl.handle.hints: {}", handle.getHints());
+            } catch (ModelException e) {
+                log.error("Failed to execute scxml", e);
+            }
+        }
+        catch (WorkflowException wfe) {
+            throw new RepositoryException(wfe);
+        }
+        catch (SCXMLException hse) {
+            throw new RepositoryException(hse);
+        }
+    }
 
     @Override
     public Map<String,Serializable> hints() {

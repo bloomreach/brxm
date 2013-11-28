@@ -20,23 +20,83 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowContext;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentHandle {
 
-    private Map<String, Serializable> hints = new HashMap<String, Serializable>();
-    private PublicationRequest request;
-    private PublishableDocument draft;
-    private PublishableDocument unpublished;
-    private PublishableDocument published;
+    private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
+
+    private Map<String, Serializable> hints = new HashMap<>();
+    private Map<String, PublishableDocument> documents = null;
+    private Map<String, PublicationRequest> requests = null;
+    private PublishableDocument subjectDocument = null;
+    private PublicationRequest subjectRequest = null;
     private String user;
     private String workflowState;
 
-    public DocumentHandle(String user, String workflowState) {
-        this.user = user;
-        this.workflowState = workflowState;
+    private Node handle;
+
+    public DocumentHandle(WorkflowContext context, Node subject) throws RepositoryException {
+        this.user = context.getUserIdentity();
+
+        handle = subject.getParent();
+
+        boolean subjectFound = false;
+
+        for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
+            PublishableDocument doc = new PublishableDocument(variant);
+            if (documents != null && documents.containsKey(doc.getState())) {
+                log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
+                        new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
+//                throw new IllegalStateException("Document at path "+handle.getPath()+" has multiple variants with state "+doc.getState());
+            }
+            if (documents == null) {
+                documents = new HashMap<>();
+            }
+            documents.put(doc.getState(), doc);
+            if (!subjectFound && variant.isSame(subject)) {
+                subjectDocument = doc;
+                workflowState = doc.getState();
+                subjectFound = true;
+            }
+        }
+        for (Node request : new NodeIterable(handle.getNodes(HippoNodeType.NT_REQUEST))) {
+            PublicationRequest req = new PublicationRequest(request);
+            String requestType = JcrUtils.getStringProperty(request, "hippostdpubwf:type", "");
+            if ("rejected".equals(requestType)) {
+                if (!subjectFound && request.isSame(subject)) {
+                    subjectRequest = req;
+                    subjectFound = true;
+                }
+                else {
+                    // ignore all other rejected requests
+                    continue;
+                }
+            }
+            if (requests != null && requests.containsKey(requestType)) {
+                log.warn("Document at path {} has multiple requests of type {}. Request with identifier {} ignored.",
+                        new String[]{handle.getPath(), requestType, request.getIdentifier()});
+//                throw new IllegalStateException("Document at path "+handle.getPath()+" has multiple requests of type "+requestType);
+                continue;
+            }
+            if (requests == null) {
+                requests = new HashMap<>();
+            }
+            requests.put(requestType, req);
+            if (!subjectFound && request.isSame(subject)) {
+                subjectRequest = req;
+                subjectFound = true;
+            }
+        }
     }
 
     public String getUser() {
@@ -48,59 +108,55 @@ public class DocumentHandle {
     }
 
     public PublicationRequest getRequest() {
-        return request;
+        // TODO: temporary solution, probably this shouldn't be needed or the intended functionality be changed
+        if (subjectRequest == null && requests != null && !requests.isEmpty()) {
+            return requests.values().iterator().next();
+        }
+        return subjectRequest;
     }
 
-    public void setRequest(final PublicationRequest request) {
-        this.request = request;
+    // TODO: temporary solution, probably this shouldn't be needed or the intended functionality be changed
+    public PublishableDocument getDocument() {
+        return subjectDocument;
+    }
+
+    public void setRequest(final PublicationRequest request) throws RepositoryException {
+        String requestType = request.getType();
+        if (requests == null) {
+            requests = new HashMap<>();
+        }
+        if (requests.put(requestType, request) != null) {
+            // TODO: probably an error situation?
+        }
     }
 
     public void putDocumentVariant(PublishableDocument variant) throws RepositoryException {
-        String state = variant.getState();
-
-        if (PublishableDocument.DRAFT.equals(state)) {
-            draft = variant;
-        } else if (PublishableDocument.UNPUBLISHED.equals(state)) {
-            unpublished = variant;
-        } else if (PublishableDocument.PUBLISHED.equals(state)) {
-            published = variant;
-        }
+        documents.put(variant.getState(), variant);
     }
 
     public PublishableDocument getDocumentVariantByState(String state) {
-        if (PublishableDocument.DRAFT.equals(state)) {
-            return draft;
-        } else if (PublishableDocument.UNPUBLISHED.equals(state)) {
-            return unpublished;
-        } else if (PublishableDocument.PUBLISHED.equals(state)) {
-            return published;
-        }
-
-        return null;
+        return documents.get(state);
     }
 
     public PublishableDocument getDraft() {
-        return draft;
+        return documents.get(PublishableDocument.DRAFT);
     }
 
     public void setDraft(final PublishableDocument draft) {
-        this.draft = draft;
     }
 
     public PublishableDocument getUnpublished() {
-        return unpublished;
+        return documents.get(PublishableDocument.UNPUBLISHED);
     }
 
     public void setUnpublished(final PublishableDocument unpublished) {
-        this.unpublished = unpublished;
     }
 
     public PublishableDocument getPublished() {
-        return published;
+        return documents.get(PublishableDocument.PUBLISHED);
     }
 
     public void setPublished(final PublishableDocument published) {
-        this.published = published;
     }
 
     public Map<String, Serializable> getHints() {

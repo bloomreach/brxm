@@ -26,14 +26,11 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.model.ModelException;
 import org.apache.commons.scxml2.model.SCXML;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.scxml.SCXMLException;
 import org.onehippo.repository.scxml.SCXMLExecutorFactory;
@@ -52,12 +49,6 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
 
     private SCXMLExecutor scxmlExecutor;
     private DocumentHandle handle;
-
-    protected PublishableDocument draftDocument;
-    protected PublishableDocument unpublishedDocument;
-    protected PublishableDocument publishedDocument;
-    protected PublicationRequest current;
-
 
     public SCXMLReviewedActionsWorkflowImpl() throws RemoteException {
         super();
@@ -97,28 +88,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     public void setNode(Node node) throws RepositoryException {
         super.setNode(node);
 
-        Node parent = node.getParent();
-
-        // from BasicReviewedActionsWorkflowImpl
-        draftDocument = unpublishedDocument = publishedDocument = null;
-        for (Node sibling : new NodeIterable(parent.getNodes(node.getName()))) {
-            String state = JcrUtils.getStringProperty(sibling, HippoStdNodeType.HIPPOSTD_STATE, "");
-            if ("draft".equals(state)) {
-                draftDocument = new PublishableDocument(sibling);
-            } else if ("unpublished".equals(state)) {
-                unpublishedDocument = new PublishableDocument(sibling);
-            } else if ("published".equals(state)) {
-                publishedDocument = new PublishableDocument(sibling);
-            }
-        }
-        current = null;
-        for (Node request : new NodeIterable(parent.getNodes("hippo:request"))) {
-            String requestType = JcrUtils.getStringProperty(request, "hippostdpubwf:type", "");
-            if (!("rejected".equals(requestType))) {
-                current = new PublicationRequest(request);
-            }
-        }
-        // end from BasicReviewedActionsWorkflowImpl
+        handle = new DocumentHandle(getWorkflowContext(), node);
 
         try {
             SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
@@ -130,24 +100,6 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
 
             SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
             scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxml);
-
-            handle = new DocumentHandle(super.getWorkflowContext().getUserIdentity(), JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, ""));
-
-            if (draftDocument != null) {
-                handle.setDraft(draftDocument);
-            }
-
-            if (unpublishedDocument != null) {
-                handle.setUnpublished(unpublishedDocument);
-            }
-
-            if (publishedDocument != null) {
-                handle.setPublished(publishedDocument);
-            }
-
-            if (current != null) {
-                handle.setRequest(current);
-            }
 
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
             scxmlExecutor.getRootContext().set("handle", handle);
