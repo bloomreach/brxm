@@ -229,14 +229,14 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     This method is particularly helpful in <i>key</i> kind of fields, where the <i>key</i> values contain chars on which
-     *     Lucene text indexing tokenizes.For example, give me all the documents that have a key that start with JIRA key
-     *     <code>HSTTW0-23</code> can be expressed as <code>addLike("myproject:key","HSTTW0-23%")</code>.
+     *     Lucene text indexing tokenizes. For example, "give me all the documents that have a key that start with JIRA key
+     *     <code>HSTTW0-23</code>" can be expressed as <code>addLike("myproject:key","HSTTW0-23%")</code>.
      *     This results in documents having key <code>HSTTW0-2345</code>, <code>HSTTW0-2357</code>, etc.
      * </p>
      * <p>
-     *     <strong>STRONGLY RECOMMENDED TO NOT USE PREFIX '%'</strong>. Thus do not use a query like
-     *     <code>addLike("myproject:key","%HSTTW0-23%")</code>. Note the prefix '%'. Prefix wildcard blow up in memory and cpu
-     *     as they cannot be efficiently done in Lucene
+     *     <strong>DO NOT USE '%' AS A PREFIX</strong>. Thus do not use a query like
+     *     <code>addLike("myproject:key","%HSTTW0-23%")</code>. Note the prefix '%'. Prefix wildcards blow up in memory and CPU
+     *     as they cannot be efficiently done in Lucene.
      * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:author"
      * @param value object that must be of type String
