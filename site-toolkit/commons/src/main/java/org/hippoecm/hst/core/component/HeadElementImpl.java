@@ -52,10 +52,11 @@ public class HeadElementImpl implements HeadElement
         this.tagName = tagName;
     }
     
-    public HeadElementImpl(final Element element)
+    public HeadElementImpl(final Node element)
     {
-        tagName = element.getTagName();
-        
+        textContent = element.getTextContent();
+        tagName = element.getNodeName();
+
         if (attributes == null)
         {
             attributes = new HashMap<String, String>();
@@ -66,31 +67,28 @@ public class HeadElementImpl implements HeadElement
         }
         
         NamedNodeMap attrs = element.getAttributes();
-        int length = attrs.getLength();
-        
-        for (int i = 0; i < length; i++)
-        {
-            Attr attr = (Attr) attrs.item(i);
-            attributes.put(attr.getName(), attr.getValue());
+        if (attrs != null) {
+            for (int i = 0; i < attrs.getLength(); i++)
+            {
+                Attr attr = (Attr) attrs.item(i);
+                attributes.put(attr.getName(), attr.getValue());
+            }
         }
-        
-        textContent = element.getTextContent();
+
         
         NodeList nodeList = element.getChildNodes();
-        length = nodeList.getLength();
-        
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < nodeList.getLength(); i++)
         {
             Node node = nodeList.item(i);
             
-            if (node.getNodeType() == Node.ELEMENT_NODE)
+            if ("SCRIPT".equals(element.getNodeName().toUpperCase()) || node.getNodeType() == Node.ELEMENT_NODE)
             {
                 if (childHeadElements == null)
                 {
                     childHeadElements = new ArrayList<HeadElement>();
                 }
                 
-                childHeadElements.add(new HeadElementImpl((Element) node));
+                childHeadElements.add(new HeadElementImpl(node));
             }
         }
     }

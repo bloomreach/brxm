@@ -92,8 +92,12 @@ public class HeadElementUtils {
             boolean isExpandEmptyElements, boolean isPreformattedTextContent, boolean isPreformattedTextContentInCDATA,
             boolean commentedOutCDATAMarker) throws IOException {
         String tagName = headElement.getTagName();
-        writer.write('<');
-        writer.write(tagName);
+        String capitalizedTagName = tagName.toUpperCase();
+
+        if (!"#TEXT".equals(capitalizedTagName)) {
+            writer.write('<');
+            writer.write(tagName);
+        }
 
         for (Map.Entry<String, String> entry : headElement.getAttributeMap().entrySet()) {
             writer.write(' ');
@@ -109,14 +113,16 @@ public class HeadElementUtils {
             if (!isExpandEmptyElements && (textContent == null || "".equals(textContent))) {
                 writer.write("/>");
             } else {
-                writer.write('>');
+
+                if (!"#TEXT".equals(capitalizedTagName)) {
+                    writer.write('>');
+                }
 
                 if (textContent != null) {
                     if (isPreformattedTextContent) {
                         if (isPreformattedTextContentInCDATA) {
                             if (!"".equals(textContent)) {
                                 if (commentedOutCDATAMarker) {
-                                    String capitalizedTagName = tagName.toUpperCase();
                                     if ("SCRIPT".equals(capitalizedTagName)) {
                                         writer.write("\n//<![CDATA[\n");
                                         writer.write(textContent);
@@ -144,17 +150,18 @@ public class HeadElementUtils {
                     }
                 }
 
-                writer.write("</");
-                writer.write(tagName);
-                writer.write('>');
+                if (!"#TEXT".equals(capitalizedTagName)) {
+                    writer.write("</");
+                    writer.write(tagName);
+                    writer.write('>');
+                }
             }
         } else {
-            writer.write(">\n");
+            writer.write(">");
 
             for (HeadElement childHeadElement : headElement.getChildHeadElements()) {
                 writeHeadElement(writer, childHeadElement, isPreformattedTextContent, isExpandEmptyElements,
                         isPreformattedTextContentInCDATA);
-                writer.write('\n');
             }
 
             writer.write("</");

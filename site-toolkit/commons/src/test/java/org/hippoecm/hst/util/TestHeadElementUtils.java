@@ -17,11 +17,18 @@ package org.hippoecm.hst.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class TestHeadElementUtils {
 
@@ -57,7 +64,23 @@ public class TestHeadElementUtils {
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<script language=\"javascript\">alert('Hello, World!');</script>", sw.toString());
     }
-    
+
+    @Test
+    public void testHtmlTagInScriptContribution() throws Exception {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+
+        String xmlString = "<script type=\"text/javascript\">var jsflag = $('<html><body><span><input type=\"hidden\" name=\"js_enabled\" value=\"true\"/></span></body></html>');</script>";
+        Document doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
+
+        Element element = doc.getDocumentElement();
+        HeadElement head = new HeadElementImpl(element);
+
+        StringWriter sw = new StringWriter();
+        HeadElementUtils.writeHeadElement(sw, head, true, true, false, false);
+        assertEquals("<script type=\"text/javascript\">var jsflag = $('<html><body><span><input name=\"js_enabled\" value=\"true\" type=\"hidden\"></input></span></body></html>');</script>", sw.toString());
+    }
+
     @Test
     public void testEmptyOrBlankScriptContributionInCDATASection() throws Exception {
         HeadElement headElem = new HeadElementImpl("script");
