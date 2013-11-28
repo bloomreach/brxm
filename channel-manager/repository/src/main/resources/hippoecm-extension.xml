@@ -57,18 +57,6 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="channel-manager-cluster-templatecomposer-delete-initializeHstConfigEditorWithPreviewContext">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>20011.01</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer/initializeHstConfigEditorWithPreviewContext</sv:value>
-    </sv:property>
-  </sv:node>
-
   <sv:node sv:name="manage-changes-privileges">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
