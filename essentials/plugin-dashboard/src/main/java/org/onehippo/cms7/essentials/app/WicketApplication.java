@@ -9,6 +9,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.onehippo.cms7.essentials.installer.HomePage;
 import org.onehippo.cms7.essentials.setup.SetupPage;
 
+import com.google.common.base.Strings;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -18,12 +19,13 @@ import com.google.inject.Injector;
 public class WicketApplication extends WebApplication {
 
 
+
     /**
      * @see org.apache.wicket.Application#getHomePage()
      */
     @Override
     public Class<? extends WebPage> getHomePage() {
-        return HomePage.class;
+       return SetupPage.class;
     }
 
     /**
@@ -42,13 +44,5 @@ public class WicketApplication extends WebApplication {
     protected void onDestroy() {
         super.onDestroy();
         EventBusModule.getInstance().cleanup();
-
-
-    }
-
-    @Override
-    public RuntimeConfigurationType getConfigurationType() {
-        // TODO call super, testing only
-        return RuntimeConfigurationType.DEVELOPMENT;
     }
 }
