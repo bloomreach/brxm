@@ -53,16 +53,16 @@ public class RepositorySCXMLRegistryTest {
             "  </state>\n" +
             "</scxml>";
 
-    private static final String SCXML_HELLO_INVALID = // no initial attribute
+    private static final String SCXML_HELLO_NO_INITIAL = // no initial attribute
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\">\n" +
-            "  <state id=\"hello-invalid\">\n" +
+            "  <state id=\"hello-noinit\">\n" +
             "    <onentry>\n" +
             "      <log expr=\"'Hello, Invalid World'\"/>\n" +
             "    </onentry>\n" +
             "  </state>\n" +
             "</scxml>";
 
-    private static final String SCXML_HELLO_INVALID2 = // nonexisting initial attribute
+    private static final String SCXML_HELLO_NONEXISTING_INITIAL = // nonexisting initial attribute
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"nonexisting\">\n" +
             "  <state id=\"hello-invalid\">\n" +
             "    <onentry>\n" +
@@ -71,9 +71,9 @@ public class RepositorySCXMLRegistryTest {
             "  </state>\n" +
             "</scxml>";
 
-    private static final String SCXML_HELLO_INVALID3 = // execution without onentry
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello-invalid2\">\n" +
-            "  <state id=\"hello-invalid2\">\n" +
+    private static final String SCXML_HELLO_WRONG_EXECUTION_IN_STATE = // execution without onentry
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello-invalid\">\n" +
+            "  <state id=\"hello-invalid\">\n" +
             "    <log expr=\"'Hello, Invalid World'\"/>\n" +
             "  </state>\n" +
             "</scxml>";
@@ -122,27 +122,33 @@ public class RepositorySCXMLRegistryTest {
         MockNode root = MockNode.root();
         MockNode scxmlConfigNode = root.addMockNode("hippo:moduleconfig", "nt:unstructured");
         MockNode scxmlDefsNode = scxmlConfigNode.addMockNode("hipposcxml:definitions", "hipposcxml:definitions");
+
         MockNode scxmlDefNode = scxmlDefsNode.addMockNode("hello", "hipposcxml:scxml");
         scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO);
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello-invalid", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_INVALID);
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello-invalid2", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_INVALID2);
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello-invalid3", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_INVALID3);
+
+        scxmlDefNode = scxmlDefsNode.addMockNode("hello-no-initial", "hipposcxml:scxml");
+        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_NO_INITIAL);
+
+        scxmlDefNode = scxmlDefsNode.addMockNode("hello-nonexisting-initial", "hipposcxml:scxml");
+        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_NONEXISTING_INITIAL);
+
+        scxmlDefNode = scxmlDefsNode.addMockNode("hello-wrong-execution-in-state", "hipposcxml:scxml");
+        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
+
         registry.reconfigure(scxmlConfigNode);
         registry.initialize();
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);
         assertEquals("hello", helloScxml.getInitial());
+        assertNotNull(registry.getSCXML("hello-no-initial"));
+        assertNull(registry.getSCXML("hello-nonexisting-initial"));
+        assertNotNull(registry.getSCXML("hello-wrong-execution-in-state"));
 
-        assertNull(registry.getSCXML("hello-invalid"));
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-invalid'."));
-        assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"null\" found; illegal initialstate for SCXML document"));
-        assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"nonexisting\" found; illegal initialstate for SCXML document"));
-        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-invalid3 (L3:C41): [COMMONS_SCXML] Ignoring element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state>"));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-nonexisting-initial'."));
+        assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"nonexisting\" found; illegal initial state for SCXML document"));
+        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state (L3:C41): [COMMONS_SCXML] Ignoring element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state>"));
     }
 
     private boolean containsLogMessage(final List<LogRecord> logRecords, String message) {

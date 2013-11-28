@@ -141,6 +141,7 @@ resources/.project
 resources/.settings
 resources/target
 scripts/hippo-repository-scripts.iml
+scripts/target
 servlets/*.iml
 servlets/*.tmp
 servlets/.classpath
