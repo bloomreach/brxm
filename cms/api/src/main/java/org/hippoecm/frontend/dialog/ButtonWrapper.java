@@ -144,7 +144,7 @@ public class ButtonWrapper implements IClusterable {
 
     public void setEnabled(boolean isset) {
         enabled = isset;
-        if (button != null && button.findParent(Page.class) != null) {
+        if (button != null && isPresentOnPage(button)) {
             button.setEnabled(isset);
             if (ajax) {
                 AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
@@ -166,6 +166,10 @@ public class ButtonWrapper implements IClusterable {
                 }
             }
         }
+    }
+
+    private static boolean isPresentOnPage(final Button button) {
+        return button.findParent(Page.class) != null;
     }
 
     /**
