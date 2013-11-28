@@ -246,7 +246,7 @@ public interface Filter extends BaseFilter {
 
     /**
      * @see {@link #addLike(String, String)}
-     * @deprecated since 7.9.0 use {@link #addLike(String, String)} instead as the Object param was stringified any way
+     * @deprecated since 7.9.0 use {@link #addLike(String, String)} instead as the Object param was stringified anyway
      */
     @Deprecated
     void addLike(String fieldAttributeName, Object value) throws FilterException ;
@@ -260,7 +260,7 @@ public interface Filter extends BaseFilter {
     /**
      * @see {@link #addLike(String, String)} only now inverted
      *
-     * @deprecated since 7.9.0 use {@link #addNotLike(String, String)} instead as the Object param was stringified any way
+     * @deprecated since 7.9.0 use {@link #addNotLike(String, String)} instead as the Object param was stringified anyway
      */
     @Deprecated
     void addNotLike(String fieldAttributeName, Object value) throws FilterException ;
