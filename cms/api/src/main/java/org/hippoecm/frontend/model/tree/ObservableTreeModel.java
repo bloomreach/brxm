@@ -49,6 +49,9 @@ import org.slf4j.LoggerFactory;
  * A JCR tree model implementation that can be shared by multiple tree instances.
  * It is observable and can therefore not be used to register listeners.  Use the {@link JcrTreeModel}
  * instead to register {@link TreeModelListener}s.
+ *
+ * Each instance of this class should be registered separately. Hence this class does not override {@link #equals}
+ * nor {@link #hashCode}.
  */
 public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeModel, IObservable, IDetachable {
 

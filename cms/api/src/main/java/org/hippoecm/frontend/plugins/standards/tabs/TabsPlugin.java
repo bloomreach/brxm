@@ -158,7 +158,7 @@ public class TabsPlugin extends RenderPlugin {
                 if (tabbie != null) {
                     tabs.remove(tabbie);
                     tabbie.destroy();
-                    if (tabs.size() == 0) {
+                    if (tabs.isEmpty()) {
                         tabbedPanel.setSelectedTab(-1);
                     }
                     service.unbind();
@@ -221,7 +221,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     public boolean hasOpenTabs() {
-        return this.tabs.size() > 0;
+        return !this.tabs.isEmpty();
     }
 
     Panel getEmptyPanel() {
@@ -467,7 +467,7 @@ public class TabsPlugin extends RenderPlugin {
             String serviceId = context.getReference(renderer).getServiceId();
             context.unregisterTracker(decoratorTracker, serviceId);
 
-            if (tabs.size() > 0) {
+            if (!tabs.isEmpty()) {
                 // look for previously selected tab
                 int lastCount = 0;
                 Tab lastTab = tabs.get(0);

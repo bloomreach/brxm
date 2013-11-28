@@ -412,7 +412,7 @@ public class TabbedPanel extends WebMarkupContainer {
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
-        if (!hasBeenRendered() && getSelectedTab() == -1 && tabs.size() > 0) {
+        if (!hasBeenRendered() && getSelectedTab() == -1 && !tabs.isEmpty()) {
             // select the first tab by default
             setSelectedTab(0);
         }
