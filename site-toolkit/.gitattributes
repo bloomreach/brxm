@@ -269,6 +269,7 @@ client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringCompon
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/AbstractCmsRestTest.java -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/VirtualHost127001AugmentedTest.java -text
 client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.java -text
+client-modules/cms-rest/src/test/resources/log4j.xml -text
 client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/AbstractCmsRestTest.xml -text
 client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/VirtualHost127001AugmentedTest.xml -text
 client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.xml -text
@@ -857,6 +858,7 @@ components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/internal/TestHippoRepositoryResourceBundleFamilyFactory.java -text
+components/resourcebundle/src/test/resources/log4j.xml -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages.properties -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en.properties -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en_CA.properties -text
@@ -871,6 +873,7 @@ components/rewriter/src/main/java/org/hippoecm/hst/utils/SimpleHtmlExtractor.jav
 components/rewriter/src/site/site.xml -text
 components/rewriter/src/test/java/org/hippoecm/hst/content/rewriter/impl/TestSimpleContentRewriter.java -text
 components/rewriter/src/test/java/org/hippoecm/hst/utils/TestSimpleHtmlExtractor.java -text
+components/rewriter/src/test/resources/log4j.xml -text
 components/rewriter/src/test/resources/org/hippoecm/hst/utils/features.html -text
 components/security/pom.xml -text
 components/security/src/main/java/org/hippoecm/hst/security/impl/DefaultLoginModule.java -text
@@ -921,6 +924,7 @@ components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestLazyMul
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestMultiplePoolingRepositoryFactory.java svneol=native#text/plain
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestMultipleRepository.java svneol=native#text/plain
 components/session-pool/src/test/java/org/hippoecm/hst/core/jcr/pool/TestRepositorySessionLifecycles.java svneol=native#text/plain
+components/session-pool/src/test/resources/log4j.xml -text
 components/session-pool/src/test/resources/org/hippoecm/hst/core/jcr/pool/GeneralBasicPoolingRepository.xml svneol=native#text/plain
 components/session-pool/src/test/resources/org/hippoecm/hst/core/jcr/pool/GeneralMultiplePoolingRepository.xml svneol=native#text/plain
 components/session-pool/src/test/resources/org/hippoecm/hst/core/jcr/pool/TestBasicPoolingRepository.xml svneol=native#text/plain
@@ -1127,6 +1131,7 @@ toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsit
 toolkit-resources/addon/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/resources/hst-root.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/site/site.xml -text
+toolkit-resources/addon/repository/src/test/resources/log4j.xml -text
 toolkit-resources/addon/src/site/site.xml -text
 toolkit-resources/addon/toolkit-cnd/cnd/pom.xml svneol=native#text/plain
 toolkit-resources/addon/toolkit-cnd/cnd/src/main/resources/hippoecm-extension.xml svneol=native#text/plain

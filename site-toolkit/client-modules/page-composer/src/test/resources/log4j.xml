@@ -83,7 +83,7 @@
     <appender-ref ref="root"/>
   </category>
 
-  <!-- surpress classcast waringing in dispose() method over SPI -->
+  <!-- surpress classcast warning in dispose() method over SPI -->
   <category additivity="false" name="org.apache.jackrabbit.jcr2spi.WorkspaceManager">
     <level value="error"/>
     <appender-ref ref="root"/>

@@ -288,12 +288,12 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>org.onehippo.repository.test.keepserver</name>
-              <value>true</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
+            <!-- Tests fail when repo.path is set
+            <repo.path>${project.build.directory}</repo.path>
+            -->
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
