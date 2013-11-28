@@ -80,6 +80,7 @@ public class EventsPanel extends Panel {
                 final PluginEvent pluginEvent = item.getModelObject();
                 final Label eventMessage = new Label("eventMessage", new Model<>(pluginEvent.getMessage()));
                 item.add(eventMessage);
+                eventMessage.setEscapeModelStrings(false);
                 // TODO add model..
                 final CheckBox undoCheckbox = new CheckBox("undoCheckbox", new PropertyModel<Boolean>(pluginEvent, "selected"));
                 undoCheckbox.setVisible(false);
@@ -97,7 +98,7 @@ public class EventsPanel extends Panel {
     }
 
     public void repaint(final AjaxRequestTarget target) {
-        final Queue<DisplayEvent> events = listener.consumeEvents();
+        final List<DisplayEvent> events = listener.consumeEvents();
         displayItems.clear();
         displayItems.addAll(new LinkedList<>(events));
         //displayItems = new LinkedList<>(events);

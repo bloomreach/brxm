@@ -90,6 +90,10 @@ public class ExecutionStep extends EssentialsWizardStep {
 
         }
 
+        // add documentation messages:
+        eventBus.post(new DisplayEvent(getString("powerpack.restart.rebuild"), true));
+        eventBus.post(new DisplayEvent(getString("powerpack.documentation"), true));
+
         myParent.getFinalStep().displayEvents(target);
 
     }

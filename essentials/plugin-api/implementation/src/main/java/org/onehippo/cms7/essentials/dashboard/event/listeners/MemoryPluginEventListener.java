@@ -18,8 +18,8 @@ package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 
 import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.PluginEventListener;
@@ -32,29 +32,30 @@ import com.google.common.eventbus.Subscribe;
 public class MemoryPluginEventListener implements PluginEventListener<DisplayEvent> {
 
     public static final int MAX_ITEMS = 1000;
-    private final Queue<DisplayEvent> events = new ConcurrentLinkedQueue<>();
-
-
+    private final List<DisplayEvent> events = new CopyOnWriteArrayList<>();
 
     @Override
     @Subscribe
     public void onPluginEvent(final DisplayEvent event) {
         if (events.size() == MAX_ITEMS) {
-            events.poll();
+            events.remove(0);
         }
-        events.add(event);
+        if (event.isAddAsFirst()) {
+            events.add(0, event);
+
+        } else {
+            events.add(event);
+        }
     }
 
-
-    public Queue<DisplayEvent> pollEvents() {
+    public List<DisplayEvent> pollEvents() {
         return new LinkedList<>(events);
 
     }
 
-    public Queue<DisplayEvent> consumeEvents() {
-        final Queue<DisplayEvent> pluginEvents = new LinkedList<>(events);
+    public List<DisplayEvent> consumeEvents() {
+        final List<DisplayEvent> pluginEvents = new LinkedList<>(events);
         events.clear();
         return pluginEvents;
-
     }
 }

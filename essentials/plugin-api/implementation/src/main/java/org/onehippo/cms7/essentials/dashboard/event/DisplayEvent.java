@@ -32,6 +32,10 @@ public class DisplayEvent extends MessageEvent {
      */
     private boolean selected;
 
+    /**
+     * Flag which indicates item will be placed as first in the queue
+     */
+    private  boolean addAsFirst;
     public boolean isSelected() {
         return selected;
     }
@@ -43,5 +47,15 @@ public class DisplayEvent extends MessageEvent {
     public DisplayEvent(final String message) {
         super(message);
         log.debug("DISPLAY EVENT: {}", message);
+    }
+
+    public DisplayEvent(final String message, final boolean addAsFirst) {
+        super(message);
+        this.addAsFirst = addAsFirst;
+        log.debug("DISPLAY EVENT: {}", message);
+    }
+
+    public boolean isAddAsFirst() {
+        return addAsFirst;
     }
 }

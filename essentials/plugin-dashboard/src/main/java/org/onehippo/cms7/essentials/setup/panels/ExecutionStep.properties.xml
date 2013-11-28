@@ -3,4 +3,16 @@
 <properties>
 
   <entry key="powerpack.none.selected">No Power Pack will be installed at this time</entry>
+  <entry key="powerpack.documentation">
+    <![CDATA[<p>Click to read <a href="http://www.onehippo.org">Hippo essentials documentation</a></p>]]>
+  </entry>
+  <entry key="powerpack.restart.rebuild">
+<![CDATA[
+<h3>Please rebuild and restart your application:<h3>
+<pre>
+mvn clean package
+mvn -P cargo.run
+</pre>
+]]>
+  </entry>
 </properties>

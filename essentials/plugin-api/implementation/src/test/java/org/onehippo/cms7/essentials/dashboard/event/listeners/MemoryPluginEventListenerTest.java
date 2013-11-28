@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
+import java.util.List;
 import java.util.Queue;
 
 import org.junit.After;
@@ -50,7 +51,7 @@ public class MemoryPluginEventListenerTest {
         for (int i = 0; i < maxItems; i++) {
              bus.post(new DisplayEvent(String.valueOf(i)));
         }
-        Queue<DisplayEvent> pluginEvents = listener.consumeEvents();
+        List<DisplayEvent> pluginEvents = listener.consumeEvents();
         assertEquals(MemoryPluginEventListener.MAX_ITEMS, pluginEvents.size());
         // above consume should remove all events:
         pluginEvents = listener.consumeEvents();
@@ -59,6 +60,13 @@ public class MemoryPluginEventListenerTest {
         bus.post(new DisplayEvent("test"));
         pluginEvents = listener.consumeEvents();
         assertEquals(1, pluginEvents.size());
+        // test first
+        bus.post(new DisplayEvent("test", true));
+        bus.post(new DisplayEvent("test", true));
+        bus.post(new DisplayEvent("first", true));
+        pluginEvents = listener.consumeEvents();
+        assertEquals(3, pluginEvents.size());
+        assertEquals(pluginEvents.get(0).getMessage(), "first");
         // consume again:
         pluginEvents = listener.consumeEvents();
         assertEquals(0, pluginEvents.size());
