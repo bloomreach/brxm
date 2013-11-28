@@ -142,21 +142,12 @@ public class DocumentHandle {
         return documents.get(PublishableDocument.DRAFT);
     }
 
-    public void setDraft(final PublishableDocument draft) {
-    }
-
     public PublishableDocument getUnpublished() {
         return documents.get(PublishableDocument.UNPUBLISHED);
     }
 
-    public void setUnpublished(final PublishableDocument unpublished) {
-    }
-
     public PublishableDocument getPublished() {
         return documents.get(PublishableDocument.PUBLISHED);
-    }
-
-    public void setPublished(final PublishableDocument published) {
     }
 
     public Map<String, Serializable> getHints() {
