@@ -16,16 +16,16 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-public class HstConfigurationBuilder {
+@PersistentNode(type = "hst:sitemapitem")
+public class HstSiteMapItem extends BaseJcrModel{
 
-    private static Logger log = LoggerFactory.getLogger(HstConfigurationBuilder.class);
-
-
+    private static Logger log = LoggerFactory.getLogger(HstSiteMapItem.class);
 
 }

@@ -60,15 +60,18 @@ public @interface PersistentProperty {
             final Session session = context.getSession();
             try {
                 final String parentPath = ourModel.getParentPath();
-                if(session.itemExists(parentPath)){
+                if (session.itemExists(parentPath)) {
                     final Node node = session.getNode(parentPath);
-                    if(value instanceof String){
+                    if (value instanceof String) {
                         node.setProperty(name, (String) value);
-                    }else{
+                    }
+                    else if (value instanceof Boolean) {
+                        node.setProperty(name, (Boolean) value);
+                    } else {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());
                     }
 
-                } else{
+                } else {
                     log.error("Parent couldn't be found for path: {}", parentPath);
                 }
             } catch (RepositoryException e) {

@@ -19,38 +19,36 @@ package org.onehippo.cms7.essentials.dashboard.model.hst;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@PersistentNode(type = "hst:configuration")
-public class HstConfiguration extends BaseJcrModel {
+@PersistentNode(type = "hst:component")
+public class HstComponent extends BaseJcrModel{
+
+    private static Logger log = LoggerFactory.getLogger(HstComponent.class);
+
+    @PersistentProperty(name = "hst:template")
+    private String hstTemplate;
 
 
-    private JcrModel templates = new HstTemplates();
-    private List<JcrModel> menus = new ArrayList<>();
+    @PersistentCollection
+    private List<HstComponent> components = new ArrayList<>();
 
-    public HstConfiguration() {
-        addChild(templates);
+    public void addComponent(final HstComponent component){
+        components.add(component);
     }
 
-    public HstConfiguration(final String name, final String parentPath) {
-        this();
-        setName(name);
-        setParentPath(parentPath);
-        templates.setParentPath("/hst:hst/hst:configurations/" + getName());
+    public List<HstComponent> getComponents() {
+        return components;
     }
 
-    public void addTemplate(final HstTemplate template) {
-        template.setParentPath(templates.getParentPath());
-        templates.addChild(template);
+    public void setComponents(final List<HstComponent> components) {
+        this.components = components;
     }
-
-    public void addMenu(final HstSiteMenu menu) {
-        menus.add(menu);
-    }
-
-
 }

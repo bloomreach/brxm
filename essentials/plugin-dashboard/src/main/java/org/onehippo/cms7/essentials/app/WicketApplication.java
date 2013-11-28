@@ -6,6 +6,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
+import org.onehippo.cms7.essentials.installer.HomePage;
 import org.onehippo.cms7.essentials.setup.SetupPage;
 
 import com.google.inject.Guice;
@@ -22,7 +23,7 @@ public class WicketApplication extends WebApplication {
      */
     @Override
     public Class<? extends WebPage> getHomePage() {
-        return SetupPage.class;
+        return HomePage.class;
     }
 
     /**

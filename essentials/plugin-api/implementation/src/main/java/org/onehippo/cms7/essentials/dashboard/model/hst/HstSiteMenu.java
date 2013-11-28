@@ -19,38 +19,44 @@ package org.onehippo.cms7.essentials.dashboard.model.hst;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@PersistentNode(type = "hst:configuration")
-public class HstConfiguration extends BaseJcrModel {
+@PersistentNode(type = "hst:sitemenu")
+public class HstSiteMenu extends BaseJcrModel{
 
+    private static Logger log = LoggerFactory.getLogger(HstSiteMenu.class);
 
-    private JcrModel templates = new HstTemplates();
-    private List<JcrModel> menus = new ArrayList<>();
+    private  String name;
 
-    public HstConfiguration() {
-        addChild(templates);
+    public HstSiteMenu(final String name) {
+        this.name = name;
     }
 
-    public HstConfiguration(final String name, final String parentPath) {
-        this();
-        setName(name);
-        setParentPath(parentPath);
-        templates.setParentPath("/hst:hst/hst:configurations/" + getName());
+    public String getName() {
+        return name;
     }
 
-    public void addTemplate(final HstTemplate template) {
-        template.setParentPath(templates.getParentPath());
-        templates.addChild(template);
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public void addMenu(final HstSiteMenu menu) {
-        menus.add(menu);
+    private List<HstSiteMenuItem> menuItems = new ArrayList<>();
+
+    public void add(final HstSiteMenuItem item){
+        menuItems.add(item);
     }
 
+    public List<HstSiteMenuItem> getMenuItems() {
+        return menuItems;
+    }
+
+    public void setMenuItems(final List<HstSiteMenuItem> menuItems) {
+        this.menuItems = menuItems;
+    }
 
 }

@@ -16,13 +16,19 @@
 
 package org.onehippo.cms7.essentials.dashboard.model;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.util.Collection;
+
+import javax.jcr.Item;
+
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
+ * Persists Collection of JcrModel objects
+ *
  * @version "$Id$"
+ * @see JcrModel
  */
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Persistent {
-    public String type() ;
+public interface PersistentCollectionHandler<T, E extends Collection<? extends Item>> {
+
+    E execute(final PluginContext context, Collection<JcrModel> model, T annotation);
 }

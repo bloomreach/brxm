@@ -8,6 +8,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -22,6 +24,7 @@ public abstract class BaseRepositoryTest extends BaseTest {
     private static final Logger log = LoggerFactory.getLogger(BaseRepositoryTest.class);
     protected MemoryRepository repository;
     protected Session session;
+    protected Session hippoSession;
 
     @Override
     public PluginContext getContext() {
@@ -47,9 +50,10 @@ public abstract class BaseRepositoryTest extends BaseTest {
         if (repository != null) {
             repository.shutDown();
         }
-
+        if (hippoSession != null) {
+            hippoSession.logout();
+        }
     }
-
 
     //############################################
     // UTILITY METHODS
@@ -68,5 +72,19 @@ public abstract class BaseRepositoryTest extends BaseTest {
         session.save();
     }
 
+    /**
+     * Method useful when testing with local build (useful when you wanna see the changes)
+     *
+     * @return remote session (HippoSession)
+     */
+    public Session getHippoSession() throws RepositoryException {
+        if (hippoSession == null) {
+
+            final HippoRepository hippoRepository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+            hippoSession = hippoRepository.login("admin", "admin".toCharArray());
+        }
+        return hippoSession;
+
+    }
 
 }

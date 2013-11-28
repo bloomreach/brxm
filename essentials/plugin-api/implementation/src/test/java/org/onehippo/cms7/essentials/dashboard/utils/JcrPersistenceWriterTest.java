@@ -25,14 +25,16 @@ import javax.jcr.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.BaseTest;
+import org.onehippo.cms7.essentials.TestPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstConfiguration;
+import org.onehippo.cms7.essentials.dashboard.model.hst.HstSiteMenu;
+import org.onehippo.cms7.essentials.dashboard.model.hst.HstSiteMenuItem;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @version "$Id$"
@@ -40,38 +42,49 @@ import static org.junit.Assert.assertTrue;
 public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriterTest.class);
-
     private Session session;
+
+    private final boolean useHippoSesson = true;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        session = getContext().getSession();
-        session.getRootNode().addNode("hst:hst", "hst:hst").addNode("hst:configurations", "hst:configurations");
-        session.save();
+        createHstRootConfig();
+
 
     }
 
     @Test
     public void testWrite() throws Exception {
-        JcrPersistenceWriter writer = new JcrPersistenceWriter(getContext());
+        final PluginContext context = getContext();
+
+        if (useHippoSesson) {
+            ((TestPluginContext) context).setSession(getHippoSession());
+        }
+        JcrPersistenceWriter writer = new JcrPersistenceWriter(context);
         //############################################
         // POPULATE TREE:
         //############################################
-        final HstConfiguration hstConfiguration = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
+        final HstConfiguration config = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
+        // template
         final HstTemplate template = new HstTemplate("main.test", "/JSP/somepath.jsp");
         final List<String> containers = new ArrayList<>();
         containers.add("foo");
         containers.add("bar");
         template.setContainers(containers);
-        hstConfiguration.addTemplate(template);
+        config.addTemplate(template);
+        // menu
+        final HstSiteMenu myMenu = new HstSiteMenu("myMenu");
+        final HstSiteMenuItem menuItem = new HstSiteMenuItem("test");
+        myMenu.add(menuItem);
+        config.addMenu(myMenu);
+
 
         //############################################
         //
         //############################################
-        final Item config = writer.write(hstConfiguration);
-
-        assertNotNull("Expected saved object", config);
+        final Item item = writer.write(config);
+        assertNotNull("Expected saved object", item);
     }
 }
