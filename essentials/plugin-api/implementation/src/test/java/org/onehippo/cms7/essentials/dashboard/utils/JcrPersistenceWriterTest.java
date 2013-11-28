@@ -44,7 +44,7 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriterTest.class);
     private Session session;
 
-    private final boolean useHippoSesson = true;
+    private final boolean useHippoSesson = false;
 
     @Override
     @Before
