@@ -51,11 +51,11 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     private boolean skipBinary = false;
 
     public ContentExportDialog(final IModelReference<Node> modelReference) {
-        final JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
+        final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
         try {
-            String path = nodeModel.getNode().getPath();
+            String path = nodeModel.getObject().getPath();
             add(new Label("message", new StringResourceModel("dialog.message", this, null, null, path)));
             //info("Export content from : " + );
         } catch (RepositoryException e) {
@@ -89,7 +89,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             public void onClick(AjaxRequestTarget target) {
                 String export;
                 try {
-                    Node node = nodeModel.getNode();
+                    Node node = nodeModel.getObject();
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     ((HippoSession) node.getSession()).exportDereferencedView(node.getPath(), out, skipBinary, false);
                     export = prettyPrint(out.toByteArray());
@@ -109,10 +109,10 @@ public class ContentExportDialog extends AbstractDialog<Node> {
     }
 
     public IModel<String> getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        IModel<Node> nodeModel = getModel();
         String path;
         try {
-            path = nodeModel.getNode().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
             path = e.getMessage();
         }

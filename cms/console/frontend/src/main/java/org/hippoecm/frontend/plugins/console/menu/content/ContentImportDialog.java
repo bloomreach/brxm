@@ -110,7 +110,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     }
 
-    public ContentImportDialog(IModelReference modelReference) {
+    public ContentImportDialog(IModelReference<Node> modelReference) {
         InitMaps();
         this.nodeModel = (JcrNodeModel) modelReference.getModel();
 

@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Opens a dialog with subtree of node that's been selected
  * and allows user to select multiple nodes to delete those.
- *
- * @version "$Id$"
  */
 public class DeleteMultipleDialog extends AbstractDialog<Node> {
 
@@ -52,7 +50,7 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
 
     private NodeModelReference modelReference;
     private final TreeTable tree;
-    private JcrNodeModel selectedModel;
+    private IModel<Node> selectedModel;
     private IModel<Boolean> checkboxModel;
 
     public DeleteMultipleDialog(final NodeModelReference modelReference) {
@@ -61,8 +59,8 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
         DefaultTreeModel model = null;
         try {
 
-            selectedModel = (JcrNodeModel) modelReference.getModel();
-            final JcrTreeNode root = new JcrTreeNode(new JcrNodeModel(selectedModel.getNode().getPath()), null);
+            selectedModel = modelReference.getModel();
+            final JcrTreeNode root = new JcrTreeNode(new JcrNodeModel(selectedModel.getObject().getPath()), null);
             model = new DefaultTreeModel(root);
         } catch (RepositoryException e) {
             log.error("Error initializing tree", e);
@@ -95,8 +93,8 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
 
         for (Object selectedNode : selectedNodes) {
             JcrTreeNode deleteNode = (JcrTreeNode) selectedNode;
-            JcrNodeModel nodeModel = (JcrNodeModel) deleteNode.getChainedModel();
-            final Node node = nodeModel.getNode();
+            IModel<Node> nodeModel = deleteNode.getChainedModel();
+            final Node node = nodeModel.getObject();
             if (node != null) {
                 try {
                     // check if node has subnodes
@@ -123,7 +121,7 @@ public class DeleteMultipleDialog extends AbstractDialog<Node> {
     private boolean rootSelected(Iterable<Object> selectedNodes) {
         for (Object selectedNode : selectedNodes) {
             JcrTreeNode deleteNode = (JcrTreeNode) selectedNode;
-            JcrNodeModel nodeModel = (JcrNodeModel) deleteNode.getChainedModel();
+            IModel<Node> nodeModel = deleteNode.getChainedModel();
             if (nodeModel.equals(selectedModel)) {
                 return true;
             }

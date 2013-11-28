@@ -47,7 +47,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
     static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
 
     public ReferencesDialog(final ReferencesPlugin plugin) {
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+        final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
         setModel(nodeModel);
 
         add(new RefreshingView<Property>("references") {
@@ -110,10 +110,10 @@ public class ReferencesDialog extends AbstractDialog<Node> {
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        final IModel<Node> nodeModel = getModel();
         String path;
         try {
-            path = nodeModel.getNode().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
             path = e.getMessage();
             log.warn("Unable to get path for : " + nodeModel);

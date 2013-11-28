@@ -43,21 +43,23 @@ public class RenameDialog extends AbstractDialog<Node> {
     private String name;
     private final IModelReference modelReference;
 
-    public RenameDialog(IModelReference modelReference) {
+    public RenameDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
 
-        JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
-        try {
-            // get name of current node
-            name = model.getNode().getName();
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
+        final Node node = modelReference.getModel().getObject();
+
+        if (node != null) {
+            try {
+                // get name of current node
+                name = node.getName();
+            } catch (RepositoryException e) {
+                log.error(e.getMessage());
+            }
+        } else {
+            setOkVisible(false);
         }
 
         add(setFocus(new TextField("name", new PropertyModel(this, "name"))));
-        if (model.getNode() == null) {
-            setOkVisible(false);
-        }
     }
 
     @Override

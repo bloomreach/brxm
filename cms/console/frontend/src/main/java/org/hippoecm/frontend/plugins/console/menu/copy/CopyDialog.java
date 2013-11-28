@@ -55,7 +55,7 @@ public class CopyDialog extends LookupDialog {
     private final IModelReference<Node> modelReference;
 
     public CopyDialog(IModelReference<Node> modelReference) {
-        super(new JcrTreeNode(new JcrNodeModel("/"), null), (JcrNodeModel) modelReference.getModel());
+        super(new JcrTreeNode(new JcrNodeModel("/"), null), modelReference.getModel());
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         setSelectedNode(model);
@@ -124,7 +124,7 @@ public class CopyDialog extends LookupDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = getOriginalModel();
+            IModel<Node> nodeModel = getOriginalModel();
 
             IModel<Node> selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
@@ -138,9 +138,9 @@ public class CopyDialog extends LookupDialog {
                 // The actual copy
                 UserSession wicketSession = UserSession.get();
                 HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-                jcrSession.copy(nodeModel.getNode(), targetPath);
+                jcrSession.copy(nodeModel.getObject(), targetPath);
 
-                Node rootNode = nodeModel.getNode().getSession().getRootNode();
+                Node rootNode = nodeModel.getObject().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
                 
                 if (generate) {

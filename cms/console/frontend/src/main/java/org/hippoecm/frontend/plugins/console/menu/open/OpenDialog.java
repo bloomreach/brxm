@@ -61,9 +61,9 @@ public class OpenDialog extends AbstractDialog<Node> {
                     selected = jcrSession.getNode(pathOrId);
                 }
             } else {
-                JcrNodeModel parentModel = (JcrNodeModel) modelReference.getModel();
-                if(parentModel.getNode().hasNode(pathOrId)) {
-                    selected = parentModel.getNode().getNode(pathOrId);
+                final Node parentNode = modelReference.getModel().getObject();
+                if (parentNode.hasNode(pathOrId)) {
+                    selected = parentNode.getNode(pathOrId);
                 } else {
                     selected = jcrSession.getNodeByIdentifier(pathOrId);
                 }

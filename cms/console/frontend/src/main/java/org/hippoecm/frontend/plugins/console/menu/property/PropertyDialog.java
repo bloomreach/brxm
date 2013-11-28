@@ -49,7 +49,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,9 +81,9 @@ public class PropertyDialog extends AbstractDialog<Node> {
     private IModel<Map<String, List<PropertyDefinition>>> choiceModel;
     private final IModelReference modelReference;
 
-    public PropertyDialog(IModelReference modelReference) {
+    public PropertyDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
-        final JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
+        final IModel<Node> model = modelReference.getModel();
 
         // list defined properties for automatic completion
         choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {
@@ -92,7 +91,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
             protected Map<String, List<PropertyDefinition>> load() {
                 Map<String, List<PropertyDefinition>> choices = new HashMap<String, List<PropertyDefinition>>();
-                Node node = model.getNode();
+                Node node = model.getObject();
                 try {
                     NodeType pnt = node.getPrimaryNodeType();
                     for (PropertyDefinition pd : pnt.getPropertyDefinitions()) {
@@ -254,8 +253,8 @@ public class PropertyDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
-            Node node = nodeModel.getNode();
+            final IModel<Node> nodeModel = modelReference.getModel();
+            final Node node = nodeModel.getObject();
 
             final int propertyType = PropertyType.valueFromName(type);
             final Value value = getJcrValue(propertyType);

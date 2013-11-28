@@ -15,26 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.console;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.IModelReference;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 
-public class NodeModelReference implements IModelReference {
+public class NodeModelReference implements IModelReference<Node> {
 
     private static final long serialVersionUID = 1L;
     private final Component component;
-    private final JcrNodeModel model;
+    private final IModel<Node> model;
 
-    public NodeModelReference(Component component, final JcrNodeModel model) {
+    public NodeModelReference(Component component, final IModel<Node> model) {
         this.component = component;
         this.model = model;
     }
 
     @Override
-    public IModel getModel() {
+    public IModel<Node> getModel() {
         return model;
     }
 

@@ -41,14 +41,14 @@ public class DeleteDialog extends AbstractDialog<Node> {
     private final IModelReference modelReference;
     private boolean immediateSave;
 
-    public DeleteDialog(IModelReference modelReference) {
+    public DeleteDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
-        JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
+        IModel<Node> model = modelReference.getModel();
         setModel(model);
 
         String path;
         try {
-            final Node node = model.getNode();
+            final Node node = model.getObject();
             if (node != null) {
                 path = node.getPath();
             } else {
@@ -68,7 +68,7 @@ public class DeleteDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            Node node = ((JcrNodeModel) getModel()).getNode();
+            Node node = getModel().getObject();
             Node siblingOrParent = getSiblingOrParent(node);
 
             node.remove();

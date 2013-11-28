@@ -77,7 +77,7 @@ public class PermissionsDialog extends AbstractDialog<Node> {
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
     public PermissionsDialog(PermissionsPlugin plugin) {
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+        final IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();
         setModel(nodeModel);
 
         final Label usernameLabel = new Label("username", "Unknown");
@@ -93,7 +93,7 @@ public class PermissionsDialog extends AbstractDialog<Node> {
         add(actionsLabel);
         add(privilegesLabel);
         try {
-            Node subject = nodeModel.getNode();
+            Node subject = nodeModel.getObject();
 
             // FIXME: hardcoded workflowuser
             Session privSession = subject.getSession()
@@ -169,10 +169,10 @@ public class PermissionsDialog extends AbstractDialog<Node> {
     }
 
     public IModel getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        final IModel<Node> nodeModel = getModel();
         String path;
         try {
-            path = nodeModel.getNode().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
             path = e.getMessage();
             log.warn("Unable to get path for : " + nodeModel);

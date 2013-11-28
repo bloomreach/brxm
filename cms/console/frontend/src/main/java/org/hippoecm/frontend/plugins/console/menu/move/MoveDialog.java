@@ -47,8 +47,8 @@ public class MoveDialog extends LookupDialog {
     private Label targetLabel;
     private final IModelReference modelReference;
 
-    public MoveDialog(IModelReference modelReference) {
-        super(new JcrTreeNode(new JcrNodeModel("/"), null), (JcrNodeModel) modelReference.getModel());
+    public MoveDialog(IModelReference<Node> modelReference) {
+        super(new JcrTreeNode(new JcrNodeModel("/"), null), modelReference.getModel());
         this.modelReference = modelReference;
         JcrNodeModel model = (JcrNodeModel) modelReference.getModel();
         setSelectedNode(model);
@@ -109,7 +109,7 @@ public class MoveDialog extends LookupDialog {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = getOriginalModel();
+            IModel<Node> nodeModel = getOriginalModel();
 
             IModel<Node> selectedNode = getSelectedNode().getNodeModel();
             if (selectedNode != null && name != null && !"".equals(name)) {
@@ -123,10 +123,10 @@ public class MoveDialog extends LookupDialog {
                 // The actual move
                 UserSession wicketSession = getSession();
                 HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
-                String sourcePath = nodeModel.getNode().getPath();
+                String sourcePath = nodeModel.getObject().getPath();
                 jcrSession.move(sourcePath, targetPath);
 
-                Node rootNode = nodeModel.getNode().getSession().getRootNode();
+                Node rootNode = nodeModel.getObject().getSession().getRootNode();
                 Node targetNode = rootNode.getNode(targetPath.substring(1));
                 modelReference.setModel(new JcrNodeModel(targetNode));
             }

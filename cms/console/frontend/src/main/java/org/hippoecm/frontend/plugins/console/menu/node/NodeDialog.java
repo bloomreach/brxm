@@ -62,11 +62,11 @@ public class NodeDialog extends AbstractDialog<Node> {
 
     public NodeDialog(IModelReference<Node> modelReference) {
         this.modelReference = modelReference;
-        JcrNodeModel nodeModel = (JcrNodeModel) modelReference.getModel();
+        final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
         // list defined child node names and types for automatic completion
-        Node node = nodeModel.getNode();
+        final Node node = nodeModel.getObject();
         try {
             NodeType pnt = node.getPrimaryNodeType();
             for (NodeDefinition nd : pnt.getChildNodeDefinitions()) {
@@ -251,8 +251,8 @@ public class NodeDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
-            Node node = nodeModel.getNode().addNode(name, type);
+            final IModel<Node> nodeModel = getModel();
+            final Node node = nodeModel.getObject().addNode(name, type);
 
             modelReference.setModel(new JcrNodeModel(node));
         } catch (RepositoryException ex) {

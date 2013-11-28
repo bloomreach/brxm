@@ -41,14 +41,14 @@ public class WorkflowDialog extends AbstractDialog<Node> {
     public WorkflowDialog(WorkflowPlugin plugin) {
         this.plugin = plugin;
 
-        final JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+        final IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();
 
         final MultiLineLabel dump = new MultiLineLabel("dump", "");
         dump.setOutputMarkupId(true);
         add(dump);
 
         try {
-            Node subject = nodeModel.getNode();
+            Node subject = nodeModel.getObject();
             ByteArrayOutputStream ostream = new ByteArrayOutputStream();
             PrintWriter out = new PrintWriter(ostream);
             Session session = subject.getSession();
@@ -80,10 +80,10 @@ public class WorkflowDialog extends AbstractDialog<Node> {
     }
 
     public IModel<String> getTitle() {
-        JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
+        IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();
         String path;
         try {
-            path = nodeModel.getNode().getPath();
+            path = nodeModel.getObject().getPath();
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
