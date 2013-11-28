@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class BaseJcrModel implements JcrModel {
+public abstract class BaseJcrModel implements JcrModel {
 
     private static Logger log = LoggerFactory.getLogger(BaseJcrModel.class);
-    private List<JcrModel> children = new ArrayList<>();
+
     private String name;
     private String parentPath;
 
@@ -53,31 +53,14 @@ public class BaseJcrModel implements JcrModel {
         this.name = name;
     }
 
-    @Override
-    public JcrModel addChild(final JcrModel model) {
-        children.add(model);
-        model.setParentPath(this.parentPath +'/' + getName());
-        return model;
-    }
-
-    @Override
-    public List<JcrModel> getChildren() {
-        return children;
-    }
-
-    @Override
-    public void setChildren(final List<JcrModel> children) {
-        this.children = children;
-    }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BaseJcrModel{");
-        sb.append("children=").append(children);
-        sb.append(", name='").append(name).append('\'');
+        sb.append("name='").append(name).append('\'');
         sb.append(", parentPath='").append(parentPath).append('\'');
+        sb.append(", class='").append(this.getClass()).append('\'');
         sb.append('}');
         return sb.toString();
     }
-
 }

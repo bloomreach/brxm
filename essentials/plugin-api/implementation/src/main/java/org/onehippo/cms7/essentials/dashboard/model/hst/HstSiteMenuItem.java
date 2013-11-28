@@ -35,7 +35,8 @@ public class HstSiteMenuItem extends BaseJcrModel {
     @PersistentProperty(name = "hst:repobased")
     private Boolean repoBased;
 
-    public HstSiteMenuItem(final String referenceSitemapItem) {
+    public HstSiteMenuItem(final String name, final String referenceSitemapItem) {
+        setName(name);
         this.referenceSitemapItem = referenceSitemapItem;
     }
 

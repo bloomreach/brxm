@@ -21,7 +21,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -83,7 +82,7 @@ public @interface PersistentNode {
 
 
             } catch (RepositoryException e) {
-                log.error("Error saving model", e);
+                log.error("Error saving model: " + model.getClass(), e);
                 GlobalUtils.refreshSession(session, false);
             }
             return null;

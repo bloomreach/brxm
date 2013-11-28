@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.model.hst;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,23 +32,15 @@ public class HstSiteMenu extends BaseJcrModel{
 
     private static Logger log = LoggerFactory.getLogger(HstSiteMenu.class);
 
-    private  String name;
-
-    public HstSiteMenu(final String name) {
-        this.name = name;
+    protected HstSiteMenu(final String name) {
+        setName(name);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
+    @PersistentCollection
     private List<HstSiteMenuItem> menuItems = new ArrayList<>();
 
-    public void add(final HstSiteMenuItem item){
+    public void addMenuItem(final HstSiteMenuItem item){
+        item.setParentPath(getParentPath() + '/' + getName());
         menuItems.add(item);
     }
 

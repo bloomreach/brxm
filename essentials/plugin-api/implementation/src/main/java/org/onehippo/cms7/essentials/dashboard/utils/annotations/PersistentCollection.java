@@ -21,19 +21,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.jcr.Node;
-
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
-import org.onehippo.cms7.essentials.dashboard.model.PersistentCollectionHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Processes collecton of JCR Node items
+ * Marker annotation for collection of JCR Node items
  *
  * @version "$Id$"
  */
@@ -41,16 +31,4 @@ import org.slf4j.LoggerFactory;
 @Target({ElementType.FIELD})
 @Documented
 public @interface PersistentCollection {
-
-    enum ProcessAnnotation implements PersistentCollectionHandler<PersistentCollection, Collection<Node>> {
-        NODE_COLLECTION_WRITER {
-            @Override
-            public Collection<Node> execute(final PluginContext context, final Collection<JcrModel> model, final PersistentCollection annotation) {
-                return Collections.emptyList();
-            }
-        };
-        private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
-
-
-    }
 }

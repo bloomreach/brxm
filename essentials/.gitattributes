@@ -496,7 +496,6 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionStatus.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instructions.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/JcrModel.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentCollectionHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PersistentHandler.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/packaging/PowerpackPackage.java -text
 plugin-api/api/src/main/resources/dashboard.cnd -text
@@ -549,6 +548,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMapItem.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMenu.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMenuItem.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMenus.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstTemplate.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstTemplates.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/SimplePropertyModel.java -text
@@ -590,6 +590,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/AnnotationUtils.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/Persistent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentCollection.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentMultiProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/PersistentNode.java -text

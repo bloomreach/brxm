@@ -68,17 +68,17 @@ public class JcrPersistenceWriterTest extends BaseRepositoryTest {
         //############################################
         final HstConfiguration config = new HstConfiguration("mytestconfiguration", "/hst:hst/hst:configurations");
         // template
-        final HstTemplate template = new HstTemplate("main.test", "/JSP/somepath.jsp");
+        final HstTemplate template = config.addTemplate("main.test", "/JSP/somepath.jsp");
         final List<String> containers = new ArrayList<>();
         containers.add("foo");
         containers.add("bar");
         template.setContainers(containers);
-        config.addTemplate(template);
+
         // menu
-        final HstSiteMenu myMenu = new HstSiteMenu("myMenu");
-        final HstSiteMenuItem menuItem = new HstSiteMenuItem("test");
-        myMenu.add(menuItem);
-        config.addMenu(myMenu);
+        final HstSiteMenu myMenu = config.addMenu("myMenu");
+        final HstSiteMenuItem menuItem = new HstSiteMenuItem("HOME","home");
+        myMenu.addMenuItem(menuItem);
+
 
 
         //############################################

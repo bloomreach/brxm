@@ -66,17 +66,7 @@ public final class HstUtils {
      * @param templateName the name of the template to create
      * @return a template object with name and script
      */
-    public static HstTemplate createTemplateFromAsset(final Plugin plugin, final String assetId, final String templateName) {
-        final Asset asset = plugin.getAsset(assetId);
-        if (asset == null) {
-            log.warn("Asset {} not available in plugin configuration", assetId);
-            return null;
-        }
 
-        final HstTemplate template = new HstTemplate(templateName);
-        template.setScript(asset.getData());
-        return template;
-    }
 
     /**
      * Store a {@link HstTemplate} to the hst:templates folder underneath the hst:configuration node with the provided

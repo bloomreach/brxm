@@ -234,7 +234,8 @@ public class ComponentsPanel extends EssentialsWizardStep {
             final File file = new File(siteJspFolder.getAbsoluteFile() + JSP_FOLDER + asset.getUrl());
             copyAsset(file, asset);
         }
-        final HstTemplate template = new HstTemplate(catalogObject.getTemplate());
+        // TODO convert to new model
+        final HstTemplate template = null;//new HstTemplate(catalogObject.getTemplate());
         try {
             template.setRenderPath("jsp/essentials/components/" + templateName);
             final Session session = context.getSession();

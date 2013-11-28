@@ -16,9 +16,11 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -26,7 +28,23 @@ import org.slf4j.LoggerFactory;
 @PersistentNode(type = "hst:templates")
 public class HstTemplates extends BaseJcrModel {
 
+    @PersistentCollection
+    private List<HstTemplate> templateList = new ArrayList<>();
+
     public HstTemplates() {
         setName("hst:templates");
+    }
+
+    public void addTemplate(final HstTemplate template) {
+        templateList.add(template);
+        template.setParentPath(getParentPath() + '/' + getName());
+    }
+
+    public List<HstTemplate> getTemplateList() {
+        return templateList;
+    }
+
+    public void setTemplateList(final List<HstTemplate> templateList) {
+        this.templateList = templateList;
     }
 }

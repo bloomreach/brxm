@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.List;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -30,6 +29,8 @@ import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.Persistent;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
@@ -105,13 +106,13 @@ public class JcrPersistenceWriter {
                 log.error("Error fetching parent path", e);
             }
         }
-        // TODO write multi properties:
+
         final PersistentMultiProperty.ProcessAnnotation multiWriter = PersistentMultiProperty.ProcessAnnotation.MULTI_PROPERTY_WRITER;
         final Collection<Field> multiFields = AnnotationUtils.getAnnotatedFields(model.getClass(), PersistentMultiProperty.class);
         for (Field multiField : multiFields) {
             try {
-                final Object value =multiField.get(model);
-                if(value !=null){
+                final Object value = multiField.get(model);
+                if (value != null) {
                     final PersistentMultiProperty p = multiField.getAnnotation(PersistentMultiProperty.class);
                     final String name = p.name();
                     final JcrModel myModel = new SimplePropertyModel(value);
@@ -126,13 +127,48 @@ public class JcrPersistenceWriter {
                 log.error("Error fetching parent path", e);
             }
         }
-
-
-        // process kids:
-        final List<JcrModel> children = model.getChildren();
-        for (JcrModel child : children) {
-            writeNode(child);
+        // process persistent nodes:
+        final Collection<Field> persistentFields = AnnotationUtils.getAnnotatedFields(model.getClass(), Persistent.class);
+        for (Field persistentField : persistentFields) {
+            try {
+                final Object value = persistentField.get(model);
+                if (value instanceof JcrModel) {
+                    final PersistentNode myNode = AnnotationUtils.getClassAnnotation(value.getClass(), PersistentNode.class);
+                    if (myNode == null) {
+                        log.error("Item is not annotated by @PersistentNode annotation: {}", value.getClass());
+                        continue;
+                    }
+                    writeNode((JcrModel) value);
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Error processing value", e);
+            }
         }
+        // process collections:
+        final Collection<Field> collectionFields = AnnotationUtils.getAnnotatedFields(model.getClass(), PersistentCollection.class);
+        for (Field collectionField : collectionFields) {
+            try {
+                final Object value = collectionField.get(model);
+                if (value instanceof Collection) {
+                    Iterable<?> collection = (Iterable<?>) value;
+                    for (Object o : collection) {
+                        if (o instanceof JcrModel) {
+                            writeNode((JcrModel) o);
+                        } else {
+                            if (o != null) {
+                                log.error("Value is within collection is not JcrModel type:  {}", o.getClass());
+                            }
+                        }
+                    }
+                } else {
+                    log.error("Field is annotated by @PersistableCollection however it is not collection type {}", value.getClass());
+                }
+            } catch (IllegalAccessException e) {
+                log.error("Error processing value", e);
+            }
+
+        }
+
 
         return jcrNode;
     }

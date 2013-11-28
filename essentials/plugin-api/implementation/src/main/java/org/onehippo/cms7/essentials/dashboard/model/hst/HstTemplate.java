@@ -30,11 +30,11 @@ public class HstTemplate extends BaseJcrModel{
     private String script = null;
     private boolean isNamed = false;
 
-    public HstTemplate(final String name) {
+    protected HstTemplate(final String name) {
         setName(name);
     }
 
-    public HstTemplate(final String name, final String renderPath) {
+    protected HstTemplate(final String name, final String renderPath) {
         this(name);
         this.renderPath = renderPath;
     }

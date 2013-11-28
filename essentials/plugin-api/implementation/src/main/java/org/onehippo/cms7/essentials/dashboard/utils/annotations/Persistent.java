@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.model;
+package org.onehippo.cms7.essentials.dashboard.utils.annotations;
 
-import java.util.Collection;
-
-import javax.jcr.Item;
-
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Persists Collection of JcrModel objects
+ * Marker annotation of JCR Node item, it delegates all writing to {@code @PersistentNode writers}
  *
  * @version "$Id$"
- * @see JcrModel
  */
-public interface PersistentCollectionHandler<T, E extends Collection<? extends Item>> {
-
-    E execute(final PluginContext context, Collection<JcrModel> model, T annotation);
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+@Documented
+public @interface Persistent {
 }

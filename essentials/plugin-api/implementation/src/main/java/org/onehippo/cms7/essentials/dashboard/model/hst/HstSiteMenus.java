@@ -16,30 +16,37 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
-import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.JcrPersistenceWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-public class HstConfigurationService {
+@PersistentNode(type = "hst:sitemenus")
+public class HstSiteMenus extends BaseJcrModel{
 
-    private static Logger log = LoggerFactory.getLogger(HstConfigurationService.class);
-    final HstConfiguration config;
-    private final PluginContext context;
+    @PersistentCollection
+    private List<HstSiteMenu> menus = new ArrayList<>();
 
-    public HstConfigurationService(final String name, final PluginContext context) {
-        this.config = new HstConfiguration(name, "/hst:hst/hst:configurations");
-        this.context = context;
+    public HstSiteMenus() {
+        setName("hst:sitemenus");
     }
 
-
-    public HstConfiguration build() {
-        JcrPersistenceWriter writer = new JcrPersistenceWriter(context);
-        writer.write(config);
-        return config;
+    public void addMenu(final HstSiteMenu menu){
+        menu.setParentPath(getParentPath() +'/'+getName());
+        menus.add(menu);
     }
 
+    public List<HstSiteMenu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(final List<HstSiteMenu> menus) {
+        this.menus = menus;
+    }
 }
