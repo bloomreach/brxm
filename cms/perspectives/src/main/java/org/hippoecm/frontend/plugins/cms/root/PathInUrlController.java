@@ -16,42 +16,42 @@
 package org.hippoecm.frontend.plugins.cms.root;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class PathInUrlController extends Behavior implements IObserver<IModelReference<Node>> {
+class PathInUrlController extends UrlControllerBehavior implements IObserver<IModelReference<Node>> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PathInUrlController.class);
-    private static final JavaScriptResourceReference URLCONTROLLER_JS = new JavaScriptResourceReference(PathInUrlController.class, "PathInUrlController.js");
+
+    private static final String URL_PARAMETER_MODE = "mode";
+    private static final String URL_PARAMETER_MODE_VALUE_EDIT = "edit";
+    public static final String PATH = "path";
 
     private final IModelReference<Node> modelReference;
-    private final String parameterName;
+    private final IBrowseService browseService;
+    private final IEditorManager editorMgr;
 
-    public PathInUrlController(final IModelReference<Node> modelReference, final String parameterName) {
+    public PathInUrlController(final IModelReference<Node> modelReference, IBrowseService browseService, IEditorManager editorMgr) {
         this.modelReference = modelReference;
-        this.parameterName = parameterName;
-    }
-
-    @Override
-    public void renderHead(Component component, final IHeaderResponse response) {
-        response.render(JavaScriptHeaderItem.forReference(URLCONTROLLER_JS));
+        this.browseService = browseService;
+        this.editorMgr = editorMgr;
     }
 
     @Override
@@ -81,11 +81,45 @@ class PathInUrlController extends Behavior implements IObserver<IModelReference<
     }
 
     private void showPathInUrl(final String path) {
-        final AjaxRequestTarget requestTarget = RequestCycle.get().find(AjaxRequestTarget.class);
-        if (requestTarget != null) {
-            final String javascript = String.format("Hippo.showParameterInUrl('%s', '%s');", parameterName, path);
-            requestTarget.appendJavaScript(javascript);
-        }
+        setParameter(PATH, path);
     }
 
+    @Override
+    protected void onRequest(Map<String, String> parameters) {
+        String jcrPath = parameters.get(PATH);
+        if (jcrPath != null) {
+            JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
+
+            if (browseService != null) {
+                browseService.browse(nodeModel);
+            } else {
+                log.info("Could not find browse service - document " + jcrPath + " will not be selected");
+            }
+
+            if (parameters.containsKey(URL_PARAMETER_MODE)) {
+                String modeStr = parameters.get(URL_PARAMETER_MODE);
+                if (modeStr != null) {
+                    IEditor.Mode mode;
+                    if (URL_PARAMETER_MODE_VALUE_EDIT.equals(modeStr)) {
+                        mode = IEditor.Mode.EDIT;
+                    } else {
+                        mode = IEditor.Mode.VIEW;
+                    }
+                    if (editorMgr != null) {
+                        IEditor editor = editorMgr.getEditor(nodeModel);
+                        try {
+                            if (editor == null) {
+                                editor = editorMgr.openPreview(nodeModel);
+                            }
+                            editor.setMode(mode);
+                        } catch (EditorException e) {
+                            log.info("Could not open editor for " + jcrPath);
+                        } catch (ServiceException e) {
+                            log.info("Could not open preview for " + jcrPath);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

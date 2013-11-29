@@ -215,6 +215,11 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     @Override
+    public int getPageId() {
+        return 0;
+    }
+
+    @Override
     public void onDetach() {
         context.detach();
         super.onDetach();
