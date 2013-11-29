@@ -102,7 +102,7 @@ public class MockNode extends MockItem implements HippoNode {
         }
     }
 
-    public static MockNode root() throws RepositoryException {
+    public static MockNode root() {
         MockNode root = new MockNode("");
         root.setPrimaryType("rep:root");
         return root;
