@@ -31,6 +31,7 @@
   <modules>
     <module>resources</module>
     <module>plugins</module>
+    <module>frontend</module>
   </modules>
 
 </project>

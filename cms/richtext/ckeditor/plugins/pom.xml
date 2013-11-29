@@ -26,7 +26,6 @@
   <name>CMS Rich Text CKEditor Plugins</name>
   <description>CMS Rich Text CKEditor Plugins</description>
   <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
-  <packaging>jar</packaging>
 
   <build>
     <plugins>

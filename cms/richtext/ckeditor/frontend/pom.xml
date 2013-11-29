@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
- 
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms-richtext</artifactId>
+    <artifactId>hippo-cms-richtext-ckeditor</artifactId>
     <version>2.25.04-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Rich Text Frontend</name>
-  <description>Hippo CMS Rich Text Frontend</description>
-  <artifactId>hippo-cms-richtext-frontend</artifactId>
-  <packaging>jar</packaging>
+  <name>CMS Rich Text CKEditor Frontend</name>
+  <description>CMS Rich Text CKEditor Frontend</description>
+  <artifactId>hippo-cms-richtext-ckeditor-frontend</artifactId>
 
   <dependencies>
     <dependency>
@@ -46,39 +47,25 @@
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-workflowmenu</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gallery-frontend</artifactId>
+      <artifactId>hippo-cms-richtext-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
-      <groupId>hippo</groupId>
-      <artifactId>htmlcleaner</artifactId>
-      <version>${hippo.htmlcleaner.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-resources</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-richtext-ckeditor-plugins</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- test -->
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-test</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-richtext-repository</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
@@ -94,18 +81,10 @@
         <filtering>false</filtering>
         <directory>${basedir}/src/main/java</directory>
         <includes>
-          <include>**/*.html</include>
           <include>**/*.css</include>
-          <include>**/*.png</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource>
-      <resource>
-        <filtering>false</filtering>
-        <directory>${basedir}/src/main/resources</directory>
-        <includes>
-          <include>**/*.cnd</include>
-          <include>**/*.xml</include>
+          <include>**/*.gif</include>
+          <include>**/*.html</include>
+          <include>**/*.js</include>
         </includes>
       </resource>
     </resources>
@@ -115,6 +94,22 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>always</forkMode>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <predefinedVars>
+            CKEDITOR,
+            Hippo,
+            HippoAjax,
+            jQuery,
+            Wicket,
+            window
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
         </configuration>
       </plugin>
     </plugins>

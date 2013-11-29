@@ -24,10 +24,12 @@ import org.hippoecm.frontend.plugins.richtext.dialog.images.ImagePickerBehavior;
 import org.hippoecm.frontend.plugins.richtext.dialog.links.LinkPickerBehavior;
 import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
@@ -44,8 +46,8 @@ public class CKEditorPanelPickerExtensionTest {
 
     @Before
     public void setUp() {
-        linkPickerBehavior = EasyMock.createMock(LinkPickerBehavior.class);
-        imagePickerBehavior = EasyMock.createMock(ImagePickerBehavior.class);
+        linkPickerBehavior = createMock(LinkPickerBehavior.class);
+        imagePickerBehavior = createMock(ImagePickerBehavior.class);
         extension = new CKEditorPanelPickerExtension(linkPickerBehavior, imagePickerBehavior);
     }
 

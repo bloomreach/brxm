@@ -2433,6 +2433,10 @@ reporting/repository/src/main/resources/hippoecm-extension.xml -text
 reporting/repository/src/main/resources/hipporeport.cnd -text
 reporting/repository/src/main/resources/reporting-dashboard.xml -text
 reporting/repository/src/main/resources/reports-cluster-loader.xml -text
+richtext/ckeditor/frontend/pom.xml -text
+richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverter.java -text
+richtext/ckeditor/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
+richtext/ckeditor/frontend/src/test/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverterTest.java -text
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickimage.png -text svneol=unset#image/png
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickinternallink.png -text svneol=unset#image/png
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickimage.png -text svneol=unset#image/png
@@ -2515,8 +2519,6 @@ richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/lock.
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/images/refresh.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/skins/moono/readme.md -text
 richtext/frontend/pom.xml -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverter.java -text
-richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/ckeditor/ckeditor-loading.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IHtmlCleanerService.java -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/IImageURLProvider.java svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/ILinkDecorator.java svneol=native#text/plain
@@ -2577,7 +2579,6 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/Ric
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/richtext/model/RichTextImageMetaDataModel.java svneol=native#text/plain
 richtext/frontend/src/site/apt/index.apt -text
 richtext/frontend/src/site/site.xml svneol=native#text/plain
-richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/ckeditor/DeclarativeKeystrokesConverterTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextProcessorTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/model/BrowsableModelTest.java -text
