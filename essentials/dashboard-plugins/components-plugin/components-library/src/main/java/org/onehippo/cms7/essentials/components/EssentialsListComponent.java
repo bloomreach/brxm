@@ -51,7 +51,17 @@ public class EssentialsListComponent extends CommonComponent {
         final EssentialsDocumentListComponentInfo paramInfo = getComponentParametersInfo(request);
         final String path = getScopePath(paramInfo);
         log.debug("Calling EssentialsListComponent for documents path:  [{}]", path);
-        final HippoBean scope = getScopeBean(request, path);
+        HippoBean scope;
+        if (Strings.isNullOrEmpty(path)) {
+            scope = getContentBean(request);
+            if (scope == null) {
+                // TODO check if we should use global scope:
+                scope = getSiteContentBaseBean(request);
+            }
+        } else {
+            scope = getScopeBean(request, path);
+        }
+
         if (scope == null) {
             log.warn("Search scope was null");
             handleInvalidScope(request, response);
