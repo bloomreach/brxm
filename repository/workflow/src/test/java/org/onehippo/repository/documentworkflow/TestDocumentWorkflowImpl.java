@@ -25,7 +25,9 @@ import static org.junit.Assert.assertTrue;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.mock.MockNode;
@@ -57,12 +59,18 @@ public class TestDocumentWorkflowImpl {
         return variant;
     }
 
-    @Before
-    public void before() throws Exception {
+    @BeforeClass
+    public static void beforeClass() throws Exception {
         MockRepositorySCXMLRegistry scxmlRegistry = new MockRepositorySCXMLRegistry();
         scxmlRegistry.setup("document-workflow", DOCUMENT_WORKFLOW);
         HippoServiceRegistry.registerService(scxmlRegistry, SCXMLRegistry.class);
         HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLExecutorFactory.class), SCXMLExecutorFactory.class);
+        HippoServiceRegistry.unregisterService(HippoServiceRegistry.getService(SCXMLRegistry.class), SCXMLRegistry.class);
     }
 
     @Test
