@@ -227,6 +227,7 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
             }
             if (observer != null) {
                 observationContext.unregisterObserver(observer);
+                observer = null;
             }
         }
 
