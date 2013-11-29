@@ -20,13 +20,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.scxml2.model.SCXML;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.testutils.slf4j.LogRecord;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
 
@@ -80,7 +81,7 @@ public class RepositorySCXMLRegistryTest {
 
     private static LoggerRecordingWrapper recordingLogger;
 
-    private RepositorySCXMLRegistry registry;
+    private MockRepositorySCXMLRegistry registry;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -91,20 +92,15 @@ public class RepositorySCXMLRegistryTest {
     @Before
     public void before() throws Exception {
         recordingLogger.clearLogRecords();
-        registry = new RepositorySCXMLRegistry();
+        registry = new MockRepositorySCXMLRegistry();
     }
 
     @Test
     public void testInitialize() throws Exception {
-        MockNode root = MockNode.root();
-        MockNode scxmlConfigNode = root.addMockNode("hippo:moduleconfig", "nt:unstructured");
-        MockNode scxmlDefsNode = scxmlConfigNode.addMockNode("hipposcxml:definitions", "hipposcxml:definitions");
-        MockNode scxmlDefNode = scxmlDefsNode.addMockNode("hello", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO);
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello2", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO2);
-        registry.reconfigure(scxmlConfigNode);
-        registry.initialize();
+        Map<String, String> scxmlDefinitions = new LinkedHashMap<>();
+        scxmlDefinitions.put("hello", SCXML_HELLO);
+        scxmlDefinitions.put("hello2", SCXML_HELLO2);
+        registry.setup(scxmlDefinitions);
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);
@@ -119,24 +115,12 @@ public class RepositorySCXMLRegistryTest {
 
     @Test
     public void testInitializeWithInvalidSCXML() throws Exception {
-        MockNode root = MockNode.root();
-        MockNode scxmlConfigNode = root.addMockNode("hippo:moduleconfig", "nt:unstructured");
-        MockNode scxmlDefsNode = scxmlConfigNode.addMockNode("hipposcxml:definitions", "hipposcxml:definitions");
-
-        MockNode scxmlDefNode = scxmlDefsNode.addMockNode("hello", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO);
-
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello-no-initial", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_NO_INITIAL);
-
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello-nonexisting-initial", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_NONEXISTING_INITIAL);
-
-        scxmlDefNode = scxmlDefsNode.addMockNode("hello-wrong-execution-in-state", "hipposcxml:scxml");
-        scxmlDefNode.setProperty("hipposcxml:source", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
-
-        registry.reconfigure(scxmlConfigNode);
-        registry.initialize();
+        Map<String, String> scxmlDefinitions = new LinkedHashMap<>();
+        scxmlDefinitions.put("hello", SCXML_HELLO);
+        scxmlDefinitions.put("hello-no-initial", SCXML_HELLO_NO_INITIAL);
+        scxmlDefinitions.put("hello-nonexisting-initial", SCXML_HELLO_NONEXISTING_INITIAL);
+        scxmlDefinitions.put("hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
+        registry.setup(scxmlDefinitions);
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);

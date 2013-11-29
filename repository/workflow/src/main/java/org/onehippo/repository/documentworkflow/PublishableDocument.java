@@ -20,15 +20,17 @@ import java.util.Date;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class PublishableDocument extends Document {
 
-    final public static String PUBLISHED = "published";
-    final public static String UNPUBLISHED = "unpublished";
-    final public static String DRAFT = "draft";
-    final public static String STALE = "stale";
+    final public static String PUBLISHED = HippoStdNodeType.PUBLISHED;
+    final public static String UNPUBLISHED = HippoStdNodeType.UNPUBLISHED;
+    final public static String DRAFT = HippoStdNodeType.DRAFT;
 
     public PublishableDocument() {
     }
@@ -38,49 +40,49 @@ public class PublishableDocument extends Document {
     }
 
    public void setState(String state) throws RepositoryException {
-       setStringProperty("hippostd:state", state);
+       setStringProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
     }
 
     public String getState() throws RepositoryException {
-        return getStringProperty("hippostd:state");
+        return getStringProperty(HippoStdNodeType.HIPPOSTD_STATE);
     }
 
     public String getStateSummary() throws RepositoryException {
         Node node = getNode();
         if (node != null) {
-            return JcrUtils.getStringProperty(node, "hippostd:stateSummary", null);
+            return JcrUtils.getStringProperty(node, HippoStdNodeType.HIPPOSTD_STATESUMMARY, null);
         }
 
         return null;
     }
 
     public void setPublicationDate(Date date) throws RepositoryException {
-        setDateProperty("hippostdpubwf:publicationDate", date);
+        setDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE, date);
     }
 
     public Date getPublicationDate() throws RepositoryException {
-        return getDateProperty("hippostdpubwf:publicationDate");
+        return getDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE);
     }
 
     public void setOwner(String username) throws RepositoryException {
-        setStringProperty("hippostd:holder", username);
+        setStringProperty(HippoStdNodeType.HIPPOSTD_HOLDER, username);
     }
 
     public String getOwner() throws RepositoryException {
-        return getStringProperty("hippostd:holder");
+        return getStringProperty(HippoStdNodeType.HIPPOSTD_HOLDER);
     }
 
     public void setAvailability(String[] availability) throws RepositoryException {
         if (availability != null) {
-            setStringsProperty("hippo:availability", availability);
+            setStringsProperty(HippoNodeType.HIPPO_AVAILABILITY, availability);
         }
         else {
-            setStringsProperty("hippo:availability", new String[0]);
+            setStringsProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
         }
     }
 
     public String[] getAvailability() throws RepositoryException {
-        return getStringsProperty("hippo:availability");
+        return getStringsProperty(HippoNodeType.HIPPO_AVAILABILITY);
     }
 
     protected boolean isAvailable(String environment) throws RepositoryException {
@@ -98,7 +100,7 @@ public class PublishableDocument extends Document {
     }
 
     public void setModified(String username) throws RepositoryException{
-        setStringProperty("hippostdpubwf:lastModifiedBy", username);
-        setDateProperty("hippostdpubwf:lastModificationDate", new Date());
+        setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, username);
+        setDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new Date());
     }
 }

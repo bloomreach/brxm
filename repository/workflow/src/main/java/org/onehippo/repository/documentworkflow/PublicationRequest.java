@@ -21,10 +21,18 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.util.JcrConstants;
 
 public class PublicationRequest extends Document {
 
+    public static final String NT_HIPPOSTDPUBWF_REQUEST = "hippostdpubwf:request";
+    public static final String HIPPOSTDPUBWF_TYPE = "hippostdpubwf:type";
+    public static final String HIPPOSTDPUBWF_USERNAME = "hippostdpubwf:username";
+    public static final String HIPPOSTDPUBWF_REQDATE = "hippostdpubwf:reqdate";
+    public static final String HIPPOSTDPUBWF_REASON = "hippostdpubwf:reason";
     public static final String REJECTED = "rejected"; // zombie
     public static final String PUBLISH = "publish";
     public static final String DEPUBLISH = "depublish";
@@ -41,46 +49,46 @@ public class PublicationRequest extends Document {
 
     private static Node newRequestNode(Node parent) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(parent, false);
-        Node requestNode = parent.addNode("hippo:request", "hippostdpubwf:request");
-        requestNode.addMixin("mix:referenceable");
+        Node requestNode = parent.addNode(HippoNodeType.NT_REQUEST, NT_HIPPOSTDPUBWF_REQUEST);
+        requestNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
         return requestNode;
     }
 
     public PublicationRequest(String type, Node sibling, PublishableDocument document, String username) throws RepositoryException {
         super(newRequestNode(sibling.getParent()));
-        setStringProperty("hippostdpubwf:type", type);
-        setStringProperty("hippostdpubwf:username", username);
+        setStringProperty(HIPPOSTDPUBWF_TYPE, type);
+        setStringProperty(HIPPOSTDPUBWF_USERNAME, username);
         if (document != null) {
-            getCheckedOutNode().setProperty("hippostdpubwf:document", document.getNode());
+            getCheckedOutNode().setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, document.getNode());
         }
     }
 
     public PublicationRequest(String type, Node sibling, PublishableDocument document, String username, Date scheduledDate) throws RepositoryException {
         this(type, sibling, document, username);
-        setDateProperty("hippostdpubwf:reqdate", scheduledDate);
+        setDateProperty(HIPPOSTDPUBWF_REQDATE, scheduledDate);
     }
 
     String getType() throws RepositoryException {
-        return getStringProperty("hippostdpubwf:type");
+        return getStringProperty(HIPPOSTDPUBWF_TYPE);
     }
 
     String getOwner() throws RepositoryException {
-        return getStringProperty("hippostdpubwf:username");
+        return getStringProperty(HIPPOSTDPUBWF_USERNAME);
     }
 
     Date getScheduledDate() throws RepositoryException  {
-        return getDateProperty("hippostdpubwf:reqdate");
+        return getDateProperty(HIPPOSTDPUBWF_REQDATE);
     }
 
     void setRejected(PublishableDocument stale, String reason) throws RepositoryException  {
-        setStringProperty("hippostdpubwf:type", REJECTED);
+        setStringProperty(HIPPOSTDPUBWF_TYPE, REJECTED);
         if (stale != null) {
-            setNodeProperty("hippostdpubwf:document", stale.getNode());
+            setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, stale.getNode());
         }
         else {
-            setNodeProperty("hippostdpubwf:document", null);
+            setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, null);
         }
-        setStringProperty("hippostdpubwf:reason", reason);
+        setStringProperty(HIPPOSTDPUBWF_REASON, reason);
     }
 
     void setRejected(String reason) throws RepositoryException  {
@@ -88,8 +96,8 @@ public class PublicationRequest extends Document {
     }
 
     Document getReference() throws RepositoryException  {
-        if (hasNode() && getNode().hasProperty("hippostdpubwf:document")) {
-            return new Document(getNode().getProperty("hippostdpubwf:document").getNode());
+        if (hasNode() && getNode().hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
+            return new Document(getNode().getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT).getNode());
         }
         return null;
     }
