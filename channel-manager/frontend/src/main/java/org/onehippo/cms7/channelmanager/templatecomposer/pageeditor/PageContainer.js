@@ -405,8 +405,13 @@
 
         _lock: function(cb) {
             if (this.iframeCompletion.length === 0) {
-                Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').mask();
-                 this.fireEvent('lock');
+                if (typeof(this.maskTask) === 'undefined' || this.maskTask === null) {
+                    this.maskTask = new Ext.util.DelayedTask(function() {
+                        Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').mask();
+                    });
+                    this.maskTask.delay(800);
+                }
+                this.fireEvent('lock');
             }
             if (typeof cb === 'function') {
                 this.iframeCompletion.unshift(cb);
@@ -419,12 +424,22 @@
                 cb.call(this);
             }
             this.fireEvent('unlock', this.pageContext);
+
+            if (typeof(this.maskTask) !== 'undefined' && this.maskTask !== null) {
+                this.maskTask.cancel();
+                this.maskTask = null;
+            }
             Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').unmask();
         },
 
         _fail: function() {
             this.iframeCompletion = [];
             this.fireEvent('unlock', null);
+            Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').unmask();
+            if (typeof(this.maskTask) !== 'undefined' && this.maskTask !== null) {
+                this.maskTask.cancel();
+                this.maskTask = null;
+            }
             Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').unmask();
         },
 
