@@ -77,7 +77,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
      */
     protected Node getCheckedOutNode() throws RepositoryException {
         if (node != null) {
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
         }
         return node;
     }

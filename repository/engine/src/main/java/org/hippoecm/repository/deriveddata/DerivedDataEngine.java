@@ -180,7 +180,7 @@ public class DerivedDataEngine {
     }
 
     private boolean compute(Node derivatesFolder, Node modified) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(modified, true);
+        JcrUtils.ensureIsCheckedOut(modified);
         final Collection<String> dependencies = new TreeSet<String>();
 
         boolean changed = applyFunctions(derivatesFolder, modified, dependencies);
@@ -265,7 +265,7 @@ public class DerivedDataEngine {
         final boolean changed = !Arrays.equals(oldDependenciesValues, dependenciesValues);
 
         if (changed && modified.isNodeType(HippoNodeType.NT_DERIVED)) {
-            JcrUtils.ensureIsCheckedOut(modified, false);
+            JcrUtils.ensureIsCheckedOut(modified);
             modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues, PropertyType.REFERENCE);
         }
         return changed;
@@ -286,7 +286,7 @@ public class DerivedDataEngine {
                             if (values.length - i > 1) {
                                 System.arraycopy(values, i + 1, newValues, i, values.length - i - 1);
                             }
-                            JcrUtils.ensureIsCheckedOut(refProp.getParent(), true);
+                            JcrUtils.ensureIsCheckedOut(refProp.getParent());
                             refProp.setValue(newValues);
                             break;
                         }

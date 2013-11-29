@@ -44,7 +44,7 @@ public abstract class AbstractSchedulerInvocationModule implements WorkflowInvoc
             final Scheduler scheduler = SchedulerModule.getScheduler(invocation.getSubject().getSession());
             if (scheduler != null) {
                 final Node handle = invocation.getSubject().getParent();
-                JcrUtils.ensureIsCheckedOut(handle, false);
+                JcrUtils.ensureIsCheckedOut(handle);
                 final Node requestNode = handle.addNode("hippo:request", "hipposched:workflowjob");
                 scheduler.scheduleJob(new WorkflowJobDetail(requestNode, invocation), createTrigger("default"));
             } else {

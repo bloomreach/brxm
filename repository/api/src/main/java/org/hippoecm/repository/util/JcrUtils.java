@@ -759,6 +759,23 @@ public class JcrUtils {
     }
 
     /**
+     * Make sure the node is in checked out state. If the node is not in checked out state it will get checked out
+     *
+     * @param node the node to check
+     * @throws RepositoryException
+     */
+    public static void ensureIsCheckedOut(Node node) throws RepositoryException {
+        if (!node.isCheckedOut()) {
+            if (node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+                versionManager.checkout(node.getPath());
+                node.getSession().refresh(true);
+            }
+            ensureIsCheckedOut(node.getParent());
+        }
+    }
+
+    /**
      * Make sure the node is in checked out state. If the node is not in checked out state and is of type
      * <code>mix:versionable</code> this method checks out the node. If it is not <code>mix:versionable</code> and
      * <code>traverseAncestors</code> is <code>true</code> it checks out the versionable ancestor.
@@ -766,17 +783,11 @@ public class JcrUtils {
      * @param node              the node to check
      * @param traverseAncestors whether to check out the versionable ancestor that causes this node to be checked in
      * @throws RepositoryException
+     * @deprecate since 2.25.05 (7.9.0). Use {@link #ensureIsCheckedOut(javax.jcr.Node)} instead
      */
+    @Deprecated
     public static void ensureIsCheckedOut(Node node, boolean traverseAncestors) throws RepositoryException {
-        if (!node.isCheckedOut()) {
-            if (node.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-                final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-                versionManager.checkout(node.getPath());
-                node.getSession().refresh(true);
-            } else if (traverseAncestors) {
-                ensureIsCheckedOut(node.getParent(), true);
-            }
-        }
+        ensureIsCheckedOut(node);
     }
 
     /**

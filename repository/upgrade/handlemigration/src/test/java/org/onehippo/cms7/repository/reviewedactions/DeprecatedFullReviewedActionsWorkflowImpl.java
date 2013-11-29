@@ -113,7 +113,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
         session.move(source, destination);
         session.save();
         handle = session.getNode(destination);
-        JcrUtils.ensureIsCheckedOut(handle, false);
+        JcrUtils.ensureIsCheckedOut(handle);
         for (Node node : new NodeIterable(handle.getNodes())) {
             node.remove();
         }

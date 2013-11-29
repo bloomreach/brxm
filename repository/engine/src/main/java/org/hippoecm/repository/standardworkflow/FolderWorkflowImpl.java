@@ -368,7 +368,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         for (final Node target : new NodeIterable(rootSession.getNode(targetParentPath).getNodes(targetName))) {
             try {
                 if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
-                    JcrUtils.ensureIsCheckedOut(target, false);
+                    JcrUtils.ensureIsCheckedOut(target);
                     for (final Node child : new NodeIterable(target.getNodes(target.getName()))) {
                         if (child.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
                             final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
@@ -556,12 +556,12 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     private void renameChildDocument(Node documentNode) throws RepositoryException {
         if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-            JcrUtils.ensureIsCheckedOut(documentNode, false);
+            JcrUtils.ensureIsCheckedOut(documentNode);
             for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
                 Node child = children.nextNode();
                 if (child != null) {
                     if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        JcrUtils.ensureIsCheckedOut(child, false);
+                        JcrUtils.ensureIsCheckedOut(child);
                         documentNode.getSession().move(child.getPath(), documentNode.getPath()+"/"+documentNode.getName());
                     }
                 }
@@ -842,7 +842,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             source = source.getParent();
         }
 
-        JcrUtils.ensureIsCheckedOut(folder, false);
+        JcrUtils.ensureIsCheckedOut(folder);
 
         folder.getSession().move(source.getPath(), folder.getPath() + "/" + targetName);
         renameChildDocument(folder, targetName);

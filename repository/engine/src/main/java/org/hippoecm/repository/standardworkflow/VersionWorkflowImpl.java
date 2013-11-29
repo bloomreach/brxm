@@ -321,7 +321,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             throw new WorkflowException("version never existed");
         }
 
-        JcrUtils.ensureIsCheckedOut(subject, false);
+        JcrUtils.ensureIsCheckedOut(subject);
         for (Property property : new PropertyIterable(subject.getProperties())) {
             if (property.getDefinition().isProtected()) {
                 continue;

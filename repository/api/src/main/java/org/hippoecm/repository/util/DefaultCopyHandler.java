@@ -56,7 +56,7 @@ public class DefaultCopyHandler implements CopyHandler {
     private NodeType[] nodeTypes;
 
     public DefaultCopyHandler(Node node) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(node, true);
+        JcrUtils.ensureIsCheckedOut(node);
         setCurrent(node);
     }
 

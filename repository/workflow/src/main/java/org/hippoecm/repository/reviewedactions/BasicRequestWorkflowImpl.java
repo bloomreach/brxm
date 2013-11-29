@@ -60,7 +60,7 @@ public class BasicRequestWorkflowImpl extends WorkflowImpl implements BasicReque
     public void cancelRequest() throws WorkflowException, RepositoryException {
         if (request != null) {
             Node requestNode = request.getCheckedOutNode();
-            JcrUtils.ensureIsCheckedOut(requestNode.getParent(), true);
+            JcrUtils.ensureIsCheckedOut(requestNode.getParent());
             requestNode.remove();
             request = null;
         }

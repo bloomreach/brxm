@@ -75,7 +75,7 @@ public class Document implements Serializable {
      * @return the ensured to be checked out backing Node of this Document
      */
     public Node getCheckedOutNode() throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(node, true);
+        JcrUtils.ensureIsCheckedOut(node);
         return node;
     }
 

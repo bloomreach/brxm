@@ -54,11 +54,11 @@ public abstract class BaseContentUpdateVisitor extends BaseNodeUpdateVisitor {
 
     protected void removeMixin(final Node node, final String mixin) throws RepositoryException {
         if (node.isNodeType(mixin)) {
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
             final List<Reference> references = removeReferences(node);
             try {
                 node.removeMixin(mixin);
-                JcrUtils.ensureIsCheckedOut(node, true);
+                JcrUtils.ensureIsCheckedOut(node);
                 node.addMixin(JcrConstants.MIX_REFERENCEABLE);
             } finally {
                 restoreReferences(references);
@@ -83,7 +83,7 @@ public abstract class BaseContentUpdateVisitor extends BaseNodeUpdateVisitor {
         final List<Reference> references = new LinkedList<>();
         for (Property property : new PropertyIterable(handle.getReferences())) {
             final Node node = property.getParent();
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
             final String propertyName = property.getName();
             if (!HippoNodeType.HIPPO_RELATED.equals(propertyName)) {
                 references.add(new Reference(property));

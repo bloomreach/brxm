@@ -90,7 +90,7 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
         assertNotNull(node);
 
         for (int i = 0; i < 5; i++) {
-            JcrUtils.ensureIsCheckedOut(node, false);
+            JcrUtils.ensureIsCheckedOut(node);
             node.setProperty("hippostd:holder", node.getProperty("hippostd:holder").getString() + ".");
             session.save();
             versionwf = (VersionWorkflow) getWorkflow(node, "versioning");
@@ -179,9 +179,9 @@ public class VersioningWorkflowIntegrationTest extends RepositoryTestCase {
 
     private String edit() throws Exception {
         final Node handle = getNode("test/versiondocument");
-        JcrUtils.ensureIsCheckedOut(handle, false);
+        JcrUtils.ensureIsCheckedOut(handle);
         final Node document = handle.getNode("versiondocument");
-        JcrUtils.ensureIsCheckedOut(document, false);
+        JcrUtils.ensureIsCheckedOut(document);
         String language = document.getProperty("hippostd:language").getString();
         for (int i = 0; i < languages.length - 1; i++) {
             if (languages[i].equals(language)) {

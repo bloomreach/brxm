@@ -146,7 +146,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
     protected void deleteRequest() throws WorkflowException, RepositoryException {
         if (request != null) {
-            JcrUtils.ensureIsCheckedOut(getNode().getParent(),false);
+            JcrUtils.ensureIsCheckedOut(getNode().getParent());
             getCheckedOutNode().remove();
             request = null;
         }

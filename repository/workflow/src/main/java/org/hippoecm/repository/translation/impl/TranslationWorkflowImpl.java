@@ -96,7 +96,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
                 throw new WorkflowException("Could not locate handle for document after copying");
             }
             copiedDoc = copiedDoc.getNode(copiedDoc.getName());
-            JcrUtils.ensureIsCheckedOut(copiedDoc, false);
+            JcrUtils.ensureIsCheckedOut(copiedDoc);
             copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
         } else {
             Workflow internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", targetFolder);
@@ -139,7 +139,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             String path = ((FolderWorkflow) internalWorkflow).add(category, type, name);
             copiedDoc = rootSession.getNode(path);
 
-            JcrUtils.ensureIsCheckedOut(copiedDoc, false);
+            JcrUtils.ensureIsCheckedOut(copiedDoc);
             if (!copiedDoc.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 copiedDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
             }
@@ -163,7 +163,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         }
 
         Node copiedDocNode = rootSession.getNodeByIdentifier(document.getIdentity());
-        JcrUtils.ensureIsCheckedOut(copiedDocNode, false);
+        JcrUtils.ensureIsCheckedOut(copiedDocNode);
         if (!copiedDocNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             copiedDocNode.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         }
