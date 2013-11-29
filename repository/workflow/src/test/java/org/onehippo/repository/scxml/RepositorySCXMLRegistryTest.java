@@ -20,14 +20,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.scxml2.model.SCXML;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.testutils.slf4j.LogRecord;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
 
@@ -97,10 +96,10 @@ public class RepositorySCXMLRegistryTest {
 
     @Test
     public void testInitialize() throws Exception {
-        Map<String, String> scxmlDefinitions = new LinkedHashMap<>();
-        scxmlDefinitions.put("hello", SCXML_HELLO);
-        scxmlDefinitions.put("hello2", SCXML_HELLO2);
-        registry.setup(scxmlDefinitions);
+        MockNode scxmlConfigNode = registry.createConfigNode();
+        registry.addScxmlNode(scxmlConfigNode, "hello", SCXML_HELLO);
+        registry.addScxmlNode(scxmlConfigNode, "hello2", SCXML_HELLO2);
+        registry.setup(scxmlConfigNode);
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);
@@ -114,13 +113,18 @@ public class RepositorySCXMLRegistryTest {
     }
 
     @Test
+    public void testLoadCustomActions() throws Exception {
+        // TODO
+    }
+
+    @Test
     public void testInitializeWithInvalidSCXML() throws Exception {
-        Map<String, String> scxmlDefinitions = new LinkedHashMap<>();
-        scxmlDefinitions.put("hello", SCXML_HELLO);
-        scxmlDefinitions.put("hello-no-initial", SCXML_HELLO_NO_INITIAL);
-        scxmlDefinitions.put("hello-nonexisting-initial", SCXML_HELLO_NONEXISTING_INITIAL);
-        scxmlDefinitions.put("hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
-        registry.setup(scxmlDefinitions);
+        MockNode scxmlConfigNode = registry.createConfigNode();
+        registry.addScxmlNode(scxmlConfigNode, "hello", SCXML_HELLO);
+        registry.addScxmlNode(scxmlConfigNode, "hello-no-initial", SCXML_HELLO_NO_INITIAL);
+        registry.addScxmlNode(scxmlConfigNode, "hello-nonexisting-initial", SCXML_HELLO_NONEXISTING_INITIAL);
+        registry.addScxmlNode(scxmlConfigNode, "hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
+        registry.setup(scxmlConfigNode);
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);

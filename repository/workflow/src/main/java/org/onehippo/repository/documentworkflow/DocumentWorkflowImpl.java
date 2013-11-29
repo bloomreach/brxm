@@ -52,12 +52,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     private SCXMLExecutor scxmlExecutor;
     private DocumentHandle handle;
 
-    protected PublishableDocument draftDocument;
-    protected PublishableDocument unpublishedDocument;
-    protected PublishableDocument publishedDocument;
-    protected PublicationRequest current;
-
-
     public DocumentWorkflowImpl() throws RemoteException {
     }
 
@@ -98,6 +92,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         catch (SCXMLException hse) {
             throw new RepositoryException(hse);
         }
+    }
+
+    DocumentHandle getHandle() {
+        return handle;
     }
 
     @Override

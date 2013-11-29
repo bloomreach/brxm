@@ -69,19 +69,19 @@ public class PublicationRequest extends Document {
         setDateProperty(HIPPOSTDPUBWF_REQDATE, scheduledDate);
     }
 
-    String getType() throws RepositoryException {
+    public String getType() throws RepositoryException {
         return getStringProperty(HIPPOSTDPUBWF_TYPE);
     }
 
-    String getOwner() throws RepositoryException {
+    public String getOwner() throws RepositoryException {
         return getStringProperty(HIPPOSTDPUBWF_USERNAME);
     }
 
-    Date getScheduledDate() throws RepositoryException  {
+    public Date getScheduledDate() throws RepositoryException  {
         return getDateProperty(HIPPOSTDPUBWF_REQDATE);
     }
 
-    void setRejected(PublishableDocument stale, String reason) throws RepositoryException  {
+    public void setRejected(PublishableDocument stale, String reason) throws RepositoryException  {
         setStringProperty(HIPPOSTDPUBWF_TYPE, REJECTED);
         if (stale != null) {
             setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, stale.getNode());
@@ -92,11 +92,11 @@ public class PublicationRequest extends Document {
         setStringProperty(HIPPOSTDPUBWF_REASON, reason);
     }
 
-    void setRejected(String reason) throws RepositoryException  {
+    public void setRejected(String reason) throws RepositoryException  {
         setRejected(null, reason);
     }
 
-    Document getReference() throws RepositoryException  {
+    public Document getReference() throws RepositoryException  {
         if (hasNode() && getNode().hasProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
             return new Document(getNode().getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT).getNode());
         }

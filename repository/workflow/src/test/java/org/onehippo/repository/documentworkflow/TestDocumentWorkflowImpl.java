@@ -19,6 +19,7 @@ package org.onehippo.repository.documentworkflow;
 import javax.jcr.RepositoryException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -53,10 +54,21 @@ public class TestDocumentWorkflowImpl {
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        MockRepositorySCXMLRegistry scxmlRegistry = new MockRepositorySCXMLRegistry();
+        MockRepositorySCXMLRegistry registry = new MockRepositorySCXMLRegistry();
         String scxml = IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("test-document-workflow.scxml"));
-        scxmlRegistry.setup("document-workflow", scxml);
-        HippoServiceRegistry.registerService(scxmlRegistry, SCXMLRegistry.class);
+        MockNode scxmlConfigNode = registry.createConfigNode();
+        MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "document-workflow", scxml);
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyvariant", CopyVariantAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "request", RequestAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "archive", ArchiveAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "ismodified", IsModifiedAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "schedulerequest", ScheduleRequestAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copydocument", CopyDocumentAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "movedocument", MoveDocumentAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renamedocument", RenameDocumentAction.class.getName());
+        registry.setup(scxmlConfigNode);
+
+        HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
         HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
     }
 
@@ -72,14 +84,17 @@ public class TestDocumentWorkflowImpl {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         wf.setWorkflowContext(new MockWorkflowContext("testuser"));
 
-        MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
-        MockNode unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
-        MockNode rejectedRequest1 = addRequest(handle, PublicationRequest.REJECTED);
-        MockNode publishRequest = addRequest(handle, PublicationRequest.PUBLISH);
-        MockNode rejectedRequest2 = addRequest(handle, PublicationRequest.REJECTED);
+        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        MockNode publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        MockNode rejectedRequest1 = addRequest(handleNode, PublicationRequest.REJECTED);
+        MockNode publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        MockNode rejectedRequest2 = addRequest(handleNode, PublicationRequest.REJECTED);
 
         wf.setNode(publishedVariant);
-        assertTrue(wf.hints().isEmpty());
+        DocumentHandle handle = wf.getHandle();
+        assertNotNull(handle.getRequest());
+        assertEquals(PublicationRequest.PUBLISH, handle.getRequest().getType());
+        assertTrue(!wf.hints().isEmpty());
     }
 }

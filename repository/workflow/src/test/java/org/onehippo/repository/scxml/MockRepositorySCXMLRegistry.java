@@ -16,27 +16,32 @@
 
 package org.onehippo.repository.scxml;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.onehippo.repository.mock.MockNode;
 
 public class MockRepositorySCXMLRegistry extends RepositorySCXMLRegistry {
 
-    public void setup(String scxmlId, String scxmlDefinition) throws Exception {
-        HashMap<String, String> definitions = new HashMap<>();
-        definitions.put(scxmlId, scxmlDefinition);
-        setup(definitions);
+    public static MockNode createConfigNode() throws Exception {
+        MockNode scxmlConfigNode = MockNode.root().addMockNode("hippo:moduleconfig", "nt:unstructured");
+        scxmlConfigNode.addMockNode(SCXML_DEFINITIONS, SCXML_DEFINITIONS);
+        return scxmlConfigNode;
     }
 
-    public void setup(Map<String, String> definitions) throws Exception {
-        MockNode scxmlConfigNode = MockNode.root().addMockNode("hippo:moduleconfig", "nt:unstructured");
-        MockNode scxmlDefsNode = scxmlConfigNode.addMockNode("hipposcxml:definitions", "hipposcxml:definitions");
-        for (Map.Entry<String, String> entry : definitions.entrySet()) {
-            MockNode scxmlDefNode = scxmlDefsNode.addMockNode(entry.getKey(), "hipposcxml:scxml");
-            scxmlDefNode.setProperty("hipposcxml:source", entry.getValue());
-        }
-        reconfigure(scxmlConfigNode);
+    public static MockNode addScxmlNode(MockNode configNode, String name, String source) throws Exception {
+        MockNode scxmlDefsNode = (MockNode)configNode.getNode(SCXML_DEFINITIONS);
+        MockNode scxmlDefNode = scxmlDefsNode.addMockNode(name, NT_SCXML);
+        scxmlDefNode.setProperty(SCXML_SOURCE, source);
+        return scxmlDefNode;
+    }
+
+    public static MockNode addCustomAction(MockNode scxmlDefNode, String namespace, String actionName, String className) throws Exception {
+        MockNode actionNode = scxmlDefNode.addMockNode(actionName, SCXML_ACTION);
+        actionNode.setProperty(SCXML_ACTION_NAMESPACE, namespace);
+        actionNode.setProperty(SCXML_ACTION_CLASSNAME, className);
+        return actionNode;
+    }
+
+    public void setup(MockNode configNode) throws Exception {
+        reconfigure(configNode);
         initialize();
     }
 }

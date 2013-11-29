@@ -49,11 +49,12 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
 
     static Logger log = LoggerFactory.getLogger(RepositorySCXMLRegistry.class);
 
-    private static final String SCXML_DEFINITIONS = "hipposcxml:definitions";
-    private static final String SCXML_SOURCE = "hipposcxml:source";
-    private static final String SCXML_ACTION_NAMESPACE = "hipposcxml:namespace";
-    private static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
-    private static final String SCXML_ACTION = "hipposcxml:action";
+    public static final String SCXML_DEFINITIONS = "hipposcxml:definitions";
+    public static final String NT_SCXML = "hipposcxml:scxml";
+    public static final String SCXML_SOURCE = "hipposcxml:source";
+    public static final String SCXML_ACTION_NAMESPACE = "hipposcxml:namespace";
+    public static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
+    public static final String SCXML_ACTION = "hipposcxml:action";
 
     private Map<String, SCXML> scxmlMap;
 
