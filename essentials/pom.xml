@@ -37,6 +37,11 @@
     <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
 
   </properties>
+  <scm>
+    <connection>scm:git:git@github.com:onehippo/essentials.git</connection>
+    <url>scm:git:git@github.com:onehippo/essentials.git</url>
+    <developerConnection>scm:git:git@github.com:onehippo/essentials.git</developerConnection>
+  </scm>
 
 
   <modules>
