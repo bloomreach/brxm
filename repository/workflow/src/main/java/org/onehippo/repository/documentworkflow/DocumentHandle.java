@@ -64,7 +64,7 @@ public class DocumentHandle {
                 subjectFound = true;
             }
         }
-        for (Node requestNode : new NodeIterable(handle.getNodes(HippoNodeType.NT_REQUEST))) {
+        for (Node requestNode : new NodeIterable(handle.getNodes(PublicationRequest.HIPPO_REQUEST))) {
             PublicationRequest req = new PublicationRequest(requestNode);
             String requestType = JcrUtils.getStringProperty(requestNode, PublicationRequest.HIPPOSTDPUBWF_TYPE, "");
             if ("rejected".equals(requestType)) {

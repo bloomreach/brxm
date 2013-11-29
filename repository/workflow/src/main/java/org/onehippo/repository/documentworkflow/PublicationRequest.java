@@ -28,6 +28,7 @@ import org.onehippo.repository.util.JcrConstants;
 
 public class PublicationRequest extends Document {
 
+    public static final String HIPPO_REQUEST = "hippo:request";
     public static final String NT_HIPPOSTDPUBWF_REQUEST = "hippostdpubwf:request";
     public static final String HIPPOSTDPUBWF_TYPE = "hippostdpubwf:type";
     public static final String HIPPOSTDPUBWF_USERNAME = "hippostdpubwf:username";
@@ -49,7 +50,7 @@ public class PublicationRequest extends Document {
 
     private static Node newRequestNode(Node parent) throws RepositoryException {
         JcrUtils.ensureIsCheckedOut(parent, false);
-        Node requestNode = parent.addNode(HippoNodeType.NT_REQUEST, NT_HIPPOSTDPUBWF_REQUEST);
+        Node requestNode = parent.addNode(HIPPO_REQUEST, NT_HIPPOSTDPUBWF_REQUEST);
         requestNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
         return requestNode;
     }

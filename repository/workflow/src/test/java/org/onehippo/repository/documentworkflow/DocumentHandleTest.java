@@ -36,7 +36,7 @@ public class DocumentHandleTest {
     }
 
     protected MockNode addRequest(MockNode handle, String type) throws RepositoryException {
-        MockNode variant = handle.addMockNode(HippoNodeType.NT_REQUEST, PublicationRequest.NT_HIPPOSTDPUBWF_REQUEST);
+        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, PublicationRequest.NT_HIPPOSTDPUBWF_REQUEST);
         variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
