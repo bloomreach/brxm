@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
@@ -38,15 +39,6 @@ import org.onehippo.repository.scxml.SCXMLRegistry;
 
 public class TestDocumentWorkflowImpl {
 
-    private static final String DOCUMENT_WORKFLOW =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello\">\n" +
-                    "  <state id=\"hello\">\n" +
-                    "    <onentry>\n" +
-                    "      <log expr=\"'Hello, World'\"/>\n" +
-                    "    </onentry>\n" +
-                    "  </state>\n" +
-                    "</scxml>";
-
     protected MockNode addVariant(MockNode handle, String state) throws RepositoryException {
         MockNode variant = handle.addMockNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
         variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
@@ -62,7 +54,8 @@ public class TestDocumentWorkflowImpl {
     @BeforeClass
     public static void beforeClass() throws Exception {
         MockRepositorySCXMLRegistry scxmlRegistry = new MockRepositorySCXMLRegistry();
-        scxmlRegistry.setup("document-workflow", DOCUMENT_WORKFLOW);
+        String scxml = IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("test-document-workflow.scxml"));
+        scxmlRegistry.setup("document-workflow", scxml);
         HippoServiceRegistry.registerService(scxmlRegistry, SCXMLRegistry.class);
         HippoServiceRegistry.registerService(new RepositorySCXMLExecutorFactory(), SCXMLExecutorFactory.class);
     }
