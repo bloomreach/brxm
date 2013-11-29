@@ -42,6 +42,16 @@
     <url>scm:git:git@github.com:onehippo/essentials.git</url>
     <developerConnection>scm:git:git@github.com:onehippo/essentials.git</developerConnection>
   </scm>
+<!--
+  <distributionManagement>
+    <repository>
+      <name>Hippo Maven 2 Repository</name>
+      <id>hippo-maven2</id>
+      <url>https://maven.onehippo.com/content/repositories/releases/</url>
+      <uniqueVersion>false</uniqueVersion>
+    </repository>
+  </distributionManagement>
+-->
 
 
   <modules>
