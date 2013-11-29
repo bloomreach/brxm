@@ -25,7 +25,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;

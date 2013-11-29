@@ -101,8 +101,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     @Override
-    public Map<String,Serializable> hints() {
-        return null;
+    public Map<String, Serializable> hints() {
+        Map<String, Serializable> info = super.hints();
+        info.putAll(handle.getHints());
+        return info;
     }
 
     // EditableWorkflow implementation
