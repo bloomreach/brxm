@@ -47,7 +47,7 @@
     <file action="copy" overwrite="true" source="jsp/essentials-component-events.jsp" target="{{jspRoot}}/essentials/essentials-component-events.jsp"/>
     <file action="copy" overwrite="true" source="jsp/essentials-component-event-detail.jsp" target="{{jspRoot}}/essentials/essentials-component-event-detail.jsp"/>
     <!--todo temporary:-->
-    <file action="copy" overwrite="true" source="essentials-home-example.jsp" target="{{jspRoot}}/essentials/essentials-home-example.jsp"/>
+    <file action="copy" overwrite="true" source="jsp/essentials-home-example.jsp" target="{{jspRoot}}/essentials/essentials-home-example.jsp"/>
   </instructionSet>
   <instructionSet name="SITE-MAPS">
     <xml action="copy" source="xml/hst/sitemap/news.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:sitemap"/>
