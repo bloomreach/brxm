@@ -25,6 +25,8 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
@@ -35,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstHtmlTag extends TagSupport {
-    
 
     private final static Logger log = LoggerFactory.getLogger(HstHtmlTag.class);
     
@@ -48,6 +49,12 @@ public class HstHtmlTag extends TagSupport {
     protected String scope;
         
     protected ContentRewriter<String> contentRewriter;
+
+    protected String formattedText;
+
+    protected String text;
+
+    protected enum RewriteMode { HIPPOHTML, FORMATTEDTEXT, UNKNOWN, TEXT }
 
     /**
      * Whether links should be rewritten to fully qualified links (URLs) including scheme, host, port etc. 
@@ -90,33 +97,41 @@ public class HstHtmlTag extends TagSupport {
         }
 
         String characterEncoding = pageContext.getResponse().getCharacterEncoding();
-        
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
         }
-        
-        if(hippoHtml == null || hippoHtml.getContent() == null ) {
-            log.warn("Node or content is null. Return");
-            cleanup();
-            return EVAL_PAGE;
-        }
-            
-        String html = hippoHtml.getContent();
-       
-        if(hippoHtml.getNode() != null) {
+
+        RewriteMode mode = determineMode();
+        log.debug("Determined rewrite mode: " + mode);
+
+        String html;
+        if(mode.equals(RewriteMode.HIPPOHTML) || mode.equals(RewriteMode.FORMATTEDTEXT)) {
             if (contentRewriter == null) {
                 contentRewriter = new SimpleContentRewriter();
             }
-            contentRewriter.setFullyQualifiedLinks(fullyQualifiedLinks);
-            contentRewriter.setImageVariant(imageVariant);
-            html = contentRewriter.rewrite(html, hippoHtml.getNode(), requestContext);
-        } else {
-            log.warn("Node should be a HippoNode and response a HstResponse");
         }
-        
+        switch (mode) {
+            case HIPPOHTML:
+                contentRewriter.setFullyQualifiedLinks(fullyQualifiedLinks);
+                contentRewriter.setImageVariant(imageVariant);
+                html = contentRewriter.rewrite(hippoHtml.getContent(), hippoHtml.getNode(), requestContext);
+                break;
+            case FORMATTEDTEXT:
+                html = contentRewriter.rewrite(formattedText, null, requestContext);
+                break;
+            case TEXT:
+                html = lineEndingsToHTML(text);
+                break;
+            default:
+                log.warn("No input available to rewrite.");
+                cleanup();
+                return EVAL_PAGE;
+        }
+
         if(html == null) {
-            html = "";
+            html = StringUtils.EMPTY;
         }
+
         if (var == null) {
             try {               
                 JspWriter writer = pageContext.getOut();
@@ -146,8 +161,39 @@ public class HstHtmlTag extends TagSupport {
         cleanup();
         return EVAL_PAGE;
     }
-    
-    
+
+    private RewriteMode determineMode() {
+        if((hippoHtml != null && hippoHtml.getContent() != null)) {
+            return RewriteMode.HIPPOHTML;
+        }
+        if(formattedText != null) {
+            return RewriteMode.FORMATTEDTEXT;
+        }
+        if(text != null) {
+            return RewriteMode.TEXT;
+        } else {
+            return RewriteMode.UNKNOWN;
+        }
+    }
+
+    private String lineEndingsToHTML(final String html) {
+        String escaped = StringEscapeUtils.escapeHtml(html);
+
+        if (StringUtils.isBlank(escaped)) {
+            return escaped;
+        } else {
+            escaped = StringUtils.replace(escaped, "\n\n", "</p><p>");
+            escaped = StringUtils.replace(escaped, "<p></p>", "<br/><br/>");
+            escaped = StringUtils.replace(escaped, "\n", "<br/>");
+
+            StringBuilder builder = new StringBuilder("<p>");
+            builder.append(escaped);
+            builder.append("</p>");
+
+            return builder.toString();
+        }
+    }
+
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#release()
@@ -166,6 +212,8 @@ public class HstHtmlTag extends TagSupport {
         hippoHtml = null;
         contentRewriter = null;
         imageVariant = null;
+        formattedText = null;
+        text = null;
     }
 
 
@@ -184,7 +232,7 @@ public class HstHtmlTag extends TagSupport {
     public HippoHtml getHippohtml(){
         return this.hippoHtml;
     }
-    
+
     public ContentRewriter<String> getContentRewriter() {
         return contentRewriter;
     }
@@ -222,6 +270,13 @@ public class HstHtmlTag extends TagSupport {
         this.imageVariant = imageVariant;
     }
 
+    public void setFormattedText(final String formattedText) {
+        this.formattedText = formattedText;
+    }
+
+    public void setText(final String text) {
+        this.text = text;
+    }
 
     /* -------------------------------------------------------------------*/
         
