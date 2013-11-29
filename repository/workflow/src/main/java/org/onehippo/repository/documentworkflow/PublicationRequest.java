@@ -49,7 +49,7 @@ public class PublicationRequest extends Document {
     }
 
     private static Node newRequestNode(Node parent) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(parent, false);
+        JcrUtils.ensureIsCheckedOut(parent);
         Node requestNode = parent.addNode(HIPPO_REQUEST, NT_HIPPOSTDPUBWF_REQUEST);
         requestNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
         return requestNode;

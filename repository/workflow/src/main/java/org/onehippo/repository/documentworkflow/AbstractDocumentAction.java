@@ -140,7 +140,7 @@ public abstract class AbstractDocumentAction extends Action {
 
     protected Node cloneDocumentNode(Node srcNode) throws RepositoryException {
         final Node parent = srcNode.getParent();
-        JcrUtils.ensureIsCheckedOut(parent, true);
+        JcrUtils.ensureIsCheckedOut(parent);
 
         Node destNode = parent.addNode(srcNode.getName(), srcNode.getPrimaryNodeType().getName());
         if (!destNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {

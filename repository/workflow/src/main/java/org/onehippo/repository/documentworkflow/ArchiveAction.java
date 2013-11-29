@@ -74,8 +74,8 @@ public class ArchiveAction extends AbstractDocumentAction {
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(document.getNode(), true);
-        JcrUtils.ensureIsCheckedOut(document.getNode().getParent(), true);
+        JcrUtils.ensureIsCheckedOut(document.getNode());
+        JcrUtils.ensureIsCheckedOut(document.getNode().getParent());
         document.getNode().remove();
     }
 

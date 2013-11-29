@@ -117,7 +117,7 @@ public class CopyVariantAction extends AbstractDocumentAction {
         final Node parent = sourceNode.getParent();
         Node targetNode = null;
 
-        JcrUtils.ensureIsCheckedOut(parent, true);
+        JcrUtils.ensureIsCheckedOut(parent);
 
         boolean saveNeeded = false;
 
