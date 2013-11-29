@@ -462,7 +462,7 @@ public class UpdaterExecutor implements EventListener {
     private void ensureIsCheckedOut(Node node) throws RepositoryException {
         if (!node.isCheckedOut()) {
             log.debug("Checking out node {}" + node.getPath());
-            JcrUtils.ensureIsCheckedOut(background.getNodeByIdentifier(node.getIdentifier()), true);
+            JcrUtils.ensureIsCheckedOut(background.getNodeByIdentifier(node.getIdentifier()));
         }
     }
 

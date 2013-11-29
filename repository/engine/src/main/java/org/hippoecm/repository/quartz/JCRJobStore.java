@@ -392,7 +392,7 @@ public class JCRJobStore extends AbstractJobStore {
                 } else {
                     final String jobIdentifier = ((JCRJobDetail) jobDetail).getIdentifier();
                     final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
-                    JcrUtils.ensureIsCheckedOut(jobNode.getParent(), false);
+                    JcrUtils.ensureIsCheckedOut(jobNode.getParent());
                     jobNode.remove();
                     session.save();
                 }

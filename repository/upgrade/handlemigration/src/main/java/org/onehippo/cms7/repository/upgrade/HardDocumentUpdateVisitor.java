@@ -36,7 +36,7 @@ public class HardDocumentUpdateVisitor extends BaseContentUpdateVisitor {
         }
         try {
             final VersionHistory versionHistory = getVersionHistory(node);
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
             removeHippoPaths(node);
             removeMixin(node, HippoNodeType.NT_HARDDOCUMENT);
             session.save();

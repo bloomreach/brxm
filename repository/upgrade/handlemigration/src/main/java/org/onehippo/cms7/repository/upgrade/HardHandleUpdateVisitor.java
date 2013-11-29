@@ -132,7 +132,7 @@ public class HardHandleUpdateVisitor extends BaseContentUpdateVisitor {
     }
 
     private void setPreview(final Node handle, final String identifier) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(handle, false);
+        JcrUtils.ensureIsCheckedOut(handle);
         final String docPath = handle.getPath() + "/" + handle.getName();
         defaultSession.getWorkspace().clone(HANDLE_MIGRATION_WORKSPACE, "/" + handle.getIdentifier(), docPath, true);
         final Node newPreview = defaultSession.getNodeByIdentifier(identifier);

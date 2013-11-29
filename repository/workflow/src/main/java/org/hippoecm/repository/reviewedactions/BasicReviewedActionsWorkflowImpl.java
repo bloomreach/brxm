@@ -177,7 +177,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     protected Node cloneDocumentNode(Document document) throws RepositoryException {
         Node srcNode = document.getNode();
         final Node parent = srcNode.getParent();
-        JcrUtils.ensureIsCheckedOut(parent, true);
+        JcrUtils.ensureIsCheckedOut(parent);
 
         Node destNode = parent.addNode(srcNode.getName(), srcNode.getPrimaryNodeType().getName());
         if (!destNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
@@ -190,8 +190,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(document.getNode(), true);
-        JcrUtils.ensureIsCheckedOut(document.getNode().getParent(), true);
+        JcrUtils.ensureIsCheckedOut(document.getNode());
+        JcrUtils.ensureIsCheckedOut(document.getNode().getParent());
         document.getNode().remove();
     }
 

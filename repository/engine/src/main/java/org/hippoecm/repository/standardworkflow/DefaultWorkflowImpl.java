@@ -184,15 +184,15 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
                 }
             }
         } else {
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
             node.addMixin(HippoNodeType.NT_TRANSLATED);
         }
         if (translationNode == null) {
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
             translationNode = node.addNode(HippoNodeType.HIPPO_TRANSLATION, HippoNodeType.NT_TRANSLATION);
             localized.setTranslation(translationNode);
         } else {
-            JcrUtils.ensureIsCheckedOut(node, true);
+            JcrUtils.ensureIsCheckedOut(node);
         }
         translationNode.setProperty(HippoNodeType.HIPPO_MESSAGE, newName);
         translationNode.getSession().save();
