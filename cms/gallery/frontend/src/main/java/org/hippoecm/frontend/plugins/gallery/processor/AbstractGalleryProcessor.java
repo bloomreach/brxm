@@ -15,11 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.gallery.processor;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-import javax.jcr.Binary;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -33,10 +31,7 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetaData;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetadataException;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
-import org.hippoecm.frontend.plugins.gallery.imageutil.UnsupportedImageException;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageBinary;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -51,10 +46,9 @@ import org.slf4j.LoggerFactory;
  * initialize additional properties and the other resource child nodes.
  */
 public abstract class AbstractGalleryProcessor implements GalleryProcessor {
-
     private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(AbstractGalleryProcessor.class);
-    private static final Object conversionLock = new Object();
 
     protected static final String MIMETYPE_IMAGE_PREFIX = "image";
 
@@ -71,44 +65,20 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
             throw new GalleryException("Resource node not of primaryType " + HippoNodeType.NT_RESOURCE);
         }
 
-        Binary binary = ResourceHelper.getValueFactory(resourceNode).createBinary(stream);
-        ImageMetaData metadata = new ImageMetaData(mimeType, fileName);
-        try {
-            metadata.parse(binary.getStream());
-        } catch (ImageMetadataException e) {
-            throw new GalleryException(e.getMessage());
-        }
-
-        if (metadata.getColorModel().equals(ImageMetaData.ColorModel.UNKNOWN)) {
-            throw new GalleryException("Unknown color profile for " + metadata.toString());
-        }
-
-        if (!metadata.getColorModel().equals(ImageMetaData.ColorModel.RGB)) {
-            try {
-                synchronized(conversionLock) {
-                    InputStream converted = ImageUtils.convertToRGB(binary.getStream(), metadata.getColorModel());
-                    binary.dispose();
-                    binary = ResourceHelper.getValueFactory(resourceNode).createBinary(converted);
-                }
-            } catch (IOException e) {
-                log.error("Error during conversion to RGB", e);
-                throw new GalleryException("Error during conversion to RGB for " + metadata.toString(), e);
-            } catch (UnsupportedImageException e) {
-                log.error("Image can't be converted to RGB", e);
-                throw new GalleryException("Image can't be converted to RGB for " + metadata.toString(), e);
-            }
-        }
+        //Create a new image binary that serves as the original source converted to RGB plus image metadata
+        ImageBinary image = new ImageBinary(node, stream, fileName, mimeType);
 
         log.debug("Setting JCR data of primary resource");
-        ResourceHelper.setDefaultResourceProperties(resourceNode, mimeType, binary);
+        ResourceHelper.setDefaultResourceProperties(resourceNode, image.getMimeType(), image, image.getFileName());
 
         //TODO: here for backwards compatibility
-        validateResource(resourceNode, fileName);
+        validateResource(resourceNode, image.getFileName());
 
-        //TODO: do we need the InputStream here?
-        InputStream isTemp = binary.getStream();
+        //TODO: Currently the InputStream is never used in our impls, might revisit this piece of the API
+        InputStream isTemp = image.getStream();
         try {
-            initGalleryNode(node, isTemp, metadata.getMimeType(), fileName);
+            //store the filename in a property
+            initGalleryNode(node, isTemp, image.getMimeType(), image.getFileName());
         } finally {
             IOUtils.closeQuietly(isTemp);
         }
@@ -124,7 +94,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         //create the primary resource node
         log.debug("Creating primary resource {}", resourceNode.getPath());
         Calendar lastModified = resourceNode.getProperty(JcrConstants.JCR_LASTMODIFIED).getDate();
-        initGalleryResource(resourceNode, binary.getStream(), metadata.getMimeType(), fileName, lastModified);
+        initGalleryResource(resourceNode, image.getStream(), image.getMimeType(), image.getFileName(), lastModified);
 
         // create all resource variant nodes
         for (IFieldDescriptor field : type.getFields().values()) {
@@ -133,15 +103,17 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
                 if (!node.hasNode(variantPath)) {
                     log.debug("creating variant resource {}", variantPath);
                     Node variantNode = node.addNode(variantPath, field.getTypeDescriptor().getType());
-                    initGalleryResource(variantNode, binary.getStream(), metadata.getMimeType(), fileName, lastModified);
+                    initGalleryResource(variantNode, image.getStream(), image.getMimeType(), image.getFileName(), lastModified);
                 }
             }
         }
 
-        binary.dispose();
+        image.dispose();
 
-        time = System.currentTimeMillis() - time;
-        log.debug("Processing image '{}' took {} ms.", fileName, time);
+        if (log.isDebugEnabled()) {
+            time = System.currentTimeMillis() - time;
+            log.debug("Processing image '{}' took {} ms.", fileName, time);
+        }
     }
 
     protected Node getPrimaryChild(Node node) throws RepositoryException, GalleryException {

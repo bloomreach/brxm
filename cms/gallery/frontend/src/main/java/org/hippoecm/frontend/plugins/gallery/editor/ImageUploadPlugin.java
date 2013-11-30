@@ -28,6 +28,7 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageBinary;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
@@ -92,25 +93,22 @@ public class ImageUploadPlugin extends RenderPlugin {
         String fileName = upload.getClientFileName();
         String mimeType = upload.getContentType();
 
-        JcrNodeModel nodeModel = (JcrNodeModel) ImageUploadPlugin.this.getDefaultModel();
+        String serviceId = getPluginConfig().getString("gallery.processor.id", "gallery.processor.service");
+        GalleryProcessor processor = getPluginContext().getService(serviceId, GalleryProcessor.class);
+        if (processor == null) {
+            processor = new DefaultGalleryProcessor();
+        }
+
+        JcrNodeModel nodeModel = (JcrNodeModel) getDefaultModel();
         Node node = nodeModel.getNode();
+
         try {
-            GalleryProcessor processor = getPluginContext().getService(getPluginConfig().getString("gallery.processor.id",
-                    "gallery.processor.service"), GalleryProcessor.class);
-            if (processor == null) {
-                processor = new DefaultGalleryProcessor();
-            }
-            processor.initGalleryResource(node, upload.getInputStream(), mimeType, fileName, Calendar.getInstance());
-            processor.validateResource(node, fileName);
-        } catch (RepositoryException ex) {
-            error(ex);
-            log.error(ex.getMessage());
-        } catch (IOException ex) {
-            // FIXME: report back to user
-            log.error(ex.getMessage());
-        } catch (GalleryException ex) {
-            error(ex);
-            log.error(ex.getMessage());
+            ImageBinary image = new ImageBinary(node, upload.getInputStream(), fileName, mimeType);
+            processor.initGalleryResource(node, image.getStream(), image.getMimeType(), image.getFileName(), Calendar.getInstance());
+            processor.validateResource(node, image.getFileName());
+        } catch (IOException | GalleryException | RepositoryException e) {
+            error(e);
+            log.error(e.getMessage());
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,6 @@
 
 package org.hippoecm.frontend.plugins.gallery.imageutil;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-public class ReusableInputStream extends BufferedInputStream {
-
-    private boolean canBeClosed;
-
-    public ReusableInputStream(InputStream in) {
-        super(in);
-        mark(Integer.MAX_VALUE);
-    }
-
-    @Override
-    public void close() throws IOException {
-        if(canBeClosed) {
-            super.close();
-        }
-    }
-
-    public void canBeClosed() {
-        canBeClosed = true;
-    }
+public enum ColorModel {
+    UNKNOWN, RGB, CMYK, YCCK
 }

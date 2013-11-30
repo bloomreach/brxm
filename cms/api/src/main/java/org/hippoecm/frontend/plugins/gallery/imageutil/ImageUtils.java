@@ -20,7 +20,6 @@ import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -327,8 +326,8 @@ public class ImageUtils {
      * @param colorModel the color model of the image
      * @return the RGB version of the supplied image
      */
-    public static InputStream convertToRGB(InputStream is, ImageMetaData.ColorModel colorModel) throws IOException, UnsupportedImageException {
-        if (!colorModel.equals(ImageMetaData.ColorModel.CMYK) && !colorModel.equals(ImageMetaData.ColorModel.YCCK)) {
+    public static InputStream convertToRGB(InputStream is, ColorModel colorModel) throws IOException, UnsupportedImageException {
+        if (colorModel != ColorModel.CMYK && colorModel != ColorModel.YCCK) {
             return is;
         }
 
@@ -406,7 +405,7 @@ public class ImageUtils {
                     null);
 
             ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-            ColorModel cm = new ComponentColorModel(cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+            java.awt.image.ColorModel cm = new ComponentColorModel(cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
             BufferedImage convertedImage = new BufferedImage(cm, (WritableRaster) raster, true, null);
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();

@@ -175,9 +175,6 @@ api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrClusterConfig.java
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrPluginConfig.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/PluginConfigFactory.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaData.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetadataException.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ReusableInputStream.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/UnsupportedImageException.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/DefaultGalleryProcessor.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/model/GalleryException.java svneol=native#text/plain
@@ -1102,9 +1099,7 @@ api/src/main/resources/skin/images/tree-icons.png -text
 api/src/main/resources/skin/screen.css svneol=native#text/css
 api/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
 api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
-api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaDataTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageUtilTest.java -text
-api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ReusableInputStreamTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ScaleImageOperationTest.java -text
 api/src/test/resources/test-1x5000.png -text
 api/src/test/resources/test-380x428.gif -text
