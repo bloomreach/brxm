@@ -36,7 +36,7 @@ import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
@@ -116,7 +116,6 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         //############################################
         final ProjectSettingsBean document = dashboardPluginContext.getConfigService().read(ProjectSetupPlugin.class.getName());
         if (document != null) {
-            final PluginConfigService configService = dashboardPluginContext.getConfigService();
             dashboardPluginContext.setBeansPackageName(document.getSelectedBeansPackage());
             dashboardPluginContext.setComponentsPackageName(document.getSelectedComponentsPackage());
             dashboardPluginContext.setRestPackageName(document.getSelectedRestPackage());

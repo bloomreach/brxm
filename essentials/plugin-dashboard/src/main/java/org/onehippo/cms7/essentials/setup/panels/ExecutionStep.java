@@ -20,12 +20,15 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
@@ -95,6 +98,16 @@ public class ExecutionStep extends EssentialsWizardStep {
         eventBus.post(new DisplayEvent(getString("powerpack.documentation")));
 
         myParent.getFinalStep().displayEvents(target);
+
+        //############################################
+        // WRITE WE ARE DONE
+        //############################################
+        // write into repository:
+        JcrPluginConfigService service = new JcrPluginConfigService(myParent.getDashboardPluginContext());
+        final ProjectSettingsBean document = service.read(ProjectSetupPlugin.class.getName());
+        document.setSetupDone(true);
+        final boolean saved = service.write(document);
+        log.info("Final step saved: [{}]", saved);
 
     }
 

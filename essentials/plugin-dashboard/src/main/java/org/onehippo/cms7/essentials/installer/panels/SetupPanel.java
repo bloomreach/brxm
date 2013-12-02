@@ -15,12 +15,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.config.BaseDocument;
-import org.onehippo.cms7.essentials.dashboard.config.Document;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigProperty;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSettingsBean;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
@@ -31,10 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SetupPanel extends Panel {
 
-    public static final String PROPERTY_NAMESPACE = "project-namespace";
-    public static final String PROPERTY_COMPONENTS_PACKAGE = "components-package";
-    public static final String PROPERTY_REST_PACKAGE = "rest-package";
-    public static final String PROPERTY_BEANS_PACKAGE = "beans-package";
+
     public static final String CONFIG_NAME = "projectSettings";
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SetupPanel.class);

@@ -10,7 +10,7 @@ public interface PluginConfigService {
      *
      * @param document Document instance
      */
-    void write(Document document);
+    boolean write(Document document);
 
     <T extends Document> T read(String pluginClass);
 

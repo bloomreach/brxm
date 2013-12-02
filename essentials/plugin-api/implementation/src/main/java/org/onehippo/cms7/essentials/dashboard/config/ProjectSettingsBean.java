@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.setup;
+package org.onehippo.cms7.essentials.dashboard.config;
 
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.onehippo.cms7.essentials.dashboard.config.BaseDocument;
-import org.onehippo.cms7.essentials.dashboard.config.DocumentType;
 
 /**
  * @version "$Id$"
@@ -27,7 +25,6 @@ import org.onehippo.cms7.essentials.dashboard.config.DocumentType;
 @DocumentType("ProjectSettingsBean")
 @Node(discriminator = false, jcrType = "dashboard:document")
 public class ProjectSettingsBean extends BaseDocument {
-
 
     @Field
     private String projectNamespace;
@@ -37,6 +34,8 @@ public class ProjectSettingsBean extends BaseDocument {
     private String selectedComponentsPackage;
     @Field
     private String selectedRestPackage;
+    @Field
+    private Boolean setupDone;
 
     public ProjectSettingsBean() {
     }
@@ -47,6 +46,19 @@ public class ProjectSettingsBean extends BaseDocument {
 
     public ProjectSettingsBean(final String name, final String path) {
         super(name, path);
+    }
+
+
+    public Boolean getSetupDone() {
+        return setupDone == null ? false : setupDone;
+    }
+
+    public void setSetupDone(final Boolean setupDone) {
+        if (setupDone == null) {
+            this.setupDone = false;
+        } else {
+            this.setupDone = setupDone;
+        }
     }
 
     public String getProjectNamespace() {

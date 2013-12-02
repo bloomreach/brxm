@@ -51,7 +51,7 @@ public class DefaultDocumentManager implements DocumentManager {
     protected void initContentTypes() {
         contentTypeMap.put(getContentType(BaseDocument.class), BaseDocument.class);
         contentTypeMap.put(getContentType(BaseFolder.class), BaseFolder.class);
-
+        contentTypeMap.put(getContentType(ProjectSettingsBean.class), ProjectSettingsBean.class);
     }
 
     protected String getContentType(Class<? extends Document> clazz) {
@@ -144,9 +144,10 @@ public class DefaultDocumentManager implements DocumentManager {
 
     private ObjectContentManager createManager(final Session session) {
         @SuppressWarnings("rawtypes")
-        List<Class> classes = new ArrayList<>();
-        classes.add(BaseDocument.class);
-        classes.add(BaseFolder.class);
+        final List<Class> classes = new ArrayList<>();
+        for (Class<? extends Document> clazz : contentTypeMap.values()) {
+            classes.add(clazz);
+        }
         Mapper mapper = new AnnotationMapperImpl(classes);
         return new ObjectContentManagerImpl(session, mapper);
     }

@@ -2,6 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
+  <entry key="powerpack.none.selected">Power Pack will not be installed at this time</entry>
   <entry key="powerpack.installation.success">Power Pack successfully installed</entry>
   <entry key="powerpack.installation.partial">Not all parts of Power Pack were installed</entry>
   <entry key="powerpack.documentation">

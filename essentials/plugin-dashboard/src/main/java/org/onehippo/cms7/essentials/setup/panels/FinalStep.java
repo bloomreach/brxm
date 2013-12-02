@@ -30,12 +30,14 @@ public class FinalStep extends EssentialsWizardStep {
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(FinalStep.class);
     private final EventsPanel eventsPanel;
+    private final SetupPage parent;
 
-    public FinalStep(final SetupPage components, final String title) {
+    public FinalStep(final SetupPage parent, final String title) {
         super(title);
         eventsPanel = new EventsPanel("events");
         add(eventsPanel);
         setOutputMarkupId(true);
+        this.parent = parent;
     }
 
     @Override

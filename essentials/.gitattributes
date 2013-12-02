@@ -375,7 +375,6 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-conten
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-setup-plugin/pom.xml -text
-dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSettingsBean.java -text
 dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.html -text
 dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/hippo-logo.png -text
@@ -514,6 +513,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseFolder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManager.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigService.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DashboardPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PanelPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/BaseEvent.java -text

@@ -54,19 +54,23 @@ public class JcrPluginConfigService implements PluginConfigService {
     }
 
     @Override
-    public void write(final Document document) {
+    public boolean write(final Document document) {
         log.debug("Writing document: {}", document);
         log.debug("Writing node: {}", context);
+        boolean saved =false;
         try {
             final String configRoot = getFullConfigPath(context.getDescriptor().getPluginClass());
             document.setPath(configRoot);
-            manager.saveDocument(document);
+
+            saved = manager.saveDocument(document);
             session.save();
+            return saved;
         } catch (RepositoryException e) {
             log.error("Error writing configuration", e);
             GlobalUtils.refreshSession(session, false);
         }
 
+        return saved;
     }
 
     @Override
