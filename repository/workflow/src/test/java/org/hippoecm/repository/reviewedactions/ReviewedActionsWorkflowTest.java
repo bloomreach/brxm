@@ -166,7 +166,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
         PublishableDocument document = new PublishableDocument(node);
         assertTrue("Published variant is not available live after publication", document.isAvailable("live"));
-        assertTrue("Published variant is not available in preview after publication", document.isAvailable("preview"));
+        assertFalse("Published variant is available in preview after publication", document.isAvailable("preview"));
     }
 
     @Test
@@ -205,7 +205,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
         PublishableDocument document = new PublishableDocument(node);
         assertTrue("Published variant is not available live after publication", document.isAvailable("live"));
-        assertTrue("Published variant is not available in preview after publication", document.isAvailable("preview"));
+        assertFalse("Published variant is available in preview after publication", document.isAvailable("preview"));
     }
 
     @Test
@@ -347,7 +347,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             assertNotNull(document);
             node = session.getNodeByUUID(document.getIdentity());
             assertNotNull(node);
-            assertEquals("published", node.getProperty("hippostd:state").getString());
+            assertEquals("unpublished", node.getProperty("hippostd:state").getString());
 
             workflow = (FullReviewedActionsWorkflow) getWorkflow(document, "default");
             document = workflow.obtainEditableInstance();
