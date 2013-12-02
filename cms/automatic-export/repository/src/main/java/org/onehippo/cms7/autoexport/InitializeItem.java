@@ -202,8 +202,8 @@ final class InitializeItem {
             if (isDeltaXML) {
                 deltaXML = parseDeltaXML(document);
                 if (deltaXML == null) {
-                    log.info("Content resource " + contentResource + " uses unrecognized delta xml semantics" +
-                    		"; export in this context will be disabled.");
+                    log.info("Content resource " + contentResource + " uses delta xml semantics that are not supported " +
+                            "by automatic export. Changes to this context must be exported manually.");
                     enabled = false;
                 }
             }
