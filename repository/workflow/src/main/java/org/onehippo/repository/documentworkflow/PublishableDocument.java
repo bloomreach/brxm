@@ -64,11 +64,11 @@ public class PublishableDocument extends Document {
         return getDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE);
     }
 
-    public void setOwner(String username) throws RepositoryException {
+    public void setHolder(String username) throws RepositoryException {
         setStringProperty(HippoStdNodeType.HIPPOSTD_HOLDER, username);
     }
 
-    public String getOwner() throws RepositoryException {
+    public String getHolder() throws RepositoryException {
         return getStringProperty(HippoStdNodeType.HIPPOSTD_HOLDER);
     }
 

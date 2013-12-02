@@ -41,6 +41,7 @@ public class DocumentHandle {
     private PublicationRequest request = null;
     private String user;
     private String workflowState;
+    private String ds;
 
     private Node handle;
 
@@ -98,23 +99,52 @@ public class DocumentHandle {
         return Collections.emptyMap();
     }
 
+    /**
+     * Get short notation representing the <strong>S</strong>tates of all existing Variants
+     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published variant exists
+     */
+    public String getS() {
+        if (ds == null) {
+            ds = "";
+            if (getD() != null) {
+                ds += "d";
+            }
+            if (getU() != null) {
+                ds += "u";
+            }
+            if (getP() != null) {
+                ds += "p";
+            }
+        }
+        return ds;
+    }
+
     public String getUser() {
         return user;
     }
 
-    public String getWorkflowState() {
+    /**
+     * @return the <strong>S</strong>tate of the Document variant which is subject of this workflow or null if none
+     */
+    public String getSs() {
         return workflowState;
     }
 
-    public PublicationRequest getRequest() {
+    /**
+     * @return the active <strong>R</strong>equest or null if none
+     */
+    public PublicationRequest getR() {
         return request;
     }
 
-    public PublicationRequest getRejectedRequest() {
+    /**
+     * @return the rejected <strong>R</strong>equest which is subject of this workflow or null if none
+     */
+    public PublicationRequest getRr() {
         return rejectedRequest;
     }
 
-    public void setRequest(final PublicationRequest request) throws RepositoryException {
+    public void setR(final PublicationRequest request) throws RepositoryException {
         if (this.request != null) {
             // TODO: probably an error situation?
         }
@@ -122,6 +152,7 @@ public class DocumentHandle {
     }
 
     public void putDocumentVariant(PublishableDocument variant) throws RepositoryException {
+        ds = null;
         getDocuments(true).put(variant.getState(), variant);
     }
 
@@ -129,15 +160,24 @@ public class DocumentHandle {
         return getDocuments(false).get(state);
     }
 
-    public PublishableDocument getDraft() {
+    /**
+     * @return <strong>D</strong>raft variant if it exists or null otherwise
+     */
+    public PublishableDocument getD() {
         return getDocuments(false).get(PublishableDocument.DRAFT);
     }
 
-    public PublishableDocument getUnpublished() {
+    /**
+     * @return <strong>U</strong>npublished variant if it exists or null otherwise
+     */
+    public PublishableDocument getU() {
         return getDocuments(false).get(PublishableDocument.UNPUBLISHED);
     }
 
-    public PublishableDocument getPublished() {
+    /**
+     * @return <strong>P</strong>ublished variant if it exists or null otherwise
+     */
+    public PublishableDocument getP() {
         return getDocuments(false).get(PublishableDocument.PUBLISHED);
     }
 

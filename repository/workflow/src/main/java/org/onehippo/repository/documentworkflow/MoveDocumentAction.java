@@ -90,23 +90,23 @@ public class MoveDocumentAction extends AbstractDocumentAction {
             throw new ModelException("New document name is blank.");
         }
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
         PublishableDocument document = null;
 
-        if (handle.getUnpublished() != null) {
-            document = handle.getUnpublished();
+        if (dm.getU() != null) {
+            document = dm.getU();
         }
 
         if (document == null) {
-            if (handle.getPublished() != null) {
-                document = handle.getPublished();
+            if (dm.getP() != null) {
+                document = dm.getP();
             }
         }
 
         if (document == null) {
-            if (handle.getDraft() != null) {
-                document = handle.getDraft();
+            if (dm.getD() != null) {
+                document = dm.getD();
             }
         }
 

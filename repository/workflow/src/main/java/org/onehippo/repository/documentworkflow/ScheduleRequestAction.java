@@ -67,7 +67,7 @@ public class ScheduleRequestAction extends AbstractDocumentAction {
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
             RepositoryException {
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
         try {
             if (getType() == null || !("publish".equals(getType()) || "depublish".equals(getType()))) {
@@ -75,7 +75,7 @@ public class ScheduleRequestAction extends AbstractDocumentAction {
             }
             Boolean allowed = null;
             try {
-                allowed = (Boolean)handle.getHints().get(getType());
+                allowed = (Boolean)dm.getHints().get(getType());
             }
             catch (Exception e) {
                 //

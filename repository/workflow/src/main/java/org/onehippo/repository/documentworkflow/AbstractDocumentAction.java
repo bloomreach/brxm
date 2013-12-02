@@ -134,8 +134,8 @@ public abstract class AbstractDocumentAction extends Action {
      * @throws org.apache.commons.scxml2.model.ModelException
      * @throws org.apache.commons.scxml2.SCXMLExpressionException
      */
-    protected DocumentHandle getDocumentHandle(SCInstance scInstance) throws ModelException {
-        return getContextAttribute(scInstance, "handle");
+    protected DocumentHandle getDataModel(SCInstance scInstance) throws ModelException {
+        return getContextAttribute(scInstance, "dm");
     }
 
     protected Node cloneDocumentNode(Node srcNode) throws RepositoryException {

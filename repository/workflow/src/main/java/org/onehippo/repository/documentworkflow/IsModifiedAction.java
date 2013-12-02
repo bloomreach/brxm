@@ -54,11 +54,11 @@ public class IsModifiedAction extends AbstractDocumentAction {
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
             RepositoryException {
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
-        if (handle.getDraft() != null && handle.getUnpublished() != null && PublishableDocument.DRAFT.equals(handle.getWorkflowState())) {
-            // TODO: BasicReviewedActionsWorkflowImpl#hints() method retrieves a 'fresh' draftNode based on the handle.draft.identifier. Why would that be needed?
-            handle.getHints().put("modified", !equals(handle.getDraft().getNode(), handle.getUnpublished().getNode()));
+        if (dm.getD() != null && dm.getU() != null && PublishableDocument.DRAFT.equals(dm.getSs())) {
+            // TODO: BasicReviewedActionsWorkflowImpl#hints() method retrieves a 'fresh' draftNode based on the dm.d.identifier. Why would that be needed?
+            dm.getHints().put("modified", !equals(dm.getD().getNode(), dm.getU().getNode()));
         }
     }
 

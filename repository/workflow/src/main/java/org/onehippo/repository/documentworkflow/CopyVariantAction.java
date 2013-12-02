@@ -104,10 +104,10 @@ public class CopyVariantAction extends AbstractDocumentAction {
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
             RepositoryException {
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
-        PublishableDocument sourceDoc = handle.getDocumentVariantByState(getSourceState());
-        PublishableDocument targetDoc = handle.getDocumentVariantByState(getTargetState());
+        PublishableDocument sourceDoc = dm.getDocumentVariantByState(getSourceState());
+        PublishableDocument targetDoc = dm.getDocumentVariantByState(getTargetState());
 
         if (sourceDoc == null || sourceDoc.getNode() == null) {
             throw new ModelException("Source document variant (node) is not available.");
@@ -158,13 +158,13 @@ public class CopyVariantAction extends AbstractDocumentAction {
 
         targetDoc.setAvailability(getAvailabilities() != null ? StringUtils.split(getAvailabilities(), "\t\r\n, ") : null);
         if (isApplyModified()) {
-            targetDoc.setModified(handle.getUser());
+            targetDoc.setModified(dm.getUser());
         }
 
         if (saveNeeded) {
             targetDoc.getNode().getSession().save();
         }
 
-        handle.putDocumentVariant(targetDoc);
+        dm.putDocumentVariant(targetDoc);
     }
 }

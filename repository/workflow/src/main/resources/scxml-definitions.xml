@@ -38,102 +38,102 @@
 
       <onentry>
         <script>
-          notEditing = !handle.draft or !handle.draft.owner;
+          notEditing = !dm.d or !dm.d.holder;
 
-          editable = notEditing or handle.draft.owner == handle.user;
-          canEdit = !handle.request and editable;
-          canDispose = handle.draft and handle.draft.owner and handle.draft.owner == handle.user;
+          editable = notEditing or dm.d.holder == dm.user;
+          canEdit = !dm.r and editable;
+          canDispose = dm.d and dm.d.holder and dm.d.holder == dm.user;
           // Note: current workflow doesn't check against empty request
-          canCommit = !handle.request and canDispose;
+          canCommit = !dm.r and canDispose;
 
-          // system user is allowed to (de)publish when a handle.request exists because that's how a scheduled request is processed
-          systemUser = handle.user == 'system';
-          canPublish = (systemUser or !handle.request) and notEditing and handle.unpublished and (!handle.published or handle.published.stateSummary =~ ['new','changed']);
-          canDepublish = (systemUser or !handle.request) and notEditing and handle.published and handle.published.stateSummary =~ ['changed','live'];
+          // system user is allowed to (de)publish when a dm.r exists because that's how a scheduled request is processed
+          systemUser = dm.user == 'system';
+          canPublish = (systemUser or !dm.r) and notEditing and dm.u and (!dm.p or dm.p.stateSummary =~ ['new','changed']);
+          canDepublish = (systemUser or !dm.r) and notEditing and dm.p and dm.p.stateSummary =~ ['changed','live'];
 
-          canDelete = !handle.request and notEditing and (!handle.published or handle.published.stateSummary == 'new');
-          canCopy = handle.unpublished or handle.published;
+          canDelete = !dm.r and notEditing and (!dm.p or dm.p.stateSummary == 'new');
+          canCopy = dm.u or dm.p;
 
-          handle.hints["obtainEditableInstance"] = canEdit;
-          handle.hints["disposeEditableInstance"] = canDispose;
-          handle.hints["commitEditableInstance"] = canCommit;
-          handle.hints["publish"] = canPublish;
-          handle.hints["depublish"] = canDepublish;
-          handle.hints["delete"] = canDelete;
-          handle.hints["rename"] = canDelete;
-          handle.hints["move"] = canDelete;
-          handle.hints["copy"] = canCopy;
+          dm.hints["obtainEditableInstance"] = canEdit;
+          dm.hints["disposeEditableInstance"] = canDispose;
+          dm.hints["commitEditableInstance"] = canCommit;
+          dm.hints["publish"] = canPublish;
+          dm.hints["depublish"] = canDepublish;
+          dm.hints["delete"] = canDelete;
+          dm.hints["rename"] = canDelete;
+          dm.hints["move"] = canDelete;
+          dm.hints["copy"] = canCopy;
 
-          handle.hints["status"] = editable;
-          if (handle.workflowState == 'draft' and !editable) {
-          handle.hints["inUseBy"] = handle.owner;
+          dm.hints["status"] = editable;
+          if (dm.ss == 'draft' and !editable) {
+          dm.hints["inUseBy"] = dm.holder;
           }
         </script>
         <hippo:ismodified/>
       </onentry>
 
-      <transition event="workflow.event.document.copy" cond="handle.hints['copy']" target="handle">
+      <transition event="workflow.event.document.copy" cond="dm.hints['copy']" target="handle">
         <hippo:copydocument destinationExpr="_eventdata.destination" newNameExpr="_eventdata.newName" />
       </transition>
 
-      <transition event="workflow.event.document.move" cond="handle.hints['move']" target="handle">
+      <transition event="workflow.event.document.move" cond="dm.hints['move']" target="handle">
         <hippo:movedocument destinationExpr="_eventdata.destination" newNameExpr="_eventdata.newName" />
       </transition>
 
-      <transition event="workflow.event.document.rename" cond="handle.hints['rename']" target="handle">
+      <transition event="workflow.event.document.rename" cond="dm.hints['rename']" target="handle">
         <hippo:renamedocument newNameExpr="_eventdata" />
       </transition>
 
-      <transition event="workflow.event.document.delete" cond="handle.hints['delete']" target="deleted">
+      <transition event="workflow.event.document.delete" cond="dm.hints['delete']" target="deleted">
         <hippo:archive />
       </transition>
 
       <state id="draft" initial="draft-init">
 
-        <transition event="workflow.event.document.edit.obtain" cond="handle.hints['obtainEditableInstance']" target="handle">
-          <if cond="!handle.draft or !handle.draft.owner">
-            <if cond="not empty(handle.unpublished)">
+        <transition event="workflow.event.document.edit.obtain" cond="dm.hints['obtainEditableInstance']" target="handle">
+          <if cond="!dm.d or !dm.d.holder">
+            <if cond="not empty(dm.u)">
               <hippo:copyvariant sourceState="unpublished" targetState="draft" skipIndex="true" applyModified="true"/>
               <else/>
               <hippo:copyvariant sourceState="published" targetState="draft" skipIndex="true" applyModified="true"/>
             </if>
             <script>
-              handle.draft.owner = handle.user;
+              dm.d.holder = dm.user;
             </script>
           </if>
           <script>
-            eventResult = handle.draft;
+            eventResult = dm.d;
           </script>
         </transition>
 
-        <transition event="workflow.event.document.edit.commit" cond="handle.hints['commitEditableInstance']" target="handle">
+        <transition event="workflow.event.document.edit.commit" cond="dm.hints['commitEditableInstance']" target="handle">
           <script>
-            handle.draft.owner = null;
+            dm.d.holder = null;
           </script>
           <hippo:copyvariant sourceState="draft" targetState="unpublished" versionable="true" applyModified="true"/>
           <script>
-            handle.unpublished.availability = ["preview"];
-            if (handle.published and handle.published.stateSummary =~ "live") {
-            handle.published.availability = ["live"];
+            dm.u.availability = ["preview"];
+            if (dm.p and dm.p.stateSummary =~ "live") {
+            dm.p.availability = ["live"];
             }
-            eventResult = handle.unpublished;
+            eventResult = dm.u;
           </script>
         </transition>
 
-        <transition event="workflow.event.document.edit.dispose" cond="handle.hints['disposeEditableInstance']" target="handle">
+        <transition event="workflow.event.document.edit.dispose" cond="dm.hints['disposeEditableInstance']" target="handle">
           <script>
-            handle.draft.owner = null;
-            eventResult = handle.unpublished and handle.unpublished.availability =~ "preview" ? handle.unpublished : handle.published ?: null;
+            dm.d.holder = null;
+            eventResult = dm.u and dm.u.availability =~ "preview" ? dm.u : dm.p ?: null;
           </script>
         </transition>
 
         <state id="draft-init">
-          <transition cond="handle.draft and !handle.draft.owner and handle.draft.stateSummary == 'new'" target="draft-nonediting-new" />
-          <transition cond="handle.draft and !handle.draft.owner and handle.draft.stateSummary == 'live'" target="draft-nonediting-live" />
-          <transition cond="handle.draft and !handle.draft.owner and handle.draft.stateSummary == 'changed'" target="draft-nonediting-changed" />
-          <transition cond="handle.draft and handle.draft.stateSummary == 'new'" target="draft-editing-new" />
-          <transition cond="handle.draft and handle.draft.stateSummary == 'live'" target="draft-editing-live" />
-          <transition cond="handle.draft and handle.draft.stateSummary == 'changed'" target="draft-editing-changed" />
+          <transition cond="dm.d and !dm.d.holder and dm.d.stateSummary == 'new'" target="draft-nonediting-new" />
+          <transition cond="dm.d and !dm.d.holder and dm.d.stateSummary == 'live'" target="draft-nonediting-live" />
+          <transition cond="dm.d and !dm.d.holder and dm.d.stateSummary == 'changed'" target="draft-nonediting-changed" />
+          <transition cond="dm.d and dm.d.stateSummary == 'new'" target="draft-editing-new" />
+          <transition cond="dm.d and dm.d.stateSummary == 'live'" target="draft-editing-live" />
+          <transition cond="dm.d and dm.d.stateSummary == 'changed'" target="draft-editing-changed" />
           <transition target="draft-unavailable" />
         </state>
 
@@ -149,27 +149,27 @@
 
       <state id="unpublished" initial="unpublished-init">
 
-        <transition event="workflow.event.document.publish" cond="handle.hints['publish']" target="handle">
+        <transition event="workflow.event.document.publish" cond="dm.hints['publish']" target="handle">
           <hippo:copyvariant sourceState="unpublished" targetState="published" applyModified="true"/>
           <script>
-            handle.published.availability = ["preview", "live"];
-            handle.published.publicationDate = new("java.util.Date");
-            handle.unpublished.availability = null;
+            dm.p.availability = ["preview", "live"];
+            dm.p.publicationDate = new("java.util.Date");
+            dm.u.availability = null;
             // must save JCR session first before checkin
-            handle.unpublished.node.session.save();
+            dm.u.node.session.save();
             // now make version
-            handle.unpublished.node.checkin();
+            dm.u.node.checkin();
           </script>
         </transition>
 
-        <transition event="workflow.event.document.schedule.publish" cond="handle.hints['publish']" target="handle">
+        <transition event="workflow.event.document.schedule.publish" cond="dm.hints['publish']" target="handle">
           <hippo:schedulerequest type="publish" targetDateExpr="_eventdata"/>
         </transition>
 
         <state id="unpublished-init">
-          <transition cond="handle.unpublished and handle.unpublished.stateSummary == 'new'" target="unpublished-new" />
-          <transition cond="handle.unpublished and handle.unpublished.stateSummary == 'live'" target="unpublished-live" />
-          <transition cond="handle.unpublished and handle.unpublished.stateSummary == 'changed'" target="unpublished-changed" />
+          <transition cond="dm.u and dm.u.stateSummary == 'new'" target="unpublished-new" />
+          <transition cond="dm.u and dm.u.stateSummary == 'live'" target="unpublished-live" />
+          <transition cond="dm.u and dm.u.stateSummary == 'changed'" target="unpublished-changed" />
           <transition target="unpublished-unavailable" />
         </state>
 
@@ -182,29 +182,29 @@
 
       <state id="published" initial="published-init">
 
-        <transition event="workflow.event.document.depublish" cond="handle.hints['depublish']" target="handle">
-          <if cond="!handle.unpublished">
+        <transition event="workflow.event.document.depublish" cond="dm.hints['depublish']" target="handle">
+          <if cond="!dm.u">
             <hippo:copyvariant sourceState="published" targetState="unpublished" versionable="true"/>
           </if>
           <script>
-            handle.published.availability = null;
-            handle.unpublished.availability = ["preview"];
-            handle.unpublished.modified = handle.user;
+            dm.p.availability = null;
+            dm.u.availability = ["preview"];
+            dm.u.modified = dm.user;
             // must save JCR session first before checkin
-            handle.unpublished.node.session.save();
+            dm.u.node.session.save();
             // now make version
-            handle.unpublished.node.checkin();
+            dm.u.node.checkin();
           </script>
         </transition>
 
-        <transition event="workflow.event.document.schedule.depublish" cond="handle.hints['depublish']" target="handle">
+        <transition event="workflow.event.document.schedule.depublish" cond="dm.hints['depublish']" target="handle">
           <hippo:schedulerequest type="depublish" targetDateExpr="_eventdata"/>
         </transition>
 
         <state id="published-init">
-          <transition cond="handle.published and handle.published.stateSummary == 'live'" target="published-live" />
-          <transition cond="handle.published and handle.published.stateSummary == 'new'" target="published-new" />
-          <transition cond="handle.published and handle.published.stateSummary == 'changed'" target="published-changed" />
+          <transition cond="dm.p and dm.p.stateSummary == 'live'" target="published-live" />
+          <transition cond="dm.p and dm.p.stateSummary == 'new'" target="published-new" />
+          <transition cond="dm.p and dm.p.stateSummary == 'changed'" target="published-changed" />
           <transition target="published-unavailable" />
         </state>
 
@@ -218,10 +218,10 @@
       <state id="request" initial="request-init">
 
         <state id="request-init">
-          <transition cond="handle.request and handle.request.type == 'publish'" target="request-publication" />
-          <transition cond="handle.request and handle.request.type == 'depublish'" target="request-depublication" />
-          <transition cond="handle.request and handle.request.type == 'scheduledpublish'" target="request-schedule-publication" />
-          <transition cond="handle.request and handle.request.type == 'scheduleddepublish'" target="request-schedule-depublication" />
+          <transition cond="dm.r and dm.r.type == 'publish'" target="request-publication" />
+          <transition cond="dm.r and dm.r.type == 'depublish'" target="request-depublication" />
+          <transition cond="dm.r and dm.r.type == 'scheduledpublish'" target="request-schedule-publication" />
+          <transition cond="dm.r and dm.r.type == 'scheduleddepublish'" target="request-schedule-depublication" />
           <transition target="request-unavailable" />
         </state>
 

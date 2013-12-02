@@ -71,9 +71,9 @@ public class RequestAction extends AbstractDocumentAction {
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException, RepositoryException {
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
-        if (handle.getRequest() == null) {
+        if (dm.getR() == null) {
             try {
                 PublishableDocument contextVariant = eval(scInstance, getContextVariantExpr());
                 Date targetDate = null;
@@ -85,13 +85,13 @@ public class RequestAction extends AbstractDocumentAction {
                 PublicationRequest req = null;
 
                 if (targetDate == null) {
-                    req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, handle.getUser());
+                    req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser());
                 } else {
-                    req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, handle.getUser(), targetDate);
+                    req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser(), targetDate);
                 }
 
                 req.getNode().getSession().save();
-                handle.setRequest(req);
+                dm.setR(req);
             } catch (RepositoryException e) {
                 throw new ModelException("request publication failure", e);
             }

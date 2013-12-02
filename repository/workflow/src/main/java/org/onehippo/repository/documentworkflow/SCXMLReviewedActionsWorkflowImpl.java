@@ -48,7 +48,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     private static final String SCXML_DEFINITION_ID = "reviewed-actions-workflow";
 
     private SCXMLExecutor scxmlExecutor;
-    private DocumentHandle handle;
+    private DocumentHandle dm;
 
     public SCXMLReviewedActionsWorkflowImpl() throws RemoteException {
         super();
@@ -70,7 +70,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     protected void checkAllowedOperation(String hint, String error) throws WorkflowException {
         Boolean allowed = null;
         try {
-            allowed = (Boolean)handle.getHints().get(hint);
+            allowed = (Boolean) dm.getHints().get(hint);
         }
         catch (Exception e) {
             // ignore
@@ -88,7 +88,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     public void setNode(Node node) throws RepositoryException {
         super.setNode(node);
 
-        handle = new DocumentHandle(getWorkflowContext(), node);
+        dm = new DocumentHandle(getWorkflowContext(), node);
 
         try {
             SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
@@ -102,13 +102,13 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxml);
 
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
-            scxmlExecutor.getRootContext().set("handle", handle);
+            scxmlExecutor.getRootContext().set("dm", dm);
             scxmlExecutor.getRootContext().set("eventResult", null);
 
             try {
                 scxmlExecutor.go();
                 log.info("scmxl.current.targets: {}", SCXMLUtils.getCurrentTransitionTargetIdList(scxmlExecutor));
-                log.info("scmxl.handle.hints: {}", handle.getHints());
+                log.info("scmxl.dm.hints: {}", dm.getHints());
             } catch (ModelException e) {
                 log.error("Failed to execute scxml", e);
             }
@@ -124,7 +124,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
-        info.putAll(handle.getHints());
+        info.putAll(dm.getHints());
         return info;
     }
 

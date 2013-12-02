@@ -90,7 +90,7 @@ public class CopyDocumentAction extends AbstractDocumentAction {
             throw new ModelException("New document name is blank.");
         }
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
         String folderWorkflowCategory = "embedded";
         RepositoryMap config = getWorkflowContext(scInstance).getWorkflowConfiguration();
@@ -100,23 +100,23 @@ public class CopyDocumentAction extends AbstractDocumentAction {
         }
 
         try {
-            if (handle.getUnpublished() == null) {
-                Document folder = WorkflowUtils.getContainingFolder(handle.getPublished());
+            if (dm.getU() == null) {
+                Document folder = WorkflowUtils.getContainingFolder(dm.getP());
                 Workflow workflow = getWorkflowContext(null).getWorkflow(folderWorkflowCategory, destination);
     
                 if (workflow instanceof EmbedWorkflow) {
-                    Document copy = ((EmbedWorkflow) workflow).copyTo(folder, handle.getPublished(), newName, null);
+                    Document copy = ((EmbedWorkflow) workflow).copyTo(folder, dm.getP(), newName, null);
                     FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext(null).getWorkflow("default", copy);
                     copiedDocumentWorkflow.depublish();
                 } else {
                     throw new ModelException("cannot copy document which is not contained in a folder");
                 }
             } else {
-                Document folder = WorkflowUtils.getContainingFolder(handle.getUnpublished());
+                Document folder = WorkflowUtils.getContainingFolder(dm.getU());
                 Workflow workflow = getWorkflowContext(scInstance).getWorkflow(folderWorkflowCategory, destination);
     
                 if (workflow instanceof EmbedWorkflow) {
-                    ((EmbedWorkflow) workflow).copyTo(folder, handle.getUnpublished(), newName, null);
+                    ((EmbedWorkflow) workflow).copyTo(folder, dm.getU(), newName, null);
                 } else {
                     throw new ModelException("cannot copy document which is not contained in a folder");
                 }

@@ -27,16 +27,17 @@
     <state id="handle" initial="handle-initial">
 
       <state id="handle-initial">
-        <transition cond="handle.draft and !handle.unpublished and !handle.published" target="new"/>
+        <transition cond="dm.s == 'd'" target="new"/>
         <transition target="not-new"/>
       </state>
 
       <state id="new" initial="new-initial">
 
         <state id="new-initial">
-          <transition cond="!empty(handle.draft.owner)" target="new.edit"/>
+          <transition cond="!empty(dm.d.holder)" target="new.edit"/>
           <transition target="new.not-edit"/>
         </state>
+
         <state id="new.edit">
         </state>
         <state id="new.not-edit">
@@ -47,17 +48,18 @@
 
         <state id="editable" initial="editable-initial">
           <state id="editable-initial">
-            <transition cond="handle.draft and handle.draft.owner == handle.user" target="not-new.edit"/>
+            <transition cond="!empty(dm.d.holder)" target="not-new.edit"/>
             <transition target="not-new.not-edit"/>
           </state>
 
           <state id="not-new.edit">
           </state>
+
           <state id ="not-new.not-edit">
             <onentry>
-              <if cond="!handle.request and (handle.workflowState=='unpublished' or (!handle.unpublished and handle.workflowState=='draft') or (!handle.draft and !handle.unpublished))">
+              <if cond="!dm.r and dm.ss and (dm.ss=='unpublished' or (dm.ss=='draft' and !dm.u) or (dm.s=='p'))">
                 <script>
-                  handle.hints["obtainEditableInstance"] = true;
+                  dm.hints["obtainEditableInstance"] = true;
                 </script>
               </if>
             </onentry>

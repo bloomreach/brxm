@@ -49,18 +49,18 @@ public class ArchiveAction extends AbstractDocumentAction {
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
             RepositoryException {
 
-        DocumentHandle handle = getDocumentHandle(scInstance);
+        DocumentHandle dm = getDataModel(scInstance);
 
-        if (handle.getDraft() != null) {
-            deleteDocument(handle.getDraft());
+        if (dm.getD() != null) {
+            deleteDocument(dm.getD());
         }
 
-        if (handle.getPublished() != null) {
-            deleteDocument(handle.getPublished());
+        if (dm.getP() != null) {
+            deleteDocument(dm.getP());
         }
 
         try {
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext(scInstance).getWorkflow("core", handle.getUnpublished());
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext(scInstance).getWorkflow("core", dm.getU());
             defaultWorkflow.archive();
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);

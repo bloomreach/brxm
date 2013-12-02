@@ -50,7 +50,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     private static final String SCXML_DEFINITION_ID = "document-workflow";
 
     private SCXMLExecutor scxmlExecutor;
-    private DocumentHandle handle;
+    private DocumentHandle dm;
 
     public DocumentWorkflowImpl() throws RemoteException {
     }
@@ -61,7 +61,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
 
-        handle = new DocumentHandle(getWorkflowContext(), node);
+        dm = new DocumentHandle(getWorkflowContext(), node);
 
         try {
             SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
@@ -75,13 +75,13 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxml);
 
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
-            scxmlExecutor.getRootContext().set("handle", handle);
+            scxmlExecutor.getRootContext().set("dm", dm);
             scxmlExecutor.getRootContext().set("eventResult", null);
 
             try {
                 scxmlExecutor.go();
                 log.info("scmxl.current.targets: {}", SCXMLUtils.getCurrentTransitionTargetIdList(scxmlExecutor));
-                log.info("scmxl.handle.hints: {}", handle.getHints());
+                log.info("scmxl.dm.hints: {}", dm.getHints());
             } catch (ModelException e) {
                 log.error("Failed to execute scxml", e);
             }
@@ -94,8 +94,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         }
     }
 
-    DocumentHandle getHandle() {
-        return handle;
+    DocumentHandle getDocumentModel() {
+        return dm;
     }
 
     SCXMLExecutor getScxmlExecutor() {
@@ -105,7 +105,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
-        info.putAll(handle.getHints());
+        info.putAll(dm.getHints());
         return info;
     }
 
