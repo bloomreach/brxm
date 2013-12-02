@@ -41,6 +41,8 @@ import org.apache.wicket.markup.Markup;
 import org.apache.wicket.markup.MarkupException;
 import org.apache.wicket.markup.MarkupFactory;
 import org.apache.wicket.markup.MarkupNotFoundException;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -74,7 +76,6 @@ import wicket.contrib.input.events.key.KeyType;
  */
 public abstract class AbstractDialog<T> extends Form<T> implements IDialogService.Dialog, IAjaxIndicatorAware {
     private static final long serialVersionUID = 1L;
-
 
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
@@ -344,6 +345,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         });
 
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(OnDomReadyHeaderItem.forScript("if (Wicket != null && Wicket.Window != null) { Wicket.Window.unloadConfirmation = false; };"));
     }
 
     /**
