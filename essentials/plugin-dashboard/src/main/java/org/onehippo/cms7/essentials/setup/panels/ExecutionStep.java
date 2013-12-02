@@ -83,16 +83,16 @@ public class ExecutionStep extends EssentialsWizardStep {
         final InstructionStatus status = powerpackPackage.execute(myParent.getDashboardPluginContext());
         switch (status) {
             case SUCCESS:
-                eventBus.post(new DisplayEvent("Installation finished successfully (" + status + ')'));
+                eventBus.post(new DisplayEvent(getString("powerpack.installation.success")));
                 break;
             case FAILED:
-                eventBus.post(new DisplayEvent("Installation (" + status + ')'));
+                eventBus.post(getString("powerpack.installation.partial"));
 
         }
 
         // add documentation messages:
-        eventBus.post(new DisplayEvent(getString("powerpack.restart.rebuild"), true));
-        eventBus.post(new DisplayEvent(getString("powerpack.documentation"), true));
+        eventBus.post(new DisplayEvent(getString("powerpack.restart.rebuild")));
+        eventBus.post(new DisplayEvent(getString("powerpack.documentation")));
 
         myParent.getFinalStep().displayEvents(target);
 

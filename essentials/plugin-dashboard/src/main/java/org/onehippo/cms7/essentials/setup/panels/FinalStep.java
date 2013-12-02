@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.setup.panels;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.wizard.EssentialsWizardStep;
 import org.onehippo.cms7.essentials.setup.SetupPage;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ public class FinalStep extends EssentialsWizardStep {
 
     @Override
     public void applyState() {
+        // write into repository:
+
+
     }
 
     public EventsPanel getEventsPanel() {
