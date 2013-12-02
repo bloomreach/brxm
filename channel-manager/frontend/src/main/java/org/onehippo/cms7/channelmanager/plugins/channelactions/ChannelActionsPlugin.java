@@ -198,9 +198,6 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
                         return true;
                     }
                 }
-            } else {
-                log.warn("Document '{}' does not contain the property '{}'. No 'View' menu items will be shown.",
-                        documentNode.getPath(), HippoNodeType.HIPPO_AVAILABILITY);
             }
         } catch (RepositoryException e) {
             log.error("Error getting " + HippoNodeType.HIPPO_AVAILABILITY + " property from document", e);
