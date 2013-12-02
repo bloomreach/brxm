@@ -36,7 +36,6 @@ import org.hippoecm.repository.reviewedactions.PublishableDocument;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.EmbedWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.hippoecm.repository.standardworkflow.FolderWorkflowImpl;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -110,8 +109,7 @@ public class DeprecatedFullReviewedActionsWorkflowImpl extends DeprecatedBasicRe
         Node handle = unpublishedDocument.getNode().getParent();
         final String source = handle.getPath();
         final String destination = "/content/attic/" + atticName("/content/attic", handle.getName(), true, session);
-        session.move(source, destination);
-        session.save();
+        session.getWorkspace().move(source, destination);
         handle = session.getNode(destination);
         JcrUtils.ensureIsCheckedOut(handle);
         for (Node node : new NodeIterable(handle.getNodes())) {
