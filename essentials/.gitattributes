@@ -757,6 +757,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginDeta
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginHelper.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/BodyPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/BodyPanel.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/ButtonsFragment.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/DashboardPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/DashboardPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/GlobalToolbarPanel.html -text
@@ -765,8 +766,10 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/Ins
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/InstalledPluginsPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/MarketplacePanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/MarketplacePanel.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/MenuFragment.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/MenuPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/MenuPanel.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/MenuPanel.properties.xml -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/SetupPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/SetupPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/carousel.js -text
