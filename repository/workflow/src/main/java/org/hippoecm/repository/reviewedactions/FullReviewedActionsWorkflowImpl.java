@@ -243,9 +243,8 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             } else {
                 createPublished();
             }
-            publishedDocument.setAvailability(new String[]{"live", "preview"});
+            publishedDocument.setAvailability(new String[]{"live"});
             publishedDocument.setPublicationDate(new Date());
-            unpublishedDocument.setAvailability(new String[0]);
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);
             versionWorkflow.version();
         } catch (MappingException ex) {
@@ -276,7 +275,6 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             if (unpublishedDocument == null) {
                 createUnpublished(publishedDocument);
             }
-            unpublishedDocument.setAvailability(new String[]{"preview"});
             publishedDocument.setAvailability(new String[]{});
 
             VersionWorkflow versionWorkflow = (VersionWorkflow) getWorkflowContext().getWorkflow("versioning", unpublishedDocument);

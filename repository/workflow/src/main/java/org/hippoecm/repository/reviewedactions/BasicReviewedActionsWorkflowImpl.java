@@ -414,10 +414,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 copyDocumentTo(draftDocument, unpublishedDocument);
                 unpublishedDocument.setModified(getWorkflowContext().getUserIdentity());
             }
-            unpublishedDocument.setAvailability(new String[]{"preview"});
-            if (publishedDocument != null && publishedDocument.isAvailable("live")) {
-                publishedDocument.setAvailability(new String[]{"live"});
-            }
 
             return toUserDocument(unpublishedDocument);
         } catch (RepositoryException ex) {
@@ -459,6 +455,14 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         final Node node = cloneDocumentNode(from);
         unpublishedDocument = new PublishableDocument(node);
         unpublishedDocument.setState(PublishableDocument.UNPUBLISHED);
+        unpublishedDocument.setAvailability(new String[]{"preview"});
+        if (publishedDocument != null) {
+            if (publishedDocument.isAvailable("live")) {
+                publishedDocument.setAvailability(new String[]{"live"});
+            } else {
+                publishedDocument.setAvailability(new String[]{});
+            }
+        }
         node.addMixin(JcrConstants.MIX_VERSIONABLE);
         node.getSession().save();
     }

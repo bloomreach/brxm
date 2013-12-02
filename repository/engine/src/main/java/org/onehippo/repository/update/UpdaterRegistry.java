@@ -84,7 +84,7 @@ public class UpdaterRegistry implements EventListener {
                             }
                             list.add(updaterInfo);
                         }
-                    } catch (IllegalArgumentException | IllegalAccessException | InstantiationException | ClassNotFoundException | RepositoryException e) {
+                    } catch (Exception e) {
                         log.error("Failed to register updater '{}': {}", updaterName, e.toString());
                     }
                 }
