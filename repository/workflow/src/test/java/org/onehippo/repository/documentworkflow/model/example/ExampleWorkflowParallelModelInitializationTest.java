@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.model.TransitionTarget;
@@ -44,7 +45,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-new"));
         assertTrue(targetIds.contains("unpublished-variant-unavailable"));
@@ -62,7 +63,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-editing-new"));
         assertTrue(targetIds.contains("unpublished-variant-unavailable"));
@@ -80,7 +81,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-new"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -98,7 +99,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-editing-new"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -116,7 +117,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-live"));
         assertTrue(targetIds.contains("unpublished-variant-live"));
@@ -134,7 +135,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-editing-live"));
         assertTrue(targetIds.contains("unpublished-variant-live"));
@@ -152,7 +153,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-changed"));
         assertTrue(targetIds.contains("unpublished-variant-changed"));
@@ -170,7 +171,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-editing-changed"));
         assertTrue(targetIds.contains("unpublished-variant-changed"));
@@ -188,7 +189,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-new"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -206,7 +207,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-editing-new"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -224,7 +225,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -242,7 +243,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-live"));
@@ -260,7 +261,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-changed"));
@@ -278,7 +279,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -296,7 +297,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -314,7 +315,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-new"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -332,7 +333,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-changed"));
@@ -350,7 +351,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-changed"));
         assertTrue(targetIds.contains("unpublished-variant-changed"));
@@ -368,7 +369,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-live"));
@@ -386,7 +387,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-live"));
         assertTrue(targetIds.contains("unpublished-variant-live"));
@@ -404,7 +405,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-changed"));
         assertTrue(targetIds.contains("unpublished-variant-changed"));
@@ -422,7 +423,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -440,7 +441,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-nonediting-new"));
         assertTrue(targetIds.contains("unpublished-variant-new"));
@@ -458,7 +459,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-unavailable"));
@@ -476,7 +477,7 @@ public class ExampleWorkflowParallelModelInitializationTest extends AbstractExam
         List<TransitionTarget> targets = SCXMLUtils.getCurrentTransitionTargetList(executor);
         assertEquals(4, targets.size());
 
-        List<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        Set<String> targetIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
         log.debug("current target ids: {}", targetIds);
         assertTrue(targetIds.contains("draft-variant-unavailable"));
         assertTrue(targetIds.contains("unpublished-variant-unavailable"));

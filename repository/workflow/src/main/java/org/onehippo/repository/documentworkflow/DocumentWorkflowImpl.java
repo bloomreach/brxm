@@ -98,6 +98,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         return handle;
     }
 
+    SCXMLExecutor getScxmlExecutor() {
+        return scxmlExecutor;
+    }
+
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
@@ -110,14 +111,14 @@ public class SCXMLUtils {
         return new LinkedList<TransitionTarget>(targets);
     }
 
-    public static List<String> getCurrentTransitionTargetIdList(SCXMLExecutor executor) {
+    public static Set<String> getCurrentTransitionTargetIdList(SCXMLExecutor executor) {
         Set<TransitionTarget> targets = executor.getCurrentStatus().getStates();
 
         if (CollectionUtils.isEmpty(targets)) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
-        List<String> list = new LinkedList<String>();
+        Set<String> list = new TreeSet<String>();
 
         for (TransitionTarget target : targets) {
             list.add(target.getId());
