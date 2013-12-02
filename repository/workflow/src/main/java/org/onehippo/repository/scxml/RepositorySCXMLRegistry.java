@@ -26,8 +26,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.stream.Location;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLReporter;
+import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.util.XMLEventAllocator;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.StringUtils;
@@ -158,7 +161,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private SCXML readSCXML(final Node scxmlDefNode) throws SCXMLException {
         String scxmlDefPath = null;
         String scxmlSource = null;
-        final List<CustomAction> actions = new ArrayList<CustomAction>();
+        final List<CustomAction> customActions = new ArrayList<CustomAction>();
         String className = null;
 
         try {
@@ -178,28 +181,52 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                 className = actionNode.getProperty(SCXML_ACTION_CLASSNAME).getString();
                 @SuppressWarnings("unchecked")
                 Class<? extends Action> actionClass = (Class<Action>) Thread.currentThread().getContextClassLoader().loadClass(className);
-                actions.add(new CustomAction(namespace, actionNode.getName(), actionClass));
+                customActions.add(new CustomAction(namespace, actionNode.getName(), actionClass));
             }
         } catch (ClassNotFoundException e) {
             throw new SCXMLException("Failed to find the custom action class: " + className, e);
         } catch (RepositoryException e) {
-            throw new SCXMLException("Failed to read custom actions from repository.", e);
+            throw new SCXMLException("Failed to read custom actions from repository. " + e.getLocalizedMessage(), e);
         } catch (Exception e) {
-            throw new SCXMLException("Failed to load custom actions.", e);
+            throw new SCXMLException("Failed to load custom actions. " + e.getLocalizedMessage(), e);
         }
 
         try {
-            XMLReporter xmlReporter = new XMLReporterImpl(scxmlDefPath);
-            PathResolver pathResolver = new RepositoryPathResolver(scxmlDefinitionsNodePath, null);
-            Configuration configuration = new Configuration(xmlReporter, pathResolver, actions);
+            Configuration configuration = createSCXMLReaderConfiguration(scxmlDefPath, customActions);
             return SCXMLReader.read(new StreamSource(new StringReader(scxmlSource)), configuration);
         } catch (IOException e) {
-            throw new SCXMLException("IO error while reading SCXML definition at '" + scxmlDefPath + "'.", e);
+            throw new SCXMLException("IO error while reading SCXML definition at '" + scxmlDefPath + "'. " + e.getLocalizedMessage(), e);
         } catch (ModelException e) {
-            throw new SCXMLException("Invalid SCXML model definition at '" + scxmlDefPath + "'.", e);
+            throw new SCXMLException("Invalid SCXML model definition at '" + scxmlDefPath + "'. " + e.getLocalizedMessage(), e);
         } catch (XMLStreamException e) {
-            throw new SCXMLException("Failed to read SCXML XML stream at '" + scxmlDefPath + "'.", e);
+            throw new SCXMLException("Failed to read SCXML XML stream at '" + scxmlDefPath + "'. " + e.getLocalizedMessage(), e);
         }
+    }
+
+    private Configuration createSCXMLReaderConfiguration(final String scxmlDefPath, final List<CustomAction> customActions) {
+        final String factoryId = null;
+        final ClassLoader classLoader = null;
+        final XMLEventAllocator allocator = null;
+        final Map<String, Object> properties = new HashMap<String, Object>();
+        //properties.put(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
+        final XMLResolver resolver = null;
+        final XMLReporter xmlReporter = new XMLReporterImpl(scxmlDefPath);
+        final String encoding = null;
+        final String systemId = null;
+        final boolean validate = false;
+        final PathResolver pathResolver = new RepositoryPathResolver(scxmlDefinitionsNodePath, null);
+        final ClassLoader customActionClassLoader = null;
+        final boolean useContextClassLoaderForCustomActions = true;
+
+        Configuration configuration = 
+                new Configuration(
+                        factoryId, classLoader, allocator, 
+                        properties, resolver, xmlReporter, 
+                        encoding, systemId, validate, 
+                        pathResolver, customActions, 
+                        customActionClassLoader, useContextClassLoaderForCustomActions);
+
+        return configuration;
     }
 
     private boolean validateSemantics(final SCXML scxml) {

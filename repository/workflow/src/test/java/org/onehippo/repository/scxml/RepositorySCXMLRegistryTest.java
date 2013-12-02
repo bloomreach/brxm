@@ -20,8 +20,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.scxml2.ErrorReporter;
+import org.apache.commons.scxml2.EventDispatcher;
+import org.apache.commons.scxml2.SCInstance;
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.TriggerEvent;
+import org.apache.commons.scxml2.model.Action;
+import org.apache.commons.scxml2.model.ModelException;
 import org.apache.commons.scxml2.model.SCXML;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -78,6 +87,24 @@ public class RepositorySCXMLRegistryTest {
             "  </state>\n" +
             "</scxml>";
 
+    private static final String SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS =
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "  <state id=\"hello\">\n" +
+            "    <onentry>\n" +
+            "      <hippo:unknown-custom-action/>\n" +
+            "    </onentry>\n" +
+            "  </state>\n" +
+            "</scxml>";
+
+    private static final String SCXML_HELLO_WITH_UNKNOWN_NS_CUSTOM_ACTIONS =
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "  <state id=\"hello\">\n" +
+            "    <onentry>\n" +
+            "      <hippo2:unknown-custom-action/>\n" +
+            "    </onentry>\n" +
+            "  </state>\n" +
+            "</scxml>";
+
     private static LoggerRecordingWrapper recordingLogger;
 
     private MockRepositorySCXMLRegistry registry;
@@ -99,7 +126,7 @@ public class RepositorySCXMLRegistryTest {
         MockNode scxmlConfigNode = registry.createConfigNode();
         registry.addScxmlNode(scxmlConfigNode, "hello", SCXML_HELLO);
         registry.addScxmlNode(scxmlConfigNode, "hello2", SCXML_HELLO2);
-        registry.setup(scxmlConfigNode);
+        registry.setUp(scxmlConfigNode);
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);
@@ -113,18 +140,13 @@ public class RepositorySCXMLRegistryTest {
     }
 
     @Test
-    public void testLoadCustomActions() throws Exception {
-        // TODO
-    }
-
-    @Test
     public void testInitializeWithInvalidSCXML() throws Exception {
         MockNode scxmlConfigNode = registry.createConfigNode();
         registry.addScxmlNode(scxmlConfigNode, "hello", SCXML_HELLO);
         registry.addScxmlNode(scxmlConfigNode, "hello-no-initial", SCXML_HELLO_NO_INITIAL);
         registry.addScxmlNode(scxmlConfigNode, "hello-nonexisting-initial", SCXML_HELLO_NONEXISTING_INITIAL);
         registry.addScxmlNode(scxmlConfigNode, "hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
-        registry.setup(scxmlConfigNode);
+        registry.setUp(scxmlConfigNode);
 
         SCXML helloScxml = registry.getSCXML("hello");
         assertNotNull(helloScxml);
@@ -136,7 +158,58 @@ public class RepositorySCXMLRegistryTest {
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
         assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-nonexisting-initial'."));
         assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"nonexisting\" found; illegal initial state for SCXML document"));
-        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state (L3:C41): [COMMONS_SCXML] Ignoring element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state>"));
+        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state (L3:C41): [COMMONS_SCXML] Ignoring unknown or invalid element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state>"));
+    }
+
+    /*
+     * When local name of custom action is not found from the all the registered custom actions, it should still work with a proper warning.
+     */
+    @Test
+    public void testLoadUnknownLocalCustomAction() throws Exception {
+        MockNode scxmlConfigNode = registry.createConfigNode();
+        MockNode scxmlDefNode = (MockNode) registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
+        registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "known-custom-action", KnownAction.class.getName());
+        registry.setUp(scxmlConfigNode);
+
+        SCXML helloScxml = registry.getSCXML("hello-with-unknown-custom-actions");
+        assertNotNull(helloScxml);
+
+        List<LogRecord> logRecords = recordingLogger.getLogRecords();
+        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions"));
+        assertTrue(containsLogMessage(logRecords, "Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\""));
+    }
+
+    /*
+     * When local name of custom action is not registered and there's no custom actions registered, it should still work with a proper warning.
+     */
+    @Test
+    public void testLoadUnknownLocalCustomActionWhenNoCustomActions() throws Exception {
+        MockNode scxmlConfigNode = registry.createConfigNode();
+        registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
+        registry.setUp(scxmlConfigNode);
+
+        SCXML helloScxml = registry.getSCXML("hello-with-unknown-custom-actions");
+        assertNotNull(helloScxml);
+
+        List<LogRecord> logRecords = recordingLogger.getLogRecords();
+        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions"));
+        assertTrue(containsLogMessage(logRecords, "Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\""));
+    }
+
+    /*
+     * When namespace prefix is not resolved, it fails to load the SCXML. 
+     */
+    @Test
+    public void testLoadUnknownNsCustomAction() throws Exception {
+        MockNode scxmlConfigNode = registry.createConfigNode();
+        registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-ns-custom-actions", SCXML_HELLO_WITH_UNKNOWN_NS_CUSTOM_ACTIONS);
+        registry.setUp(scxmlConfigNode);
+
+        SCXML helloScxml = registry.getSCXML("hello-with-unknown-ns-custom-actions");
+        assertNull(helloScxml);
+
+        List<LogRecord> logRecords = recordingLogger.getLogRecords();
+        assertTrue(containsLogMessage(logRecords, "Failed to read SCXML XML stream at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-ns-custom-actions'. ParseError"));
     }
 
     private boolean containsLogMessage(final List<LogRecord> logRecords, String message) {
@@ -151,5 +224,13 @@ public class RepositorySCXMLRegistryTest {
         }
 
         return false;
+    }
+
+    private static class KnownAction extends Action {
+        private static final long serialVersionUID = 1L;
+        @Override
+        public void execute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
+                Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
+        }
     }
 }

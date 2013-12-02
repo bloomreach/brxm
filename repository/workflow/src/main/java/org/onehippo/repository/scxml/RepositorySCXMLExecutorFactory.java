@@ -21,11 +21,15 @@ import org.apache.commons.scxml2.env.Tracer;
 import org.apache.commons.scxml2.env.jexl.JexlContext;
 import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
 import org.apache.commons.scxml2.model.SCXML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * RepositorySCXMLExecutorFactory
  */
 public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
+
+    static Logger log = LoggerFactory.getLogger(RepositorySCXMLExecutorFactory.class);
 
     void initialize() {
     }
