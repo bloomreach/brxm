@@ -102,7 +102,7 @@ public class DefaultDocumentManager implements DocumentManager {
             throw new IllegalArgumentException("Cannot save document which is null or has no path");
         }
         if (document.getPath().charAt(0) != PATH_SEPARATOR) {
-            throw new IllegalArgumentException("Cannot save document with relative path");
+            throw new IllegalArgumentException("Cannot save document with relative path: " + document.getPath());
         }
 
         ObjectContentManager manager = createManager(session);

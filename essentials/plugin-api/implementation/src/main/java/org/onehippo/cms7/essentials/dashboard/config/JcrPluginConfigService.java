@@ -18,11 +18,11 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.List;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,25 +61,24 @@ public class JcrPluginConfigService implements PluginConfigService {
         log.debug("Writing node: {}", context);
         try {
             final String configRoot = getFullConfigPath(context.getDescriptor().getPluginClass());
-            // TODO fix
             document.setPath(configRoot);
             manager.saveDocument(document);
             session.save();
         } catch (RepositoryException e) {
             log.error("Error writing configuration", e);
-            refreshSession();
+            GlobalUtils.refreshSession(session, false);
         }
 
     }
 
     @Override
-    public Document read(final String pluginClass) {
+    public <T extends Document> T read(final String pluginClass) {
         final String path = getFullConfigPath(pluginClass);
         return getConfigDocument(path);
     }
 
     @Override
-    public Document read() {
+    public <T extends Document> T read() {
         final String path = getFullConfigPath(context.getDescriptor().getPluginClass());
         return getConfigDocument(path);
     }
@@ -87,19 +86,12 @@ public class JcrPluginConfigService implements PluginConfigService {
     private String getFullConfigPath(final CharSequence pluginClass) {
         final List<String> configList = Lists.newLinkedList(Splitter.on('/').split(CONFIG_PATH));
         configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
-        return Joiner.on('/').join(configList);
+        return '/' + Joiner.on('/').join(configList);
     }
 
-    @SuppressWarnings("HippoHstCallNodeRefreshInspection")
-    private void refreshSession() {
-        try {
-            session.refresh(false);
-        } catch (RepositoryException e) {
-            log.error("Error refreshing session", e);
-        }
-    }
 
-    private Document getConfigDocument(final String path) {
+
+    private <T extends Document> T getConfigDocument(final String path) {
         // NOTE: added null check so we can test dashboard without repository (CMS) running
         if (session == null) {
             return null;
@@ -107,8 +99,6 @@ public class JcrPluginConfigService implements PluginConfigService {
         return manager.fetchDocument(path);
 
     }
-
-
 
 
 }

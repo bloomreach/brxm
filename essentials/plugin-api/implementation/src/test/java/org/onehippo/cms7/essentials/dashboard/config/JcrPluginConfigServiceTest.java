@@ -5,6 +5,7 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.xmlbeans.impl.xb.xmlconfig.ConfigDocument;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,17 +36,13 @@ public class JcrPluginConfigServiceTest {
         session.save();
         final DashboardPluginContext context = new DashboardPluginContext(session, new DummyTestPlugin());
         PluginConfigService service = new JcrPluginConfigService(context);
-        // TODO fix test
-        /*final ConfigDocument document = new PluginConfigDocument("test");
-        final ConfigProperty property = new PluginConfigProperty("test");
-        property.addValue("test value");
-        property.addValue("test value 2");
-        document.addProperty(property);
+        final Document document = new BaseDocument("test");
+        document.addProperty("test");
         service.write(document);
         // now read it:
-        final ConfigDocument copy = service.read();
+        final Document copy = service.read();
         assertEquals(copy.getName(), document.getName());
-        assertEquals(copy.getValue("test"), document.getValue("test"));*/
+        assertEquals(copy.getProperties().get(0), "test");
 
 
     }

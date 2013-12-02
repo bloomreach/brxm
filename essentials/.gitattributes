@@ -478,7 +478,6 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/PanelPlugin.
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/Plugin.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/HippoEssentialsGenerated.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Asset.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ConfigProperty.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Document.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DocumentManager.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DocumentType.java -text
@@ -515,7 +514,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseFolder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManager.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigService.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginConfigProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DashboardPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PanelPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/BaseEvent.java -text
