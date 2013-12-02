@@ -38,8 +38,6 @@ import com.google.common.collect.Lists;
 public class JcrPluginConfigService implements PluginConfigService {
 
     public static final String CONFIG_PATH = "dashboard/plugins";
-    public static final String NS_FOLDER = "dashboard:folder";
-    public static final String NS_DOCUMENT = "dashboard:document";
     private static Logger log = LoggerFactory.getLogger(JcrPluginConfigService.class);
     private final PluginContext context;
     private final Session session;
@@ -88,8 +86,6 @@ public class JcrPluginConfigService implements PluginConfigService {
         configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
         return '/' + Joiner.on('/').join(configList);
     }
-
-
 
     private <T extends Document> T getConfigDocument(final String path) {
         // NOTE: added null check so we can test dashboard without repository (CMS) running
