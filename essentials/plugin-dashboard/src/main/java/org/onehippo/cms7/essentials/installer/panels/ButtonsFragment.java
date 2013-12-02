@@ -43,7 +43,7 @@ public class ButtonsFragment extends Fragment {
 
             @Override
             public void onClick(final AjaxRequestTarget target) {
-
+                provider.swapFragment(target);
             }
         };
         final AjaxLink<Void> buttonPlugins = new
@@ -53,7 +53,7 @@ public class ButtonsFragment extends Fragment {
 
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
-
+                        provider.swapFragment(target);
                     }
                 };
         add(buttonTools);

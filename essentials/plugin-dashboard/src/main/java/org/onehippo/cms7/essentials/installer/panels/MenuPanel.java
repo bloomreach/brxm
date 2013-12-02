@@ -25,13 +25,31 @@ public class MenuPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
 
+    private Fragment nextFragment;
+    private Fragment currentFragment;
+
     public MenuPanel(final String id, final HomePage dashboard, final List<Plugin> pluginList, final List<Plugin> mainPlugins) {
 
         super(id);
         final Fragment menuFragment = new MenuFragment("fragmentPanel", "menuFragment", this, dashboard, pluginList, mainPlugins);
         final Fragment buttonsFragment = new ButtonsFragment("fragmentPanel", "buttonsFragment", this, dashboard, pluginList, mainPlugins);
+        nextFragment = menuFragment;
+        currentFragment = buttonsFragment;
+
         add(buttonsFragment);
         setOutputMarkupId(true);
+
+
+
+    }
+
+
+    public void swapFragment(final AjaxRequestTarget target){
+        Fragment temp = currentFragment;
+        currentFragment.replaceWith(nextFragment);
+        currentFragment = nextFragment;
+        nextFragment = temp;
+        target.add(currentFragment);
 
     }
 
