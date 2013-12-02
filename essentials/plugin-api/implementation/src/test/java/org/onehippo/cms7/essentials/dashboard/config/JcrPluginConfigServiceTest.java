@@ -28,13 +28,13 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest{
 
     @Test
     public void testConfigReadingWriting() throws Exception {
-        mySession = getHippoSession();
-        final Node root = mySession.getRootNode();
+
+        final Node root = session.getRootNode();
         root.addNode("essentials", "essentials:folder");
-        final Node dashboard = root.getNode("dashboard");
+        final Node dashboard = root.getNode("essentials");
         assertNotNull(dashboard);
         mySession.save();
-        final DashboardPluginContext context = new DashboardPluginContext(mySession, new DummyTestPlugin());
+        final DashboardPluginContext context = new DashboardPluginContext(session, new DummyTestPlugin());
         PluginConfigService service = new JcrPluginConfigService(context);
         final ProjectSettingsBean document = new ProjectSettingsBean("test");
         document.addProperty("test");
