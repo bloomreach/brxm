@@ -66,7 +66,6 @@ class VersionsCleaner extends BaseNodeUpdateVisitor {&#xd;
         versions.add(version);&#xd;
       }&#xd;
     }&#xd;
-    Collections.reverse(versions)&#xd;
     &#xd;
     // remove versions&#xd;
     int removeCount = versions.size() - retainCount&#xd;
