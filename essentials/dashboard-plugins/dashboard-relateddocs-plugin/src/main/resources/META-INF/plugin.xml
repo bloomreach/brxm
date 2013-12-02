@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
   <name>Related Docs Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.dashboard.relateddocs.RelatedDocsPlugin</plugin-class>
+  <plugin-class>org.onehippo.cms7.essentials.essentials.relateddocs.RelatedDocsPlugin</plugin-class>
   <type>plugin</type>
   <vendor>Hippo</vendor>
   <description>The Related documents plugin suggests documents in for Hippo CMS 7 in the editor.</description>

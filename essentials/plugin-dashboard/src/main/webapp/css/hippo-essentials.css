@@ -5,14 +5,14 @@
 */
 .footer {
   border-top: 1px solid #eeeeee;
-  margin-top: 300px;
+  margin-top: 400px;
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: #35363a;
   text-align: center;
   color: #c6c6c6;
   font-size: 13px;
-  min-height: 300px;
+  min-height: 600px;
 }
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
@@ -194,6 +194,9 @@ form {
   width: 100%;
   max-width: 100%;
 }
+/* menu stuff*/
 .nav-stacked li {
   margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
 }

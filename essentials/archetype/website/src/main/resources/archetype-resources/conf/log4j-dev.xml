@@ -171,7 +171,7 @@
   </logger>
 
   <!-- setup -->
-  <logger name="org.onehippo.cms7.essentials.dashboard.event.listeners.InstructionsEventListener">
+  <logger name="org.onehippo.cms7.essentials.essentials.event.listeners.InstructionsEventListener">
     <level value="info"/>
     <appender-ref ref="setup"/>
   </logger>

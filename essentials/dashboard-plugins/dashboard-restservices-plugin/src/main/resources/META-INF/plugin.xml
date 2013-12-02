@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
   <name>REST Services Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.dashboard.restservices.RestServicesPlugin</plugin-class>
+  <plugin-class>org.onehippo.cms7.essentials.essentials.restservices.RestServicesPlugin</plugin-class>
   <type>system</type>
   <vendor>Hippo</vendor>
   <description>HST bean generator plugin</description>

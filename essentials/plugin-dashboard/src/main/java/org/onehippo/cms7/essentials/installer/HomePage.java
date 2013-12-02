@@ -49,8 +49,6 @@ import com.google.inject.Inject;
 public class HomePage extends WebPage implements IHeaderContributor {
 
 
-    public static final String NS_DASHBOARD_FOLDER = "dashboard:folder";
-    public static final String PATH_HIPPO_DASHBOARD = "hippo-dashboard";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(HomePage.class);
     private static final Predicate<Plugin> MAIN_PLUGIN = new Predicate<Plugin>() {
@@ -192,41 +190,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
         }
     }
 
-    @Deprecated
-    private void bootstrap() {
-        InputStream stream = null;
-        Session session = null;
-        try {
-            session = GlobalUtils.createSession();
-            if (session == null) {
-                log.error("Session was null, is Hippo Repository up and running?");
-                return;
-            }
-            final Node root = session.getRootNode();
-            if (root.hasNode(PATH_HIPPO_DASHBOARD)) {
-
-                log.info("Dashboard already registered, skipping");
-
-                return;
-            }
-            stream = HomePage.class.getResourceAsStream("/dashboard.cnd");
-            if (stream != null) {
-                CndImporter.registerNodeTypes(new InputStreamReader(stream), session);
-                root.addNode(PATH_HIPPO_DASHBOARD, NS_DASHBOARD_FOLDER);
-                session.save();
-            }
-
-
-        } catch (ParseException | RepositoryException | IOException e) {
-            log.error("Error registering cnd", e);
-        } finally {
-            IOUtils.closeQuietly(stream);
-            if (session != null) {
-                session.logout();
-            }
-        }
-
-    }
 
     public Plugin getSelectedPlugin() {
         return selectedPlugin;

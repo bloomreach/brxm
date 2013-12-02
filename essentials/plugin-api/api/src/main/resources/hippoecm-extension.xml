@@ -3,7 +3,7 @@
   Copyright 2013 Hippo B.V. (http://www.onehippo.com)
   -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
-  <sv:node sv:name="dashboard">
+  <sv:node sv:name="essentials">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -14,13 +14,13 @@
       <sv:value>21100</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://plugins.onehippo.com/dashboard/nt/1.0</sv:value>
+      <sv:value>http://plugins.onehippo.com/essentials/nt/1.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>dashboard.cnd</sv:value>
+      <sv:value>essentials.cnd</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="dashboard-namespace">
+  <sv:node sv:name="essentials-namespace">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -31,7 +31,7 @@
       <sv:value>21101</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>namespace-dashboard.xml</sv:value>
+      <sv:value>namespace-essentials.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>

@@ -23,7 +23,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
  * @version "$Id$"
  */
 @DocumentType("ProjectSettingsBean")
-@Node(discriminator = false, jcrType = "dashboard:document")
+@Node(discriminator = false, jcrType = "essentials:document")
 public class ProjectSettingsBean extends BaseDocument {
 
     @Field

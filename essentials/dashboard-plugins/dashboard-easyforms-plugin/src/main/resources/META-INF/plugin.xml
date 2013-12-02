@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
   <name>Easyforms Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.dashboard.easyforms.EasyFormsPlugin</plugin-class>
+  <plugin-class>org.onehippo.cms7.essentials.essentials.easyforms.EasyFormsPlugin</plugin-class>
   <assets>
     <asset id="resource-template" type="text/plain" url="classpath://mail-session.fml"/>
   </assets>

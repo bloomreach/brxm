@@ -24,7 +24,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
  * @version "$Id$"
  */
 @DocumentType("BaseFolder")
-@Node(discriminator = false, jcrType = "dashboard:folder")
+@Node(discriminator = false, jcrType = "essentials:folder")
 public class BaseFolder extends BaseDocument implements Folder {
 
     private static final Pattern PATH_SPLITTER = Pattern.compile("/");

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
   Copyright 2013 Hippo B.V. (http://www.onehippo.com)
   -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="dashboard">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="essentials">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespace</sv:value>
   </sv:property>

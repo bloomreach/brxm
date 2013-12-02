@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
  */
 public class JcrPluginConfigService implements PluginConfigService {
 
-    public static final String CONFIG_PATH = "dashboard/plugins";
+    public static final String CONFIG_PATH = "essentials/plugins";
     private static Logger log = LoggerFactory.getLogger(JcrPluginConfigService.class);
     private final PluginContext context;
     private final Session session;

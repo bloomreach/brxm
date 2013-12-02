@@ -30,7 +30,7 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest{
     public void testConfigReadingWriting() throws Exception {
         mySession = getHippoSession();
         final Node root = mySession.getRootNode();
-        root.addNode("dashboard", "dashboard:folder");
+        root.addNode("essentials", "essentials:folder");
         final Node dashboard = root.getNode("dashboard");
         assertNotNull(dashboard);
         mySession.save();

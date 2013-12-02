@@ -5,5 +5,5 @@
 
 <plugin>
   <name>Gallery Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin</plugin-class>
+  <plugin-class>org.onehippo.cms7.essentials.essentials.gallery.GalleryPlugin</plugin-class>
 </plugin>

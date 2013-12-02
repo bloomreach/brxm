@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
   <name>Gallery Plugin</name>
-  <plugin-class>org.onehippo.plugins.dashboard.gallery.GalleryPlugin</plugin-class>
+  <plugin-class>org.onehippo.plugins.essentials.gallery.GalleryPlugin</plugin-class>
   <description>Plugin Description</description>
   <documentation-link>http://documentation.link.com</documentation-link>
   <issues-link>http://issues.onehippo.com</issues-link>
