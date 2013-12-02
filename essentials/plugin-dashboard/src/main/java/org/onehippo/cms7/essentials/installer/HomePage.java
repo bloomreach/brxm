@@ -12,13 +12,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
@@ -28,12 +21,13 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PanelPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
@@ -45,6 +39,13 @@ import org.onehippo.cms7.essentials.installer.panels.MenuPanel;
 import org.onehippo.cms7.essentials.installer.panels.SetupPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 public class HomePage extends WebPage implements IHeaderContributor {
 
@@ -61,12 +62,12 @@ public class HomePage extends WebPage implements IHeaderContributor {
         }
     };
     final ImmutableList<Plugin> mainPlugins;
-    // cannot serialize:
-    @Inject
-    private transient EventBus eventBus;
     private final BodyPanel body;
     private final Panel globalToolbarPanel;
     private final ImmutableList<Plugin> pluginList;
+    // cannot serialize:
+    @Inject
+    private transient EventBus eventBus;
     private MenuPanel menu;
     private Plugin selectedPlugin;
 
@@ -132,12 +133,12 @@ public class HomePage extends WebPage implements IHeaderContributor {
 
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
         // inject project settings:
-        final ConfigDocument document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+        final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
         if (document != null) {
-            context.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
-            context.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
-            context.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
-            context.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
+            context.setBeansPackageName(document.getSelectedBeansPackage());
+            context.setComponentsPackageName(document.getSelectedComponentsPackage());
+            context.setRestPackageName(document.getSelectedRestPackage());
+            context.setProjectNamespacePrefix(document.getProjectNamespace());
         }
         final String pluginClass = plugin.getPluginClass();
 
@@ -165,7 +166,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
         selectedPlugin = null;
 
         Plugin plugin = getPluginByName("Settings");
-        if(plugin==null) {
+        if (plugin == null) {
             log.info("Settings plugin not found");
         }
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
@@ -180,7 +181,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
                 plugin = next;
             }
         }
-        if(plugin != null ) {
+        if (plugin != null) {
             return plugin;
         } else {
             for (final Plugin next : pluginList) {
@@ -191,7 +192,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
             return plugin;
         }
     }
-
 
     @Deprecated
     private void bootstrap() {
@@ -228,7 +228,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
         }
 
     }
-
 
     public Plugin getSelectedPlugin() {
         return selectedPlugin;

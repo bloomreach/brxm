@@ -16,12 +16,12 @@
 
 package org.onehippo.cms7.essentials.setup;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.Session;
+import javax.servlet.ServletContext;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxLink;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -29,37 +29,33 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.event.LogEvent;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.LoggingPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 import org.onehippo.cms7.essentials.dashboard.event.listeners.ValidationEventListener;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
-import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
-import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
-import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.dashboard.wizard.AjaxWizardPanel;
 import org.onehippo.cms7.essentials.installer.panels.GlobalToolbarPanel;
-import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
-import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
 import org.onehippo.cms7.essentials.setup.panels.ExecutionStep;
 import org.onehippo.cms7.essentials.setup.panels.FinalStep;
 import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.Session;
-import javax.servlet.ServletContext;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+
+;
 
 /**
  * @version "$Id$"
@@ -75,9 +71,12 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         }
     };
     private static Logger log = LoggerFactory.getLogger(SetupPage.class);
-
+    final PluginContext dashboardPluginContext;
     private final ImmutableList<Plugin> mainPlugins;
     private final ImmutableList<Plugin> pluginList;
+    private final SelectPowerpackStep selectStep;
+    private final FinalStep finalStep;
+    private final ExecutionStep executionStep;
     @Inject
     private EventBus eventBus;
     @Inject
@@ -86,11 +85,6 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private MemoryPluginEventListener memoryPluginEventListener;
     @Inject
     private ValidationEventListener validationEventListener;
-
-    private final SelectPowerpackStep selectStep;
-    private final FinalStep finalStep;
-    private final ExecutionStep executionStep;
-    final PluginContext dashboardPluginContext;
 
     @SuppressWarnings("unchecked")
     public SetupPage(final PageParameters parameters) {
@@ -120,12 +114,13 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         //############################################
         // INJECT PROJECT SETTINGS
         //############################################
-        final ConfigDocument document = dashboardPluginContext.getConfigService().read(ProjectSetupPlugin.class.getName());
+        final ProjectSettingsBean document = dashboardPluginContext.getConfigService().read(ProjectSetupPlugin.class.getName());
         if (document != null) {
-            dashboardPluginContext.setBeansPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_BEANS_PACKAGE));
-            dashboardPluginContext.setComponentsPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_COMPONENTS_PACKAGE));
-            dashboardPluginContext.setRestPackageName(document.getValue(ProjectSetupPlugin.PROPERTY_REST_PACKAGE));
-            dashboardPluginContext.setProjectNamespacePrefix(document.getValue(ProjectSetupPlugin.PROPERTY_NAMESPACE));
+            final PluginConfigService configService = dashboardPluginContext.getConfigService();
+            dashboardPluginContext.setBeansPackageName(document.getSelectedBeansPackage());
+            dashboardPluginContext.setComponentsPackageName(document.getSelectedComponentsPackage());
+            dashboardPluginContext.setRestPackageName(document.getSelectedRestPackage());
+            dashboardPluginContext.setProjectNamespacePrefix(document.getProjectNamespace());
         }
 
         final IndicatingAjaxLink<Void> autoExportLink = new IndicatingAjaxLink<Void>("autoexportLink") {
@@ -152,14 +147,16 @@ public class SetupPage extends WebPage implements IHeaderContributor {
         //############################################
         // WIZARD & STEPS
         //############################################
-        final AjaxWizardPanel wizard = new AjaxWizardPanel("wizard") {
-            private static final long serialVersionUID = 1L;
+        final AjaxWizardPanel wizard = new
 
-            @Override
-            public void onFinish() {
+                AjaxWizardPanel("wizard") {
+                    private static final long serialVersionUID = 1L;
 
-            }
-        };
+                    @Override
+                    public void onFinish() {
+
+                    }
+                };
         selectStep = new SelectPowerpackStep(this, getString("step.choose.powerpack"));
 
         executionStep = new ExecutionStep(this, getString("step.execution"));
@@ -205,7 +202,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private boolean autoExportEnabled() {
         try {
             Session session = dashboardPluginContext.getSession();
-            if (session !=null && session.nodeExists(GlobalToolbarPanel.AUTO_EXPORT_PATH)) {
+            if (session != null && session.nodeExists(GlobalToolbarPanel.AUTO_EXPORT_PATH)) {
                 final Node autoExportNode = session.getNode(GlobalToolbarPanel.AUTO_EXPORT_PATH);
                 if (autoExportNode.hasProperty(GlobalToolbarPanel.AUTOEXPORT_ENABLED)) {
                     return autoExportNode.getProperty(GlobalToolbarPanel.AUTOEXPORT_ENABLED).getBoolean();
@@ -221,7 +218,7 @@ public class SetupPage extends WebPage implements IHeaderContributor {
     private void enableAutoExport() {
         try {
             Session session = dashboardPluginContext.getSession();
-            if (session !=null && session.nodeExists(GlobalToolbarPanel.AUTO_EXPORT_PATH)) {
+            if (session != null && session.nodeExists(GlobalToolbarPanel.AUTO_EXPORT_PATH)) {
                 final Node autoExportNode = session.getNode(GlobalToolbarPanel.AUTO_EXPORT_PATH);
                 if (autoExportNode.hasProperty(GlobalToolbarPanel.AUTOEXPORT_ENABLED)) {
                     autoExportNode.setProperty(GlobalToolbarPanel.AUTOEXPORT_ENABLED, Boolean.TRUE);

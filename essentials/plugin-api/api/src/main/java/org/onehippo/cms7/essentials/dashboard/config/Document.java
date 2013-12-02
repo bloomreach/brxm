@@ -16,18 +16,43 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import java.util.List;
+
 /**
  * @version "$Id$"
  */
+public interface Document {
 
-public interface ConfigProperty {
 
+    List<String> getProperties();
+
+    void setProperties(List<String> properties);
+
+    void addProperty(String value);
+
+    /**
+     * Name of the content (node name)
+     *
+     * @return node name
+     */
     String getName();
 
     void setName(String name);
 
-    Object getValue();
 
-    void setValue(Object value);
+    /**
+     * Returns content path
+     *
+     * @return absolute content path
+     */
+    String getPath();
+
+    /**
+     * Sets content path
+     *
+     * @param path
+     */
+    void setPath(String path);
+
 
 }

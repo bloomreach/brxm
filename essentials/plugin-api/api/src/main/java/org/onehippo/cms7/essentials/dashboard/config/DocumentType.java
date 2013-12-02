@@ -16,18 +16,26 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @version "$Id$"
  */
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface ConfigProperty {
-
-    String getName();
-
-    void setName(String name);
-
-    Object getValue();
-
-    void setValue(Object value);
-
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface DocumentType {
+    /**
+     * The value specifies a logical DocumentType name,
+     *
+     * @return the DocumentType name
+     */
+    String value();
 }

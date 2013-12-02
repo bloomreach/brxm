@@ -19,15 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.config;
 /**
  * @version "$Id$"
  */
+public interface Folder extends Document {
 
-public interface ConfigProperty {
-
-    String getName();
-
-    void setName(String name);
-
-    Object getValue();
-
-    void setValue(Object value);
 
 }

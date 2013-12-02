@@ -16,48 +16,33 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import java.util.regex.Pattern;
+
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+
 /**
  * @version "$Id$"
  */
-public class PluginConfigProperty implements ConfigProperty {
+@DocumentType("BaseFolder")
+@Node(discriminator = false, jcrType = "dashboard:folder")
+public class BaseFolder extends BaseDocument implements Folder {
 
+    private static final Pattern PATH_SPLITTER = Pattern.compile("/");
 
-    private String name;
-    private Object value;
-
-    public PluginConfigProperty() {
+    public BaseFolder() {
     }
 
-    public PluginConfigProperty(final String name, final Object value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public Object getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(final Object value) {
-        this.value = value;
+    public BaseFolder(String path) {
+        setPath(path);
+        final String[] splitter = PATH_SPLITTER.split(path);
+        setName(splitter[splitter.length -1]);
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("PluginConfigProperty{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", value=").append(value);
+        final StringBuilder sb = new StringBuilder();
+        sb.append("BaseFolder");
+        sb.append("{path='").append(getPath()).append('\'');
         sb.append('}');
         return sb.toString();
     }

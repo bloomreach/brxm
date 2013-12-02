@@ -15,7 +15,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-/*import org.onehippo.cms7.services.contenttype.ContentType;
+/*import org.onehippo.cms7.services.contenttype.DocumentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.onehippo.cms7.services.contenttype.HippoContentTypeService;*/

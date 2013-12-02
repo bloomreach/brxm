@@ -14,12 +14,13 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
-import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigDocument;
+import org.onehippo.cms7.essentials.dashboard.config.BaseDocument;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigProperty;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
@@ -30,17 +31,13 @@ import org.slf4j.LoggerFactory;
  */
 public class SetupPanel extends Panel {
 
-    private static final long serialVersionUID = 1L;
     public static final String PROPERTY_NAMESPACE = "project-namespace";
     public static final String PROPERTY_COMPONENTS_PACKAGE = "components-package";
     public static final String PROPERTY_REST_PACKAGE = "rest-package";
     public static final String PROPERTY_BEANS_PACKAGE = "beans-package";
     public static final String CONFIG_NAME = "projectSettings";
+    private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(SetupPanel.class);
-
-    private final PluginContext context;
-    private final Plugin descriptor;
-
     final DropDownChoice<String> dropdownNamespace;
     final DropDownChoice<String> dropdownRest;
     final DropDownChoice<String> dropdownBeansPackage;
@@ -49,6 +46,8 @@ public class SetupPanel extends Panel {
     final TextField<String> inputRestPackage;
     final TextField<String> inputComponentsPackage;
     final TextField<String> inputNamespace;
+    private final PluginContext context;
+    private final Plugin descriptor;
     private String beansPackage;
     private String restPackage;
     private String componentsPackage;
@@ -122,18 +121,18 @@ public class SetupPanel extends Panel {
         if (Strings.isEmpty(selectedBeansPackage)
                 || Strings.isEmpty(selectedComponentsPackage)
                 || Strings.isEmpty(selectedProjectNamespace)
-                || Strings.isEmpty(selectedRestPackage)){
+                || Strings.isEmpty(selectedRestPackage)) {
             //.TODO validation error
             log.error("TODO: throw validation error");
 
 
-        }else{
+        } else {
             final PluginConfigService configService = getContext().getConfigService();
-            final ConfigDocument projectSettings = new PluginConfigDocument(CONFIG_NAME);
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_NAMESPACE, selectedProjectNamespace));
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_REST_PACKAGE, selectedRestPackage));
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_COMPONENTS_PACKAGE, selectedComponentsPackage));
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_BEANS_PACKAGE, selectedBeansPackage));
+            final ProjectSettingsBean projectSettings = new ProjectSettingsBean(CONFIG_NAME);
+            projectSettings.setProjectNamespace(selectedProjectNamespace);
+            projectSettings.setSelectedRestPackage(selectedRestPackage);
+            projectSettings.setSelectedComponentsPackage(selectedComponentsPackage);
+            projectSettings.setSelectedBeansPackage(selectedBeansPackage);
             configService.write(projectSettings);
         }
     }
@@ -147,16 +146,23 @@ public class SetupPanel extends Panel {
         final Session session = context.getSession();
         // TODO: load existing
         final PluginConfigService configService = getContext().getConfigService();
-        final ConfigDocument document = configService.read();
-        if(document !=null){
-            selectedComponentsPackage = document.getValue(PROPERTY_COMPONENTS_PACKAGE);
-            selectedProjectNamespace = document.getValue(PROPERTY_NAMESPACE);
-            selectedBeansPackage = document.getValue(PROPERTY_BEANS_PACKAGE);
-            selectedRestPackage = document.getValue(PROPERTY_REST_PACKAGE);
+        final ProjectSettingsBean document = configService.read();
+        if (document != null) {
+            selectedComponentsPackage = document.getSelectedComponentsPackage();
+            selectedProjectNamespace = document.getProjectNamespace();
+            selectedBeansPackage = document.getSelectedBeansPackage();
+            selectedRestPackage = document.getSelectedRestPackage();
         }
 
 
+    }
 
+    public Plugin getDescriptor() {
+        return descriptor;
+    }
+
+    public PluginContext getContext() {
+        return context;
     }
 
     private static enum SelectBox {
@@ -219,14 +225,6 @@ public class SetupPanel extends Panel {
             onSaveButton(target);
         }
 
-    }
-
-    public Plugin getDescriptor() {
-        return descriptor;
-    }
-
-    public PluginContext getContext() {
-        return context;
     }
 
 }

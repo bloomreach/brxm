@@ -17,12 +17,14 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
-import org.onehippo.cms7.essentials.dashboard.config.ConfigDocument;
+
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigDocument;
+import org.onehippo.cms7.essentials.dashboard.config.BaseDocument;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigProperty;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
@@ -124,11 +126,11 @@ public class ProjectSetupPlugin extends DashboardPlugin {
 
         }else{
             final PluginConfigService configService = getContext().getConfigService();
-            final ConfigDocument projectSettings = new PluginConfigDocument(CONFIG_NAME);
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_NAMESPACE, selectedProjectNamespace));
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_REST_PACKAGE, selectedRestPackage));
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_COMPONENTS_PACKAGE, selectedComponentsPackage));
-            projectSettings.addProperty(new PluginConfigProperty(PROPERTY_BEANS_PACKAGE, selectedBeansPackage));
+            final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
+            projectSettings.setProjectNamespace(selectedProjectNamespace);
+            projectSettings.setSelectedRestPackage(selectedRestPackage);
+            projectSettings.setSelectedComponentsPackage(selectedComponentsPackage);
+            projectSettings.setSelectedBeansPackage(selectedBeansPackage);
             configService.write(projectSettings);
         }
     }
@@ -142,12 +144,12 @@ public class ProjectSetupPlugin extends DashboardPlugin {
         final Session session = context.getSession();
         // TODO: load existing
         final PluginConfigService configService = getContext().getConfigService();
-        final ConfigDocument document = configService.read();
+        final ProjectSettingsBean document = configService.read();
         if(document !=null){
-            selectedComponentsPackage = document.getValue(PROPERTY_COMPONENTS_PACKAGE);
-            selectedProjectNamespace = document.getValue(PROPERTY_NAMESPACE);
-            selectedBeansPackage = document.getValue(PROPERTY_BEANS_PACKAGE);
-            selectedRestPackage = document.getValue(PROPERTY_REST_PACKAGE);
+            selectedComponentsPackage = document.getSelectedComponentsPackage();
+            selectedProjectNamespace = document.getProjectNamespace();
+            selectedBeansPackage = document.getSelectedBeansPackage();
+            selectedRestPackage = document.getSelectedRestPackage();
         }
 
 

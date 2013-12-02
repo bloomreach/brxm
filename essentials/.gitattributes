@@ -375,6 +375,7 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-conten
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/dashboard-setup-plugin/pom.xml -text
+dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSettingsBean.java -text
 dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.html -text
 dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 dashboard-plugins/dashboard-setup-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/hippo-logo.png -text
@@ -477,8 +478,11 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/PanelPlugin.
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/Plugin.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/annotations/HippoEssentialsGenerated.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Asset.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ConfigDocument.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ConfigProperty.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Document.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DocumentManager.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DocumentType.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Folder.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginConfigService.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/config/Screenshot.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginContext.java -text
@@ -507,8 +511,10 @@ plugin-api/api/src/test/resources/log4j.xml -text
 plugin-api/implementation/pom.xml -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/AbstractCndInstaller.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/AbstractDependencyInstaller.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseFolder.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManager.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigService.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginConfigDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/PluginConfigProperty.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DashboardPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PanelPluginContext.java -text
@@ -638,6 +644,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/GuiceJUnitM
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/GuiceJUnitRunner.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/MemoryRepository.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginContext.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManagerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text

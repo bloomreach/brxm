@@ -8,16 +8,16 @@ public interface PluginConfigService {
     /**
      * Stores given configuration
      *
-     * @param document ConfigDocument instance
+     * @param document Document instance
      */
-    void write(ConfigDocument document);
+    void write(Document document);
 
-    ConfigDocument read(String pluginClass);
+    <T extends Document> T read(String pluginClass);
 
     /**
      * Reads config document
      *
      * @return null object if nothing found
      */
-    ConfigDocument read();
+    <T extends Document> T  read();
 }
