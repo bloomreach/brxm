@@ -72,7 +72,7 @@ class UpdaterInfo {
      * @throws ClassNotFoundException if the the updater class could not be found.
      * @throws RepositoryException if something went wrong while reading the node.
      */
-    UpdaterInfo(Node node) throws IllegalArgumentException, RepositoryException, IllegalAccessException, InstantiationException, ClassNotFoundException, CompilationFailedException {
+    UpdaterInfo(Node node) throws Exception {
         if (!node.isNodeType("hipposys:updaterinfo")) {
             throw new IllegalArgumentException("Node must be of type hipposys:updaterinfo");
         }
