@@ -40,44 +40,6 @@ public class HintAction extends Action {
     private String hint;
     private String value;
 
-    /**
-     * Returns the context object by the name.
-     * @param scInstance
-     * @param name
-     * @return
-     * @throws org.apache.commons.scxml2.model.ModelException
-     */
-    @SuppressWarnings("unchecked")
-    protected <T> T getContextAttribute(SCInstance scInstance, String name) throws ModelException {
-        Context ctx = scInstance.getContext(getParentTransitionTarget());
-        return (T) ctx.get(name);
-    }
-
-    /**
-     * Evaluates the expression and returns the last evaluated value.
-     * @param scInstance
-     * @param expr
-     * @return
-     * @throws org.apache.commons.scxml2.model.ModelException
-     * @throws org.apache.commons.scxml2.SCXMLExpressionException
-     */
-    @SuppressWarnings("unchecked")
-    protected <T> T eval(SCInstance scInstance, String expr) throws ModelException, SCXMLExpressionException {
-        Context ctx = scInstance.getContext(getParentTransitionTarget());
-        return (T) scInstance.getEvaluator().eval(ctx, expr);
-    }
-
-    /**
-     * Returns the document handle object from the current SCXML execution context.
-     * @param scInstance
-     * @return
-     * @throws org.apache.commons.scxml2.model.ModelException
-     * @throws org.apache.commons.scxml2.SCXMLExpressionException
-     */
-    protected DocumentHandle getDataModel(SCInstance scInstance) throws ModelException {
-        return getContextAttribute(scInstance, "dm");
-    }
-
     public String getHint() {
         return hint;
     }
@@ -98,28 +60,24 @@ public class HintAction extends Action {
     public final void execute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
                               Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
+        if (StringUtils.isBlank(getHint())) {
+            throw new ModelException("No hint specified");
+        }
+
+        Context ctx = scInstance.getContext(getParentTransitionTarget());
+
         Serializable attrValue = null;
 
-        if (getHint() != null) {
+        if (getValue() != null) {
+            attrValue = (Serializable)scInstance.getEvaluator().eval(ctx, getValue());
+        }
 
-            if (getValue() != null) {
-                attrValue = eval(scInstance, getValue());
-            }
-            if (StringUtils.isBlank(getHint())) {
-                throw new ModelException("No hint specified");
-            }
-
-            DocumentHandle dm = getDataModel(scInstance);
-
-            if (attrValue == null || (attrValue instanceof String && StringUtils.isBlank((String)attrValue))) {
-                dm.getHints().remove(getHint());
-            }
-            else {
-                if (attrValue instanceof String && ("true".equals(attrValue) || "false".equals(attrValue))) {
-                    attrValue = Boolean.valueOf((String)attrValue);
-                }
-                dm.getHints().put(getHint(), attrValue);
-            }
+        DocumentHandle dm = (DocumentHandle)ctx.get("dm");
+        if (attrValue == null) {
+            dm.getHints().remove(getHint());
+        }
+        else {
+            dm.getHints().put(getHint(), attrValue);
         }
     }
 }
