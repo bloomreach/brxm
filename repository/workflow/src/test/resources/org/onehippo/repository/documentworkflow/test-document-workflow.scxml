@@ -58,9 +58,7 @@
           <state id ="not-new.not-edit">
             <onentry>
               <if cond="!dm.r and dm.ss and (dm.ss=='unpublished' or (dm.ss=='draft' and !dm.u) or (dm.s=='p'))">
-                <script>
-                  dm.hints["obtainEditableInstance"] = true;
-                </script>
+                <hippo:hint hint="obtainEditableInstance" value="true"/>
               </if>
             </onentry>
           </state>
