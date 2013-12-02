@@ -1,215 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:wicket="http://wicket.apache.org">
 <head>
-    <title>Hippo Essentials installer</title>
-    <meta charset="utf-8"/>
+    <title>Hippo Essentials</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="assets/css/bootstrap-responsive.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css"/>
-
-    <!--[if IE 7]>
-    <link rel="stylesheet" href="assets/css/font-awesome-ie7.min.css"/>
-    <![endif]-->
-
-    <!--fonts-->
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300"/>
-    <!--ace styles-->
-    <link rel="stylesheet" href="assets/css/ace.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-responsive.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-skins.min.css"/>
-    <link rel="stylesheet" href="assets/css/colorbox.css"/>
-    <link rel="stylesheet" href="assets/css/hippo.css"/>
-    <link rel="stylesheet" href="assets/css/carousel.css"/>
-
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" href="assets/css/ace-ie.min.css"/>
-    <![endif]-->
-
-    <!--inline styles if any-->
-
+    <link href="css/bootstrap.css" rel="stylesheet"/>
+    <link href="css/hippo-essentials.css" rel="stylesheet"/>
 </head>
 <body>
 
-<!--
+<div class="hippo-header">
+    <div class="hippo-header-logo">
+        <img src="images/hippo-logo.png">
+    </div>
+    <div wicket:id="globalToolbar" class="hippo-header-text">
+        <!--<wicket:message key="header.message"/>-->
+    </div>
 
-//############################################
-// GLOBAL TOOLBAR PANEL (org.onehippo.cms7.essentials.installer.panels.GlobalToolbarPanel)
-//############################################
--->
-
-<div wicket:id="globalToolbar" class="navbar navbar-inverse">
 
 </div>
-
-
-<!--
-    //############################################
-    //  MAIN CONTENT
-    //############################################
-
--->
-
-<div class="container-fluid" id="main-container">
-    <a id="menu-toggler" href="#">
-        <span></span>
-    </a>
-
-    <div id="sidebar">
-        <div id="sidebar-shortcuts">
-
-            <!--
-                //############################################
-                // SETTINGS MENU
-                //############################################
-
-            -->
-            <div id="sidebar-shortcuts-large">
-                <button class="btn btn-small btn-success">
-                    <i class="icon-signal"></i>
-                </button>
-
-                <button class="btn btn-small btn-info">
-                    <i class="icon-pencil"></i>
-                </button>
-
-                <button class="btn btn-small btn-warning">
-                    <i class="icon-group"></i>
-                </button>
-
-                <button class="btn btn-small btn-danger">
-                    <i class="icon-cogs"></i>
-                </button>
-            </div>
-
-        </div>
-
-        <!--
-            //############################################
-            // LEFT MENU
-            //############################################
-        -->
-        <div wicket:id="menu">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2" wicket:id="menu">
             [MENU]
         </div>
-
-        <!--/.nav-list-->
-
-        <div id="sidebar-collapse">
-            <i class="icon-double-angle-left"></i>
+        <div class="col-sm-6" wicket:id="body">
+            [BODY]
         </div>
-    </div>
-
-    <!--
-    //############################################
-    // BODY
-    //############################################
-
-    -->
-    <div id="main-content" class="clearfix">
-        <div id="breadcrumbs">
-            <ul class="breadcrumb">
-                <li>
-                    <i class="icon-home home-icon"></i>
-                    <a href="#">Home</a>
-                    <span class="divider">
-                        <i class="icon-angle-right arrow-icon"></i>
-                    </span>
-                </li>
-            </ul>
-            <div id="nav-search">
-                <form class="form-search">
-            <span class="input-icon">
-            <input type="text" placeholder="Search ..." class="input-small search-query" id="nav-search-input" autocomplete="off"/>
-            <i class="icon-search" id="nav-search-icon"></i>
-            </span>
-                </form>
-            </div>
-        </div>
-        <div id="page-content" class="clearfix">
-
-            <!--<div class="page-header position-relative">
-                <h1>
-                    Dashboard
-                    <small>
-                        <i class="icon-double-angle-right"></i>
-                    </small>
-                </h1>
-            </div>-->
-            <!--/.page-header-->
-
-            <div class="row-fluid">
-                <!--PAGE CONTENT BEGINS HERE-->
-
-                <div class="space-6"></div>
-                <!--
-                //############################################
-                //  PLUGIN DETAIL
-                //############################################
-                -->
-                <div class="main" wicket:id="body">
-                    [BODY]
-                </div>
-
-
-            </div>
-        </div>
-
     </div>
 </div>
 
 
-<!--
-    //############################################
-    // JAVASCRIPT
-    //############################################
+<div class="footer">
+    <wicket:message key="hippo.copyright"/>
+</div>
 
--->
-
-<!--
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript">
-    window.jQuery || document.write("<script src='assets/js/jquery-1.9.1.min.js'>" + "<" + "/script>");
-</script>
--->
-<script src="assets/js/bootstrap.min.js"></script>
-
-
-<!--[if lte IE 8]>
-<script src="/js/"></script>
-<![endif]-->
-
-<script src="assets/js/jquery-ui-1.10.3.custom.min.js"></script>
-<script src="assets/js/jquery.ui.touch-punch.min.js"></script>
-<script src="assets/js/jquery.slimscroll.min.js"></script>
-<script src="assets/js/jquery.easy-pie-chart.min.js"></script>
-<script src="assets/js/jquery.sparkline.min.js"></script>
-<script src="assets/js/jquery.colorbox-min.js"></script>
-<!--ace scripts-->
-
-<script src="assets/js/ace-elements.min.js"></script>
-<script src="assets/js/ace.min.js"></script>
-<script src="assets/js/jquery.carouFredSel-6.2.1.js"></script>
-<!--<script src="assets/js/carousel.js"></script>-->
-
-<!--inline scripts related to this page-->
-
-<script type="text/javascript">
-    $(function () {
-
-        $('.dialogs,.comments').slimScroll({
-            height: '300px'
-        });
-
-        $('.sparkline').each(function () {
-            var $box = $(this).closest('.infobox');
-            var barColor = !$box.hasClass('infobox-dark') ? $box.css('color') : '#FFF';
-            $(this).sparkline('html', {tagValuesAttribute: 'data-values', type: 'bar', barColor: barColor, chartRangeMin: $(this).data('min') || 0});
-        });
-
-    })
-</script>
 
 </body>
 </html>

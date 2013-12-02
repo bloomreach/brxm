@@ -28,7 +28,8 @@ public class DashboardPanel extends Panel {
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(
-                DashboardPanel.class, "carousel.js")));
+        /* TODO mm enable once we are finished*/
+        /*response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(
+                DashboardPanel.class, "carousel.js")));*/
     }
 }
