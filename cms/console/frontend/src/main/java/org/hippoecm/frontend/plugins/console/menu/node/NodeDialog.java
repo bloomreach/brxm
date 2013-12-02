@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ public class NodeDialog extends AbstractDialog<Node> {
 
     private final Map<String, Collection<String>> namesToTypes = new HashMap<String, Collection<String>>();
     private final Map<String, Collection<String>> typesToNames = new HashMap<String, Collection<String>>();
-    
+
     private final IModelReference<Node> modelReference;
 
     public NodeDialog(IModelReference<Node> modelReference) {
@@ -242,13 +242,6 @@ public class NodeDialog extends AbstractDialog<Node> {
     }
 
     @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(DefaultCssAutoCompleteTextField.class,
-                "DefaultCssAutocompleteTextField.css")));
-    }
-
-    @Override
     public void onOk() {
         try {
             final IModel<Node> nodeModel = getModel();
@@ -268,7 +261,7 @@ public class NodeDialog extends AbstractDialog<Node> {
     public IValueMap getProperties() {
         return DialogConstants.SMALL;
     }
-    
+
     private Collection<NodeType> getDescendentNodeTypes(NodeType nt) {
         Collection<NodeType> result = new HashSet<NodeType>();
         NodeTypeIterator subNodeTypes = nt.getDeclaredSubtypes();
@@ -281,7 +274,7 @@ public class NodeDialog extends AbstractDialog<Node> {
         }
         return result;
     }
-    
+
     private void addNodeType(NodeDefinition nd, NodeType nt) {
         Collection<String> types = namesToTypes.get(nd.getName());
         if (types == null) {

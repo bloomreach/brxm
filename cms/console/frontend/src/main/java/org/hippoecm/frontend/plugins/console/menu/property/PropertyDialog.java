@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 public class PropertyDialog extends AbstractDialog<Node> {
 
-    
+
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PropertyDialog.class);
     private static final List<String> ALL_TYPES = new ArrayList<String>(8);
@@ -178,7 +178,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
             public void setObject(String object) {
                 type = object;
             }
-            
+
             @Override
             public String getObject() {
                 List<? extends String> choices = ddChoice.getChoices();
@@ -188,7 +188,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
                 return type;
             }
         });
-        
+
         ddChoice.setRequired(true);
         ddChoice.setOutputMarkupId(true);
         ddChoice.add(new AjaxFormComponentUpdatingBehavior("onchange") {
@@ -241,13 +241,6 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
         add(setFocus(nameField));
         add(new TextArea<String>("value", new PropertyModel<String>(this, "value")));
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(DefaultCssAutoCompleteTextField.class,
-                "DefaultCssAutocompleteTextField.css")));
     }
 
     @Override
