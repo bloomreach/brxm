@@ -101,6 +101,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
         long start = System.currentTimeMillis();
         int count = 0;
+        int totalLength = 0;
         while (hippostdHtmlNodes.hasNext()) {
             try {
                 Node hippostdHtml = hippostdHtmlNodes.nextNode();
@@ -127,6 +128,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                 String handleUUID = handleNode.getIdentifier();
                 // hippostd:content is a mandatory property so no need to check for existence
                 String content = hippostdHtml.getProperty("hippostd:content").getString();
+                totalLength += content.length();
 
                 try {
                     Set<Link> linksForHandle = linksByHandleUUID.get(handleUUID);
@@ -172,9 +174,10 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         }
         long scanningTook = (System.currentTimeMillis() - start);
         log.info("Finished scanning all hippostd:html nodes for external links in {} seconds.", String.valueOf((scanningTook / 1000.0)));
-        log.info("In total {}  hippostd:html nodes where scanned.", String.valueOf(count));
+        log.info("In total {}  hippostd:html nodes were scanned.", String.valueOf(count));
         log.info("In total {} handles have links", linksByHandleUUID.size());
         log.info("In total there are {} unique links", linksByURL.size());
+        log.info("The total size of text scanned was {} characters long", totalLength);
         log.info("Starting scanning for external links that are broken");
 
         start = System.currentTimeMillis();

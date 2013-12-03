@@ -41,15 +41,15 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
 
+  <logger additivity="false" name="org.onehippo.cms7.brokenlinks">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </logger>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>
-
-  <category additivity="true" name="org.onehippo.cms7.brokenlinks">
-    <level value="debug"/>
-    <appender-ref ref="console"/>
-  </category>
 
 </log4j:configuration>
