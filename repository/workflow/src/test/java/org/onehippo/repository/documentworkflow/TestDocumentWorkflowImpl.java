@@ -130,7 +130,7 @@ public class TestDocumentWorkflowImpl {
     }
 
     @Test
-    public void testWorkflowFeatures() throws Exception {
+    public void testWorkflowSupportedFeatures() throws Exception {
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
         MockWorkflowContext context = new MockWorkflowContext("testuser");
         wf.setWorkflowContext(context);
@@ -138,19 +138,19 @@ public class TestDocumentWorkflowImpl {
         MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
 
         wf.setNode(draftVariant);
-        assertEquals(DocumentWorkflow.Features.all, wf.getDocumentModel().getFeatures());
-        assertTrue(wf.getDocumentModel().getFeatures().document());
-        assertTrue(wf.getDocumentModel().getFeatures().request());
+        assertEquals(DocumentWorkflow.SupportedFeatures.all, wf.getDocumentModel().getSupportedFeatures());
+        assertTrue(wf.getDocumentModel().getSupportedFeatures().document());
+        assertTrue(wf.getDocumentModel().getSupportedFeatures().request());
 
-        context.getWorkflowConfiguration().put("workflow.features", DocumentWorkflow.Features.document.name());
+        context.getWorkflowConfiguration().put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(draftVariant);
-        assertEquals(DocumentWorkflow.Features.document, wf.getDocumentModel().getFeatures());
-        assertTrue(wf.getDocumentModel().getFeatures().document());
-        assertFalse(wf.getDocumentModel().getFeatures().request());
+        assertEquals(DocumentWorkflow.SupportedFeatures.document, wf.getDocumentModel().getSupportedFeatures());
+        assertTrue(wf.getDocumentModel().getSupportedFeatures().document());
+        assertFalse(wf.getDocumentModel().getSupportedFeatures().request());
 
-        context.getWorkflowConfiguration().put("workflow.features", "undefined");
+        context.getWorkflowConfiguration().put("workflow.supportedFeatures", "undefined");
         wf.setNode(draftVariant);
-        assertEquals(DocumentWorkflow.Features.all, wf.getDocumentModel().getFeatures());
+        assertEquals(DocumentWorkflow.SupportedFeatures.all, wf.getDocumentModel().getSupportedFeatures());
     }
 
     @Test

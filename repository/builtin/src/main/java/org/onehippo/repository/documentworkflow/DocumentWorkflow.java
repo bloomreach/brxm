@@ -26,9 +26,9 @@ import org.hippoecm.repository.standardworkflow.VersionWorkflow;
 public interface DocumentWorkflow extends FullRequestWorkflow, FullReviewedActionsWorkflow, UnlockWorkflow, VersionWorkflow {
 
     /**
-     * The Features enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality should be used and exposed
+     * The SupportedFeatures enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality should be used and exposed
      */
-    enum Features {
+    enum SupportedFeatures {
 
         all, request, document, unlock, version;
 

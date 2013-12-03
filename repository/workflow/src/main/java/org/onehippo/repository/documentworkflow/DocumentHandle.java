@@ -43,7 +43,7 @@ public class DocumentHandle {
     private String user;
     private String workflowState;
     private String ds;
-    private DocumentWorkflow.Features features = DocumentWorkflow.Features.all;
+    private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
     private Node handle;
 
@@ -51,17 +51,17 @@ public class DocumentHandle {
 
         RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
         if (workflowConfiguration.exists()) {
-            String featuresConfiguration = (String)workflowConfiguration.get("workflow.features");
-            if (featuresConfiguration != null) {
+            String supportedFeaturesConfiguration = (String)workflowConfiguration.get("workflow.supportedFeatures");
+            if (supportedFeaturesConfiguration != null) {
                 try {
-                    features = DocumentWorkflow.Features.valueOf(featuresConfiguration);
+                    supportedFeatures = DocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
                 }
                 catch (IllegalArgumentException e) {
                     String configurationPath = (String)workflowConfiguration.get("_path");
                     if (configurationPath == null) {
                         configurationPath = "<unknown>";
                     }
-                    log.warn("Unknown DocumentWorkflow.Features [{}] configured for property workflow.features at: {}", featuresConfiguration, configurationPath);
+                    log.warn("Unknown DocumentWorkflow.SupportedFeatures [{}] configured for property workflow.supportedFeatures at: {}", supportedFeaturesConfiguration, configurationPath);
                 }
             }
         }
@@ -120,18 +120,18 @@ public class DocumentHandle {
     }
 
     /**
-     * @return configured Features or {@link DocumentWorkflow.Features#all} by default
+     * @return configured Features or {@link org.onehippo.repository.documentworkflow.DocumentWorkflow.SupportedFeatures#all} by default
      */
-    public DocumentWorkflow.Features getFeatures() {
-        return features;
+    public DocumentWorkflow.SupportedFeatures getSupportedFeatures() {
+        return supportedFeatures;
     }
 
     /**
-     * Script supporting shortened version of {@link #getFeatures() getFeatures().name()}
-     * @return configured {@link DocumentWorkflow.Features} name value
+     * Script supporting shortened version of {@link #getSupportedFeatures()}
+     * @return configured SupportedFeatures or {@link org.onehippo.repository.documentworkflow.DocumentWorkflow.SupportedFeatures#all} by default
      */
-    public String getF() {
-        return getFeatures().name();
+    public DocumentWorkflow.SupportedFeatures getSf() {
+        return getSupportedFeatures();
     }
 
     /**
