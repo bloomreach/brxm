@@ -112,12 +112,22 @@ public class DocumentHandleTest {
     @Test
     public void testPrivileges() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
-        session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
         session.setPermissions("/test/test", "hippo:admin", false);
         MockWorkflowContext context = new MockWorkflowContext("testuser", session);
         MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
         MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         DocumentHandle dm = new DocumentHandle(context, draftVariant);
+
+        // testing with only hippo:admin being denied
+        assertTrue(dm.hasPermission("foo"));
+        assertTrue(dm.hasPermission("foo,bar"));
+        assertTrue(dm.hasPermission("bar,foo"));
+        assertFalse(dm.hasPermission("hippo:admin"));
+
+        session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
+        dm = new DocumentHandle(context, draftVariant);
+
+        // testing with only hippo:author,hippo:editor being allowed
         assertFalse(dm.hasPermission("foo"));
         assertFalse(dm.hasPermission("foo,bar"));
         assertFalse(dm.hasPermission("bar,foo"));
@@ -129,6 +139,7 @@ public class DocumentHandleTest {
         assertTrue(dm.hasPermission("hippo:editor,hippo:author"));
         assertFalse(dm.hasPermission("hippo:admin"));
         assertFalse(dm.hasPermission("hippo:admin,foo"));
+        assertFalse(dm.hasPermission("hippo:admin,hippo:author"));
         assertFalse(dm.hasPermission("hippo:admin,hippo:author,hippo:editor"));
         assertFalse(dm.hasPermission("hippo:author,hippo:editor,hippo:admin"));
     }
