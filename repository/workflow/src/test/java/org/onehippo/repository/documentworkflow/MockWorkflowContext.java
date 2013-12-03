@@ -21,7 +21,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -32,20 +31,20 @@ public class MockWorkflowContext implements WorkflowContext {
 
     private String userIdentity;
     private Session session;
+    private MockRepositoryMap configuration;
 
     public MockWorkflowContext(String userIdentity) throws RepositoryException {
-        this.userIdentity = userIdentity;
-        this.session = new MockSession(MockNode.root());
+        this(userIdentity, new MockSession(MockNode.root()));
     }
 
     public MockWorkflowContext(String userIdentity, Session session) throws RepositoryException {
         this.userIdentity = userIdentity;
         this.session = session;
+        this.configuration = new MockRepositoryMap();
     }
 
     public MockWorkflowContext(String userIdentity, MockNode rootNode) throws RepositoryException {
-        this.userIdentity = userIdentity;
-        this.session = new MockSession(rootNode);
+        this(userIdentity, new MockSession(rootNode));
     }
 
     @Override
@@ -79,7 +78,7 @@ public class MockWorkflowContext implements WorkflowContext {
     }
 
     @Override
-    public RepositoryMap getWorkflowConfiguration() {
-        return null;
+    public MockRepositoryMap getWorkflowConfiguration() {
+        return configuration;
     }
 }

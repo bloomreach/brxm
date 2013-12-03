@@ -51,16 +51,16 @@ public class ArchiveAction extends AbstractDocumentAction {
 
         DocumentHandle dm = getDataModel(scInstance);
 
-        if (dm.getD() != null) {
-            deleteDocument(dm.getD());
+        if (dm.getDraft() != null) {
+            deleteDocument(dm.getDraft());
         }
 
-        if (dm.getP() != null) {
-            deleteDocument(dm.getP());
+        if (dm.getPublished() != null) {
+            deleteDocument(dm.getPublished());
         }
 
         try {
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext(scInstance).getWorkflow("core", dm.getU());
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext(scInstance).getWorkflow("core", dm.getUnpublished());
             defaultWorkflow.archive();
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);

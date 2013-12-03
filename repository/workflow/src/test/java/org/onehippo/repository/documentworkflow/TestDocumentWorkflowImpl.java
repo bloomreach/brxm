@@ -23,6 +23,7 @@ import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
@@ -125,6 +126,26 @@ public class TestDocumentWorkflowImpl {
         if (hints.containsKey(hint)) {
             Assert.fail("Current hints "+hints+" contains not expected hint ["+hint+"]");
         }
+    }
+
+    @Test
+    public void testWorkflowFeatures() throws Exception {
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        MockWorkflowContext context = new MockWorkflowContext("testuser");
+        wf.setWorkflowContext(context);
+        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+
+        wf.setNode(draftVariant);
+        assertEquals(DocumentWorkflow.Features.all, wf.getDocumentModel().getFeatures());
+
+        context.getWorkflowConfiguration().put("workflow.features", DocumentWorkflow.Features.document.name());
+        wf.setNode(draftVariant);
+        assertEquals(DocumentWorkflow.Features.document, wf.getDocumentModel().getFeatures());
+
+        context.getWorkflowConfiguration().put("workflow.features", "undefined");
+        wf.setNode(draftVariant);
+        assertEquals(DocumentWorkflow.Features.all, wf.getDocumentModel().getFeatures());
     }
 
     @Test

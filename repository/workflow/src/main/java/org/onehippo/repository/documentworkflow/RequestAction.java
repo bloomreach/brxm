@@ -73,7 +73,7 @@ public class RequestAction extends AbstractDocumentAction {
 
         DocumentHandle dm = getDataModel(scInstance);
 
-        if (dm.getR() == null) {
+        if (dm.getRequest() == null) {
             try {
                 PublishableDocument contextVariant = eval(scInstance, getContextVariantExpr());
                 Date targetDate = null;
@@ -91,7 +91,7 @@ public class RequestAction extends AbstractDocumentAction {
                 }
 
                 req.getNode().getSession().save();
-                dm.setR(req);
+                dm.setRequest(req);
             } catch (RepositoryException e) {
                 throw new ModelException("request publication failure", e);
             }

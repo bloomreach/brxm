@@ -51,21 +51,21 @@ public class DocumentHandleTest {
         MockNode rejectedRequest2 = addRequest(handle, PublicationRequest.REJECTED);
 
         DocumentHandle dm = new DocumentHandle(new MockWorkflowContext("testuser"), unpublishedVariant);
-        assertNull(dm.getD());
-        assertEquals(publishedVariant,dm.getP().getNode());
-        assertEquals(unpublishedVariant,dm.getU().getNode());
-        assertEquals(HippoStdNodeType.UNPUBLISHED, dm.getSs());
+        assertNull(dm.getDraft());
+        assertEquals(publishedVariant,dm.getPublished().getNode());
+        assertEquals(unpublishedVariant,dm.getUnpublished().getNode());
+        assertEquals(HippoStdNodeType.UNPUBLISHED, dm.getSubjectState());
         assertEquals("testuser", dm.getUser());
-        assertNull(dm.getRr());
-        assertEquals(publishRequest, dm.getR().getNode());
+        assertNull(dm.getRejectedRequest());
+        assertEquals(publishRequest, dm.getRequest().getNode());
 
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), publishRequest);
-        assertNull(dm.getSs());
-        assertNull(dm.getRr());
-        assertEquals(publishRequest, dm.getR().getNode());
+        assertNull(dm.getSubjectState());
+        assertNull(dm.getRejectedRequest());
+        assertEquals(publishRequest, dm.getRequest().getNode());
 
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), rejectedRequest2);
-        assertEquals(rejectedRequest2, dm.getRr().getNode());
-        assertEquals(publishRequest, dm.getR().getNode());
+        assertEquals(rejectedRequest2, dm.getRejectedRequest().getNode());
+        assertEquals(publishRequest, dm.getRequest().getNode());
     }
 }

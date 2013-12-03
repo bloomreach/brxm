@@ -94,19 +94,19 @@ public class MoveDocumentAction extends AbstractDocumentAction {
 
         PublishableDocument document = null;
 
-        if (dm.getU() != null) {
-            document = dm.getU();
+        if (dm.getUnpublished() != null) {
+            document = dm.getUnpublished();
         }
 
         if (document == null) {
-            if (dm.getP() != null) {
-                document = dm.getP();
+            if (dm.getPublished() != null) {
+                document = dm.getPublished();
             }
         }
 
         if (document == null) {
-            if (dm.getD() != null) {
-                document = dm.getD();
+            if (dm.getDraft() != null) {
+                document = dm.getDraft();
             }
         }
 

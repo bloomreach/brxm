@@ -56,9 +56,9 @@ public class IsModifiedAction extends AbstractDocumentAction {
 
         DocumentHandle dm = getDataModel(scInstance);
 
-        if (dm.getD() != null && dm.getU() != null && PublishableDocument.DRAFT.equals(dm.getSs())) {
+        if (dm.getDraft() != null && dm.getUnpublished() != null && PublishableDocument.DRAFT.equals(dm.getSubjectState())) {
             // TODO: BasicReviewedActionsWorkflowImpl#hints() method retrieves a 'fresh' draftNode based on the dm.d.identifier. Why would that be needed?
-            dm.getHints().put("modified", !equals(dm.getD().getNode(), dm.getU().getNode()));
+            dm.getHints().put("modified", !equals(dm.getDraft().getNode(), dm.getUnpublished().getNode()));
         }
     }
 
