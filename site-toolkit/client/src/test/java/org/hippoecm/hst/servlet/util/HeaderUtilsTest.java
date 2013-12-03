@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,12 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.servlet.util;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 
@@ -30,12 +24,18 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class HeaderUtilsTest {
 
     MockHttpServletRequest request;
     MockHttpServletResponse response;
     BinaryPage page;
-    
+
     @Before
     public void setup() throws UnsupportedEncodingException {
         request = new MockHttpServletRequest();
@@ -49,19 +49,19 @@ public class HeaderUtilsTest {
     public void testNotForced() {
         assertFalse(HeaderUtils.isForcedCheck(request));
     }
-    
+
     @Test
     public void testForcedCacheControl() {
         request.addHeader("Cache-Control", "no-cache");
         assertTrue(HeaderUtils.isForcedCheck(request));
     }
-    
+
     @Test
     public void testForcedPragma() {
         request.addHeader("Pragma", "no-cache");
         assertTrue(HeaderUtils.isForcedCheck(request));
     }
-    
+
     @Test
     public void testNoETag() {
         assertFalse(HeaderUtils.hasMatchingEtag(request, page));
@@ -78,7 +78,7 @@ public class HeaderUtilsTest {
         request.addHeader("If-None-Match", "non-match");
         assertFalse(HeaderUtils.hasMatchingEtag(request, page));
     }
-    
+
     @Test
     public void testNoModified() {
         assertTrue(HeaderUtils.isModifiedSince(request, page));
@@ -99,7 +99,7 @@ public class HeaderUtilsTest {
     @Test
     public void testSetLastModified() {
         HeaderUtils.setLastModifiedHeaders(response, page);
-        Long mod = (Long) response.getHeader("Last-Modified");
+        Long mod = Long.valueOf(response.getHeader("Last-Modified"));
         assertEquals(1234L, mod.longValue());
     }
 
@@ -114,7 +114,7 @@ public class HeaderUtilsTest {
     @Test
     public void testSetExpires() {
         HeaderUtils.setExpiresHeaders(response, page);
-        Long expires = (Long) response.getHeader("Expires");
+        Long expires = Long.valueOf(response.getHeader("Expires"));
         assertTrue(expires > System.currentTimeMillis());
         assertNotNull(response.getHeader("Cache-Control"));
     }
