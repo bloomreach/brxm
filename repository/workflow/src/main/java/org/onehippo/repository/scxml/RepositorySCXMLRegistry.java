@@ -26,7 +26,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.stream.Location;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
@@ -59,7 +58,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     public static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
     public static final String SCXML_ACTION = "hipposcxml:action";
 
-    private Map<String, SCXML> scxmlMap;
+    private Map<String, SCXMLDefinition> scxmlDefMap;
 
     private Session session;
     private String scxmlDefinitionsNodePath;
@@ -82,17 +81,17 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     }
 
     @Override
-    public SCXML getSCXML(String id) {
-        if (scxmlMap != null) {
-            return scxmlMap.get(id);
+    public SCXMLDefinition getSCXMLDefinition(String id) {
+        if (scxmlDefMap != null) {
+            return scxmlDefMap.get(id);
         }
 
         return null;
     }
 
     void destroy() {
-        if (scxmlMap != null) {
-            scxmlMap.clear();
+        if (scxmlDefMap != null) {
+            scxmlDefMap.clear();
         }
 
         session = null;
@@ -116,7 +115,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
             return;
         }
 
-        Map<String, SCXML> newScxmlMap = new HashMap<String, SCXML>();
+        Map<String, SCXMLDefinition> newScxmlDefMap = new HashMap<String, SCXMLDefinition>();
 
         try {
             if (scxmlDefsNode.hasNodes()) {
@@ -124,41 +123,41 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                     final String scxmlDefId = scxmlDefNode.getName();
                     // NOTE: in order to keep the existing SCXML instance in case the new SCXML definition has error(s),
                     //       find the existing old SCXML instance here to restore later if necessary.
-                    SCXML oldScxml = (scxmlMap != null ? scxmlMap.get(scxmlDefId) : null);
-                    SCXML newScxml = null;
+                    SCXMLDefinition oldScxmlDef = (scxmlDefMap != null ? scxmlDefMap.get(scxmlDefId) : null);
+                    SCXMLDefinition newScxmlDef = null;
 
                     try {
-                        newScxml = readSCXML(scxmlDefNode);
+                        newScxmlDef = readSCXMLDefinition(scxmlDefId, scxmlDefNode);
 
-                        if (!validateSemantics(newScxml)) {
+                        if (!validateSemantics(newScxmlDef)) {
                             log.error("Invalid SCXML at '{}'. This will be ignored with keeping old one if exists.", scxmlDefNode.getPath());
-                            newScxml = null;
+                            newScxmlDef = null;
                         }
                     } catch (SCXMLException e) {
                         log.error("Invalid SCXML at " + scxmlDefNode.getPath(), e);
                     }
 
-                    if (newScxml == null) {
+                    if (newScxmlDef == null) {
                         // NOTE: The new SCXML instance has error(s) so it's null here.
                         //       Now, let put the old existing SCXML instance back into the map if there's any.
-                        newScxml = oldScxml;
+                        newScxmlDef = oldScxmlDef;
                         log.info("The existing SCXML definition was kept due to invalid SCXML. Id: '{}'.", scxmlDefId);
                     }
 
-                    if (newScxml != null) {
-                        newScxmlMap.put(scxmlDefId, newScxml);
+                    if (newScxmlDef != null) {
+                        newScxmlDefMap.put(scxmlDefId, newScxmlDef);
                         log.info("Registering SCXML definition. Id: '{}'.", scxmlDefId);
                     }
                 }
             }
 
-            scxmlMap = newScxmlMap;
+            scxmlDefMap = newScxmlDefMap;
         } catch (RepositoryException e) {
             log.warn("Failed to parse SCXML definition node.", e);
         }
     }
 
-    private SCXML readSCXML(final Node scxmlDefNode) throws SCXMLException {
+    private SCXMLDefinition readSCXMLDefinition(final String scxmlDefId, final Node scxmlDefNode) throws SCXMLException {
         String scxmlDefPath = null;
         String scxmlSource = null;
         final List<CustomAction> customActions = new ArrayList<CustomAction>();
@@ -193,7 +192,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
 
         try {
             Configuration configuration = createSCXMLReaderConfiguration(scxmlDefPath, customActions);
-            return SCXMLReader.read(new StreamSource(new StringReader(scxmlSource)), configuration);
+            SCXML scxml = SCXMLReader.read(new StreamSource(new StringReader(scxmlSource)), configuration);
+            return new SCXMLDefinitionImpl(scxmlDefId, scxmlDefPath, scxml);
         } catch (IOException e) {
             throw new SCXMLException("IO error while reading SCXML definition at '" + scxmlDefPath + "'. " + e.getLocalizedMessage(), e);
         } catch (ModelException e) {
@@ -229,7 +229,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         return configuration;
     }
 
-    private boolean validateSemantics(final SCXML scxml) {
+    private boolean validateSemantics(final SCXMLDefinition scxmlDef) {
         // TODO: Add more validation logic against Hippo specific semantics.
         return true;
     }
@@ -283,4 +283,31 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
+    private static class SCXMLDefinitionImpl implements SCXMLDefinition {
+
+        private final String id;
+        private final String path;
+        private final SCXML scxml;
+
+        public SCXMLDefinitionImpl(final String id, final String path, final SCXML scxml) {
+            this.id = id;
+            this.path = path;
+            this.scxml = scxml;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+
+        @Override
+        public String getPath() {
+            return path;
+        }
+
+        @Override
+        public SCXML getSCXML() {
+            return scxml;
+        }
+    }
 }

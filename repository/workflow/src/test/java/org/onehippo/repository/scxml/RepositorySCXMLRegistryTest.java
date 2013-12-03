@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.scxml.LogRecordTestUtils.containsLogMessage;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +32,6 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.ModelException;
-import org.apache.commons.scxml2.model.SCXML;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -128,15 +128,15 @@ public class RepositorySCXMLRegistryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello2", SCXML_HELLO2);
         registry.setUp(scxmlConfigNode);
 
-        SCXML helloScxml = registry.getSCXML("hello");
+        SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello");
         assertNotNull(helloScxml);
-        assertEquals("hello", helloScxml.getInitial());
+        assertEquals("hello", helloScxml.getSCXML().getInitial());
 
-        SCXML hello2Scxml = registry.getSCXML("hello2");
+        SCXMLDefinition hello2Scxml = registry.getSCXMLDefinition("hello2");
         assertNotNull(hello2Scxml);
-        assertEquals("hello2", hello2Scxml.getInitial());
+        assertEquals("hello2", hello2Scxml.getSCXML().getInitial());
 
-        assertNull(registry.getSCXML("nonexisting"));
+        assertNull(registry.getSCXMLDefinition("nonexisting"));
     }
 
     @Test
@@ -148,12 +148,12 @@ public class RepositorySCXMLRegistryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello-wrong-execution-in-state", SCXML_HELLO_WRONG_EXECUTION_IN_STATE);
         registry.setUp(scxmlConfigNode);
 
-        SCXML helloScxml = registry.getSCXML("hello");
+        SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello");
         assertNotNull(helloScxml);
-        assertEquals("hello", helloScxml.getInitial());
-        assertNotNull(registry.getSCXML("hello-no-initial"));
-        assertNull(registry.getSCXML("hello-nonexisting-initial"));
-        assertNotNull(registry.getSCXML("hello-wrong-execution-in-state"));
+        assertEquals("hello", helloScxml.getSCXML().getInitial());
+        assertNotNull(registry.getSCXMLDefinition("hello-no-initial"));
+        assertNull(registry.getSCXMLDefinition("hello-nonexisting-initial"));
+        assertNotNull(registry.getSCXMLDefinition("hello-wrong-execution-in-state"));
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
         assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-nonexisting-initial'."));
@@ -171,7 +171,7 @@ public class RepositorySCXMLRegistryTest {
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "known-custom-action", KnownAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
-        SCXML helloScxml = registry.getSCXML("hello-with-unknown-custom-actions");
+        SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-custom-actions");
         assertNotNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
@@ -188,7 +188,7 @@ public class RepositorySCXMLRegistryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
         registry.setUp(scxmlConfigNode);
 
-        SCXML helloScxml = registry.getSCXML("hello-with-unknown-custom-actions");
+        SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-custom-actions");
         assertNotNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
@@ -205,25 +205,11 @@ public class RepositorySCXMLRegistryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-ns-custom-actions", SCXML_HELLO_WITH_UNKNOWN_NS_CUSTOM_ACTIONS);
         registry.setUp(scxmlConfigNode);
 
-        SCXML helloScxml = registry.getSCXML("hello-with-unknown-ns-custom-actions");
+        SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-ns-custom-actions");
         assertNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
         assertTrue(containsLogMessage(logRecords, "Failed to read SCXML XML stream at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-ns-custom-actions'. ParseError"));
-    }
-
-    private boolean containsLogMessage(final List<LogRecord> logRecords, String message) {
-        if (logRecords == null) {
-            return false;
-        }
-
-        for (LogRecord logRecord : logRecords) {
-            if (logRecord.toString().contains(message)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static class KnownAction extends Action {

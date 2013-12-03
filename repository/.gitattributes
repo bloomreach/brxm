@@ -474,6 +474,7 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/PublicationRequest.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/PublishableDocument.java -text
+workflow/src/main/java/org/onehippo/repository/scxml/SCXMLDefinition.java -text
 workflow/src/main/resources/date-derivatives.xml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/gallery-namespace.xml -text
@@ -489,6 +490,7 @@ workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/pla
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
+workflow/src/test/java/org/onehippo/repository/scxml/LogRecordTestUtils.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLExecutorFactoryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLRegistryTest.java -text
 workflow/src/test/resources/log4j-filters.txt -text

@@ -16,7 +16,6 @@
 package org.onehippo.repository.scxml;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
-import org.apache.commons.scxml2.model.SCXML;
 import org.onehippo.cms7.services.SingletonService;
 
 
@@ -26,6 +25,6 @@ import org.onehippo.cms7.services.SingletonService;
 @SingletonService
 public interface SCXMLExecutorFactory {
 
-    public SCXMLExecutor createSCXMLExecutor(SCXML scxml) throws SCXMLException;
+    public SCXMLExecutor createSCXMLExecutor(SCXMLDefinition scxmlDef) throws SCXMLException;
 
 }

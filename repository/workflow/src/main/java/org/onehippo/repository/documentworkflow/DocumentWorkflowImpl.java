@@ -28,12 +28,12 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.model.ModelException;
-import org.apache.commons.scxml2.model.SCXML;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.scxml.SCXMLDefinition;
 import org.onehippo.repository.scxml.SCXMLException;
 import org.onehippo.repository.scxml.SCXMLExecutorFactory;
 import org.onehippo.repository.scxml.SCXMLRegistry;
@@ -65,14 +65,14 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
         try {
             SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
-            SCXML scxml = scxmlRegistry.getSCXML(SCXML_DEFINITION_ID);
+            SCXMLDefinition scxmlDef = scxmlRegistry.getSCXMLDefinition(SCXML_DEFINITION_ID);
 
-            if (scxml == null) {
+            if (scxmlDef == null) {
                 throw new WorkflowException("SCXML definition not found by id, '" + SCXML_DEFINITION_ID + "'.");
             }
 
             SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
-            scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxml);
+            scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxmlDef);
 
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
             scxmlExecutor.getRootContext().set("dm", dm);

@@ -15,15 +15,11 @@
  */
 package org.onehippo.repository.scxml;
 
-import java.util.List;
-
 import org.apache.commons.scxml2.SCXMLExecutor;
-import org.apache.commons.scxml2.model.SCXML;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.testutils.slf4j.LogRecord;
 import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
 
 /**
@@ -34,11 +30,16 @@ public class RepositorySCXMLExecutorFactoryTest {
     private static final String SCXML_HELLO_WITH_ERROR_JEXL_SCRIPTS =
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello\">\n" +
             "  <state id=\"hello\">\n" +
-            "    <onentry>\n" +
-            "      <script>\n" +
-            "        unknownObject.invoke();\n" +
-            "      </script>\n" +
-            "    </onentry>\n" +
+            "    <initial>\n" +
+            "      <transition target=\"world\" />\n" +
+            "    </initial>\n" +
+            "    <state id=\"world\">\n" +
+            "      <onentry>\n" +
+            "        <script>\n" +
+            "          unknownObject.invoke();\n" +
+            "        </script>\n" +
+            "      </onentry>\n" +
+            "    </state>\n" +
             "  </state>\n" +
             "</scxml>";
 
@@ -57,7 +58,9 @@ public class RepositorySCXMLExecutorFactoryTest {
     public void before() throws Exception {
         recordingLogger.clearLogRecords();
         registry = new MockRepositorySCXMLRegistry();
+
         execFactory = new RepositorySCXMLExecutorFactory();
+        execFactory.initialize();
     }
 
     @Test
@@ -66,13 +69,10 @@ public class RepositorySCXMLExecutorFactoryTest {
         registry.addScxmlNode(scxmlConfigNode, "hello-with-error-jexl-scripts", SCXML_HELLO_WITH_ERROR_JEXL_SCRIPTS);
         registry.setUp(scxmlConfigNode);
 
-        SCXML helloScxml = registry.getSCXML("hello-with-error-jexl-scripts");
+        SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-error-jexl-scripts");
         SCXMLExecutor helloExec = execFactory.createSCXMLExecutor(helloScxml);
 
         helloExec.go();
-
-        // TODO
-        List<LogRecord> logRecords = recordingLogger.getLogRecords();
     }
 
 }
