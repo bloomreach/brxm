@@ -23,8 +23,6 @@ import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
@@ -127,30 +125,6 @@ public class TestDocumentWorkflowImpl {
         if (hints.containsKey(hint)) {
             Assert.fail("Current hints "+hints+" contains not expected hint ["+hint+"]");
         }
-    }
-
-    @Test
-    public void testWorkflowSupportedFeatures() throws Exception {
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
-        MockWorkflowContext context = new MockWorkflowContext("testuser");
-        wf.setWorkflowContext(context);
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-
-        wf.setNode(draftVariant);
-        assertEquals(DocumentWorkflow.SupportedFeatures.all, wf.getDocumentModel().getSupportedFeatures());
-        assertTrue(wf.getDocumentModel().getSupportedFeatures().document());
-        assertTrue(wf.getDocumentModel().getSupportedFeatures().request());
-
-        context.getWorkflowConfiguration().put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        wf.setNode(draftVariant);
-        assertEquals(DocumentWorkflow.SupportedFeatures.document, wf.getDocumentModel().getSupportedFeatures());
-        assertTrue(wf.getDocumentModel().getSupportedFeatures().document());
-        assertFalse(wf.getDocumentModel().getSupportedFeatures().request());
-
-        context.getWorkflowConfiguration().put("workflow.supportedFeatures", "undefined");
-        wf.setNode(draftVariant);
-        assertEquals(DocumentWorkflow.SupportedFeatures.all, wf.getDocumentModel().getSupportedFeatures());
     }
 
     @Test
