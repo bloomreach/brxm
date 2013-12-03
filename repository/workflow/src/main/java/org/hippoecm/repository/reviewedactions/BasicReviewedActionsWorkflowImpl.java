@@ -124,7 +124,9 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
             boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
             boolean unpublishedDirty = unpublishedDocument != null &&
-                    (publishedDocument == null || publishedDocument.getLastModificationDate().compareTo(unpublishedDocument.getLastModificationDate()) < 0);
+                    (publishedDocument == null
+                            || publishedDocument.getLastModificationDate().getTime() == 0
+                            || !publishedDocument.getLastModificationDate().equals(unpublishedDocument.getLastModificationDate()));
             boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
             boolean pendingRequest = current != null;
 
