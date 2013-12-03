@@ -38,7 +38,7 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
     }
 
     @Test
-    public void assertPendingChangescorrectForMovesWithinSameParent() throws RepositoryException {
+    public void assertPendingChangesCorrectForMovesWithinSameParent() throws RepositoryException {
 
         Session session = createSession();
 
@@ -57,7 +57,7 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
     }
 
     @Test
-    public void assertPendingChangesIncorrectForMovesBetweenDifferentParents() throws RepositoryException {
+    public void assertPendingChangesCorrectForMovesBetweenDifferentParents() throws RepositoryException {
         Session session = createSession();
         session.move("/hst:hst/hst:configurations/unittestcommon/hst:pages/basepage/header",
                 "/hst:hst/hst:configurations/unittestcommon/hst:pages/homepage/header");

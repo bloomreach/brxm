@@ -47,40 +47,24 @@ public class HstConfigurationUtils {
 
     /**
      * Persists pending changes. logs events to the HippoEventBus and if <code>invalidator</code> is not <code>null</code>
-     * also send event paths if dispatchPendingChanges = true. In case dispatchPendingChanges = false, we introduce a very small
-     * wait to make sure on the current jvm the asynchronous jcr events have been processed (exceptional circumstances ignored. Worst
-     * case scenario is that an event arrives a bit too late)
+     * also send event paths
      * @param session
-     * @param dispatchPendingChanges if <code>false</code> we do not use HippoSession#pendingChanges to dispatch changes directly but
-     *                               instead a thread sleep of 100 ms to enable jcr events to be dispatched
      * @throws RepositoryException
      */
-    public synchronized static void persistChanges(final Session session, final boolean dispatchPendingChanges) throws RepositoryException {
+    public synchronized static void persistChanges(final Session session) throws RepositoryException {
         if (!session.hasPendingChanges()) {
             return;
         }
-            // never prune for getting changes since needed for hstNode model reloading
+        // never prune for getting changes since needed for hstNode model reloading
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
         session.save();
-        if (dispatchPendingChanges) {
-            EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
-            // after the save the paths need to be send, not before!
-            if (invalidator != null && pathsToBeChanged != null) {
-                invalidator.eventPaths(pathsToBeChanged);
-            }
-        } else {
-            try {
-                Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        EventPathsInvalidator invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        // after the save the paths need to be send, not before!
+        if (invalidator != null && pathsToBeChanged != null) {
+            invalidator.eventPaths(pathsToBeChanged);
         }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),StringUtils.join(pathsToBeChanged, ","));
-    }
-
-    public synchronized static void persistChanges(final Session session) throws RepositoryException {
-        persistChanges(session, true);
     }
 
     /**
