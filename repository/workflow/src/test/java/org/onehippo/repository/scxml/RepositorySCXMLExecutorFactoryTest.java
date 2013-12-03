@@ -15,12 +15,17 @@
  */
 package org.onehippo.repository.scxml;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
+import org.onehippo.repository.scxml.test.ErrorRecord;
+import org.onehippo.repository.scxml.test.ErrorRecordTestUtils;
+import org.onehippo.repository.scxml.test.ErrorRecordingErrorReporterWrapper;
 
 /**
  * RepositorySCXMLExecutorFactoryTest
@@ -43,20 +48,11 @@ public class RepositorySCXMLExecutorFactoryTest {
             "  </state>\n" +
             "</scxml>";
 
-    private static LoggerRecordingWrapper recordingLogger;
-
     private MockRepositorySCXMLRegistry registry;
     private RepositorySCXMLExecutorFactory execFactory;
 
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        recordingLogger = new LoggerRecordingWrapper(RepositorySCXMLExecutorFactory.log);
-        RepositorySCXMLExecutorFactory.log = recordingLogger;
-    }
-
     @Before
     public void before() throws Exception {
-        recordingLogger.clearLogRecords();
         registry = new MockRepositorySCXMLRegistry();
 
         execFactory = new RepositorySCXMLExecutorFactory();
@@ -71,8 +67,17 @@ public class RepositorySCXMLExecutorFactoryTest {
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-error-jexl-scripts");
         SCXMLExecutor helloExec = execFactory.createSCXMLExecutor(helloScxml);
+        // replace errorReporter to capture the error infos
+        ErrorRecordingErrorReporterWrapper errorReporter = new ErrorRecordingErrorReporterWrapper(helloScxml);
+        helloExec.setErrorReporter(errorReporter);
 
         helloExec.go();
+
+        List<ErrorRecord> errorRecords = errorReporter.getErrorRecords();
+
+        // Note: Also, SimpleErrorReporter in commons-SCXML will log this as well: "... Expression error inside /hello/world ..."
+        //       But let's just assert for hippo specific path information here.
+        assertTrue(ErrorRecordTestUtils.containsErrorDetail(errorRecords, "in /hippo:moduleconfig/hipposcxml:definitions/hello-with-error-jexl-scripts"));
     }
 
 }

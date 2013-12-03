@@ -18,7 +18,6 @@ package org.onehippo.repository.scxml;
 import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
-import org.apache.commons.scxml2.env.SimpleErrorReporter;
 import org.apache.commons.scxml2.env.jexl.JexlContext;
 import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
 import org.slf4j.Logger;
@@ -43,33 +42,12 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
         }
 
         final JexlContext jexlCtx = new JexlContext();
-        SCXMLExecutor executor = new SCXMLExecutor(evaluator, new SimpleDispatcher(), new HippoSimpleErrorReporter(scxmlDef));
+        SCXMLExecutor executor = new SCXMLExecutor(evaluator, new SimpleDispatcher(), new HippoScxmlErrorReporter(scxmlDef));
         executor.setRootContext(jexlCtx);
         executor.setStateMachine(scxmlDef.getSCXML());
         return executor;
     }
 
     void destroy() {
-    }
-
-    private static class HippoSimpleErrorReporter extends SimpleErrorReporter {
-
-        private static final long serialVersionUID = 1L;
-
-        private final SCXMLDefinition scxmlDef;
-
-        public HippoSimpleErrorReporter(final SCXMLDefinition scxmlDef) {
-            this.scxmlDef = scxmlDef;
-        }
-
-        @Override
-        public void onError(final String errorCode, final String errDetail,
-                final Object errCtx) {
-            StringBuilder sbDetail = new StringBuilder(128);
-            sbDetail.append(errDetail);
-            sbDetail.append(" in ");
-            sbDetail.append(scxmlDef.getPath());
-            super.onError(errorCode, sbDetail.toString(), errCtx);
-        }
     }
 }
