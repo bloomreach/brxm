@@ -17,10 +17,14 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
+import java.security.AccessControlException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -36,6 +40,7 @@ public class DocumentHandle {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
 
+    private Map<String, Boolean> privilegesMap;
     private Map<String, Serializable> hints = new HashMap<>();
     private Map<String, PublishableDocument> documents = null;
     private PublicationRequest rejectedRequest = null;
@@ -43,11 +48,16 @@ public class DocumentHandle {
     private String user;
     private String workflowState;
     private String ds;
+    private Node subject;
+    private WorkflowContext context;
     private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
     private Node handle;
 
     public DocumentHandle(WorkflowContext context, Node subject) throws RepositoryException {
+
+        this.context = context;
+        this.subject = subject;
 
         RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
         if (workflowConfiguration.exists()) {
@@ -117,6 +127,58 @@ public class DocumentHandle {
             return documents;
         }
         return Collections.emptyMap();
+    }
+
+    /**
+     * Checks if specific privileges (e.g. hippo:editor) are allowed for the current user session against the workflow subject node.
+     * <p>
+     *     Implementation note: previously evaluated privileges are cached within the DocumentHandle instance
+     * </p>
+     * @param privileges the privileges (, separated) to check permission for
+     * @return true if for the current user session the workflow subject node allows the specified privileges
+     */
+    public boolean hasPermission(String privileges) {
+        if (privileges == null) {
+            return false;
+        }
+
+        HashSet<String> privs = new HashSet<>(Arrays.asList(privileges.split(",")));
+        if (privs.isEmpty()) {
+            return false;
+        }
+
+        if (privilegesMap == null) {
+            privilegesMap = new HashMap<>();
+        }
+        for (String priv : privs) {
+            Boolean hasPrivilege = privilegesMap.get(priv);
+            if (hasPrivilege == null) {
+                hasPrivilege = Boolean.FALSE;
+                try {
+                    // TODO: should use more efficient Session#hasPermission instead, when REPO-855 is fixed
+                    context.getUserSession().checkPermission(subject.getPath(), priv);
+                    hasPrivilege = Boolean.TRUE;
+                } catch (AccessControlException e) {
+                } catch (AccessDeniedException e) {
+                } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
+                } catch (RepositoryException e) {
+                }
+                this.privilegesMap.put(priv, hasPrivilege);
+            }
+            if (!hasPrivilege.booleanValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Script supporting shortened version of {@link #hasPermission(String)}
+     * @param privileges the privileges (, separated) to check permission for
+     * @return true if for the current user session the current workflow subject node allows the specified privileges
+     */
+    public boolean pm(String privileges) {
+        return hasPermission(privileges);
     }
 
     /**
