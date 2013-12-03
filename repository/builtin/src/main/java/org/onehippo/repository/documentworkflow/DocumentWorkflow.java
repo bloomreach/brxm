@@ -24,4 +24,9 @@ import org.hippoecm.repository.standardworkflow.VersionWorkflow;
  * Aggregate DocumentWorkflow, combining all Document handle based workflow operations into one generic interface
  */
 public interface DocumentWorkflow extends FullRequestWorkflow, FullReviewedActionsWorkflow, UnlockWorkflow, VersionWorkflow {
+
+    /**
+     * The Features enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality should be used and exposed
+     */
+    enum Features { all, request, document, unlock, version };
 }
