@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import javax.jcr.RepositoryException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
@@ -138,10 +139,14 @@ public class TestDocumentWorkflowImpl {
 
         wf.setNode(draftVariant);
         assertEquals(DocumentWorkflow.Features.all, wf.getDocumentModel().getFeatures());
+        assertTrue(wf.getDocumentModel().getFeatures().document());
+        assertTrue(wf.getDocumentModel().getFeatures().request());
 
         context.getWorkflowConfiguration().put("workflow.features", DocumentWorkflow.Features.document.name());
         wf.setNode(draftVariant);
         assertEquals(DocumentWorkflow.Features.document, wf.getDocumentModel().getFeatures());
+        assertTrue(wf.getDocumentModel().getFeatures().document());
+        assertFalse(wf.getDocumentModel().getFeatures().request());
 
         context.getWorkflowConfiguration().put("workflow.features", "undefined");
         wf.setNode(draftVariant);

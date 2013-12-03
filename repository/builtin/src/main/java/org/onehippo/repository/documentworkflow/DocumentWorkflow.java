@@ -28,5 +28,24 @@ public interface DocumentWorkflow extends FullRequestWorkflow, FullReviewedActio
     /**
      * The Features enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality should be used and exposed
      */
-    enum Features { all, request, document, unlock, version };
+    enum Features {
+
+        all, request, document, unlock, version;
+
+        public boolean request() {
+            return this == all || this == request;
+        }
+
+        public boolean document() {
+            return this == all || this == document;
+        }
+
+        public boolean unlock() {
+            return this == all || this == unlock;
+        }
+
+        public boolean version() {
+            return this == all || this == version;
+        }
+    };
 }
