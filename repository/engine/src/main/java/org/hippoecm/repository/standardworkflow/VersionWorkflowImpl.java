@@ -47,6 +47,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.DefaultCopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -308,6 +309,10 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         }
         clear(target);
         restore(target, version.getNode("jcr:frozenNode"));
+        if (target.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
+            final Calendar cal = Calendar.getInstance();
+            target.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, cal);
+        }
         target.save();
         return targetDocument;
     }

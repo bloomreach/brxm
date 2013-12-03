@@ -86,4 +86,12 @@ public class PublishableDocument extends Document {
         setStringProperty("hippostdpubwf:lastModifiedBy", username);
         setDateProperty("hippostdpubwf:lastModificationDate", new Date());
     }
+
+    public Date getLastModificationDate() throws RepositoryException {
+        final Date date = getDateProperty("hippostdpubwf:lastModificationDate");
+        if (date == null) {
+            return new Date(0);
+        }
+        return date;
+    }
 }

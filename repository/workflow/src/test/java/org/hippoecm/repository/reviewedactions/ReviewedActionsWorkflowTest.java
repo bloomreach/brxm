@@ -170,6 +170,20 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void publishActionIsDisabledAfterPublishingDocument() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        // steps taken by an author
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        reviewedWorkflow.publish();
+
+        final Map<String, Serializable> hints = reviewedWorkflow.hints();
+        assertFalse("document is still publishable, immediately after publication", (Boolean) hints.get("publish"));
+    }
+
+    @Test
     public void cannotEditWithPendingRequest() throws RepositoryException, RemoteException, WorkflowException {
         Node node;
 

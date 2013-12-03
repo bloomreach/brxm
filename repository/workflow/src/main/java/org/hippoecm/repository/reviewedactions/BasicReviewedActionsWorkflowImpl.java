@@ -123,7 +123,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
 
             boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
-            boolean unpublishedDirty = unpublishedDocument != null && unpublishedDocument.isAvailable("preview");
+            boolean unpublishedDirty = unpublishedDocument != null &&
+                    (publishedDocument == null
+                            || publishedDocument.getLastModificationDate().getTime() == 0
+                            || !publishedDocument.getLastModificationDate().equals(unpublishedDocument.getLastModificationDate()));
             boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
             boolean pendingRequest = current != null;
 
@@ -408,6 +411,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
             if (unpublishedDocument == null) {
                 createUnpublished(draftDocument);
+            } else if (!unpublishedDocument.isAvailable("preview")) {
+                unpublishedDocument.setAvailability(new String[] {"preview"});
             }
 
             if (!equals(draftDocument.getNode(), unpublishedDocument.getNode())) {

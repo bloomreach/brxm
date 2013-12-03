@@ -23,7 +23,6 @@ import javax.jcr.NodeIterator;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -34,29 +33,14 @@ import static org.junit.Assert.assertTrue;
 
 public class PendingChangesTest extends RepositoryTestCase {
 
-    private HippoNode root;
+    private HippoNode test;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
+        test = (HippoNode) session.getRootNode().addNode("test");
         session.save();
-        root = (HippoNode) session.getRootNode().addNode("test");
-        session.save();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        //session.refresh(false);
-        if(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-        super.tearDown();
     }
 
     @Test
@@ -69,13 +53,13 @@ public class PendingChangesTest extends RepositoryTestCase {
         changes = ((HippoSession)session).pendingChanges();
         assertFalse(changes.hasNext());
 
-        assertFalse(root.isModified());
-        changes = root.pendingChanges();
+        assertFalse(test.isModified());
+        changes = test.pendingChanges();
         assertFalse(changes.hasNext());
 
-        root.setProperty("prop", "test");
-        assertTrue(root.isModified());
-        changes = root.pendingChanges();
+        test.setProperty("prop", "test");
+        assertTrue(test.isModified());
+        changes = test.pendingChanges();
         assertTrue(changes.hasNext());
         changes = ((HippoSession)session).pendingChanges();
         for(paths.clear(); changes.hasNext(); ) {
@@ -86,9 +70,9 @@ public class PendingChangesTest extends RepositoryTestCase {
 
         session.save();
 
-        root.addNode("test0","nt:unstructured");
-        node = root.addNode("test1","nt:unstructured");
-        root.addNode("test2","nt:unstructured");
+        test.addNode("test0","nt:unstructured");
+        node = test.addNode("test1","nt:unstructured");
+        test.addNode("test2", "nt:unstructured");
         node.addNode("aap", "hippo:testdocument").addMixin("mix:versionable");
         node.addNode("noot", "hippo:testdocument").addMixin("mix:versionable");
         node = node.addNode("mies", "hippo:testdocument");
@@ -111,7 +95,7 @@ public class PendingChangesTest extends RepositoryTestCase {
         assertTrue(paths.contains("/test/test1/mies"));
         assertTrue(paths.contains("/test/test1/mies/zus"));
 
-        changes = root.pendingChanges();
+        changes = test.pendingChanges();
         for(paths.clear(); changes.hasNext(); ) {
             paths.add(changes.nextNode().getPath());
         }
@@ -147,7 +131,7 @@ public class PendingChangesTest extends RepositoryTestCase {
         changes = ((HippoSession)session).pendingChanges();
         assertFalse(changes.hasNext());
 
-        root.getNode("test1").addNode("vuur");
+        test.getNode("test1").addNode("vuur");
 
         changes = ((HippoSession)session).pendingChanges();
         for(paths.clear(); changes.hasNext(); ) {
@@ -160,7 +144,7 @@ public class PendingChangesTest extends RepositoryTestCase {
 
     @Test
     public void testNodeFilter() throws Exception {
-        Node node = root.addNode("test", "nt:unstructured");
+        Node node = test.addNode("test", "nt:unstructured");
         node.remove();
 
         NodeIterator changes = ((HippoSession) session).pendingChanges(null, null, true);
@@ -169,6 +153,20 @@ public class PendingChangesTest extends RepositoryTestCase {
             paths.add(changes.nextNode().getPath());
         }
         assertEquals(1, paths.size());
+    }
+
+    @Test
+    public void testMoveNode() throws Exception {
+        final Node foo = test.addNode("foo");
+        session.save();
+        session.move(foo.getPath(), test.getPath() + "/bar");
+        final NodeIterator iterator = ((HippoSession) session).pendingChanges();
+        int count = 0;
+        while (iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+        assertEquals("Unexepected number of pending changes after move", 2, count);
     }
 
 }
