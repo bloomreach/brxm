@@ -203,7 +203,7 @@ final class InitializeItem {
                 deltaXML = parseDeltaXML(document);
                 if (deltaXML == null) {
                     log.info("Content resource " + contentResource + " uses delta xml semantics that are not supported " +
-                            "by automatic export. Changes to this context must be exported manually.");
+                            "by automatic export. Changes to the context " + contextPath + " must be exported manually.");
                     enabled = false;
                 }
             }
