@@ -81,7 +81,7 @@ public class HeadElementImpl implements HeadElement
         {
             Node node = nodeList.item(i);
             
-            if ("SCRIPT".equals(element.getNodeName().toUpperCase()) || node.getNodeType() == Node.ELEMENT_NODE)
+            if ("SCRIPT".equalsIgnoreCase(element.getNodeName()) || node.getNodeType() == Node.ELEMENT_NODE)
             {
                 if (childHeadElements == null)
                 {

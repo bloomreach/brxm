@@ -22,6 +22,7 @@ import java.io.StringWriter;
 
 import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HeadElementImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -70,7 +71,7 @@ public class TestHeadElementUtils {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
 
-        String xmlString = "<script type=\"text/javascript\">var jsflag = $('<html><body><span><input type=\"hidden\" name=\"js_enabled\" value=\"true\"/></span></body></html>');</script>";
+        String xmlString = "<script type=\"text/javascript\">var jsflag = $('<html><body><span><input name=\"js_enabled\"></input></span></body></html>');</script>";
         Document doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
 
         Element element = doc.getDocumentElement();
@@ -78,7 +79,24 @@ public class TestHeadElementUtils {
 
         StringWriter sw = new StringWriter();
         HeadElementUtils.writeHeadElement(sw, head, true, true, false, false);
-        assertEquals("<script type=\"text/javascript\">var jsflag = $('<html><body><span><input name=\"js_enabled\" value=\"true\" type=\"hidden\"></input></span></body></html>');</script>", sw.toString());
+        assertEquals(xmlString, sw.toString());
+    }
+
+    @Ignore
+    @Test
+    public void testHtmlTagParagraphContribution() throws Exception {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+
+        String xmlString = "<p>This is a paragraph with a <strong>bold</strong> text</p>";
+        Document doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
+
+        Element element = doc.getDocumentElement();
+        HeadElement head = new HeadElementImpl(element);
+
+        StringWriter sw = new StringWriter();
+        HeadElementUtils.writeHeadElement(sw, head, true, true, false, false);
+        assertEquals(xmlString, sw.toString());
     }
 
     @Test
