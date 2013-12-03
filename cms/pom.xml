@@ -126,8 +126,8 @@
     <joda-time.version>1.6</joda-time.version>
     <json-lib.version>2.2.2</json-lib.version>
 
-    <jackrabbit.version>2.6.0</jackrabbit.version>
-    <jackrabbit.patched.version>2.6-r1464061-h1</jackrabbit.patched.version>
+    <jackrabbit.version>2.6.5</jackrabbit.version>
+    <jackrabbit.patched.version>2.6.5-h1</jackrabbit.patched.version>
     <tika.version>0.9</tika.version>
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
     <sanselan.version>0.97-incubator</sanselan.version>
