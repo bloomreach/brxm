@@ -45,6 +45,24 @@ public class ImageUtilTest {
         assertTrue(isRGB(rgb, "test-YCCK.jpg"));
     }
 
+    @Test
+    @Deprecated
+    public void convertYCCKtoRGBUsingDeprecatedMethod() throws Exception {
+        InputStream ycck = getClass().getResourceAsStream("/test-YCCK.jpg");
+        InputStream rgb = ImageUtils.convertToRGB(ycck, ImageMetaData.ColorModel.YCCK);
+
+        assertTrue(isRGB(rgb, "test-YCCK.jpg"));
+    }
+
+    @Test
+    @Deprecated
+    public void convertCMYKToRGBUsingDeprecatedMethod() throws Exception {
+        InputStream cmyk = getClass().getResourceAsStream("/test-CMYK.jpg");
+        InputStream rgb = ImageUtils.convertToRGB(cmyk, ImageMetaData.ColorModel.CMYK);
+
+        assertTrue(isRGB(rgb, "test-CMYK.jpg"));
+    }
+
     public static boolean isRGB(final InputStream stream, final String fileName) throws IOException, ImageReadException {
         try {
             ImageInfo info = Sanselan.getImageInfo(stream, fileName);

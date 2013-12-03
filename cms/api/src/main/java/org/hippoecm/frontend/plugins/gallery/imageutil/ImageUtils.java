@@ -419,4 +419,18 @@ public class ImageUtils {
             }
         }
     }
+
+    /**
+     * Convert image in CYYK or CMYK color space to RGB using {@link ImageUtils#convertToRGB(InputStream is, ColorModel colorModel)}
+     *
+     * @param is the image data
+     * @param colorModel the color model of the image
+     * @return the RGB version of the supplied image
+     *
+     * @deprecated This method is deprecated in favor of {@link ImageUtils#convertToRGB(InputStream is, ColorModel colorModel)}
+     */
+    @Deprecated
+    public static InputStream convertToRGB(InputStream is, ImageMetaData.ColorModel colorModel) throws IOException, UnsupportedImageException {
+        return convertToRGB(is, ColorModel.valueOf(colorModel.name()));
+    }
 }
