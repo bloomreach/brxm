@@ -64,12 +64,12 @@ public class TestPendingChangesHippoSession extends AbstractHstLoadingCacheTestC
 
         final NodeIterator nodeIterator = ((HippoSession) session).pendingChanges();
         boolean expectedWrongPendingChangeFound = false;
-        while (nodeIterator.hasNext()) {
+        while(nodeIterator.hasNext()) {
             if (nodeIterator.nextNode().getPath().equals("/hst:hst")) {
-                expectedWrongPendingChangeFound = true;
+                fail("Should be no pending change for /hst:hst");
             }
         }
-        assertTrue("Expected HippoSession pending changes to return incorrect pending change /hst:hst", expectedWrongPendingChangeFound);
+
         session.logout();
 
     }
