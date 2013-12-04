@@ -18,8 +18,6 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
@@ -53,12 +51,6 @@ public abstract class CreateTypeDialog extends AbstractWizard {
         feedback.setOutputMarkupId(true);
 
         setOutputMarkupId(true);
-    }
-
-    @Override
-    public void renderHead(final HtmlHeaderContainer container) {
-        super.renderHead(container);
-        container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript("if (Wicket != null && Wicket.Window != null) { Wicket.Window.unloadConfirmation = false; };"));
     }
 
     @Override

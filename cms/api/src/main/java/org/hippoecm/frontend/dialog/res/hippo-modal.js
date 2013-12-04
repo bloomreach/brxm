@@ -200,4 +200,7 @@
         return s;
     };
 
+    //Simply refresh if the user wants to
+    Wicket.Window.unloadConfirmation = false;
+
 }());
