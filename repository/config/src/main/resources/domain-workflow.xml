@@ -43,31 +43,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="hippo-types">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hippo-types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
   <sv:node sv:name="hippo-request">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:domainrule</sv:value>
@@ -240,31 +215,6 @@
       </sv:property>
       <sv:property sv:name="hipposys:value" sv:type="String">
         <sv:value>hipposched:triggers</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="hipposys-ocmqueryfolder">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:domainrule</sv:value>
-    </sv:property>
-    <sv:node sv:name="type-hipposys-ocmqueryfolder">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:facetrule</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:equals" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:facet" sv:type="String">
-        <sv:value>jcr:primaryType</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:filter" sv:type="Boolean">
-        <sv:value>false</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:type" sv:type="String">
-        <sv:value>Name</sv:value>
-      </sv:property>
-      <sv:property sv:name="hipposys:value" sv:type="String">
-        <sv:value>hipposys:ocmqueryfolder</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

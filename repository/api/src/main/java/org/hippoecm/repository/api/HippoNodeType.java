@@ -128,6 +128,7 @@ public interface HippoNodeType {
 
     public static final String NT_NODETYPE = "hipposysedit:nodetype";
 
+    @Deprecated
     public static final String NT_OCMQUERY = "hipposys:ocmquery";
 
     public static final String NT_PROTOTYPESET = "hipposysedit:prototypeset";
@@ -154,8 +155,10 @@ public interface HippoNodeType {
 
     public static final String NT_TRANSLATION = "hippo:translation";
 
+    @Deprecated
     public static final String NT_TYPE = "hipposys:type";
 
+    @Deprecated
     public static final String NT_TYPES = "hipposys:types";
 
     public static final String NT_USER = "hipposys:user";
@@ -343,6 +346,7 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYSEDIT_TYPE = "hipposysedit:type";
 
+    @Deprecated
     public static final String HIPPO_TYPES = "hipposys:types";
 
     public static final String HIPPO_URI = "hipposysedit:uri";

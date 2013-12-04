@@ -35,38 +35,5 @@
     <sv:property sv:name="hipposys:privileges" sv:type="String">
       <sv:value>hippo:editor</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-      <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublishableDocument">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposys:type</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:classname" sv:type="String">
-          <sv:value>org.hippoecm.repository.reviewedactions.PublishableDocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:display" sv:type="String">
-          <sv:value>PublishableDocument</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hippostdpubwf:document</sv:value>
-        </sv:property>
-      </sv:node>
-      <sv:node sv:name="org.hippoecm.repository.reviewedactions.PublicationRequest">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposys:type</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:classname" sv:type="String">
-          <sv:value>org.hippoecm.repository.reviewedactions.PublicationRequest</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:display" sv:type="String">
-          <sv:value>PublicationRequest</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hippostdpubwf:request</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
   </sv:node>
 </sv:node>

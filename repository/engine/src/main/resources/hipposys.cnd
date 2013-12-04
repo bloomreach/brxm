@@ -51,17 +51,17 @@
 
 // REPOSITORY WORKFLOW, OCM AND QUERY
 
-[hipposys:type] > nt:base
+[hipposys:type] > nt:base // deprecated
 - hipposys:nodetype (string) mandatory
 - hipposys:display (string) mandatory
 - hipposys:classname (string) mandatory //FIXME
 
-[hipposys:types] > nt:base
+[hipposys:types] > nt:base // deprecated
 + * (hipposys:type) = hipposys:type
 
 [hipposys:workflow] > hipposys:type
 - hipposys:privileges (string) multiple
-+ hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
++ hipposys:types (hipposys:types) = hipposys:types // deprecated
 + hipposys:config (nt:unstructured) = nt:unstructured
 
 [hipposys:workflowevent] > hipposys:workflow
@@ -85,7 +85,7 @@
 [hipposys:workflowfolder] > nt:base, mix:referenceable
 + * (hipposys:workflowcategory) = hipposys:workflowcategory
 
-[hipposys:ocmquery] > hippo:query
+[hipposys:ocmquery] > hippo:query // deprecated
 - hipposys:classname (string) mandatory
 + hipposys:types (hipposys:types) = hipposys:types mandatory autocreated
 
