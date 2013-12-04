@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.scxml;
 
+import org.apache.commons.jexl2.JexlEngine;
 import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
@@ -38,7 +39,7 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
     @Override
     public SCXMLExecutor createSCXMLExecutor(SCXMLDefinition scxmlDef) throws SCXMLException {
         if (evaluator == null) {
-            evaluator = new JexlEvaluator();
+            evaluator = new StrictJexlEvaluator();
         }
 
         final JexlContext jexlCtx = new JexlContext();
@@ -49,5 +50,16 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
     }
 
     void destroy() {
+    }
+
+    private static class StrictJexlEvaluator extends JexlEvaluator {
+        @Override
+        protected JexlEngine createJexlEngine() {
+            JexlEngine engine = super.createJexlEngine();
+            // TODO: temporary forcing JexlEngine strict mode until this becomes enforced/enforceable in SCXML itself
+            // see also SCXML-177
+            engine.setStrict(true);
+            return engine;
+        }
     }
 }
