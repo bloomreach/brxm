@@ -103,4 +103,12 @@ public class PublishableDocument extends Document {
         setStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, username);
         setDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new Date());
     }
+
+    public Date getLastModified() throws RepositoryException {
+        final Date date = getDateProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE);
+        if (date == null) {
+            return new Date(0);
+        }
+        return date;
+    }
 }

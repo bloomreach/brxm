@@ -40,24 +40,30 @@ public class DocumentHandle {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
 
-    private Map<String, Boolean> privilegesMap;
-    private Map<String, Serializable> hints = new HashMap<>();
+    private WorkflowContext context;
+    private Node subject;
+
+    private Node handle;
+    private String user;
+    private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
+
     private Map<String, PublishableDocument> documents = null;
     private PublicationRequest rejectedRequest = null;
     private PublicationRequest request = null;
-    private String user;
-    private String workflowState;
-    private String ds;
-    private Node subject;
-    private WorkflowContext context;
-    private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
-    private Node handle;
+    private String subjectState;
+    private String states;
+
+    private Map<String, Serializable> hints = new HashMap<>();
+
+    private Map<String, Boolean> privilegesMap;
 
     public DocumentHandle(WorkflowContext context, Node subject) throws RepositoryException {
 
         this.context = context;
         this.subject = subject;
+        handle = subject.getParent();
+        this.user = context.getUserIdentity();
 
         RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
         if (workflowConfiguration.exists()) {
@@ -76,10 +82,6 @@ public class DocumentHandle {
             }
         }
 
-        this.user = context.getUserIdentity();
-
-        handle = subject.getParent();
-
         boolean subjectFound = false;
 
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
@@ -90,7 +92,7 @@ public class DocumentHandle {
             }
             getDocuments(true).put(doc.getState(), doc);
             if (!subjectFound && variant.isSame(subject)) {
-                workflowState = doc.getState();
+                subjectState = doc.getState();
                 subjectFound = true;
             }
         }
@@ -198,27 +200,27 @@ public class DocumentHandle {
 
     /**
      * Get short notation representing the states of all existing Variants
-     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published variant exists
+     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published variant exists. Never returns null
      */
     public String getStates() {
-        if (ds == null) {
-            ds = "";
+        if (states == null) {
+            states = "";
             if (getDraft() != null) {
-                ds += "d";
+                states += "d";
             }
             if (getUnpublished() != null) {
-                ds += "u";
+                states += "u";
             }
             if (getPublished() != null) {
-                ds += "p";
+                states += "p";
             }
         }
-        return ds;
+        return states;
     }
 
     /**
      * Script supporting shortened version of {@link #getStates}
-     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published variant exists
+     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published variant exists. Never returns null
      */
     public String getS() {
         return getStates();
@@ -229,15 +231,15 @@ public class DocumentHandle {
     }
 
     /**
-     * @return the state of the Document variant which is subject of this workflow or null if none
+     * @return the state of the Document variant which is subject of this workflow or empty String if none. Never returns null;
      */
     public String getSubjectState() {
-        return workflowState;
+        return subjectState == null ? "" : subjectState;
     }
 
     /**
      * Script supporting shortened version of {@link #getSubjectState}
-     * @return the state of the Document variant which is subject of this workflow or null if none
+     * @return the state of the Document variant which is subject of this workflow or empty String if none. Never returns null;
      */
     public String getSs() {
         return getSubjectState();
@@ -281,7 +283,7 @@ public class DocumentHandle {
     }
 
     public void putDocumentVariant(PublishableDocument variant) throws RepositoryException {
-        ds = null;
+        states = null;
         getDocuments(true).put(variant.getState(), variant);
     }
 

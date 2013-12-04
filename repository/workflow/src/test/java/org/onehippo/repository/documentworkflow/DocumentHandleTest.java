@@ -78,7 +78,7 @@ public class DocumentHandleTest {
         assertEquals(publishRequest, dm.getRequest().getNode());
 
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), publishRequest);
-        assertNull(dm.getSubjectState());
+        assertEquals("", dm.getSubjectState());
         assertNull(dm.getRejectedRequest());
         assertEquals(publishRequest, dm.getRequest().getNode());
 

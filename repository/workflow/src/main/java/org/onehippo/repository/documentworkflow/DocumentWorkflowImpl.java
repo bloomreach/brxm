@@ -55,6 +55,26 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public DocumentWorkflowImpl() throws RemoteException {
     }
 
+    DocumentHandle getDocumentModel() {
+        return dm;
+    }
+
+    SCXMLExecutor getScxmlExecutor() {
+        return scxmlExecutor;
+    }
+
+    protected Object triggerSCXMLEvent(String action) throws ModelException {
+        scxmlExecutor.getRootContext().set("eventResult", null);
+        SCXMLUtils.triggerSignalEvents(scxmlExecutor, action);
+        return scxmlExecutor.getRootContext().get("eventResult");
+    }
+
+    protected Object triggerSCXMLEvent(String action, Object payload) throws ModelException {
+        scxmlExecutor.getRootContext().set("eventResult", null);
+        SCXMLUtils.triggerSignalEventWithPayload(scxmlExecutor, action, payload);
+        return scxmlExecutor.getRootContext().get("eventResult");
+    }
+
     // Workflow implementation / WorkflowImpl override
 
     @Override
@@ -73,7 +93,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
             SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
             scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxmlDef);
-
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
             scxmlExecutor.getRootContext().set("dm", dm);
             scxmlExecutor.getRootContext().set("eventResult", null);
@@ -92,14 +111,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         catch (SCXMLException hse) {
             throw new RepositoryException(hse);
         }
-    }
-
-    DocumentHandle getDocumentModel() {
-        return dm;
-    }
-
-    SCXMLExecutor getScxmlExecutor() {
-        return scxmlExecutor;
     }
 
     @Override

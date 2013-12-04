@@ -14,63 +14,125 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<scxml xmlns="http://www.w3.org/2005/07/scxml" xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml" version="1.0" initial="reset-event-result">
+<scxml version="1.0"
+       xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
+       initial="handle">
 
-  <state id="reset-event-result" initial="handle">
-    <onentry>
-      <script>
-        // clear possible previous result, always start empty
-        eventResult = null;
-      </script>
-    </onentry>
+  <parallel id="handle">
 
-    <state id="handle" initial="handle-initial">
+    <state id="editable" initial="init-editable">
 
-      <state id="handle-initial">
-        <transition cond="dm.s == 'd'" target="new"/>
-        <transition target="not-new"/>
+      <state id="init-editable">
+        <transition target="not-editable"
+                    cond="!(dm.sf.document or dm.sf.unlock) or !empty(dm.r) or !empty(dm.rr)"/>
+        <transition target="editing"
+                    cond="!empty(dm.d.holder)"/>
+        <transition target="not-editing"/>
       </state>
 
-      <state id="new" initial="new-initial">
+      <state id="not-editable"/>
 
-        <state id="new-initial">
-          <transition cond="!empty(dm.d.holder)" target="new.edit"/>
-          <transition target="new.not-edit"/>
-        </state>
-
-        <state id="new.edit">
-        </state>
-        <state id="new.not-edit">
-        </state>
+      <state id="editing">
+        <onentry>
+          <if cond="dm.sf.document">
+            <if cond="dm.ss=='draft' and dm.d.holder==dm.user">
+              <hippo:hint hint="disposeEditableInstance" value="true"/>
+              <hippo:hint hint="obtainEditableInstance" value="true"/>
+              <hippo:hint hint="commitEditableInstance" value="true"/>
+              <else/>
+              <hippo:hint hint="obtainEditableInstance" value="false"/>
+            </if>
+          </if>
+          <if cond="dm.sf.unlock">
+            <if cond="dm.ss=='draft' and (dm.d.holder==dm.user or dm.pm('hippo:admin'))">
+              <hippo:hint hint="unlock" value="true"/>
+              <else/>
+              <hippo:hint hint="unlock" value="false"/>
+            </if>
+          </if>
+        </onentry>
       </state>
 
-      <parallel id="not-new">
-
-        <state id="editable" initial="editable-initial">
-          <state id="editable-initial">
-            <transition cond="!empty(dm.d.holder)" target="not-new.edit"/>
-            <transition target="not-new.not-edit"/>
-          </state>
-
-          <state id="not-new.edit">
-          </state>
-
-          <state id ="not-new.not-edit">
-            <onentry>
-              <if cond="!dm.r and dm.ss and (dm.ss=='unpublished' or (dm.ss=='draft' and !dm.u) or (dm.s=='p'))">
-                <hippo:hint hint="obtainEditableInstance" value="true"/>
-              </if>
-            </onentry>
-          </state>
-        </state>
-
-        <state id="other"/>
-      </parallel>
+      <state id="not-editing">
+        <onentry>
+          <if cond="dm.sf.document">
+            <if cond="dm.ss=='unpublished' or (dm.ss=='draft' and empty(dm.u)) or dm.s=='p'">
+              <hippo:hint hint="obtainEditableInstance" value="true"/>
+              <else/>
+              <hippo:hint hint="obtainEditableInstance" value="false"/>
+            </if>
+          </if>
+          <if cond="dm.sf.unlock">
+            <hippo:hint hint="unlock" value="false"/>
+          </if>
+        </onentry>
+      </state>
 
     </state>
 
-  </state>
+    <state id="requestable" initial="init-requestable">
 
-  <final id="deleted" />
+      <state id="init-requestable">
+        <transition target="not-requestable"/>
+      </state>
+
+      <state id="not-requestable"/>
+
+      <state id="requested"/>
+      <state id="request-allowed"/>
+      <state id="request-rejected"/>
+
+    </state>
+
+    <state id="publishable" initial="init-publishable">
+
+      <state id="init-publishable">
+        <transition target="not-publishable"/>
+      </state>
+
+      <state id="not-publishable"/>
+      <state id="publish-allowed"/>
+      <state id="depublish-allowed"/>
+
+    </state>
+
+    <state id="versionable" initial="init-versionable">
+
+      <state id="init-versionable">
+        <transition target="not-versionable"/>
+      </state>
+
+      <state id="not-versionable"/>
+      <state id="version-allowed"/>
+      <state id="versioned"/>
+
+    </state>
+
+    <state id="terminateable" initial="init-terminateable">
+
+      <state id="init-terminateable">
+        <transition target="not-terminateable"/>
+      </state>
+
+      <state id="not-terminateable"/>
+      <state id="terminate-allowed"/>
+
+    </state>
+
+    <state id="copyable" initial="init-copyable">
+
+      <state id="init-copyable">
+        <transition target="not-copyable"/>
+      </state>
+
+      <state id="not-copyable"/>
+      <state id="copy-allowed"/>
+
+    </state>
+
+  </parallel>
+
+  <final id="terminated" />
 
 </scxml>

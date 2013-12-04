@@ -58,6 +58,12 @@ public class MockAccessManagedSession extends MockSession {
         else {
             target.put(path, permSet);
         }
+        if (allowed) {
+            deniedPermissions.remove(path);
+        }
+        else {
+            allowedPermissions.remove(path);
+        }
     }
 
     @Override

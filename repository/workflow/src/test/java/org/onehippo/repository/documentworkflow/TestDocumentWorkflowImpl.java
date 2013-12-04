@@ -23,12 +23,11 @@ import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 
-import static org.junit.Assert.assertTrue;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -115,6 +114,18 @@ public class TestDocumentWorkflowImpl {
         Assert.fail("Current SCXML states ["+stateIds+"] not containing expected states "+set(ids)+"");
     }
 
+    protected void assertNotContainsStateIds(SCXMLExecutor executor, String ... ids) {
+        Set<String> stateIds = SCXMLUtils.getCurrentTransitionTargetIdList(executor);
+        if (ids.length <= stateIds.size()) {
+            for (String id : ids) {
+                if (stateIds.contains(id))
+                    Assert.fail("Current SCXML states "+stateIds+" containing not expected states "+set(ids)+"");
+            }
+            return;
+        }
+        Assert.fail("Current SCXML states ["+stateIds+"] not containing expected states "+set(ids)+"");
+    }
+
     protected void assertContainsHint(Map<String, Serializable> hints, String hint, Object value) {
         if (!hints.containsKey(hint) || ! hints.get(hint).equals(value)) {
             Assert.fail("Current hints "+hints+" not containing expected hint ["+hint+"] with value ["+value+"]");
@@ -128,105 +139,144 @@ public class TestDocumentWorkflowImpl {
     }
 
     @Test
-    public void testHandleNewState() throws Exception {
+    public void testEditableState() throws Exception {
 
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
         DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
-        wf.setWorkflowContext(new MockWorkflowContext("testuser"));
+        wf.setWorkflowContext(workflowContext);
 
         MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        MockNode draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest = null;
 
-        wf.setNode(draftVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "new.not-edit");
-
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-
-        wf.setNode(draftVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "new.edit");
-
-        assertTrue(wf.hints().isEmpty());
-    }
-
-    @Test
-    public void testHandleNotNewEditableState() throws Exception {
-
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
-        wf.setWorkflowContext(new MockWorkflowContext("testuser"));
-
-        MockNode draftVariant, unpublishedVariant, publishedVariant = null;
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-
-        wf.setNode(publishedVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.not-edit", "other");
-        publishedVariant.remove();
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(unpublishedVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.not-edit", "other");
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        wf.setNode(publishedVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.not-edit", "other");
+        // test state not-editable
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         wf.setNode(draftVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.not-edit", "other");
-        publishedVariant.remove();
-        unpublishedVariant.remove();
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editable");
+
+        workflowConfig.remove("workflow.supportedFeatures");
         wf.setNode(draftVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "new.not-edit");
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+
+        rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
+        wf.setNode(rejectedRequest);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editable");
+
+        rejectedRequest.remove();
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+
+        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editable");
+
+        publishRequest.remove();
+
+        // test state not-editing
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
+        assertContainsHint(wf.hints(), "unlock", false);
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
+        assertNotContainsHint(wf.hints(), "unlock");
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.unlock.name());
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "unlock", false);
+        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
+
+        workflowConfig.remove("workflow.supportedFeatures");
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         wf.setNode(draftVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.not-edit", "other");
-    }
 
-    @Test
-    public void testHandleNotNewEditableInitialState() throws Exception {
-
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
-        wf.setWorkflowContext(new MockWorkflowContext("testuser"));
-
-        MockNode draftVariant, unpublishedVariant, publishedVariant = null;
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-
-        wf.setNode(draftVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.edit", "other");
-
-        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, (String)null);
+        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
 
         wf.setNode(unpublishedVariant);
-        assertMatchingStateIds(wf.getScxmlExecutor(), "not-new.not-edit", "other");
+
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-
-        wf.setNode(draftVariant);
-        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
-
-        wf.setNode(publishedVariant);
-        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
 
         unpublishedVariant.remove();
-
-        wf.setNode(publishedVariant);
-        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
-
-        wf.setNode(draftVariant);
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-
         draftVariant.remove();
+
+        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         wf.setNode(publishedVariant);
+
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
 
-        MockNode rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
-
+        rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
         wf.setNode(publishedVariant);
+
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
 
-        MockNode publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        wf.setNode(rejectedRequest);
 
-        wf.setNode(publishedVariant);
         assertNotContainsHint(wf.hints(), "obtainEditableInstance");
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-editable");
+
+        // test state editing
+        publishedVariant.remove();
+        rejectedRequest.remove();
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "editing");
+        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
+        assertContainsHint(wf.hints(), "commitEditableInstance", true);
+        assertContainsHint(wf.hints(), "disposeEditableInstance", true);
+        assertNotContainsHint(wf.hints(), "unlock");
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.unlock.name());
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "editing");
+        assertNotContainsHint(wf.hints(), "obtainEditableInstance");
+        assertNotContainsHint(wf.hints(), "commitEditableInstance");
+        assertNotContainsHint(wf.hints(), "disposeEditableInstance");
+        assertContainsHint(wf.hints(), "unlock", true);
+
+        workflowConfig.remove("workflow.supportedFeatures");
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "editing");
+        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
+        assertContainsHint(wf.hints(), "commitEditableInstance", true);
+        assertContainsHint(wf.hints(), "disposeEditableInstance", true);
+        assertContainsHint(wf.hints(), "unlock", true);
+
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
+        session.setPermissions("/test/test", "hippo:admin", false);
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "editing");
+        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
+        assertNotContainsHint(wf.hints(), "commitEditableInstance");
+        assertNotContainsHint(wf.hints(), "disposeEditableInstance");
+        assertContainsHint(wf.hints(), "unlock", false);
+
+        session.setPermissions("/test/test", "hippo:admin", true);
+        wf.setNode(draftVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "editing");
+        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
+        assertNotContainsHint(wf.hints(), "commitEditableInstance");
+        assertNotContainsHint(wf.hints(), "disposeEditableInstance");
+        assertContainsHint(wf.hints(), "unlock", true);
     }
 }
