@@ -32,19 +32,19 @@ public interface DocumentWorkflow extends FullRequestWorkflow, FullReviewedActio
 
         all, request, document, unlock, version;
 
-        public boolean request() {
+        public boolean isRequest() {
             return this == all || this == request;
         }
 
-        public boolean document() {
+        public boolean isDocument() {
             return this == all || this == document;
         }
 
-        public boolean unlock() {
+        public boolean isUnlock() {
             return this == all || this == unlock;
         }
 
-        public boolean version() {
+        public boolean isVersion() {
             return this == all || this == version;
         }
     };

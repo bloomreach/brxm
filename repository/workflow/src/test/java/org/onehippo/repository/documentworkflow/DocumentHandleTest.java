@@ -95,14 +95,14 @@ public class DocumentHandleTest {
 
         DocumentHandle dm = new DocumentHandle(context, draftVariant);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
-        assertTrue(dm.getSupportedFeatures().document());
-        assertTrue(dm.getSupportedFeatures().request());
+        assertTrue(dm.getSupportedFeatures().isDocument());
+        assertTrue(dm.getSupportedFeatures().isRequest());
 
         context.getWorkflowConfiguration().put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         dm = new DocumentHandle(context, draftVariant);
         assertEquals(DocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
-        assertTrue(dm.getSupportedFeatures().document());
-        assertFalse(dm.getSupportedFeatures().request());
+        assertTrue(dm.getSupportedFeatures().isDocument());
+        assertFalse(dm.getSupportedFeatures().isRequest());
 
         context.getWorkflowConfiguration().put("workflow.supportedFeatures", "undefined");
         dm = new DocumentHandle(context, draftVariant);
