@@ -79,6 +79,7 @@ public class PluginUserSession extends UserSession {
 
     @SuppressWarnings("unused")
     private String sessionId;
+    private int pageId;
 
 
     public UserCredentials getUserCredentials() {
@@ -308,6 +309,11 @@ public class PluginUserSession extends UserSession {
             sessionModel.getObject();
         }
 
+        if (credentials == null) {
+            pageId = 0;
+        } else {
+            pageId = 1;
+        }
     }
 
     public void logout() {
@@ -328,6 +334,8 @@ public class PluginUserSession extends UserSession {
         }
         JcrObservationManager.getInstance().cleanupListeners(this);
 
+        pageId = 0;
+
         invalidate();
         dirty();
         if (WebApplication.exists()) {
@@ -337,6 +345,10 @@ public class PluginUserSession extends UserSession {
 
     public Credentials getCredentials() {
         return credentials.getJcrCredentials();
+    }
+
+    public int getPageId() {
+        return pageId;
     }
 
     /**

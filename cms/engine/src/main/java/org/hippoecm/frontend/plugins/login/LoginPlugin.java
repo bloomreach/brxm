@@ -107,9 +107,6 @@ public class LoginPlugin extends RenderPlugin {
 
             setOutputMarkupId(true);
 
-            parameters = new PageParametersEncoder().decodePageParameters(
-                    RequestCycle.get().getRequest().getUrl());
-
             String[] localeArray = getPluginConfig().getStringArray("locales");
             if (localeArray == null) {
                 localeArray = LOCALES;
@@ -205,6 +202,14 @@ public class LoginPlugin extends RenderPlugin {
                 UserSession.get().releaseJcrSession();
             }
             super.onDetach();
+        }
+
+        @Override
+        protected void onBeforeRender() {
+            super.onBeforeRender();
+
+            parameters = new PageParametersEncoder().decodePageParameters(
+                    RequestCycle.get().getRequest().getUrl());
         }
 
         @Override

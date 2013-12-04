@@ -27,13 +27,10 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IController;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ControllerPlugin extends Plugin implements IController {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(ControllerPlugin.class);
     private PathInUrlController controller;
 
     public ControllerPlugin(IPluginContext context, IPluginConfig config) {
@@ -58,9 +55,10 @@ public class ControllerPlugin extends Plugin implements IController {
         }
     }
 
+    @Override
     public void process(IRequestParameters parameters) {
         if (controller != null) {
-            controller.process(parameters);
+            controller.init(parameters);
         }
     }
 

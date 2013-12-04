@@ -21,8 +21,9 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -32,6 +33,7 @@ import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +42,15 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PathInUrlController.class);
 
-    private static final String URL_PARAMETER_MODE = "mode";
-    private static final String URL_PARAMETER_MODE_VALUE_EDIT = "edit";
-    public static final String PATH = "path";
+    private static final String MODE_PARAM = "mode";
+    private static final String MODE_VALUE_EDIT = "edit";
+    private static final String PATH_PARAM = "path";
 
     private final IModelReference<Node> modelReference;
     private final IBrowseService browseService;
     private final IEditorManager editorMgr;
+
+    private transient boolean browsing = false;
 
     public PathInUrlController(final IModelReference<Node> modelReference, IBrowseService browseService, IEditorManager editorMgr) {
         this.modelReference = modelReference;
@@ -59,67 +63,89 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
         return modelReference;
     }
 
+    public void init(IRequestParameters parameters) {
+        final StringValue pathValue = parameters.getParameterValue(PATH_PARAM);
+        if (!pathValue.isNull() && !pathValue.isEmpty()) {
+            String jcrPath = pathValue.toString();
+            IEditor.Mode mode = IEditor.Mode.VIEW;
+
+            final StringValue modeValue = parameters.getParameterValue(MODE_PARAM);
+            if (!modeValue.isEmpty() && !modeValue.isNull()) {
+                if (modeValue.toString().equals(MODE_VALUE_EDIT)) {
+                    mode = IEditor.Mode.EDIT;
+                }
+            }
+
+            browseTo(jcrPath, mode);
+        }
+    }
+
     @Override
     public void onEvent(final Iterator<? extends IEvent<IModelReference<Node>>> events) {
-        showPathInUrl(modelReference.getModel());
+        if (!browsing) {
+            showPathInUrl(modelReference.getModel());
+        }
     }
 
     private void showPathInUrl(final IModel<Node> nodeModel) {
-        final String path = getPathToShow(nodeModel.getObject());
-        showPathInUrl(path);
-    }
-
-    private String getPathToShow(final Node node) {
+        final Node node = nodeModel.getObject();
         if (node != null) {
             try {
-                return node.getPath();
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    String path = node.getPath();
+                    setParameter(PATH_PARAM, path);
+                }
             } catch (RepositoryException e) {
                 log.warn("Could not retrieve path of node model, path to the node will not be shown in the URL", e);
             }
         }
-        return StringUtils.EMPTY;
-    }
-
-    private void showPathInUrl(final String path) {
-        setParameter(PATH, path);
     }
 
     @Override
     protected void onRequest(Map<String, String> parameters) {
-        String jcrPath = parameters.get(PATH);
-        if (jcrPath != null) {
-            JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
+        String jcrPath = parameters.get(PATH_PARAM);
 
-            if (browseService != null) {
-                browseService.browse(nodeModel);
-            } else {
-                log.info("Could not find browse service - document " + jcrPath + " will not be selected");
+        IEditor.Mode mode = IEditor.Mode.VIEW;
+        if (parameters.containsKey(MODE_PARAM)) {
+            String modeStr = parameters.get(MODE_PARAM);
+            if (modeStr != null) {
+                if (MODE_VALUE_EDIT.equals(modeStr)) {
+                    mode = IEditor.Mode.EDIT;
+                }
             }
+        }
 
-            if (parameters.containsKey(URL_PARAMETER_MODE)) {
-                String modeStr = parameters.get(URL_PARAMETER_MODE);
-                if (modeStr != null) {
-                    IEditor.Mode mode;
-                    if (URL_PARAMETER_MODE_VALUE_EDIT.equals(modeStr)) {
-                        mode = IEditor.Mode.EDIT;
-                    } else {
-                        mode = IEditor.Mode.VIEW;
-                    }
-                    if (editorMgr != null) {
-                        IEditor editor = editorMgr.getEditor(nodeModel);
-                        try {
-                            if (editor == null) {
-                                editor = editorMgr.openPreview(nodeModel);
-                            }
-                            editor.setMode(mode);
-                        } catch (EditorException e) {
-                            log.info("Could not open editor for " + jcrPath);
-                        } catch (ServiceException e) {
-                            log.info("Could not open preview for " + jcrPath);
+        browseTo(jcrPath, mode);
+    }
+
+    public void browseTo(String jcrPath, IEditor.Mode mode) {
+        browsing = true;
+        try {
+            if (jcrPath != null) {
+                JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
+
+                if (browseService != null) {
+                    browseService.browse(nodeModel);
+                } else {
+                    log.info("Could not find browse service - document " + jcrPath + " will not be selected");
+                }
+
+                if (editorMgr != null) {
+                    IEditor editor = editorMgr.getEditor(nodeModel);
+                    try {
+                        if (editor == null) {
+                            editor = editorMgr.openPreview(nodeModel);
                         }
+                        editor.setMode(mode);
+                    } catch (EditorException e) {
+                        log.info("Could not open editor for " + jcrPath);
+                    } catch (ServiceException e) {
+                        log.info("Could not open preview for " + jcrPath);
                     }
                 }
             }
+        } finally {
+            browsing = false;
         }
     }
 }

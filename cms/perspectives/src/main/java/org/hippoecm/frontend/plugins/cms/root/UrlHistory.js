@@ -31,9 +31,14 @@
                     return;
                 }
 
-                window.addEventListener('popstate', jQuery.proxy(function () {
-                    this.onUrlChange();
-                }, this));
+                console.log('initializing history');
+
+                if (window.addEventListener) {
+                    window.addEventListener('popstate', jQuery.proxy(function () {
+                        console.log('popping');
+                        this.onUrlChange();
+                    }, this));
+                }
 
                 this.callback = callback;
 
@@ -51,7 +56,7 @@
                 if (window.history && window.history.pushState) {
                     var nameValuePair = name + '=' + value,
                         query = document.location.search,
-                        url = document.location.protocol + '//' + document.location.host + document.location.pathname,
+                        url = '',
                         hasValue = value.length > 0,
                         parameters, isChanged, i;
 
@@ -81,7 +86,7 @@
                         }
                     }
                     url += document.location.hash;
-                    window.history.pushState(null, null, url);
+                    window.history.pushState({}, document.title, url);
                 }
             },
 

@@ -50,6 +50,8 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
     private static final long serialVersionUID = 1L;
 
+    private final int pageId;
+
     private PluginManager mgr;
     private PluginContext context;
     private IRenderService root;
@@ -63,6 +65,8 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     public PluginPage(IApplicationFactory appFactory) {
+        pageId = ((PluginUserSession) UserSession.get()).getPageId();
+
         add(new EmptyPanel("root"));
 
         mgr = new PluginManager(this);
@@ -216,7 +220,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
     @Override
     public int getPageId() {
-        return 0;
+        return pageId;
     }
 
     @Override
