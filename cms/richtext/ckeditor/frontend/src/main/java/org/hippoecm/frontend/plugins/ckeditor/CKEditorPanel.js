@@ -17,7 +17,25 @@
     "use strict";
 
     // minimum delay for setTimeout() calls as defined in HTML5 spec
-    var DOM_MIN_TIMEOUT_MS = 4;
+    var DOM_MIN_TIMEOUT_MS = 4,
+        CKEDITOR_READY = new Hippo.Future(function(success) {
+            var pollTimeoutMillis = DOM_MIN_TIMEOUT_MS;
+
+            (function succeedWhenCKEditorIsLoaded() {
+                if (typeof CKEDITOR.on === 'function') {
+                    if (CKEDITOR.status === 'loaded') {
+                        success();
+                    } else {
+                        CKEDITOR.on('loaded', success);
+                    }
+                } else {
+                    // try again using exponential backoff
+                    pollTimeoutMillis *= 2;
+                    console.log("Waiting " + pollTimeoutMillis + " ms for CKEditor's event mechanism to load...");
+                    window.setTimeout(succeedWhenCKEditorIsLoaded, pollTimeoutMillis);
+                }
+            }());
+        });
 
     function updateEditorElementWhenDataChanged(editor) {
         var data = editor.getData();
@@ -46,33 +64,37 @@
     }
 
     Hippo.createCKEditor = function(elementId, config) {
-        // queue editor creation
-        window.setTimeout(function() {
-            try {
-                var editor = CKEDITOR.replace(elementId, config);
-                if (editor !== null) {
-                    updateEditorElementWhenDataChanged(editor);
-                    destroyEditorWhenElementIsDestroyed(editor, elementId);
-                    removeHippoEditorFieldBorder(elementId);
-                } else {
-                    console.error("CKEditor instance with id '" + elementId + "' was not created");
+        CKEDITOR_READY.when(function() {
+            // queue editor creation
+            window.setTimeout(function() {
+                try {
+                    var editor = CKEDITOR.replace(elementId, config);
+                    if (editor !== null) {
+                        updateEditorElementWhenDataChanged(editor);
+                        destroyEditorWhenElementIsDestroyed(editor, elementId);
+                        removeHippoEditorFieldBorder(elementId);
+                    } else {
+                        console.error("CKEditor instance with id '" + elementId + "' was not created");
+                    }
+                } catch (exception) {
+                    console.error("Cannot create CKEditor instance with id '" + elementId + "'", exception);
                 }
-            } catch (exception) {
-                console.error("Cannot create CKEditor instance with id '" + elementId + "'", exception);
-            }
-        }, DOM_MIN_TIMEOUT_MS);
+            }, DOM_MIN_TIMEOUT_MS);
+        });
     };
 
     if (Wicket.Browser.isIE()) {
-        /*
-          Replace CKEditor's 'appendStyleText' method. IE chokes on the original because it calls createStyleSheet()
-          with an empty string as argument. That throws an Error when the page is served by an HTTP server.
-         */
-        CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
-            var style = this.$.createStyleSheet();
-            style.cssText = cssStyleText;
-            return style;
-        };
+        CKEDITOR_READY.when(function() {
+            /*
+              Replace CKEditor's 'appendStyleText' method. IE chokes on the original because it calls createStyleSheet()
+              with an empty string as argument. That throws an Error when the page is served by an HTTP server.
+             */
+            CKEDITOR.dom.document.prototype.appendStyleText = function(cssStyleText) {
+                var style = this.$.createStyleSheet();
+                style.cssText = cssStyleText;
+                return style;
+            };
+        });
     }
 
 }(jQuery));

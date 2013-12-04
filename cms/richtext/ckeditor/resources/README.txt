@@ -1,43 +1,50 @@
-This artifact contains the CKEditor sources, located in 'src/main/resources/ckeditor'.
+This artifact contains the CKEditor sources, located in 'src/main/resources/ckeditor',
+and the optimized version of these sources, located under 'src/main/resources/ckeditor/optimized'.
+
+The non-optimized sources are only used when Wicket runs in development mode.
+
+Both sources are maintained at Github at https://github.com/onehippo/ckeditor.
+Do not modify the sources in this artifact.
 
 Version
 -------
-The version number of the included CKEditor sources can be found in the changelog file:
+The version number of the included CKEditor sources can be found in the optimizer ckeditor.js file:
 
-  src/main/resources/ckeditor/CHANGES.md
-
-The top entry displays the current version.
-
+  $ grep -Po 'version:"[0-9.]+"' src/main/resources/ckeditor/optimized/ckeditor.js
+  version:"4.3.0.1"
 
 Updating CKEditor sources
 -------------------------
 
-The CKEditor sources can be updated as follows:
+When a new tag is available of CKEditor for Hippo CMS, it can replace the sources in this Maven artifact.
+The following recipe assumes you start in the directory 'cms/richtext/ckeditor/resources'.
 
-1. Go to http://ckeditor.com/builder.
-2. Click 'Upload build-config.js' and upload the following file:
+1. Get the tag to copy
 
-     src/main/resources/ckeditor/build-config.js
+   $ cd /tmp
+   $ git clone https://github.com/onehippo/ckeditor.git
+   $ cd ckeditor
+   $ git checkout hippo/4.3.0.1
+     (or another tag)
+   $ cd -
 
-3. Modify the selected plugins, skins and/or languages.
-4. Tick the 'I agree with the Terms' checkbox.
-5. Download the *optimized* version of the sources.
-6. Extract the downloaded zip file and replace all existing CKEditor sources:
+2. Remove the existing sources
 
-     $ rm -rf src/main/resources/ckeditor
-     $ unzip -d src/main/resources ckeditor_XXX.zip
+   $ rm -rf src/main/resources/ckeditor
 
-7. Remove the 'samples' directory:
+3. Copy the sources in the tag
 
-     $ rm -rf src/main/resources/ckeditor/samples
+   $ cp -r /tmp/ckeditor/* src/main/resources/ckeditor
 
-8. Revert the 'icons' directory of the CodeMirror plugin:
+4. Build the tag
 
-     $ svn revert src/main/resources/ckeditor/plugins/codemirror/icons
+   $ /tmp/ckeditor/dev/builder/build.sh
 
-Step 8 is needed because the current CKEditor builder does not include the 'icons' directory
-of the CodeMirror plugin by default.
+5. Copy the generated optimized sources too
 
+  $ cp -r /tmp/ckeditor/dev/builder/release/ckeditor/* src/main/resources/ckeditor/optimized
+
+6. Commit the updated sources
 
 Creating table with CKEditor widget information
 -----------------------------------------------

@@ -19,7 +19,7 @@ package org.onehippo.cms7.ckeditor;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.wicket.markup.head.JavaScriptUrlReferenceHeaderItem;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.junit.Test;
 
@@ -32,7 +32,16 @@ public class CKEditorConstantsTest {
 
     @Test
     public void ckeditorJsConstantRefersToFileInJar() {
-        final String url = ((UrlResourceReference)CKEditorConstants.CKEDITOR_JS).getUrl().toString();
+        assertConstantRefersToFileInJar(CKEditorConstants.CKEDITOR_OPTIMIZED_JS);
+    }
+
+    @Test
+    public void ckeditorSrcJsConstantRefersToFileInJar() {
+        assertConstantRefersToFileInJar(CKEditorConstants.CKEDITOR_SRC_JS);
+    }
+
+    private static void assertConstantRefersToFileInJar(final ResourceReference constant) {
+        final String url = ((UrlResourceReference)constant).getUrl().toString();
         final InputStream js = CKEditorConstants.class.getResourceAsStream("/" + url);
         assertNotNull("The file '" + url + "' does not exist in the same JAR", js);
         try {

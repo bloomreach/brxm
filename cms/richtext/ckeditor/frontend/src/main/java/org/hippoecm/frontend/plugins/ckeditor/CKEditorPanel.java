@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -94,12 +96,21 @@ public class CKEditorPanel extends Panel {
         super.renderHead(response);
 
         response.render(CssHeaderItem.forReference(CKEDITOR_PANEL_CSS));
-        response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEditorConstants.CKEDITOR_JS));
+        response.render(JavaScriptUrlReferenceHeaderItem.forReference(getCKEditorJsReference()));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEDITOR_PANEL_JS));
 
         JSONObject editorConfig = getConfigurationForEditor();
         renderContentsCss(response, editorConfig);
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForEditor(editorConfig)));
+    }
+
+    public static ResourceReference getCKEditorJsReference() {
+        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)) {
+            log.info("Using non-optimized CKEditor sources.");
+            return CKEditorConstants.CKEDITOR_SRC_JS;
+        }
+        log.info("Using optimized CKEditor sources");
+        return CKEditorConstants.CKEDITOR_OPTIMIZED_JS;
     }
 
     private JSONObject getConfigurationForEditor() {

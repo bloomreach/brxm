@@ -298,6 +298,10 @@ richtext/ckeditor/frontend/target
 richtext/ckeditor/plugins/*.iml
 richtext/ckeditor/plugins/target
 richtext/ckeditor/resources/*.iml
+richtext/ckeditor/resources/src/main/resources/ckeditor/*.iml
+richtext/ckeditor/resources/src/main/resources/ckeditor/dev
+richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/lang/_translationstatus.txt
+richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/samples
 richtext/ckeditor/resources/src/main/resources/ckeditor/samples
 richtext/ckeditor/resources/target
 richtext/ckeditor/target

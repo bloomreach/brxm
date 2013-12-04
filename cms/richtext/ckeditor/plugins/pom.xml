@@ -42,6 +42,27 @@
           <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-optimized-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/classes/ckeditor/optimized</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/main/resources/ckeditor</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

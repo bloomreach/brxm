@@ -1,39 +1,124 @@
-CKEditor 4
-==========
+CKEditor 4 for Hippo CMS
+========================
 
-Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.  
-http://ckeditor.com - See LICENSE.md for license information.
+## Hippo-specific modifications
 
-CKEditor is a text editor to be used inside web pages. It's not a replacement
-for desktop text editors like Word or OpenOffice, but a component to be used as
-part of web applications and websites.
+This repository contains Hippo-specific modifications of CKEditor 4.
+The build includes only the plugins used in Hippo CMS (see dev/builder/build-config.js).
 
-## Documentation
+The following external plugins are included:
 
-The full editor documentation is available online at the following address:
-http://docs.ckeditor.com
+  - [codemirror](https://github.com/w8tcha/CKEditor-CodeMirror-Plugin)
+  - [wordcount](https://github.com/w8tcha/CKEditor-WordCount-Plugin)
+  - [youtube](https://github.com/fonini/ckeditor-youtube-plugin)
 
-## Installation
+## Versions
 
-Installing CKEditor is an easy task. Just follow these simple steps:
+A Hippo-specific CKEditor build adds a 1-based nano version to the CKEditor version it extends.
+For example, version '4.3.0.1' extends CKEditor 4.3.0.
 
- 1. **Download** the latest version from the CKEditor website:
-    http://ckeditor.com. You should have already completed this step, but be
-    sure you have the very latest version.
- 2. **Extract** (decompress) the downloaded file into the root of your website.
+Each branch 'hippo/<version>' contains all commits in the CKEditor branch 'release/<version>'
+plus all Hippo-specific modifications.
 
-**Note:** CKEditor is by default installed in the `ckeditor` folder. You can
-place the files in whichever you want though.
+A release is available in a tag are named 'hippo/<version>', e.g. 'hippo/4.3.0.1'.
 
-## Checking Your Installation
+The version number is included in the generated code. Be sure to update the 'BUILD_VERSION' variable in the script
+/dev/builder/build.sh before tagging a release. In between tags the version number should get the suffix '-SNAPSHOT'.
 
-The editor comes with a few sample pages that can be used to verify that
-installation proceeded properly. Take a look at the `samples` directory.
+### Branches for external plugins
 
-To test your installation, just call the following page at your website:
+The Git repository of each external plugin is available as a remote named after the plugin.
+It master branch is available locally as '<plugin>/master'. For example, the CodeMirror master
+branch is available locally as 'codemirror/master'. This allows easy Hippo-specific modifications
+of the plugin code, if needed.
 
-	http://<your site>/<CKEditor installation path>/samples/index.html
+Only a part of each external plugin's code has to be included in the Hippo CKEditor build,
+i.e. the part that should to into the CKEditor subdirectory 'plugins/XXX'. The history of that
+part is kept in a branch 'XXX/plugin' and included as a subtree merge under the directory 'plugins/XXX'.
 
-For example:
+For example, all CodeMirror plugin code is located in the branch 'codemirror/master'
+under the directory 'codemirror'. All commits that affect that subdirectory are kept
+in the branch 'codemirror/plugin'. The code in the branch 'codemirror/plugin' is then
+included in a Hippo CKEditor branch under the directory 'plugins/codemirror'.
 
-	http://www.example.com/ckeditor/samples/index.html
+## Adding a new external plugin
+
+The following example adds a fictitious external plugin called 'example' to the Hippo CKEditor 4.3.x build.
+Its Git repository contains a subdirectory 'code' that should go into the CKEditor directory 'plugins/example'.
+
+  1. git remote add example <remote url>
+  2. git fetch example
+  3. git checkout -b example/master example/master
+  4. git subtree split --prefix=code/ -b example/plugin
+  5. git checkout hippo/4.3.x
+  6. git read-tree --prefix=plugins/example/ -u example/plugin
+
+Add the 'example' plugin to the file dev/builder/build-config.js to include it in the Hippo CKEditor build.
+
+## The remainder of this file contains the unmodified CKEditor README
+
+## Development Code
+
+This repository contains the development version of CKEditor.
+
+**Attention:** The code in this repository should be used locally and for
+development purposes only. We don't recommend distributing it on remote websites
+because the user experience will be very limited. For that purpose, you should
+build it (see below) or use an official release instead, available on the
+[CKEditor website](http://ckeditor.com).
+
+### Code Installation
+
+There is no special installation procedure to install the development code.
+Simply clone it on any local directory and you're set.
+
+### Available Branches
+
+This repository contains the following branches:
+
+  - **master**: development of the upcoming minor release.
+  - **major**: development of the upcoming major release.
+  - **stable**: latest stable release tag point (non-beta).
+  - **latest**: latest release tag point (including betas).
+  - **release/A.B.x** (e.g. 4.0.x, 4.1.x): release freeze, tests and tagging.
+    Hotfixing.
+
+(*) Note that both **master** and **major** are under heavy development. Their
+code didn't pass the release testing phase so it may be unstable.
+
+Additionally, all releases will have their relative tags in this form: 4.0,
+4.0.1, etc.
+
+### Samples
+
+The `samples/` folder contains a good set of examples that can be used
+to test your installation. It can also be a precious resource for learning
+some aspects of the CKEditor JavaScript API and its integration on web pages.
+
+### Code Structure
+
+The development code contains the following main elements:
+
+  - Main coding folders:
+    - `core/`: the core API of CKEditor. Alone, it does nothing, but
+    it provides the entire JavaScript API that makes the magic happen.
+    - `plugins/`: contains most of the plugins maintained by the CKEditor core team.
+    - `skin/`: contains the official default skin of CKEditor.
+    - `dev/`: contains "developer tools".
+
+### Building a Release
+
+A release optimized version of the development code can be easily created
+locally. The `dev/builder/build.sh` script can be used for that purpose:
+
+	> ./dev/builder/build.sh
+
+A "release ready" working copy of your development code will be built in the new
+`dev/builder/release/` folder. An internet connection is necessary to run the
+builder, for its first time at least.
+
+### License
+
+Licensed under the GPL, LGPL and MPL licenses, at your choice.
+
+For full details about license, please check the LICENSE.md file.

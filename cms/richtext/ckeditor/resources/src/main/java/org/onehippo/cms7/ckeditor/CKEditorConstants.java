@@ -35,7 +35,8 @@ public class CKEditorConstants {
      * {@code org.onehippo.cms7.utilities.servlet.ResourceServlet} should be configured that serves files from jars
      * that start with /ckeditor.
      */
-    public static final ResourceReference CKEDITOR_JS = new UrlResourceReference(new Url(Arrays.asList("ckeditor", "ckeditor.js"), Charset.forName("UTF-8")));
+    public static final ResourceReference CKEDITOR_OPTIMIZED_JS = new UrlResourceReference(new Url(Arrays.asList("ckeditor", "optimized", "ckeditor.js"), Charset.forName("UTF-8")));
+    public static final ResourceReference CKEDITOR_SRC_JS = new UrlResourceReference(new Url(Arrays.asList("ckeditor", "ckeditor.js"), Charset.forName("UTF-8")));
 
     /**
      * CKEDITOR constants for keyboard shortcuts
