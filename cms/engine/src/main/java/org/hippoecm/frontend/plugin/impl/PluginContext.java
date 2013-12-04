@@ -222,11 +222,16 @@ public class PluginContext implements IPluginContext, IDetachable {
     }
 
     public void unregisterService(IClusterable service, String name) {
+        if (stopping) {
+            return;
+        }
+
         List<IClusterable> list = services.get(name);
         if (list != null) {
             if (!list.remove(service)) {
                 log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
                         + " is unregistering service at " + name + " that wasn't registered.");
+                return;
             }
             if (initializing) {
                 if (registrations.containsKey(service)) {
@@ -244,12 +249,6 @@ public class PluginContext implements IPluginContext, IDetachable {
             } else {
                 if (name != null) {
                     manager.unregisterService(service, name);
-                }
-                if (stopping) {
-                    if (!stopped.containsKey(name)) {
-                        stopped.put(name, new LinkedList<IClusterable>());
-                    }
-                    stopped.get(name).add(service);
                 }
             }
         } else {
