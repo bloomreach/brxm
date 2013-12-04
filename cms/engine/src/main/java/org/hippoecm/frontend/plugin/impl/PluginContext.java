@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugin.impl;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -52,7 +51,6 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPluginConfig config;
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
-    private Map<String, List<IClusterable>> stopped;
     private Map<IClusterable, ServiceRegistration> registrations;
     private List<ServiceRegistration> registrationOrder;
     private Map<IServiceFactory<IClusterable>, IClusterable> instances;
@@ -335,8 +333,6 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (!stopping) {
             stopping = true;
 
-            stopped = new HashMap<String, List<IClusterable>>();
-
             if (plugin != null) {
                 plugin.stop();
             }
@@ -369,9 +365,6 @@ public class PluginContext implements IPluginContext, IDetachable {
                     for (IClusterable service : entry.getValue()) {
                         final String key = entry.getKey();
                         if (key != null) {
-                            if (stopped.containsKey(key) && stopped.get(key).contains(service)) {
-                                continue;
-                            }
                             manager.unregisterService(service, key);
                         }
                     }
@@ -384,7 +377,6 @@ public class PluginContext implements IPluginContext, IDetachable {
                 registrations.clear();
             }
             services.clear();
-            stopped.clear();
         }
     }
 
