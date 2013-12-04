@@ -362,11 +362,9 @@ public class PluginContext implements IPluginContext, IDetachable {
             if (!initializing) {
                 log.debug("unregistering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
                 for (Map.Entry<String, List<IClusterable>> entry : services.entrySet()) {
+                    final String key = entry.getKey();
                     for (IClusterable service : entry.getValue()) {
-                        final String key = entry.getKey();
-                        if (key != null) {
-                            manager.unregisterService(service, key);
-                        }
+                        manager.unregisterService(service, key);
                     }
                 }
             } else {
