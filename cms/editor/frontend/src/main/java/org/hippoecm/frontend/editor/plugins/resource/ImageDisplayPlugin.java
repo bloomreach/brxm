@@ -50,6 +50,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(ImageDisplayPlugin.class);
 
+    public static final String MIME_TYPE_HIPPO_UNINITIALIZED = "application/vnd.hippo.uninitialized";
+
     ByteSizeFormatter formatter = new ByteSizeFormatter();
 
     public ImageDisplayPlugin(IPluginContext context, IPluginConfig config) {
@@ -99,19 +101,18 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         final JcrResourceStream stream = new JcrResourceStream(model);
         Fragment fragment = new Fragment(id, "unknown", this);
         try {
-            if (stream.length().bytes() <= 0) {
+            if (stream.length().bytes() < 0) {
                 return fragment;
             }
 
-            Node node = getModelObject();
-
-            FileLink filelink = createFileLink(stream, node);
-
             fragment = new Fragment(id, "embed", this);
-            fragment.add(new Label("filesize", new Model<String>(formatter.format(stream.length().bytes()))));
-            fragment.add(new Label("mimetype", new Model<String>(stream.getContentType())));
+            fragment.add(new Label("filesize", Model.of(formatter.format(stream.length().bytes()))));
+            fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
+            fragment.add(createFileLink(stream, getModelObject()));
 
-            fragment.add(filelink);
+            if (stream.getContentType().equals(MIME_TYPE_HIPPO_UNINITIALIZED)) {
+                fragment.setVisible(false);
+            }
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }

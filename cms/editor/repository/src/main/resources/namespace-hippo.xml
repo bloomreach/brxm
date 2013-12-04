@@ -311,7 +311,7 @@
           <sv:value>2008-03-26T12:03:00.000+01:00</sv:value>
         </sv:property>
         <sv:property sv:name="jcr:mimeType" sv:type="String">
-          <sv:value>image/jpeg</sv:value>
+          <sv:value>application/vnd.hippo.uninitialized</sv:value>
         </sv:property>
         <sv:property sv:name="hippo:filename" sv:type="String">
           <sv:value>hippo:resource</sv:value>
