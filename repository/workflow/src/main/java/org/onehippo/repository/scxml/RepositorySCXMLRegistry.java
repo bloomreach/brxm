@@ -17,6 +17,8 @@ package org.onehippo.repository.scxml;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -219,7 +221,9 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         final String encoding = null;
         final String systemId = null;
         final boolean validate = false;
-        final PathResolver pathResolver = new RepositoryPathResolver(scxmlDefinitionsNodePath, null);
+        // TODO: for now, no base url resolver, which works when src attribute is set to an absolute url.
+        //       later, do we need to have a configuration for a base url to refer to other scxml definitions?
+        final PathResolver pathResolver = new RepositoryURLResolver(null);
         final ClassLoader customActionClassLoader = null;
         final boolean useContextClassLoaderForCustomActions = true;
 
@@ -283,36 +287,61 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
-    private static class RepositoryPathResolver implements PathResolver {
+    private static class RepositoryURLResolver implements PathResolver {
 
-        private final String scxmlDefsPath;
-        private final String relativeBasePath;
+        /** The base URL to resolve against. */
+        private URL baseURL;
 
-        private RepositoryPathResolver(final String scxmlDefsPath, String relativeBasePath) {
-            this.scxmlDefsPath = scxmlDefsPath;
-            this.relativeBasePath = relativeBasePath;
+        /**
+         * Constructor.
+         *
+         * @param baseURL The base URL to resolve against
+         */
+        public RepositoryURLResolver(final URL baseURL) {
+            this.baseURL = baseURL;
         }
 
-        @Override
-        public String resolvePath(String ctxPath) {
-            StringBuilder sbTemp = new StringBuilder(scxmlDefsPath);
+        /**
+         * Uses URL(URL, String) constructor to combine URL's.
+         * @see org.apache.commons.scxml2.PathResolver#resolvePath(java.lang.String)
+         */
+        public String resolvePath(final String ctxPath) {
+            URL combined = null;
 
-            if (StringUtils.isNotEmpty(relativeBasePath)) {
-                sbTemp.append('/');
-                sbTemp.append(StringUtils.removeStart(relativeBasePath, "/"));
+            try {
+                if (baseURL != null) {
+                    combined = new URL(baseURL, ctxPath);
+                } else {
+                    // try to resolve URL from the path directly.
+                    combined = new URL(ctxPath);
+                }
+                return combined.toString();
+            } catch (MalformedURLException e) {
+                log.error("Malformed URL", e);
             }
 
-            if (StringUtils.isNotEmpty(ctxPath)) {
-                sbTemp.append('/');
-                sbTemp.append(StringUtils.removeStart(ctxPath, "/"));
-            }
-
-            return sbTemp.toString();
+            return null;
         }
 
-        @Override
-        public PathResolver getResolver(String ctxPath) {
-            return new RepositoryPathResolver(scxmlDefsPath, ctxPath);
+        /**
+         * @see org.apache.commons.scxml2.PathResolver#getResolver(java.lang.String)
+         */
+        public PathResolver getResolver(final String ctxPath) {
+            URL combined = null;
+
+            try {
+                if (baseURL != null) {
+                    combined = new URL(baseURL, ctxPath);
+                } else {
+                    // try to resolve URL from the path directly.
+                    combined = new URL(ctxPath);
+                }
+                return new RepositoryURLResolver(combined);
+            } catch (MalformedURLException e) {
+                log.error("Malformed URL", e);
+            }
+
+            return null;
         }
     }
 
