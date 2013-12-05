@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -32,6 +34,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.util.XMLEventAllocator;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.scxml2.PathResolver;
 import org.apache.commons.scxml2.io.SCXMLReader;
@@ -57,6 +60,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     public static final String SCXML_ACTION_NAMESPACE = "hipposcxml:namespace";
     public static final String SCXML_ACTION_CLASSNAME = "hipposcxml:classname";
     public static final String SCXML_ACTION = "hipposcxml:action";
+
+    private static final Pattern XML_STREAM_EXCEPTION_MESSAGE_PATTERN = Pattern.compile("Message:\\s(http://www.w3.org/TR/1999/REC-xml-names-19990114(\\S+))\\s?");
 
     private Map<String, SCXMLDefinition> scxmlDefMap;
 
@@ -199,7 +204,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         } catch (ModelException e) {
             throw new SCXMLException("Invalid SCXML model definition at '" + scxmlDefPath + "'. " + e.getLocalizedMessage(), e);
         } catch (XMLStreamException e) {
-            throw new SCXMLException("Failed to read SCXML XML stream at '" + scxmlDefPath + "'. " + e.getLocalizedMessage(), e);
+            throw new SCXMLException("Failed to read SCXML XML stream at '" + scxmlDefPath + "'. " + naturalizeXMLStreamExceptionMessage(e), e);
         }
     }
 
@@ -234,6 +239,32 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     private boolean validateSemantics(final SCXMLDefinition scxmlDef) {
         // TODO: Add more validation logic against Hippo specific semantics.
         return true;
+    }
+
+    private String naturalizeXMLStreamExceptionMessage(final XMLStreamException xse) {
+        String naturalized = xse.getLocalizedMessage();
+        final Matcher m = XML_STREAM_EXCEPTION_MESSAGE_PATTERN.matcher(naturalized);
+
+        if (m.find()) {
+            final String errorInfo = m.group(2);
+            if (StringUtils.isNotEmpty(errorInfo)) {
+                final String [] tokens = StringUtils.split(errorInfo, "#?&");
+                if (!ArrayUtils.isEmpty(tokens)) {
+                    final Location location = xse.getLocation();
+                    final StringBuilder sbTemp =
+                            new StringBuilder().append("XML Stream Error at (L")
+                            .append(location.getLineNumber())
+                            .append(":C").append(location.getColumnNumber())
+                            .append("). Cause: ").append(StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(tokens[0]), " "));
+                    if (tokens.length > 1) {
+                        sbTemp.append(" (").append(StringUtils.join(tokens, ", ", 1, tokens.length)).append(")");
+                    }
+                    naturalized = sbTemp.toString();
+                }
+            }
+        }
+
+        return naturalized;
     }
 
     private static class XMLReporterImpl implements XMLReporter {

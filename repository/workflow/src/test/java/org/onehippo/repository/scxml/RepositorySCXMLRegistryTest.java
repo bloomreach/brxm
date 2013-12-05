@@ -205,7 +205,7 @@ public class RepositorySCXMLRegistryTest {
         assertNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "Failed to read SCXML XML stream at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-ns-custom-actions'. ParseError"));
+        assertTrue(containsLogMessage(logRecords, "Failed to read SCXML XML stream at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-ns-custom-actions'. XML Stream Error at (L4:C38). Cause: Element Prefix Unbound (hippo2, hippo2:unknown-custom-action)"));
     }
 
     private static class KnownAction extends Action {
