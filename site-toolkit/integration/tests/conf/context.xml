@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+    <!-- Disable session persistence across Tomcat restarts -->
+    <Manager pathname="" />
+
+    <!-- Start the repository as a remote server and bind it on the specified address -->
+    <Parameter name="start-remote-server" value="true" override="false"/>
+    <Parameter name="repository-address" value="rmi://127.0.0.1:1101/hipporepository" override="false"/>
+
+</Context>

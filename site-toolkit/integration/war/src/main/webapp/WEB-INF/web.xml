@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    version="2.5" 
+    id="hsttestwar">
+
+  <display-name>HST Integration Test WAR</display-name>
+  <description>HST Integration Test WAR</description>
+
+  <servlet>
+    <servlet-name>H2DB</servlet-name>
+    <servlet-class>org.hippoecm.hst.servlets.H2ServerServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>Repository</servlet-name>
+    <servlet-class>org.hippoecm.repository.RepositoryServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Repository</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>H2DB</servlet-name>
+    <url-pattern>/h2db/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
