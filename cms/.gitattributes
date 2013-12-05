@@ -2575,7 +2575,6 @@ richtext/ckeditor/resources/src/main/resources/ckeditor/lang/zh-cn.js -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/lang/zh.js -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/CHANGES.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/LICENSE.md -text
-richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/README.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/plugins/a11yhelp/dialogs/lang/ko.js -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/plugins/about/dialogs/hidpi/logo_ckeditor.png -text svneol=unset#image/png
 richtext/ckeditor/resources/src/main/resources/ckeditor/optimized/plugins/about/dialogs/logo_ckeditor.png -text svneol=unset#image/png
