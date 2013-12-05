@@ -31,11 +31,8 @@
                     return;
                 }
 
-                console.log('initializing history');
-
                 if (window.addEventListener) {
                     window.addEventListener('popstate', jQuery.proxy(function () {
-                        console.log('popping');
                         this.onUrlChange();
                     }, this));
                 }
