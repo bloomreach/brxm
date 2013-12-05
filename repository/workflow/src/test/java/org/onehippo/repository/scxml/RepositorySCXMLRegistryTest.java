@@ -153,12 +153,10 @@ public class RepositorySCXMLRegistryTest {
         assertEquals("hello", helloScxml.getSCXML().getInitial());
         assertNotNull(registry.getSCXMLDefinition("hello-no-initial"));
         assertNull(registry.getSCXMLDefinition("hello-nonexisting-initial"));
-        assertNotNull(registry.getSCXMLDefinition("hello-wrong-execution-in-state"));
+        assertNull(registry.getSCXMLDefinition("hello-wrong-execution-in-state"));
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-nonexisting-initial'."));
-        assertTrue(containsLogMessage(logRecords, "No SCXML child state with ID \"nonexisting\" found; illegal initial state for SCXML document"));
-        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state (L3:C41): [COMMONS_SCXML] Ignoring unknown or invalid element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state>"));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-wrong-execution-in-state'. Ignoring unknown or invalid element <log> in namespace \"http://www.w3.org/2005/07/scxml\" as child  of <state> at Line number = 3"));
     }
 
     /*
@@ -172,11 +170,10 @@ public class RepositorySCXMLRegistryTest {
         registry.setUp(scxmlConfigNode);
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-custom-actions");
-        assertNotNull(helloScxml);
+        assertNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions"));
-        assertTrue(containsLogMessage(logRecords, "Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\""));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions'. Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\" as child  of <onentry> at Line number = 4"));
     }
 
     /*
@@ -189,11 +186,10 @@ public class RepositorySCXMLRegistryTest {
         registry.setUp(scxmlConfigNode);
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-unknown-custom-actions");
-        assertNotNull(helloScxml);
+        assertNull(helloScxml);
 
         List<LogRecord> logRecords = recordingLogger.getLogRecords();
-        assertTrue(containsLogMessage(logRecords, "SCXML model error in /hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions"));
-        assertTrue(containsLogMessage(logRecords, "Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\""));
+        assertTrue(containsLogMessage(logRecords, "Invalid SCXML model definition at '/hippo:moduleconfig/hipposcxml:definitions/hello-with-unknown-custom-actions'. Ignoring unknown or invalid element <unknown-custom-action> in namespace \"http://www.onehippo.org/cms7/repository/scxml\" as child  of <onentry> at Line number = 4"));
     }
 
     /*

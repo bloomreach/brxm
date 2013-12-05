@@ -53,11 +53,13 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
     }
 
     private static class StrictJexlEvaluator extends JexlEvaluator {
+
+        private static final long serialVersionUID = 1L;
+
         @Override
         protected JexlEngine createJexlEngine() {
             JexlEngine engine = super.createJexlEngine();
-            // TODO: temporary forcing JexlEngine strict mode until this becomes enforced/enforceable in SCXML itself
-            // see also SCXML-177
+            // always use strict mode in JEXL expression evaluations
             engine.setStrict(true);
             return engine;
         }

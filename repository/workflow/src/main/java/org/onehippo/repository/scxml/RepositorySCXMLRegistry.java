@@ -225,6 +225,8 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                         encoding, systemId, validate, 
                         pathResolver, customActions, 
                         customActionClassLoader, useContextClassLoaderForCustomActions);
+        configuration.setStrict(true);
+        configuration.setSilent(false);
 
         return configuration;
     }
