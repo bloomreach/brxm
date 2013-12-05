@@ -10,8 +10,8 @@ Version
 -------
 The version number of the included CKEditor sources can be found in the optimizer ckeditor.js file:
 
-  $ grep -Po 'version:"[0-9.]+"' src/main/resources/ckeditor/optimized/ckeditor.js
-  version:"4.3.0.1"
+  $ grep -Po 'version:"[0-9.h-]+"' src/main/resources/ckeditor/optimized/ckeditor.js
+  version:"4.3.0-h1"
 
 Updating CKEditor sources
 -------------------------
@@ -30,7 +30,7 @@ The following recipe assumes you start in the directory 'cms/richtext/ckeditor/r
 
 2. Remove the existing sources
 
-   $ rm -rf src/main/resources/ckeditor
+   $ rm -rf src/main/resources/ckeditor/*
 
 3. Copy the sources in the tag
 
@@ -42,7 +42,8 @@ The following recipe assumes you start in the directory 'cms/richtext/ckeditor/r
 
 5. Copy the generated optimized sources too
 
-  $ cp -r /tmp/ckeditor/dev/builder/release/ckeditor/* src/main/resources/ckeditor/optimized
+   $ mkdir src/main/resources/ckeditor/optimized
+   $ cp -r /tmp/ckeditor/dev/builder/release/ckeditor/* src/main/resources/ckeditor/optimized
 
 6. Commit the updated sources
 

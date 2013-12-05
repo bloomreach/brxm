@@ -14,46 +14,46 @@ The following external plugins are included:
 
 ## Versions
 
-A Hippo-specific CKEditor build adds a 1-based nano version to the CKEditor version it extends.
-For example, version '4.3.0.1' extends CKEditor 4.3.0.
+A Hippo-specific CKEditor build adds a 1-based nano version to the CKEditor version it extends, prefix with `-h`.
+For example, version `4.3.0-h1` extends CKEditor `4.3.0`.
 
-Each branch 'hippo/<version>' contains all commits in the CKEditor branch 'release/<version>'
+Each branch `hippo/<version>` contains all commits in the CKEditor branch `release/<version>`
 plus all Hippo-specific modifications.
 
-A release is available in a tag are named 'hippo/<version>', e.g. 'hippo/4.3.0.1'.
+A release is available in a tag are named `hippo/<version>`, e.g. `hippo/4.3.0-h1`.
 
-The version number is included in the generated code. Be sure to update the 'BUILD_VERSION' variable in the script
-/dev/builder/build.sh before tagging a release. In between tags the version number should get the suffix '-SNAPSHOT'.
+The version number is included in the generated code. Be sure to bump the `BUILD_VERSION` variable in the script
+`/dev/builder/build.sh` after tagging a release.
 
 ### Branches for external plugins
 
 The Git repository of each external plugin is available as a remote named after the plugin.
-It master branch is available locally as '<plugin>/master'. For example, the CodeMirror master
-branch is available locally as 'codemirror/master'. This allows easy Hippo-specific modifications
+Its master branch is available locally as `<plugin>/master`. For example, the CodeMirror master
+branch is available locally as `codemirror/master`. This allows easy Hippo-specific modifications
 of the plugin code, if needed.
 
 Only a part of each external plugin's code has to be included in the Hippo CKEditor build,
-i.e. the part that should to into the CKEditor subdirectory 'plugins/XXX'. The history of that
-part is kept in a branch 'XXX/plugin' and included as a subtree merge under the directory 'plugins/XXX'.
+i.e. the part that should to into the CKEditor subdirectory `plugins/XXX`. The history of that
+part is kept in a branch `XXX/plugin` and included as a subtree merge under the directory `plugins/XXX`.
 
-For example, all CodeMirror plugin code is located in the branch 'codemirror/master'
-under the directory 'codemirror'. All commits that affect that subdirectory are kept
-in the branch 'codemirror/plugin'. The code in the branch 'codemirror/plugin' is then
-included in a Hippo CKEditor branch under the directory 'plugins/codemirror'.
+For example, all CodeMirror plugin code is located in the branch `codemirror/master`
+under the directory `codemirror`. All commits that affect that subdirectory are kept
+in the branch `codemirror/plugin`. The code in the branch `codemirror/plugin` is then
+included in a Hippo CKEditor branch under the directory `plugins/codemirror`.
 
 ## Adding a new external plugin
 
 The following example adds a fictitious external plugin called 'example' to the Hippo CKEditor 4.3.x build.
-Its Git repository contains a subdirectory 'code' that should go into the CKEditor directory 'plugins/example'.
+Its Git repository contains a subdirectory `code` that should go into the CKEditor directory `plugins/example`.
 
-  1. git remote add example <remote url>
-  2. git fetch example
-  3. git checkout -b example/master example/master
-  4. git subtree split --prefix=code/ -b example/plugin
-  5. git checkout hippo/4.3.x
-  6. git read-tree --prefix=plugins/example/ -u example/plugin
+    > git remote add example <remote url>
+    > git fetch example
+    > git checkout -b example/master example/master
+    > git subtree split --prefix=code/ -b example/plugin
+    > git checkout hippo/4.3.x
+    > git read-tree --prefix=plugins/example/ -u example/plugin
 
-Add the 'example' plugin to the file dev/builder/build-config.js to include it in the Hippo CKEditor build.
+Add the 'example' plugin to the file `dev/builder/build-config.js` to include it in the Hippo CKEditor build.
 
 ## The remainder of this file contains the unmodified CKEditor README
 
