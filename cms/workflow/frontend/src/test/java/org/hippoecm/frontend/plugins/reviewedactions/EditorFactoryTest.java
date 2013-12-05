@@ -303,10 +303,6 @@ public class EditorFactoryTest extends PluginTest {
                 "hipposys:nodetype", "hippostd:publishable",
                 "hipposys:classname", org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl.class.getName(),
                 "hipposys:display", "publishable workflow",
-                "/publishable/hipposys:types/" + PublishableDocument.class.getName(), "hipposys:type",
-                    "hipposys:classname", PublishableDocument.class.getName(),
-                    "hipposys:display", "publisahble document",
-                    "hipposys:nodetype", "hippostd:publishable"
         };
         build(session, mount("/hippo:configuration/hippo:workflows/default", workflowConfig));
         Node category = session.getRootNode().getNode("hippo:configuration/hippo:workflows/default");
