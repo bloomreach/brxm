@@ -25,13 +25,9 @@
  * - position in the toolbar group
  *
  * Execute this script in the example page 'samples/replacebyclass.html' that is part of the CKEditor sources:
- * 1. open http://ckeditor.com/builder
- * 2. upload 'build-config.js' next to this file
- * 3. download the source version of CKEditor
- * 4. unzip the downloaded archive
- * 5. open 'samples/replacebyclass.html' in Chrome
- * 6. open the 'console' tab in Chrome developer tools
- * 7. paste the contents of this file into the console and hit <enter>
+ * 1. open 'samples/replacebyclass.html' in Chrome
+ * 2. open the 'console' tab in Chrome developer tools
+ * 3. paste the contents of this file into the console and hit <enter>
  *
  * The table should appear above the CKEditor instance.
  */
@@ -43,11 +39,15 @@
         Button: 'button',
         Checkbox: 'forms',
         FontSize: 'font',
+        Form: 'forms',
         Image: 'image',
+        image2: 'image2',
         ImageButton: 'forms',
         Link: 'link',
         Radio: 'forms',
-        Source: 'sourcearea, codemirror'
+        Select: 'forms',
+        Source: 'sourcearea, codemirror',
+        Textarea: 'forms'
     }
 
     function addToUniqueArray(map, key, value) {
@@ -59,13 +59,11 @@
     }
 
     function getPluginPerLangKey() {
-        var plugins = CKEDITOR.plugins.registered,
+        var plugins = CKEDITOR.lang.en,
             map = {};
         for (var plugin in plugins) {
-            if (plugins[plugin].langEntries) {
-                for (langEntry in plugins[plugin].langEntries.en) {
-                    addToUniqueArray(map, langEntry, plugin);
-                }
+            for (langEntry in plugins[plugin]) {
+                addToUniqueArray(map, langEntry, plugin);
             }
         }
         return map;
@@ -75,10 +73,8 @@
         var plugins = CKEDITOR.plugins.registered,
             map = {};
         for (var plugin in plugins) {
-            if (plugins[plugin].langEntries) {
-                for (langEntry in plugins[plugin].langEntries.en) {
-                    addToUniqueArray(map, plugins[plugin].langEntries.en[langEntry], plugin);
-                }
+            for (langEntry in CKEDITOR.lang.en[plugin]) {
+                addToUniqueArray(map, CKEDITOR.lang.en[plugin][langEntry], plugin);
             }
         }
         return map;

@@ -2440,7 +2440,7 @@ richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/hidpi/pickinternallink.png -text svneol=unset#image/png
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickimage.png -text svneol=unset#image/png
 richtext/ckeditor/plugins/src/main/resources/ckeditor/plugins/hippopicker/icons/pickinternallink.png -text svneol=unset#image/png
-richtext/ckeditor/resources/create-widget-table.js -text
+richtext/ckeditor/resources/create-toolbar-items-table.js -text
 richtext/ckeditor/resources/src/main/appended-resources/META-INF/LICENSE -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/CHANGES.md -text
 richtext/ckeditor/resources/src/main/resources/ckeditor/LICENSE.md -text

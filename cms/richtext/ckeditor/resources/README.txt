@@ -45,11 +45,15 @@ The following recipe assumes you start in the directory 'cms/richtext/ckeditor/r
    $ mkdir src/main/resources/ckeditor/optimized
    $ cp -r /tmp/ckeditor/dev/builder/release/ckeditor/* src/main/resources/ckeditor/optimized
 
-6. Commit the updated sources
+6. Update the CKEditor documentation on Hippo Campus. If plugins have been added and/or removed,
+   an updated table of toolbar items provided by all plugins can be generated using a script (see below).
+
+7. Commit the updated sources
+
 
 Creating table with CKEditor widget information
 -----------------------------------------------
 
-The script 'create-widget-table.js' can be used to create an HTML table with information about
-all CKEditor widgets (buttons, comboboxes etc.) that are available in a CKEditor distribution.
+The script 'create-toolbar-items-table.js' can be used to create an HTML table with information about
+all CKEditor toolbar items (buttons, comboboxes etc.) that are available in a CKEditor distribution.
 This table can then be included in end-user documentation.
