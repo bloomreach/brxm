@@ -71,6 +71,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "  },"
             + "  contentsCss: 'ckeditor/hippocontents.css',"
             + "  dialog_buttonsOrder: 'ltr',"
+            + "  dialog_noConfirmCancel: true,"
             + "  keystrokes: ["
             + "    [ 'Ctrl', 'm', 'maximize' ],"
             + "    [ 'Alt', 'b', 'showblocks' ]"
