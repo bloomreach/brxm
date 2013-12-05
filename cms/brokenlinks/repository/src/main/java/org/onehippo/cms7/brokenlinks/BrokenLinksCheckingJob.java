@@ -16,6 +16,8 @@
 package org.onehippo.cms7.brokenlinks;
 
 import java.rmi.RemoteException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -101,7 +103,12 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
         long start = System.currentTimeMillis();
         int count = 0;
-        int totalLength = 0;
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         while (hippostdHtmlNodes.hasNext()) {
             try {
                 Node hippostdHtml = hippostdHtmlNodes.nextNode();
@@ -128,7 +135,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                 String handleUUID = handleNode.getIdentifier();
                 // hippostd:content is a mandatory property so no need to check for existence
                 String content = hippostdHtml.getProperty("hippostd:content").getString();
-                totalLength += content.length();
+                md.update(content.getBytes());
 
                 try {
                     Set<Link> linksForHandle = linksByHandleUUID.get(handleUUID);
@@ -177,7 +184,11 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         log.info("In total {}  hippostd:html nodes were scanned.", String.valueOf(count));
         log.info("In total {} handles have links", linksByHandleUUID.size());
         log.info("In total there are {} unique links", linksByURL.size());
-        log.info("The total size of text scanned was {} characters long", totalLength);
+        final StringBuilder sb = new StringBuilder();
+        for (final byte b : md.digest()) {
+            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+        log.info("Digest of text processed: {}", sb.toString());
         log.info("Starting scanning for external links that are broken");
 
         start = System.currentTimeMillis();
