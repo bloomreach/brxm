@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -103,6 +104,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
         long start = System.currentTimeMillis();
         int count = 0;
+        int totalLinksCount = 0;
         MessageDigest md = null;
         try {
             md = MessageDigest.getInstance("SHA");
@@ -112,11 +114,6 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         while (hippostdHtmlNodes.hasNext()) {
             try {
                 Node hippostdHtml = hippostdHtmlNodes.nextNode();
-                // since this might be a long running loop and searches are not transactional, nodes might
-                // be deleted in the meantime, hence, check for now
-                if (hippostdHtml == null) {
-                    continue;
-                }
 
                 if (!hippostdHtml.getPath().startsWith(config.getStartPath())) {
                     // skip paths that do not start with the path we want to scan below
@@ -141,7 +138,9 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                     Set<Link> linksForHandle = linksByHandleUUID.get(handleUUID);
                     count++;
 
-                    for (String url : PlainTextLinksExtractor.getLinks(content)) {
+                    final List<String> links = PlainTextLinksExtractor.getLinks(content);
+                    totalLinksCount += links.size();
+                    for (String url : links) {
 
                         if (isExcludedURL(config, url)) {
                             log.info("The URL is excluded while broken links checking in '{}': {}", hippostdHtml.getPath(), url);
@@ -189,6 +188,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
             sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
         }
         log.info("Digest of text processed: {}", sb.toString());
+        log.info("Total amount of links counted: {}", totalLinksCount);
         log.info("Starting scanning for external links that are broken");
 
         start = System.currentTimeMillis();
