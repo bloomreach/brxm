@@ -62,6 +62,20 @@
         <include>pom.xml</include>
       </includes>
     </fileSet>
+    <!-- bootstrap-essentials module -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap/essentials/src/main/resources</directory>
+      <includes>
+        <include>**/*.xml</include>
+        <include>**/*.cnd</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>bootstrap/essentials</directory>
+      <includes>
+        <include>pom.xml</include>
+      </includes>
+    </fileSet>
     <!-- bootstrap-content module -->
     <fileSet filtered="true" encoding="UTF-8">
       <directory>bootstrap/content/src/main/resources</directory>
