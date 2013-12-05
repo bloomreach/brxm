@@ -30,6 +30,12 @@ public class WicketApplication extends WebApplication {
 
     @Override
     public Class<? extends WebPage> getHomePage() {
+        // TODO: mm disable this after sprint is done
+        if(true){
+            return HomePage.class;
+        }
+
+
         // check if setup is done and show different page:
         final PluginScanner scanner = new PluginScanner();
         final ServletContext servletContext = WebApplication.get().getServletContext();
