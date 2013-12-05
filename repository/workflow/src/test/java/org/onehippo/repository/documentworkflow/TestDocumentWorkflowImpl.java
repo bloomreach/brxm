@@ -160,7 +160,7 @@ public class TestDocumentWorkflowImpl {
         workflowConfig.remove("workflow.supportedFeatures");
         wf.setNode(draftVariant);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+        assertContainsStateIds(wf.getScxmlExecutor(), "editable");
 
         rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
         wf.setNode(rejectedRequest);
@@ -170,7 +170,7 @@ public class TestDocumentWorkflowImpl {
         rejectedRequest.remove();
         wf.setNode(draftVariant);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+        assertContainsStateIds(wf.getScxmlExecutor(), "editable");
 
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
         wf.setNode(draftVariant);
@@ -182,7 +182,7 @@ public class TestDocumentWorkflowImpl {
         // test state not-editing
         wf.setNode(draftVariant);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+        assertContainsStateIds(wf.getScxmlExecutor(), "editable");
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
         assertContainsHint(wf.hints(), "unlock", false);
 
@@ -220,7 +220,7 @@ public class TestDocumentWorkflowImpl {
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-editing");
+        assertContainsStateIds(wf.getScxmlExecutor(), "editable");
 
         wf.setNode(rejectedRequest);
 
