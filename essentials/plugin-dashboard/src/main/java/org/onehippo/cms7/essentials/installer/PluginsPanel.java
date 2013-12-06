@@ -43,11 +43,7 @@ public class PluginsPanel extends Panel {
 
     public PluginsPanel(final String id, final PluginContext context, final List<Plugin> pluginList, final List<Plugin> mainPlugins) {
         super(id);
-
-//        pluginList.addAll(mainPlugins);
         this.pluginList = pluginList;
-        //pluginList.addAll(mainPlugins);
-
         List<ITab> tabs = new ArrayList<>();
         tabs.add(new AbstractTab(new Model<>("Installed")) {
             private static final long serialVersionUID = 1L;
@@ -77,11 +73,6 @@ public class PluginsPanel extends Panel {
     private static class Installed extends Panel {
         private static final long serialVersionUID = 1L;
 
-        /**
-         * Constructor
-         *
-         * @param id component id
-         */
         public Installed(String id) {
             super(id);
         }
@@ -93,11 +84,7 @@ public class PluginsPanel extends Panel {
      */
     private static class EmptyPluginPanel extends Panel {
         private static final long serialVersionUID = 1L;
-        /**
-         * Constructor
-         *
-         * @param id component id
-         */
+
         public EmptyPluginPanel(String id) {
             super(id);
         }
@@ -111,54 +98,10 @@ public class PluginsPanel extends Panel {
         private static final long serialVersionUID = 1L;
         private Plugin selectedPlugin;
         private Panel configuration;
-        // private final Panel panel;
 
-        /**
-         * Constructor
-         *
-         * @param id component id
-         */
         public FindAdditional(String id) {
             super(id);
 
-//            Plugin plugin1 = new EssentialsPlugin() {
-//
-//                @Override
-//                public String getType() {
-//                    return "enterprise";
-//                }
-//
-//                @Override
-//                public String getName() {
-//                    return "Relevance";
-//                }
-//            };
-//
-//            Plugin plugin2 = new EssentialsPlugin() {
-//
-//                @Override
-//                public String getType() {
-//                    return "enterprise";
-//                }
-//
-//                @Override
-//                public String getName() {
-//                    return "Reporting";
-//                }
-//            };
-//
-//            Plugin plugin3 = new EssentialsPlugin() {
-//
-//                @Override
-//                public String getType() {
-//                    return "Hippo Certified";
-//                }
-//
-//                @Override
-//                public String getName() {
-//                    return "Content Blocks";
-//                }
-//            };
 
             MultivaluedMap<String, Plugin> map = new MetadataMap<>();
 
@@ -166,8 +109,6 @@ public class PluginsPanel extends Panel {
                 map.add(plugin.getType(), plugin);
             }
 
-//            map.add(plugin2.getType(), plugin2);
-//            map.add(plugin3.getType(), plugin3);
 
             configuration = new BodyPanel("body");
             add(configuration);
@@ -191,13 +132,6 @@ public class PluginsPanel extends Panel {
                                 @Override
                                 public void onClick(final AjaxRequestTarget target) {
                                     onPluginSelected(plugin, target);
-                                    // add(new AttributeModifier("class", "selected"));
-                                    //target.add(this);
-                                   /* System.out.println("install mother fucker");
-                                    final EmptyPanel empty = new EmptyPanel("plugin");
-                                    empty.setOutputMarkupId(true);
-                                    configuration.replace(empty);
-                                    target.add(configuration);*/
                                 }
                             };
                             link.setOutputMarkupId(true);
@@ -218,13 +152,6 @@ public class PluginsPanel extends Panel {
             configuration.replace(new EmptyPluginPanel("plugin"));
         }
 
-//        private void delegateOnPluginClick(final AjaxRequestTarget target, final Plugin plugin) {
-//            System.out.println("install mother fucker: " + plugin.getName());
-//            final EmptyPanel empty = new EmptyPanel("plugin");
-//            empty.setOutputMarkupId(true);
-//            configuration.replace(empty);
-//            target.add(configuration);
-//        }
 
         /**
          * Triggered when menu item is clicked
