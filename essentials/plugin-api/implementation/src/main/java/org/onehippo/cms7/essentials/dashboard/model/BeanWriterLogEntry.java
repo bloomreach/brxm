@@ -66,6 +66,9 @@ public class BeanWriterLogEntry {
         this.actionType = actionType;
     }
 
+    public String getMessage() {
+        return actionType.toString();
+    }
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BeanWriterLogEntry{");
@@ -75,5 +78,6 @@ public class BeanWriterLogEntry {
         sb.append('}');
         return sb.toString();
     }
+
 
 }
