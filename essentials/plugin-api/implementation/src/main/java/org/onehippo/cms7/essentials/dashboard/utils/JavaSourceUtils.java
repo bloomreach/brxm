@@ -614,8 +614,13 @@ public class JavaSourceUtils {
 
                             final String identifier = name.getIdentifier();
                             if (identifier.equals("jcrType")) {
-                                final StringLiteral ex = (StringLiteral) pair.getValue();
-                                jcrType = ex.getLiteralValue();
+                                final Expression literalValue = pair.getValue();
+                                if(literalValue instanceof StringLiteral){
+                                    final StringLiteral ex = (StringLiteral) literalValue;
+                                    jcrType = ex.getLiteralValue();
+                                }else{
+                                    log.warn("Couldn't resolve value for: {}", literalValue);
+                                }
                             }
                         }
                     }

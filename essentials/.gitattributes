@@ -98,8 +98,11 @@ archetype/website/src/main/resources/archetype-resources/site/src/main/webapp/js
 archetype/website/src/main/resources/archetype-resources/site/src/test/resources/log4j.xml -text
 archetype/website/src/main/resources/archetype-resources/src/main/assembly/distribution.xml -text
 dashboard-plugins/beanwriter-plugin/pom.xml -text
+dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanWriterActionPanel.html -text
+dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanWriterActionPanel.java -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanwriterPlugin.html -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanwriterPlugin.java -text
+dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanwriterPlugin.properties.xml -text
 dashboard-plugins/beanwriter-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-gui/pom.xml -text
@@ -542,6 +545,8 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/i
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/executors/PluginInstructionExecutor.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/package-info.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/instruction/parser/InstructionParser.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/ActionType.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/BeanWriterLogEntry.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/CatalogObject.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/EssentialsPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginAsset.java -text

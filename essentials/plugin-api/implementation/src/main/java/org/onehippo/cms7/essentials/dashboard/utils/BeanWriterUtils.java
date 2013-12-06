@@ -15,6 +15,8 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.model.ActionType;
+import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.HippoEssentialsGeneratedObject;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryBean;
 import org.onehippo.cms7.essentials.dashboard.utils.beansmodel.MemoryProperty;
@@ -28,11 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id: BeanWriterUtils.java 174577 2013-08-21 16:12:51Z mmilicevic $"
+ * @version "$Id$"
  */
 public class BeanWriterUtils {
+    public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
-
 
     private BeanWriterUtils() {
     }
@@ -57,8 +59,9 @@ public class BeanWriterUtils {
                 populateSupertypes(supertype, memoryBeans);
                 supertype = supertype.getSupertype();
             }
-            final NoAnnotationMethodVisitor methodCollection = JavaSourceUtils.getAnnotateMethods(context, bean.getBeanPath());
-            final ExistingMethodsVisitor existingMethodCollection = JavaSourceUtils.getMethodCollection(bean.getBeanPath());
+            final Path beanPath = bean.getBeanPath();
+            final NoAnnotationMethodVisitor methodCollection = JavaSourceUtils.getAnnotateMethods(context, beanPath);
+            final ExistingMethodsVisitor existingMethodCollection = JavaSourceUtils.getMethodCollection(beanPath);
             final Set<String> existing = existingMethodCollection.getMethodInternalNames();
             // add also supertype methods:
             final MemoryBean mySuperType = bean.getSupertype();
@@ -93,44 +96,52 @@ public class BeanWriterUtils {
                         case "Text":
                             methodName = GlobalUtils.createMethodName(name);
 
-                            JavaSourceUtils.addBeanMethodString(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         case "Boolean":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodBoolean(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         case "Long":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodLong(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodLong(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         case "Double":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodDouble(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodDouble(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         case "hippostd:html":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodHippoHtml(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         case "hippo:mirror":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodHippoMirror(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         case "hippogallerypicker:imagelink":
                             methodName = GlobalUtils.createMethodName(name);
-                            JavaSourceUtils.addBeanMethodImageLink(bean.getBeanPath(), methodName, name, multiple);
+                            JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
                             existing.add(name);
+                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             log.debug("@@@ added [{}] method", methodName);
                             break;
                         default:
@@ -141,10 +152,12 @@ public class BeanWriterUtils {
                                     if (memoryBean.getPrefixedName().equals(type)) {
                                         final String beanName = FilenameUtils.removeExtension(memoryBean.getBeanPath().toFile().getName());
                                         if (multiple) {
-                                            JavaSourceUtils.addImport(bean.getBeanPath(), "java.util.List");
-                                            JavaSourceUtils.addTwoArgumentsMethod("getBeans", String.format("List<%s>", beanName), bean.getBeanPath(), methodName, name);
+                                            JavaSourceUtils.addImport(beanPath, "java.util.List");
+                                            JavaSourceUtils.addTwoArgumentsMethod("getBeans", String.format("List<%s>", beanName), beanPath, methodName, name);
+                                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                                         } else {
-                                            JavaSourceUtils.addTwoArgumentsMethod("getBean", beanName, bean.getBeanPath(), methodName, name);
+                                            JavaSourceUtils.addTwoArgumentsMethod("getBean", beanName, beanPath, methodName, name);
+                                            context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                                         }
                                         existing.add(name);
                                     }
@@ -181,6 +194,7 @@ public class BeanWriterUtils {
                 JavaSourceUtils.addExtendsClass(javaClass, extendsName);
                 JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
                 memoryBean.setBeanPath(javaClass);
+                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
             }
 
         }
@@ -266,13 +280,13 @@ public class BeanWriterUtils {
         return retVal;
     }
 
-        /**
-         * Find all existing HST beans (which annotated with {@code @Node})
-         *
-         * @param context             plugin context instance
-         * @param sourceFileExtension file extension, e.g. {@code "java"}
-         * @return a list of beans or an empty list if nothing was found
-         */
+    /**
+     * Find all existing HST beans (which annotated with {@code @Node})
+     *
+     * @param context             plugin context instance
+     * @param sourceFileExtension file extension, e.g. {@code "java"}
+     * @return a list of beans or an empty list if nothing was found
+     */
     public static List<Path> findExitingBeans(final PluginContext context, final String sourceFileExtension) {
         final Path startDir = context.getBeansPackagePath();
         final List<Path> existingBeans = new ArrayList<>();
@@ -313,13 +327,13 @@ public class BeanWriterUtils {
 
     }
 
-
     /**
      * Add HippoGenerated annotation to an existing bean
+     *
      * @param context plugin context instance
-     * @param path path to source file
+     * @param path    path to source file
      */
-    public static void annotateExistingMethods(final PluginContext context, final Path path){
+    public static void annotateExistingMethods(final PluginContext context, final Path path) {
 
         final NoAnnotationMethodVisitor methodCollection = JavaSourceUtils.getAnnotateMethods(context, path);
         final List<EssentialsGeneratedMethod> methodsNames = methodCollection.getModifiableMethods();
@@ -327,7 +341,6 @@ public class BeanWriterUtils {
             JavaSourceUtils.annotateMethod(method, path);
         }
     }
-
 
     /**
      * Adds (missing) methods to a HippoBean

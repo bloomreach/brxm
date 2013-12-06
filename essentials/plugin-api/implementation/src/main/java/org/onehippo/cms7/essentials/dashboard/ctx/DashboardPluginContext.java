@@ -7,6 +7,7 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,9 +25,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 
 /**
- * @version "$Id: DashboardPluginContext.java 169746 2013-07-05 11:50:33Z ksalic $"
+ * @version "$Id$"
  */
 public class DashboardPluginContext implements PluginContext {
 
@@ -36,6 +40,7 @@ public class DashboardPluginContext implements PluginContext {
     private static final long serialVersionUID = 1L;
     private final transient Session session;
     private final Plugin plugin;
+    private final Multimap<String, Object> contextData = ArrayListMultimap.create();
     private transient File siteFile;
     private String componentsPackage;
     private String beansPackage;
@@ -45,6 +50,21 @@ public class DashboardPluginContext implements PluginContext {
     public DashboardPluginContext(final Session session, final Plugin plugin) {
         this.session = session;
         this.plugin = plugin;
+    }
+
+    @Override
+    public Multimap<String, Object> getPluginContextData() {
+        return contextData;
+    }
+
+    @Override
+    public Collection<Object> getPluginContextData(final String key) {
+        return contextData.get(key);
+    }
+
+    @Override
+    public void addPluginContextData(final String key, final Object value) {
+        contextData.put(key, value);
     }
 
     public Session getSession() {

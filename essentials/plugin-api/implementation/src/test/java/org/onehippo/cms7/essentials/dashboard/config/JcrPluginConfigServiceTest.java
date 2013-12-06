@@ -33,7 +33,7 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest{
         root.addNode("essentials", "essentials:folder");
         final Node dashboard = root.getNode("essentials");
         assertNotNull(dashboard);
-        mySession.save();
+        session.save();
         final DashboardPluginContext context = new DashboardPluginContext(session, new DummyTestPlugin());
         PluginConfigService service = new JcrPluginConfigService(context);
         final ProjectSettingsBean document = new ProjectSettingsBean("test");
