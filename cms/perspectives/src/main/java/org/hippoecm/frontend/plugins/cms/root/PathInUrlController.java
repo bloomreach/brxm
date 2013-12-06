@@ -124,28 +124,33 @@ class PathInUrlController extends UrlControllerBehavior implements IObserver<IMo
             if (jcrPath != null) {
                 JcrNodeModel nodeModel = new JcrNodeModel(jcrPath);
 
-                if (browseService != null) {
-                    browseService.browse(nodeModel);
-                } else {
-                    log.info("Could not find browse service - document " + jcrPath + " will not be selected");
-                }
-
-                if (editorMgr != null) {
-                    IEditor editor = editorMgr.getEditor(nodeModel);
-                    try {
-                        if (editor == null) {
-                            editor = editorMgr.openPreview(nodeModel);
-                        }
-                        editor.setMode(mode);
-                    } catch (EditorException e) {
-                        log.info("Could not open editor for " + jcrPath);
-                    } catch (ServiceException e) {
-                        log.info("Could not open preview for " + jcrPath);
+                if (nodeModel.getNode() != null) {
+                    if (browseService != null) {
+                        browseService.browse(nodeModel);
+                    } else {
+                        log.info("Could not find browse service - document " + jcrPath + " will not be selected");
                     }
+
+                    if (editorMgr != null) {
+                        IEditor editor = editorMgr.getEditor(nodeModel);
+                        try {
+                            if (editor == null) {
+                                editor = editorMgr.openPreview(nodeModel);
+                            }
+                            editor.setMode(mode);
+                        } catch (EditorException e) {
+                            log.info("Could not open editor for " + jcrPath);
+                        } catch (ServiceException e) {
+                            log.info("Could not open preview for " + jcrPath);
+                        }
+                    }
+                } else {
+                    log.debug("Cannot browse to '{}': node does not exist", jcrPath);
                 }
             }
         } finally {
             browsing = false;
         }
     }
+
 }
