@@ -139,7 +139,7 @@ public class TestDocumentWorkflowImpl {
     }
 
     @Test
-    public void testEditableState() throws Exception {
+    public void testEditState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
@@ -261,7 +261,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "unlock", true);
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        session.setPermissions("/test/test", "hippo:admin", false);
+        session.setPermissions(draftVariant.getPath(), "hippo:admin", false);
         wf.setNode(draftVariant);
 
         assertContainsStateIds(wf.getScxmlExecutor(), "editing");
@@ -270,7 +270,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "disposeEditableInstance");
         assertContainsHint(wf.hints(), "unlock", false);
 
-        session.setPermissions("/test/test", "hippo:admin", true);
+        session.setPermissions(draftVariant.getPath(), "hippo:admin", true);
         wf.setNode(draftVariant);
 
         assertContainsStateIds(wf.getScxmlExecutor(), "editing");
@@ -278,5 +278,144 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "commitEditableInstance");
         assertNotContainsHint(wf.hints(), "disposeEditableInstance");
         assertContainsHint(wf.hints(), "unlock", true);
+    }
+
+    @Test
+    public void testRequestState() throws Exception {
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        wf.setWorkflowContext(workflowContext);
+
+        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        MockNode unpublishedVariant, rejectedRequest, publishRequest = null;
+
+        // test state not-requested
+        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        wf.setNode(unpublishedVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "not-requested");
+
+        // test state requested
+        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        wf.setNode(unpublishedVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "requested");
+
+        rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
+        wf.setNode(unpublishedVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "requested");
+
+        wf.setNode(rejectedRequest);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "request-rejected");
+
+        session.setPermissions(publishRequest.getPath(), "hippo:editor", false);
+        wf.setNode(publishRequest);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "requested");
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertNotContainsHint(wf.hints(), "acceptRequest");
+        assertNotContainsHint(wf.hints(), "rejectRequest");
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        wf.setNode(publishRequest);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "requested");
+        assertNotContainsHint(wf.hints(), "cancelRequest");
+        assertNotContainsHint(wf.hints(), "acceptRequest");
+        assertNotContainsHint(wf.hints(), "rejectRequest");
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
+        session.setPermissions(publishRequest.getPath(), "hippo:editor", true);
+
+        wf.setNode(publishRequest);
+        assertContainsStateIds(wf.getScxmlExecutor(), "requested");
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertContainsHint(wf.hints(), "acceptRequest", true);
+        assertContainsHint(wf.hints(), "rejectRequest", true);
+
+        publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        wf.setNode(publishRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", true);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
+
+        publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
+        wf.setNode(publishRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", true);
+
+        session.setPermissions(publishRequest.getPath(), "hippo:editor", false);
+        wf.setNode(publishRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertNotContainsHint(wf.hints(), "acceptRequest");
+        assertNotContainsHint(wf.hints(), "rejectRequest");
+
+        publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+
+        wf.setNode(publishRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", true);
+        assertNotContainsHint(wf.hints(), "acceptRequest");
+        assertNotContainsHint(wf.hints(), "rejectRequest");
+
+        // test state request-rejected
+
+        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", false);
+        wf.setNode(rejectedRequest);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "request-rejected");
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertContainsHint(wf.hints(), "acceptRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        wf.setNode(rejectedRequest);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "request-rejected");
+        assertNotContainsHint(wf.hints(), "cancelRequest");
+        assertNotContainsHint(wf.hints(), "acceptRequest");
+        assertNotContainsHint(wf.hints(), "rejectRequest");
+
+        workflowConfig.remove("workflow.supportedFeatures");
+        rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        wf.setNode(rejectedRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", true);
+        assertContainsHint(wf.hints(), "acceptRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
+
+        rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
+        wf.setNode(rejectedRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertContainsHint(wf.hints(), "acceptRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
+
+        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", true);
+        wf.setNode(rejectedRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", true);
+        assertContainsHint(wf.hints(), "acceptRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
+
+        publishRequest.getProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME).remove();
+        wf.setNode(rejectedRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", true);
+        assertContainsHint(wf.hints(), "acceptRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
+
+        session.setPermissions(rejectedRequest.getPath(), "hippo:editor", false);
+        wf.setNode(rejectedRequest);
+
+        assertContainsHint(wf.hints(), "cancelRequest", false);
+        assertContainsHint(wf.hints(), "acceptRequest", false);
+        assertContainsHint(wf.hints(), "rejectRequest", false);
     }
 }

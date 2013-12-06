@@ -74,10 +74,13 @@
     <state id="request" initial="init-request">
 
       <state id="init-request">
-        <transition target="requested"
-                    cond="!empty(dm.r)"/>
+        <!-- Note: transition for request-rejected MUST be evaluated before transition for requested
+                   because if the subject is a rejected request only its state is to be considered
+        -->
         <transition target="request-rejected"
                     cond="!empty(dm.rr)"/>
+        <transition target="requested"
+                    cond="!empty(dm.r)"/>
         <transition target="not-requested"/>
       </state>
 
