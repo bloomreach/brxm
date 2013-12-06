@@ -28,6 +28,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.core.request.mapper.AbstractComponentMapper;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -36,13 +37,16 @@ import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.mapper.info.PageComponentInfo;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.mapper.parameter.PageParametersEncoder;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.InvalidLoginPage;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.PluginPage;
@@ -67,7 +71,7 @@ public class LoginPlugin extends RenderPlugin {
     public static final String DEFAULT_LOCALE = "en";
 
     // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-    public final static String[] LOCALES = { "en", "fr", "nl", "it", "de" };
+    public final static String[] LOCALES = {"en", "fr", "nl", "it", "de"};
 
     private static final long serialVersionUID = 1L;
 
@@ -138,27 +142,30 @@ public class LoginPlugin extends RenderPlugin {
             add(passwordTextField = new PasswordTextField("password", new PropertyModel<String>(LoginPlugin.this,
                     "password")));
 
-            add(locale = new DropDownChoice<String>("locale", 
-                new PropertyModel<String>(this, "selectedLocale") {
-                    private static final long serialVersionUID = 1L;
+            add(locale = new DropDownChoice<String>("locale",
+                    new PropertyModel<String>(this, "selectedLocale") {
+                        private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void setObject(final String object) {
-                        super.setObject(locales.contains(object) ? object : DEFAULT_LOCALE);
+                        @Override
+                        public void setObject(final String object) {
+                            super.setObject(locales.contains(object) ? object : DEFAULT_LOCALE);
+                        }
+                    },
+                    Arrays.asList(localeArray),
+                    // Display the language name from i18n properties
+                    new IChoiceRenderer<String>() {
+                        private static final long serialVersionUID = 1L;
+
+                        public String getDisplayValue(String object) {
+                            Locale locale = new Locale(object);
+                            return new StringResourceModel(object, LoginPlugin.this, null, null, locale.getDisplayLanguage()).getString();
+                        }
+
+                        public String getIdValue(String object, int index) {
+                            return object;
+                        }
                     }
-                }, 
-                Arrays.asList(localeArray),
-                // Display the language name from i18n properties
-                new IChoiceRenderer<String>() {
-                    private static final long serialVersionUID = 1L;
-                    public String getDisplayValue(String object) {
-                        Locale locale = new Locale(object);
-                        return new StringResourceModel(object, LoginPlugin.this, null, null, locale.getDisplayLanguage()).getString();
-                    }
-                    public String getIdValue(String object, int index) {
-                        return object;
-                    }
-                }));
+            ));
 
             passwordTextField.setResetPassword(false);
 
@@ -208,8 +215,22 @@ public class LoginPlugin extends RenderPlugin {
         protected void onBeforeRender() {
             super.onBeforeRender();
 
-            parameters = new PageParametersEncoder().decodePageParameters(
-                    RequestCycle.get().getRequest().getUrl());
+            Request request = RequestCycle.get().getRequest();
+
+            /**
+             * strip the first query parameter from URL
+             * Copied from {@link AbstractComponentMapper#removeMetaParameter}
+             */
+            Url urlCopy = new Url(request.getUrl());
+            if (!urlCopy.getQueryParameters().isEmpty() &&
+                    Strings.isEmpty(urlCopy.getQueryParameters().get(0).getValue())) {
+                String pageComponentInfoCandidate = urlCopy.getQueryParameters().get(0).getName();
+                if (PageComponentInfo.parse(pageComponentInfoCandidate) != null) {
+                    urlCopy.getQueryParameters().remove(0);
+                }
+            }
+
+            parameters = new PageParametersEncoder().decodePageParameters(urlCopy);
         }
 
         @Override
