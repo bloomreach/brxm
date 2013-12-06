@@ -81,7 +81,9 @@ public class RichTextEditorImageService implements IDetachable {
                 RichTextImage item = loadImageItem(this);
                 if (item != null) {
                     setFacetSelectPath("");
+                    setType("");
                     setUrl("");
+                    setUuid("");
                 }
             }
 

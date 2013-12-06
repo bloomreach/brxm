@@ -223,7 +223,11 @@
             },
             LANG = editor.lang.hippopicker;
 
-        function  isInternalImage(element) {
+        function getSelectedImage() {
+            return editor.getSelection().getStartElement();
+        }
+
+        function isInternalImage(element) {
             return !element.isReadOnly()
                     && element.is('img')
                     && element.hasAttribute('data-facetselect')
@@ -254,8 +258,7 @@
 
         editor.addCommand('pickImage', {
             exec: function(editor) {
-                var selectedImage = editor.getSelection().getStartElement();
-                openImagePickerDialog(selectedImage);
+                openImagePickerDialog(getSelectedImage());
             }
         });
 
@@ -263,7 +266,11 @@
             exec: function(editor, parameters) {
                 var img = editor.document.createElement('img');
                 setElementAttributes(img, IMAGE_ATTRIBUTE_PARAMETER_MAP, parameters);
-                editor.insertElement(img);
+                if (img.hasAttributes()) {
+                    editor.insertElement(img);
+                } else {
+                    getSelectedImage().remove();
+                }
             }
         });
 
