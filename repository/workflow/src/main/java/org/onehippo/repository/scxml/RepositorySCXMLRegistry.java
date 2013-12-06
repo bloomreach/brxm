@@ -17,8 +17,6 @@ package org.onehippo.repository.scxml;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -221,9 +219,11 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         final String encoding = null;
         final String systemId = null;
         final boolean validate = false;
-        // TODO: for now, no base url resolver, which works when src attribute is set to an absolute url.
-        //       later, do we need to have a configuration for a base url to refer to other scxml definitions?
-        final PathResolver pathResolver = new RepositoryURLResolver(null);
+        // TODO: for now, we set no pathResolver, which means we do not translate (context) relative paths into absolute URL string.
+        //       in the future, we may want to improve Commons SCXML to support more pluggable resource resolving/loading in order to
+        //       support resolution/loading from respository stored resources.
+        //       in the shorter term (within SCXML 2.0 version probably), it doesn't seem feasible or easy to have nicer path resolver.
+        final PathResolver pathResolver = null;
         final ClassLoader customActionClassLoader = null;
         final boolean useContextClassLoaderForCustomActions = true;
 
@@ -284,64 +284,6 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
                 throws XMLStreamException {
             // TODO: what's relatedInformation for?
             log.warn("SCXML model error in {} (L{}:C{}): [{}] {} {}", new Object [] { ctxPath, location.getLineNumber(), location.getColumnNumber(), errorType, message, relatedInformation });
-        }
-    }
-
-    static class RepositoryURLResolver implements PathResolver {
-
-        /** The base URL to resolve against. */
-        private URL baseURL;
-
-        /**
-         * Constructor.
-         *
-         * @param baseURL The base URL to resolve against
-         */
-        public RepositoryURLResolver(final URL baseURL) {
-            this.baseURL = baseURL;
-        }
-
-        /**
-         * Uses URL(URL, String) constructor to combine URL's.
-         * @see org.apache.commons.scxml2.PathResolver#resolvePath(java.lang.String)
-         */
-        public String resolvePath(final String ctxPath) {
-            URL combined = null;
-
-            try {
-                if (baseURL != null) {
-                    combined = new URL(baseURL, ctxPath);
-                } else {
-                    // try to resolve URL from the path directly.
-                    combined = new URL(ctxPath);
-                }
-                return combined.toString();
-            } catch (MalformedURLException e) {
-                log.error("Malformed URL", e);
-            }
-
-            return null;
-        }
-
-        /**
-         * @see org.apache.commons.scxml2.PathResolver#getResolver(java.lang.String)
-         */
-        public PathResolver getResolver(final String ctxPath) {
-            URL combined = null;
-
-            try {
-                if (baseURL != null) {
-                    combined = new URL(baseURL, ctxPath);
-                } else {
-                    // try to resolve URL from the path directly.
-                    combined = new URL(ctxPath);
-                }
-                return new RepositoryURLResolver(combined);
-            } catch (MalformedURLException e) {
-                log.error("Malformed URL", e);
-            }
-
-            return null;
         }
     }
 

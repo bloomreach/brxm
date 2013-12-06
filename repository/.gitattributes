@@ -493,7 +493,6 @@ workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLExecutorFactoryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLRegistryTest.java -text
-workflow/src/test/java/org/onehippo/repository/scxml/RepositoryURLResolverTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecord.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordTestUtils.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordingErrorReporterWrapper.java -text
