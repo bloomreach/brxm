@@ -27,20 +27,18 @@ public class MenuPanel extends Panel {
 
     private Fragment nextFragment;
     private Fragment currentFragment;
+    private final HomePage dashboard;
 
     public MenuPanel(final String id, final HomePage dashboard, final List<Plugin> pluginList, final List<Plugin> mainPlugins) {
-
         super(id);
         final Fragment menuFragment = new MenuFragment("fragmentPanel", "menuFragment", this, dashboard, pluginList, mainPlugins);
         final Fragment buttonsFragment = new ButtonsFragment("fragmentPanel", "buttonsFragment", this, dashboard, pluginList, mainPlugins);
         nextFragment = menuFragment;
         currentFragment = buttonsFragment;
+        this.dashboard = dashboard;
 
         add(buttonsFragment);
         setOutputMarkupId(true);
-
-
-
     }
 
 
@@ -51,6 +49,10 @@ public class MenuPanel extends Panel {
         nextFragment = temp;
         target.add(currentFragment);
 
+    }
+
+    public void pluginSelected(final AjaxRequestTarget target, final List<Plugin> pluginList, final List<Plugin> mainPlugins){
+         dashboard.onPluginsSelected(target, pluginList, mainPlugins);
     }
 
 }

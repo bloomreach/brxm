@@ -1,20 +1,18 @@
 package org.onehippo.cms7.essentials.installer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.jackrabbit.commons.cnd.CndImporter;
-import org.apache.jackrabbit.commons.cnd.ParseException;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.WebPage;
@@ -23,10 +21,10 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PanelPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
@@ -38,13 +36,6 @@ import org.onehippo.cms7.essentials.installer.panels.MenuPanel;
 import org.onehippo.cms7.essentials.installer.panels.SetupPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 public class HomePage extends WebPage implements IHeaderContributor {
 
@@ -65,7 +56,7 @@ public class HomePage extends WebPage implements IHeaderContributor {
     // cannot serialize:
     @Inject
     private transient EventBus eventBus;
-    private MenuPanel menu;
+    private Panel menu;
     private Plugin selectedPlugin;
 
     @SuppressWarnings("unchecked")
@@ -171,6 +162,14 @@ public class HomePage extends WebPage implements IHeaderContributor {
         target.add(body);
     }
 
+    public void onPluginsSelected(final AjaxRequestTarget target, final List<Plugin> pluginList, final List<Plugin> mainPlugins) {
+        selectedPlugin = null;
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
+        final PluginsPanel panel = new PluginsPanel("plugin", context, pluginList, mainPlugins);
+        body.replace(panel);
+        target.add(body);
+    }
+
     private Plugin getPluginByName(String name) {
         Plugin plugin = null;
         for (final Plugin next : mainPlugins) {
@@ -194,4 +193,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
     public Plugin getSelectedPlugin() {
         return selectedPlugin;
     }
+
+
 }

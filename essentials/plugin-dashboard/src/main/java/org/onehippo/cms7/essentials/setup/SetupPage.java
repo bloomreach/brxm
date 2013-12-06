@@ -55,7 +55,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
-;
+
 
 /**
  * @version "$Id$"

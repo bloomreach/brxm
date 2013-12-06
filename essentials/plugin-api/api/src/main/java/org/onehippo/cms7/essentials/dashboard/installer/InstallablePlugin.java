@@ -3,6 +3,7 @@ package org.onehippo.cms7.essentials.dashboard.installer;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
 import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -13,10 +14,9 @@ import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 
-
 /**
- * Extend this class if your plugin needs to be installed. This plugin offers a nice default interface for essentials which
- * need to be installed. It also provides creating your own plugin interface etc. etc.
+ * Extend this class if your plugin needs to be installed. This plugin offers a nice default interface for essentials
+ * which need to be installed. It also provides creating your own plugin interface etc. etc.
  *
  * @version "$Id: InstallablePlugin.java 174582 2013-08-21 16:56:23Z mmilicevic $"
  */
@@ -32,6 +32,10 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         this.titleId = plugin.getName();
         setOutputMarkupId(true);
         // setOutputMarkupPlaceholderTag(true);
+
+        Label description = new Label("description", plugin.getDescription());
+        description.setEscapeModelStrings(false);
+        add(description);
 
         TransparentWebMarkupContainer main = new TransparentWebMarkupContainer("main");
         add(main);
@@ -63,8 +67,8 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
     /**
      * Create an installer ui.
      *
-     * @return
      * @param pluginInstalled
+     * @return
      */
     public Fragment createInstaller(final InstallState pluginInstalled) {
         final Fragment fragment = new Fragment("install-fragment", "default-installer", InstallablePlugin.this);
@@ -83,6 +87,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
                 setEnabled(false);
                 target.add(this);
                 onInstall(this, target);
+
             }
         };
 
@@ -91,20 +96,26 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         form.add(button);
         fragment.add(form);
         fragment.add(label);
+        fragment.add(getAfterInstallWindow());
         // hide "installed"
         fragment.setVisible(pluginInstalled != InstallState.INSTALLED_AND_RESTARTED);
         return fragment;
     }
 
     /**
-     * When the install buttons get's clicked. This is what happens:
-     * TODO mm: what happens?
+     * When the install buttons get's clicked. This is what happens: TODO mm: what happens?
      *
      * @param button
      * @param target
      */
     public void onInstall(final AjaxButton button, final AjaxRequestTarget target) {
         getInstaller().install();
+    }
+
+    public ModalWindow getAfterInstallWindow() {
+        ModalWindow window = new ModalWindow("modal");
+
+        return window;
     }
 
 

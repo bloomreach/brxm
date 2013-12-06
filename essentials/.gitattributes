@@ -489,6 +489,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginCo
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayLocation.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/DefaultAfterInstallWindow.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallState.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallablePlugin.html -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallablePlugin.java -text
@@ -754,8 +755,15 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/InstalledP
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/InstalledPluginsPage.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/LoginPage.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/LoginPage.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/Option.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginDetails.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginHelper.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginsPanel$EmptyPluginPanel.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginsPanel$EmptyPluginPanel.properties -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginsPanel$FindAdditional.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginsPanel$Installed.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginsPanel.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/PluginsPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/BodyPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/BodyPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/ButtonsFragment.java -text

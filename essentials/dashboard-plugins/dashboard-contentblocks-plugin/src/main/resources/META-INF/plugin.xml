@@ -3,8 +3,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
   <name>Content Blocks Plugin</name>
-  <plugin-class>org.onehippo.cms7.essentials.essentials.contentblocks.ContentBlocksPlugin</plugin-class>
+  <plugin-class>org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin</plugin-class>
   <type>plugin</type>
   <vendor>Hippo</vendor>
-  <description>Content Blocks plugin installer</description>
+  <description>
+    <![CDATA[
+    <p>Content Blocks plugin provides the content/document editor an ability to add multiple pre-configured compound type block to a document. You can configure the available content blocks on per document type bases</p>
+    <a href="http://content-blocks.forge.onehippo.org/">Detailed documentation</a>
+    ]]>
+  </description>
 </plugin>

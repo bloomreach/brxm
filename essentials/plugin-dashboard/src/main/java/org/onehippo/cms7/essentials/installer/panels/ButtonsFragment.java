@@ -53,7 +53,8 @@ public class ButtonsFragment extends Fragment {
 
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
-                        provider.swapFragment(target);
+                        provider.pluginSelected(target, pluginList, mainPlugins);
+                        // provider.swapFragment(target);
                     }
                 };
         add(buttonTools);
