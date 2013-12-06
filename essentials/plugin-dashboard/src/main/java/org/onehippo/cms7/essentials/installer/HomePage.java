@@ -82,10 +82,6 @@ public class HomePage extends WebPage implements IHeaderContributor {
         add(globalToolbarPanel);
         add(menu);
         add(body);
-        // TODO: do not use own bootstrapping, deploy plugins API with CMS! @see hippoecm-extension.xml within API module
-        // run setup & bootstrapping:
-        //bootstrap();
-
         body.replace(new DashboardPanel("plugin", pluginList, eventBus));
 
     }
