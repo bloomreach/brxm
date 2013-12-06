@@ -2,6 +2,7 @@ package org.onehippo.cms7.essentials.installer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,21 +48,24 @@ public class PluginsPanel extends Panel {
         //pluginList.addAll(mainPlugins);
 
         List<ITab> tabs = new ArrayList<>();
-        tabs.add(new AbstractTab(new Model("Installed")) {
+        tabs.add(new AbstractTab(new Model<>("Installed")) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public Panel getPanel(String panelId) {
                 return new Installed(panelId);
             }
         });
 
-        tabs.add(new AbstractTab(new Model("Find additional")) {
+        tabs.add(new AbstractTab(new Model<>("Find additional")) {
+            private static final long serialVersionUID = 1L;
             @Override
             public Panel getPanel(String panelId) {
                 return new FindAdditional(panelId);
             }
         });
 //
-        add(new AjaxTabbedPanel("tabs", tabs));
+        add(new AjaxTabbedPanel<>("tabs", tabs));
 
     }
 
@@ -70,6 +74,8 @@ public class PluginsPanel extends Panel {
      * Panel representing the content panel for the first tab.
      */
     private static class Installed extends Panel {
+        private static final long serialVersionUID = 1L;
+
         /**
          * Constructor
          *
@@ -80,12 +86,12 @@ public class PluginsPanel extends Panel {
         }
     }
 
-    ;
 
     /**
      * Panel representing the empty panel
      */
     private static class EmptyPluginPanel extends Panel {
+        private static final long serialVersionUID = 1L;
         /**
          * Constructor
          *
@@ -96,13 +102,12 @@ public class PluginsPanel extends Panel {
         }
     }
 
-    ;
 
     /**
      * Panel representing the content panel for the first tab.
      */
     public class FindAdditional extends Panel {
-
+        private static final long serialVersionUID = 1L;
         private Plugin selectedPlugin;
         private Panel configuration;
         // private final Panel panel;
@@ -154,7 +159,7 @@ public class PluginsPanel extends Panel {
 //                }
 //            };
 
-            MultivaluedMap<String, Plugin> map = new MetadataMap();
+            MultivaluedMap<String, Plugin> map = new MetadataMap<>();
 
             for (Plugin plugin : pluginList) {
                 map.add(plugin.getType(), plugin);
@@ -168,16 +173,20 @@ public class PluginsPanel extends Panel {
 
             add(new ListView<EntryWrapper>("type", convertToSerializableEntryModel(map.entrySet())) {
 
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 protected void populateItem(final ListItem<EntryWrapper> item) {
                     final EntryWrapper entryWrapper = item.getModelObject();
                     item.add(new Label("type-label", entryWrapper.getKey()));
                     item.add(new ListView<Plugin>("plugin", entryWrapper.getValue()) {
+                        private static final long serialVersionUID = 1L;
 
                         @Override
                         protected void populateItem(final ListItem<Plugin> item) {
                             final Plugin plugin = item.getModelObject();
-                            AjaxLink link = new AjaxLink("plugin-link") {
+                            AjaxLink<Void> link = new AjaxLink<Void>("plugin-link") {
+                                private static final long serialVersionUID = 1L;
                                 @Override
                                 public void onClick(final AjaxRequestTarget target) {
                                     onPluginSelected(plugin, target);
@@ -252,14 +261,11 @@ public class PluginsPanel extends Panel {
 
     }
 
-    ;
-
-
     /**
      * Serialization utils for wicket:
      */
 
-    public List<EntryWrapper> convertToSerializableEntryModel(Set<Map.Entry<String, List<Plugin>>> entrySet) {
+    public List<EntryWrapper> convertToSerializableEntryModel(Collection<Map.Entry<String, List<Plugin>>> entrySet) {
         List<EntryWrapper> list = new ArrayList<>();
         if (entrySet != null && !entrySet.isEmpty()) {
             for (Map.Entry<String, List<Plugin>> entry : entrySet) {
@@ -269,8 +275,9 @@ public class PluginsPanel extends Panel {
         return list;
     }
 
-    public class EntryWrapper implements Serializable {
+    public static class EntryWrapper implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         private List<Plugin> value;
         private String key;
 
