@@ -141,9 +141,9 @@ public class EventLabelTest extends PluginTest {
     @Test
     public void testWorkflowWithRemovedTarget() throws Exception {
         Node handleNode = root.getNode("test").addNode("testDocument", HippoNodeType.NT_HANDLE);
-        handleNode.addMixin(HippoNodeType.NT_HARDHANDLE);
+        handleNode.addMixin("mix:versionable");
         Node docNode = handleNode.addNode("testDocument", HippoNodeType.NT_DOCUMENT);
-        docNode.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+        docNode.addMixin("mix:versionable");
         session.save();
 
         Long timestamp = Calendar.getInstance().getTimeInMillis();

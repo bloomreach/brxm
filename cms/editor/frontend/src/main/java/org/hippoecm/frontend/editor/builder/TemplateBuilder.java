@@ -948,9 +948,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 }
                 List<String> superTypes = typeDescriptor.getSuperTypes();
                 for (String currentType : currentTypes) {
-                    if (HippoNodeType.NT_HARDDOCUMENT.equals(currentType)) {
-                        continue;
-                    }
                     if (!superTypes.contains(currentType)) {
                         prototype.removeMixin(currentType);
                     }

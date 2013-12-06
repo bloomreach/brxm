@@ -273,7 +273,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 Node clone = prototypes.addNode(HippoNodeType.HIPPO_PROTOTYPE, newTypeName);
 
                 if (newType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    clone.addMixin(HippoNodeType.NT_HARDDOCUMENT);
+                    clone.addMixin("mix:versionable");
+                    clone.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
+                } else if (newType.isNodeType(HippoNodeType.NT_REQUEST)) {
+                    clone.addMixin("mix:referenceable");
                 }
                 for (String mixinName : nts.getSupertypes()) {
                     if (!newType.isNodeType(mixinName)) {
@@ -313,12 +316,6 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     }
                 }
 
-                if (newType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    clone.addMixin(HippoNodeType.NT_HARDDOCUMENT);
-                    clone.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
-                } else if (newType.isNodeType(HippoNodeType.NT_REQUEST)) {
-                    clone.addMixin("mix:referenceable");
-                }
                 EditorUtils.createMandatoryProperties(clone, newType);
 
                 current = draft;
