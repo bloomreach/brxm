@@ -753,6 +753,8 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/BlockingMo
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/BlockingModalPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/BlockingModalPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/EssentialsGlobalFeedBackPanel.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/EssentialsTabPanel.html -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/EssentialsTabPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/HomePage.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/HomePage.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/HomePage.properties.xml -text

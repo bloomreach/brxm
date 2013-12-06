@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PluginsPanel extends Panel {
 
+    private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(PluginsPanel.class);
 
     private final List<Plugin> pluginList;
@@ -65,7 +66,7 @@ public class PluginsPanel extends Panel {
             }
         });
 //
-        add(new AjaxTabbedPanel<>("tabs", tabs));
+        add(new EssentialsTabPanel<>("tabs", tabs));
 
     }
 
