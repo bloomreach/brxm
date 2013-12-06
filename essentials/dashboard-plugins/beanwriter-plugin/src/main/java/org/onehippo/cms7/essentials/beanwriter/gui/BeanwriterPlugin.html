@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd"
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd"
+      xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en"
       lang="en">
 
 <wicket:extend>
+    <div class="plugin-introduction">
+        <wicket:message key="beanwriter.description"/>
+    </div>
     <form wicket:id="form">
-        <button type="button" class="btn btn-primary" wicket:id="execute">Update and create HST beans</button>
+        <button type="button" class="btn btn-primary" wicket:id="execute">
+            <wicket:message key="beanwriter.button"/>
+        </button>
     </form>
 </wicket:extend>
 </html>

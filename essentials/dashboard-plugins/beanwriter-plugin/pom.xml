@@ -78,6 +78,7 @@
         <directory>${basedir}/src/main/java</directory>
         <includes>
           <include>**/*.woff</include>
+          <include>**/*.xml</include>
           <include>**/*.eot</include>
           <include>**/*.ttf</include>
           <include>**/*.svg</include>

@@ -100,6 +100,7 @@ archetype/website/src/main/resources/archetype-resources/src/main/assembly/distr
 dashboard-plugins/beanwriter-plugin/pom.xml -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanwriterPlugin.html -text
 dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanwriterPlugin.java -text
+dashboard-plugins/beanwriter-plugin/src/main/java/org/onehippo/cms7/essentials/beanwriter/gui/BeanwriterPlugin.properties.xml -text
 dashboard-plugins/beanwriter-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/beanwriter-plugin/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/components-gui/pom.xml -text
