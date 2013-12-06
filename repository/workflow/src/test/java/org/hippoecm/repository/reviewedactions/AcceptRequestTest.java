@@ -32,6 +32,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -140,9 +141,8 @@ public class AcceptRequestTest extends RepositoryTestCase {
     @Test
     public void testScheduledPublication() throws WorkflowException, MappingException, RepositoryException, RemoteException, InterruptedException {
         Node node;
-        long publicationdelay = 2*60*1000*2;
-        long longerdelay = publicationdelay + 15*1000;
-        long shorterdelay = 60*1000;
+        int secondsToWait;
+        boolean found;
 
         // set proper fixture
         {
@@ -161,31 +161,66 @@ public class AcceptRequestTest extends RepositoryTestCase {
             node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
             BasicReviewedActionsWorkflow reviewedWorkflow = (BasicReviewedActionsWorkflow) getWorkflow(node, "default");
             assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
-            Date publicationDate = new Date(System.currentTimeMillis()+publicationdelay);
-            reviewedWorkflow.requestPublication(publicationDate);
+
+            reviewedWorkflow.requestPublication(new Date(System.currentTimeMillis()+100));
             session.save();
-            session.refresh(true);
         }
 
-        Thread.sleep(longerdelay);
-        
         // These steps would be taken by editor:
         {
-            node = getNode("test/myarticle/hippo:request");
-            FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
-            workflow.acceptRequest();
-            session.save();
-            session.refresh(true);
+            secondsToWait = 5;
+            found = false;
+            do {
+                session.refresh(false);
+                node = getNode("test/myarticle/hippo:request");
+                if (node != null) {
+                    FullRequestWorkflow workflow = (FullRequestWorkflow) getWorkflow(node, "default");
+                    if (workflow.hints().containsKey("acceptRequest") && ((Boolean)workflow.hints().get("acceptRequest")).booleanValue()) {
+                        workflow.acceptRequest();
+                        session.save();
+                        found = true;
+                    }
+                    else {
+                        Assert.fail("Publication request not acceptable");
+                    }
+                }
+                else {
+                    secondsToWait--;
+                    if (secondsToWait > 0) {
+                        Thread.sleep(1000);
+                    }
+                }
+
+            } while (!found && secondsToWait > 0);
+
+            if (!found) {
+                Assert.fail("No acceptable publication request found");
+            }
         }
-        
-        Thread.sleep(shorterdelay);
-        
-        session.refresh(false);
-        node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
-        assertNotNull(node);
-        assertEquals("published", node.getProperty("hippostd:state").getString());
-        final Value[] values = node.getProperty("hippo:availability").getValues();
-        assertEquals(2, values.length);
+
+        secondsToWait = 5;
+        found = false;
+
+        do {
+            session.refresh(false);
+            node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+            if (node != null) {
+                assertEquals("published", node.getProperty("hippostd:state").getString());
+                final Value[] values = node.getProperty("hippo:availability").getValues();
+                assertEquals(1, values.length);
+                found = true;
+            }
+            else {
+                secondsToWait--;
+                if (secondsToWait > 0) {
+                    Thread.sleep(1000);
+                }
+            }
+        } while (!found && secondsToWait > 0);
+
+        if (!found) {
+            Assert.fail("Published document not found");
+        }
     }
  
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {
