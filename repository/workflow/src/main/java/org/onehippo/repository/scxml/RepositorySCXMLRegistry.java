@@ -287,7 +287,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
-    private static class RepositoryURLResolver implements PathResolver {
+    static class RepositoryURLResolver implements PathResolver {
 
         /** The base URL to resolve against. */
         private URL baseURL;
