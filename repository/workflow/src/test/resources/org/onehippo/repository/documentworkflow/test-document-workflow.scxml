@@ -21,6 +21,21 @@
 
   <parallel id="handle">
 
+    <state id="status">
+      <onentry>
+        <if cond="dm.sf.document">
+          <hippo:hint hint="status" value="false"/>
+          <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
+            <!--not draft in use by other user -->
+            <if cond="dm.ss=='unpublished' or (empty(dm.u) and (dm.ss=='published' or (dm.ss=='draft' and empty(dm.p))))">
+              <!-- status on unpublished or published if no unpublished or draft if also no published -->
+              <hippo:hint hint="status" value="true"/>
+            </if>
+          </if>
+        </if>
+      </onentry>
+    </state>
+
     <state id="edit" initial="init-edit">
 
       <state id="init-edit">
@@ -42,6 +57,9 @@
               <hippo:hint hint="commitEditableInstance" value="true"/>
               <else/>
               <hippo:hint hint="obtainEditableInstance" value="false"/>
+            </if>
+            <if cond="dm.ss=='draft' and dm.d.holder!=dm.user">
+              <hippo:hint hint="inUseBy" value="dm.d.holder"/>
             </if>
           </if>
           <if cond="dm.sf.unlock">

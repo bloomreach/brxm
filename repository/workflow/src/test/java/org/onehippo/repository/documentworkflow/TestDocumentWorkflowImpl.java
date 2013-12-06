@@ -139,6 +139,78 @@ public class TestDocumentWorkflowImpl {
     }
 
     @Test
+    public void testStatusState() throws Exception {
+
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        wf.setWorkflowContext(workflowContext);
+
+        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        MockNode draftVariant, unpublishedVariant, publishedVariant = null;
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
+
+        draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
+        wf.setNode(unpublishedVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "status");
+        assertNotContainsHint(wf.hints(), "status");
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        wf.setNode(unpublishedVariant);
+
+        assertContainsHint(wf.hints(), "status", true);
+
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "status", false);
+
+        wf.setNode(publishedVariant);
+
+        assertContainsHint(wf.hints(), "status", false);
+
+        unpublishedVariant.remove();
+        wf.setNode(publishedVariant);
+
+        assertContainsHint(wf.hints(), "status", true);
+
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "status", false);
+
+        publishedVariant.remove();
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "status", true);
+
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "status", true);
+
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
+        wf.setNode(draftVariant);
+
+        assertContainsHint(wf.hints(), "status", false);
+
+        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        wf.setNode(unpublishedVariant);
+
+        assertContainsHint(wf.hints(), "status", false);
+
+        draftVariant.remove();
+        wf.setNode(unpublishedVariant);
+
+        assertContainsHint(wf.hints(), "status", true);
+    }
+
+        @Test
     public void testEditState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
@@ -259,6 +331,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "commitEditableInstance", true);
         assertContainsHint(wf.hints(), "disposeEditableInstance", true);
         assertContainsHint(wf.hints(), "unlock", true);
+        assertNotContainsHint(wf.hints(), "inUseBy");
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
         session.setPermissions(draftVariant.getPath(), "hippo:admin", false);
@@ -269,6 +342,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "commitEditableInstance");
         assertNotContainsHint(wf.hints(), "disposeEditableInstance");
         assertContainsHint(wf.hints(), "unlock", false);
+        assertContainsHint(wf.hints(), "inUseBy", "otheruser");
 
         session.setPermissions(draftVariant.getPath(), "hippo:admin", true);
         wf.setNode(draftVariant);
