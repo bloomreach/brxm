@@ -24,6 +24,29 @@ public interface PluginContext extends Serializable, AutoCloseable {
 
 
     /**
+     * Plugin can store and retrieve data during it's lifecycle
+     *
+     * @return data stored (if any)
+     */
+    Map<String, Object> getPluginContextData();
+
+    /**
+     * Get context data for given key
+     *
+     * @param key data key
+     * @return object stored (if any)
+     */
+    Object getPluginContextData(String key);
+
+    /**
+     * Adds some data to context storage
+     *
+     * @param key   string key
+     * @param value any object value
+     */
+    void addPluginContextData(String key, Object value);
+
+    /**
      * Returns JCR session for logged in user.
      * <p>NOTE: session is managed by plugin itself, so logout etc. must be done by plugin</p>
      * <p>Sessions will be logout after plugin is unloaded by plugin framework</p>
@@ -164,7 +187,6 @@ public interface PluginContext extends Serializable, AutoCloseable {
      * returns pre-filled nr of key value pairs for replacement injection in templates etc.
      *
      * @return object containing a number of items which can be used to inject into templates etc.
-     *
      */
     Map<String, Object> getPlaceholderData();
 }

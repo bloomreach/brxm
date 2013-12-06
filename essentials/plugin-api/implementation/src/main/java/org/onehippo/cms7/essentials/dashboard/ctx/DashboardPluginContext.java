@@ -26,7 +26,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 /**
- * @version "$Id: DashboardPluginContext.java 169746 2013-07-05 11:50:33Z ksalic $"
+ * @version "$Id$"
  */
 public class DashboardPluginContext implements PluginContext {
 
@@ -36,6 +36,7 @@ public class DashboardPluginContext implements PluginContext {
     private static final long serialVersionUID = 1L;
     private final transient Session session;
     private final Plugin plugin;
+    private final Map<String, Object> contextData = new HashMap<>();
     private transient File siteFile;
     private String componentsPackage;
     private String beansPackage;
@@ -45,6 +46,21 @@ public class DashboardPluginContext implements PluginContext {
     public DashboardPluginContext(final Session session, final Plugin plugin) {
         this.session = session;
         this.plugin = plugin;
+    }
+
+    @Override
+    public Map<String, Object> getPluginContextData() {
+        return contextData;
+    }
+
+    @Override
+    public Object getPluginContextData(final String key) {
+        return contextData.get(key);
+    }
+
+    @Override
+    public void addPluginContextData(final String key, final Object value) {
+        contextData.put(key, value);
     }
 
     public Session getSession() {
