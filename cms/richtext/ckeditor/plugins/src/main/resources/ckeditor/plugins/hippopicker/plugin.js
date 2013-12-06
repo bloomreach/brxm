@@ -60,7 +60,6 @@
 
         var LINK_ATTRIBUTES_PARAMETER_MAP = {
                 'data-uuid': 'f_uuid',
-                href: 'f_href',
                 title: 'f_title',
                 target: 'f_target'
             },
@@ -177,11 +176,16 @@
                     selectedLink = getSelectedLinkOrNull(editor.getSelection());
                 }
 
-                // Set the href attribute to 'http://' so the CKEditor link picker will still recognize the link
-                // as a link (and, for example, enable the 'remove link' button). The CMS will recognize the empty
-                // 'http://' href and still interpret the link as an internal link.
                 if (selectedLink !== null) {
-                    selectedLink.setAttribute('href', 'http://');
+                    if (selectedLink.hasAttribute('data-uuid')) {
+                        // Set the href attribute to 'http://' so the CKEditor link picker will still recognize the link
+                        // as a link (and, for example, enable the 'remove link' button). The CMS will recognize the empty
+                        // 'http://' href and still interpret the link as an internal link.
+                        selectedLink.setAttribute('href', 'http://');
+                    } else {
+                        // the link has been removed in the picker dialog
+                        selectedLink.remove(true);
+                    }
                 }
             }
         });
