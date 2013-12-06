@@ -7,6 +7,7 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * @version "$Id$"
@@ -36,7 +40,7 @@ public class DashboardPluginContext implements PluginContext {
     private static final long serialVersionUID = 1L;
     private final transient Session session;
     private final Plugin plugin;
-    private final Map<String, Object> contextData = new HashMap<>();
+    private final Multimap<String, Object> contextData = ArrayListMultimap.create();
     private transient File siteFile;
     private String componentsPackage;
     private String beansPackage;
@@ -49,12 +53,12 @@ public class DashboardPluginContext implements PluginContext {
     }
 
     @Override
-    public Map<String, Object> getPluginContextData() {
+    public Multimap<String, Object> getPluginContextData() {
         return contextData;
     }
 
     @Override
-    public Object getPluginContextData(final String key) {
+    public Collection<Object> getPluginContextData(final String key) {
         return contextData.get(key);
     }
 

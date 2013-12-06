@@ -8,12 +8,15 @@ package org.onehippo.cms7.essentials.dashboard.ctx;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.jcr.Session;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Plugin context is passed to all HippoEssentials plugins.
@@ -28,15 +31,15 @@ public interface PluginContext extends Serializable, AutoCloseable {
      *
      * @return data stored (if any)
      */
-    Map<String, Object> getPluginContextData();
+    Multimap<String, Object> getPluginContextData();
 
     /**
      * Get context data for given key
      *
      * @param key data key
-     * @return object stored (if any)
+     * @return collections of objects stored for given key (if any)
      */
-    Object getPluginContextData(String key);
+    Collection<Object> getPluginContextData(String key);
 
     /**
      * Adds some data to context storage

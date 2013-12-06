@@ -107,6 +107,7 @@ public class HstQueryBuilder implements QueryBuilder {
         if (mappings == null) {
             mappings = new ArrayList<>();
         }
+
         Collections.addAll(mappings, beans);
         return this;
     }
