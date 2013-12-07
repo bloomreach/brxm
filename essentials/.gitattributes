@@ -815,6 +815,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/panels/model/P
 plugin-dashboard/src/main/resources/log4j.xml -text
 plugin-dashboard/src/main/resources/rest.xml -text
 plugin-dashboard/src/main/webapp/META-INF/context.xml -text
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
 plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
 plugin-dashboard/src/main/webapp/assets/css/hippo-essentials.css -text
@@ -1099,6 +1100,7 @@ plugin-dashboard/src/main/webapp/images/forward_disabled.png -text
 plugin-dashboard/src/main/webapp/images/forward_enabled.png -text
 plugin-dashboard/src/main/webapp/images/forward_enabled_hover.png -text
 plugin-dashboard/src/main/webapp/images/hippo-logo.png -text
+plugin-dashboard/src/main/webapp/images/loader.gif -text
 plugin-dashboard/src/main/webapp/images/sort_asc.png -text
 plugin-dashboard/src/main/webapp/images/sort_asc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/sort_both.png -text
@@ -1108,6 +1110,8 @@ plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
 plugin-dashboard/src/main/webapp/images/top-back.png -text
 plugin-dashboard/src/main/webapp/js/angular.js -text
+plugin-dashboard/src/main/webapp/js/app.js -text
+plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/resources/keystore -text

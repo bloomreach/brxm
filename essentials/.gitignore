@@ -2847,6 +2847,12 @@ plugin-dashboard/src/main/webapp/WEB-INF/.DS_Store
 plugin-dashboard/src/main/webapp/WEB-INF/.idea
 plugin-dashboard/src/main/webapp/WEB-INF/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/WEB-INF/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/*.iml
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/.DS_Store
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/.idea
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/WEB-INF/jsp/target
 plugin-dashboard/src/main/webapp/WEB-INF/target
 plugin-dashboard/src/main/webapp/assets/*.iml
 plugin-dashboard/src/main/webapp/assets/.DS_Store
