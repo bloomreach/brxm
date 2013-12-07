@@ -6,9 +6,11 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hippo-essentials.css"/>
 
   <script src="${pageContext.request.contextPath}/js/angular.js"></script>
+  <script src="${pageContext.request.contextPath}/js/angular-route.min.js"></script>
+
   <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<%--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>--%>
   <script src="${pageContext.request.contextPath}/js/app.js"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
 
@@ -47,8 +49,8 @@
     </ul>
 
   </div>
-  <div class="col-sm-9">
-    [BODY]
+  <div class="col-sm-9" ng-controller="mainCtrl">
+    <div ng-view></div>
   </div>
 </div>
 

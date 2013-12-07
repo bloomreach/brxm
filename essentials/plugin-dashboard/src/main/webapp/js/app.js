@@ -16,7 +16,7 @@
 
 'use strict';
 
-var app = angular.module('Essentials', []);
+var app = angular.module('Essentials', ['ngRoute']);
 
 //############################################
 // GLOBAL LOADING
@@ -57,3 +57,27 @@ app.config(function ($provide, $httpProvider) {
     });
     $httpProvider.interceptors.push('MyHttpInterceptor');
 });
+
+//############################################
+// ROUTES
+//############################################
+// configure our routes
+app.config(function ($routeProvider) {
+    $routeProvider
+            .when('/', {
+                templateUrl: 'pages/home.html',
+                controller: 'mainCtrl'
+            })
+
+});
+
+
+
+
+
+
+
+
+
+
+

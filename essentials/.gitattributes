@@ -1130,10 +1130,14 @@ plugin-dashboard/src/main/webapp/images/sort_desc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
 plugin-dashboard/src/main/webapp/images/top-back.png -text
+plugin-dashboard/src/main/webapp/js/angular-route.min.js -text
+plugin-dashboard/src/main/webapp/js/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/angular.js -text
+plugin-dashboard/src/main/webapp/js/angular.min.js.map -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
+plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text

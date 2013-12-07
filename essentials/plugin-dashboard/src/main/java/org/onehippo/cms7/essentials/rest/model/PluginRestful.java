@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id: PluginRestful.java 174870 2013-08-23 13:56:24Z mmilicevic $"
+ * @version "$Id$"
  */
 @XmlRootElement(name = "plugin")
 public class PluginRestful implements Serializable {
