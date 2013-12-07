@@ -2,8 +2,10 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
-
-  <display-name>plugin-dashboard</display-name>
+  <display-name>essentials-webapp</display-name>
+  <listener>
+    <listener-class>org.onehippo.cms7.essentials.rest.RestServletListener</listener-class>
+  </listener>
   <filter>
     <filter-name>wicket.plugin-dashboard</filter-name>
     <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
@@ -16,9 +18,26 @@
       <param-value>org.onehippo.cms7.essentials.app.WicketApplication</param-value>
     </init-param>
   </filter>
-
   <filter-mapping>
     <filter-name>wicket.plugin-dashboard</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/packs/*</url-pattern>
   </filter-mapping>
+  <servlet>
+    <servlet-name>REST</servlet-name>
+    <servlet-class>org.onehippo.cms7.essentials.rest.RestServlet</servlet-class>
+    <init-param>
+      <param-name>jaxrs.serviceClasses</param-name>
+      <param-value>
+        org.onehippo.cms7.essentials.rest.MenuResource
+      </param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>REST</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>/WEB-INF/jsp/index.jsp</welcome-file>
+  </welcome-file-list>
 </web-app>

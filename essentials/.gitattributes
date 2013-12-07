@@ -806,7 +806,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/Men
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/SetupPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/SetupPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/carousel.js -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestClient.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestModule.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestServlet.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestServletListener.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DependencyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PluginRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulList.java -text
