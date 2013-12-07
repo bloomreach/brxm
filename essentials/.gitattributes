@@ -492,6 +492,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PluginCo
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayLocation.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
+plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/DefaultAfterInstallWindow.html -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/DefaultAfterInstallWindow.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallState.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallablePlugin.html -text

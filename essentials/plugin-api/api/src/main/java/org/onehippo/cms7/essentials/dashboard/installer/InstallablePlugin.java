@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
@@ -24,6 +25,9 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
 
     private static final long serialVersionUID = 1L;
     public static final String SESSION_SUFIX = "installState";
+    final Fragment installer;
+    final TransparentWebMarkupContainer main;
+    private InstallState pluginInstalled;
 
     private String titleId;
 
@@ -37,14 +41,16 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         description.setEscapeModelStrings(false);
         add(description);
 
-        TransparentWebMarkupContainer main = new TransparentWebMarkupContainer("main");
+        main = new TransparentWebMarkupContainer("main");
         add(main);
+        main.setOutputMarkupId(true);
 
-        final InstallState pluginInstalled = getInstallState();
+        pluginInstalled = getInstallState();
         if (pluginInstalled != InstallState.INSTALLED_AND_RESTARTED) {
             main.add(new AttributeModifier("style", "display:none;"));
         }
-        add(createInstaller(pluginInstalled));
+        installer = createInstaller(pluginInstalled, plugin);
+        add(installer);
     }
 
     public InstallState getInstallState() {
@@ -68,15 +74,21 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
      * Create an installer ui.
      *
      * @param pluginInstalled
+     * @param plugin
      * @return
      */
-    public Fragment createInstaller(final InstallState pluginInstalled) {
+    public Fragment createInstaller(final InstallState pluginInstalled, final Plugin plugin) {
         final Fragment fragment = new Fragment("install-fragment", "default-installer", InstallablePlugin.this);
+        fragment.setOutputMarkupId(true);
         final InstallState currentInstallState = getInstallState();
         final Label label = new Label("install-message", new StringResourceModel(currentInstallState.getMessage(), this, null));
 
         final Form<?> form = new Form<>("form");
         form.setOutputMarkupId(true);
+
+        final ModalWindow afterInstallWindow = getAfterInstallWindow(plugin);
+
+        fragment.add(afterInstallWindow);
 
         AjaxButton button = new AjaxButton("install") {
             private static final long serialVersionUID = 1L;
@@ -87,7 +99,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
                 setEnabled(false);
                 target.add(this);
                 onInstall(this, target);
-
+                afterInstallWindow.show(target);
             }
         };
 
@@ -96,7 +108,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         form.add(button);
         fragment.add(form);
         fragment.add(label);
-        fragment.add(getAfterInstallWindow());
+
         // hide "installed"
         fragment.setVisible(pluginInstalled != InstallState.INSTALLED_AND_RESTARTED);
         return fragment;
@@ -110,11 +122,25 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
      */
     public void onInstall(final AjaxButton button, final AjaxRequestTarget target) {
         getInstaller().install();
+        pluginInstalled = getInstaller().getInstallState();
     }
 
-    public ModalWindow getAfterInstallWindow() {
+    public ModalWindow getAfterInstallWindow(final Plugin plugin) {
         ModalWindow window = new ModalWindow("modal");
 
+        window.setContent(new DefaultAfterInstallWindow(window.getContentId()));
+        window.setTitle(new StringResourceModel("install_title", this, null, new Model(plugin.getName())));
+        window.setCloseButtonCallback(new ModalWindow.CloseButtonCallback() {
+            public boolean onCloseButtonClicked(AjaxRequestTarget target) {
+                if (pluginInstalled == InstallState.INSTALLED_AND_RESTARTED) {
+                    main.add(new AttributeModifier("style", ""));
+                    installer.setVisible(false);
+                }
+                //main.add(new AttributeModifier("style", ""));
+                target.add(main, installer);
+                return true;
+            }
+        });
         return window;
     }
 
