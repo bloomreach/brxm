@@ -808,10 +808,11 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/Set
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/carousel.js -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestClient.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestModule.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestServlet.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/RestServletListener.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestApplication.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestModule.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServlet.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DependencyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PluginRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulList.java -text
@@ -1133,6 +1134,9 @@ plugin-dashboard/src/main/webapp/js/angular.js -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
+plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
+plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
+plugin-dashboard/src/main/webapp/theme/styles.css -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/resources/keystore -text
 /pom.xml -text

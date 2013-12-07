@@ -1,6 +1,7 @@
 package org.onehippo.cms7.essentials.rest;
 
 import org.junit.Test;
+import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;

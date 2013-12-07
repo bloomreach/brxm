@@ -8,7 +8,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.rest.RestClient;
+import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;

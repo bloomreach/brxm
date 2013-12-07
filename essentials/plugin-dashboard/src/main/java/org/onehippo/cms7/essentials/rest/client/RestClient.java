@@ -1,4 +1,4 @@
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.rest.client;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;

@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.rest.config;
 
-import org.onehippo.cms7.essentials.rest.model.PluginRestful;
+import javax.ws.rs.core.Application;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.code.inject.jaxrs.CXFServerModule;
+
 
 /**
  * @version "$Id$"
  */
-public class RestModule extends CXFServerModule {
+public class RestApplication extends Application {
 
-    private static Logger log = LoggerFactory.getLogger(RestModule.class);
+    private static Logger log = LoggerFactory.getLogger(RestApplication.class);
 
-    @Override
-    protected void configure() {
-        publish(MenuResource.class);
-        publish(PluginResource.class);
-    }
 }

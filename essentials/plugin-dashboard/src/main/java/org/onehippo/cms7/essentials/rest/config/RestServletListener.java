@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.rest.config;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.wicket.guice.GuiceComponentInjector;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.EventBusModule;
 import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 import org.slf4j.Logger;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.rest.config;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,8 +53,6 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
 
         bean.setBus(getBus());
         bean.create();
-        injector.injectMembers(bean);
-
     }
 
     private String getClassNameAndProperties(String cName, Map<String, List<String>> props) {
