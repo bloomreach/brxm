@@ -823,6 +823,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/Powerpack
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/Restful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulList.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StepRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text

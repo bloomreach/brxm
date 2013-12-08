@@ -48,6 +48,17 @@ public class PowerpackResource {
     @Path("/")
     public RestfulList<PowerpackRestful> getPowerpacks() {
         final RestfulList<PowerpackRestful> powerpacks = new RestfulList<>();
+        // TODO make dynamic (read from packages)
+        final PowerpackRestful pack = new PowerpackRestful();
+        pack.setName("Basic News and Events site");
+        pack.setEnabled(true);
+        // add dummy packs:
+        final PowerpackRestful dummy1 = new PowerpackRestful();
+        dummy1.setName("A REST only site that contains only REST services and no pages.");
+
+        // add packs
+        powerpacks.add(pack);
+        powerpacks.add(dummy1);
 
         return powerpacks;
     }

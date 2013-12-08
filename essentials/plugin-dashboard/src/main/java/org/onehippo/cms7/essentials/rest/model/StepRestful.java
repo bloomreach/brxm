@@ -16,39 +16,19 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "powerpack")
-public class PowerpackRestful implements Restful {
+@XmlRootElement(name = "step")
+public class StepRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private List<StepRestful> steps = new ArrayList<>();
     private String name;
-    private boolean enabled;
-    private String introduction;
+    private String description;
     private String template;
-
-
-    public void addStep(final StepRestful step) {
-        steps.add(step);
-    }
-
-    public List<StepRestful> getSteps() {
-        return steps;
-    }
-
-
-
-    public void setSteps(final List<StepRestful> steps) {
-        this.steps = steps;
-    }
 
     public String getName() {
         return name;
@@ -58,20 +38,12 @@ public class PowerpackRestful implements Restful {
         this.name = name;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public String getDescription() {
+        return description;
     }
 
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getIntroduction() {
-        return introduction;
-    }
-
-    public void setIntroduction(final String introduction) {
-        this.introduction = introduction;
+    public void setDescription(final String description) {
+        this.description = description;
     }
 
     public String getTemplate() {

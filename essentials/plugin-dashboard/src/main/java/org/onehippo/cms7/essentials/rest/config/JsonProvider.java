@@ -21,6 +21,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.eclipse.persistence.jaxb.rs.MOXyJsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +32,12 @@ import org.slf4j.LoggerFactory;
 @Provider
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class JsonProvider extends MOXyJsonProvider {
+public class JsonProvider extends JSONProvider {
 
     private static Logger log = LoggerFactory.getLogger(JsonProvider.class);
 
     public JsonProvider() {
-        setIncludeRoot(false);
+        setIgnoreNamespaces(true);
+        setDropRootElement(true);
     }
 }

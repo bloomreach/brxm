@@ -18,14 +18,10 @@ package org.onehippo.cms7.essentials.rest.model;
 
 import java.io.Serializable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id$"
  */
-public interface Restful extends Serializable{
-
+public interface Restful extends Serializable {
 
 
 }

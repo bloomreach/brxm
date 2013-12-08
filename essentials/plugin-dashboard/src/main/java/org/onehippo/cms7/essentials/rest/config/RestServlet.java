@@ -65,7 +65,7 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
         final List<Object> providers = new ArrayList<>();
 
         final JsonProvider provider = new JsonProvider();
-        provider.setIncludeRoot(false);
+        //provider.setIncludeRoot(false);
         providers.add(provider);
         return providers;
     }
