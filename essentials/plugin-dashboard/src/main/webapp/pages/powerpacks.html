@@ -26,12 +26,11 @@
     </div>
 
     <form>
-        <select id="powerpackDropdown">
-            <option value="newsAndEvent"></option>
-            <option value="headlessRest"></option>
-            <option value="none"></option>
+
+        <select id="powerpackDropdown" ng-options="option.enabled as option.name for option in packs.powerpacks" ng-model="selectedItem">
+
         </select>
-        <div id="pack.description">[ON SELECT DESCRIPTIO]</div>
+        <div id="pack.description">[ON SELECT DESCRIPTION]</div>
 
         <br/><br/>
 
