@@ -55,7 +55,6 @@
     <module>dashboard-easyforms-plugin</module>
     <module>components-plugin</module>
     <module>beanwriter-plugin</module>
-    <module>dashboard-wizard-plugin</module>
   </modules>
   <dependencyManagement>
 
