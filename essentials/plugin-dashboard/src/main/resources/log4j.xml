@@ -64,6 +64,9 @@
   <category name="org.apache.wicket">
     <level value="error"/>
   </category>
+  <category name="org.apache.cxf">
+    <level value="info"/>
+  </category>
 
   <category name="org.onehippo.cms7.essentials">
     <level value="debug"/>

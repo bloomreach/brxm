@@ -61,7 +61,7 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
 
     @Override
     protected List<?> getProviders(final ServletConfig servletConfig, final String splitChar) throws ServletException {
-        log.error("@@@@  PROVIDERS");
+        log.info("@@@@  WIRING PROVIDERS");
         final List<Object> providers = new ArrayList<>();
 
         final JsonProvider provider = new JsonProvider();

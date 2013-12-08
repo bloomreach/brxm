@@ -21,47 +21,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "step")
-public class StepRestful implements Restful {
+@XmlRootElement(name = "message")
+public class MessageRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
-    private String name;
-    private String buttonText;
-
-    private String description;
-    private String template;
-
-    public String getButtonText() {
-        return buttonText;
+    public MessageRestful() {
     }
 
-    public void setButtonText(final String buttonText) {
-        this.buttonText = buttonText;
+    public MessageRestful(final String value) {
+
+        this.value = value;
     }
 
-    public String getName() {
-        return name;
+    private String value;
+
+    public String getValue() {
+        return value;
     }
 
-
-    public void setName(final String name) {
-        this.name = name;
+    public void setValue(final String value) {
+        this.value = value;
     }
 
-    public String getDescription() {
-        return description;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("MessageRestful{");
+        sb.append("value='").append(value).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(final String template) {
-        this.template = template;
-    }
 }

@@ -1,6 +1,7 @@
 package org.onehippo.cms7.essentials.rest.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +68,7 @@ public class RestfulList<T extends Restful> implements Serializable {
     }
 
 
-    public void addAll(List<T> items) {
+    public void addAll(Collection<T> items) {
         items.addAll(items);
     }
 
@@ -80,6 +81,7 @@ public class RestfulList<T extends Restful> implements Serializable {
             @XmlElementRef(type = PowerpackRestful.class),
             @XmlElementRef(type = VendorRestful.class),
             @XmlElementRef(type = StatusRestful.class),
+            @XmlElementRef(type = MessageRestful.class),
             @XmlElementRef(type = DependencyRestful.class),
     })
     public List<T> getItems() {

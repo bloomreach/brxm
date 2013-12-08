@@ -34,6 +34,7 @@ public class PowerpackRestful implements Restful {
     private boolean enabled;
     private String introduction;
     private String template;
+    private String value;
 
 
     public void addStep(final StepRestful step) {
@@ -45,6 +46,13 @@ public class PowerpackRestful implements Restful {
     }
 
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(final String value) {
+        this.value = value;
+    }
 
     public void setSteps(final List<StepRestful> steps) {
         this.steps = steps;
