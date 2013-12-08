@@ -11,7 +11,7 @@
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <groupId>org.onehippo.cms7.essentials</groupId>
-  <artifactId>hippo-plugins</artifactId>
+  <artifactId>hippo-essentials</artifactId>
   <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>
 

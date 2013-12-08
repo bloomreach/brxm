@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>hippo-plugins</artifactId>
+    <artifactId>hippo-essentials</artifactId>
     <groupId>org.onehippo.cms7.essentials</groupId>
     <version>1.01.00-SNAPSHOT</version>
   </parent>
