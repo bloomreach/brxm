@@ -48,12 +48,8 @@
 
   <modules>
     <module>essentials-powerpacks</module>
-    <module>dashboard-documents-plugin</module>
-    <module>dashboard-setup-plugin</module>
-    <module>dashboard-gallery-plugin</module>
     <module>dashboard-xinha-plugin</module>
     <module>dashboard-relateddocs-plugin</module>
-    <module>dashboard-taxonomy-plugin</module>
     <module>dashboard-restservices-plugin</module>
     <module>dashboard-contentblocks-plugin</module>
     <module>dashboard-easyforms-plugin</module>
