@@ -43,7 +43,7 @@
   </div>
   <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
 
-    <ul class="nav nav-stacked" ng-hide="showPowerpacks">
+    <ul class="nav nav-stacked" ng-hide="packsInstalled">
       <li ng-repeat="item in menu">
         <a href="" ng-click="onMenuClick(item)">{{item.item}}</a>
       </li>

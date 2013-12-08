@@ -5,7 +5,7 @@
  */
 // TODO move wizard data to won file
 app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-    $rootScope.showPowerpacks = true;
+
     $scope.installSampleData = false;
     $scope.stepVisible = [true, false];
     $scope.resultMessages = null;
