@@ -26,11 +26,12 @@
     <servlet-name>REST</servlet-name>
     <servlet-class>org.onehippo.cms7.essentials.rest.config.RestServlet</servlet-class>
 <!--    <init-param>
-      <param-name>jaxrs.serviceClasses</param-name>
+      <param-name>jaxrs.providers</param-name>
       <param-value>
-        org.onehippo.cms7.essentials.rest.MenuResource
+        org.apache.cxf.jaxrs.provider.JSONProvider(unwrapped=true dropRootElement=true)
       </param-value>
-    </init-param>-->
+    </init-param>
+-->
     <init-param>
       <param-name>javax.ws.rs.Application</param-name>
       <param-value>

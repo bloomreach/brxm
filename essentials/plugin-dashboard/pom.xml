@@ -22,6 +22,7 @@
     <jetty.version>7.6.3.v20120416</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cxf-rt-frontend-jaxrs.version>2.6.6</cxf-rt-frontend-jaxrs.version>
+    <eclipselink.version>2.5.1</eclipselink.version>
   </properties>
   <dependencies>
     <dependency>
@@ -124,6 +125,17 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <version>${cxf-rt-frontend-jaxrs.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>eclipselink</artifactId>
+      <version>${eclipselink.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf-rt-frontend-jaxrs.version}</version>
     </dependency>
   </dependencies>

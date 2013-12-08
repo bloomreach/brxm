@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import org.apache.jackrabbit.ocm.manager.ManagerConstant;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
@@ -23,8 +24,11 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
  * @version "$Id$"
  */
 @DocumentType("ProjectSettingsBean")
-@Node(discriminator = false, jcrType = "essentials:document")
+@Node(discriminator = true, jcrType = "essentials:document")
 public class ProjectSettingsBean extends BaseDocument {
+
+
+
 
     @Field
     private String projectNamespace;

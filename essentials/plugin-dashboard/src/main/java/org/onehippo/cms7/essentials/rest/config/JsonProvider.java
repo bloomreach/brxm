@@ -14,37 +14,28 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest;
+package org.onehippo.cms7.essentials.rest.config;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.ext.Provider;
 
-import org.onehippo.cms7.essentials.rest.model.PluginRestful;
+import org.eclipse.persistence.jaxb.rs.MOXyJsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
  */
+@Provider
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-@Path("/plugin/")
-public class PluginResource {
+public class JsonProvider extends MOXyJsonProvider {
 
-    @Inject
-    private EventBus eventBus;
-    private static Logger log = LoggerFactory.getLogger(PluginResource.class);
+    private static Logger log = LoggerFactory.getLogger(JsonProvider.class);
 
-
-    @GET
-    @Path("/")
-    public PluginRestful getMenu() {
-        return new PluginRestful();
+    public JsonProvider() {
+        setIncludeRoot(false);
     }
 }

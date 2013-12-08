@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.rest.config;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Application;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
@@ -38,7 +41,7 @@ import com.google.inject.Injector;
  */
 public class RestServlet extends CXFNonSpringJaxrsServlet {
 
-    private static final String IGNORE_APP_PATH_PARAM = "jaxrs.application.address.ignore";
+    private static final Logger log = LoggerFactory.getLogger(RestServlet.class);
     public static final String ATTRIBUTE_INJECTOR = "GuiceCXF#Injector";
     private static final long serialVersionUID = 1L;
     @Override
@@ -50,9 +53,21 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
         setExtensions(bean, servletConfig);
         setDocLocation(bean, servletConfig);
         setSchemasLocations(bean, servletConfig);
-
+        bean.setProviders(getProviders(servletConfig, splitChar));
         bean.setBus(getBus());
         bean.create();
+
+    }
+
+    @Override
+    protected List<?> getProviders(final ServletConfig servletConfig, final String splitChar) throws ServletException {
+        log.error("@@@@  PROVIDERS");
+        final List<Object> providers = new ArrayList<>();
+
+        final JsonProvider provider = new JsonProvider();
+        provider.setIncludeRoot(false);
+        providers.add(provider);
+        return providers;
     }
 
     private String getClassNameAndProperties(String cName, Map<String, List<String>> props) {

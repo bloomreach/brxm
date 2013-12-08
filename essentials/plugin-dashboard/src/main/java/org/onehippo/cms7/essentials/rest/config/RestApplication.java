@@ -16,8 +16,12 @@
 
 package org.onehippo.cms7.essentials.rest.config;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.ws.rs.core.Application;
 
+import org.eclipse.persistence.jaxb.rs.MOXyJsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,4 +34,13 @@ public class RestApplication extends Application {
 
     private static Logger log = LoggerFactory.getLogger(RestApplication.class);
 
+   /* @Override
+    public Set<Object> getSingletons() {
+        JsonProvider provider = new JsonProvider();
+        provider.setIncludeRoot(false);
+        HashSet<Object> set = new HashSet<>(1);
+        set.add(provider);
+        return set;
+    }
+*/
 }

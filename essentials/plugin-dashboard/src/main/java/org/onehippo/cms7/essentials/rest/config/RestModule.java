@@ -18,10 +18,13 @@ package org.onehippo.cms7.essentials.rest.config;
 
 import org.onehippo.cms7.essentials.rest.MenuResource;
 import org.onehippo.cms7.essentials.rest.PluginResource;
+import org.onehippo.cms7.essentials.rest.StatusResource;
+import org.onehippo.cms7.essentials.rest.model.StatusRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.code.inject.jaxrs.CXFServerModule;
+import com.google.inject.Provides;
 
 /**
  * @version "$Id$"
@@ -34,5 +37,9 @@ public class RestModule extends CXFServerModule {
     protected void configure() {
         publish(MenuResource.class);
         publish(PluginResource.class);
+        publish(StatusResource.class);
+
     }
+
+
 }

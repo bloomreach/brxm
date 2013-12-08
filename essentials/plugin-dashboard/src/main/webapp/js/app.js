@@ -17,13 +17,25 @@
 'use strict';
 
 var app = angular.module('Essentials', ['ngRoute']);
+app.run(function ($rootScope) {
+    $rootScope.packsInstalled = false;
+    var root = 'http://localhost:8080/dashboard/rest';
+    /* TODO generate this server side */
+    $rootScope.REST = {
+        root: root,
+        menus: root + '/menus',
+        plugins: root + '/plugins',
+        status: root + '/status'
 
+    }
+
+});
 //############################################
 // GLOBAL LOADING
 //############################################
 app.config(function ($provide, $httpProvider) {
 
-    $provide.factory('MyHttpInterceptor', function ($q, $rootScope) {
+    $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
         return {
 
             //############################################
@@ -35,7 +47,7 @@ app.config(function ($provide, $httpProvider) {
             },
             requestError: function (error) {
                 $rootScope.busyLoading = true;
-                $rootScope.errorMessage.push(error.data);
+                $rootScope.globalError.push(error.data);
                 return $q.reject(error);
             },
 
@@ -45,12 +57,14 @@ app.config(function ($provide, $httpProvider) {
             response: function (data) {
                 $rootScope.busyLoading = false;
                 $rootScope.globalError = false;
+                $log.info(data);
                 return data || $q.when(data);
             },
             responseError: function (error) {
                 $rootScope.busyLoading = false;
                 $rootScope.globalError = true;
-                $rootScope.errorMessage.push(error.data);
+                $rootScope.globalError.push(error.data);
+                $log.error(error);
                 return $q.reject(error);
             }
         };
@@ -58,18 +72,7 @@ app.config(function ($provide, $httpProvider) {
     $httpProvider.interceptors.push('MyHttpInterceptor');
 });
 
-//############################################
-// ROUTES
-//############################################
-// configure our routes
-app.config(function ($routeProvider) {
-    $routeProvider
-            .when('/', {
-                templateUrl: 'pages/home.html',
-                controller: 'mainCtrl'
-            })
 
-});
 
 
 

@@ -16,17 +16,17 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import org.apache.jackrabbit.ocm.manager.ManagerConstant;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@DocumentType("ProjectSettingsBean")
-@Node(discriminator = false, jcrType = "essentials:document")
-public class RecentlyInstalledPlugin extends BaseDocument{
+@DocumentType("RecentlyInstalledPlugin")
+@Node(discriminator = true, jcrType = "essentials:document")
+public class RecentlyInstalledPlugin extends BaseDocument {
+
 
 
     @Field
@@ -80,4 +80,6 @@ public class RecentlyInstalledPlugin extends BaseDocument{
         sb.append('}');
         return sb.toString();
     }
+
+
 }

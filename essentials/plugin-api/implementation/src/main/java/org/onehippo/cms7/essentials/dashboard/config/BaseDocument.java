@@ -33,7 +33,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
  * @version "$Id$"
  */
 @DocumentType("BaseDocument")
-@Node(discriminator = false, jcrType = "essentials:document")
+@Node(discriminator = true, jcrType = "essentials:document")
 public class BaseDocument implements Document {
 
     @Field(path = true)

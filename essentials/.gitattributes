@@ -806,9 +806,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/Men
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/SetupPanel.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/SetupPanel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/installer/panels/carousel.js -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BaseResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/StatusResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/client/RestClient.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/JsonProvider.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestApplication.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestModule.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServlet.java -text
@@ -816,7 +819,9 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServ
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DependencyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PluginRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulList.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.html -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/SetupPage.properties.xml -text
@@ -1137,7 +1142,9 @@ plugin-dashboard/src/main/webapp/js/angular.min.js.map -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
+plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
+plugin-dashboard/src/main/webapp/pages/powerpacks.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
