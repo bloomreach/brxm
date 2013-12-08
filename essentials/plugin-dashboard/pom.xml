@@ -27,12 +27,12 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-dashboard-plugin-api</artifactId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

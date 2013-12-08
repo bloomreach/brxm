@@ -42,7 +42,7 @@
 
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
     <junit.version>4.11</junit.version>
-    <hippo-dashboard-plugin-api.version>1.01.00-SNAPSHOT</hippo-dashboard-plugin-api.version>
+    <hippo-essentials-plugin-api.version>1.01.00-SNAPSHOT</hippo-essentials-plugin-api.version>
     <freemarker.version>2.3.18</freemarker.version>
   </properties>
 
@@ -68,18 +68,18 @@
       <!-- PLUGIN API -->
       <dependency>
         <groupId>org.onehippo.cms7.essentials</groupId>
-        <artifactId>hippo-dashboard-plugin-api</artifactId>
-        <version>${hippo-dashboard-plugin-api.version}</version>
+        <artifactId>hippo-essentials-plugin-api</artifactId>
+        <version>${hippo-essentials-plugin-api.version}</version>
       </dependency>
       <dependency>
           <groupId>org.onehippo.cms7.essentials</groupId>
-          <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
-          <version>${hippo-dashboard-plugin-api.version}</version>
+          <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+          <version>${hippo-essentials-plugin-api.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.essentials</groupId>
-        <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
-        <version>${hippo-dashboard-plugin-api.version}</version>
+        <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
+        <version>${hippo-essentials-plugin-api.version}</version>
         <type>test-jar</type>
         <scope>test</scope>
       </dependency>

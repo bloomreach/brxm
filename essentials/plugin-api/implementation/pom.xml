@@ -9,13 +9,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7.essentials</groupId>
-    <artifactId>hippo-dashboard-plugin-sdk</artifactId>
+    <artifactId>hippo-essentials-plugin-sdk</artifactId>
     <version>1.01.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Essentials dashboard plugins api implementation</name>
-  <description>Hippo Essentials dashboard plugins api implementation</description>
-  <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+  <name>Hippo Essentials plugins api implementation</name>
+  <description>Hippo Essentials plugins api implementation</description>
+  <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
   <version>1.01.00-SNAPSHOT</version>
   <packaging>jar</packaging>
 
@@ -26,7 +26,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-dashboard-plugin-api</artifactId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

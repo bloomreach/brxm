@@ -13,9 +13,9 @@
     <version>7.8.5</version>
   </parent>
 
-  <name>Hippo Essentials dashboard plugins sdk</name>
-  <description>Hippo Essentials dashboard plugins sdk</description>
-  <artifactId>hippo-dashboard-plugin-sdk</artifactId>
+  <name>Hippo Essentials  plugins sdk</name>
+  <description>Hippo Essentials  plugins sdk</description>
+  <artifactId>hippo-essentials-plugin-sdk</artifactId>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <version>1.01.00-SNAPSHOT</version>
   <packaging>pom</packaging>

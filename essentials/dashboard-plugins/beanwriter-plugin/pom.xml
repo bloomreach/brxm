@@ -24,7 +24,7 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-dashboard-plugin-api</artifactId>
+      <artifactId>hippo-essentials-plugin-api</artifactId>
     </dependency>
 
     <!--
@@ -42,11 +42,11 @@
 
     <dependency>
         <groupId>org.onehippo.cms7.essentials</groupId>
-        <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+        <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
-      <artifactId>hippo-dashboard-plugin-api-implementation</artifactId>
+      <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
