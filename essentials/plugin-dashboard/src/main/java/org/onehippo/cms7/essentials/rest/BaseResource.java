@@ -27,6 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
+import org.onehippo.cms7.essentials.rest.model.ProjectRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,22 @@ import org.slf4j.LoggerFactory;
 public class BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(BaseResource.class);
+
+
+    public ProjectRestful getProjectRestful(){
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
+        // inject project settings:
+        final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+        final ProjectRestful projectRestful = new ProjectRestful();
+        if (document != null) {
+            projectRestful.setNamespace(document.getProjectNamespace());
+        }
+
+        return projectRestful;
+
+
+
+    }
 
     public List<Plugin> getPlugins(final ServletContext context) {
         final String libPath = context.getRealPath("/WEB-INF/lib");

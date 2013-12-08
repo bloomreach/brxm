@@ -22,9 +22,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
+import org.onehippo.cms7.essentials.rest.model.PowerpackListRestful;
 import org.onehippo.cms7.essentials.rest.model.PowerpackRestful;
+import org.onehippo.cms7.essentials.rest.model.ProjectRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.StepRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +43,7 @@ import com.google.inject.Inject;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
 @Path("/powerpack/")
-public class PowerpackResource {
+public class PowerpackResource extends BaseResource{
 
     @Inject
     private EventBus eventBus;
@@ -46,8 +52,21 @@ public class PowerpackResource {
 
     @GET
     @Path("/")
-    public RestfulList<PowerpackRestful> getPowerpacks() {
-        final RestfulList<PowerpackRestful> powerpacks = new RestfulList<>();
+    public PowerpackListRestful getPowerpacks() {
+        final PowerpackListRestful powerpacks = new PowerpackListRestful();
+        final ProjectRestful projectRestful = getProjectRestful();
+        // TODO enable:
+        projectRestful.setNamespace("marketplace");
+        powerpacks.setProject(projectRestful);
+        // add steps:
+        final StepRestful stepOne = new StepRestful();
+        stepOne.setName("Select a powerpack");
+        powerpacks.addStep(stepOne);
+        // two:
+        final StepRestful stepTwo = new StepRestful();
+        stepTwo.setName("Validate");
+        powerpacks.addStep(stepTwo);
+
         // TODO make dynamic (read from packages)
         final PowerpackRestful pack = new PowerpackRestful();
         pack.setName("Basic News and Events site");
@@ -57,8 +76,8 @@ public class PowerpackResource {
         dummy1.setName("A REST only site that contains only REST services and no pages.");
 
         // add packs
-        powerpacks.add(pack);
-        powerpacks.add(dummy1);
+        powerpacks.addPowerpack(pack);
+        powerpacks.addPowerpack(dummy1);
 
         return powerpacks;
     }

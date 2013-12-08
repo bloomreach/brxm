@@ -71,6 +71,8 @@
   display: block;
   text-align: center;
   float: left;
+  min-width: 250px;
+
 }
 .wizard-steps li .step {
   text-align: center;
@@ -199,6 +201,11 @@ form {
   margin-bottom: 10px;
   font-size: 16px;
   font-weight: bold;
+}
+.relativeRow {
+  position: relative;
+  border: 1px red solid;
+  width: 100%;
 }
 .plugin-introduction {
   padding: 20px;

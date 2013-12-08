@@ -1,39 +1,39 @@
-<div style="position: relative" ng-model="powerpack">
+<!--
+    //############################################
+    // STEP INDICATOR
+    //############################################
+ -->
+<div class="row">
+    <ul class="wizard-steps">
+        <li ng-repeat="step in packs.steps">
+            <span class="step" id="no">{{$index +1}}</span>
+            <span class="title" id="title">{{step.name}}</span>
+        </li>
+    </ul>
+</div>
+<!--
+   //############################################
+   // CONTENT
+   //############################################
+-->
 
-    <!--
-        //############################################
-        // STEP INDICATOR
-        //############################################
-     -->
-    <div>
-        <ul class="wizard-steps">
-            <li ng-repeat="step in powerpack.steps">
-                <span class="step" id="no">{{$index}}</span>
-                <span class="title" id="title">{{step.title}}</span>
-            </li>
-        </ul>
+<div class="row">
+    <strong>Step 1:</strong>
+
+    <div class="alert alert-success">Congratulations - you've successfully created <strong>{{packs.project.namespace}}</strong> and are almost ready to get coding!
+        We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
+        project <strong>{{packs.project.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
     </div>
-    <div class="step-content">
-        <div class="step-pane active" id="view">
-            <!--
-                template repeat
-            -->
-            <strong>Step 1:</strong>
 
-            <div class="alert alert-success">Congratulations - you've successfully created ${name} and are almost ready to get coding!
-                We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
-                project ${name} will be. We'll then add the relevant components and configuration to get you started.
-            </div>
+    <form>
+        <select id="powerpackDropdown">
+            <option value="newsAndEvent"></option>
+            <option value="headlessRest"></option>
+            <option value="none"></option>
+        </select>
+        <div id="pack.description">[ON SELECT DESCRIPTIO]</div>
 
-            <form>
-                <select id="powerpackDropdown">
-                    <option value="newsAndEvent"></option>
-                    <option value="headlessRest"></option>
-                    <option value="none"></option>
-                </select>
-                <div id="pack.description">[ON SELECT DESCRIPTIO]</div>
-
-                <br/><br/>
+        <br/><br/>
 
         <span>
             <input id="sample-content" type="checkbox"/>
@@ -42,7 +42,7 @@
             </label>
         </span>
 
-                <p>&nbsp;</p>
+        <p>&nbsp;</p>
 
         <span id="templatesRadioGroup">
             <input id="jspFilesystemRadio" type="radio" name="template" checked="checked">Generate JSP templates on filesystem.
@@ -52,26 +52,24 @@
             <input id="freemarkerRepositoryRadio" name="template" disabled="disabled" type="radio">Generate Freemarker templates in repository.
             <br/>
         </span>
-            </form>
+    </form>
 
 
-        </div>
-    </div>
-    <!--
-        //############################################
-        // BUTTONS
-        //############################################
+</div>
 
-    -->
-    <div class="wizard-actions">
-        <button id="prev" class="btn btn-prev">
-            <i class="icon-arrow-left"></i>
-            <span id="previouslabel"></span>
-        </button>
-        <button id="next" class="btn btn-success btn-next" data-last="Finish">
-            <span id="nextorfinish"></span>
-            <i class="icon-arrow-right icon-on-right"></i>
-        </button>
-    </div>
 
+<!--
+    //############################################
+    // BUTTONS
+    //############################################
+-->
+<div class="wizard-actions">
+    <button id="prev" class="btn btn-prev">
+        <i class="icon-arrow-left"></i>
+        <span id="previouslabel"></span>
+    </button>
+    <button id="next" class="btn btn-success btn-next" data-last="Finish">
+        <span id="nextorfinish"></span>
+        <i class="icon-arrow-right icon-on-right"></i>
+    </button>
 </div>
