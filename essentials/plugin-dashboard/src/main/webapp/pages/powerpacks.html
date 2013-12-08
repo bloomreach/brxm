@@ -25,6 +25,7 @@
         <strong>{{packs.project.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
     </div>
     <form>
+        <!--select as label for value in array-->
         <select ng-change="selectChange()" ng-options="option.value as option.name for option in packs.powerpacks" ng-model="selectedItem">
 
         </select>
@@ -33,7 +34,7 @@
         <br/><br/>
 
         <span>
-            <input id="sample-content" type="checkbox"/>
+            <input id="sample-content" type="checkbox" ng-model="installSampleData"/>
             <label for="sample-content">
                 Add sample content
             </label>
@@ -73,7 +74,7 @@ resultMessages
            <span id="previouslabel">{{step.buttonText}}</span>
        </button>
    -->
-    <button ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]" ng-repeat="step in packs.steps" ng-click="onWizardButton($index,step)">
+    <button ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]" ng-repeat="step in packs.steps" ng-click="onWizardButton($index, step)">
         <!--<span id="nextorfinish"></span>-->
         <i class="icon-arrow-right icon-on-right">{{step.buttonText}}</i>
     </button>

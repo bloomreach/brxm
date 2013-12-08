@@ -104,6 +104,10 @@ public class PowerpackResource extends BaseResource {
                 "mvn -P cargo.run\n" +
                 "</pre>"));
         eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
+        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
+        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
+        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
+        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
         final List<DisplayEvent> displayEvents = listener.consumeEvents();
         for (DisplayEvent displayEvent : displayEvents) {
             messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage()));

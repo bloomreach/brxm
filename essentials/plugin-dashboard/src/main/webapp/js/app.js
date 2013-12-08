@@ -23,9 +23,11 @@ app.run(function ($rootScope) {
     /* TODO generate this server side */
     $rootScope.REST = {
         root: root,
-        menus: root + '/menus',
-        plugins: root + '/plugins',
-        status: root + '/status'
+        menus: root + '/menus/',
+        plugins: root + '/plugins/',
+        status: root + '/status/',
+        powerpacks: root + '/powerpack/',
+        powerpacks_install: root + '/powerpack/install/'
 
     }
 
@@ -56,13 +58,13 @@ app.config(function ($provide, $httpProvider) {
             //############################################
             response: function (data) {
                 $rootScope.busyLoading = false;
-                $rootScope.globalError = false;
+                $rootScope.globalError = [];
                 $log.info(data);
                 return data || $q.when(data);
             },
             responseError: function (error) {
                 $rootScope.busyLoading = false;
-                $rootScope.globalError = true;
+                $rootScope.globalError = [];
                 $rootScope.globalError.push(error.data);
                 $log.error(error);
                 return $q.reject(error);
