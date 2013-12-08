@@ -24,8 +24,8 @@
 
 
   <modelVersion>4.0.0</modelVersion>
-  <name>Hippo Essentials dashboard plugins</name>
-  <description>Hippo Essentials dashboard plugins</description>
+  <name>Hippo Essentials plugins</name>
+  <description>Hippo Essentials plugins</description>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <artifactId>hippo-dashboard-plugins</artifactId>
   <version>1.01.00-SNAPSHOT</version>

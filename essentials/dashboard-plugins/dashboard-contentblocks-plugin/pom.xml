@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hippo-dashboard-contentblocks-plugin</artifactId>
-  <name>Hippo Essentials dashboard content blocks plugin</name>
+  <name>Hippo Essentials content blocks plugin</name>
 
   <dependencies>
 

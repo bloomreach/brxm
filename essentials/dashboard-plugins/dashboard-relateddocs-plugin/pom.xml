@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hippo-dashboard-relateddocs-plugin</artifactId>
-  <name>Hippo Essentials dashboard related docs plugin</name>
+  <name>Hippo Essentials related docs plugin</name>
 
   <dependencies>
     <dependency>

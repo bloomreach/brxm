@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hippo-dashboard-taxonomy-plugin</artifactId>
-  <name>Hippo Essentials dashboard taxonomy plugin</name>
+  <name>Hippo Essentials taxonomy plugin</name>
 
   <dependencies>
     <dependency>

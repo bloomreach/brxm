@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>hippo-dashboard-wizard-plugin</artifactId>
-  <name>Hippo Essentials dashboard wizard plugin example</name>
+  <name>Hippo Essentials wizard plugin example</name>
 
   <dependencies>
     <dependency>

@@ -13,8 +13,8 @@
     <version>1.01.00-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Essentials dashboard plugins api</name>
-  <description>Hippo Essentials dashboard plugins api</description>
+  <name>Hippo Essentials plugins api</name>
+  <description>Hippo Essentials plugins api</description>
   <artifactId>hippo-essentials-plugin-api</artifactId>
   <version>1.01.00-SNAPSHOT</version>
   <packaging>jar</packaging>
