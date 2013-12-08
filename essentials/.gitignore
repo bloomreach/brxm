@@ -2861,6 +2861,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/atlassian
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/target
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/*.iml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/.DS_Store
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/setup/.idea
@@ -4245,6 +4251,12 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/.idea
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/atlassian-ide-plugin.xml
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/hippo-plugins.iws
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/target
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/*.iml
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/.DS_Store
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/.idea
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/atlassian-ide-plugin.xml
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/hippo-plugins.iws
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/target
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/target
 plugin-dashboard/src/test/java/org/onehippo/cms7/hippo-plugins.iws
 plugin-dashboard/src/test/java/org/onehippo/cms7/target

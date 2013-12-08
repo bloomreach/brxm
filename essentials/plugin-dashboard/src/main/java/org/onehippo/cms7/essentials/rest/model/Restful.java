@@ -18,42 +18,14 @@ package org.onehippo.cms7.essentials.rest.model;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "status")
-public class StatusRestful implements Restful {
-
-    private static final long serialVersionUID = 1L;
+public interface Restful extends Serializable{
 
 
-    private String name;
-    private String message;
-    private boolean status;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(final boolean status) {
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
 }

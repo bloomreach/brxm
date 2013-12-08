@@ -14,7 +14,11 @@ app.config(function ($routeProvider) {
             .when('/powerpacks', {
                 templateUrl: 'pages/powerpacks.html',
                 controller: 'mainCtrl'
+            }).when('/plugin/:id', {
+                templateUrl: 'pages/powerpacks.html',
+                controller: 'mainCtrl'
             })
+            .otherwise({redirectTo: '/'})
 
 });
 var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {

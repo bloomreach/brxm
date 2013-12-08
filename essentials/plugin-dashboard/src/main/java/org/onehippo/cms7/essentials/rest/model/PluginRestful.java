@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * @version "$Id$"
  */
 @XmlRootElement(name = "plugin")
-public class PluginRestful implements Serializable {
+public class PluginRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
     private static Logger log = LoggerFactory.getLogger(PluginRestful.class);

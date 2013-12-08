@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
  * @version "$Id: RestfulList.java 174870 2013-08-23 13:56:24Z mmilicevic $"
  */
 @XmlRootElement(name = "collection")
-public class RestfulList<T> implements Serializable {
+public class RestfulList<T extends Restful> implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private List<T> items = Lists.newArrayList();
@@ -77,6 +77,7 @@ public class RestfulList<T> implements Serializable {
 
     @XmlElementRefs({
             @XmlElementRef(type = PluginRestful.class),
+            @XmlElementRef(type = PowerpackRestful.class),
             @XmlElementRef(type = VendorRestful.class),
             @XmlElementRef(type = StatusRestful.class),
             @XmlElementRef(type = DependencyRestful.class),
