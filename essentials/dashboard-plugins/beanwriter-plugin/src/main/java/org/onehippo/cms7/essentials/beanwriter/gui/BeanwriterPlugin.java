@@ -13,10 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -50,11 +46,12 @@ public class BeanwriterPlugin extends DashboardPlugin {
     public BeanwriterPlugin(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
         logsPanel = new BeanWriterActionPanel("logsPanel", Collections.<BeanWriterLogEntry>emptyList());
-        final Form<?> form = new Form("form");
+
         final String basePath = ProjectUtils.getBaseProjectDirectory();
 
         namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
 
+/*
         final AjaxButton executeButton = new AjaxButton("execute") {
             private static final long serialVersionUID = 1L;
 
@@ -69,13 +66,11 @@ public class BeanwriterPlugin extends DashboardPlugin {
                 }
                 // repaint panel:
                 logsPanel.replaceModel(entries);
-                target.add(logsPanel);
+
             }
         };
-        form.add(executeButton);
-        add(form);
-        logsPanel.setOutputMarkupId(true);
-        add(logsPanel);
+*/
+
         setOutputMarkupId(true);
 
     }

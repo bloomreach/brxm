@@ -31,9 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.wicket.util.string.Strings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -54,7 +56,7 @@ public class JarResourceServlet extends HttpServlet {
         try {
 
             final String pluginClassName = getPluginClassName(path);
-            if(Strings.isEmpty(pluginClassName)) {
+            if(Strings.isNullOrEmpty(pluginClassName)) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }

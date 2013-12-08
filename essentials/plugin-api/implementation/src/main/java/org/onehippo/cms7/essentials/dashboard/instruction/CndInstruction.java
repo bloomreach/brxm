@@ -17,12 +17,12 @@
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
@@ -74,7 +74,7 @@ public class CndInstruction extends PluginInstruction {
         try {
             // TODO extend so we can define supertypes
             String[] superTypes;
-            if (!Strings.isEmpty(superType)) {
+            if (!Strings.isNullOrEmpty(superType)) {
                 final Iterable<String> split = Splitter.on(",").omitEmptyStrings().trimResults().split(superType);
                 superTypes = Iterables.toArray(split, String.class);
             } else {

@@ -16,12 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.utils.inject;
 
-import org.apache.wicket.util.string.Strings;
+
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -39,8 +40,8 @@ public class PropertiesModuleTest extends BaseTest{
 
     @Test
     public void testConfigure() throws Exception {
-        assertTrue(!Strings.isEmpty(instance.getValue()));
-        assertTrue(!Strings.isEmpty(instance.getName()));
+        assertTrue(!Strings.isNullOrEmpty(instance.getValue()));
+        assertTrue(!Strings.isNullOrEmpty(instance.getName()));
         log.info("instance {}", instance);
 
     }

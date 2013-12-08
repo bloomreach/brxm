@@ -14,16 +14,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.ListChoice;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.PropertyModel;
+
+import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
@@ -32,10 +24,8 @@ import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.relateddocs.installer.RelatedDocsInstaller;
 import org.onehippo.cms7.essentials.dashboard.relateddocs.query.RelatedDocQueryBuilder;
-import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.wicket.SortedTypeChoiceRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +43,6 @@ public class RelatedDocsPlugin extends InstallablePlugin<RelatedDocsInstaller> {
     public RelatedDocsPlugin(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
 
-        final FeedbackPanel feedbackPanel = new EssentialsFeedbackPanel("feedback");
-        feedbackPanel.setOutputMarkupId(true);
-        add(feedbackPanel);
 
         final Session session = context.getSession();
 
@@ -70,7 +57,7 @@ public class RelatedDocsPlugin extends InstallablePlugin<RelatedDocsInstaller> {
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve node types", e);
         }
-
+/*
         final DropDownChoice<Prefer> prefer = new DropDownChoice<>("prefer", new PropertyModel<Prefer>(this, "selected"), Arrays.asList(Prefer.RIGHT, Prefer.LEFT), new IChoiceRenderer<Prefer>() {
             private static final long serialVersionUID = 1L;
             @Override
@@ -180,7 +167,7 @@ public class RelatedDocsPlugin extends InstallablePlugin<RelatedDocsInstaller> {
         form.add(create);
         run.setEnabled(false);
         form.add(run);
-        add(form);
+        add(form);*/
 
     }
 

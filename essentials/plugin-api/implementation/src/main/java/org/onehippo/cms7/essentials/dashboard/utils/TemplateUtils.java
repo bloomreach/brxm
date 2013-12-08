@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.WordUtils;
-import org.apache.wicket.util.string.Strings;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -44,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 
 
@@ -130,7 +130,7 @@ public final class TemplateUtils {
     }
 
     public static String replaceTemplateData(final String content, final Map<String, Object> data) {
-        if (Strings.isEmpty(content)) {
+        if (Strings.isNullOrEmpty(content)) {
             return content;
         }
 

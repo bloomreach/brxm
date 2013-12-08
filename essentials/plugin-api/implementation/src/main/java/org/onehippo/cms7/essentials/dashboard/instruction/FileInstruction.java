@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.wicket.util.string.Strings;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
 import org.onehippo.cms7.essentials.dashboard.event.MessageEvent;
@@ -41,6 +40,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -214,7 +214,7 @@ public class FileInstruction extends PluginInstruction {
         data.put("createdFoldersTarget", createdFoldersTarget);
         // setup messages:
 
-        if (Strings.isEmpty(message)) {
+        if (Strings.isNullOrEmpty(message)) {
             // check message based on action:
             if (action.equals(COPY)) {
                 message = messageCopy;
@@ -230,10 +230,10 @@ public class FileInstruction extends PluginInstruction {
     }
 
     private boolean valid() {
-        if (Strings.isEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isEmpty(target)) {
+        if (Strings.isNullOrEmpty(action) || !VALID_ACTIONS.contains(action) || Strings.isNullOrEmpty(target)) {
             return false;
         }
-        if (action.equals(COPY) && (Strings.isEmpty(source))) {
+        if (action.equals(COPY) && (Strings.isNullOrEmpty(source))) {
             return false;
         }
         return true;

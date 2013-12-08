@@ -23,21 +23,10 @@ import javax.security.auth.login.Configuration;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.Radio;
-import org.apache.wicket.markup.html.form.RadioGroup;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.ui.PluginFeedbackPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,18 +58,18 @@ public class RestServicesPlugin extends DashboardPlugin {
     // TODO check this
     private static final String DEFAULT_HST_REST_PACKAGE = "org.onehippo.cms7.essentials.site.rest";
 
-    private final WebMarkupContainer container;
+
     private String mountName = StringUtils.EMPTY;
     private String serviceType = SERVICE_TYPE_PLAIN;
 
     // Used to set on the mount on property hst:types
     private final static String[] HST_REST_TYPES = new String[]{"rest"};
 
-    private final FeedbackPanel feedback;
+
 
     public RestServicesPlugin(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
-        //############################################
+       /* //############################################
         // FEEDBACK
         //############################################
         feedback = new PluginFeedbackPanel("feedback");
@@ -106,10 +95,10 @@ public class RestServicesPlugin extends DashboardPlugin {
 
         container.add(new SubmitButton("submit"));
 
-        add(form);
+        add(form);*/
     }
 
-    private void onFormSubmit(final AjaxRequestTarget target) {
+   /* private void onFormSubmit(final AjaxRequestTarget target) {
         // TODO fix log level
         log.info("Submitting form.... (mountName={}, serviceType={})", mountName, serviceType);
 
@@ -128,7 +117,7 @@ public class RestServicesPlugin extends DashboardPlugin {
             addError("Unable to add REST mount", target);
             resetSession();
         }
-    }
+    }*/
 
     private void createMount() throws RepositoryException {
 
@@ -352,20 +341,23 @@ public class RestServicesPlugin extends DashboardPlugin {
             log.error("Error refreshing session", e);
         }
     }
+/*
 
     private void addError(final Serializable message, final AjaxRequestTarget target) {
         feedback.getFeedbackMessagesModel().setObject(new ArrayList<FeedbackMessage>());
         feedback.error(message);
         target.add(feedback);
     }
+*/
 
-    private void addSuccess(final Serializable message, final AjaxRequestTarget target) {
+/*    private void addSuccess(final Serializable message, final AjaxRequestTarget target) {
         feedback.getFeedbackMessagesModel().setObject(new ArrayList<FeedbackMessage>());
         feedback.success(message);
         target.add(feedback);
-    }
+    }*/
 
 
+/*
     private class SubmitButton extends AjaxButton {
         private static final long serialVersionUID = 1L;
 
@@ -378,4 +370,5 @@ public class RestServicesPlugin extends DashboardPlugin {
             onFormSubmit(target);
         }
     }
+*/
 }

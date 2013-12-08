@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.dashboard.panels;
+package org.onehippo.cms7.essentials.dashboard.setup;
 
-import java.io.Serializable;
-import java.util.Collection;
-
-import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-public interface EventListener<T> extends Serializable{
+public class ProjectSetupPlugin {
 
-    void onSelected(final AjaxRequestTarget target, final Collection<T> selectedItems);
+    // NOTE for time being just a dummy holder
+
 }

@@ -18,15 +18,12 @@ package org.onehippo.cms7.essentials.dashboard;
 
 import javax.jcr.Session;
 
-import org.apache.wicket.markup.html.panel.Panel;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
 /**
  * @version "$Id$"
  */
-public abstract class PanelPlugin extends Panel{
-
-
+public abstract class PanelPlugin extends Panel {
 
 
     private static final long serialVersionUID = 1L;
@@ -45,9 +42,8 @@ public abstract class PanelPlugin extends Panel{
      * Logout  all JCR sessions
      * <p> <strong>NOTE:</strong> no save or session refresh is called, only {@code session.logout()} is callled</p>
      */
-    @Override
     protected void onRemove() {
-        super.onRemove();
+
         // cleanup connections:
         final Session session = context.getSession();
         if (session != null) {

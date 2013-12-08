@@ -22,7 +22,6 @@ import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -45,7 +44,6 @@ import org.onehippo.cms7.essentials.rest.model.PowerpackRestful;
 import org.onehippo.cms7.essentials.rest.model.ProjectRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.StepRestful;
-import org.onehippo.cms7.essentials.setup.panels.SelectPowerpackStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +59,7 @@ import com.google.inject.Inject;
 @Path("/powerpack/")
 public class PowerpackResource extends BaseResource {
 
+    public static final String POWERPACK_NEWS_AND_EVENT_LABEL ="news and events";
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PowerpackResource.class);
@@ -77,7 +76,7 @@ public class PowerpackResource extends BaseResource {
         }
         final PowerpackPackage powerpackPackage;
         switch (id) {
-            case SelectPowerpackStep.POWERPACK_NEWS_AND_EVENT_LABEL:
+            case POWERPACK_NEWS_AND_EVENT_LABEL:
                 if (sampleContent) {
                     powerpackPackage = new BasicPowerpackWithSamples();
                 } else {

@@ -1,15 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.installer;
 
-import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.modal.ModalWindow;
-import org.apache.wicket.markup.html.TransparentWebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -25,14 +16,14 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
 
     private static final long serialVersionUID = 1L;
     public static final String SESSION_SUFIX = "installState";
-    final Fragment installer;
-    final TransparentWebMarkupContainer main;
+
     private InstallState pluginInstalled;
 
     private String titleId;
 
     public InstallablePlugin(final String id, final Plugin plugin, final PluginContext context) {
         super(id, plugin, context);
+   /*
         this.titleId = plugin.getName();
         setOutputMarkupId(true);
         // setOutputMarkupPlaceholderTag(true);
@@ -50,7 +41,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
             main.add(new AttributeModifier("style", "display:none;"));
         }
         installer = createInstaller(pluginInstalled, plugin);
-        add(installer);
+        add(installer);*/
     }
 
     public InstallState getInstallState() {
@@ -77,7 +68,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
      * @param plugin
      * @return
      */
-    public Fragment createInstaller(final InstallState pluginInstalled, final Plugin plugin) {
+  /*  public Fragment createInstaller(final InstallState pluginInstalled, final Plugin plugin) {
         final Fragment fragment = new Fragment("install-fragment", "default-installer", InstallablePlugin.this);
         fragment.setOutputMarkupId(true);
         final InstallState currentInstallState = getInstallState();
@@ -114,12 +105,12 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
         return fragment;
     }
 
-    /**
+    *//**
      * When the install buttons get's clicked. This is what happens: TODO mm: what happens?
      *
      * @param button
      * @param target
-     */
+     *//*
     public void onInstall(final AjaxButton button, final AjaxRequestTarget target) {
         getInstaller().install();
         pluginInstalled = getInstaller().getInstallState();
@@ -142,7 +133,7 @@ public abstract class InstallablePlugin<T extends Installer> extends DashboardPl
             }
         });
         return window;
-    }
+    }*/
 
 
 }

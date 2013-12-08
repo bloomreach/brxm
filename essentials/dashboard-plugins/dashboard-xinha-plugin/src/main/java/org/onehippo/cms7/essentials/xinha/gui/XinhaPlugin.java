@@ -4,11 +4,8 @@
 
 package org.onehippo.cms7.essentials.xinha.gui;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,21 +15,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.GridView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.eclipse.jface.text.projection.Fragment;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.MultiValueJcrUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.XmlUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
@@ -58,7 +44,8 @@ public class XinhaPlugin extends DashboardPlugin {
         final List<String> currentlySelectedPluginList = getSelectedList(Property.PLUGIN);
 
         final List<XinhaEntry> mergedToolbarList = merge(availableToolBarList, currentlySelectedToolBarList);
-        final XinhaPluginDataProvider xinhaToolbarDataProvider = new XinhaPluginDataProvider(mergedToolbarList);
+        //final XinhaPluginDataProvider xinhaToolbarDataProvider = new XinhaPluginDataProvider(mergedToolbarList);
+        /*
         GridView<XinhaEntry> toolbar = new XinhaGridView("toolbar", xinhaToolbarDataProvider, Property.TOOLBAR);
         add(toolbar);
 
@@ -66,18 +53,19 @@ public class XinhaPlugin extends DashboardPlugin {
         final XinhaPluginDataProvider xinhaPluginProvider = new XinhaPluginDataProvider(mergedPluginList);
         GridView<XinhaEntry> plugins = new XinhaGridView("plugins", xinhaPluginProvider, Property.PLUGIN);
         add(plugins);
+        */
 
     }
 
-    private class XinhaGridView extends GridView<XinhaEntry>{
+    /*private class XinhaGridView extends GridView<XinhaEntry> {
 
         private static final long serialVersionUID = 1L;
         private final Property property;
 
-        /**
+        *//**
          * @param id           component id
          * @param dataProvider data provider
-         */
+         *//*
         public XinhaGridView(final String id, final IDataProvider<XinhaEntry> dataProvider, final Property property) {
             super(id, dataProvider);
             this.property = property;
@@ -108,7 +96,7 @@ public class XinhaPlugin extends DashboardPlugin {
             item.add(fragment);
         }
 
-    }
+    }*/
 
     private boolean setItem(String item, int index, boolean enable, Property property) {
         final Session session = getContext().getSession();
@@ -154,7 +142,7 @@ public class XinhaPlugin extends DashboardPlugin {
         return list;
     }
 
-    private static class XinhaPluginDataProvider implements IDataProvider<XinhaEntry> {
+    /*private static class XinhaPluginDataProvider implements IDataProvider<XinhaEntry> {
 
         private static final long serialVersionUID = 1L;
         private List<XinhaEntry> entries;
@@ -182,7 +170,7 @@ public class XinhaPlugin extends DashboardPlugin {
         @Override
         public void detach() {
         }
-    }
+    }*/
 
     private enum Property {
         TOOLBAR("Xinha.config.toolbar"), PLUGIN("Xinha.plugins");

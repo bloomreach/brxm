@@ -19,17 +19,12 @@ package org.onehippo.cms7.essentials.beanwriter.gui;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
-import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+import org.onehippo.cms7.essentials.dashboard.Panel;
 import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javafx.scene.control.ListView;
 
 /**
  * @version "$Id$"
@@ -44,23 +39,6 @@ public class BeanWriterActionPanel extends Panel {
     public BeanWriterActionPanel(final String id, final  List<BeanWriterLogEntry> displayItems) {
         super(id);
 
-        this.displayItems = displayItems;
-        setDefaultModel(new PropertyModel<>(this, "displayItems"));
-        repeater = new ListView<BeanWriterLogEntry>("repeater", new PropertyModel<List<BeanWriterLogEntry>>(this, "displayItems")) {
-            private static final long serialVersionUID = 1L;
-
-            protected void populateItem(final ListItem<BeanWriterLogEntry> item) {
-                final BeanWriterLogEntry pluginEvent = item.getModelObject();
-                final Label eventMessage = new Label("message", new Model<>(pluginEvent.getMessage()));
-                item.add(eventMessage);
-                eventMessage.setEscapeModelStrings(false);
-            }
-        };
-        repeater.setReuseItems(true);
-        repeater.setOutputMarkupId(true);
-        setOutputMarkupId(true);
-        add(repeater);
-
     }
 
 
@@ -68,8 +46,6 @@ public class BeanWriterActionPanel extends Panel {
 
         displayItems.clear();
         displayItems.addAll(new LinkedList<>(displayItems));
-        repeater.modelChanged();
-        modelChanged();
     }
 
 

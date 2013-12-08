@@ -4,9 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,16 +19,6 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.ajax.AjaxEventBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.form.ListChoice;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.model.PropertyModel;
-import org.eclipse.jface.text.templates.TemplateException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
@@ -41,11 +29,9 @@ import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderM
 import org.onehippo.cms7.essentials.dashboard.contentblocks.model.ContentBlockModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
-import org.onehippo.cms7.essentials.dashboard.ui.EssentialsFeedbackPanel;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.wicket.SortedTypeChoiceRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +51,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
     public ContentBlocksPlugin(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
-        final FeedbackPanel feedbackPanel = new EssentialsFeedbackPanel("feedback");
-        feedbackPanel.setOutputMarkupId(true);
-        add(feedbackPanel);
+
 
         final Session session = context.getSession();
         final List<String> primaryNodeTypes = new ArrayList<>();
@@ -84,7 +68,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
             log.error("Exception while trying to retrieve node types", e);
         }
 
-
+/*
         final SortedTypeChoiceRenderer renderer = new SortedTypeChoiceRenderer(context, this, primaryNodeTypes);
         final SortedTypeChoiceRenderer providerRender = new SortedTypeChoiceRenderer(context, this, providerList);
 
@@ -223,7 +207,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
 
             }
         });
-        add(addToTypesListChoice);
+        add(addToTypesListChoice);*/
     }
 
     private boolean removeContentBlockFromType(final ContentBlockModel contentBlockModel) {
@@ -327,7 +311,7 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
                 }
             }
 
-        } catch (RepositoryException  | IOException e) {
+        } catch (RepositoryException | IOException e) {
             GlobalUtils.refreshSession(session, false);
             log.error("Error in content bocks plugin", e);
         } finally {
