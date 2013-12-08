@@ -5,8 +5,7 @@
 
  */
 app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-
-
+    $rootScope.showPowerpacks = true;
 
     $scope.stepVisible = [true, false];
     $scope.resultMessages = {"@page": "1", "@totalSize": "0", "message": [
