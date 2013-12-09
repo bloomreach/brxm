@@ -4,10 +4,12 @@
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/theme/hippo-theme/main.css"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hippo-essentials.css"/>
-
-  <script src="${pageContext.request.contextPath}/js/require.js"></script>
   <script src="${pageContext.request.contextPath}/js/angular.js"></script>
   <script src="${pageContext.request.contextPath}/js/angular-route.min.js"></script>
+
+
+  <%--<script src="${pageContext.request.contextPath}/js/require.js" data-main="${pageContext.request.contextPath}/js/main.js"></script>--%>
+  <%--<script src="${pageContext.request.contextPath}/js/require.js"></script>--%>
 
   <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"></script>-->
 <%--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular-route.js"></script>

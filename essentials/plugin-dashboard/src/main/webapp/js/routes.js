@@ -28,10 +28,13 @@ app.config(function ($routeProvider) {
         //############################################
         // PLUGINS: TODO make dynamic
         //############################################
-            .when('/plugins/:pluginId', {
+            .when('/plugins/:pluginId',
+            {
                 templateUrl: function (params) {
                     return 'plugins/' + params.pluginId + '/index.html';
-                }
+                },
+                controller: 'pluginLoaderCtrl'
+
             })
             .otherwise({redirectTo: '/'})
 

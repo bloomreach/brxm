@@ -4,28 +4,6 @@
 var _PROVIDER_QUEUE = 0;
 app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-    $scope.render = function ($scope, $route, $routeParams) {
-
-        // Update the rendering of the page.
-        $scope.render = function () {
-            var renderAction = $route.current.action;
-            $log.info(renderAction);
-        };
-
-        $rootScope.$on("$routeChangeSuccess", function ($currentRoute, $previousRoute) {
-                    $scope.render();
-                }
-        );
-    };
-
-   /* var queue = angular.module('Essentials')._invokeQueue;
-    for (var i = _PROVIDER_QUEUE; i < queue.length; i++) {
-        var call = queue[i];
-        var provider = _PROVIDERS[call[0]];
-        if (provider) {
-            provider[call[1]].apply(provider, call[2]);
-        }
-    }*/
 });
 
 

@@ -17,14 +17,12 @@ var app = angular.module('Essentials', ['ngRoute'], function ($controllerProvide
     };
 
 
-
 });
 
 //############################################
 // GLOBAL LOADING
 //############################################
 app.config(function ($provide, $httpProvider) {
-
     $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
         return {
 
@@ -78,7 +76,7 @@ app.config(function ($provide, $httpProvider) {
 //############################################
 
 
-app.run(function ($rootScope, $http, MyHttpInterceptor) {
+app.run(function ($rootScope,$log, $http, $templateCache, MyHttpInterceptor) {
     $rootScope.headerMessage = "Welcome on the Hippo Trail";
     $rootScope.packsInstalled = false;
     var root = 'http://localhost:8080/dashboard/rest';
@@ -102,21 +100,32 @@ app.run(function ($rootScope, $http, MyHttpInterceptor) {
             url: $rootScope.REST.controllers
         }).success(function (data) {
                     $rootScope.controllers = data;
+                    // load all controller files:
+                    /*var controller = $rootScope.controllers.controller;
+                    for(var i = 0; i < controller.length; i++){
+                        $log.info(controller[i].id);
+                        require(["plugins/"+ controller[i].id+"/controller.js"]);
+                        $log.info("Loaded: " + controller[i].id);
+                    }*/
+
                 });
 
     };
     $rootScope.initData();
+});
+
+/*
+
+define([
+    'angular',
+    'angular-route',
+    'controllers',
+    'routes'
+], function (angular) {
+    'use strict';
 
 
 });
-
-
-
-
-
-
-
-
-
+*/
 
 
