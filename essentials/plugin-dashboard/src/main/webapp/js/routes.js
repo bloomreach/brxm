@@ -3,6 +3,7 @@
 //############################################
 // configure our routes
 app.config(function ($routeProvider) {
+
     $routeProvider
             .when('/', {
                 templateUrl: 'pages/home.html',
@@ -29,22 +30,13 @@ app.config(function ($routeProvider) {
         //############################################
             .when('/plugins/:pluginId', {
                 templateUrl: function (params) {
-                    console.log('plugins/' + params.pluginId + '/index.html');
                     return 'plugins/' + params.pluginId + '/index.html';
-                },
-                controller: 'contentBlocksCtrl'
-
-
-                /*templateUrl: function (params) {
-                 return       'plugins/' + params.pluginId +'/index.html';
-                 },
-                 controller: function (params) {
-                 return       params.pluginId + 'Ctrl';
-                 }*/
+                }
             })
             .otherwise({redirectTo: '/'})
 
 });
+
 var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
     if (true) {
         // TODO mm: enable

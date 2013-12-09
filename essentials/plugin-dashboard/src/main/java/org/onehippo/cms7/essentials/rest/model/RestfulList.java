@@ -82,7 +82,8 @@ public class RestfulList<T extends Restful> implements Serializable {
             @XmlElementRef(type = VendorRestful.class),
             @XmlElementRef(type = StatusRestful.class),
             @XmlElementRef(type = MessageRestful.class),
-            @XmlElementRef(type = DependencyRestful.class),
+            @XmlElementRef(type = ControllerRestful.class),
+            @XmlElementRef(type = DocumentTypeRestful.class)
     })
     public List<T> getItems() {
         return items;

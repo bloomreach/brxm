@@ -10,24 +10,6 @@ app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $ht
         $scope.render = function () {
             var renderAction = $route.current.action;
             $log.info(renderAction);
-/*
-            var renderPath = renderAction.split(".");
-            var username = ($routeParams.username || "");
-
-            // Reset the booleans used to set the class
-            // for the navigation.
-            var isHome = (renderPath[ 0 ] == "home");
-            var isFriends = (renderPath[ 0 ] == "friends");
-            var isContact = (renderPath[ 0 ] == "contact");
-
-            // Store the values in the model.
-            $scope.renderAction = renderAction;
-            $scope.renderPath = renderPath;
-            $scope.username = username;
-            $scope.isHome = isHome;
-            $scope.isFriends = isFriends;
-            $scope.isContact = isContact;*/
-
         };
 
         $rootScope.$on("$routeChangeSuccess", function ($currentRoute, $previousRoute) {

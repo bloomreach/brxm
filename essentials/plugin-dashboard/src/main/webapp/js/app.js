@@ -15,27 +15,11 @@ var app = angular.module('Essentials', ['ngRoute'], function ($controllerProvide
         $compileProvider: $compileProvider,
         $provide: $provide
     };
-});
 
-app.run(function ($rootScope) {
-    $rootScope.headerMessage = "Welcome on the Hippo Trail";
-    $rootScope.packsInstalled = false;
-    var root = 'http://localhost:8080/dashboard/rest';
-    /* TODO generate this server side */
-    $rootScope.REST = {
-        root: root,
-        menus: root + '/menus/',
-        plugins: root + '/plugins/',
-        status: root + '/status/',
-        powerpacks: root + '/powerpacks/',
-        beanwriter: root + '/beanwriter/',
-        documentTypes: root + '/documenttypes/',
-        controllers: root + '/controllers/',
-        powerpacks_install: root + '/powerpacks/install/'
 
-    }
 
 });
+
 //############################################
 // GLOBAL LOADING
 //############################################
@@ -89,7 +73,42 @@ app.config(function ($provide, $httpProvider) {
     $httpProvider.interceptors.push('MyHttpInterceptor');
 });
 
+//############################################
+// RUN
+//############################################
 
+
+app.run(function ($rootScope, $http, MyHttpInterceptor) {
+    $rootScope.headerMessage = "Welcome on the Hippo Trail";
+    $rootScope.packsInstalled = false;
+    var root = 'http://localhost:8080/dashboard/rest';
+    /* TODO generate this server side */
+    $rootScope.REST = {
+        root: root,
+        menus: root + '/menus/',
+        plugins: root + '/plugins/',
+        status: root + '/status/',
+        powerpacks: root + '/powerpacks/',
+        beanwriter: root + '/beanwriter/',
+        documentTypes: root + '/documenttypes/',
+        controllers: root + '/controllers/',
+        powerpacks_install: root + '/powerpacks/install/'
+
+    };
+
+    $rootScope.initData = function () {
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.controllers
+        }).success(function (data) {
+                    $rootScope.controllers = data;
+                });
+
+    };
+    $rootScope.initData();
+
+
+});
 
 
 
