@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
     <artifactId>dependencies</artifactId>
-    <version>2.27.03-iteration-7</version>
+    <version>2.27.03-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit Dependencies For Spring Framework</name>
