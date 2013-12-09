@@ -35,7 +35,6 @@ app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
     $scope.stepVisible = [true, false];
     $scope.resultMessages = null;
     $scope.selectedDescription = "Please make a selection";
-    $scope.message = "Welcome";
     $scope.packs = null;
 
     $scope.init = function () {

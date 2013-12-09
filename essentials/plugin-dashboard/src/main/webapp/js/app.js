@@ -18,6 +18,7 @@
 
 var app = angular.module('Essentials', ['ngRoute']);
 app.run(function ($rootScope) {
+    $rootScope.headerMessage = "Welcome on the Hippo Trail";
     $rootScope.packsInstalled = false;
     var root = 'http://localhost:8080/dashboard/rest';
     /* TODO generate this server side */

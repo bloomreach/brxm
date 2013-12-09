@@ -37,7 +37,7 @@
       <img src="${pageContext.request.contextPath}/images/hippo-logo.png">
     </div>
     <div class="hippo-header-text">
-
+           {{headerMessage}}
     </div>
 
   </div>
