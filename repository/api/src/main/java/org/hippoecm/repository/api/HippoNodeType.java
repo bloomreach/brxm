@@ -377,6 +377,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
+    public static final String HIPPO_DELTADIRECTIVE = "hippo:deltadirective";
+
     public static final String HIPPOSYS_PATH = "hipposys:path";
 
     public static final String HIPPOSYS_QUERY = "hipposys:query";
