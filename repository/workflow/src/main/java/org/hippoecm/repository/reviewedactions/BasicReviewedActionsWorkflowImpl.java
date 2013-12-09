@@ -382,6 +382,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 }
             }
             draftDocument.setOwner(getWorkflowContext().getUserIdentity());
+            draftDocument.setAvailability(new String[0]);
             // make sure drafts nor their descendant nodes get indexed
             final Node draftNode = draftDocument.getNode();
             if (!draftNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
@@ -451,7 +452,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
         }
         draftDocument = new PublishableDocument(draftNode);
         draftDocument.setState(PublishableDocument.DRAFT);
-        draftDocument.setAvailability(null);
+        draftDocument.setAvailability(new String[0]);
         draftDocument.setModified(getWorkflowContext().getUserIdentity());
         draftNode.getSession().save();
     }
