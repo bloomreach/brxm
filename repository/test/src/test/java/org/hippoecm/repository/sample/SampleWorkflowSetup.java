@@ -47,15 +47,6 @@ abstract class SampleWorkflowSetup
         node.setProperty("hipposys:nodetype","sample:newsArticle");
         node.setProperty("hipposys:display","Sample Workflow");
         node.setProperty("hipposys:classname","org.hippoecm.repository.sample.SampleWorkflowImpl");
-        Node types = node.getNode("hipposys:types");
-        node = types.addNode("org.hippoecm.repository.sample.AuthorDocument","hipposys:type");
-        node.setProperty("hipposys:nodetype","sample:author");
-        node.setProperty("hipposys:display","AuthorDocument");
-        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.AuthorDocument");
-        node = types.addNode("org.hippoecm.repository.sample.ArticleDocument","hipposys:type");
-        node.setProperty("hipposys:nodetype","sample:newsArticle");
-        node.setProperty("hipposys:display","ArticleDocument");
-        node.setProperty("hipposys:classname","org.hippoecm.repository.sample.ArticleDocument");
 
         root.addNode("files");
 

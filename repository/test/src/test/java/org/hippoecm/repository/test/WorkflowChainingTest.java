@@ -44,11 +44,6 @@ public class WorkflowChainingTest extends RepositoryTestCase {
         workflow.setProperty("hipposys:nodetype", "hippo:document");
         workflow.setProperty("hipposys:display", "Test workflow chaining");
         workflow.setProperty("hipposys:classname", "org.hippoecm.repository.test.ChainingImpl");
-        final Node types = workflow.getNode("hipposys:types");
-        final Node type = types.addNode("org.hippoecm.repository.api.Document", "hipposys:type");
-        type.setProperty("hipposys:nodetype", "hippo:document");
-        type.setProperty("hipposys:display", "Document");
-        type.setProperty("hipposys:classname", "org.hippoecm.repository.api.Document");
 
         final Node test = root.addNode("test");
         final Node handle = test.addNode("testdocument", "hippo:handle");
