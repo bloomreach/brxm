@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<ul class="nav nav-tabs" ng-controller="mainMenuCtrl">
+<ul class="nav nav-tabs">
 
     <li ng-repeat="tab in tabs" ng-class="{true:'active', false:''}[isPageSelected('{{tab.link}}')]"><a href="#{{tab.link}}"><span>{{tab.name}}</span></a></li>
 </ul>

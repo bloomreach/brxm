@@ -7,7 +7,7 @@ app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope
         {name: "Find additional", link: "/find-plugins"}
     ];
     $scope.isPageSelected = function (path) {
-        return $location.path() == path;// ? 'active':'';
+        return $location.path() == path;
     };
     //plugin list
     $scope.init = function () {
@@ -93,7 +93,7 @@ app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
  //############################################
 
  */
-app.controller('mainMenuCtrl', function ($scope, $log, $rootScope, $http, MyHttpInterceptor) {
+app.controller('mainMenuCtrl', function ($scope, $log, $location, $rootScope, $http, MyHttpInterceptor) {
 
 
     $scope.menu = [
@@ -101,6 +101,13 @@ app.controller('mainMenuCtrl', function ($scope, $log, $rootScope, $http, MyHttp
         {name: "Tools", link: "#/tools"}
     ];
 
+    $scope.isPageSelected = function (path) {
+        var myPath = $location.path();
+        if(myPath =='/find-plugins'){
+            myPath = '/plugins';
+        }
+        return  '#' + myPath == path;
+    };
     $scope.onMenuClick = function (menuItem) {
         $log.info(menuItem);
     };

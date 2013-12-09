@@ -42,10 +42,9 @@
 
   </div>
   <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-
-    <ul class="nav nav-stacked" ng-hide="packsInstalled">
-      <li ng-repeat="item in menu">
-        <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
+    <ul class="nav nav-stacked nav-pills" ng-hide="packsInstalled">
+      <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
+        <a  href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
       </li>
     </ul>
 
