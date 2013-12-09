@@ -25,8 +25,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.component.HeadElement;
-import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.util.HeadElementUtils;
@@ -131,16 +129,15 @@ public class HeadContributionsTag extends TagSupport {
     }
 
     private void outputHeadElement(Element headElement) throws JspException {
-        HeadElement outHeadElement = new HeadElementImpl(headElement);
-        if (outHeadElement.hasAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE)) {
-            outHeadElement.removeAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
+        if (headElement.hasAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE)) {
+            headElement.removeAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
         }
 
         String elementOutput;
         if (xhtml) {
-            elementOutput = HeadElementUtils.toXhtmlString(outHeadElement, isResponseTextHtmlContent());
+            elementOutput = HeadElementUtils.toXhtmlString(headElement, isResponseTextHtmlContent());
         } else {
-            elementOutput = HeadElementUtils.toHtmlString(outHeadElement);
+            elementOutput = HeadElementUtils.toHtmlString(headElement);
         }
 
         try {
