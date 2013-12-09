@@ -52,7 +52,9 @@ public class BeanWriterResource extends BaseResource {
     public RestfulList<MessageRestful> runBeanWriter() {
         final String basePath = ProjectUtils.getBaseProjectDirectory();
         final RestfulList<MessageRestful> messages = new RestfulList<>();
-        final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
+        messages.add(new MessageRestful("Not implemented yet"));
+        messages.add(new MessageRestful("Not implemented yet"));
+      /*  final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
         final List<MemoryBean> memoryBeans = BeanWriterUtils.buildBeansGraph(namespacePath, context, EssentialConst.SOURCE_PATTERN_JAVA);
         BeanWriterUtils.addMissingMethods(context, memoryBeans, EssentialConst.FILE_EXTENSION_JAVA);
@@ -61,7 +63,7 @@ public class BeanWriterResource extends BaseResource {
         for (Object object : objects) {
             final BeanWriterLogEntry entry = (BeanWriterLogEntry) object;
             messages.add(new MessageRestful(entry.getMessage()));
-        }
+        }*/
         return messages;
     }
 }

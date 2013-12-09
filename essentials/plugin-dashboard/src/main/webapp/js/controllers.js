@@ -1,11 +1,15 @@
 app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-    $scope.resultMessages
+    $scope.resultMessages = {"@page": "1", "@totalSize": "0", "message": [
+        {"value": "Not implemented yet"},
+        {"value": "Not implemented yet"}
+    ]};
     $scope.runBeanWriter = function () {
         $http({
             method: 'GET',
             url: $rootScope.REST.beanwriter
         }).success(function (data) {
-                    $scope.plugins = data;
+                    $scope.resultMessages = data;
+                    $log.info($scope.resultMessages);
                 });
 
     };
