@@ -18,6 +18,8 @@
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
 <mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <test='http://www.hippoecm.org/editor/test/nt/0.1'>
 <test_0_0='http://www.hippoecm.org/editor/test/nt/0.0'>
 
@@ -71,6 +73,9 @@
 + * (test:validator)
 
 [test:edited]
+- test:title (string)
+
+[test:document] > hippo:document, hippostd:relaxed
 - test:title (string)
 
 [test:inheritingfromedited] > test:edited

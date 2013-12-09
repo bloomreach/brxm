@@ -41,7 +41,6 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
@@ -79,7 +78,8 @@ import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.util.JcrConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,7 +218,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 log.error("Failed to find prototype when updating the path", ex);
             }
 
-            Collection<String> fieldNames = new HashSet<String>();
+            Collection<String> fieldNames = new HashSet<>();
             for (ITypeDescriptor subType : typeDescriptor.getSubTypes()) {
                 fieldNames.addAll(subType.getFields().keySet());
             }
@@ -244,7 +244,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
             boolean containsNewName = false;
             int position = -1;
-            List<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>();
+            List<IPluginConfig> newPlugins = new LinkedList<>();
             List<IPluginConfig> plugins = clusterConfig.getPlugins();
             for (int i = 0; i < plugins.size(); i++) {
                 IPluginConfig plugin = plugins.get(i);
@@ -595,7 +595,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         @Override
         public void add(int index, IPluginConfig config) {
-            List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
+            List<IPluginConfig> plugins = new LinkedList<>(clusterConfig.getPlugins());
             plugins.add(index, config);
             clusterConfig.setPlugins(plugins);
         }
@@ -606,13 +606,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         void replaceAll(List<IPluginConfig> configs) {
-            Collection<String> names = new TreeSet<String>();
+            Collection<String> names = new TreeSet<>();
             for (IPluginConfig plugin : configs) {
                 names.add(plugin.getName());
             }
 
             boolean doUpdate = false;
-            Iterable<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
+            Iterable<IPluginConfig> plugins = new LinkedList<>(clusterConfig.getPlugins());
             for (IPluginConfig plugin : plugins) {
                 if (!names.contains(plugin.getName())) {
                     String field = plugin.getString("field");
@@ -725,7 +725,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
                 @Override
                 public void onEvent(Iterator<? extends IEvent<IClusterConfig>> events) {
-                    EventCollection<IEvent<IClusterConfig>> collection = new EventCollection<IEvent<IClusterConfig>>();
+                    EventCollection<IEvent<IClusterConfig>> collection = new EventCollection<>();
                     while (events.hasNext()) {
                         IEvent<IClusterConfig> event = events.next();
                         if (event instanceof ClusterConfigEvent) {
@@ -905,7 +905,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     }
                 }
             }
-            paths = new HashMap<String, String>();
+            paths = new HashMap<>();
             for (Map.Entry<String, IFieldDescriptor> entry : typeDescriptor.getFields().entrySet()) {
                 paths.put(entry.getKey(), entry.getValue().getPath());
             }
@@ -939,15 +939,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             Node prototype = (Node) prototypeModel.getObject();
             if (prototype != null && typeDescriptor != null) {
-                Collection<String> currentTypes = new HashSet<String>();
-                if (prototype.hasProperty(JcrConstants.JCR_MIXINTYPES)) {
-                    Value[] currentNodeTypes = prototype.getProperty(JcrConstants.JCR_MIXINTYPES).getValues();
+                Collection<String> currentTypes = new HashSet<>();
+                if (prototype.hasProperty(JcrConstants.JCR_MIXIN_TYPES)) {
+                    Value[] currentNodeTypes = prototype.getProperty(JcrConstants.JCR_MIXIN_TYPES).getValues();
                     for (Value nt : currentNodeTypes) {
                         currentTypes.add(nt.getString());
                     }
                 }
                 List<String> superTypes = typeDescriptor.getSuperTypes();
                 for (String currentType : currentTypes) {
+                    if (JcrConstants.MIX_REFERENCEABLE.equals(currentType)) {
+                        continue;
+                    }
                     if (!superTypes.contains(currentType)) {
                         prototype.removeMixin(currentType);
                     }
@@ -964,7 +967,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 }
 
                 Map<String, String> oldFields = paths;
-                paths = new HashMap<String, String>();
+                paths = new HashMap<>();
                 for (Map.Entry<String, IFieldDescriptor> entry : typeDescriptor.getFields().entrySet()) {
                     paths.put(entry.getKey(), entry.getValue().getPath());
                 }
@@ -1143,7 +1146,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     private void initPluginCache() {
-        pluginCache = new TreeMap<String, IPluginConfig>();
+        pluginCache = new TreeMap<>();
         List<IPluginConfig> plugins = clusterConfig.getPlugins();
         for (IPluginConfig plugin : plugins) {
             IPluginConfig cache = new JavaPluginConfig();
@@ -1210,7 +1213,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private void notifyObservers() {
         if (obContext != null) {
-            EventCollection<IEvent<IObservable>> collection = new EventCollection<IEvent<IObservable>>();
+            EventCollection<IEvent<IObservable>> collection = new EventCollection<>();
             collection.add(new IEvent() {
 
                 @Override

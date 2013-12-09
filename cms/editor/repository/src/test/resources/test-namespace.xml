@@ -874,6 +874,86 @@
     </sv:node>
   </sv:node>
   <!-- end "test:edited"-->
+
+  <!-- "test:document"-->
+  <sv:node sv:name="document">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposysedit:templatetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>mix:referenceable</sv:value>
+      <sv:value>editor:editable</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposysedit:nodetype">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:handle</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>mix:referenceable</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:nodetype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hipposysedit:nodetype</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hipposysedit:remodel</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:uri" sv:type="String">
+          <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
+        </sv:property>
+        <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
+          <sv:value>hippo:document</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="editor:templates">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>editor:templateset</sv:value>
+      </sv:property>
+      <sv:node sv:name="_default_">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:plugincluster</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:properties" sv:type="String">
+          <sv:value>mode</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:references" sv:type="String">
+          <sv:value>engine</sv:value>
+          <sv:value>wicket.model</sv:value>
+        </sv:property>
+        <sv:property sv:name="frontend:services" sv:type="String">
+          <sv:value>wicket.id</sv:value>
+        </sv:property>
+        <sv:node sv:name="root">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:plugin</sv:value>
+          </sv:property>
+          <sv:property sv:name="item" sv:type="String">
+            <sv:value>${cluster.id}.field</sv:value>
+          </sv:property>
+          <sv:property sv:name="plugin.class" sv:type="String">
+            <sv:value>org.hippoecm.frontend.service.render.ListViewPlugin</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="hipposysedit:prototypes">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposysedit:prototypeset</sv:value>
+      </sv:property>
+      <sv:node sv:name="hipposysedit:prototype">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>test:document</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+          <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+  <!-- end "test:document"-->
+
   <!-- "test:inheritingfromedited"-->
   <sv:node sv:name="inheritingfromedited">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

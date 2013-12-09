@@ -15,16 +15,21 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.Value;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.EditorTestCase;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -49,7 +54,10 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.JavaFieldDescriptor;
 import org.hippoecm.frontend.types.TypeDescriptorEvent;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.Test;
+import org.onehippo.repository.util.JcrConstants;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -83,9 +91,9 @@ public class TemplateBuilderTest extends EditorTestCase {
         IModel<String> pluginSelectModel = new PluginSelectModel();
         TemplateBuilder builder = new TemplateBuilder("test:edited", false, context, new ExtPtModel(), pluginSelectModel);
 
-        final List<IPluginConfig> added = new LinkedList<IPluginConfig>();
-        final List<IPluginConfig> removed = new LinkedList<IPluginConfig>();
-        final List<IPluginConfig> changed = new LinkedList<IPluginConfig>();
+        final List<IPluginConfig> added = new LinkedList<>();
+        final List<IPluginConfig> removed = new LinkedList<>();
+        final List<IPluginConfig> changed = new LinkedList<>();
         final IClusterConfig config = builder.getTemplate();
         context.registerService(new IObserver<IObservable>() {
             private static final long serialVersionUID = 1L;
@@ -132,6 +140,35 @@ public class TemplateBuilderTest extends EditorTestCase {
 
     @Test
     /**
+     * verify that a prototype is updated correctly when a mixin is added
+     */
+    public void testAddMixin() throws Exception {
+        final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        EditmodelWorkflow workflow = (EditmodelWorkflow) workflowManager.getWorkflow("default", session.getNode("/hippo:namespaces/test/document"));
+        workflow.edit();
+
+        IModel<String> pluginSelectModel = new PluginSelectModel();
+        TemplateBuilder builder = new TemplateBuilder("test:document", false, context, new ExtPtModel(), pluginSelectModel);
+
+        ITypeDescriptor type = builder.getTypeDescriptor();
+        List<String> superTypes = new ArrayList<>(type.getSuperTypes());
+        superTypes.add("test:mixin");
+        type.setSuperTypes(superTypes);
+
+        home.processEvents();
+
+        final Node prototype = builder.getPrototype().getNode();
+        Value[] mixinValues = prototype.getProperty(JcrConstants.JCR_MIXIN_TYPES).getValues();
+        Set<String> mixins = new HashSet<>();
+        for (Value value : mixinValues) {
+            mixins.add(value.getString());
+        }
+        assertTrue(mixins.contains(JcrConstants.MIX_REFERENCEABLE));
+        assertTrue(mixins.contains("test:mixin"));
+    }
+
+    @Test
+    /**
      * verify that a field is removed from the type when a plugin is removed from the cluster
      */
     public void testRemovePlugin() throws Exception {
@@ -145,8 +182,8 @@ public class TemplateBuilderTest extends EditorTestCase {
         home.processEvents();
 
         // setup field removal detection
-        final List<String> added = new LinkedList<String>();
-        final List<String> removed = new LinkedList<String>();
+        final List<String> added = new LinkedList<>();
+        final List<String> removed = new LinkedList<>();
         context.registerService(new IObserver<IObservable>() {
             private static final long serialVersionUID = 1L;
 
@@ -175,7 +212,7 @@ public class TemplateBuilderTest extends EditorTestCase {
         }, IObserver.class.getName());
 
         // remove a field plugin
-        List<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>(plugins);
+        List<IPluginConfig> newPlugins = new LinkedList<>(plugins);
         newPlugins.remove(1);
         config.setPlugins(newPlugins);
 
@@ -204,7 +241,7 @@ public class TemplateBuilderTest extends EditorTestCase {
         node.addNode("test:nt_unstructured", "nt:unstructured");
 
         // remove the field plugin
-        List<IPluginConfig> newPlugins = new LinkedList<IPluginConfig>(plugins);
+        List<IPluginConfig> newPlugins = new LinkedList<>(plugins);
         newPlugins.remove(3);
         config.setPlugins(newPlugins);
         home.processEvents();

@@ -266,6 +266,11 @@ public class EditmodelWorkflowTest extends RepositoryTestCase {
         assertEquals(1, nodes.getSize());
         Node ntNode = nodes.nextNode();
         assertFalse(ntNode.isNodeType(HippoNodeType.NT_REMODEL));
+
+        NodeIterator prototypes = typeNode.getNode("hipposysedit:prototypes").getNodes("hipposysedit:prototype");
+        assertEquals(1, prototypes.getSize());
+        Node prototypeNode = prototypes.nextNode();
+        assertEquals("nt:unstructured", prototypeNode.getPrimaryNodeType().getName());
     }
 
 }

@@ -37,7 +37,6 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.nodetype.PropertyDefinition;
 
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.editor.EditorUtils;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
@@ -47,7 +46,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,12 +179,15 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     }
 
     private class PrototypeState {
+        private final Node subject;
         Node draft = null;
         Node current = null;
 
-        PrototypeState() throws RepositoryException {
-            if (subject.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
-                NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
+        PrototypeState(final Node subject) throws RepositoryException {
+            this.subject = subject;
+
+            if (this.subject.hasNode(HippoNodeType.HIPPO_PROTOTYPES)) {
+                NodeIterator nodes = this.subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
                 while (nodes.hasNext()) {
                     Node child = nodes.nextNode();
                     if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
@@ -273,10 +275,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 Node clone = prototypes.addNode(HippoNodeType.HIPPO_PROTOTYPE, newTypeName);
 
                 if (newType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                    clone.addMixin("mix:versionable");
-                    clone.setProperty(HippoNodeType.HIPPO_PATHS, new Value[] {});
+                    clone.addMixin(JcrConstants.MIX_REFERENCEABLE);
+                    clone.setProperty(HippoNodeType.HIPPO_PATHS, new Value[]{});
                 } else if (newType.isNodeType(HippoNodeType.NT_REQUEST)) {
-                    clone.addMixin("mix:referenceable");
+                    clone.addMixin(JcrConstants.MIX_REFERENCEABLE);
                 }
                 for (String mixinName : nts.getSupertypes()) {
                     if (!newType.isNodeType(mixinName)) {
@@ -376,7 +378,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
 
         try {
             state.checkout();
-            PrototypeState prototypeState = new PrototypeState();
+            PrototypeState prototypeState = new PrototypeState(subject);
             prototypeState.checkout();
 
             subject.getSession().save();
@@ -448,8 +450,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     prototype = child;
                 }
             }
-            if (prototype != null) {
-                prototype.setPrimaryType(JcrConstants.NT_UNSTRUCTURED);
+            if (prototype != null && !prototype.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
+                PrototypeState targetPrototypeState = new PrototypeState(target);
+                targetPrototypeState.checkout();
+                prototype.remove();
             }
         }
         if (target.isNodeType(HippoNodeType.NT_TRANSLATED)) {
@@ -467,7 +471,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             throw new WorkflowException("No draft available to publish");
         }
         state.commit();
-        PrototypeState prototypeState = new PrototypeState();
+        PrototypeState prototypeState = new PrototypeState(subject);
         prototypeState.commit(state);
 
         subject.getSession().save();
@@ -479,7 +483,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             throw new WorkflowException("No draft available to publish");
         }
         state.revert();
-        PrototypeState prototypeState = new PrototypeState();
+        PrototypeState prototypeState = new PrototypeState(subject);
         prototypeState.revert();
 
         subject.getSession().save();
