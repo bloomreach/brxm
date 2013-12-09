@@ -15,6 +15,8 @@
   <script src="${pageContext.request.contextPath}/js/app.js"></script>
   <script src="${pageContext.request.contextPath}/js/routes.js"></script>
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
+  <%--  TODO make dynamic--%>
+  <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
 
 </head>
 <body>

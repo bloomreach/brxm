@@ -23,9 +23,24 @@ app.config(function ($routeProvider) {
             }).when('/tools', {
                 templateUrl: 'pages/tools.html',
                 controller: 'toolCtrl'
-            }).when('/plugin/:id', {
-                templateUrl: 'pages/powerpacks.html',
-                controller: 'mainCtrl'
+            })
+        //############################################
+        // PLUGINS: TODO make dynamic
+        //############################################
+            .when('/plugins/:pluginId', {
+                templateUrl: function (params) {
+                    console.log('plugins/' + params.pluginId + '/index.html');
+                    return 'plugins/' + params.pluginId + '/index.html';
+                },
+                controller: 'contentBlocksCtrl'
+
+
+                /*templateUrl: function (params) {
+                 return       'plugins/' + params.pluginId +'/index.html';
+                 },
+                 controller: function (params) {
+                 return       params.pluginId + 'Ctrl';
+                 }*/
             })
             .otherwise({redirectTo: '/'})
 

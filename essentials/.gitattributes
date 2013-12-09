@@ -1019,6 +1019,8 @@ plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/powerpacks.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
+plugin-dashboard/src/main/webapp/plugins/contentBlocks/controller.js -text
+plugin-dashboard/src/main/webapp/plugins/contentBlocks/index.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text

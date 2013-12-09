@@ -1,3 +1,52 @@
+//############################################
+// PLUGINS CONTROLLER LOADER
+//############################################
+var _PROVIDER_QUEUE = 0;
+app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+
+    $scope.render = function ($scope, $route, $routeParams) {
+
+        // Update the rendering of the page.
+        $scope.render = function () {
+            var renderAction = $route.current.action;
+            $log.info(renderAction);
+/*
+            var renderPath = renderAction.split(".");
+            var username = ($routeParams.username || "");
+
+            // Reset the booleans used to set the class
+            // for the navigation.
+            var isHome = (renderPath[ 0 ] == "home");
+            var isFriends = (renderPath[ 0 ] == "friends");
+            var isContact = (renderPath[ 0 ] == "contact");
+
+            // Store the values in the model.
+            $scope.renderAction = renderAction;
+            $scope.renderPath = renderPath;
+            $scope.username = username;
+            $scope.isHome = isHome;
+            $scope.isFriends = isFriends;
+            $scope.isContact = isContact;*/
+
+        };
+
+        $rootScope.$on("$routeChangeSuccess", function ($currentRoute, $previousRoute) {
+                    $scope.render();
+                }
+        );
+    };
+
+   /* var queue = angular.module('Essentials')._invokeQueue;
+    for (var i = _PROVIDER_QUEUE; i < queue.length; i++) {
+        var call = queue[i];
+        var provider = _PROVIDERS[call[0]];
+        if (provider) {
+            provider[call[1]].apply(provider, call[2]);
+        }
+    }*/
+});
+
+
 app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
     $scope.resultMessages = {"@page": "1", "@totalSize": "0", "message": [
         {"value": "Not implemented yet"},
@@ -9,7 +58,6 @@ app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
             url: $rootScope.REST.beanwriter
         }).success(function (data) {
                     $scope.resultMessages = data;
-                    $log.info($scope.resultMessages);
                 });
 
     };
