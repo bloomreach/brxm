@@ -22,9 +22,10 @@
   <img src="${pageContext.request.contextPath}/images/loader.gif"/>
 </div>
 <!-- ERROR MESSAGES -->
-<div class="alert-danger" ng-show="globalError">
-  <div ng-repeat="message in errorMessage">
-    {{ message.message }}
+<div class="alert-danger" ng-show="globalError.length > 0">
+  <strong>An error occurred:</strong>
+  <div ng-repeat="message in globalError">
+    {{message}}
   </div>
 </div>
 <%--

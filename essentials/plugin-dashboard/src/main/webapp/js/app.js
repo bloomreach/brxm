@@ -28,6 +28,7 @@ app.run(function ($rootScope) {
         plugins: root + '/plugins/',
         status: root + '/status/',
         powerpacks: root + '/powerpacks/',
+        beanwriter: root + '/beanwriter/',
         powerpacks_install: root + '/powerpacks/install/'
 
     }
@@ -50,7 +51,13 @@ app.config(function ($provide, $httpProvider) {
             },
             requestError: function (error) {
                 $rootScope.busyLoading = true;
-                $rootScope.globalError.push(error.data);
+                $rootScope.globalError = [];
+                if (error.data) {
+                    $rootScope.globalError.push(error.data);
+                }
+                else {
+                    $rootScope.globalError.push(error.status);
+                }
                 return $q.reject(error);
             },
 
@@ -66,7 +73,12 @@ app.config(function ($provide, $httpProvider) {
             responseError: function (error) {
                 $rootScope.busyLoading = false;
                 $rootScope.globalError = [];
-                $rootScope.globalError.push(error.data);
+                if (error.data) {
+                    $rootScope.globalError.push(error.data);
+                }
+                else {
+                    $rootScope.globalError.push(error.status);
+                }
                 $log.error(error);
                 return $q.reject(error);
             }

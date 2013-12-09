@@ -1,5 +1,14 @@
 app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+    $scope.resultMessages
+    $scope.runBeanWriter = function () {
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.beanwriter
+        }).success(function (data) {
+                    $scope.plugins = data;
+                });
 
+    };
 });
 app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
     $scope.tabs = [
@@ -102,7 +111,7 @@ app.controller('mainMenuCtrl', function ($scope, $log, $location, $rootScope, $h
 
     $scope.isPageSelected = function (path) {
         var myPath = $location.path();
-        if(myPath =='/find-plugins'){
+        if (myPath == '/find-plugins') {
             myPath = '/plugins';
         }
         return  '#' + myPath == path;
