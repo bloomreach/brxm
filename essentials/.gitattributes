@@ -1008,6 +1008,8 @@ plugin-dashboard/src/main/webapp/images/sort_desc_disabled.png -text
 plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
 plugin-dashboard/src/main/webapp/images/top-back.png -text
+plugin-dashboard/src/main/webapp/js/Essentials.js -text
+plugin-dashboard/src/main/webapp/js/WizardModel.js -text
 plugin-dashboard/src/main/webapp/js/angular-route.min.js -text
 plugin-dashboard/src/main/webapp/js/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/angular.js -text
