@@ -18,7 +18,6 @@ package org.onehippo.repository.documentworkflow.task;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import org.easymock.EasyMock;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
@@ -27,7 +26,7 @@ import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.MockWorkflowContext;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.scxml.AbstractAction;
+import org.onehippo.repository.test.scxml.MockAbstractWorkflowTaskDelegatingAction;
 
 /**
  * HintWorkflowTaskTest
@@ -44,10 +43,9 @@ public class HintWorkflowTaskTest {
         liveVariant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "published");
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), liveVariant);
 
-        AbstractAction action = EasyMock.createNiceMock(AbstractAction.class);
-        EasyMock.expect(action.getContextAttribute("dm")).andReturn(dm).anyTimes();
-        EasyMock.expect(action.eval("value1")).andReturn("value1").anyTimes();
-        EasyMock.replay(action);
+        MockAbstractWorkflowTaskDelegatingAction<HintWorkflowTask> action = new MockAbstractWorkflowTaskDelegatingAction<HintWorkflowTask>();
+        action.setContextAttribute("dm", dm);
+        action.setContextAttribute("value1", "value1");
 
         task = new HintWorkflowTask();
         task.setAbstractAction(action);

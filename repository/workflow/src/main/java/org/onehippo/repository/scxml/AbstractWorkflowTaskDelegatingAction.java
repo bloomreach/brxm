@@ -76,6 +76,14 @@ public abstract class AbstractWorkflowTaskDelegatingAction<T extends WorkflowTas
     }
 
     /**
+     * Sets the current associated workflow task.
+     * @param workflowTask
+     */
+    protected void setWorkflowTask(T workflowTask) {
+        this.workflowTask = workflowTask;
+    }
+
+    /**
      * Creates a workflow task.
      * This method is invoked to create a new workflow task.
      * @return

@@ -18,10 +18,12 @@ package org.onehippo.repository.documentworkflow.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import org.apache.commons.scxml2.SCInstance;
+import org.apache.commons.scxml2.Context;
+import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.env.jexl.JexlContext;
+import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
 import org.apache.commons.scxml2.model.ModelException;
-import org.easymock.EasyMock;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
@@ -40,7 +42,9 @@ public class HintDelegatingActionTest {
     private HintWorkflowTask task;
     private DocumentHandle dm;
     private HintDelegatingAction delegatingAction;
-    private SCInstance scInstance;
+
+    private Context context = new JexlContext();
+    private Evaluator evaluator = new JexlEvaluator();
 
     @Before
     public void before() throws Exception {
@@ -48,6 +52,9 @@ public class HintDelegatingActionTest {
         MockNode liveVariant = handle.addMockNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
         liveVariant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "published");
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), liveVariant);
+
+        context.set("dm", dm);
+        context.set("value1", "value1");
 
         delegatingAction = new HintDelegatingAction() {
             private static final long serialVersionUID = 1L;
@@ -57,34 +64,29 @@ public class HintDelegatingActionTest {
             }
             @Override
             public <T> T getContextAttribute(String name) throws ModelException {
-                if ("dm".equals(name)) {
-                    return (T) dm;
-                }
-                return super.getContextAttribute(name);
+                return (T) context.get(name);
             }
             @Override
             public <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
-                return (T) expr;
+                return (T) evaluator.eval(context, expr);
             }
         };
 
         task = new HintWorkflowTask();
         task.setAbstractAction(delegatingAction);
-
-        scInstance = EasyMock.createNiceMock(SCInstance.class);
     }
 
     @Test
     public void testBasic() throws Exception {
         delegatingAction.setHint("hint1");
         delegatingAction.setValue("value1");
-        delegatingAction.execute(null, null, scInstance, null, null);
+        delegatingAction.execute(null, null, null, null, null);
 
         assertEquals("value1", dm.getHints().get("hint1"));
 
         delegatingAction.setHint("hint1");
         delegatingAction.setValue(null);
-        delegatingAction.execute(null, null, scInstance, null, null);
+        delegatingAction.execute(null, null, null, null, null);
 
         assertFalse(dm.getHints().containsKey("hint1"));
     }

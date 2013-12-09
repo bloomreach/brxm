@@ -506,6 +506,7 @@ workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecord.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordTestUtils.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordingErrorReporterWrapper.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/LogRecordTestUtils.java -text
+workflow/src/test/java/org/onehippo/repository/test/scxml/MockAbstractWorkflowTaskDelegatingAction.java -text
 workflow/src/test/resources/log4j-filters.txt -text
 workflow/src/test/resources/org/onehippo/repository/documentworkflow/model/example/example-workflow-parallel-model.scxml.xml svneol=native#text/plain
 workflow/src/test/resources/org/onehippo/repository/documentworkflow/test-document-workflow.scxml -text
