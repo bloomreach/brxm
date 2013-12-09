@@ -1011,7 +1011,9 @@ plugin-dashboard/src/main/webapp/js/angular.min.js.map -text
 plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
+plugin-dashboard/src/main/webapp/js/require.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
+plugin-dashboard/src/main/webapp/js/services/dependencyService.js -text
 plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
