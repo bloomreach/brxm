@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-iteration-6</version>
+    <version>24.1-iteration-7</version>
   </parent>
 
   <name>Hippo CMS7 Utilities</name>
@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-utilities</artifactId>
-  <version>1.02.01-SNAPSHOT</version>
+  <version>1.02.01-iteration-7</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -65,9 +65,9 @@
   </dependencies>
 
  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/tags/hippo-cms7-utilities-1.02.01-iteration-7</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/tags/hippo-cms7-utilities-1.02.01-iteration-7</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/tags/hippo-cms7-utilities-1.02.01-iteration-7</url>
   </scm>
 
   <repositories>
