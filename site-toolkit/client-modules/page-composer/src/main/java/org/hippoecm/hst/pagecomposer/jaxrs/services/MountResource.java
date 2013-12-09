@@ -360,7 +360,11 @@ public class MountResource extends AbstractConfigResource {
 
             String statement = "//element(*," + docType + ")[@hippo:paths = '" + contentRoot.getIdentifier() + "' and @hippo:availability = 'preview' and not(@jcr:primaryType='nt:frozenNode')]";
             QueryManager queryMngr = session.getWorkspace().getQueryManager();
-            QueryResult result = queryMngr.createQuery(statement, "xpath").execute();
+            final Query query = queryMngr.createQuery(statement, "xpath");
+            // currently kind of ballpark figure limit as it does not make sense to show hundreds of documents
+            // as a result. Nicer would be to include a pathParam for pageSize and page number to support paging.
+            query.setLimit(100);
+            QueryResult result = query.execute();
             NodeIterator documents = result.getNodes();
             while (documents.hasNext()) {
                 Node doc = documents.nextNode();
