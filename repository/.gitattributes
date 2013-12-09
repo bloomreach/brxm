@@ -319,6 +319,7 @@ resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_confi
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 scripts/pom.xml -text
 scripts/src/main/resources/hippoecm-extension.xml -text
+scripts/src/main/resources/remove-translations-nodes.xml -text
 scripts/src/main/resources/versions-cleaner.xml -text
 servlets/pom.xml svneol=native#text/plain
 test/README -text
