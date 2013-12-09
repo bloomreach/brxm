@@ -51,7 +51,6 @@ public class ControllersResource extends BaseResource {
         final RestfulList<ControllerRestful> controllers = new RestfulList<>();
         // TODO implement
         controllers.add(new ControllerRestful("contentBlocks", "contentBlocksCtrl", "plugins/contentBlocks/index.html"));
-        controllers.add(new ControllerRestful("contentBlocks", "contentBlocksCtrl", "plugins/contentBlocks/index.html"));
         return controllers;
 
     }

@@ -19,12 +19,13 @@ package org.onehippo.cms7.essentials.rest.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "powerpack")
+@XmlRootElement(name = "item")
 public class PowerpackListRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
@@ -58,6 +59,7 @@ public class PowerpackListRestful implements Restful {
         return steps;
     }
 
+    @XmlElement(name = "items")
     public List<PowerpackRestful> getPowerpacks() {
         return powerpacks;
     }

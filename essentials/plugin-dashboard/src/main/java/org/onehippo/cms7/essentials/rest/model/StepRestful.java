@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "step")
+@XmlRootElement(name = "item")
 public class StepRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

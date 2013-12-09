@@ -26,7 +26,7 @@
     </div>
     <form>
         <!--select as label for value in array-->
-        <select ng-change="selectChange()" ng-options="option.value as option.name for option in packs.powerpacks" ng-model="selectedItem">
+        <select ng-change="selectChange()" ng-options="option.value as option.name for option in packs.items" ng-model="selectedItem">
 
         </select>
         <div id="pack.description">{{selectedDescription}}</div>

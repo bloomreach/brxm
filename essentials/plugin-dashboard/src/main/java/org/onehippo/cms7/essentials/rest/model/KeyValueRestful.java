@@ -16,44 +16,32 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version "$Id$"
  */
 @XmlRootElement(name = "item")
-public class StatusRestful implements Restful {
+public class KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private String key;
+    private String value;
 
-    private String name;
-    private String message;
-    private boolean status;
-
-    public String getMessage() {
-        return message;
+    public String getKey() {
+        return key;
     }
 
-    public void setMessage(final String message) {
-        this.message = message;
+    public void setKey(final String key) {
+        this.key = key;
     }
 
-    public boolean isStatus() {
-        return status;
+    public String getValue() {
+        return value;
     }
 
-    public void setStatus(final boolean status) {
-        this.status = status;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
+    public void setValue(final String value) {
+        this.value = value;
     }
 }

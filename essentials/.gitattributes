@@ -685,6 +685,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BaseResource.ja
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BeanWriterResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ControllersResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentTypeResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/KeyValueResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PowerpackResource.java -text
@@ -699,6 +700,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServ
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DependencyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DocumentTypeRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/KeyValueRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/MessageRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PluginRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PowerpackListRestful.java -text
@@ -1018,6 +1020,7 @@ plugin-dashboard/src/main/webapp/js/app.js -text
 plugin-dashboard/src/main/webapp/js/bootstrap.js -text
 plugin-dashboard/src/main/webapp/js/controllers.js -text
 plugin-dashboard/src/main/webapp/js/domReady.js -text
+plugin-dashboard/src/main/webapp/js/jquery.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
 plugin-dashboard/src/main/webapp/js/main.js -text
 plugin-dashboard/src/main/webapp/js/require.js -text

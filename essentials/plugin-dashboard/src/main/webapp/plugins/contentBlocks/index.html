@@ -1,2 +1,23 @@
-<div ng-controller="contentBlocksCtrl"><h1>Content Blocks Plugin</h1>
-    <h1>{{welcomeMessage}}</h1></div>
+<div ng-controller="contentBlocksCtrl">
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th class="col-sm-1"></th>
+            <th class="col-sm-7">Select document types:</th>
+            <th class="col-sm-4">Select column:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="docType in documentTypes">
+            <td><input type="checkbox" name="docTypeGroup" value="{{docType.key}}"></td>
+            <td>{{docType.key}}</td>
+            <td>
+                <select ng-change="selectChange()"
+                        ng-options="option.value as option.key for option in column.items"
+                        ng-model="selectedItem">
+                </select>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

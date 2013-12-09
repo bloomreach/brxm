@@ -72,8 +72,8 @@ app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
     //$scope.trustedContent = $sce.trustAsHtml($scope.resultMessages.message.value);
     $scope.selectChange = function () {
 
-        for (var i = 0; i < $scope.packs.powerpacks.length; i++) {
-            var powerpack = $scope.packs.powerpacks[i];
+        for (var i = 0; i < $scope.packs.items.length; i++) {
+            var powerpack = $scope.packs.items[i];
             if (powerpack.value === $scope.selectedItem) {
                 $scope.selectedDescription = powerpack.name;
             }

@@ -14,36 +14,40 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms7.essentials.rest.config;
+package org.onehippo.cms7.essentials.rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.ext.Provider;
 
-import org.apache.cxf.jaxrs.provider.json.JSONProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableList;
+import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
+import org.onehippo.cms7.essentials.rest.model.MessageRestful;
+import org.onehippo.cms7.essentials.rest.model.RestfulList;
 
 /**
  * @version "$Id$"
  */
-@Provider
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-public class JsonProvider extends JSONProvider {
+@Path("/keyvalue/")
+public class KeyValueResource extends BaseResource {
 
-    private static Logger log = LoggerFactory.getLogger(JsonProvider.class);
-    private static final ImmutableList<String> items = new ImmutableList.Builder<String>()
-            .add("items")
-            .add("item")
-            .build();
-    public JsonProvider() {
-        setIgnoreNamespaces(true);
-        setDropRootElement(true);
-        setArrayKeys(items);
-        setSerializeAsArray(true);
+
+    @GET
+    @Path("/")
+    public RestfulList<KeyValueRestful> getKeyValue() {
+        return new RestfulList<>();
+
     }
+
+    @GET
+    @Path("/{serviceId}")
+    public RestfulList<KeyValueRestful> getKeyValueForService(@PathParam("serviceId") String serviceId) {
+        return new RestfulList<>();
+
+    }
+
 }

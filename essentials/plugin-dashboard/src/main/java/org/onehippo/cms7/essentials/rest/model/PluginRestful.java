@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "plugin")
+@XmlRootElement(name = "item")
 public class PluginRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

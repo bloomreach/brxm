@@ -1,8 +1,22 @@
 app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
     $scope.welcomeMessage = "Content blocks plugin";
-    $scope.init = function(){
-        $log.warn("contentBlocksCtrl is invoked");
+
+    $scope.documentTypes = [
+        {"value": "namespace:news", "key":"News document"},
+        {"value": "namespace:events", "key": "Events document"}
+    ];
+
+    $scope.documentTypesSelected = [];
+
+
+
+    $scope.init = function () {
+
     };
     $scope.init();
+
+
+
+
 });
