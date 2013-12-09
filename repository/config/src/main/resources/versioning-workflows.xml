@@ -35,25 +35,6 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>mix:versionable</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-      <sv:node sv:name="org.hippoecm.repository.api.Document">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposys:type</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:classname" sv:type="String">
-          <sv:value>org.hippoecm.repository.api.Document</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:display" sv:type="String">
-          <sv:value>Document</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="restore">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -71,25 +52,6 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>nt:frozenNode</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-      <sv:node sv:name="org.hippoecm.repository.api.Document">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hipposys:type</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:classname" sv:type="String">
-          <sv:value>org.hippoecm.repository.api.Document</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:display" sv:type="String">
-          <sv:value>Document</sv:value>
-        </sv:property>
-        <sv:property sv:name="hipposys:nodetype" sv:type="String">
-          <sv:value>hippo:document</sv:value>
-        </sv:property>
-      </sv:node>
-    </sv:node>
   </sv:node>
 </sv:node>
 

@@ -36,11 +36,6 @@
     <sv:property sv:name="hipposys:privileges" sv:type="String">
       <sv:value>hippo:author</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
@@ -66,11 +61,6 @@
     <sv:property sv:name="hipposys:privileges" sv:type="String">
       <sv:value>hippo:author</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>

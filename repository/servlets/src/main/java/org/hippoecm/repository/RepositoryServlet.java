@@ -636,7 +636,7 @@ public class RepositoryServlet extends HttpServlet {
                     Node n = session.getNodeByIdentifier(queryString);
                     writer.println("Found node: " + n.getPath());
                 } catch (ItemNotFoundException e) {
-                    writer.println("No node found for uuid " + queryString);
+                    writer.println("No node found for uuid " + StringEscapeUtils.escapeHtml(queryString));
                 } catch (RepositoryException e) {
                     writer.println(e.getMessage());
                 }

@@ -34,10 +34,5 @@
     <sv:property sv:name="hipposys:privileges" sv:type="String">
       <sv:value>hippo:admin</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>

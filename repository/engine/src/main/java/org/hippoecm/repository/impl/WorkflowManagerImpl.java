@@ -350,7 +350,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public Workflow getWorkflow(String category, Node item) throws RepositoryException {
         Node workflowNode = getWorkflowNode(category, item);
         if (workflowNode != null) {
-            Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
             String workflowName = workflowNode.getName();
             final Workflow workflow = getRealWorkflow(item, workflowNode);
             if (workflow != null) {
@@ -358,7 +357,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 String path = item.getPath();
                 String uuid = item.getIdentifier();
                 Class[] interfaces = getRemoteInterfaces(workflow.getClass());
-                InvocationHandler handler = new WorkflowInvocationHandler(category, workflowName, workflow, uuid, path, types, objectPersist);
+                InvocationHandler handler = new WorkflowInvocationHandler(category, workflowName, workflow, uuid, path, objectPersist);
                 return createWorkflow(workflow.getClass(), interfaces, handler);
             }
         }
@@ -403,7 +402,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
             log.error("Workflow specified at " + workflowNode.getPath() + " not present");
             throw new RepositoryException("workflow not present", e);
         }
-        Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
         String uuid = item.getIdentifier();
         String path = item.getPath();
@@ -433,7 +431,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 ((WorkflowImpl)workflow).setNode(rootSessionNode);
             }
             Class[] interfaces = getRemoteInterfaces(workflow.getClass());
-            InvocationHandler handler = new WorkflowInvocationHandler(category, workflowName, workflow, uuid, path, types, true);
+            InvocationHandler handler = new WorkflowInvocationHandler(category, workflowName, workflow, uuid, path, true);
             return createWorkflow(workflow.getClass(), interfaces, handler);
         }
     }
@@ -478,17 +476,15 @@ public class WorkflowManagerImpl implements WorkflowManager {
         String workflowName;
         Workflow upstream;
         String uuid;
-        Node types;
         String path;
         boolean objectPersist;
 
-        WorkflowInvocationHandler(String category, String workflowName, Workflow upstream, String uuid, String path, Node types, boolean objectPersist) {
+        WorkflowInvocationHandler(String category, String workflowName, Workflow upstream, String uuid, String path, boolean objectPersist) {
             this.category = category;
             this.workflowName = workflowName;
             this.upstream = upstream;
             this.uuid = uuid;
             this.path = path;
-            this.types = types;
             this.objectPersist = objectPersist;
         }
 

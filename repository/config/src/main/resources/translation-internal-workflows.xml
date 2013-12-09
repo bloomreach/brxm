@@ -33,11 +33,6 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippostd:folder</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
@@ -66,11 +61,6 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippostd:directory</sv:value>
     </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="hipposys:config">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>nt:unstructured</sv:value>
