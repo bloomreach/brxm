@@ -564,7 +564,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
             }
         } catch (ModelLoadingException e) {
-            log.warn("Configured Mount '{}' is incorrect. Possible child mounts will still be loaded.", jcrLocation, e);
+            log.warn("Configured Mount '{}' is incorrect. Available child mounts will still be loaded.", jcrLocation, e);
         }
 
         for (HstNode childMount : mount.getNodes()) {
@@ -590,7 +590,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         if (StringUtils.isEmpty(contentPath)) {
             throw new ModelLoadingException("Mount '"+mount.getValueProvider().getPath()+"' does have an empty or null contentPath, " +
                     "hence has broken configuration. Fix the hst:content property when the mountpoint points to a hst:site node, or make sure" +
-                    " hst:ismapped = false if this mount does not need a mountpoint to a hst:site node. Possible child mounts will still be loaded");
+                    " hst:ismapped = false if this mount does not need a mountpoint to a hst:site node. Available child mounts will still be loaded");
         }
     }
 
