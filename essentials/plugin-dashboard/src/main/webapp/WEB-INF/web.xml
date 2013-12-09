@@ -33,7 +33,8 @@
     // PLUGIN RESOURCES LOADER
     //############################################
   -->
-  <servlet>
+<!--
+<servlet>
     <servlet-name>PLUGINS</servlet-name>
     <servlet-class>org.onehippo.cms7.essentials.servlet.JarResourceServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
@@ -42,6 +43,7 @@
     <servlet-name>PLUGINS</servlet-name>
     <url-pattern>/plugins/*</url-pattern>
   </servlet-mapping>
+  -->
 
 
   <welcome-file-list>

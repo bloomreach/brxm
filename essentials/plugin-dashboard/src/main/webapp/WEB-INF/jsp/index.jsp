@@ -45,7 +45,7 @@
 
     <ul class="nav nav-stacked" ng-hide="packsInstalled">
       <li ng-repeat="item in menu">
-        <a href="" ng-click="onMenuClick(item)">{{item.item}}</a>
+        <a href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
       </li>
     </ul>
 

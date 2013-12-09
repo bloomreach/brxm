@@ -56,7 +56,7 @@ import com.google.inject.Inject;
  */
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON})
-@Path("/powerpack/")
+@Path("/powerpacks/")
 public class PowerpackResource extends BaseResource {
 
     public static final String POWERPACK_NEWS_AND_EVENT_LABEL ="news and events";

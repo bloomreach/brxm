@@ -1,3 +1,28 @@
+app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+
+});
+app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+    $scope.tabs = [
+        {name: "Installed Plugins", link: "/plugins"},
+        {name: "Find additional", link: "/find-plugins"}
+    ];
+    $scope.isPageSelected = function (path) {
+        return $location.path() == path;// ? 'active':'';
+    };
+    //plugin list
+    $scope.init = function () {
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.plugins
+        }).success(function (data) {
+                    $scope.plugins = data;
+                });
+
+    };
+    $scope.init();
+
+});
+
 /*
  //############################################
  // MAIN CONTROLLER
@@ -11,9 +36,9 @@ app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
     $scope.resultMessages = null;
     $scope.selectedDescription = "Please make a selection";
     $scope.message = "Welcome";
-    $scope.packs=null;
+    $scope.packs = null;
 
-    $scope.init = function(){
+    $scope.init = function () {
         $http({
             method: 'GET',
             url: $rootScope.REST.powerpacks
@@ -70,9 +95,10 @@ app.controller('mainCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
  */
 app.controller('mainMenuCtrl', function ($scope, $log, $rootScope, $http, MyHttpInterceptor) {
 
+
     $scope.menu = [
-        {item: "Plugins"},
-        {item: "Tools"}
+        {name: "Plugins", link: "#/plugins"},
+        {name: "Tools", link: "#/tools"}
     ];
 
     $scope.onMenuClick = function (menuItem) {

@@ -26,8 +26,8 @@ app.run(function ($rootScope) {
         menus: root + '/menus/',
         plugins: root + '/plugins/',
         status: root + '/status/',
-        powerpacks: root + '/powerpack/',
-        powerpacks_install: root + '/powerpack/install/'
+        powerpacks: root + '/powerpacks/',
+        powerpacks_install: root + '/powerpacks/install/'
 
     }
 

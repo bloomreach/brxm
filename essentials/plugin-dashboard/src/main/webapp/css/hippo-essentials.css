@@ -71,8 +71,6 @@
   display: block;
   text-align: center;
   float: left;
-  min-width: 250px;
-
 }
 .wizard-steps li .step {
   text-align: center;
@@ -202,11 +200,6 @@ form {
   font-size: 16px;
   font-weight: bold;
 }
-.relativeRow {
-  position: relative;
-  border: 1px red solid;
-  width: 100%;
-}
 .plugin-introduction {
   padding: 20px;
 }
@@ -215,4 +208,13 @@ form {
   z-index: 100;
   margin: 0 0 0 -12px;
   left: 50%;
+}
+
+.tabs li {
+  min-width: 120px;
+  width: 160px;
+}
+
+.tabs {
+  max-width: 360px;
 }

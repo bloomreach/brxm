@@ -14,6 +14,15 @@ app.config(function ($routeProvider) {
             .when('/powerpacks', {
                 templateUrl: 'pages/powerpacks.html',
                 controller: 'mainCtrl'
+            }).when('/plugins', {
+                templateUrl: 'pages/plugins.html',
+                controller: 'pluginCtrl'
+            }).when('/find-plugins', {
+                templateUrl: 'pages/find-plugins.html',
+                controller: 'pluginCtrl'
+            }).when('/tools', {
+                templateUrl: 'pages/tools.html',
+                controller: 'toolCtrl'
             }).when('/plugin/:id', {
                 templateUrl: 'pages/powerpacks.html',
                 controller: 'mainCtrl'
@@ -22,7 +31,7 @@ app.config(function ($routeProvider) {
 
 });
 var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
-    if(true){
+    if (true) {
         // TODO mm: enable
         return true;
     }
@@ -32,7 +41,7 @@ var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
         return true;
     } else {
         var deferred = $q.defer();
-        $http.get($rootScope.REST.status +'/powerpack')
+        $http.get($rootScope.REST.status + '/powerpack')
                 .success(function (response) {
                     $rootScope.packsInstalled = response.packsInstalled;
                     deferred.resolve(true);
