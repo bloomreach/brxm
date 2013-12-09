@@ -29,6 +29,8 @@ app.run(function ($rootScope) {
         status: root + '/status/',
         powerpacks: root + '/powerpacks/',
         beanwriter: root + '/beanwriter/',
+        documentTypes: root + '/documenttypes/',
+        controllers: root + '/controllers/',
         powerpacks_install: root + '/powerpacks/install/'
 
     }
