@@ -122,7 +122,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             final String userIdentity = super.getWorkflowContext().getUserIdentity();
             final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
 
-            boolean draftInUse = draftDocument != null && draftDocument.getOwner() != null && !draftDocument.getOwner().equals(userIdentity);
+            boolean editing = draftDocument != null && draftDocument.getOwner() != null;
+            boolean draftInUse = editing && !draftDocument.getOwner().equals(userIdentity);
             boolean unpublishedDirty = unpublishedDocument != null &&
                     (publishedDocument == null
                             || publishedDocument.getLastModificationDate().getTime() == 0
@@ -132,8 +133,8 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
             boolean status = !draftInUse;
             boolean editable = !draftInUse && !pendingRequest;
-            boolean publishable = unpublishedDirty && !pendingRequest;
-            boolean depublishable = publishedLive && !pendingRequest;
+            boolean publishable = unpublishedDirty && !editing && !pendingRequest;
+            boolean depublishable = publishedLive && !editing && !pendingRequest;
             Boolean deleteable = !publishedLive;
 
             // put everything on the unpublished; unless it doesn't exist
@@ -142,7 +143,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 deleteable = null;
             } else if (unpublishedDocument == null) {
                 // unpublished is null
-                // put edit, publish actions on draft, depublish, delete on published.
+                // put edit action on draft, depublish, delete on published.
                 if (PublishableDocument.DRAFT.equals(state)) {
                     if (publishedDocument != null) {
                         depublishable = status = false;
@@ -150,7 +151,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                     }
                 } else if (PublishableDocument.PUBLISHED.equals(state)) {
                     if (draftDocument != null) {
-                        editable = publishable = false;
+                        editable = false;
                     }
                 }
             }
@@ -161,7 +162,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
                 info.put("modified", !equals(draftNode, unpublishedNode));
             }
 
-            if (!editable && PublishableDocument.DRAFT.equals(state) && draftInUse) {
+            if (PublishableDocument.DRAFT.equals(state) && draftInUse) {
                 info.put("inUseBy", draftDocument.getOwner());
             }
             info.put("obtainEditableInstance", editable);

@@ -202,6 +202,25 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void cannotPublishOrDepublishWhenInUse() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        assertNotNull("No applicable workflow where there should be one", reviewedWorkflow);
+        Document document = reviewedWorkflow.obtainEditableInstance();
+        assertNotNull(document);
+        for (Node docNode : new NodeIterable(getNode("test/myarticle").getNodes("myarticle"))) {
+            FullReviewedActionsWorkflow frw = (FullReviewedActionsWorkflow) getWorkflow(docNode, "default");
+            Map<String,Serializable> hints = frw.hints();
+            Serializable publishable = hints.get("publish");
+            assertEquals(false, publishable);
+            Serializable depublishable = hints.get("depublish");
+            assertEquals(false, depublishable);
+        }
+    }
+
+    @Test
     public void acceptedPublicationRequestPublishesDocument() throws RepositoryException, RemoteException, WorkflowException {
         Node node;
 
