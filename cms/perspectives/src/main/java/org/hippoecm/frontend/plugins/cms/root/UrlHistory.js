@@ -31,15 +31,17 @@
                     return;
                 }
 
+                this.callback = callback;
+
                 if (window.addEventListener) {
                     window.addEventListener('popstate', jQuery.proxy(function () {
                         this.onUrlChange();
                     }, this));
                 }
 
-                this.callback = callback;
-
                 this.initialized = true;
+
+                this.onUrlChange();
             },
 
             /**
