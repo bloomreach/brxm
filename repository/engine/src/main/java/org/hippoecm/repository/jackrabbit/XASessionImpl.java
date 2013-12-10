@@ -263,13 +263,9 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
 
     @Override
     public void finalize() {
-        if(log.isDebugEnabled()) {
-            super.finalize();
-        } else {
-            if (context.getSessionState().isAlive()) {
-                log.info("Unclosed session detected.");
-                logout();
-            }
+        if (context.getSessionState().isAlive()) {
+            log.info("Unclosed session detected.");
+            logout();
         }
     }
 
