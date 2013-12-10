@@ -132,7 +132,6 @@
 - hippo:reloadonstartup (boolean)
 - hippo:status (string) < 'pending', 'done', 'disabled'
 - hippo:contextnodename (string)
-- hippo:deltadirective (string) < 'combine', 'overlay', 'insert', 'skip', 'unknown', 'none'
 - hippo:version (string)
 - hippo:timestamp (long)
 

@@ -627,7 +627,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         ContentFileInfo info = initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ? readContentFileInfo(initItemNode) : null;
         if (info != null) {
             initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, info.contextNodeName);
-            initItemNode.setProperty(HippoNodeType.HIPPO_DELTADIRECTIVE, info.deltaDirective);
+            initItemNode.setProperty(HippoNodeType.HIPPOSYS_DELTADIRECTIVE, info.deltaDirective);
             if (isReload) {
                 reloadItems.add(initItemNode.getIdentifier());
             }
@@ -980,7 +980,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private boolean isReloadable(Node node) throws RepositoryException {
         if (JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_RELOADONSTARTUP, false)) {
-            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_DELTADIRECTIVE, null));
+            final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_DELTADIRECTIVE, null));
             if (deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"))) {
                 getLogger().error("Cannot reload initialize item {} because it is a combine or overlay delta", node.getName());
                 return false;
