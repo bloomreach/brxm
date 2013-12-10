@@ -31,6 +31,7 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;
 import org.apache.wicket.Page;
 import org.apache.wicket.RuntimeConfigurationType;
@@ -45,6 +46,8 @@ import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
 import org.apache.wicket.page.IPageManagerContext;
+import org.apache.wicket.pageStore.IDataStore;
+import org.apache.wicket.pageStore.IPageStore;
 import org.apache.wicket.protocol.http.BufferedWebResponse;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.IRequestCycle;
@@ -341,6 +344,15 @@ public class Main extends PluginApplication {
 
             getDebugSettings().setOutputMarkupContainerClassName(true);
         } else {
+            // don't serialize pages for performance
+            setPageManagerProvider(new DefaultPageManagerProvider(this) {
+
+                @Override
+                protected IPageStore newPageStore(final IDataStore dataStore) {
+                    return new AmnesicPageStore();
+                }
+            });
+
             // don't throw on missing resource
             resourceSettings.setThrowExceptionOnMissingResource(false);
 
@@ -513,5 +525,6 @@ public class Main extends PluginApplication {
             repository = null;
         }
     }
+
 
 }
