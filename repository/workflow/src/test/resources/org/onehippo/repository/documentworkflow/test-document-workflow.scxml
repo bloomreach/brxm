@@ -25,6 +25,7 @@
       <onentry>
         <if cond="dm.sf.document">
           <hippo:hint hint="status" value="false"/>
+          <hippo:hint hint="checkModified" value="dm.ss=='draft' and !empty(dm.u)"/>
           <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
             <!--not draft in use by other user -->
             <if cond="dm.ss=='unpublished' or (empty(dm.u) and (dm.ss=='published' or (dm.ss=='draft' and empty(dm.p))))">

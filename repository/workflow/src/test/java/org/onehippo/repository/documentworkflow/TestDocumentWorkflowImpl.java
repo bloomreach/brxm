@@ -154,8 +154,6 @@ public class TestDocumentWorkflowImpl {
         MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
         MockNode draftVariant, unpublishedVariant, publishedVariant = null;
 
-        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
-
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
@@ -165,28 +163,34 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsStateIds(wf.getScxmlExecutor(), "status");
         assertNotContainsHint(wf.hints(), "status");
+        assertNotContainsHint(wf.hints(), "checkModified");
 
         workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(unpublishedVariant);
 
         assertContainsHint(wf.hints(), "status", true);
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         wf.setNode(draftVariant);
 
         assertContainsHint(wf.hints(), "status", false);
+        assertContainsHint(wf.hints(), "checkModified", true);
 
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "status", false);
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         unpublishedVariant.remove();
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "status", true);
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         wf.setNode(draftVariant);
 
         assertContainsHint(wf.hints(), "status", false);
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         publishedVariant.remove();
         wf.setNode(draftVariant);
