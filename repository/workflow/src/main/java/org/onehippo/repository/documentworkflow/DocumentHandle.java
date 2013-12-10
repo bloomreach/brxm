@@ -157,9 +157,7 @@ public class DocumentHandle {
             if (hasPrivilege == null) {
                 hasPrivilege = Boolean.FALSE;
                 try {
-                    // TODO: should use more efficient Session#hasPermission instead, when REPO-855 is fixed
-                    context.getUserSession().checkPermission(subject.getPath(), priv);
-                    hasPrivilege = Boolean.TRUE;
+                    hasPrivilege = Boolean.valueOf(context.getUserSession().hasPermission(subject.getPath(), priv));
                 } catch (AccessControlException e) {
                 } catch (AccessDeniedException e) {
                 } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
