@@ -123,7 +123,7 @@ public class HstHtmlTag extends TagSupport {
                 html = lineEndingsToHTML(text);
                 break;
             default:
-                log.warn("No input available to rewrite.");
+                log.info("No input available to rewrite.");
                 cleanup();
                 return EVAL_PAGE;
         }
