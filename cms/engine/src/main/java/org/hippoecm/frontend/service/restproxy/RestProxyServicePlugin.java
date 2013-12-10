@@ -127,7 +127,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         log.debug("Registering this service under id '{}'", serviceId);
         context.registerService(this, serviceId);
 
-        pingServiceUri = (restUri + config.getString(PING_SERVICE_URI, "/sites/#areAlive")).replaceAll("^://", "/");
+        pingServiceUri = (restUri + config.getString(PING_SERVICE_URI, "/sites/_isAlive")).replaceAll("^://", "/");
         log.debug("Using ping REST uri '{}'", pingServiceUri);
 
         siteIsAlive = checkSiteIsAlive(pingServiceUri);
@@ -259,14 +259,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             if (!siteIsAlive) {
                 log.warn("The response status ('{}') is not okay from the pinging site service URI, '{}'.", httpResponse.getStatusLine(), normalizedPingServiceUri);
             }
-        } catch (UnsupportedEncodingException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
-            } else {
-                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, e.toString());
-            }
-
-            siteIsAlive = false;
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);

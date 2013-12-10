@@ -72,7 +72,7 @@
       <sv:value>http://127.0.0.1:8080/site/_cmsrest</sv:value>
     </sv:property>
     <sv:property sv:name="ping.service.uri" sv:type="String">
-      <sv:value>/sites/#areAlive</sv:value>
+      <sv:value>/sites/_isAlive</sv:value>
     </sv:property>
     <sv:property sv:name="service.id" sv:type="String">
       <sv:value>hst.rest.proxy.service</sv:value>
