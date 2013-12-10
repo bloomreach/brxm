@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.ArchiveWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -32,6 +35,13 @@ public class ArchiveDelegatingAction extends AbstractWorkflowTaskDelegatingActio
     @Override
     protected ArchiveWorkflowTask createWorkflowTask() {
         return new ArchiveWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }

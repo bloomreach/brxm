@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.HintWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -38,16 +41,23 @@ public class HintDelegatingAction extends AbstractWorkflowTaskDelegatingAction<H
     }
 
     public String getValue() {
-        return getWorkflowTask().getValue();
+        return (String) getProperties().get("value");
     }
 
     public void setValue(final String value) {
-        getWorkflowTask().setValue(value);
+        getProperties().put("value", value);
     }
 
     @Override
     protected HintWorkflowTask createWorkflowTask() {
         return new HintWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }

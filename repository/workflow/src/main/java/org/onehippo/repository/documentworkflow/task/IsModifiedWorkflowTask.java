@@ -46,7 +46,7 @@ public class IsModifiedWorkflowTask extends AbstractDocumentWorkflowTask {
     private static Logger log = LoggerFactory.getLogger(IsModifiedWorkflowTask.class);
 
     @Override
-    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 

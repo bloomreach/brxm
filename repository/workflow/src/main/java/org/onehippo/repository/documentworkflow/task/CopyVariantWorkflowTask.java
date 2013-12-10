@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -96,7 +97,7 @@ public class CopyVariantWorkflowTask extends AbstractDocumentWorkflowTask {
     }
 
     @Override
-    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 

@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.ScheduleRequestWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -38,16 +41,23 @@ public class ScheduleRequestDelegatingAction extends AbstractWorkflowTaskDelegat
     }
 
     public String getTargetDateExpr() {
-        return getWorkflowTask().getTargetDateExpr();
+        return (String) getProperties().get("targetDate");
     }
 
     public void setTargetDateExpr(final String targetDateExpr) {
-        getWorkflowTask().setTargetDateExpr(targetDateExpr);
+        getProperties().put("targetDate", targetDateExpr);
     }
 
     @Override
     protected ScheduleRequestWorkflowTask createWorkflowTask() {
         return new ScheduleRequestWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }

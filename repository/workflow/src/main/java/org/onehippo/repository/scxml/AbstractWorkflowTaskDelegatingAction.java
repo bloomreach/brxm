@@ -16,6 +16,8 @@
 package org.onehippo.repository.scxml;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -27,6 +29,8 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.WorkflowTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AbstractWorkflowTaskDelegatingAction
@@ -38,9 +42,28 @@ public abstract class AbstractWorkflowTaskDelegatingAction<T extends WorkflowTas
 
     private static final long serialVersionUID = 1L;
 
+    private static Logger log = LoggerFactory.getLogger(AbstractWorkflowTaskDelegatingAction.class);
+
     private T workflowTask;
+    private Map<String, Object> properties;
 
     public AbstractWorkflowTaskDelegatingAction() {
+    }
+
+    /**
+     * Can be overriden to initialize the workflow task by given properties. The <code>properties</code> contains
+     * all the attribute values which are not evaluated yet in the execution runtime.
+     * @param properties
+     */
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+    }
+
+    /**
+     * Can be overriden to initialize the workflow task by given dynamic properties. The <code>dynamicProperties</code> contains
+     * all the attribute values which were evaluated in the execution runtime.
+     * @param properties
+     */
+    protected void initTaskAfterEvaluation(Map<String, Object> properties) {
     }
 
     /**
@@ -53,8 +76,40 @@ public abstract class AbstractWorkflowTaskDelegatingAction<T extends WorkflowTas
             WorkflowException, RepositoryException {
 
         T task = getWorkflowTask();
-        task.execute();
 
+        initTaskBeforeEvaluation(properties);
+        evaluateProperties();
+        initTaskAfterEvaluation(properties);
+
+        task.execute(properties);
+
+    }
+
+    private void evaluateProperties() {
+        for (Map.Entry<String, Object> entry : getProperties().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (value != null && value instanceof String) {
+                try {
+                    getProperties().put(key, eval((String) value));
+                } catch (Exception e) {
+                    log.error("Failed to evaluate dynamic property expression, '" + value + "'.", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the properties map. If not exists, it creates a new map first.
+     * @return
+     */
+    protected Map<String, Object> getProperties() {
+        if (properties == null) {
+            properties = new HashMap<String, Object>();
+        }
+
+        return properties;
     }
 
     /**
@@ -66,10 +121,6 @@ public abstract class AbstractWorkflowTaskDelegatingAction<T extends WorkflowTas
     protected T getWorkflowTask() {
         if (workflowTask == null) {
             workflowTask = createWorkflowTask();
-
-            if (workflowTask instanceof AbstractActionAware) {
-                ((AbstractActionAware) workflowTask).setAbstractAction(this);
-            }
         }
 
         return workflowTask;

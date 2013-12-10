@@ -63,7 +63,7 @@ public class HintDelegatingActionTest {
                 return task;
             }
             @Override
-            public <T> T getContextAttribute(String name) throws ModelException {
+            public <T> T getContextAttribute(String name) {
                 return (T) context.get(name);
             }
             @Override
@@ -73,7 +73,6 @@ public class HintDelegatingActionTest {
         };
 
         task = new HintWorkflowTask();
-        task.setAbstractAction(delegatingAction);
     }
 
     @Test

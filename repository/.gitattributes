@@ -496,7 +496,6 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RenameDocum
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RequestWorkflowTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ScheduleRequestWorkflowTask.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/AbstractAction.java -text
-workflow/src/main/java/org/onehippo/repository/scxml/AbstractActionAware.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/AbstractWorkflowTaskDelegatingAction.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/HippoScxmlErrorReporter.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLDefinition.java -text

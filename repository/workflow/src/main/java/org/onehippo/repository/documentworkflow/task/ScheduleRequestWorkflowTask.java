@@ -17,6 +17,7 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -37,7 +38,6 @@ public class ScheduleRequestWorkflowTask extends AbstractDocumentWorkflowTask {
     private static Logger log = LoggerFactory.getLogger(ScheduleRequestWorkflowTask.class);
 
     private String type;
-    private String targetDateExpr;
 
     public String getType() {
         return type;
@@ -47,16 +47,8 @@ public class ScheduleRequestWorkflowTask extends AbstractDocumentWorkflowTask {
         this.type = type;
     }
 
-    public String getTargetDateExpr() {
-        return targetDateExpr;
-    }
-
-    public void setTargetDateExpr(final String targetDateExpr) {
-        this.targetDateExpr = targetDateExpr;
-    }
-
     @Override
-    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 
@@ -73,10 +65,7 @@ public class ScheduleRequestWorkflowTask extends AbstractDocumentWorkflowTask {
         if (allowed == null || !allowed.booleanValue()) {
             throw new WorkflowException("ScheduledRequestAction: "+getType()+" not allowed");
         }
-        Date targetDate = null;
-        if (getTargetDateExpr() != null) {
-            targetDate = eval(getTargetDateExpr());
-        }
+        Date targetDate = (Date) properties.get("targetDate");
         if (targetDate == null) {
             throw new WorkflowException("ScheduledRequestAction: no target date specified");
         }

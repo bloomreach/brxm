@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.RequestWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -38,24 +41,31 @@ public class RequestDelegatingAction extends AbstractWorkflowTaskDelegatingActio
     }
 
     public String getContextVariantExpr() {
-        return getWorkflowTask().getContextVariantExpr();
+        return (String) getProperties().get("contextVariant");
     }
 
     public void setContextVariantExpr(String contextVariantExpr) {
-        getWorkflowTask().setContextVariantExpr(contextVariantExpr);
+        getProperties().put("contextVariant", contextVariantExpr);
     }
 
     public String getTargetDateExpr() {
-        return getWorkflowTask().getTargetDateExpr();
+        return (String) getProperties().get("targetDate");
     }
 
     public void setTargetDateExpr(String targetDateExpr) {
-        getWorkflowTask().setTargetDateExpr(targetDateExpr);
+        getProperties().put("targetDate", targetDateExpr);
     }
 
     @Override
     protected RequestWorkflowTask createWorkflowTask() {
         return new RequestWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }

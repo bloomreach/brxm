@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.IsModifiedWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -32,6 +35,13 @@ public class IsModifiedDelegatingAction extends AbstractWorkflowTaskDelegatingAc
     @Override
     protected IsModifiedWorkflowTask createWorkflowTask() {
         return new IsModifiedWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }

@@ -46,7 +46,7 @@ public class MockAbstractWorkflowTaskDelegatingAction<T extends WorkflowTask> ex
         return null;
     }
 
-    public <T> T getContextAttribute(String name) throws ModelException {
+    public <T> T getContextAttribute(String name) {
         return (T) context.get(name);
     }
 

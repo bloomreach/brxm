@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,8 +29,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowContext;
@@ -43,8 +42,6 @@ import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.api.WorkflowTask;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.scxml.AbstractAction;
-import org.onehippo.repository.scxml.AbstractActionAware;
 import org.onehippo.repository.util.JcrConstants;
 
 /**
@@ -54,7 +51,7 @@ import org.onehippo.repository.util.JcrConstants;
  * delegating operations to the underlying AbstractAction to retrieve execution context attributes.
  * </P>
  */
-public abstract class AbstractDocumentWorkflowTask implements WorkflowTask, AbstractActionAware, Serializable {
+public abstract class AbstractDocumentWorkflowTask implements WorkflowTask, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -82,87 +79,48 @@ public abstract class AbstractDocumentWorkflowTask implements WorkflowTask, Abst
         Arrays.sort(PROTECTED_MIXINS);
     }
 
-    private AbstractAction action;
+    private WorkflowContext workflowContext;
+    private DocumentHandle dataModel;
 
     /**
      * Execute this workflow task
-     * 
+     * @param properties execution time properties
      * @throws WorkflowException
      */
-    public final void execute() throws WorkflowException {
+    @Override
+    public final void execute(Map<String, Object> properties) throws WorkflowException {
         try {
-            doExecute();
+            doExecute(properties);
         } catch (RepositoryException | RemoteException e) {
             throw new WorkflowException(e.getMessage(), e);
         }
     }
 
-    protected abstract void doExecute() throws WorkflowException, RepositoryException, RemoteException;
-
-    public void setAbstractAction(final AbstractAction action) {
-        this.action = action;
-    }
-
-    protected AbstractAction getAbstractAction() {
-        return action;
-    }
-
-    /**
-     * Returns the context object by the name.
-     * @param scInstance
-     * @param name
-     * @return
-     * @throws org.hippoecm.repository.api.WorkflowException
-     */
-    protected <T> T getContextAttribute(String name) throws WorkflowException {
-        try {
-            return getAbstractAction().getContextAttribute(name);
-        } catch (ModelException e) {
-            throw new WorkflowException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Evaluates the expression and returns the last evaluated value.
-     * @param expr
-     * @return
-     * @throws org.hippoecm.repository.api.WorkflowException
-     */
-    public <T> T eval(String expr) throws WorkflowException {
-        try {
-            return getAbstractAction().eval(expr);
-        } catch (ModelException e) {
-            throw new WorkflowException(e.getMessage(), e);
-        } catch (SCXMLExpressionException e) {
-            throw new WorkflowException(e.getMessage(), e);
-        }
-    }
+    protected abstract void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Returns the current workflow context instance.
      * @return
-     * @throws org.hippoecm.repository.api.WorkflowException
      */
-    public WorkflowContext getWorkflowContext() throws WorkflowException {
-        try {
-            return getAbstractAction().getContextAttribute("workflowContext");
-        } catch (ModelException e) {
-            throw new WorkflowException(e.getMessage(), e);
-        }
+    public WorkflowContext getWorkflowContext() {
+        return workflowContext;
+    }
+
+    public void setWorkflowContext(final WorkflowContext workflowContext) {
+        this.workflowContext = workflowContext;
     }
 
     /**
      * Returns the document handle object from the current SCXML execution context.
      * @param scInstance
      * @return
-     * @throws org.hippoecm.repository.api.WorkflowException
      */
-    protected DocumentHandle getDataModel() throws WorkflowException {
-        try {
-            return getAbstractAction().getContextAttribute("dm");
-        } catch (ModelException e) {
-            throw new WorkflowException(e.getMessage(), e);
-        }
+    public DocumentHandle getDataModel() {
+        return dataModel;
+    }
+
+    public void setDataModel(final DocumentHandle dataModel) {
+        this.dataModel = dataModel;
     }
 
     protected Node cloneDocumentNode(Node srcNode) throws RepositoryException {

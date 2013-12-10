@@ -29,6 +29,8 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AbstractAction
@@ -39,6 +41,8 @@ import org.hippoecm.repository.api.WorkflowException;
 public abstract class AbstractAction extends Action {
 
     private static final long serialVersionUID = 1L;
+
+    private static Logger log = LoggerFactory.getLogger(AbstractAction.class);
 
     private static ThreadLocal<SCInstance> tlSCInstance = new ThreadLocal<SCInstance>();
 
@@ -79,9 +83,15 @@ public abstract class AbstractAction extends Action {
      * @throws org.apache.commons.scxml2.model.ModelException
      */
     @SuppressWarnings("unchecked")
-    public <T> T getContextAttribute(String name) throws ModelException {
-        Context ctx = getCurrentSCInstance().getContext(getParentTransitionTarget());
-        return (T) ctx.get(name);
+    public <T> T getContextAttribute(String name) {
+        try {
+            Context ctx = getCurrentSCInstance().getContext(getParentTransitionTarget());
+            return (T) ctx.get(name);
+        } catch (ModelException e) {
+            log.error("Failed to retrieve the parent transition target from the current execution context.", e);
+        }
+
+        return null;
     }
 
     /**

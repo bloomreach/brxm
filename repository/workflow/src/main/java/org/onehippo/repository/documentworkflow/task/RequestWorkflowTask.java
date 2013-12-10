@@ -17,6 +17,7 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -37,8 +38,6 @@ public class RequestWorkflowTask extends AbstractDocumentWorkflowTask {
     private static Logger log = LoggerFactory.getLogger(RequestWorkflowTask.class);
 
     private String type;
-    private String contextVariantExpr;
-    private String targetDateExpr;
 
     public String getType() {
         return type;
@@ -48,34 +47,14 @@ public class RequestWorkflowTask extends AbstractDocumentWorkflowTask {
         this.type = type;
     }
 
-    public String getContextVariantExpr() {
-        return contextVariantExpr;
-    }
-
-    public void setContextVariantExpr(String contextVariantExpr) {
-        this.contextVariantExpr = contextVariantExpr;
-    }
-
-    public String getTargetDateExpr() {
-        return targetDateExpr;
-    }
-
-    public void setTargetDateExpr(String targetDateExpr) {
-        this.targetDateExpr = targetDateExpr;
-    }
-
     @Override
-    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 
         if (dm.getRequest() == null) {
-            PublishableDocument contextVariant = eval(getContextVariantExpr());
-            Date targetDate = null;
-
-            if (getTargetDateExpr() != null) {
-                targetDate = eval(getTargetDateExpr());
-            }
+            PublishableDocument contextVariant = (PublishableDocument) properties.get("contextVariant");
+            Date targetDate = (Date) properties.get("targetDate");
 
             PublicationRequest req = null;
 

@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.RenameDocumentWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -30,16 +33,23 @@ public class RenameDocumentDelegatingAction extends AbstractWorkflowTaskDelegati
     private static final long serialVersionUID = 1L;
 
     public String getNewNameExpr() {
-        return getWorkflowTask().getNewNameExpr();
+        return (String) getProperties().get("newName");
     }
 
     public void setNewNameExpr(String newNameExpr) {
-        getWorkflowTask().setNewNameExpr(newNameExpr);
+        getProperties().put("newName", newNameExpr);
     }
 
     @Override
     protected RenameDocumentWorkflowTask createWorkflowTask() {
         return new RenameDocumentWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }

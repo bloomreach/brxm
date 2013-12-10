@@ -18,6 +18,9 @@ package org.onehippo.repository.documentworkflow.task;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
@@ -26,7 +29,6 @@ import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.MockWorkflowContext;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.test.scxml.MockAbstractWorkflowTaskDelegatingAction;
 
 /**
  * HintWorkflowTaskTest
@@ -43,25 +45,24 @@ public class HintWorkflowTaskTest {
         liveVariant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "published");
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), liveVariant);
 
-        MockAbstractWorkflowTaskDelegatingAction<HintWorkflowTask> action = new MockAbstractWorkflowTaskDelegatingAction<HintWorkflowTask>();
-        action.setContextAttribute("dm", dm);
-        action.setContextAttribute("value1", "value1");
-
         task = new HintWorkflowTask();
-        task.setAbstractAction(action);
+        task.setDataModel(dm);
     }
 
     @Test
     public void testExecution() throws Exception {
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("value", "value1");
+
         task.setHint("hint1");
-        task.setValue("value1");
-        task.execute();
+        task.execute(properties);
 
         assertEquals("value1", dm.getHints().get("hint1"));
 
+        properties.clear();
+
         task.setHint("hint1");
-        task.setValue(null);
-        task.execute();
+        task.execute(properties);
 
         assertFalse(dm.getHints().containsKey("hint1"));
     }

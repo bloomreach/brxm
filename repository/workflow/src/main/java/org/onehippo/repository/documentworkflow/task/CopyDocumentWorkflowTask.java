@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -40,38 +41,11 @@ public class CopyDocumentWorkflowTask extends AbstractDocumentWorkflowTask {
 
     private static Logger log = LoggerFactory.getLogger(CopyDocumentWorkflowTask.class);
 
-    private String destinationExpr;
-    private String newNameExpr;
-
-    public String getDestinationExpr() {
-        return destinationExpr;
-    }
-
-    public void setDestinationExpr(String destinationExpr) {
-        this.destinationExpr = destinationExpr;
-    }
-
-    public String getNewNameExpr() {
-        return newNameExpr;
-    }
-
-    public void setNewNameExpr(String newNameExpr) {
-        this.newNameExpr = newNameExpr;
-    }
-
     @Override
-    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
 
-        Document destination = null;
-        String newName = null;
-
-        if (getDestinationExpr() != null) {
-            destination = eval(getDestinationExpr());
-        }
-
-        if (getNewNameExpr() != null) {
-            newName = eval(getNewNameExpr());
-        }
+        Document destination = (Document) properties.get("destination");
+        String newName = (String) properties.get("newName");
 
         if (destination == null) {
             throw new WorkflowException("Destination is null.");

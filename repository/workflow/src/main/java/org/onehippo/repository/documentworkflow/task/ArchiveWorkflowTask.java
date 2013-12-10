@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -38,7 +39,7 @@ public class ArchiveWorkflowTask extends AbstractDocumentWorkflowTask {
     private static Logger log = LoggerFactory.getLogger(ArchiveWorkflowTask.class);
 
     @Override
-    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 

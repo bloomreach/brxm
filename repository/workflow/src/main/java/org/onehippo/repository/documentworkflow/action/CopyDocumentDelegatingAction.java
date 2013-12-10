@@ -16,6 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Map;
+
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.CopyDocumentWorkflowTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
 
@@ -30,24 +33,31 @@ public class CopyDocumentDelegatingAction extends AbstractWorkflowTaskDelegating
     private static final long serialVersionUID = 1L;
 
     public String getDestinationExpr() {
-        return getWorkflowTask().getDestinationExpr();
+        return (String) getProperties().get("destination");
     }
 
     public void setDestinationExpr(String destinationExpr) {
-        getWorkflowTask().setDestinationExpr(destinationExpr);
+        getProperties().put("destination", destinationExpr);
     }
 
     public String getNewNameExpr() {
-        return getWorkflowTask().getNewNameExpr();
+        return (String) getProperties().get("newName");
     }
 
     public void setNewNameExpr(String newNameExpr) {
-        getWorkflowTask().setNewNameExpr(newNameExpr);
+        getProperties().put("newName",newNameExpr);
     }
 
     @Override
     protected CopyDocumentWorkflowTask createWorkflowTask() {
         return new CopyDocumentWorkflowTask();
+    }
+
+    @Override
+    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
+        super.initTaskBeforeEvaluation(properties);
+        DocumentHandle dm = getContextAttribute("dm");
+        getWorkflowTask().setDataModel(dm);
     }
 
 }
