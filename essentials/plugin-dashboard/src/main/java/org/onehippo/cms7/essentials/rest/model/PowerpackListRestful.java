@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "item")
+@XmlRootElement(name = "powerpacks")
 public class PowerpackListRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

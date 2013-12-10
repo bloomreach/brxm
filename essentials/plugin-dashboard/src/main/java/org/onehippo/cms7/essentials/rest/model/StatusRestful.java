@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "item")
+@XmlRootElement(name = "items")
 public class StatusRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

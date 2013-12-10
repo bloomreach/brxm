@@ -123,7 +123,8 @@ app.controller('mainMenuCtrl', function ($scope, $log, $location, $rootScope, $h
 
     $scope.isPageSelected = function (path) {
         var myPath = $location.path();
-        if (myPath == '/find-plugins') {
+        // stay in plugins for all /plugin paths
+        if (myPath =="/find-plugins" || myPath.indexOf("/plugins") !=-1) {
             myPath = '/plugins';
         }
         return  '#' + myPath == path;

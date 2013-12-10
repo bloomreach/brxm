@@ -21,13 +21,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "item")
+@XmlRootElement(name = "items")
 public class KeyValueRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
     private String key;
     private String value;
+
+    public KeyValueRestful() {
+    }
+
+    public KeyValueRestful(final String key, final String value) {
+
+        this.key = key;
+        this.value = value;
+    }
 
     public String getKey() {
         return key;

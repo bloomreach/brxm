@@ -699,7 +699,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServ
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DependencyRestful.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DocumentTypeRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/KeyValueRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/MessageRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PluginRestful.java -text

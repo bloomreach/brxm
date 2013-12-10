@@ -24,7 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.rest.model.DocumentTypeRestful;
+import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +47,11 @@ public class DocumentTypeResource extends BaseResource {
 
     @GET
     @Path("/")
-    public RestfulList<DocumentTypeRestful> getControllers(@Context ServletContext servletContext) {
-        final RestfulList<DocumentTypeRestful> types = new RestfulList<>();
+    public RestfulList<KeyValueRestful> getControllers(@Context ServletContext servletContext) {
+        final RestfulList<KeyValueRestful> types = new RestfulList<>();
         // TODO implement
-        types.add(new DocumentTypeRestful("namespace:news"));
-        types.add(new DocumentTypeRestful("namespace:events"));
+        types.add(new KeyValueRestful("News document", "namespace:news"));
+        types.add(new KeyValueRestful("Events document", "namespace:events"));
         return types;
     }
 }

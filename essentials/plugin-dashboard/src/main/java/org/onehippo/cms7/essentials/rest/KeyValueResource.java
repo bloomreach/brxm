@@ -39,7 +39,9 @@ public class KeyValueResource extends BaseResource {
     @GET
     @Path("/")
     public RestfulList<KeyValueRestful> getKeyValue() {
-        return new RestfulList<>();
+        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
+        keyValueRestfulRestfulList.add(new KeyValueRestful("key","value"));
+        return keyValueRestfulRestfulList;
 
     }
 

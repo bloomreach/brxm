@@ -1,24 +1,48 @@
-<div class="panel panel-default"  ng-controller="contentBlocksCtrl">
-    <div class="panel-heading">Content blocks</div>
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr>
-            <th class="col-sm-1"></th>
-            <th class="col-sm-7">Select document types:</th>
-            <th class="col-sm-4">Select column:</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="docType in documentTypes">
-            <td><input type="checkbox" name="docTypeGroup" value="{{docType.key}}"></td>
-            <td>{{docType.key}}</td>
-            <td>
-                <select ng-change="selectChange()"
-                        ng-options="option.value as option.key for option in column.items"
-                        ng-model="selectedItem">
-                </select>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div ng-controller="contentBlocksCtrl">
+    <div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">Content blocks</div>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th class="col-sm-1"></th>
+                <th class="col-sm-7">Select document types:</th>
+                <th class="col-sm-4">Select column:</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="docType in documentTypes">
+                <td>
+                    <input type="checkbox" value="{{docType.key}}" ng-checked="selection.indexOf(docType.key) > -1" ng-click="toggleCheckBox(docType.key)">
+                </td>
+                <td>{{docType.key}}</td>
+                <td>
+                    <select ng-change="selectChange()"
+                            ng-options="option.value as option.key for option in columns.items"
+                            ng-model="selectedItem">
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    </div>
+    <p></p>
+    <p></p>
+     <div class="col-md-4">
+         <div class="panel panel-primary">
+             <div class="panel-heading">Selected</div>
+             <table class="table table-hover">
+                 <tbody>
+                 <tr ng-repeat="docType in selection">
+                     <td>{{docType}}</td>
+                 </tr>
+                 </tbody>
+             </table>
+         </div>
+     </div>
+     <div class="col-md-4"></div>
+     <div class="col-md-4"></div>
+
 </div>
