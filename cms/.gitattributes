@@ -1683,6 +1683,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/Reso
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceUploadPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/HtmlValidator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLogger.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/plugins/ResourceRequiredValidator.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ViewerPlugin.html -text svneol=unset#text/plain
@@ -1819,6 +1820,8 @@ editor/repository/src/main/resources/new-namespace_it.xml -text
 editor/repository/src/main/resources/new-type.xml -text
 editor/repository/src/main/resources/new-type_de.xml -text
 editor/repository/src/main/resources/new-type_it.xml -text
+editor/repository/src/main/resources/resource-required-translations.xml -text
+editor/repository/src/main/resources/resource-required.xml -text
 editor/repository/src/test/java/org/hippoecm/repository/EditmodelWorkflowTest.java svneol=native#text/plain
 editor/repository/src/test/resources/RedefineNodetypeTest-1.cnd -text
 editor/repository/src/test/resources/RedefineNodetypeTest-2.cnd -text
