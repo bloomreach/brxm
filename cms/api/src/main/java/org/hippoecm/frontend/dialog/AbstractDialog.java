@@ -581,7 +581,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     @Override
     public void render(PluginRequestTarget target) {
         if (target != null) {
-            target.add(feedback);
+            if (!cancelled) {
+                target.add(feedback);
+            }
             for (ButtonWrapper bw : buttons) {
                 if (bw.hasChanges()) {
                     target.add(bw.getButton());
