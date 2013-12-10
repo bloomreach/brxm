@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.hippoecm.hst.cmsrest.services;
 
 import org.hippoecm.hst.rest.SiteService;
@@ -23,9 +22,6 @@ import org.hippoecm.hst.rest.SiteService;
  */
 public class SitesResource extends BaseResource implements SiteService {
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.hst.rest.SiteService#isUpAndRunning()
-     */
     @Override
     public boolean isAlive() {
         return true;
