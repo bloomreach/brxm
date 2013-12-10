@@ -96,6 +96,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
     @Override
     public void remove(JcrNodeModel model) {
         load();
+
         Iterator<JcrNodeModel> iterator = elements.iterator();
         while (iterator.hasNext()) {
             JcrNodeModel currentModel = iterator.next();
@@ -175,7 +176,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
     }
 
     @Override
-    protected void load() {
+    protected void loadElements() {
         if (elements != null) {
             return;
         }

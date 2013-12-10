@@ -27,7 +27,6 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
-import org.apache.wicket.Session;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -207,7 +206,7 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
     }
 
     @Override
-    protected void load() {
+    protected void loadElements() {
         if (elements != null) {
             return;
         }

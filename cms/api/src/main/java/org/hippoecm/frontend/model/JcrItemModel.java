@@ -84,7 +84,6 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         absPath = path;
         try {
             final Item item = UserSession.get().getJcrSession().getItem(path);
-            TraceMonitor.track(item);
             property = !item.isNode();
         } catch (RepositoryException e) {
             log.warn("Instantiation of item model by path failed: " + e);
@@ -258,9 +257,11 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     @Override
     public void detach() {
-        T object = this.getObject();
-        if (object != null) {
-            TraceMonitor.release(object);
+        if (isAttached()) {
+            T object = this.getObject();
+            if (object != null) {
+                TraceMonitor.release(object);
+            }
         }
         detaching = true;
         save();

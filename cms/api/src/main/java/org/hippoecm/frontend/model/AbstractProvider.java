@@ -30,6 +30,7 @@ public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWra
     private static final long serialVersionUID = 1L;
 
     protected transient LinkedList<M> elements = null;
+    private transient boolean attached = true;
 
     // Constructor
 
@@ -52,11 +53,12 @@ public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWra
 
     @Override
     public void detach() {
-        if (elements != null) {
+        if (elements != null && attached) {
             Iterator<M> iterator = elements.iterator();
             while (iterator.hasNext()) {
                 iterator.next().detach();
             }
+            attached = false;
         }
         super.detach();
     }
@@ -112,8 +114,13 @@ public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWra
      */
     public abstract ModelPathElement getFieldElement(M model);
 
+    protected final void load() {
+        loadElements();
+        attached = true;
+    }
+
     /**
      * Method to be overridden by subclasses, to populate the list of elements.
      */
-    protected abstract void load();
+    protected abstract void loadElements();
 }
