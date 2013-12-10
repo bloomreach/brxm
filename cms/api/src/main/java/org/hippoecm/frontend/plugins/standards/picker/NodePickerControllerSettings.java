@@ -69,6 +69,9 @@ public class NodePickerControllerSettings implements IClusterable {
         settings.setClusterName(config.getString("cluster.name", DEFAULT_CLUSTER));
         settings.setClusterOptions(new JavaPluginConfig(config.getPluginConfig("cluster.options")));
 
+        // enforce a unique ID for this node picker
+        settings.getClusterOptions().remove("wicket.id");
+
         settings.setSelectionServiceKey(
                 config.getString("selection.service.key", SELECTION_SERVICE_KEY));
         settings.setFolderServiceKey(
