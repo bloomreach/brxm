@@ -31,8 +31,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
@@ -113,7 +111,7 @@ abstract class SessionImplHelper {
      * This map is only accessed from synchronized methods (see
      * <a href="https://issues.apache.org/jira/browse/JCR-1793">JCR-1793</a>).
      */
-    private final ConcurrentMap<String, String> namespaces = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> namespaces = new HashMap<String, String>();
     private AuthorizationQuery authorizationQuery;
 
     /**
@@ -129,7 +127,10 @@ abstract class SessionImplHelper {
         closeCallbacks.clear();
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
         localISM.setEnabled(false);
+        localISM.clearChangeLog();
         namespaces.clear();
+        authorizationQuery = null;
+
     }
 
     public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {

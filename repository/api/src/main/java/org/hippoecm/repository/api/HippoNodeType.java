@@ -108,8 +108,20 @@ public interface HippoNodeType {
 
     public static final String NT_HANDLE = "hippo:handle";
 
+    /**
+     * @deprecate since 2.26.00 (7.9.0) Do not use any more. Usages have been replaced with
+     * {@link org.onehippo.repository.util.JcrConstants#MIX_VERSIONABLE} or
+     * {@link org.onehippo.repository.util.JcrConstants#MIX_REFERENCEABLE}
+     */
+    @Deprecated
     public static final String NT_HARDDOCUMENT = "hippo:harddocument";
 
+    /**
+     * @deprecate since 2.26.00 (7.9.0) Do not use any more. Usages have been replaced with
+     * {@link org.onehippo.repository.util.JcrConstants#MIX_VERSIONABLE} or
+     * {@link org.onehippo.repository.util.JcrConstants#MIX_REFERENCEABLE}
+     */
+    @Deprecated
     public static final String NT_HARDHANDLE = "hippo:hardhandle";
 
     public static final String NT_IMPLEMENTATION = "hipposys:implementation";
@@ -420,6 +432,8 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_LOG = "hipposys:log";
 
     public static final String HIPPOSYS_LOGTAIL = "hipposys:logtail";
+
+    public static final String HIPPOSYS_DELTADIRECTIVE = "hipposys:deltadirective";
 
     public static final String HIPPO_IGNORABLE = "hippo:ignorable";
 

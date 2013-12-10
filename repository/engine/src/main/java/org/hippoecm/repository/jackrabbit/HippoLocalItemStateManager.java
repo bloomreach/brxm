@@ -268,6 +268,14 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         return editRealMode;
     }
 
+    void clearChangeLog() {
+        virtualStates.clear();
+        virtualNodes.clear();
+        filteredChangeLog = null;
+        modifiedExternals.clear();
+    }
+
+
     @Override
     protected void update(ChangeLog changeLog) throws ReferentialIntegrityException, StaleItemStateException,
                                                       ItemStateException {

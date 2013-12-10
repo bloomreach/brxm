@@ -25,6 +25,7 @@
 - hipposys:extensionsource (string)
 - hipposys:extensionbuild (long) // deprecated
 - hipposys:extensionversion (string)
+- hipposys:deltadirective (string) < 'combine', 'overlay', 'insert', 'skip', 'unknown', 'none'
 
 // REPOSITORY: DOCUMENT DATA TYPES AND MARKERS
 
