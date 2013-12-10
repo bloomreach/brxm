@@ -121,7 +121,10 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     @Override
     public boolean hasPermission(final String absPath, final String actions) throws RepositoryException {
         try {
-            checkPermission(absPath, actions);
+            return super.hasPermission(absPath, actions);
+        } catch (IllegalArgumentException ignore) {}
+        try {
+            helper.checkPermission(absPath, actions);
             return true;
         } catch (AccessControlException e) {
             return false;
