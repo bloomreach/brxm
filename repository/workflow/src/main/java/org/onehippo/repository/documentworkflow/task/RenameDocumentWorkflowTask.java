@@ -13,34 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
-import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
-import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.PublishableDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom action for renaming document.
+ * Custom workflow task for renaming document.
  */
-public class RenameDocumentAction extends AbstractDocumentAction {
+public class RenameDocumentWorkflowTask extends AbstractDocumentWorkflowTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(RenameDocumentAction.class);
+    private static Logger log = LoggerFactory.getLogger(RenameDocumentWorkflowTask.class);
 
     private String newNameExpr;
 
@@ -53,21 +47,19 @@ public class RenameDocumentAction extends AbstractDocumentAction {
     }
 
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            RepositoryException {
+    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         String newName = null;
 
         if (getNewNameExpr() != null) {
-            newName = eval(scInstance, getNewNameExpr());
+            newName = eval(getNewNameExpr());
         }
 
         if (StringUtils.isBlank(newName)) {
-            throw new ModelException("New document name is blank.");
+            throw new WorkflowException("New document name is blank.");
         }
 
-        DocumentHandle dm = getDataModel(scInstance);
+        DocumentHandle dm = getDataModel();
 
         PublishableDocument document = null;
 
@@ -88,18 +80,12 @@ public class RenameDocumentAction extends AbstractDocumentAction {
         }
 
         if (document == null) {
-            throw new ModelException("No source document found.");
+            throw new WorkflowException("No source document found.");
         }
 
-        try {
-            // doDepublish();
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext(scInstance).getWorkflow("core", document);
-            defaultWorkflow.rename(newName);
-        } catch (WorkflowException e) {
-            throw new ModelException(e);
-        } catch (RemoteException e) {
-            throw new ModelException(e);
-        }
+        // doDepublish();
+        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", document);
+        defaultWorkflow.rename(newName);
     }
 
 }

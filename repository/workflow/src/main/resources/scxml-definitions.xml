@@ -250,7 +250,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.CopyVariantAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.CopyVariantDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="request">
@@ -261,7 +261,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.RequestAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.RequestDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="archive">
@@ -272,7 +272,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.ArchiveAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.ArchiveDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="ismodified">
@@ -283,7 +283,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.IsModifiedAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.IsModifiedDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="schedulerequest">
@@ -294,7 +294,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.ScheduleRequestAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.ScheduleRequestDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="copydocument">
@@ -305,7 +305,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.CopyDocumentAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.CopyDocumentDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="movedocument">
@@ -316,7 +316,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.MoveDocumentAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.MoveDocumentDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="renamedocument">
@@ -327,7 +327,7 @@
         <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
-        <sv:value>org.onehippo.repository.documentworkflow.RenameDocumentAction</sv:value>
+        <sv:value>org.onehippo.repository.documentworkflow.action.RenameDocumentDelegatingAction</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

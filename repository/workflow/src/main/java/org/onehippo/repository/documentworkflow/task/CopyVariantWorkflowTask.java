@@ -13,36 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.documentworkflow.task;
 
-import java.util.Collection;
+import java.rmi.RemoteException;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
-import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
-import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.PublishableDocument;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom action for copying (creating if necessary) from one varaint node to another variant node
+ * Custom workflow task for copying (creating if necessary) from one varaint node to another variant node
  * with workflow properties setting options. 
  */
-public class CopyVariantAction extends AbstractDocumentAction {
+public class CopyVariantWorkflowTask extends AbstractDocumentWorkflowTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(CopyVariantAction.class);
+    private static Logger log = LoggerFactory.getLogger(CopyVariantWorkflowTask.class);
 
     private String sourceState;
     private String targetState;
@@ -100,17 +96,15 @@ public class CopyVariantAction extends AbstractDocumentAction {
     }
 
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            RepositoryException {
+    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel(scInstance);
+        DocumentHandle dm = getDataModel();
 
         PublishableDocument sourceDoc = dm.getDocumentVariantByState(getSourceState());
         PublishableDocument targetDoc = dm.getDocumentVariantByState(getTargetState());
 
         if (sourceDoc == null || sourceDoc.getNode() == null) {
-            throw new ModelException("Source document variant (node) is not available.");
+            throw new WorkflowException("Source document variant (node) is not available.");
         }
 
         final Node sourceNode = sourceDoc.getNode();
@@ -138,7 +132,7 @@ public class CopyVariantAction extends AbstractDocumentAction {
             targetNode = targetDoc.getNode();
 
             if (sourceNode.isSame(targetNode)) {
-                throw new ModelException(
+                throw new WorkflowException(
                         "The target document variant (node) is the same as the source document variant (node).");
             }
             copyTo(sourceNode, targetNode);

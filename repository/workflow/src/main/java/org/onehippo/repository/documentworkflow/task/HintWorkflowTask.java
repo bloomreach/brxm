@@ -18,6 +18,8 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.io.Serializable;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
@@ -49,7 +51,7 @@ public class HintWorkflowTask extends AbstractDocumentWorkflowTask {
     }
 
     @Override
-    public void execute() throws WorkflowException {
+    public void doExecute() throws WorkflowException, RepositoryException {
         if (StringUtils.isBlank(getHint())) {
             throw new WorkflowException("No hint specified");
         }

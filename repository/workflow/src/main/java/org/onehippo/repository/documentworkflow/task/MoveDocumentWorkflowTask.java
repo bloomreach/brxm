@@ -13,39 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.documentworkflow.task;
 
 import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
-import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
-import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.PublishableDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom action for moving document.
+ * Custom workflow task for moving document.
  */
-public class MoveDocumentAction extends AbstractDocumentAction {
+public class MoveDocumentWorkflowTask extends AbstractDocumentWorkflowTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(MoveDocumentAction.class);
+    private static Logger log = LoggerFactory.getLogger(MoveDocumentWorkflowTask.class);
 
     private String destinationExpr;
     private String newNameExpr;
@@ -67,30 +61,28 @@ public class MoveDocumentAction extends AbstractDocumentAction {
     }
 
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            RepositoryException {
+    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         Document destination = null;
         String newName = null;
 
         if (getDestinationExpr() != null) {
-            destination = eval(scInstance, getDestinationExpr());
+            destination = eval(getDestinationExpr());
         }
 
         if (getNewNameExpr() != null) {
-            newName = eval(scInstance, getNewNameExpr());
+            newName = eval(getNewNameExpr());
         }
 
         if (destination == null) {
-            throw new ModelException("Destination is null.");
+            throw new WorkflowException("Destination is null.");
         }
 
         if (StringUtils.isBlank(newName)) {
-            throw new ModelException("New document name is blank.");
+            throw new WorkflowException("New document name is blank.");
         }
 
-        DocumentHandle dm = getDataModel(scInstance);
+        DocumentHandle dm = getDataModel();
 
         PublishableDocument document = null;
 
@@ -111,29 +103,23 @@ public class MoveDocumentAction extends AbstractDocumentAction {
         }
 
         if (document == null) {
-            throw new ModelException("No source document found.");
+            throw new WorkflowException("No source document found.");
         }
 
-        try {
-            Document folder = getContainingFolder(document);
-            String folderWorkflowCategory = "internal";
-            RepositoryMap config = getWorkflowContext(scInstance).getWorkflowConfiguration();
-    
-            if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
-                folderWorkflowCategory = (String) config.get("folder-workflow-category");
-            }
-    
-            Workflow workflow = getWorkflowContext(scInstance).getWorkflow(folderWorkflowCategory, folder);
-    
-            if (workflow instanceof FolderWorkflow) {
-                ((FolderWorkflow) workflow).move(document, destination, newName);
-            } else {
-                throw new WorkflowException("cannot move document which is not contained in a folder");
-            }
-        } catch (WorkflowException e) {
-            throw new ModelException(e);
-        } catch (RemoteException e) {
-            throw new ModelException(e);
+        Document folder = getContainingFolder(document);
+        String folderWorkflowCategory = "internal";
+        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
+
+        if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
+            folderWorkflowCategory = (String) config.get("folder-workflow-category");
+        }
+
+        Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
+
+        if (workflow instanceof FolderWorkflow) {
+            ((FolderWorkflow) workflow).move(document, destination, newName);
+        } else {
+            throw new WorkflowException("cannot move document which is not contained in a folder");
         }
     }
 

@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -82,6 +83,21 @@ public abstract class AbstractDocumentWorkflowTask implements WorkflowTask, Abst
     }
 
     private AbstractAction action;
+
+    /**
+     * Execute this workflow task
+     * 
+     * @throws WorkflowException
+     */
+    public final void execute() throws WorkflowException {
+        try {
+            doExecute();
+        } catch (RepositoryException | RemoteException e) {
+            throw new WorkflowException(e.getMessage(), e);
+        }
+    }
+
+    protected abstract void doExecute() throws WorkflowException, RepositoryException, RemoteException;
 
     public void setAbstractAction(final AbstractAction action) {
         this.action = action;

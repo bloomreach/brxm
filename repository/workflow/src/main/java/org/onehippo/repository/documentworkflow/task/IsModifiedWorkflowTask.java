@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.documentworkflow.task;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,34 +27,28 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.ErrorReporter;
-import org.apache.commons.scxml2.EventDispatcher;
-import org.apache.commons.scxml2.SCInstance;
-import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.TriggerEvent;
-import org.apache.commons.scxml2.model.ModelException;
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.PublishableDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Custom action for determining if current draft is modified compared to the unpublished variant
+ * Custom workflow task for determining if current draft is modified compared to the unpublished variant
  * and save this state in the handle hints.
  */
-public class IsModifiedAction extends AbstractDocumentAction {
+public class IsModifiedWorkflowTask extends AbstractDocumentWorkflowTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(IsModifiedAction.class);
+    private static Logger log = LoggerFactory.getLogger(IsModifiedWorkflowTask.class);
 
     @Override
-    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
-            Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            RepositoryException {
+    public void doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel(scInstance);
+        DocumentHandle dm = getDataModel();
 
         if (dm.getDraft() != null && dm.getUnpublished() != null && PublishableDocument.DRAFT.equals(dm.getSubjectState())) {
             // TODO: BasicReviewedActionsWorkflowImpl#hints() method retrieves a 'fresh' draftNode based on the dm.d.identifier. Why would that be needed?
