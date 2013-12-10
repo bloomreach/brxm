@@ -85,7 +85,7 @@ public class PublishableDocument extends Document {
         return getStringsProperty(HippoNodeType.HIPPO_AVAILABILITY);
     }
 
-    protected boolean isAvailable(String environment) throws RepositoryException {
+    public boolean isAvailable(String environment) throws RepositoryException {
         String[] availability = getAvailability();
         if (availability == null) {
             return true;

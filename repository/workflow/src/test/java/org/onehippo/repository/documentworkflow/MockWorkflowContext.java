@@ -62,6 +62,10 @@ public class MockWorkflowContext implements WorkflowContext {
         return null;
     }
 
+    public void setUserIdentity(String userIdentity) {
+        this.userIdentity = userIdentity;
+    }
+
     @Override
     public String getUserIdentity() {
         return userIdentity;
