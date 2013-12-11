@@ -2831,6 +2831,12 @@ plugin-dashboard/src/main/webapp/js/.DS_Store
 plugin-dashboard/src/main/webapp/js/.idea
 plugin-dashboard/src/main/webapp/js/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/js/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/js/lib/*.iml
+plugin-dashboard/src/main/webapp/js/lib/.DS_Store
+plugin-dashboard/src/main/webapp/js/lib/.idea
+plugin-dashboard/src/main/webapp/js/lib/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/js/lib/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/js/lib/target
 plugin-dashboard/src/main/webapp/js/services/*.iml
 plugin-dashboard/src/main/webapp/js/services/.DS_Store
 plugin-dashboard/src/main/webapp/js/services/.idea

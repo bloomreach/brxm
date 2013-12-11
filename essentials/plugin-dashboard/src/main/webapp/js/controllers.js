@@ -22,6 +22,7 @@ app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
 
     };
 });
+// loads plugin list
 app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
     $scope.tabs = [
         {name: "Installed Plugins", link: "/plugins"},
@@ -50,12 +51,9 @@ app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope
  //############################################
  */
 app.controller('onLoadCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-
-
     $scope.init = function () {
         $log.info("...Essentials loaded...");
     };
-
     $scope.init();
 
 });
@@ -64,7 +62,6 @@ app.controller('onLoadCtrl', function ($scope, $sce, $log, $rootScope, $http, My
  //############################################
  // MENU CONTROLLER
  //############################################
-
  */
 app.controller('mainMenuCtrl', function ($scope, $log, $location, $rootScope, $http, MyHttpInterceptor) {
 
