@@ -16,6 +16,8 @@
 package org.onehippo.cms7.brokenlinks;
 
 import java.rmi.RemoteException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class BrokenLinksTest extends RepositoryTestCase {
 
@@ -229,6 +232,15 @@ public class BrokenLinksTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testManyFaultyLinksManyTimes() throws Exception {
+        for (int i = 0; i < 100; i++) {
+            tearDown();
+            setUp();
+            testManyFaultyLinks();
+        }
+    }
+
+    @Test
     public void testManyFaultyLinks() throws Exception {
         DocumentText documents = new DocumentText() {
             public String getTextForDocument(int index) {
@@ -280,6 +292,55 @@ public class BrokenLinksTest extends RepositoryTestCase {
         }
     }
 
+    @Test
+    public void testSearch() throws Exception {
+        DocumentText documents = new DocumentText() {
+            public String getTextForDocument(int index) {
+                return TEXT1;
+            }
+        };
+        for (int count : new int[] {10, 10, 10}) {
+            levels.push(count);
+        }
+        createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
+        String checksum = getSearchChecksum();
+        for (int i = 0; i < 1000; i++) {
+            if (!checksum.equals(getSearchChecksum())) {
+                fail("Checksum does not match");
+            }
+        }
+    }
+
+    private String getSearchChecksum() throws NoSuchAlgorithmException, RepositoryException {
+        MessageDigest md = MessageDigest.getInstance("SHA");
+        final NodeIterator nodes = session.getWorkspace().getQueryManager().createQuery("//element(*,hippostd:html)", "xpath").execute().getNodes();
+        while (nodes.hasNext()) {
+            final Node node = nodes.nextNode();
+            final Node handle = getHandleNode(node);
+            md.update(node.getIdentifier().getBytes());
+            md.update(handle.getIdentifier().getBytes());
+        }
+        return digestToChecksum(md);
+    }
+
+    private String digestToChecksum(final MessageDigest searchResultDigest) {
+        StringBuilder sb = new StringBuilder();
+        for (final byte b : searchResultDigest.digest()) {
+            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
+    }
+
+    private Node getHandleNode(final Node node) throws RepositoryException {
+        Node parent = node.getParent();
+        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return parent;
+        }
+        if (parent.isSame(parent.getSession().getRootNode())) {
+            return null;
+        }
+        return getHandleNode(parent);
+    }
 
     @Test
     public void testManyLinksInDocument() throws Exception {

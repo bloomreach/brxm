@@ -105,9 +105,11 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         long start = System.currentTimeMillis();
         int count = 0;
         int totalLinksCount = 0;
-        MessageDigest md = null;
+        MessageDigest searchResultDigest = null;
+        MessageDigest handleUuidsDigest = null;
         try {
-            md = MessageDigest.getInstance("SHA");
+            searchResultDigest = MessageDigest.getInstance("SHA");
+            handleUuidsDigest = MessageDigest.getInstance("SHA");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
@@ -120,6 +122,8 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                     continue;
                 }
 
+                searchResultDigest.update(hippostdHtml.getIdentifier().getBytes());
+
                 // we need to group the links per handle because all hippostd:content
                 // fields below a handle store their broken links directly below the handle
                 Node handleNode = getHandleNode(hippostdHtml);
@@ -130,9 +134,10 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                 }
 
                 String handleUUID = handleNode.getIdentifier();
+                handleUuidsDigest.update(handleUUID.getBytes());
+
                 // hippostd:content is a mandatory property so no need to check for existence
                 String content = hippostdHtml.getProperty("hippostd:content").getString();
-                md.update(content.getBytes());
 
                 try {
                     Set<Link> linksForHandle = linksByHandleUUID.get(handleUUID);
@@ -148,7 +153,7 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
                         }
 
                         if (linksForHandle == null) {
-                            linksForHandle = new HashSet<Link>();
+                            linksForHandle = new HashSet<>();
                             linksByHandleUUID.put(handleUUID, linksForHandle);
                         }
 
@@ -183,11 +188,8 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
         log.info("In total {}  hippostd:html nodes were scanned.", String.valueOf(count));
         log.info("In total {} handles have links", linksByHandleUUID.size());
         log.info("In total there are {} unique links", linksByURL.size());
-        final StringBuilder sb = new StringBuilder();
-        for (final byte b : md.digest()) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        log.info("Digest of text processed: {}", sb.toString());
+        log.info("Digest of search result: {}", digestToChecksum(searchResultDigest));
+        log.info("Digest of handles: {}", digestToChecksum(handleUuidsDigest));
         log.info("Total amount of links counted: {}", totalLinksCount);
         log.info("Starting scanning for external links that are broken");
 
@@ -264,6 +266,14 @@ public class BrokenLinksCheckingJob implements RepositoryJob {
 
         }
 
+    }
+
+    private String digestToChecksum(final MessageDigest searchResultDigest) {
+        StringBuilder sb = new StringBuilder();
+        for (final byte b : searchResultDigest.digest()) {
+            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
     }
 
     /**
