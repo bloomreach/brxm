@@ -221,6 +221,25 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void canPublishAfterDepublish() throws RepositoryException, RemoteException, WorkflowException {
+        Node node;
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        FullReviewedActionsWorkflow reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        reviewedWorkflow.publish();
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='published']");
+        reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        reviewedWorkflow.depublish();
+
+        node = getNode("test/myarticle/myarticle[@hippostd:state='unpublished']");
+        reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
+        Serializable value = reviewedWorkflow.hints().get("publish");
+        assertNotNull("No publish hint provided where there should be one", value);
+        assertTrue("Publish hint should be true", value instanceof Boolean && ((Boolean)value).booleanValue());
+    }
+
+    @Test
     public void acceptedPublicationRequestPublishesDocument() throws RepositoryException, RemoteException, WorkflowException {
         Node node;
 
