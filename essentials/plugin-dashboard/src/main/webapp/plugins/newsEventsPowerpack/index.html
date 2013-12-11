@@ -1,0 +1,79 @@
+<div ng-controller="newsEventsCtrl">
+
+    <!--
+    //############################################
+    // STEP INDICATOR
+    //############################################
+ -->
+    <div class="row">
+        <ul class="wizard-steps">
+            <li ng-class="{true:'active', false:''}[stepVisible[$index]]" ng-repeat="step in packs.steps">
+                <span class="step" id="no">{{$index +1}}</span>
+                <span class="title" id="title">{{step.name}}</span>
+            </li>
+        </ul>
+    </div>
+    <!--
+       //############################################
+       // CONTENT
+       //############################################
+    -->
+
+    <div class="row" ng-show="stepVisible[0]">
+        <div class="alert alert-success">Congratulations - you've successfully created
+            <strong>{{packs.project.namespace}}</strong> and are almost ready to get coding!
+            We just need some more information to finalize the setup. Please select from the following list of Power packs what kind of
+            project
+            <strong>{{packs.project.namespace}}</strong> will be. We'll then add the relevant components and configuration to get you started.
+        </div>
+        <form>
+            <!--select as label for value in array-->
+            <select ng-change="selectChange()" ng-options="option.value as option.name for option in packs.items" ng-model="selectedItem">
+
+            </select>
+            <div id="pack.description">{{selectedDescription}}</div>
+
+            <br/><br/>
+
+        <span>
+            <input id="sample-content" type="checkbox" ng-model="installSampleData"/>
+            <label for="sample-content">
+                Add sample content
+            </label>
+        </span>
+
+            <p>&nbsp;</p>
+
+        <span id="templatesRadioGroup">
+            <input id="jspFilesystemRadio" type="radio" name="template" checked="checked">Generate JSP templates on filesystem.
+            <br/>
+            <input id="freemarkerFilesystemRadio" name="template" disabled="disabled" type="radio">Generate Freemarker templates on filesystem.
+            <br/>
+            <input id="freemarkerRepositoryRadio" name="template" disabled="disabled" type="radio">Generate Freemarker templates in repository.
+            <br/>
+        </span>
+        </form>
+    </div>
+    <!--
+    resultMessages
+    -->
+
+    <div class="row" ng-show="stepVisible[1]">
+        <div class="alert alert-info" ng-repeat="message in resultMessages.message" ng-bind-html-unsafe="message.value">
+            {{message.value}}
+        </div>
+    </div>
+    <!--
+        //############################################
+        // BUTTONS
+        //############################################
+    -->
+    <div class="wizard-actions">
+
+        <button ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]"
+                ng-repeat="step in packs.steps"
+                ng-click="onWizardButton($index)">
+            <i class="icon-arrow-right icon-on-right">{{step}}</i>
+        </button>
+    </div>
+</div>

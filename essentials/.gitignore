@@ -2861,6 +2861,12 @@ plugin-dashboard/src/main/webapp/plugins/contentBlocks/atlassian-ide-plugin.xml
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/target
 plugin-dashboard/src/main/webapp/plugins/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/*.iml
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/.DS_Store
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/.idea
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/target
 plugin-dashboard/src/main/webapp/plugins/target
 plugin-dashboard/src/main/webapp/target
 plugin-dashboard/src/main/webapp/theme/*.iml

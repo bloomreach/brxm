@@ -718,7 +718,6 @@ plugin-dashboard/src/main/webapp/META-INF/context.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
 plugin-dashboard/src/main/webapp/WEB-INF/web.xml -text
 plugin-dashboard/src/main/webapp/assets/css/bootstrap.css -text
-plugin-dashboard/src/main/webapp/assets/css/hippo-essentials.css -text
 plugin-dashboard/src/main/webapp/assets/fonts/Roboto-Black-webfont.eot -text
 plugin-dashboard/src/main/webapp/assets/fonts/Roboto-Black-webfont.svg -text
 plugin-dashboard/src/main/webapp/assets/fonts/Roboto-Black-webfont.ttf -text
@@ -951,10 +950,11 @@ plugin-dashboard/src/main/webapp/js/services/dependencyService.js -text
 plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
 plugin-dashboard/src/main/webapp/pages/home.html -text
 plugin-dashboard/src/main/webapp/pages/plugins.html -text
-plugin-dashboard/src/main/webapp/pages/powerpacks.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/index.html -text
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/controller.js -text
+plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/index.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text

@@ -23,6 +23,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
@@ -53,21 +55,26 @@ public class StatusResource extends BaseResource {
     @GET
     @Path("/powerpack")
     public StatusRestful getMenu(@Context ServletContext servletContext) {
-        final Plugin plugin = getPluginByName("Settings", servletContext);
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
-        ProjectSettingsBean b =new ProjectSettingsBean();
-        b.setProjectNamespace("marktpla");
-        context.getConfigService().write(b);
+        try {
 
+            final Plugin plugin = getPluginByName("Settings", servletContext);
+            final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
+            ProjectSettingsBean b =new ProjectSettingsBean();
+            b.setProjectNamespace("marktpla");
+            context.getConfigService().write(b);
+            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+            final StatusRestful statusRestful = new StatusRestful();
+            if (document != null && document.getSetupDone()) {
+                statusRestful.setStatus(true);
+                return statusRestful;
+            }
+            log.info("statusRestful {}", statusRestful);
 
-        final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
-        final StatusRestful statusRestful = new StatusRestful();
-        if (document != null && document.getSetupDone()) {
-            statusRestful.setStatus(true);
             return statusRestful;
-        }
-        log.info("statusRestful {}", statusRestful);
+        } catch (Exception e) {
 
-        return statusRestful;
+
+        }
+        return null;
     }
 }

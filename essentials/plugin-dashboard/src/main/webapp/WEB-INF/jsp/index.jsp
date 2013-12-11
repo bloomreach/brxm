@@ -22,6 +22,7 @@
   <script src="${pageContext.request.contextPath}/js/controllers.js"></script>
   <%--  TODO make dynamic--%>
   <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
 
 </head>
 <body>
@@ -51,14 +52,14 @@
 
   </div>
   <div class="col-sm-2" style="margin-right: 20px;" ng-controller="mainMenuCtrl">
-    <ul class="nav nav-stacked nav-pills" ng-hide="packsInstalled">
+    <ul class="nav nav-stacked nav-pills" ng-show="packsInstalled">
       <li ng-repeat="item in menu" ng-class="{true:'active', false:''}[isPageSelected('{{item.link}}')]">
         <a  href="{{item.link}}" ng-click="onMenuClick(item)">{{item.name}}</a>
       </li>
     </ul>
 
   </div>
-  <div class="col-sm-9" ng-controller="mainCtrl">
+  <div class="col-sm-9" ng-controller="onLoadCtrl">
     <div ng-view></div>
   </div>
 </div>

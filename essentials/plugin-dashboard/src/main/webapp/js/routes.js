@@ -13,8 +13,8 @@ app.config(function ($routeProvider) {
                 }
             })
             .when('/powerpacks', {
-                templateUrl: 'pages/powerpacks.html',
-                controller: 'mainCtrl'
+                templateUrl: 'plugins/newsEventsPowerpack/index.html',
+                controller: 'newsEventsCtrl'
             }).when('/plugins', {
                 templateUrl: 'pages/plugins.html',
                 controller: 'pluginCtrl'
@@ -40,11 +40,13 @@ app.config(function ($routeProvider) {
 
 });
 
-var checkPackInstalled = function ($q, $rootScope, $location, $http, $log) {
-    if (true) {
+var checkPackInstalled = function ($q, $rootScope, $location, $http, $log, MyHttpInterceptor) {
+
+  /*  if (true) {
         // TODO mm: enable
+        $rootScope.packsInstalled = true;
         return true;
-    }
+    }*/
 
     if ($rootScope.packsInstalled) {
         $log.info("powerpack is installed");
