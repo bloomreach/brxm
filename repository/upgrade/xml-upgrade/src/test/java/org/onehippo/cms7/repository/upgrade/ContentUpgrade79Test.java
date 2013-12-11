@@ -25,14 +25,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ContentUpgradeTest {
+public class ContentUpgrade79Test {
 
     @Test
     public void testHardDocumentOnFolderIsReplacedByReferenceable() throws IOException {
         File file = File.createTempFile("test", "xml");
         FileUtils.copyURLToFile(getClass().getResource("/input.xml"), file);
 
-        ContentUpgrade upgrade = new ContentUpgrade();
+        ContentUpgrade79 upgrade = new ContentUpgrade79();
         upgrade.process(file);
 
         final long crc = FileUtils.checksumCRC32(file);
