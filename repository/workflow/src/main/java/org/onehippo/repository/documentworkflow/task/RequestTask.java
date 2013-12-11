@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom workflow task for publication request, depublication request, scheduled publication, scheduled depublication and deletion request.
  */
-public class RequestWorkflowTask extends AbstractDocumentWorkflowTask {
+public class RequestTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(RequestWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(RequestTask.class);
 
     private String type;
 

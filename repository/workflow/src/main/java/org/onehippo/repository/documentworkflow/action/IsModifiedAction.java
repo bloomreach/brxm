@@ -19,22 +19,19 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.ArchiveWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.IsModifiedTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * ArchiveDelegatingAction delegating the execution to ArchiveWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the ArchiveWorkflowTask.
- * </P>
+ * IsModifiedAction delegating the execution to IsModifiedTask.
  */
-public class ArchiveDelegatingAction extends AbstractWorkflowTaskDelegatingAction<ArchiveWorkflowTask> {
+public class IsModifiedAction extends AbstractTaskAction<IsModifiedTask> {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected ArchiveWorkflowTask createWorkflowTask() {
-        return new ArchiveWorkflowTask();
+    protected IsModifiedTask createWorkflowTask() {
+        return new IsModifiedTask();
     }
 
     @Override

@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
  * Custom workflow task for determining if current draft is modified compared to the unpublished variant
  * and save this state in the handle hints.
  */
-public class IsModifiedWorkflowTask extends AbstractDocumentWorkflowTask {
+public class IsModifiedTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(IsModifiedWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(IsModifiedTask.class);
 
     @Override
     public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {

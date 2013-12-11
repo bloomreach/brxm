@@ -32,11 +32,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom workflow task for archiving document.
  */
-public class ArchiveWorkflowTask extends AbstractDocumentWorkflowTask {
+public class ArchiveTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(ArchiveWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(ArchiveTask.class);
 
     @Override
     public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {

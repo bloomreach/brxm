@@ -45,13 +45,13 @@ import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.util.JcrConstants;
 
 /**
- * AbstractDocumentWorkflowTask
+ * AbstractDocumentTask
  * <P>
  * Abstract base workflow task class having sharable workflow/document related operations and
  * delegating operations to the underlying AbstractAction to retrieve execution context attributes.
  * </P>
  */
-public abstract class AbstractDocumentWorkflowTask implements WorkflowTask, Serializable {
+public abstract class AbstractDocumentTask implements WorkflowTask, Serializable {
 
     private static final long serialVersionUID = 1L;
 

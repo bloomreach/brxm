@@ -19,16 +19,13 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.RequestWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.RequestTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * RequestDelegatingAction delegating the execution to RequestWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the RequestWorkflowTask.
- * </P>
+ * RequestAction delegating the execution to RequestTask.
  */
-public class RequestDelegatingAction extends AbstractWorkflowTaskDelegatingAction<RequestWorkflowTask> {
+public class RequestAction extends AbstractTaskAction<RequestTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,8 +54,8 @@ public class RequestDelegatingAction extends AbstractWorkflowTaskDelegatingActio
     }
 
     @Override
-    protected RequestWorkflowTask createWorkflowTask() {
-        return new RequestWorkflowTask();
+    protected RequestTask createWorkflowTask() {
+        return new RequestTask();
     }
 
     @Override

@@ -36,11 +36,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom workflow task for moving document.
  */
-public class MoveDocumentWorkflowTask extends AbstractDocumentWorkflowTask {
+public class MoveDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(MoveDocumentWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(MoveDocumentTask.class);
 
     @Override
     public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {

@@ -35,7 +35,7 @@ import org.onehippo.repository.mock.MockNode;
  */
 public class HintWorkflowTaskTest {
 
-    private HintWorkflowTask task;
+    private HintTask task;
     private DocumentHandle dm;
 
     @Before
@@ -45,7 +45,7 @@ public class HintWorkflowTaskTest {
         liveVariant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, "published");
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), liveVariant);
 
-        task = new HintWorkflowTask();
+        task = new HintTask();
         task.setDataModel(dm);
     }
 

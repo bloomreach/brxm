@@ -35,11 +35,11 @@ import org.slf4j.LoggerFactory;
  * Custom workflow task for copying (creating if necessary) from one varaint node to another variant node
  * with workflow properties setting options. 
  */
-public class CopyVariantWorkflowTask extends AbstractDocumentWorkflowTask {
+public class CopyVariantTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(CopyVariantWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(CopyVariantTask.class);
 
     private String sourceState;
     private String targetState;

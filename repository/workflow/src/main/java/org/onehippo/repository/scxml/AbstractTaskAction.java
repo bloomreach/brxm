@@ -33,21 +33,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * AbstractWorkflowTaskDelegatingAction
+ * AbstractTaskAction
  * <P>
  * Delegating SCXML Action abstract base class.
  * </P>
  */
-public abstract class AbstractWorkflowTaskDelegatingAction<T extends WorkflowTask> extends AbstractAction {
+public abstract class AbstractTaskAction<T extends WorkflowTask> extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(AbstractWorkflowTaskDelegatingAction.class);
+    private static Logger log = LoggerFactory.getLogger(AbstractTaskAction.class);
 
     private T workflowTask;
     private Map<String, Object> properties;
 
-    public AbstractWorkflowTaskDelegatingAction() {
+    public AbstractTaskAction() {
     }
 
     /**

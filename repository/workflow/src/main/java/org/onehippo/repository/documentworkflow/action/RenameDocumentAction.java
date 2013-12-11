@@ -19,16 +19,13 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.RenameDocumentWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.RenameDocumentTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * RenameDocumentDelegatingAction delegating the execution to RenameDocumentWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the RenameDocumentWorkflowTask.
- * </P>
+ * RenameDocumentAction delegating the execution to RenameDocumentTask.
  */
-public class RenameDocumentDelegatingAction extends AbstractWorkflowTaskDelegatingAction<RenameDocumentWorkflowTask> {
+public class RenameDocumentAction extends AbstractTaskAction<RenameDocumentTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,8 +38,8 @@ public class RenameDocumentDelegatingAction extends AbstractWorkflowTaskDelegati
     }
 
     @Override
-    protected RenameDocumentWorkflowTask createWorkflowTask() {
-        return new RenameDocumentWorkflowTask();
+    protected RenameDocumentTask createWorkflowTask() {
+        return new RenameDocumentTask();
     }
 
     @Override

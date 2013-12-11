@@ -19,22 +19,35 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.IsModifiedWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.ScheduleRequestTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * IsModifiedDelegatingAction delegating the execution to IsModifiedWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the IsModifiedWorkflowTask.
- * </P>
+ * ScheduleRequestAction delegating the execution to ScheduleRequestTask.
  */
-public class IsModifiedDelegatingAction extends AbstractWorkflowTaskDelegatingAction<IsModifiedWorkflowTask> {
+public class ScheduleRequestAction extends AbstractTaskAction<ScheduleRequestTask> {
 
     private static final long serialVersionUID = 1L;
 
+    public String getType() {
+        return getWorkflowTask().getType();
+    }
+
+    public void setType(final String type) {
+        getWorkflowTask().setType(type);
+    }
+
+    public String getTargetDateExpr() {
+        return (String) getProperties().get("targetDate");
+    }
+
+    public void setTargetDateExpr(final String targetDateExpr) {
+        getProperties().put("targetDate", targetDateExpr);
+    }
+
     @Override
-    protected IsModifiedWorkflowTask createWorkflowTask() {
-        return new IsModifiedWorkflowTask();
+    protected ScheduleRequestTask createWorkflowTask() {
+        return new ScheduleRequestTask();
     }
 
     @Override

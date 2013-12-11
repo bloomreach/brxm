@@ -22,12 +22,12 @@ import org.apache.commons.scxml2.env.jexl.JexlContext;
 import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.api.WorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * MockAbstractWorkflowTaskDelegatingAction
  */
-public class MockAbstractWorkflowTaskDelegatingAction<T extends WorkflowTask> extends AbstractWorkflowTaskDelegatingAction<WorkflowTask> {
+public class MockAbstractWorkflowTaskDelegatingAction<T extends WorkflowTask> extends AbstractTaskAction<WorkflowTask> {
 
     private static final long serialVersionUID = 1L;
 

@@ -19,38 +19,19 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.ScheduleRequestWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.ArchiveTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * ScheduleRequestDelegatingAction delegating the execution to ScheduleRequestWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the ScheduleRequestWorkflowTask.
- * </P>
+ * ArchiveAction delegating the execution to ArchiveTask.
  */
-public class ScheduleRequestDelegatingAction extends AbstractWorkflowTaskDelegatingAction<ScheduleRequestWorkflowTask> {
+public class ArchiveAction extends AbstractTaskAction<ArchiveTask> {
 
     private static final long serialVersionUID = 1L;
 
-    public String getType() {
-        return getWorkflowTask().getType();
-    }
-
-    public void setType(final String type) {
-        getWorkflowTask().setType(type);
-    }
-
-    public String getTargetDateExpr() {
-        return (String) getProperties().get("targetDate");
-    }
-
-    public void setTargetDateExpr(final String targetDateExpr) {
-        getProperties().put("targetDate", targetDateExpr);
-    }
-
     @Override
-    protected ScheduleRequestWorkflowTask createWorkflowTask() {
-        return new ScheduleRequestWorkflowTask();
+    protected ArchiveTask createWorkflowTask() {
+        return new ArchiveTask();
     }
 
     @Override

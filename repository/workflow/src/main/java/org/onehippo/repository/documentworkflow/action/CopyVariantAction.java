@@ -19,16 +19,13 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.CopyVariantWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.CopyVariantTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * CopyVariantDelegatingAction delegating the execution to CopyVariantWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the CopyVariantWorkflowTask.
- * </P>
+ * CopyVariantAction delegating the execution to CopyVariantTask.
  */
-public class CopyVariantDelegatingAction extends AbstractWorkflowTaskDelegatingAction<CopyVariantWorkflowTask> {
+public class CopyVariantAction extends AbstractTaskAction<CopyVariantTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -81,8 +78,8 @@ public class CopyVariantDelegatingAction extends AbstractWorkflowTaskDelegatingA
     }
 
     @Override
-    protected CopyVariantWorkflowTask createWorkflowTask() {
-        return new CopyVariantWorkflowTask();
+    protected CopyVariantTask createWorkflowTask() {
+        return new CopyVariantTask();
     }
 
     @Override

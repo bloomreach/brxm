@@ -26,9 +26,9 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 
 /**
- * HintWorkflowTask sets or removes a DocumentHandle (dm context variable) hints key
+ * HintTask sets or removes a DocumentHandle (dm context variable) hints key
  */
-public class HintWorkflowTask extends AbstractDocumentWorkflowTask {
+public class HintTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 

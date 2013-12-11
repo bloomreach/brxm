@@ -19,38 +19,35 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.HintWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.CopyDocumentTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * HintDelegatingAction delegates the execution to HintWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the HintWorkflowTask.
- * </P>
+ * CopyDocumentAction delegating the execution to CopyDocumentTask.
  */
-public class HintDelegatingAction extends AbstractWorkflowTaskDelegatingAction<HintWorkflowTask> {
+public class CopyDocumentAction extends AbstractTaskAction<CopyDocumentTask> {
 
     private static final long serialVersionUID = 1L;
 
-    public String getHint() {
-        return getWorkflowTask().getHint();
+    public String getDestinationExpr() {
+        return (String) getProperties().get("destination");
     }
 
-    public void setHint(final String hint) {
-        getWorkflowTask().setHint(hint);
+    public void setDestinationExpr(String destinationExpr) {
+        getProperties().put("destination", destinationExpr);
     }
 
-    public String getValue() {
-        return (String) getProperties().get("value");
+    public String getNewNameExpr() {
+        return (String) getProperties().get("newName");
     }
 
-    public void setValue(final String value) {
-        getProperties().put("value", value);
+    public void setNewNameExpr(String newNameExpr) {
+        getProperties().put("newName",newNameExpr);
     }
 
     @Override
-    protected HintWorkflowTask createWorkflowTask() {
-        return new HintWorkflowTask();
+    protected CopyDocumentTask createWorkflowTask() {
+        return new CopyDocumentTask();
     }
 
     @Override

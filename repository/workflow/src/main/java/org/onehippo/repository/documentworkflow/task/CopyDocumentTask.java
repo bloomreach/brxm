@@ -35,11 +35,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom workflow task for copying document.
  */
-public class CopyDocumentWorkflowTask extends AbstractDocumentWorkflowTask {
+public class CopyDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(CopyDocumentWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(CopyDocumentTask.class);
 
     @Override
     public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {

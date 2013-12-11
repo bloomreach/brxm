@@ -31,14 +31,14 @@ import org.apache.commons.scxml2.model.CustomAction;
 import org.apache.commons.scxml2.model.SCXML;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.documentworkflow.action.ArchiveDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.CopyDocumentDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.CopyVariantDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.IsModifiedDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.MoveDocumentDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.RenameDocumentDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.RequestDelegatingAction;
-import org.onehippo.repository.documentworkflow.action.ScheduleRequestDelegatingAction;
+import org.onehippo.repository.documentworkflow.action.ArchiveAction;
+import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
+import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
+import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
+import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
+import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
+import org.onehippo.repository.documentworkflow.action.RequestAction;
+import org.onehippo.repository.documentworkflow.action.ScheduleRequestAction;
 import org.onehippo.repository.scxml.SCXMLUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,14 +56,14 @@ public class InRepoFullWorkflowParallelModelTransitionTest {
     protected List<CustomAction> getCustomActions() {
         List<CustomAction> customActions = new LinkedList<>();
 
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "copyvariant", CopyVariantDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "request", RequestDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "archive", ArchiveDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "ismodified", IsModifiedDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "schedulerequest", ScheduleRequestDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "copydocument", CopyDocumentDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "movedocument", MoveDocumentDelegatingAction.class));
-        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "renamedocument", RenameDocumentDelegatingAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "copyvariant", CopyVariantAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "request", RequestAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "archive", ArchiveAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "ismodified", IsModifiedAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "schedulerequest", ScheduleRequestAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "copydocument", CopyDocumentAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "movedocument", MoveDocumentAction.class));
+        customActions.add(new CustomAction("http://www.onehippo.org/cms7/repository/scxml", "renamedocument", RenameDocumentAction.class));
 
         return customActions;
     }

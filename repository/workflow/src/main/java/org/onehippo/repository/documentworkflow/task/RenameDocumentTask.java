@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom workflow task for renaming document.
  */
-public class RenameDocumentWorkflowTask extends AbstractDocumentWorkflowTask {
+public class RenameDocumentTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(RenameDocumentWorkflowTask.class);
+    private static Logger log = LoggerFactory.getLogger(RenameDocumentTask.class);
 
     @Override
     public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {

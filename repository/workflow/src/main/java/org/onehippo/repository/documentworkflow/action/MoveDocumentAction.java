@@ -19,16 +19,13 @@ package org.onehippo.repository.documentworkflow.action;
 import java.util.Map;
 
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.task.MoveDocumentWorkflowTask;
-import org.onehippo.repository.scxml.AbstractWorkflowTaskDelegatingAction;
+import org.onehippo.repository.documentworkflow.task.MoveDocumentTask;
+import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
- * MoveDocumentDelegatingAction delegating the execution to MoveDocumentWorkflowTask.
- * <P>
- * Note: All the setters must be redefined to delegate to the MoveDocumentWorkflowTask.
- * </P>
+ * MoveDocumentAction delegating the execution to MoveDocumentTask.
  */
-public class MoveDocumentDelegatingAction extends AbstractWorkflowTaskDelegatingAction<MoveDocumentWorkflowTask> {
+public class MoveDocumentAction extends AbstractTaskAction<MoveDocumentTask> {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,8 +46,8 @@ public class MoveDocumentDelegatingAction extends AbstractWorkflowTaskDelegating
     }
 
     @Override
-    protected MoveDocumentWorkflowTask createWorkflowTask() {
-        return new MoveDocumentWorkflowTask();
+    protected MoveDocumentTask createWorkflowTask() {
+        return new MoveDocumentTask();
     }
 
     @Override

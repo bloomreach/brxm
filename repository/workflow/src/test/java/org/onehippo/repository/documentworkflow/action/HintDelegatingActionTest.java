@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.MockWorkflowContext;
-import org.onehippo.repository.documentworkflow.task.HintWorkflowTask;
+import org.onehippo.repository.documentworkflow.task.HintTask;
 import org.onehippo.repository.mock.MockNode;
 
 /**
@@ -39,9 +39,9 @@ import org.onehippo.repository.mock.MockNode;
  */
 public class HintDelegatingActionTest {
 
-    private HintWorkflowTask task;
+    private HintTask task;
     private DocumentHandle dm;
-    private HintDelegatingAction delegatingAction;
+    private HintAction delegatingAction;
 
     private Context context = new JexlContext();
     private Evaluator evaluator = new JexlEvaluator();
@@ -56,10 +56,10 @@ public class HintDelegatingActionTest {
         context.set("dm", dm);
         context.set("value1", "value1");
 
-        delegatingAction = new HintDelegatingAction() {
+        delegatingAction = new HintAction() {
             private static final long serialVersionUID = 1L;
             @Override
-            protected HintWorkflowTask createWorkflowTask() {
+            protected HintTask createWorkflowTask() {
                 return task;
             }
             @Override
@@ -72,7 +72,7 @@ public class HintDelegatingActionTest {
             }
         };
 
-        task = new HintWorkflowTask();
+        task = new HintTask();
     }
 
     @Test
