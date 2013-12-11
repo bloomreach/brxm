@@ -34,7 +34,7 @@ import de.pdark.decentxml.XMLIOSource;
 import de.pdark.decentxml.XMLParseException;
 import de.pdark.decentxml.XMLParser;
 
-public class ContentUpgrade {
+public class ContentUpgrade79 {
 
     public static final Namespace SV = new Namespace("sv", "http://www.jcp.org/jcr/sv/1.0");
 
@@ -89,6 +89,12 @@ public class ContentUpgrade {
         if (nameAttr == null) {
             return;
         }
+
+        if (isDeprecatedHippoTranslationNode(element, nameAttr)) {
+            element.remove();
+            return;
+        }
+        
         String name = nameAttr.getValue();
         boolean prototype = "hipposysedit:prototype".equals(name);
 
@@ -128,6 +134,22 @@ public class ContentUpgrade {
         for (Element child : children) {
             processNode(child, inDocument);
         }
+    }
+
+    private boolean isDeprecatedHippoTranslationNode(final Element element, final Attribute nameAttr) {
+        if ("hippotranslation:translations".equals(nameAttr.getValue())) {
+            System.out.println("CHeck");
+            final List<Element> properties = element.getChildren("property", SV);
+            for (Element property : properties) {
+                String propName = property.getAttribute("name", SV).getValue();
+                if ("jcr:primaryType".equals(propName)) {
+                    if ("hippotranslation:translations".equals(getPrimaryType(property))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private String getPrimaryType(Element property) {
@@ -192,7 +214,7 @@ public class ContentUpgrade {
             path = args[0];
         }
         File cwd = new File(path);
-        ContentUpgrade upgrade = new ContentUpgrade();
+        ContentUpgrade79 upgrade = new ContentUpgrade79();
         upgrade.processDirectory(cwd);
     }
 
