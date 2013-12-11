@@ -204,20 +204,25 @@
 
     </state>
 
-    <state id="version" initial="no-version">
+    <state id="versioning" initial="no-versioning">
 
-      <state id="no-version">
-        <transition target="init-version"
-                    cond="dm.sf.version"/>
+      <state id="no-versioning">
+        <transition target="version"
+                    cond="dm.sf.version and dm.ss=='unpublished'"/>
       </state>
 
-      <state id="init-version">
-        <transition target="not-versionable"/>
+      <state id="version">
+        <onentry>
+          <if cond="empty(dm.v)">
+            <hippo:hint hint="version" value="true"/>
+            <hippo:hint hint="listVersions" value="true"/>
+            <hippo:hint hint="restoreVersion" value="true"/>
+            <hippo:hint hint="revertVersion" value="true"/>
+            <else/>
+            <hippo:hint hint="restoreVersionTo" value="true"/>
+          </if>
+        </onentry>
       </state>
-
-      <state id="versionable"/>
-      <state id="versioned"/>
-      <state id="not-versionable"/>
 
     </state>
 

@@ -29,6 +29,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.mock.MockVersion;
+import org.onehippo.repository.util.JcrConstants;
 
 public class DocumentHandleTest {
 
@@ -39,7 +41,7 @@ public class DocumentHandleTest {
     }
 
     protected MockNode addRequest(MockNode handle, String type) throws RepositoryException {
-        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, PublicationRequest.NT_HIPPOSTDPUBWF_REQUEST);
+        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
         variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
@@ -107,6 +109,27 @@ public class DocumentHandleTest {
         context.getWorkflowConfiguration().put("workflow.supportedFeatures", "undefined");
         dm = new DocumentHandle(context, draftVariant);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
+
+        context.getWorkflowConfiguration().remove("workflow.supportedFeatures");
+
+        MockNode request = addRequest(handleNode, PublicationRequest.PUBLISH);
+        dm = new DocumentHandle(context, request);
+        assertEquals(DocumentWorkflow.SupportedFeatures.request, dm.getSupportedFeatures());
+
+        context.getWorkflowConfiguration().put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        dm = new DocumentHandle(context, request);
+        assertEquals(DocumentWorkflow.SupportedFeatures.request, dm.getSupportedFeatures());
+
+        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
+        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
+        MockNode frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
+        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
+
+        dm = new DocumentHandle(context, frozenNode);
+        assertEquals(DocumentWorkflow.SupportedFeatures.version, dm.getSupportedFeatures());
+        assertEquals(versionNode, dm.getVersion());
+        assertEquals("unpublished", dm.getSubjectState());
     }
 
     @Test

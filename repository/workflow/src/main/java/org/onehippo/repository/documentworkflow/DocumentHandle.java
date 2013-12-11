@@ -27,12 +27,15 @@ import java.util.Map;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +45,7 @@ public class DocumentHandle {
 
     private WorkflowContext context;
     private Node subject;
+    private Version version;
 
     private Node handle;
     private String user;
@@ -58,30 +62,48 @@ public class DocumentHandle {
 
     private Map<String, Boolean> privilegesMap;
 
-    public DocumentHandle(WorkflowContext context, Node subject) throws RepositoryException {
+    public DocumentHandle(WorkflowContext context, Node workflowSubject) throws RepositoryException {
+
+        boolean supportedFeaturesPreset = false;
 
         this.context = context;
-        this.subject = subject;
+        this.subject = workflowSubject;
+
+        if (workflowSubject.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
+            // only can support VersionWorkflow operations
+            supportedFeatures = DocumentWorkflow.SupportedFeatures.version;
+            supportedFeaturesPreset = true;
+            this.subject = workflowSubject.getSession().getNodeByIdentifier(workflowSubject.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+            this.version = (Version) workflowSubject.getParent();
+        }
+        else {
+            if (workflowSubject.isNodeType(HippoNodeType.NT_REQUEST)) {
+                // only can support RequestWorkflow operations
+                supportedFeatures = DocumentWorkflow.SupportedFeatures.request;
+                supportedFeaturesPreset = true;
+            }
+        }
         handle = subject.getParent();
         this.user = context.getUserIdentity();
 
-        RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
-        if (workflowConfiguration.exists()) {
-            String supportedFeaturesConfiguration = (String)workflowConfiguration.get("workflow.supportedFeatures");
-            if (supportedFeaturesConfiguration != null) {
-                try {
-                    supportedFeatures = DocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
-                }
-                catch (IllegalArgumentException e) {
-                    String configurationPath = (String)workflowConfiguration.get("_path");
-                    if (configurationPath == null) {
-                        configurationPath = "<unknown>";
+        if (!supportedFeaturesPreset) {
+            RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
+            if (workflowConfiguration.exists()) {
+                String supportedFeaturesConfiguration = (String)workflowConfiguration.get("workflow.supportedFeatures");
+                if (supportedFeaturesConfiguration != null) {
+                    try {
+                        supportedFeatures = DocumentWorkflow.SupportedFeatures.valueOf(supportedFeaturesConfiguration);
                     }
-                    log.warn("Unknown DocumentWorkflow.SupportedFeatures [{}] configured for property workflow.supportedFeatures at: {}", supportedFeaturesConfiguration, configurationPath);
+                    catch (IllegalArgumentException e) {
+                        String configurationPath = (String)workflowConfiguration.get("_path");
+                        if (configurationPath == null) {
+                            configurationPath = "<unknown>";
+                        }
+                        log.warn("Unknown DocumentWorkflow.SupportedFeatures [{}] configured for property workflow.supportedFeatures at: {}", supportedFeaturesConfiguration, configurationPath);
+                    }
                 }
             }
         }
-
         boolean subjectFound = false;
 
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
@@ -241,6 +263,21 @@ public class DocumentHandle {
      */
     public String getSs() {
         return getSubjectState();
+    }
+
+    /**
+     * @return the Version of the Workflow invocation subject of type {@link JcrConstants#JCR_FROZEN_NODE} or null if not
+     */
+    public Version getVersion() {
+        return version;
+    }
+
+    /**
+     * Script supporting shortened version of {@link #getVersion}
+     * @return the Version of the Workflow invocation subject of type {@link JcrConstants#JCR_FROZEN_NODE} or null if not
+     */
+    public Version getV() {
+        return version;
     }
 
     /**

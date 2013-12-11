@@ -48,11 +48,13 @@ import org.onehippo.repository.documentworkflow.action.RequestDelegatingAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleRequestDelegatingAction;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
+import org.onehippo.repository.mock.MockVersion;
 import org.onehippo.repository.scxml.MockRepositorySCXMLRegistry;
 import org.onehippo.repository.scxml.RepositorySCXMLExecutorFactory;
 import org.onehippo.repository.scxml.SCXMLExecutorFactory;
 import org.onehippo.repository.scxml.SCXMLRegistry;
 import org.onehippo.repository.scxml.SCXMLUtils;
+import org.onehippo.repository.util.JcrConstants;
 
 public class TestDocumentWorkflowImpl {
 
@@ -90,7 +92,7 @@ public class TestDocumentWorkflowImpl {
     }
 
     protected MockNode addRequest(MockNode handle, String type) throws RepositoryException {
-        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, PublicationRequest.NT_HIPPOSTDPUBWF_REQUEST);
+        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
         variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
@@ -258,7 +260,7 @@ public class TestDocumentWorkflowImpl {
         rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
         wf.setNode(rejectedRequest);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-editable");
+        assertContainsStateIds(wf.getScxmlExecutor(), "no-edit");
 
         rejectedRequest.remove();
         wf.setNode(draftVariant);
@@ -317,8 +319,7 @@ public class TestDocumentWorkflowImpl {
 
         wf.setNode(rejectedRequest);
 
-        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-editable");
+        assertContainsStateIds(wf.getScxmlExecutor(), "no-edit");
 
         // test state editing
         publishedVariant.remove();
@@ -418,8 +419,8 @@ public class TestDocumentWorkflowImpl {
         workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(publishRequest);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "no-request");
-        assertNotContainsHint(wf.hints(), "cancelRequest");
+        assertContainsStateIds(wf.getScxmlExecutor(), "requested");
+        assertContainsHint(wf.hints(), "cancelRequest", false);
         assertNotContainsHint(wf.hints(), "acceptRequest");
         assertNotContainsHint(wf.hints(), "rejectRequest");
 
@@ -472,10 +473,7 @@ public class TestDocumentWorkflowImpl {
         workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         wf.setNode(rejectedRequest);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "no-request");
-        assertNotContainsHint(wf.hints(), "cancelRequest");
-        assertNotContainsHint(wf.hints(), "acceptRequest");
-        assertNotContainsHint(wf.hints(), "rejectRequest");
+        assertContainsStateIds(wf.getScxmlExecutor(), "request-rejected");
 
         workflowConfig.remove("workflow.supportedFeatures");
         rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
@@ -542,8 +540,8 @@ public class TestDocumentWorkflowImpl {
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
         wf.setNode(publishRequest);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-publishable");
-        assertContainsHint(wf.hints(), "publish", false);
+        assertContainsStateIds(wf.getScxmlExecutor(), "no-publish");
+        assertNotContainsHint(wf.hints(), "publish");
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         wf.setNode(unpublishedVariant);
@@ -658,7 +656,7 @@ public class TestDocumentWorkflowImpl {
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
         wf.setNode(publishRequest);
 
-        assertContainsStateIds(wf.getScxmlExecutor(), "not-depublishable");
+        assertContainsStateIds(wf.getScxmlExecutor(), "no-depublish");
 
         workflowContext.setUserIdentity("system");
         wf.setNode(draftVariant);
@@ -708,5 +706,45 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsStateIds(wf.getScxmlExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", true);
+    }
+
+    @Test
+    public void testVersioningState() throws Exception {
+        MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
+        MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
+        RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
+        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        wf.setWorkflowContext(workflowContext);
+
+        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        MockNode unpublishedVariant, frozenNode = null;
+
+        unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
+
+        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
+        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
+        frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
+        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
+
+        wf.setNode(unpublishedVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "version");
+        assertContainsHint(wf.hints(), "version", true);
+        assertContainsHint(wf.hints(), "listVersions", true);
+        assertContainsHint(wf.hints(), "restoreVersion", true);
+        assertContainsHint(wf.hints(), "revertVersion", true);
+        assertNotContainsHint(wf.hints(), "restoreVersionTo");
+
+        workflowConfig.put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        wf.setNode(unpublishedVariant);
+
+        assertContainsStateIds(wf.getScxmlExecutor(), "no-versioning");
+        assertNotContainsHint(wf.hints(), "version");
+        assertNotContainsHint(wf.hints(), "restoreVersionTo");
+
+        wf.setNode(frozenNode);
+        assertContainsStateIds(wf.getScxmlExecutor(), "version");
+        assertContainsHint(wf.hints(), "restoreVersionTo", true);
+        assertNotContainsHint(wf.hints(), "version");
     }
 }
