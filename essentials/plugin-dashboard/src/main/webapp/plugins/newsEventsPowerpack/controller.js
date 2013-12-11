@@ -1,33 +1,29 @@
-
-
 app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-    $scope.pageModel = WM.createModel();
+
     $scope.installSampleData = false;
-    $scope.stepVisible = $scope.pageModel.getSelectedArray();
+    $scope.stepVisible = [true, false];
     $scope.resultMessages = null;
     $scope.selectedDescription = "Please make a selection";
     $scope.packs = null;
-
+    $scope.buttons = [
+        {buttonText: "Next", previousIndex: 0, nextIndex: 1}
+    ];
+    $scope.initCalled = false;
     $scope.init = function () {
+        if ($scope.initCalled) {
+            console.log("already called");
+            return;
+        }
 
+        $scope.initCalled = true;
         $scope.packs = {"items": [
             {"enabled": true, "name": "Basic News and Events site", "value": "news-events"},
             {"enabled": false, "name": "A REST only site that contains only REST services and no pages.", "value": "empty-rest"}
         ], "project": {"namespace": "marketplace"}, "steps": [
             {"buttonText": "Next", "name": "Select a powerpack"},
-            {"buttonText": "Next", "name": "Select another powerpack"},
             {"buttonText": "Finish", "name": "Install"}
         ]};
-        var length = $scope.packs.steps.length;
-        for (var i = 0; i < length; i++) {
-            var step = $scope.packs.steps[i];
-            $scope.pageModel.addPage(step.buttonText);
-
-        }
-        $scope.pageModel.setSelected(0);
-
-
         if (true) {
             return;
         }
@@ -55,19 +51,35 @@ app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http
     };
 
 
-    $scope.onWizardButton = function (index) {
+    $scope.onWizardButton = function (idx) {
+        if (idx == 0) {
+            $scope.buttons = [
+                {buttonText: "Next", previousIndex: 0, nextIndex: 1}
+
+            ];
+            $scope.stepVisible = [true, false];
+        } else {
+            $scope.buttons = [
+                {buttonText: "Previous", previousIndex: 0, nextIndex: 1},
+                {buttonText: "Finish", previousIndex: 0, nextIndex: 2}
+            ];
+            $scope.stepVisible = [false, true];
+        }
+
+        if (idx == 2) {
+
+            // execute installation:
+            $http({
+                method: 'GET',
+                url: $rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData
+            }).success(function (data) {
+                        $scope.resultMessages = data;
+                    });
+        }
 
 
-        // execute installation:
-        $http({
-            method: 'GET',
-            url: $rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData
-        }).success(function (data) {
-                    $scope.resultMessages = data;
-                    $scope.stepVisible = [false, true];
-                });
     };
 
     $scope.init();
 
-})
+});

@@ -59,8 +59,9 @@
     -->
 
     <div class="row" ng-show="stepVisible[1]">
-        <div class="alert alert-info" ng-repeat="message in resultMessages.message" ng-bind-html-unsafe="message.value">
-            {{message.value}}
+        <div class="alert alert-info" ng-hide="resultMessages.items.length > 0">{{selectedDescription}}</div>
+        <div class="alert alert-info" ng-show="resultMessages.items.length > 0">
+            <p ng-repeat="message in resultMessages.items" ng-bind-html-unsafe="message.value">{{message.value}}</p>
         </div>
     </div>
     <!--
@@ -69,11 +70,10 @@
         //############################################
     -->
     <div class="wizard-actions">
-
         <button ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]"
-                ng-repeat="step in packs.steps"
-                ng-click="onWizardButton($index)">
-            <i class="icon-arrow-right icon-on-right">{{step}}</i>
+                ng-repeat="btn in buttons"
+                ng-click="onWizardButton({true:btn.nextIndex, false:btn.previousIndex}[stepVisible[$index]])">
+            <i class="icon-arrow-right icon-on-right">{{btn.buttonText}}</i>
         </button>
     </div>
 </div>
