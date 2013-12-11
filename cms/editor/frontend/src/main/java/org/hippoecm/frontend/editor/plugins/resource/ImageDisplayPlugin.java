@@ -50,7 +50,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(ImageDisplayPlugin.class);
 
-    public static final String MIME_TYPE_HIPPO_UNINITIALIZED = "application/vnd.hippo.uninitialized";
+    public static final String MIME_TYPE_HIPPO_BLANK = "application/vnd.hippo.blank";
 
     ByteSizeFormatter formatter = new ByteSizeFormatter();
 
@@ -110,7 +110,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
             fragment.add(createFileLink(stream, getModelObject()));
 
-            if (stream.getContentType().equals(MIME_TYPE_HIPPO_UNINITIALIZED)) {
+            if (stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK)) {
                 fragment.setVisible(false);
             }
         } catch (RepositoryException ex) {
