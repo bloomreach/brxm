@@ -17,9 +17,9 @@
                 </td>
                 <td>{{docType.key}}</td>
                 <td>
-                    <select ng-change="selectChange()"
+                    <select ng-change="selectChange(docType.key, selectedItem[$index])"
                             ng-options="option.value as option.key for option in columns.items"
-                            ng-model="selectedItem">
+                            ng-model="selectedItem[$index]">
                     </select>
                 </td>
             </tr>
@@ -37,6 +37,7 @@
                  <tbody>
                  <tr ng-repeat="docType in selection">
                      <td>{{docType}}</td>
+                     <td>{{selectedItem[$index]}}</td>
                  </tr>
                  </tbody>
              </table>

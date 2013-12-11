@@ -7,11 +7,14 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     ]};
     $scope.welcomeMessage = "Content blocks plugin";
     $scope.selection = [];
+    $scope.selectedItem = [];
     $scope.documentTypes = [];
 
 
-
-    $scope.toggleCheckBox = function(docName) {
+    $scope.selectChange = function (docName, selectedItem) {
+        $log.info(docName, selectedItem);
+    };
+    $scope.toggleCheckBox = function (docName) {
         var index = $scope.selection.indexOf(docName);
         // check if  selected
         if (index > -1) {
