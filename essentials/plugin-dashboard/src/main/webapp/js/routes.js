@@ -7,7 +7,7 @@ app.config(function ($routeProvider) {
     $routeProvider
             .when('/', {
                 templateUrl: 'pages/home.html',
-                controller: 'mainCtrl',
+                controller: 'homeCtrl',
                 resolve: {
                     factory: checkPackInstalled
                 }
@@ -42,11 +42,11 @@ app.config(function ($routeProvider) {
 
 var checkPackInstalled = function ($q, $rootScope, $location, $http, $log, MyHttpInterceptor) {
 
-  /*  if (true) {
+    if (true) {
         // TODO mm: enable
         $rootScope.packsInstalled = true;
         return true;
-    }*/
+    }
 
     if ($rootScope.packsInstalled) {
         $log.info("powerpack is installed");

@@ -43,7 +43,7 @@
 <div class="container-full">
   <div class="hippo-header">
     <div class="hippo-header-logo">
-      <img src="${pageContext.request.contextPath}/images/hippo-logo.png">
+      <a href="${pageContext.request.contextPath}"><img src="${pageContext.request.contextPath}/images/hippo-logo.png"></a>
     </div>
     <div class="hippo-header-text">
            {{headerMessage}}
@@ -58,7 +58,7 @@
     </ul>
 
   </div>
-  <div class="col-sm-9" ng-controller="onLoadCtrl">
+  <div class="col-sm-9" ng-controller="homeCtrl">
     <div ng-view></div>
   </div>
 </div>

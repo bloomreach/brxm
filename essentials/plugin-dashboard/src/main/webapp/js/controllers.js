@@ -50,7 +50,7 @@ app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope
  // ON LOAD CONTROLLER
  //############################################
  */
-app.controller('onLoadCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+app.controller('homeCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
     $scope.init = function () {
         $log.info("...Essentials loaded...");
     };
