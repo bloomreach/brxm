@@ -106,6 +106,10 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         return workflowContext;
     }
 
+    /**
+     * Sets the workflow context instance
+     * @param workflowContext
+     */
     public void setWorkflowContext(final WorkflowContext workflowContext) {
         this.workflowContext = workflowContext;
     }

@@ -94,7 +94,7 @@ public abstract class AbstractTaskAction<T extends WorkflowTask> extends Abstrac
                 try {
                     getProperties().put(key, eval((String) value));
                 } catch (Exception e) {
-                    log.error("Failed to evaluate dynamic property expression, '" + value + "'.", e);
+                    log.error("Failed to evaluate dynamic property expression in executing " + getClass().getName() + ": '" + value + "'.", e);
                 }
             }
         }

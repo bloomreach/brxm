@@ -18,6 +18,7 @@ package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Map;
 
+import org.hippoecm.repository.api.WorkflowContext;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.RequestTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
@@ -61,6 +62,7 @@ public class RequestAction extends AbstractTaskAction<RequestTask> {
     @Override
     protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
         super.initTaskBeforeEvaluation(properties);
+        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
         DocumentHandle dm = getContextAttribute("dm");
         getWorkflowTask().setDataModel(dm);
     }

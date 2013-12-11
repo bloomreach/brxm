@@ -40,7 +40,7 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
         if (this.evaluator == null) {
             JexlEvaluator evaluator = new JexlEvaluator();
             evaluator.setJexlEngineSilent(false);
-            evaluator.setJexlEngineStrict(true);
+            //evaluator.setJexlEngineStrict(true);
             this.evaluator = evaluator;
         }
 
