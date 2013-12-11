@@ -1,6 +1,6 @@
 app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-
+    $scope.hideAll = false;
     $scope.installSampleData = false;
     $scope.stepVisible = [true, false];
     $scope.resultMessages = null;
@@ -74,6 +74,7 @@ app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http
                 url: $rootScope.REST.powerpacks_install + $scope.selectedItem + "/" + $scope.installSampleData
             }).success(function (data) {
                         $scope.resultMessages = data;
+                        $scope.hideAll = true;
                     });
         }
 

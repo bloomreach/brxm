@@ -5,7 +5,7 @@
     // STEP INDICATOR
     //############################################
  -->
-    <div class="row">
+    <div class="row" ng-hide="hideAll">
         <ul class="wizard-steps">
             <li ng-class="{true:'active', false:''}[stepVisible[$index]]" ng-repeat="step in packs.steps">
                 <span class="step" id="no">{{$index +1}}</span>
@@ -69,7 +69,7 @@
         // BUTTONS
         //############################################
     -->
-    <div class="wizard-actions">
+    <div class="wizard-actions" ng-hide="hideAll">
         <button ng-class="{true:'btn btn-success btn-next', false:'btn btn-prev'}[stepVisible[$index]]"
                 ng-repeat="btn in buttons"
                 ng-click="onWizardButton({true:btn.nextIndex, false:btn.previousIndex}[stepVisible[$index]])">
