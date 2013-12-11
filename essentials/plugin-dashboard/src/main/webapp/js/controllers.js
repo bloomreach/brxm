@@ -8,7 +8,7 @@ app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $ht
 
 
 app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-    $scope.resultMessages = {"@page": "1", "@totalSize": "0", "message": [
+    $scope.resultMessages = {"@page": "1", "@totalSize": "0", "items": [
         {"value": "Not implemented yet"},
         {"value": "Not implemented yet"}
     ]};
