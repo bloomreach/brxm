@@ -1010,7 +1010,6 @@ plugin-dashboard/src/main/webapp/images/targeting1.png -text
 plugin-dashboard/src/main/webapp/images/targeting2.png -text
 plugin-dashboard/src/main/webapp/images/top-back.png -text
 plugin-dashboard/src/main/webapp/js/Essentials.js -text
-plugin-dashboard/src/main/webapp/js/WizardModel.js -text
 plugin-dashboard/src/main/webapp/js/angular-route.min.js -text
 plugin-dashboard/src/main/webapp/js/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/angular.js -text
@@ -1022,6 +1021,8 @@ plugin-dashboard/src/main/webapp/js/domReady.js -text
 plugin-dashboard/src/main/webapp/js/jquery.js -text
 plugin-dashboard/src/main/webapp/js/jquery.validate.min.js -text
 plugin-dashboard/src/main/webapp/js/main.js -text
+plugin-dashboard/src/main/webapp/js/model/WizardModel.js -text
+plugin-dashboard/src/main/webapp/js/model/karma.conf.js -text
 plugin-dashboard/src/main/webapp/js/require.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/js/services/dependencyService.js -text
