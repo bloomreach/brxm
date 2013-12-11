@@ -585,6 +585,13 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsHint(wf.hints(), "publish", false);
 
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
+        wf.setNode(unpublishedVariant);
+
+        assertContainsHint(wf.hints(), "publish", true);
+
+        publishedVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).remove();
+
         Calendar publishedModified = Calendar.getInstance();
         Calendar unpublishedModified = Calendar.getInstance();
         publishedModified.setTimeInMillis(unpublishedModified.getTimeInMillis()-1000);

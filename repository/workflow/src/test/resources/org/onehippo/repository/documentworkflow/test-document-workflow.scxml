@@ -160,7 +160,7 @@
           <hippo:hint hint="publish" value="false"/>
         </onentry>
         <transition target="publishable"
-                    cond="!empty(dm.ss) and empty(dm.d.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified)"/>
+                    cond="!empty(dm.ss) and empty(dm.d.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))"/>
         <transition target="not-publishable"/>
       </state>
 
