@@ -3,7 +3,14 @@ app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http
     $scope.hideAll = false;
     $scope.installSampleData = false;
     $scope.stepVisible = [true, false];
-    $scope.resultMessages = null;
+    // TODO remove default messages
+    $scope.resultMessages = {"items": [
+        {"displayType": "P", "value": "Power Pack successfully installed"},
+        {"displayType": "H3", "value": "Please rebuild and restart your application:"},
+        {"displayType": "PRE", "value": "\nmvn clean package\nmvn -P cargo.run\n"},
+        {"displayType": "P", "value": "Read more about Hippo Essentials at:"},
+        {"displayType": "A", "value": "http:\/\/www.onehippo.org"}
+    ]};
     $scope.selectedDescription = "Please make a selection";
     $scope.packs = null;
     $scope.buttons = [

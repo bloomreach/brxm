@@ -32,10 +32,13 @@ public class DisplayEvent extends MessageEvent {
      */
     private boolean selected;
 
+    private DisplayType displayType = DisplayType.P;
+
     /**
      * Flag which indicates item will be placed as first in the queue
      */
-    private  boolean addAsFirst;
+    private boolean addAsFirst;
+
     public boolean isSelected() {
         return selected;
     }
@@ -49,13 +52,32 @@ public class DisplayEvent extends MessageEvent {
         log.debug("DISPLAY EVENT: {}", message);
     }
 
+    public DisplayEvent(final String message, final DisplayType displayType) {
+        super(message);
+        this.displayType = displayType;
+        log.debug("DISPLAY EVENT: {}", message);
+    }
+
     public DisplayEvent(final String message, final boolean addAsFirst) {
         super(message);
         this.addAsFirst = addAsFirst;
         log.debug("DISPLAY EVENT: {}", message);
     }
 
+    public DisplayType getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(final DisplayType displayType) {
+        this.displayType = displayType;
+    }
+
     public boolean isAddAsFirst() {
         return addAsFirst;
     }
+
+    public enum DisplayType {
+        A, P, PRE, DIV, H1, H2, H3, H4, H5, STRONG
+    }
+
 }

@@ -90,7 +90,7 @@ public class PowerpackResource extends BaseResource {
         final InstructionStatus status = powerpackPackage.execute(new DashboardPluginContext(GlobalUtils.createSession(), null));
         switch (status) {
             case SUCCESS:
-                eventBus.post(new DisplayEvent("Power Pack successfully installed"));
+                eventBus.post(new DisplayEvent("Power Pack successfully installed", DisplayEvent.DisplayType.H3));
                 break;
             case FAILED:
                 eventBus.post("Not all parts of Power Pack were installed");
@@ -98,19 +98,16 @@ public class PowerpackResource extends BaseResource {
         }
 
         // add documentation messages:
-        eventBus.post(new DisplayEvent("<h3>Please rebuild and restart your application:<h3>\n" +
-                "<pre>\n" +
-                "mvn clean package\n" +
-                "mvn -P cargo.run\n" +
-                "</pre>"));
-        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
-        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
-        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
-        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
-        eventBus.post(new DisplayEvent("<p><a href=\"http://www.onehippo.org\">Read more about Hippo Essentials</a></p>"));
+        eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG));
+        eventBus.post(new DisplayEvent(
+                "\nmvn clean package\n" +
+                "mvn -P cargo.run\n" , DisplayEvent.DisplayType.PRE));
+
+        eventBus.post(new DisplayEvent("Read more about Hippo Essentials at:"));
+        eventBus.post(new DisplayEvent("http://www.onehippo.org", DisplayEvent.DisplayType.A));
         final List<DisplayEvent> displayEvents = listener.consumeEvents();
         for (DisplayEvent displayEvent : displayEvents) {
-            messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage()));
+            messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage(), displayEvent.getDisplayType()));
         }
         return messageRestfulRestfulList;
     }

@@ -61,7 +61,25 @@
     <div class="row" ng-show="stepVisible[1]">
         <div class="alert alert-info" ng-hide="resultMessages.items.length > 0">{{selectedDescription}}</div>
         <div class="alert alert-info" ng-show="resultMessages.items.length > 0">
-            <p ng-repeat="message in resultMessages.items" ng-bind-html-unsafe="message.value">{{message.value}}</p>
+
+            <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
+                <div ng-switch-when="PRE">
+                    <pre>{{message.value}}</pre>
+                </div>
+                <div ng-switch-when="A">
+                    <a href="{{message.value}}">{{message.value}}</a>
+                </div>
+                <div ng-switch-when="H3">
+                    <h3>{{message.value}}</h3>
+                </div>
+                <div ng-switch-when="H4">
+                    <h3>{{message.value}}</h3>
+                </div>
+                <div ng-switch-when="STRONG">
+                    <strong>{{message.value}}</strong>
+                </div>
+                <div ng-switch-default>{{message.value}}</div>
+            </div>
         </div>
     </div>
     <!--

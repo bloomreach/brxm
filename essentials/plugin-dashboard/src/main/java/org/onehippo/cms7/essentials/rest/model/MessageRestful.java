@@ -18,6 +18,8 @@ package org.onehippo.cms7.essentials.rest.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
+
 /**
  * @version "$Id$"
  */
@@ -25,6 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class MessageRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
+
+    private DisplayEvent.DisplayType displayType;
 
     public MessageRestful() {
     }
@@ -36,12 +40,25 @@ public class MessageRestful implements Restful {
 
     private String value;
 
+    public MessageRestful(final String message, final DisplayEvent.DisplayType displayType) {
+        this(message);
+        this.displayType = displayType;
+    }
+
     public String getValue() {
         return value;
     }
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public DisplayEvent.DisplayType getDisplayType() {
+        return displayType;
+    }
+
+    public void setDisplayType(final DisplayEvent.DisplayType displayType) {
+        this.displayType = displayType;
     }
 
     @Override
