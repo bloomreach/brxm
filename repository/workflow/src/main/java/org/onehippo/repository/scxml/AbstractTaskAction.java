@@ -77,22 +77,23 @@ public abstract class AbstractTaskAction<T extends WorkflowTask> extends Abstrac
 
         T task = getWorkflowTask();
 
-        initTaskBeforeEvaluation(properties);
-        evaluateProperties();
-        initTaskAfterEvaluation(properties);
+        Map<String, Object> runtimeProperties = new HashMap<>(getProperties());
+        initTaskBeforeEvaluation(runtimeProperties);
+        evaluateProperties(runtimeProperties);
+        initTaskAfterEvaluation(runtimeProperties);
 
-        task.execute(properties);
+        task.execute(runtimeProperties);
 
     }
 
-    private void evaluateProperties() {
-        for (Map.Entry<String, Object> entry : getProperties().entrySet()) {
+    private void evaluateProperties(Map<String, Object> properties) {
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
 
             if (value != null && value instanceof String) {
                 try {
-                    getProperties().put(key, eval((String) value));
+                    entry.setValue(eval((String)value));
                 } catch (Exception e) {
                     log.error("Failed to evaluate dynamic property expression in executing " + getClass().getName() + ": '" + value + "'.", e);
                 }
