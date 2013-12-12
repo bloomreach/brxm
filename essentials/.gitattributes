@@ -347,6 +347,8 @@ dashboard-plugins/dashboard-restservices-plugin/src/main/resources/META-INF/plug
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-content-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/spring-plain-rest-api.xml -text
 dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -text
+dashboard-plugins/dashboard-setup-plugin/pom.xml -text
+dashboard-plugins/dashboard-setup-plugin/src/main/resources/META_INF/project.xml -text
 dashboard-plugins/dashboard-xinha-plugin/pom.xml -text
 dashboard-plugins/dashboard-xinha-plugin/src/main/java/org/onehippo/cms7/essentials/xinha/gui/XinhaPlugin.html -text
 dashboard-plugins/dashboard-xinha-plugin/src/main/java/org/onehippo/cms7/essentials/xinha/gui/XinhaPlugin.java -text

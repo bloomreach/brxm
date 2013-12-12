@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -59,7 +60,12 @@ public class JcrPluginConfigService implements PluginConfigService {
         log.debug("Writing node: {}", context);
         boolean saved =false;
         try {
-            final String configRoot = getFullConfigPath(context.getDescriptor().getPluginClass());
+            final Plugin descriptor = context.getDescriptor();
+            if(descriptor==null){
+                log.error("Plugin descriptor was null");
+                return false;
+            }
+            final String configRoot = getFullConfigPath(descriptor.getPluginClass());
             document.setPath(configRoot);
 
             saved = manager.saveDocument(document);

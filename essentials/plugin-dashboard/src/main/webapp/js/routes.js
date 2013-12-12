@@ -42,18 +42,12 @@ app.config(function ($routeProvider) {
 
 var checkPackInstalled = function ($q, $rootScope, $location, $http, $log, MyHttpInterceptor) {
 
-    if (true) {
-        // TODO mm: enable
-        $rootScope.packsInstalled = true;
-        return true;
-    }
-
     if ($rootScope.packsInstalled) {
         $log.info("powerpack is installed");
         return true;
     } else {
         var deferred = $q.defer();
-        $http.get($rootScope.REST.status + '/powerpack')
+        $http.get($rootScope.REST.status + 'powerpack')
                 .success(function (response) {
                     $rootScope.packsInstalled = response.packsInstalled;
                     deferred.resolve(true);

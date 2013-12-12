@@ -32,6 +32,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
+      <artifactId>hippo-essentials-project-settings-plugin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
       <version>${project.version}</version>
     </dependency>

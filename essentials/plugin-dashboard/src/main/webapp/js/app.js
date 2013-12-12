@@ -79,7 +79,6 @@ var app;
 
     APP.run(function ($rootScope, $log, $http, $templateCache, MyHttpInterceptor) {
         $rootScope.headerMessage = "Welcome on the Hippo Trail";
-        $rootScope.packsInstalled = true;
         var root = 'http://localhost:8080/dashboard/rest';
         var plugins = root + "/plugins";
         /* TODO generate this server side */
