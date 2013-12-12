@@ -98,7 +98,7 @@ public abstract class AbstractTaskAction<T extends WorkflowTask> extends Abstrac
         }
     }
 
-    private Map<String, Object> getEvaluatedRuntimePropertiesMap() {
+    private Map<String, Object> getEvaluatedRuntimePropertiesMap() throws ModelException, SCXMLExpressionException {
         Map<String, Object> runtimePropertiesMap = new HashMap<String, Object>(getRuntimePropertiesMap());
 
         for (Map.Entry<String, Object> entry : runtimePropertiesMap.entrySet()) {
@@ -106,12 +106,8 @@ public abstract class AbstractTaskAction<T extends WorkflowTask> extends Abstrac
             Object value = entry.getValue();
 
             if (value != null && value instanceof String) {
-                try {
-                    Object runtimeValue = eval((String) value);
-                    runtimePropertiesMap.put(key, runtimeValue);
-                } catch (Exception e) {
-                    log.error("Failed to evaluate dynamic property expression in executing " + getClass().getName() + ": '" + value + "'.", e);
-                }
+                Object runtimeValue = eval((String) value);
+                runtimePropertiesMap.put(key, runtimeValue);
             }
         }
 
