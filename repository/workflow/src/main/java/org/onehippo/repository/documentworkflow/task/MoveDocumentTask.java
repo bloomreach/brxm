@@ -18,7 +18,6 @@ package org.onehippo.repository.documentworkflow.task;
 import static org.hippoecm.repository.util.WorkflowUtils.getContainingFolder;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -42,12 +41,27 @@ public class MoveDocumentTask extends AbstractDocumentTask {
 
     private static Logger log = LoggerFactory.getLogger(MoveDocumentTask.class);
 
+    private Document destination;
+    private String newName;
+
+    public Document getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Document destination) {
+        this.destination = destination;
+    }
+
+    public String getNewName() {
+        return newName;
+    }
+
+    public void setNewName(String newName) {
+        this.newName = newName;
+    }
+
     @Override
-    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
-
-        Document destination = (Document) properties.get("destination");
-        String newName = (String) properties.get("newName");
-
+    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         if (destination == null) {
             throw new WorkflowException("Destination is null.");
         }
@@ -95,6 +109,8 @@ public class MoveDocumentTask extends AbstractDocumentTask {
         } else {
             throw new WorkflowException("cannot move document which is not contained in a folder");
         }
+
+        return null;
     }
 
 }

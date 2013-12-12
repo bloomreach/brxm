@@ -16,7 +16,6 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -39,7 +38,7 @@ public class ArchiveTask extends AbstractDocumentTask {
     private static Logger log = LoggerFactory.getLogger(ArchiveTask.class);
 
     @Override
-    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
+    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 
@@ -61,6 +60,8 @@ public class ArchiveTask extends AbstractDocumentTask {
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);
         }
+
+        return null;
     }
 
     protected void deleteDocument(Document document) throws RepositoryException {

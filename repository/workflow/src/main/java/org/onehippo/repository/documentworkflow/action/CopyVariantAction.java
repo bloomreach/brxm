@@ -18,8 +18,7 @@ package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Map;
 
-import org.hippoecm.repository.api.WorkflowContext;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.apache.commons.lang.BooleanUtils;
 import org.onehippo.repository.documentworkflow.task.CopyVariantTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
 
@@ -31,51 +30,51 @@ public class CopyVariantAction extends AbstractTaskAction<CopyVariantTask> {
     private static final long serialVersionUID = 1L;
 
     public String getSourceState() {
-        return getWorkflowTask().getSourceState();
+        return getPropertiesMap().get("sourceState");
     }
 
     public void setSourceState(String sourceState) {
-        getWorkflowTask().setSourceState(sourceState);
+        getPropertiesMap().put("sourceState", sourceState);
     }
 
     public String getTargetState() {
-        return getWorkflowTask().getTargetState();
+        return getPropertiesMap().get("targetState");
     }
 
     public void setTargetState(String targetState) {
-        getWorkflowTask().setTargetState(targetState);
+        getPropertiesMap().put("targetState", targetState);
     }
 
     public String getAvailabilities() {
-        return getWorkflowTask().getAvailabilities();
+        return getPropertiesMap().get("availabilities");
     }
 
     public void setAvailabilities(String availabilities) {
-        getWorkflowTask().setAvailabilities(availabilities);
+        getPropertiesMap().put("availabilities", availabilities);
     }
 
     public boolean isApplyModified() {
-        return getWorkflowTask().isApplyModified();
+        return BooleanUtils.toBoolean(getPropertiesMap().get("applyModified"));
     }
 
     public void setApplyModified(String applyModified) {
-        getWorkflowTask().setApplyModified(applyModified);
+        getPropertiesMap().put("applyModified", applyModified);
     }
 
     public boolean isSkipIndex() {
-        return getWorkflowTask().isSkipIndex();
+        return BooleanUtils.toBoolean(getPropertiesMap().get("skipIndex"));
     }
 
     public void setSkipIndex(String skipIndex) {
-        getWorkflowTask().setSkipIndex(skipIndex);
+        getPropertiesMap().put("skipIndex", skipIndex);
     }
 
     public boolean isVersionable() {
-        return getWorkflowTask().isVersionable();
+        return BooleanUtils.toBoolean(getPropertiesMap().get("versionable"));
     }
 
     public void setVersionable(String versionable) {
-        getWorkflowTask().setVersionable(versionable);
+        getPropertiesMap().put("versionable", versionable);
     }
 
     @Override
@@ -84,11 +83,18 @@ public class CopyVariantAction extends AbstractTaskAction<CopyVariantTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
-        super.initTaskBeforeEvaluation(properties);
-        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
-        DocumentHandle dm = getContextAttribute("dm");
-        getWorkflowTask().setDataModel(dm);
+    protected void initTaskBeforeEvaluation(CopyVariantTask task, Map<String, String> propertiesMap) {
+        super.initTaskBeforeEvaluation(task, propertiesMap);
+        task.setSourceState((String) propertiesMap.get("sourceState"));
+        task.setTargetState((String) propertiesMap.get("targetState"));
+        task.setAvailabilities((String) propertiesMap.get("availabilities"));
+        task.setApplyModified(BooleanUtils.toBoolean(propertiesMap.get("applyModified")));
+        task.setSkipIndex(BooleanUtils.toBoolean(propertiesMap.get("skipIndex")));
+        task.setVersionable(BooleanUtils.toBoolean(propertiesMap.get("versionable")));
     }
 
+    @Override
+    protected void initTaskAfterEvaluation(CopyVariantTask task, Map<String, Object> runtimePropertiesMap) {
+        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+    }
 }

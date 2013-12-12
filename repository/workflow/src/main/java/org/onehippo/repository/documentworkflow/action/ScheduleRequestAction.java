@@ -16,10 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Date;
 import java.util.Map;
 
-import org.hippoecm.repository.api.WorkflowContext;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.ScheduleRequestTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
 
@@ -31,19 +30,19 @@ public class ScheduleRequestAction extends AbstractTaskAction<ScheduleRequestTas
     private static final long serialVersionUID = 1L;
 
     public String getType() {
-        return getWorkflowTask().getType();
+        return getPropertiesMap().get("type");
     }
 
     public void setType(final String type) {
-        getWorkflowTask().setType(type);
+        getPropertiesMap().put("type", type);
     }
 
     public String getTargetDateExpr() {
-        return (String) getProperties().get("targetDate");
+        return (String) getRuntimePropertiesMap().get("targetDate");
     }
 
     public void setTargetDateExpr(final String targetDateExpr) {
-        getProperties().put("targetDate", targetDateExpr);
+        getRuntimePropertiesMap().put("targetDate", targetDateExpr);
     }
 
     @Override
@@ -52,11 +51,13 @@ public class ScheduleRequestAction extends AbstractTaskAction<ScheduleRequestTas
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
-        super.initTaskBeforeEvaluation(properties);
-        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
-        DocumentHandle dm = getContextAttribute("dm");
-        getWorkflowTask().setDataModel(dm);
+    protected void initTaskBeforeEvaluation(ScheduleRequestTask task, Map<String, String> propertiesMap) {
+        super.initTaskBeforeEvaluation(task, propertiesMap);
     }
 
+    @Override
+    protected void initTaskAfterEvaluation(ScheduleRequestTask task, Map<String, Object> runtimePropertiesMap) {
+        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+        task.setTargetDate((Date) runtimePropertiesMap.get("targetDate"));
+    }
 }

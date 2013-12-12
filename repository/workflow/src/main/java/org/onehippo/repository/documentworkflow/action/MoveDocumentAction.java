@@ -18,8 +18,7 @@ package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Map;
 
-import org.hippoecm.repository.api.WorkflowContext;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.hippoecm.repository.api.Document;
 import org.onehippo.repository.documentworkflow.task.MoveDocumentTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
 
@@ -31,19 +30,19 @@ public class MoveDocumentAction extends AbstractTaskAction<MoveDocumentTask> {
     private static final long serialVersionUID = 1L;
 
     public String getDestinationExpr() {
-        return (String) getProperties().get("destination");
+        return (String) getRuntimePropertiesMap().get("destination");
     }
 
     public void setDestinationExpr(String destinationExpr) {
-        getProperties().put("destination", destinationExpr);
+        getRuntimePropertiesMap().put("destination", destinationExpr);
     }
 
     public String getNewNameExpr() {
-        return (String) getProperties().get("newName");
+        return (String) getRuntimePropertiesMap().get("newName");
     }
 
     public void setNewNameExpr(String newNameExpr) {
-        getProperties().put("newName", newNameExpr);
+        getRuntimePropertiesMap().put("newName", newNameExpr);
     }
 
     @Override
@@ -52,11 +51,14 @@ public class MoveDocumentAction extends AbstractTaskAction<MoveDocumentTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
-        super.initTaskBeforeEvaluation(properties);
-        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
-        DocumentHandle dm = getContextAttribute("dm");
-        getWorkflowTask().setDataModel(dm);
+    protected void initTaskBeforeEvaluation(MoveDocumentTask task, Map<String, String> propertiesMap) {
+        super.initTaskBeforeEvaluation(task, propertiesMap);
     }
 
+    @Override
+    protected void initTaskAfterEvaluation(MoveDocumentTask task, Map<String, Object> runtimePropertiesMap) {
+        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+        task.setDestination((Document) runtimePropertiesMap.get("destination"));
+        task.setNewName((String) runtimePropertiesMap.get("newName"));
+    }
 }

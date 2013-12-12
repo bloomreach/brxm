@@ -16,7 +16,7 @@
 package org.onehippo.repository.documentworkflow.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import org.apache.commons.scxml2.Context;
 import org.apache.commons.scxml2.Evaluator;
@@ -83,11 +83,13 @@ public class HintDelegatingActionTest {
 
         assertEquals("value1", dm.getHints().get("hint1"));
 
+        dm.getHints().clear();
+
         delegatingAction.setHint("hint1");
         delegatingAction.setValue(null);
         delegatingAction.execute(null, null, null, null, null);
 
-        assertFalse(dm.getHints().containsKey("hint1"));
+        assertNull(dm.getHints().get("hint1"));
     }
 
     

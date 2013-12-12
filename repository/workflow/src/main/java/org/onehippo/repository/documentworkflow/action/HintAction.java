@@ -16,10 +16,9 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.io.Serializable;
 import java.util.Map;
 
-import org.hippoecm.repository.api.WorkflowContext;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.HintTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
 
@@ -31,19 +30,19 @@ public class HintAction extends AbstractTaskAction<HintTask> {
     private static final long serialVersionUID = 1L;
 
     public String getHint() {
-        return getWorkflowTask().getHint();
+        return getPropertiesMap().get("hint");
     }
 
     public void setHint(final String hint) {
-        getWorkflowTask().setHint(hint);
+        getPropertiesMap().put("hint", hint);
     }
 
     public String getValue() {
-        return (String) getProperties().get("value");
+        return (String) getRuntimePropertiesMap().get("value");
     }
 
     public void setValue(final String value) {
-        getProperties().put("value", value);
+        getRuntimePropertiesMap().put("value", value);
     }
 
     @Override
@@ -52,11 +51,16 @@ public class HintAction extends AbstractTaskAction<HintTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
-        super.initTaskBeforeEvaluation(properties);
-        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
-        DocumentHandle dm = getContextAttribute("dm");
-        getWorkflowTask().setDataModel(dm);
+    protected void initTaskBeforeEvaluation(HintTask task, Map<String, String> propertiesMap) {
+        super.initTaskBeforeEvaluation(task, propertiesMap);
+        task.setHint(propertiesMap.get("hint"));
     }
 
+    @Override
+    protected void initTaskAfterEvaluation(HintTask task, Map<String, Object> runtimePropertiesMap) {
+        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+
+        Serializable value = (Serializable) runtimePropertiesMap.get("value");
+        task.setValue(value);
+    }
 }

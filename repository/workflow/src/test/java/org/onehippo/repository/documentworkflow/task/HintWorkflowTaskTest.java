@@ -18,9 +18,6 @@ package org.onehippo.repository.documentworkflow.task;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
@@ -51,18 +48,15 @@ public class HintWorkflowTaskTest {
 
     @Test
     public void testExecution() throws Exception {
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("value", "value1");
-
         task.setHint("hint1");
-        task.execute(properties);
+        task.setValue("value1");
+        task.execute();
 
         assertEquals("value1", dm.getHints().get("hint1"));
 
-        properties.clear();
-
         task.setHint("hint1");
-        task.execute(properties);
+        task.setValue(null);
+        task.execute();
 
         assertFalse(dm.getHints().containsKey("hint1"));
     }

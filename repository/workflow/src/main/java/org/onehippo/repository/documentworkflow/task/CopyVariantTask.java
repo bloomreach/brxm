@@ -16,7 +16,6 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -76,28 +75,28 @@ public class CopyVariantTask extends AbstractDocumentTask {
         return applyModified;
     }
 
-    public void setApplyModified(String applyModified) {
-        this.applyModified = Boolean.parseBoolean(applyModified);
+    public void setApplyModified(boolean applyModified) {
+        this.applyModified = applyModified;
     }
 
     public boolean isSkipIndex() {
         return skipIndex;
     }
 
-    public void setSkipIndex(String skipIndex) {
-        this.skipIndex = Boolean.parseBoolean(skipIndex);
+    public void setSkipIndex(boolean skipIndex) {
+        this.skipIndex = skipIndex;
     }
 
     public boolean isVersionable() {
         return versionable;
     }
 
-    public void setVersionable(String versionable) {
-        this.versionable = Boolean.parseBoolean(versionable);
+    public void setVersionable(boolean versionable) {
+        this.versionable = versionable;
     }
 
     @Override
-    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
+    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 
@@ -161,5 +160,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
         }
 
         dm.putDocumentVariant(targetDoc);
+
+        return null;
     }
 }

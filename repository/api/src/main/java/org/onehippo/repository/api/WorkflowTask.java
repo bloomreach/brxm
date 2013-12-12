@@ -15,8 +15,6 @@
  */
 package org.onehippo.repository.api;
 
-import java.util.Map;
-
 import org.hippoecm.repository.api.WorkflowException;
 
 /**
@@ -26,9 +24,9 @@ public interface WorkflowTask {
 
     /**
      * Execute this workflow task
-     * @param properties execution time properties
+     * @return eventResult
      * @throws WorkflowException
      */
-    public void execute(Map<String, Object> properties) throws WorkflowException;
+    public Object execute() throws WorkflowException;
 
 }

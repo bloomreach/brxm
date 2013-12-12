@@ -16,10 +16,10 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import java.util.Date;
 import java.util.Map;
 
-import org.hippoecm.repository.api.WorkflowContext;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.PublishableDocument;
 import org.onehippo.repository.documentworkflow.task.RequestTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
 
@@ -31,27 +31,27 @@ public class RequestAction extends AbstractTaskAction<RequestTask> {
     private static final long serialVersionUID = 1L;
 
     public String getType() {
-        return getWorkflowTask().getType();
+        return getPropertiesMap().get("type");
     }
 
     public void setType(String type) {
-        getWorkflowTask().setType(type);
+        getPropertiesMap().put("type", type);
     }
 
     public String getContextVariantExpr() {
-        return (String) getProperties().get("contextVariant");
+        return (String) getRuntimePropertiesMap().get("contextVariant");
     }
 
     public void setContextVariantExpr(String contextVariantExpr) {
-        getProperties().put("contextVariant", contextVariantExpr);
+        getRuntimePropertiesMap().put("contextVariant", contextVariantExpr);
     }
 
     public String getTargetDateExpr() {
-        return (String) getProperties().get("targetDate");
+        return (String) getRuntimePropertiesMap().get("targetDate");
     }
 
     public void setTargetDateExpr(String targetDateExpr) {
-        getProperties().put("targetDate", targetDateExpr);
+        getRuntimePropertiesMap().put("targetDate", targetDateExpr);
     }
 
     @Override
@@ -60,11 +60,15 @@ public class RequestAction extends AbstractTaskAction<RequestTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
-        super.initTaskBeforeEvaluation(properties);
-        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
-        DocumentHandle dm = getContextAttribute("dm");
-        getWorkflowTask().setDataModel(dm);
+    protected void initTaskBeforeEvaluation(RequestTask task, Map<String, String> propertiesMap) {
+        super.initTaskBeforeEvaluation(task, propertiesMap);
+        task.setType(propertiesMap.get("type"));
     }
 
+    @Override
+    protected void initTaskAfterEvaluation(RequestTask task, Map<String, Object> runtimePropertiesMap) {
+        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+        task.setContextVariant((PublishableDocument) runtimePropertiesMap.get("contextVariant"));
+        task.setTargetDate((Date) runtimePropertiesMap.get("targetDate"));
+    }
 }

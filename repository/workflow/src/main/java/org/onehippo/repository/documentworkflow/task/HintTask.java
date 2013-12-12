@@ -17,7 +17,6 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -33,6 +32,7 @@ public class HintTask extends AbstractDocumentTask {
     private static final long serialVersionUID = 1L;
 
     private String hint;
+    private Serializable value;
 
     public String getHint() {
         return hint;
@@ -42,21 +42,29 @@ public class HintTask extends AbstractDocumentTask {
         this.hint = hint;
     }
 
+    public Serializable getValue() {
+        return value;
+    }
+
+    public void setValue(Serializable value) {
+        this.value = value;
+    }
+
     @Override
-    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException {
+    public Object doExecute() throws WorkflowException, RepositoryException {
         if (StringUtils.isBlank(getHint())) {
             throw new WorkflowException("No hint specified");
         }
 
-        Serializable attrValue = (Serializable) properties.get("value");
-
         DocumentHandle dm = getDataModel();
 
-        if (attrValue == null) {
+        if (getValue() == null) {
             dm.getHints().remove(getHint());
         } else {
-            dm.getHints().put(getHint(), attrValue);
+            dm.getHints().put(getHint(), getValue());
         }
+
+        return null;
     }
 
 }

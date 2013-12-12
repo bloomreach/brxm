@@ -95,6 +95,20 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
+     * Sets a context object attribute by the name
+     * @param name
+     * @param value
+     */
+    public void setContextAttribute(String name, Object value) {
+        try {
+            Context ctx = getCurrentSCInstance().getContext(getParentTransitionTarget());
+            ctx.set(name, value);
+        } catch (ModelException e) {
+            log.error("Failed to retrieve the parent transition target from the current execution context.", e);
+        }
+    }
+
+    /**
      * Evaluates the expression and returns the last evaluated value.
      * @param scInstance
      * @param expr

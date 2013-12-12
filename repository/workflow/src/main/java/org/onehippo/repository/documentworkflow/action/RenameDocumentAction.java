@@ -18,8 +18,6 @@ package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Map;
 
-import org.hippoecm.repository.api.WorkflowContext;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.RenameDocumentTask;
 import org.onehippo.repository.scxml.AbstractTaskAction;
 
@@ -31,11 +29,11 @@ public class RenameDocumentAction extends AbstractTaskAction<RenameDocumentTask>
     private static final long serialVersionUID = 1L;
 
     public String getNewNameExpr() {
-        return (String) getProperties().get("newName");
+        return (String) getRuntimePropertiesMap().get("newName");
     }
 
     public void setNewNameExpr(String newNameExpr) {
-        getProperties().put("newName", newNameExpr);
+        getRuntimePropertiesMap().put("newName", newNameExpr);
     }
 
     @Override
@@ -44,11 +42,13 @@ public class RenameDocumentAction extends AbstractTaskAction<RenameDocumentTask>
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(Map<String, Object> properties) {
-        super.initTaskBeforeEvaluation(properties);
-        getWorkflowTask().setWorkflowContext((WorkflowContext) getContextAttribute("workflowContext"));
-        DocumentHandle dm = getContextAttribute("dm");
-        getWorkflowTask().setDataModel(dm);
+    protected void initTaskBeforeEvaluation(RenameDocumentTask task, Map<String, String> propertiesMap) {
+        super.initTaskBeforeEvaluation(task, propertiesMap);
     }
 
+    @Override
+    protected void initTaskAfterEvaluation(RenameDocumentTask task, Map<String, Object> runtimePropertiesMap) {
+        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+        task.setNewName((String) runtimePropertiesMap.get("newName"));
+    }
 }

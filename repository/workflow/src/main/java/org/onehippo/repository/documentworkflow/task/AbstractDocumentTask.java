@@ -20,7 +20,6 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -88,15 +87,15 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
      * @throws WorkflowException
      */
     @Override
-    public final void execute(Map<String, Object> properties) throws WorkflowException {
+    public final Object execute() throws WorkflowException {
         try {
-            doExecute(properties);
+            return doExecute();
         } catch (RepositoryException | RemoteException e) {
             throw new WorkflowException(e.getMessage(), e);
         }
     }
 
-    protected abstract void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException;
+    protected abstract Object doExecute() throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Returns the current workflow context instance.

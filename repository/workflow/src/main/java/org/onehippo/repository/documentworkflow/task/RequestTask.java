@@ -17,7 +17,6 @@ package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -38,6 +37,8 @@ public class RequestTask extends AbstractDocumentTask {
     private static Logger log = LoggerFactory.getLogger(RequestTask.class);
 
     private String type;
+    private PublishableDocument contextVariant;
+    private Date targetDate;
 
     public String getType() {
         return type;
@@ -47,15 +48,28 @@ public class RequestTask extends AbstractDocumentTask {
         this.type = type;
     }
 
+    public PublishableDocument getContextVariant() {
+        return contextVariant;
+    }
+
+    public void setContextVariant(PublishableDocument contextVariant) {
+        this.contextVariant = contextVariant;
+    }
+
+    public Date getTargetDate() {
+        return targetDate;
+    }
+
+    public void setTargetDate(Date targetDate) {
+        this.targetDate = targetDate;
+    }
+
     @Override
-    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
+    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
         DocumentHandle dm = getDataModel();
 
         if (dm.getRequest() == null) {
-            PublishableDocument contextVariant = (PublishableDocument) properties.get("contextVariant");
-            Date targetDate = (Date) properties.get("targetDate");
-
             PublicationRequest req = null;
 
             if (targetDate == null) {
@@ -69,6 +83,8 @@ public class RequestTask extends AbstractDocumentTask {
         } else {
             throw new WorkflowException("publication request already pending");
         }
-     }
+
+        return null;
+    }
 
 }

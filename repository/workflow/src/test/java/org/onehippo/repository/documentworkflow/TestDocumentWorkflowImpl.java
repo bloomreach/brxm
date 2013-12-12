@@ -142,7 +142,7 @@ public class TestDocumentWorkflowImpl {
     }
 
     protected void assertContainsHint(Map<String, Serializable> hints, String hint, Object value) {
-        if (!hints.containsKey(hint) || ! hints.get(hint).equals(value)) {
+        if (!hints.containsKey(hint) || ! hints.get(hint).toString().equals(value.toString())) {
             Assert.fail("Current hints "+hints+" not containing expected hint ["+hint+"] with value ["+value+"]");
         }
     }

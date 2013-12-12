@@ -37,10 +37,6 @@ public class MockAbstractWorkflowTaskDelegatingAction<T extends WorkflowTask> ex
     public MockAbstractWorkflowTaskDelegatingAction() {
     }
 
-    public void setWorkflowTask(WorkflowTask workflowTask) {
-        super.setWorkflowTask(workflowTask);
-    }
-
     @Override
     protected WorkflowTask createWorkflowTask() {
         return null;

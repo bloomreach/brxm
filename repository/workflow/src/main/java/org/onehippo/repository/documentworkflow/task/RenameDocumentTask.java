@@ -16,7 +16,6 @@
 package org.onehippo.repository.documentworkflow.task;
 
 import java.rmi.RemoteException;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -37,11 +36,18 @@ public class RenameDocumentTask extends AbstractDocumentTask {
 
     private static Logger log = LoggerFactory.getLogger(RenameDocumentTask.class);
 
+    private String newName;
+
+    public String getNewName() {
+        return newName;
+    }
+
+    public void setNewName(String newName) {
+        this.newName = newName;
+    }
+
     @Override
-    public void doExecute(Map<String, Object> properties) throws WorkflowException, RepositoryException, RemoteException {
-
-        String newName = (String) properties.get("newName");
-
+    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         if (StringUtils.isBlank(newName)) {
             throw new WorkflowException("New document name is blank.");
         }
@@ -73,6 +79,8 @@ public class RenameDocumentTask extends AbstractDocumentTask {
         // doDepublish();
         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", document);
         defaultWorkflow.rename(newName);
+
+        return null;
     }
 
 }
