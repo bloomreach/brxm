@@ -28,8 +28,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
+import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +50,20 @@ public class PluginResource extends BaseResource{
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
 
+    @POST
+    @Path("/configure/test")
+    public PostPayloadRestful test(@Context ServletContext servletContext) {
+
+        final PostPayloadRestful payload = new PostPayloadRestful();
+         payload.add("foo","bar");
+         payload.add("foo2","bar");
+        return payload;
+    }
+
 
     @POST
     @Path("/configure/add")
-    public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PluginRestful plugin) {
+    public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PostPayloadRestful payload) {
 
         log.info("servletContext {}");
 

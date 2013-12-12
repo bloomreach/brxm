@@ -8,6 +8,7 @@ app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $ht
      *  method: "POST",
      data: JSON.stringify({}),
      headers: {'Content-Type': 'application/json'}
+    //{"payload":{"values":{"entry":[{"key":"foo2","value":"bar"},{"key":"foo","value":"bar"}]}}}
      * */
 });
 

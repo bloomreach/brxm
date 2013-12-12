@@ -702,6 +702,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/Dependenc
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/KeyValueRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/MessageRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PluginRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PostPayloadRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PowerpackListRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PowerpackRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ProjectRestful.java -text
