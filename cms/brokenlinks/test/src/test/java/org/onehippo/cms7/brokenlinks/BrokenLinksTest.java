@@ -16,14 +16,14 @@
 package org.onehippo.cms7.brokenlinks;
 
 import java.rmi.RemoteException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.jcr.Credentials;
@@ -303,43 +303,23 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        String checksum = getSearchChecksum();
+        Set<String> checksum = getSearchResults();
         for (int i = 0; i < 1000; i++) {
-            if (!checksum.equals(getSearchChecksum())) {
-                fail("Checksum does not match");
+            if (!checksum.equals(getSearchResults())) {
+                fail("Results don't match during run " + i);
             }
+
         }
     }
 
-    private String getSearchChecksum() throws NoSuchAlgorithmException, RepositoryException {
-        MessageDigest md = MessageDigest.getInstance("SHA");
+    private Set<String> getSearchResults() throws Exception {
+        Set<String> result = new HashSet<>();
         final NodeIterator nodes = session.getWorkspace().getQueryManager().createQuery("//element(*,hippostd:html)", "xpath").execute().getNodes();
         while (nodes.hasNext()) {
             final Node node = nodes.nextNode();
-            final Node handle = getHandleNode(node);
-            md.update(node.getIdentifier().getBytes());
-            md.update(handle.getIdentifier().getBytes());
+            result.add(node.getIdentifier());
         }
-        return digestToChecksum(md);
-    }
-
-    private String digestToChecksum(final MessageDigest searchResultDigest) {
-        StringBuilder sb = new StringBuilder();
-        for (final byte b : searchResultDigest.digest()) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        return sb.toString();
-    }
-
-    private Node getHandleNode(final Node node) throws RepositoryException {
-        Node parent = node.getParent();
-        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return parent;
-        }
-        if (parent.isSame(parent.getSession().getRootNode())) {
-            return null;
-        }
-        return getHandleNode(parent);
+        return result;
     }
 
     @Test
