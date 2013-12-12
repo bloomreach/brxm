@@ -7,6 +7,9 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     ]};
     $scope.welcomeMessage = "Content blocks plugin";
     $scope.welcomeMessage2 = "Content blocks plugin";
+    $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
+    //$scope.pluginInstalled = true;
+    $scope.pluginInstalled = false;
     $scope.selection = [];
     $scope.selectedItem = [];
     $scope.documentTypes = [
@@ -46,6 +49,21 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         $log.info(docName);
         $scope.providers.push({"key": docName});
     };
+
+    $scope.installPlugin = function () {
+        $log.info("installing plugin");
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.pluginInstall + $scope.pluginClass
+        }).success(function (data) {
+
+                    $scope.installMessage = data.value;
+
+                });
+
+
+    };
+
     $scope.toggleCheckBox = function (docName) {
         var index = $scope.selection.indexOf(docName);
         // check if  selected
@@ -58,6 +76,16 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     };
 
     $scope.init = function () {
+        // check if plugin is installed
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.pluginInstallState + $scope.pluginClass
+        }).success(function (data) {
+                    //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
+                    $scope.pluginInstalled = data.installed;
+
+                });
+
         // TODO: fetch docTypes
         /* $http({
          method: 'GET',
@@ -67,6 +95,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
          });*/
     };
+
+
     $scope.init();
 
 });

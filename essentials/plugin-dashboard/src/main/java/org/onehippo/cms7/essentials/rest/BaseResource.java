@@ -16,14 +16,19 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
@@ -38,8 +43,55 @@ public class BaseResource {
 
     private static Logger log = LoggerFactory.getLogger(BaseResource.class);
 
+    @SuppressWarnings("InstanceofInterfaces")
+    protected boolean installPlugin(final Plugin plugin) {
 
-    public ProjectRestful getProjectRestful(){
+        final String pluginClass = plugin.getPluginClass();
+        final DashboardPlugin dashboardPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        if (dashboardPlugin instanceof InstallablePlugin) {
+            final InstallablePlugin<?> installable = (InstallablePlugin<?>) dashboardPlugin;
+            installable.getInstaller().install();
+            return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("InstanceofInterfaces")
+    protected boolean checkInstalled(final Plugin plugin) {
+
+        final String pluginClass = plugin.getPluginClass();
+        final DashboardPlugin dashboardPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        if (dashboardPlugin instanceof InstallablePlugin) {
+            final InstallablePlugin<?> installable = (InstallablePlugin<?>) dashboardPlugin;
+            final InstallState installState = installable.getInstallState();
+            if (installState == InstallState.INSTALLED_AND_RESTARTED) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static DashboardPlugin instantiatePlugin(final Plugin plugin, final PluginContext context, final String pluginClass) {
+        try {
+            @SuppressWarnings("unchecked")
+            final Class<DashboardPlugin> clazz = (Class<DashboardPlugin>) Class.forName(pluginClass);
+            final Constructor<DashboardPlugin> constructor = clazz.getConstructor(String.class, Plugin.class, PluginContext.class);
+            return constructor.newInstance("plugin", plugin, context);
+        } catch (ClassNotFoundException e) {
+            log.error("Couldn't find plugin class", e);
+        } catch (InstantiationException e) {
+            log.error("Error instantiating plugin", e);
+        } catch (IllegalAccessException e) {
+            log.error("Error instantiating plugin/access", e);
+        } catch (NoSuchMethodException e) {
+            log.error("Invalid constructor called", e);
+        } catch (InvocationTargetException e) {
+            log.error("Error constructing plugin", e);
+        }
+        return null;
+    }
+
+    protected ProjectRestful getProjectRestful(){
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
         // inject project settings:
         final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
@@ -54,7 +106,7 @@ public class BaseResource {
 
     }
 
-    public List<Plugin> getPlugins(final ServletContext context) {
+    protected List<Plugin> getPlugins(final ServletContext context) {
         final String libPath = context.getRealPath("/WEB-INF/lib");
         log.debug("Scanning path for essentials: {}", libPath);
         final PluginScanner scanner = new PluginScanner();
@@ -62,8 +114,7 @@ public class BaseResource {
     }
 
 
-
-    public Plugin getPluginByName(final String name, final ServletContext context) {
+    protected Plugin getPluginByName(final String name, final ServletContext context) {
         final List<Plugin> plugins = getPlugins(context);
         for (final Plugin next : plugins) {
             if (next.getName().equals(name)) {

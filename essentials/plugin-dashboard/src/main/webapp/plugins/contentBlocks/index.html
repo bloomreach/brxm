@@ -1,95 +1,103 @@
 <div ng-controller="contentBlocksCtrl">
-    <div class="col-md-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">Content Blocks</div>
-            <div class="panel-body">
-                <h4> Available Content Blocks:</h4>
-                <ul class="list-group">
-                    <li class="list-group-item" ng-repeat="provider in providers">
-                        <span class="badge"><a href="" ng-click="onDelete(provider)">delete</a></span>
-                        <span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>
-                        {{provider.key}}
-                    </li>
-                </ul>
-                <div class="input-group">
-                    <input type="text" class="form-control" ng-model="text"/>
+    <div ng-show="pluginInstalled">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">Content Blocks</div>
+                <div class="panel-body">
+                    <h4> Available Content Blocks:</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item" ng-repeat="provider in providers">
+                            <span class="badge"><a href="" ng-click="onDelete(provider)">delete</a></span>
+                            <span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>
+                            {{provider.key}}
+                        </li>
+                    </ul>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="text"/>
                       <span class="input-group-btn">
                         <button class="btn btn-default" type="button" ng-click="onAdd(text)">Add new</button>
                       </span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <h4> Configure Content Blocks:</h4>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="col-sm-7">Select document types:</th>
+                            <th class="col-sm-7">Current Providers:</th>
+                            <th class="col-sm-4">Select perfered</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr ng-repeat="docType in documentTypes">
+                            <!--<td>-->
+                            <!--<input type="checkbox" value="{{docType.key}}" ng-checked="selection.indexOf(docType.key) > -1" ng-click="toggleCheckBox(docType.key)">-->
+                            <!--</td>-->
+                            <td>{{docType.key}}</td>
+                            <!--<td>{{docType.providers}}</td>-->
+                            <td>
+                                <div class="btn-group">
+                                    <button ng-repeat="provider in docType.providers" type="button" class="btn btn-default">{{provider.key}}
+                                        <span class="badge">X</span></button>
+                                </div>
+
+                                <select ng-change="selectChange(docType.key, selectedItem[$index])"
+                                        ng-options="option.value as option.key for option in columns.items"
+                                        ng-model="selectedItem[$index]">
+                                </select>
+
+                            </td>
+                            <td>
+                                <select ng-change="selectChange(docType.key, selectedItem[$index])"
+                                        ng-options="option.value as option.key for option in columns.items"
+                                        ng-model="selectedItem[$index]">
+                                </select>
+                            </td>
+                        </tr>
+                        <!--<tr>-->
+                        <!--<button class="btn btn-primary" ng-click="onbuttonclick()"></button>-->
+                        <!--</tr>-->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="panel-body">
-                <h4> Configure Content Blocks:</h4>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                    <tr>
-                        <th class="col-sm-7">Select document types:</th>
-                        <th class="col-sm-7">Current Providers:</th>
-                        <th class="col-sm-4">Select perfered</th>
-                    </tr>
-                    </thead>
+        </div>
+        <p></p>
+        <p></p>
+        <div class="col-md-4">
+            <div class="panel panel-primary" ng-show="selection.length > 0">
+                <div class="panel-heading">Selected</div>
+                <table class="table table-hover">
                     <tbody>
-
-                    <tr ng-repeat="docType in documentTypes">
-                        <!--<td>-->
-                        <!--<input type="checkbox" value="{{docType.key}}" ng-checked="selection.indexOf(docType.key) > -1" ng-click="toggleCheckBox(docType.key)">-->
-                        <!--</td>-->
-                        <td>{{docType.key}}</td>
-                        <!--<td>{{docType.providers}}</td>-->
+                    <tr ng-repeat="docType in selection">
+                        <td>{{docType}}</td>
+                        <td>{{selectedItem[$index]}}</td>
+                    </tr>
+                    <tr ng-show="selection.length > 0 && selection.length == selectedItem.length">
+                        <td></td>
                         <td>
-                            <div class="btn-group">
-                                <button ng-repeat="provider in docType.providers" type="button" class="btn btn-default">{{provider.key}}
-                                    <span class="badge">X</span></button>
-                            </div>
-
-                            <select ng-change="selectChange(docType.key, selectedItem[$index])"
-                                    ng-options="option.value as option.key for option in columns.items"
-                                    ng-model="selectedItem[$index]">
-                            </select>
-
-                        </td>
-                        <td>
-                            <select ng-change="selectChange(docType.key, selectedItem[$index])"
-                                    ng-options="option.value as option.key for option in columns.items"
-                                    ng-model="selectedItem[$index]">
-                            </select>
+                            <button class="btn btn-primary">Save</button>
                         </td>
                     </tr>
-                    <!--<tr>-->
-                    <!--<button class="btn btn-primary" ng-click="onbuttonclick()"></button>-->
-                    <!--</tr>-->
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
-    <p></p>
-    <p></p>
-    <div class="col-md-4">
-        <div class="panel panel-primary" ng-show="selection.length > 0">
-            <div class="panel-heading">Selected</div>
-            <table class="table table-hover">
-                <tbody>
-                <tr ng-repeat="docType in selection">
-                    <td>{{docType}}</td>
-                    <td>{{selectedItem[$index]}}</td>
-                </tr>
-                <tr ng-show="selection.length > 0 && selection.length == selectedItem.length">
-                    <td></td>
-                    <td>
-                        <button class="btn btn-primary">Save</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="col-md-4">
+            <div class="alert alert-danger" ng-show="selection.length != selectedItem.length">
+                <button type="button" class="close" data-dismiss="alert">×</button>
+                <strong>Please select column for selected documents</strong>
+            </div>
         </div>
+        <div class="col-md-4"></div>
     </div>
-    <div class="col-md-4">
-        <div class="alert alert-danger" ng-show="selection.length != selectedItem.length">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <strong>Please select column for selected documents</strong>
-        </div>
-    </div>
-    <div class="col-md-4"></div>
+    <div ng-show="!pluginInstalled">
 
+        <button class="btn btn-primary" ng-click="installPlugin()">Install Content blocks plugin</button>
+        <p></p>
+        <p></p>
+        <div class="alert-info">{{installMessage}}</div>
+    </div>
 </div>

@@ -81,6 +81,7 @@ var app;
         $rootScope.headerMessage = "Welcome on the Hippo Trail";
         $rootScope.packsInstalled = true;
         var root = 'http://localhost:8080/dashboard/rest';
+        var plugins = root + "/plugins";
         /* TODO generate this server side */
         $rootScope.REST = {
             root: root,
@@ -92,13 +93,23 @@ var app;
             /**
              * Returns list of all plugins that need configuration
              */
-            pluginsToConfigure: root + '/configure/list/',
+            pluginsToConfigure: plugins + '/configure/list/',
             /**
              *Add a plugin to the list of plugins that need configuration:
              * POST method
              * DELETE method deletes plugin from the list
              */
-            pluginsAddToConfigure: root + '/configure/add/',
+            pluginsAddToConfigure: plugins + '/configure/add/',
+            /**
+             *
+             * /installstate/{className}
+             */
+            pluginInstallState: plugins + '/installstate/',
+            /**
+             *  * /install/{className}
+             */
+            pluginInstall: plugins + '/install/',
+
             status: root + '/status/',
             powerpacks: root + '/powerpacks/',
             beanwriter: root + '/beanwriter/',

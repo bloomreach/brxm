@@ -306,6 +306,11 @@ public final class HippoNodeUtils {
      */
     private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates) throws RepositoryException {
         Map<String, Set<String>> types = new LinkedHashMap<>();
+        if(session ==null){
+            // WHEN RUNNING WITHOUT CMS
+            log.warn("Session was null, returning empty types");
+            return types;
+        }
         try {
             QueryManager qmgr = session.getWorkspace().getQueryManager();
             AbstractList<Node> foldertypes = new Vector<>();

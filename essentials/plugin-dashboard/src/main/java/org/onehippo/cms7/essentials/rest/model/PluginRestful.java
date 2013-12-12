@@ -20,6 +20,15 @@ public class PluginRestful implements Restful {
     private String title;
     private String introduction;
     private String pluginLink;
+    private boolean installed;
+
+    public boolean isInstalled() {
+        return installed;
+    }
+
+    public void setInstalled(final boolean installed) {
+        this.installed = installed;
+    }
 
     public String getPluginLink() {
         return pluginLink;
