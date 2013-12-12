@@ -7,15 +7,15 @@
                     <h4> Available Content Blocks:</h4>
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
-                            <span class="badge"><a href="" ng-click="onDelete(provider)">delete</a></span>
-                            <span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>
-                            {{provider.key}}
+                            <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
+                            <!--<span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>-->
+                            <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
                         </li>
                     </ul>
                     <div class="input-group">
-                        <input type="text" class="form-control" ng-model="text"/>
+                        <input type="text" class="form-control" ng-model="providerInput"/>
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" ng-click="onAdd(text)">Add new</button>
+                        <button class="btn btn-default" type="button" ng-click="onAdd(providerInput)">Add new</button>
                       </span>
                     </div>
                 </div>

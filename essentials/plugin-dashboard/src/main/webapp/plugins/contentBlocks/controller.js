@@ -10,6 +10,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
     $scope.pluginInstalled = true;
     $scope.selection = [];
+    $scope.providerInput = "";
     $scope.selectedItem = [];
     $scope.documentTypes = [
         {"key": "News document", "value": "namespace:news", "providers": [
@@ -42,6 +43,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.onAdd = function (docName) {
         $log.info(docName);
         $scope.providers.push({"key": docName});
+        $scope.providerInput = "";
     };
     $scope.addProviderToDocType = function (prov, docName) {
         var index = $scope.documentTypes.indexOf(docName)
