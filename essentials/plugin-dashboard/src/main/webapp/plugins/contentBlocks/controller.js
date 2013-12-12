@@ -81,6 +81,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
     $scope.init = function () {
         // check if plugin is installed
+        // hack
+        $rootScope.packsInstalled = true;
         $http({
             method: 'GET',
             url: $rootScope.REST.pluginInstallState + $scope.pluginClass
