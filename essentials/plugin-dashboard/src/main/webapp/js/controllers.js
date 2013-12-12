@@ -17,10 +17,7 @@ app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
     // hack
     $rootScope.packsInstalled = true;
 
-    $scope.resultMessages = {"@page": "1", "@totalSize": "0", "items": [
-        {"value": "Not implemented yet"},
-        {"value": "Not implemented yet"}
-    ]};
+    $scope.resultMessages = null;
     $scope.runBeanWriter = function () {
         $http({
             method: 'POST',
