@@ -130,6 +130,11 @@ public class ButtonWrapper implements IClusterable {
             button.add(new InputBehavior(new KeyType[]{getKeyType()}, EventType.click) {
 
                 @Override
+                protected Boolean getDisable_in_input() {
+                    return true;
+                }
+
+                @Override
                 public void onRemove(final Component component) {
                     super.onRemove(component);
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
