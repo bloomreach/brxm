@@ -36,6 +36,8 @@ import org.onehippo.cms7.essentials.rest.model.ProjectRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * @version "$Id$"
  */
@@ -118,6 +120,19 @@ public class BaseResource {
         final List<Plugin> plugins = getPlugins(context);
         for (final Plugin next : plugins) {
             if (next.getName().equals(name)) {
+                return next;
+            }
+        }
+        return null;
+    }
+    protected Plugin getPluginByClassName(final String name, final ServletContext context) {
+        final List<Plugin> plugins = getPlugins(context);
+        for (final Plugin next : plugins) {
+            final String pluginClass = next.getPluginClass();
+            if(Strings.isNullOrEmpty(pluginClass)){
+                continue;
+            }
+            if (pluginClass.equals(name)) {
                 return next;
             }
         }

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -59,9 +61,38 @@ public class JcrPluginConfigService implements PluginConfigService {
         log.debug("Writing node: {}", context);
         boolean saved =false;
         try {
-            final String configRoot = getFullConfigPath(context.getDescriptor().getPluginClass());
+            final Plugin descriptor = context.getDescriptor();
+            if(descriptor==null){
+                log.error("Plugin descriptor was null");
+                return false;
+            }
+            final String configRoot = getFullConfigPath(descriptor.getPluginClass());
             document.setPath(configRoot);
 
+            saved = manager.saveDocument(document);
+            session.save();
+            return saved;
+        } catch (RepositoryException e) {
+            log.error("Error writing configuration", e);
+            GlobalUtils.refreshSession(session, false);
+        }
+
+        return saved;
+    }
+
+    @Override
+    public boolean write(final Document document, final String pluginClass) {
+        log.debug("Writing document: {}, class:{}", document, pluginClass);
+        log.debug("Writing node: {}", context);
+        boolean saved = false;
+        try {
+
+            if (Strings.isNullOrEmpty(pluginClass)) {
+                log.error("Plugin clas  was null");
+                return false;
+            }
+            final String configRoot = getFullConfigPath(pluginClass);
+            document.setPath(configRoot);
             saved = manager.saveDocument(document);
             session.save();
             return saved;

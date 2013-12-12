@@ -29,6 +29,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * @version "$Id$"
  */
@@ -383,6 +385,10 @@ public class BeanWriterUtils {
 
     private static void processKid(final MemoryBean bean, final XmlNode templateDocument, final NodeOrProperty nodeOrProperty, final String projectNamespacePrefix) {
         final String name = nodeOrProperty.getName();
+        if(Strings.isNullOrEmpty(name)){
+            return;
+        }
+
         if (name.startsWith(projectNamespacePrefix)) {
             addBeanProperty(bean, templateDocument, nodeOrProperty, name);
         }

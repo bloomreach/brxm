@@ -52,7 +52,7 @@ public class DefaultDocumentManager implements DocumentManager {
         contentTypeMap.put(getContentType(BaseDocument.class), BaseDocument.class);
         contentTypeMap.put(getContentType(BaseFolder.class), BaseFolder.class);
         contentTypeMap.put(getContentType(ProjectSettingsBean.class), ProjectSettingsBean.class);
-        contentTypeMap.put(getContentType(RecentlyInstalledPlugin.class), RecentlyInstalledPlugin.class);
+        /*contentTypeMap.put(getContentType(RecentlyInstalledPlugin.class), RecentlyInstalledPlugin.class);*/
     }
 
     protected String getContentType(Class<? extends Document> clazz) {

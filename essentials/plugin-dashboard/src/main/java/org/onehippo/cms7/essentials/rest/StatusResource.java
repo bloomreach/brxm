@@ -55,26 +55,24 @@ public class StatusResource extends BaseResource {
     @GET
     @Path("/powerpack")
     public StatusRestful getMenu(@Context ServletContext servletContext) {
+        final StatusRestful status = new StatusRestful();
         try {
-
-            final Plugin plugin = getPluginByName("Settings", servletContext);
+            final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
             ProjectSettingsBean b =new ProjectSettingsBean();
             b.setProjectNamespace("marktpla");
             context.getConfigService().write(b);
             final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
-            final StatusRestful statusRestful = new StatusRestful();
-            if (document != null && document.getSetupDone()) {
-                statusRestful.setStatus(true);
-                return statusRestful;
-            }
-            log.info("statusRestful {}", statusRestful);
 
-            return statusRestful;
+            if (document != null && document.getSetupDone()) {
+                status.setStatus(true);
+                return status;
+            }
+
         } catch (Exception e) {
 
-
+            log.error("Error checking powerpack status", e);
         }
-        return null;
+        return status;
     }
 }

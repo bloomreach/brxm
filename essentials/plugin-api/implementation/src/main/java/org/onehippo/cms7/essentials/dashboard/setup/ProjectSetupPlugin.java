@@ -24,6 +24,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ProjectSetupPlugin {
 
-    // NOTE for time being just a dummy holder
+    // NOTE for time being just a dummy holder, needed for saving
 
 }

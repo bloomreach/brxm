@@ -12,6 +12,8 @@ public interface PluginConfigService {
      */
     boolean write(Document document);
 
+    boolean write(Document document, String pluginClass);
+
     <T extends Document> T read(String pluginClass);
 
     /**
