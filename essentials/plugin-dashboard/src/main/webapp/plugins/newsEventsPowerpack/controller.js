@@ -3,14 +3,7 @@ app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http
     $scope.hideAll = false;
     $scope.installSampleData = false;
     $scope.stepVisible = [true, false];
-    // TODO remove default messages
-    $scope.resultMessages = {"items": [
-        {"displayType": "P", "value": "Power Pack successfully installed"},
-        {"displayType": "H3", "value": "Please rebuild and restart your application:"},
-        {"displayType": "PRE", "value": "\nmvn clean package\nmvn -P cargo.run\n"},
-        {"displayType": "P", "value": "Read more about Hippo Essentials at:"},
-        {"displayType": "A", "value": "http:\/\/www.onehippo.org"}
-    ]};
+    $scope.resultMessages = null;
     $scope.selectedDescription = "Please make a selection";
     $scope.packs = null;
     $scope.buttons = [
@@ -24,16 +17,6 @@ app.controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http
         }
 
         $scope.initCalled = true;
-        $scope.packs = {"items": [
-            {"enabled": true, "name": "Basic News and Events site", "value": "news-events"},
-            {"enabled": false, "name": "A REST only site that contains only REST services and no pages.", "value": "empty-rest"}
-        ], "project": {"namespace": "marketplace"}, "steps": [
-            {"buttonText": "Next", "name": "Select a powerpack"},
-            {"buttonText": "Finish", "name": "Install"}
-        ]};
-        if (true) {
-            return;
-        }
         $http({
             method: 'GET',
             url: $rootScope.REST.powerpacks
