@@ -227,6 +227,10 @@
             },
             LANG = editor.lang.hippopicker;
 
+        function containsUuid(imageParameters) {
+            return imageParameters.hasOwnProperty('f_uuid') && imageParameters.f_uuid !== '';
+        }
+
         function getSelectedImage() {
             return editor.getSelection().getStartElement();
         }
@@ -268,9 +272,9 @@
 
         editor.addCommand('insertImage', {
             exec: function(editor, parameters) {
-                var img = editor.document.createElement('img');
-                setElementAttributes(img, IMAGE_ATTRIBUTE_PARAMETER_MAP, parameters);
-                if (img.hasAttributes()) {
+                if (containsUuid(parameters)) {
+                    var img = editor.document.createElement('img');
+                    setElementAttributes(img, IMAGE_ATTRIBUTE_PARAMETER_MAP, parameters);
                     editor.insertElement(img);
                 } else {
                     getSelectedImage().remove();
