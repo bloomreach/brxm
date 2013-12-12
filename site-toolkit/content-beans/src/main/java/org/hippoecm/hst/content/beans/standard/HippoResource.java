@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 @Node(jcrType = "hippo:resource")
 public class HippoResource extends HippoItem implements HippoResourceBean {
 
-
     private static Logger log = LoggerFactory.getLogger(HippoResource.class);
 
     // 8 * 1024 = 8192
@@ -39,6 +38,7 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
     // 8 * 1024 * 1024 = 8388608
     private static final BigDecimal DIVISOR_M_BYTE = new BigDecimal(8388608);
 
+    public static final String MIME_TYPE_HIPPO_BLANK = "application/vnd.hippo.blank";
 
     public String getMimeType() {
         return getProperty("jcr:mimeType");
@@ -95,6 +95,14 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
             log.error("Error during fetching mandatory property jcr:lastModified from '{}'. Return null", getValueProvider().getPath());
             return null;
         }
+    }
+
+    /**
+     * If a resource contains MIME type application/vnd.hippo.blank it is marked as blank and contains no usable data.
+     */
+    @Override
+    public boolean isBlank() {
+        return getProperty("jcr:mimeType").equals(MIME_TYPE_HIPPO_BLANK);
     }
 
 }

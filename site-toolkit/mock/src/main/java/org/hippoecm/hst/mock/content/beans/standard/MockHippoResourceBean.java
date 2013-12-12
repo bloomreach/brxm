@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +28,8 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
     private String mimeType;
     private long length;
     private Calendar cal;
-    
+    private boolean blank;
+
     // 8 * 1024 = 8192
     private static final BigDecimal DIVISOR_K_BYTE = new BigDecimal(8192);
     // 8 * 1024 * 1024 = 8388608
@@ -46,12 +47,12 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8 , DIVISOR_K_BYTE);
     }
-    
+
     public BigDecimal getLengthMB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8, DIVISOR_M_BYTE);
     }
-    
+
     /**
      * Calculate size for given divisor
      *
@@ -69,7 +70,7 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
     public String getMimeType() {
         return mimeType;
     }
-    
+
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
@@ -77,9 +78,18 @@ public class MockHippoResourceBean extends MockHippoBean implements HippoResourc
     public Calendar getLastModified() {
         return cal;
     }
+
     public Calendar setLastModified(Calendar cal) {
         return cal;
     }
 
+    @Override
+    public boolean isBlank() {
+        return blank;
+    }
+
+    public void setBlank(boolean blank) {
+        this.blank = blank;
+    }
 }
 
