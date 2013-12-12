@@ -42,7 +42,7 @@ public class ListTableHeader extends Border {
         this.property = property;
         this.stateLocator = stateLocator;
 
-        getBodyContainer().add(new CssModifier(this));
+        add(new CssModifier(this));
 
         if (!triState) {
             //Initial sorting on the "Name" column (if any)
@@ -57,7 +57,7 @@ public class ListTableHeader extends Border {
             }
         }
 
-        getBodyContainer().add(new AjaxEventBehavior("onclick") {
+        add(new AjaxEventBehavior("onclick") {
             private static final long serialVersionUID = 1L;
 
             @Override
