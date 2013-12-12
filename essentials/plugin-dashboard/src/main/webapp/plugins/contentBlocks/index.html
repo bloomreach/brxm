@@ -20,8 +20,9 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <h4> Configure Content Blocks:</h4>
-                    <table class="table table-striped table-bordered">
+                    <div class="alert-warning" ng-hide="providers.length > 0">No content blocks found</div>
+                    <h4 ng-show="providers.length > 0"> Configure Content Blocks:</h4>
+                    <table ng-show="providers.length > 0" class="table table-striped table-bordered">
                         <thead>
                         <tr>
                             <th class="col-sm-7">Select document types:</th>
