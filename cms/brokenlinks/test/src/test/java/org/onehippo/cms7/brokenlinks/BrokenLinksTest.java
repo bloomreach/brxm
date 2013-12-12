@@ -232,15 +232,6 @@ public class BrokenLinksTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testManyFaultyLinksManyTimes() throws Exception {
-        for (int i = 0; i < 100; i++) {
-            tearDown();
-            setUp();
-            testManyFaultyLinks();
-        }
-    }
-
-    @Test
     public void testManyFaultyLinks() throws Exception {
         DocumentText documents = new DocumentText() {
             public String getTextForDocument(int index) {
