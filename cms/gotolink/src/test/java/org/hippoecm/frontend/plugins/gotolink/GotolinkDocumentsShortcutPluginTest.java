@@ -49,7 +49,6 @@ public class GotolinkDocumentsShortcutPluginTest {
     final IModelReference mockModelReference = createMock("modelReference", IModelReference.class);
     final IModel mockModel = createMock("model", IModel.class);
     final IPluginContext mockPluginContext = createMock("mockPluginContext", IPluginContext.class);
-    final IRenderService mockRenderService = createMock("mockRenderService", IRenderService.class);
 
     private static final String WICKET_MODEL = "model.browse.folder";
     private static final String WICKET_ID = "shortcut";
@@ -61,16 +60,14 @@ public class GotolinkDocumentsShortcutPluginTest {
 
         expect(mockPluginContext.getService(WICKET_MODEL, IModelReference.class)).andReturn(mockModelReference).times(2);
         expect(mockPluginContext.getService("dummy.browserid", IBrowseService.class)).andReturn(mockBrowseService);
-        expect(mockPluginContext.getService("dummy.browserid", IRenderService.class)).andReturn(mockRenderService);
 
         expect(mockModelReference.getModel()).andReturn(mockModel);
         mockModel.detach();
         expectLastCall().times(2);
 
         mockBrowseService.browse(isA(JcrNodeModel.class));
-        mockRenderService.focus(null);
 
-        replay(mockBrowseService, mockRenderService, mockModelReference, mockModel, mockPluginContext);
+        replay(mockBrowseService, mockModelReference, mockModel, mockPluginContext);
 
         HippoTester tester = new HippoTester(new Main());
 
@@ -86,7 +83,7 @@ public class GotolinkDocumentsShortcutPluginTest {
 
         tester.startComponentInPage(documentsShortcutPlugin);
         tester.clickLink("plugin:link", true); // true = is an ajax link
-        verify(mockBrowseService, mockRenderService, mockModelReference, mockModel, mockPluginContext);
+        verify(mockBrowseService, mockModelReference, mockModel, mockPluginContext);
     }
 
 }

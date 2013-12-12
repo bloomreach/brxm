@@ -27,6 +27,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,19 +48,12 @@ public class BrowseLink extends Panel {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 final JcrNodeModel nodeModel = browseLinkTarget.getBrowseModel();
-                String browserId = config.getString("browser.id");
-                IBrowseService browseService = context.getService(browserId, IBrowseService.class);
+                final String browserId = config.getString("browser.id");
+                final IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 if (browseService != null) {
                     browseService.browse(nodeModel);
                 } else {
-                    log.warn("no browser service found");
-                }
-
-                IRenderService browserRenderer = context.getService(browserId, IRenderService.class);
-                if (browserRenderer != null) {
-                    browserRenderer.focus(null);
-                } else {
-                    log.warn("no focus service found");
+                    log.warn("no browse service found with id '{}', cannot browse to '{}'", browserId, JcrUtils.getNodePathQuietly(nodeModel.getNode()));
                 }
             }
 

@@ -46,18 +46,13 @@ public class GotolinkDocumentsShortcutPlugin extends RenderPlugin {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                String browserId = config.getString("browser.id");
-                IBrowseService browseService = context.getService(browserId, IBrowseService.class);
+                final String browserId = config.getString("browser.id");
+                final IBrowseService browseService = context.getService(browserId, IBrowseService.class);
+                final String location = config.getString("option.location", "/content");
                 if (browseService != null) {
-                    browseService.browse(new JcrNodeModel(config.getString("option.location", "/content")));
+                    browseService.browse(new JcrNodeModel(location));
                 } else {
-                    log.warn("no browser service found");
-                }
-                IRenderService browserRenderer = context.getService(browserId, IRenderService.class);
-                if (browserRenderer != null) {
-                    browserRenderer.focus(null);
-                } else {
-                    log.warn("no focus service found");
+                    log.warn("no browse service found with id '{}', cannot browse to '{}'", browserId, location);
                 }
             }
         };
