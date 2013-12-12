@@ -36,7 +36,7 @@
                             <td>
                                 <div class="btn-group">
                                     <button ng-repeat="provider in docType.providers" type="button" class="btn btn-default">{{provider.key}}
-                                        <span class="badge" ng-click="removeProviderFromDocType(prov, docType)">X</span>
+                                        <span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>
                                     </button>
                                 </div>
                                 <select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">

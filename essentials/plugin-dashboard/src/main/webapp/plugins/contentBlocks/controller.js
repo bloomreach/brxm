@@ -8,7 +8,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.welcomeMessage = "Content blocks plugin";
     $scope.welcomeMessage2 = "Content blocks plugin";
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
-    $scope.pluginInstalled = false;
+    $scope.pluginInstalled = true;
     $scope.selection = [];
     $scope.selectedItem = [];
     $scope.documentTypes = [
@@ -46,8 +46,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.addProviderToDocType = function (prov, docName) {
         var index = $scope.documentTypes.indexOf(docName)
         $scope.documentTypes[index].providers.push(prov);
-        //$log.info(index);
-        //$log.info($scope.documentTypes[index]);
 
     };
     $scope.removeProviderFromDocType = function (prov, docName) {
@@ -55,9 +53,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         var providers = $scope.documentTypes[index].providers
         var providerIndex = providers.indexOf(prov);
         $scope.documentTypes[index].providers.splice(providerIndex, 1);
-        //$log.info(index);
-        //$log.info($scope.documentTypes[index]);
-
     };
 
     $scope.installPlugin = function () {
