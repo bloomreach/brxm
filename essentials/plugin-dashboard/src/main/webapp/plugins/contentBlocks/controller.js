@@ -6,7 +6,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         {"key": "Right column", "value": "right"}
     ]};
     $scope.welcomeMessage = "Content blocks plugin";
-    $scope.welcomeMessage2 = "Content blocks plugin";
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
     $scope.pluginInstalled = true;
     $scope.selection = [];
@@ -30,10 +29,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
     $scope.selectChange = function (docName, selectedItem) {
         $log.info(docName, selectedItem);
-    };
-    $scope.onbuttonclick = function () {
-        $log.info($scope.selection);
-        $scope.welcomeMessage2 = "foo";
     };
     $scope.onDelete = function (docName) {
         var index = $scope.providers.indexOf(docName)
@@ -66,6 +61,10 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
                     $scope.installMessage = data.value;
                 });
+    };
+
+    $scope.saveBlocksConfiguration = function () {
+        $log.info("Saving configuration for:");
     };
 
     $scope.toggleCheckBox = function (docName) {
