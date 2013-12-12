@@ -8,7 +8,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.welcomeMessage = "Content blocks plugin";
     $scope.welcomeMessage2 = "Content blocks plugin";
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
-    //$scope.pluginInstalled = true;
     $scope.pluginInstalled = false;
     $scope.selection = [];
     $scope.selectedItem = [];
@@ -58,10 +57,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         }).success(function (data) {
 
                     $scope.installMessage = data.value;
-
                 });
-
-
     };
 
     $scope.toggleCheckBox = function (docName) {
@@ -82,7 +78,9 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             url: $rootScope.REST.pluginInstallState + $scope.pluginClass
         }).success(function (data) {
                     //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
-                    $scope.pluginInstalled = data.installed;
+                    // TODO enable check:
+                    $scope.pluginInstalled = true;
+                    //$scope.pluginInstalled = data.installed;
 
                 });
 
