@@ -47,7 +47,7 @@ public class RichTextImageURLProvider implements IImageURLProvider {
         final String facetName = StringUtils.substringBefore(link, "/");
         final Node node = this.nodeModel.getObject();
         final String uuidOrNull = RichTextFacetHelper.getChildDocBaseOrNull(node, facetName);
-        if (linkFactory.getLinkUuids().contains(uuidOrNull)) {
+        if (uuidOrNull != null && linkFactory.getLinkUuids().contains(uuidOrNull)) {
             RichTextImage rti = imageFactory.loadImageItem(link);
             return rti.getUrl();
         }
