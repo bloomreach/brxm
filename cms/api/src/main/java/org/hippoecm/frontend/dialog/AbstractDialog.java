@@ -241,6 +241,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     private AjaxIndicatorAppender indicator;
 
     protected boolean cancelled = false;
+    private boolean isRemoved = false;
 
     public AbstractDialog() {
         this((IModel<T>) null);
@@ -575,18 +576,24 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         return container;
     }
 
+    @Override
+    protected void onRemove() {
+        super.onRemove();
+        this.isRemoved = true;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void render(PluginRequestTarget target) {
         if (target != null) {
-            if (!cancelled) {
+            if (!isRemoved) {
                 target.add(feedback);
-            }
-            for (ButtonWrapper bw : buttons) {
-                if (bw.hasChanges()) {
-                    target.add(bw.getButton());
+                for (ButtonWrapper bw : buttons) {
+                    if (bw.hasChanges()) {
+                        target.add(bw.getButton());
+                    }
                 }
             }
 
