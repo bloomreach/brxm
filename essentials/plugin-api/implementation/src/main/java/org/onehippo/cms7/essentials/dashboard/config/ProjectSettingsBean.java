@@ -28,8 +28,6 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 public class ProjectSettingsBean extends BaseDocument {
 
 
-
-
     @Field
     private String projectNamespace;
     @Field

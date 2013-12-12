@@ -20,13 +20,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -35,6 +39,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
@@ -59,7 +64,7 @@ import com.google.inject.Inject;
 @Path("/powerpacks/")
 public class PowerpackResource extends BaseResource {
 
-    public static final String POWERPACK_NEWS_AND_EVENT_LABEL ="news and events";
+    public static final String POWERPACK_NEWS_AND_EVENT_LABEL = "news-events";
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PowerpackResource.class);
@@ -69,7 +74,7 @@ public class PowerpackResource extends BaseResource {
 
     @GET
     @Path("/install/{id}/{sample}")
-    public RestfulList<MessageRestful> installPowerpack(@PathParam("id") String id, @PathParam("sample") final boolean sampleContent) {
+    public RestfulList<MessageRestful> installPowerpack(@Context ServletContext servletContext, @PathParam("id") String id, @PathParam("sample") final boolean sampleContent) {
         final RestfulList<MessageRestful> messageRestfulRestfulList = new RestfulList<>();
         if (Strings.isNullOrEmpty(id)) {
             return messageRestfulRestfulList;
@@ -87,7 +92,21 @@ public class PowerpackResource extends BaseResource {
                 powerpackPackage = new EmptyPowerPack();
                 break;
         }
-        final InstructionStatus status = powerpackPackage.execute(new DashboardPluginContext(GlobalUtils.createSession(), null));
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
+        // inject project settings:
+        final PluginConfigService service = context.getConfigService();
+
+        final ProjectSettingsBean document = service.read(className);
+        if (document != null) {
+            context.setBeansPackageName(document.getSelectedBeansPackage());
+            context.setComponentsPackageName(document.getSelectedComponentsPackage());
+            context.setRestPackageName(document.getSelectedRestPackage());
+            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        }
+
+
+        final InstructionStatus status = powerpackPackage.execute(context);
         switch (status) {
             case SUCCESS:
                 eventBus.post(new DisplayEvent("Power Pack successfully installed", DisplayEvent.DisplayType.H3));
@@ -96,6 +115,13 @@ public class PowerpackResource extends BaseResource {
                 eventBus.post("Not all parts of Power Pack were installed");
 
         }
+        // save status:
+        if (document !=null) {
+            document.setSetupDone(true);
+            final boolean written = service.write(document, className);
+            log.info("Config saved: {}", written);
+        }
+
 
         // add documentation messages:
         eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG));
