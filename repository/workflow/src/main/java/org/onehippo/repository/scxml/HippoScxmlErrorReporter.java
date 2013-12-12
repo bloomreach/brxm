@@ -15,6 +15,10 @@
  */
 package org.onehippo.repository.scxml;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.scxml2.env.SimpleErrorReporter;
 
 /**
@@ -28,6 +32,8 @@ public class HippoScxmlErrorReporter extends SimpleErrorReporter {
     private static final long serialVersionUID = 1L;
 
     private final SCXMLDefinition scxmlDef;
+    private List<SCXMLExecutionError> scxmlExecutionErrors;
+    private boolean recordingScxmlExecutionErrors;
 
     public HippoScxmlErrorReporter(final SCXMLDefinition scxmlDef) {
         this.scxmlDef = scxmlDef;
@@ -36,7 +42,39 @@ public class HippoScxmlErrorReporter extends SimpleErrorReporter {
     @Override
     public void onError(final String errorCode, final String errDetail,
             final Object errCtx) {
-        super.onError(errorCode, decorateErrorDetail(errDetail), errCtx);
+        String decoratedErrorDetail = decorateErrorDetail(errDetail);
+
+        if (isRecordingScxmlExecutionErrors()) {
+            if (scxmlExecutionErrors == null) {
+                scxmlExecutionErrors = new LinkedList<SCXMLExecutionError>();
+            }
+
+            scxmlExecutionErrors.add(new SCXMLExecutionError(errorCode, decoratedErrorDetail, errCtx));
+        }
+
+        super.onError(errorCode, decoratedErrorDetail, errCtx);
+    }
+
+    public boolean isRecordingScxmlExecutionErrors() {
+        return recordingScxmlExecutionErrors;
+    }
+
+    public void setRecordingScxmlExecutionErrors(boolean recordingScxmlExecutionErrors) {
+        this.recordingScxmlExecutionErrors = recordingScxmlExecutionErrors;
+    }
+
+    public void clearExecutionErrors() {
+        if (scxmlExecutionErrors != null) {
+            scxmlExecutionErrors.clear();
+        }
+    }
+
+    public List<SCXMLExecutionError> getSCXMLExecutionErrors() {
+        if (scxmlExecutionErrors != null) {
+            return Collections.unmodifiableList(scxmlExecutionErrors);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /**

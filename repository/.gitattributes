@@ -499,6 +499,8 @@ workflow/src/main/java/org/onehippo/repository/scxml/AbstractAction.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/AbstractTaskAction.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/HippoScxmlErrorReporter.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLDefinition.java -text
+workflow/src/main/java/org/onehippo/repository/scxml/SCXMLExecutionError.java -text
+workflow/src/main/java/org/onehippo/repository/scxml/SCXMLExecutorWrapper.java -text
 workflow/src/main/resources/date-derivatives.xml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/gallery-namespace.xml -text
@@ -518,6 +520,7 @@ workflow/src/test/java/org/onehippo/repository/documentworkflow/action/HintDeleg
 workflow/src/test/java/org/onehippo/repository/documentworkflow/task/HintWorkflowTaskTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLExecutorFactoryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLRegistryTest.java -text
+workflow/src/test/java/org/onehippo/repository/scxml/SCXMLExecutorWrapperTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecord.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordTestUtils.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordingErrorReporterWrapper.java -text
