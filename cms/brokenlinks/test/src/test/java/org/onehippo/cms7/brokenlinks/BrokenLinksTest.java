@@ -303,23 +303,45 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        Set<String> checksum = getSearchResults();
+        final SetTuple firstResult = getSearchResults();
         for (int i = 0; i < 1000; i++) {
-            if (!checksum.equals(getSearchResults())) {
+            final SetTuple latestResult = getSearchResults();
+            if (!firstResult.set1.equals(latestResult.set1)) {
                 fail("Results don't match during run " + i);
             }
-
+            if (!firstResult.set2.equals(latestResult.set2)) {
+                assertFalse("Null handle detected", latestResult.set2.contains("<null>"));
+                fail("Handles don't match during run " + i);
+            }
         }
     }
 
-    private Set<String> getSearchResults() throws Exception {
-        Set<String> result = new HashSet<>();
+    private SetTuple getSearchResults() throws Exception {
+        SetTuple result = new SetTuple();
         final NodeIterator nodes = session.getWorkspace().getQueryManager().createQuery("//element(*,hippostd:html)", "xpath").execute().getNodes();
         while (nodes.hasNext()) {
             final Node node = nodes.nextNode();
-            result.add(node.getIdentifier());
+            final Node handleNode = getHandleNode(node);
+            result.set1.add(node.getIdentifier());
+            result.set2.add(handleNode == null ? "<null>" : handleNode.getIdentifier());
         }
         return result;
+    }
+
+    private static final class SetTuple {
+        private final Set<String> set1 = new HashSet<>();
+        private final Set<String> set2 = new HashSet<>();
+    }
+
+    private Node getHandleNode(final Node node) throws RepositoryException {
+        Node parent = node.getParent();
+        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+            return parent;
+        }
+        if (parent.isSame(parent.getSession().getRootNode())) {
+            return null;
+        }
+        return getHandleNode(parent);
     }
 
     @Test
