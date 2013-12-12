@@ -13,15 +13,10 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.selectedItem = [];
     $scope.documentTypes = [
         {"key": "News document", "value": "namespace:news", "providers": [
-            {"key": "Provider 2"}
         ]},
         {"key": "News document2", "value": "namespace:news2", "providers": [
-            {"key": "Provider 1"},
-            {"key": "Provider 2"}
         ]},
         {"key": "Events document", "value": "namespace:events", "providers": [
-            {"key": "Provider 2"},
-            {"key": "Provider 3"}
         ]}
     ];
     $scope.providers = [
@@ -47,6 +42,22 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.onAdd = function (docName) {
         $log.info(docName);
         $scope.providers.push({"key": docName});
+    };
+    $scope.addProviderToDocType = function (prov, docName) {
+        var index = $scope.documentTypes.indexOf(docName)
+        $scope.documentTypes[index].providers.push(prov);
+        //$log.info(index);
+        //$log.info($scope.documentTypes[index]);
+
+    };
+    $scope.removeProviderFromDocType = function (prov, docName) {
+        var index = $scope.documentTypes.indexOf(docName)
+        var providers = $scope.documentTypes[index].providers
+        var providerIndex = providers.indexOf(prov);
+        $scope.documentTypes[index].providers.splice(providerIndex, 1);
+        //$log.info(index);
+        //$log.info($scope.documentTypes[index]);
+
     };
 
     $scope.installPlugin = function () {

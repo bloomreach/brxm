@@ -32,22 +32,16 @@
                         <tbody>
 
                         <tr ng-repeat="docType in documentTypes">
-                            <!--<td>-->
-                            <!--<input type="checkbox" value="{{docType.key}}" ng-checked="selection.indexOf(docType.key) > -1" ng-click="toggleCheckBox(docType.key)">-->
-                            <!--</td>-->
                             <td>{{docType.key}}</td>
-                            <!--<td>{{docType.providers}}</td>-->
                             <td>
                                 <div class="btn-group">
                                     <button ng-repeat="provider in docType.providers" type="button" class="btn btn-default">{{provider.key}}
-                                        <span class="badge">X</span></button>
+                                        <span class="badge" ng-click="removeProviderFromDocType(prov, docType)">X</span>
+                                    </button>
                                 </div>
-
-                                <select ng-change="selectChange(docType.key, selectedItem[$index])"
-                                        ng-options="option.value as option.key for option in columns.items"
-                                        ng-model="selectedItem[$index]">
+                                <select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">
+                                    <option>--Choose one--</option>
                                 </select>
-
                             </td>
                             <td>
                                 <select ng-change="selectChange(docType.key, selectedItem[$index])"
@@ -56,9 +50,6 @@
                                 </select>
                             </td>
                         </tr>
-                        <!--<tr>-->
-                        <!--<button class="btn btn-primary" ng-click="onbuttonclick()"></button>-->
-                        <!--</tr>-->
                         </tbody>
                     </table>
                 </div>
@@ -94,7 +85,6 @@
         <div class="col-md-4"></div>
     </div>
     <div ng-show="!pluginInstalled">
-
         <button class="btn btn-primary" ng-click="installPlugin()">Install Content blocks plugin</button>
         <p></p>
         <p></p>
