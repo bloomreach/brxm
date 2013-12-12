@@ -35,7 +35,7 @@ import com.google.inject.Inject;
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/menu/")
 public class MenuResource{
 

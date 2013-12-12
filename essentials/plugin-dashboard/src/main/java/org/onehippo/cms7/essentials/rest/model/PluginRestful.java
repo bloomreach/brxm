@@ -19,6 +19,15 @@ public class PluginRestful implements Restful {
     private DependencyRestful dependency;
     private String title;
     private String introduction;
+    private String pluginLink;
+
+    public String getPluginLink() {
+        return pluginLink;
+    }
+
+    public void setPluginLink(final String pluginLink) {
+        this.pluginLink = pluginLink;
+    }
 
     public VendorRestful getVendor() {
         return vendor;
@@ -52,6 +61,7 @@ public class PluginRestful implements Restful {
     public void setDependency(final DependencyRestful dependency) {
         this.dependency = dependency;
     }
+
 
     @Override
     public String toString() {

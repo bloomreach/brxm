@@ -63,6 +63,16 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public String getPluginLink() {
+        return "pluginLink";
+    }
+
+    @Override
+    public void setPluginLink(final String pluginLink) {
+
+    }
+
+    @Override
     public String getVendor() {
         return "vendor";
     }

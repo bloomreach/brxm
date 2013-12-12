@@ -44,7 +44,7 @@ import com.google.inject.Inject;
  */
 @Path("/status/")
 @Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 public class StatusResource extends BaseResource {
 
     @Inject

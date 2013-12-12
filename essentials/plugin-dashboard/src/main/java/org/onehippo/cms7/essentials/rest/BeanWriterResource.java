@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -43,16 +44,16 @@ import com.google.common.collect.Multimap;
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/beanwriter/")
 public class BeanWriterResource extends BaseResource {
 
 
-    @GET
+    @POST
     public RestfulList<MessageRestful> runBeanWriter() {
         final String basePath = ProjectUtils.getBaseProjectDirectory();
         final RestfulList<MessageRestful> messages = new RestfulList<>();
-        messages.add(new MessageRestful("Not implemented yet"));
+        messages.add(new MessageRestful("Not Enabled @see org.onehippo.cms7.essentials.rest.BeanWriterResource"));
         messages.add(new MessageRestful("Not implemented yet"));
       /*  final java.nio.file.Path namespacePath = new File(basePath + File.separator + "bootstrap").toPath();
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);

@@ -31,7 +31,7 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/keyvalue/")
 public class KeyValueResource extends BaseResource {
 

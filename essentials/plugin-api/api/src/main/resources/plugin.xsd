@@ -57,8 +57,9 @@
       <xs:element type="xs:string" name="name" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="plugin-class" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="type" minOccurs="1" maxOccurs="1"/>
-      <xs:element type="xs:string" name="description" minOccurs="1" maxOccurs="1"/>
       <xs:element type="xs:string" name="vendor" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="description" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:string" name="pluginLink" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="documentation-link" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="issues-link" minOccurs="0" maxOccurs="1"/>
       <xs:element type="screenshotsType" name="screenshots" minOccurs="0" maxOccurs="1"/>

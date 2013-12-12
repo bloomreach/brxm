@@ -4,6 +4,11 @@
 var _PROVIDER_QUEUE = 0;
 app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
+    /*
+     *  method: "POST",
+     data: JSON.stringify({}),
+     headers: {'Content-Type': 'application/json'}
+     * */
 });
 
 
@@ -14,7 +19,7 @@ app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
     ]};
     $scope.runBeanWriter = function () {
         $http({
-            method: 'GET',
+            method: 'POST',
             url: $rootScope.REST.beanwriter
         }).success(function (data) {
                     $scope.resultMessages = data;

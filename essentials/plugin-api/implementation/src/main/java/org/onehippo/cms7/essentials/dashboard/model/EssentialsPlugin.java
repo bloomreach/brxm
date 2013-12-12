@@ -35,6 +35,7 @@ public class EssentialsPlugin implements Plugin {
     private String vendorLink;
     private String description;
     private String documentationLink;
+    private String pluginLink;
     private String issuesLink;
     private List<Screenshot> screenshots;
     private List<Asset> assets;
@@ -75,6 +76,17 @@ public class EssentialsPlugin implements Plugin {
     @Override
     public void setVendorLink(final String vendorLink) {
         this.vendorLink = vendorLink;
+    }
+
+    @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
+    @Override
+    public String getPluginLink() {
+        return pluginLink;
+    }
+
+    @Override
+    public void setPluginLink(final String pluginLink) {
+        this.pluginLink = pluginLink;
     }
 
     @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)

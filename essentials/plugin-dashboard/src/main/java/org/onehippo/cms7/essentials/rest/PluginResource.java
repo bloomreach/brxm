@@ -21,6 +21,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
@@ -40,7 +41,7 @@ import com.google.inject.Inject;
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/plugins/")
 public class PluginResource extends BaseResource{
 
@@ -48,6 +49,37 @@ public class PluginResource extends BaseResource{
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
 
+
+
+    @POST
+    @Path("/configure/add")
+    public RestfulList<PluginRestful> addToRecentlyInstalled(@Context ServletContext servletContext, final PluginRestful plugin) {
+
+        log.info("servletContext {}");
+
+        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+        final List<Plugin> pluginList = getPlugins(servletContext);
+        for (Plugin p : pluginList) {
+            final PluginRestful resource = new PluginRestful();
+            resource.setTitle(p.getName());
+            plugins.add(resource);
+        }
+        return plugins;
+    }
+    @GET
+    @Path("/configure/list")
+    public RestfulList<PluginRestful> getRecentlyInstalled(@Context ServletContext servletContext) {
+
+        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+        final List<Plugin> pluginList = getPlugins(servletContext);
+        for (Plugin plugin : pluginList) {
+            final PluginRestful resource = new PluginRestful();
+            resource.setTitle(plugin.getName());
+            resource.setPluginLink(plugin.getPluginLink());
+            plugins.add(resource);
+        }
+        return plugins;
+    }
 
     @GET
     @Path("/")

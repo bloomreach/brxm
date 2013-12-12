@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
-@Consumes({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/property/")
 public class PropertiesResource extends BaseResource {
 
