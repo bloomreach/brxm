@@ -88,6 +88,8 @@ class MenuHierarchy implements Serializable {
                     put("document", action);
                 } else if (action.getId().equals("history")) {
                     put("document", action);
+                } else if (action.getId().toLowerCase().contains("depubli")) {
+                    put("depublication", action);
                 } else if (action.getId().toLowerCase().contains("publi")) {
                     put("publication", action);
                 } else if (action.getId().equals("cancel") || action.getId().equals("accept")
@@ -138,6 +140,13 @@ class MenuHierarchy implements Serializable {
             MenuHierarchy submenu = submenus.remove("custom");
             for (ActionDescription action : submenu.items) {
                 put(action);
+            }
+        }
+        if (this.submenus.containsKey("publication") && this.submenus.containsKey("depublication")) {
+            MenuHierarchy publicationMenu = this.submenus.get("publication");
+            MenuHierarchy depublicationMenu = this.submenus.remove("depublication");
+            for (ActionDescription depublicationAction : depublicationMenu.items) {
+                publicationMenu.put(depublicationAction);
             }
         }
         for (Map.Entry<String, MenuHierarchy> entry : submenus.entrySet()) {
