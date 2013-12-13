@@ -8,6 +8,7 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 
 @Node(jcrType=EventsDocument.DOCUMENT_TYPE)
+@HippoEssentialsGenerated(internalName = "{{namespace}}:eventsdocument")
 public class EventsDocument extends HippoDocument {
 
     /**
@@ -28,6 +29,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the title
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
     public String getTitle() {
         return getProperty(TITLE);
     }
@@ -37,6 +39,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the (start) date
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:date")
     public Calendar getDate() {
         return getProperty(DATE);
     }
@@ -46,6 +49,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the introduction
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:introduction")
     public String getIntroduction() {
         return getProperty(INTRODUCTION);
     }
@@ -55,6 +59,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the image
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:image")
     public HippoGalleryImageSet getImage() {
         return getLinkedBean(IMAGE, HippoGalleryImageSet.class);
     }
@@ -64,6 +69,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the content
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:content")
     public HippoHtml getContent() {
         return getHippoHtml(CONTENT);
     }
@@ -73,6 +79,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the location
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:location")
     public String getLocation() {
         return getProperty(LOCATION);
     }
@@ -82,6 +89,7 @@ public class EventsDocument extends HippoDocument {
      *
      * @return the end date
      */
+    @HippoEssentialsGenerated(internalName = "{{namespace}}:enddate")
     public Calendar getEndDate() {
         return getProperty(END_DATE);
     }
