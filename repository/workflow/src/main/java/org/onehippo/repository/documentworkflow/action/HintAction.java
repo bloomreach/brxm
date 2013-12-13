@@ -17,15 +17,25 @@
 package org.onehippo.repository.documentworkflow.action;
 
 import java.io.Serializable;
+import java.util.Collection;
 
+import javax.jcr.RepositoryException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.scxml2.ErrorReporter;
+import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.task.HintTask;
+import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.scxml.AbstractAction;
 
 /**
- * HintAction delegates the execution to HintTask.
+ * HintAction sets a provided hint value in the DocumentHandle model, or removes it if empty/null
  */
-public class HintAction extends AbstractDocumentTaskAction<HintTask> {
+public class HintAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,14 +56,24 @@ public class HintAction extends AbstractDocumentTaskAction<HintTask> {
     }
 
     @Override
-    protected HintTask createWorkflowTask() {
-        return new HintTask();
-    }
+    protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
+                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
+            WorkflowException, RepositoryException {
 
-    @Override
-    protected void initTask(HintTask task) throws ModelException, SCXMLExpressionException {
-        super.initTask(task);
-        task.setHint(getHint());
-        task.setValue((Serializable)eval(getValue()));
+        String hint = getHint();
+        if (StringUtils.isBlank(hint)) {
+            throw new WorkflowException("No hint specified");
+        }
+
+        DocumentHandle dm = (DocumentHandle)getContext().get("dm");
+
+        String valueExpr = getValue();
+        Serializable value = (Serializable)(StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
+
+        if (value == null) {
+            dm.getHints().remove(hint);
+        } else {
+            dm.getHints().put(hint, getValue());
+        }
     }
 }

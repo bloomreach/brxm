@@ -31,20 +31,28 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.MockWorkflowContext;
-import org.onehippo.repository.documentworkflow.task.HintTask;
 import org.onehippo.repository.mock.MockNode;
 
 /**
- * HintDelegatingActionTest
+ * HinthintActionTest
  */
-public class HintDelegatingActionTest {
+public class HintActionTest {
 
-    private HintTask task;
     private DocumentHandle dm;
-    private HintAction delegatingAction;
 
     private Context context = new JexlContext();
     private Evaluator evaluator = new JexlEvaluator();
+    
+    private class MockHintAction extends HintAction {
+        @Override
+        protected Context getContext() {
+            return context;
+        }
+        @Override
+        public <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
+            return (T) evaluator.eval(context, expr);
+        }
+    }
 
     @Before
     public void before() throws Exception {
@@ -55,43 +63,23 @@ public class HintDelegatingActionTest {
 
         context.set("dm", dm);
         context.set("value1", "value1");
-
-        delegatingAction = new HintAction() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void goImmutable() {}
-
-            @Override
-            protected HintTask createWorkflowTask() {
-                return task;
-            }
-            @Override
-            protected Context getContext() {
-                return context;
-            }
-            @Override
-            public <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
-                return (T) evaluator.eval(context, expr);
-            }
-        };
-
-        task = new HintTask();
     }
 
     @Test
     public void testBasic() throws Exception {
-        delegatingAction.setHint("hint1");
-        delegatingAction.setValue("value1");
-        delegatingAction.execute(null, null, null, null, null);
+        HintAction hintAction = new MockHintAction();
+        hintAction.setHint("hint1");
+        hintAction.setValue("value1");
+        hintAction.execute(null, null, null, null, null);
 
         assertEquals("value1", dm.getHints().get("hint1"));
 
         dm.getHints().clear();
 
-        delegatingAction.setHint("hint1");
-        delegatingAction.setValue(null);
-        delegatingAction.execute(null, null, null, null, null);
+        hintAction = new MockHintAction();
+        hintAction.setHint("hint1");
+        hintAction.setValue(null);
+        hintAction.execute(null, null, null, null, null);
 
         assertNull(dm.getHints().get("hint1"));
     }
