@@ -489,7 +489,6 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/task/AbstractDoc
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ArchiveTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyVariantTask.java -text
-workflow/src/main/java/org/onehippo/repository/documentworkflow/task/HintTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/IsModifiedTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/MoveDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RenameDocumentTask.java -text
@@ -517,7 +516,6 @@ workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
 workflow/src/test/java/org/onehippo/repository/documentworkflow/action/HintActionTest.java -text
-workflow/src/test/java/org/onehippo/repository/documentworkflow/task/HintWorkflowTaskTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLExecutorFactoryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLRegistryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/SCXMLExecutorWrapperTest.java -text

@@ -44,10 +44,12 @@ public class HintActionTest {
     private Evaluator evaluator = new JexlEvaluator();
     
     private class MockHintAction extends HintAction {
+        private static final long serialVersionUID = 1L;
         @Override
         protected Context getContext() {
             return context;
         }
+        @SuppressWarnings("unchecked")
         @Override
         public <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
             return (T) evaluator.eval(context, expr);
@@ -83,6 +85,4 @@ public class HintActionTest {
 
         assertNull(dm.getHints().get("hint1"));
     }
-
-    
 }
