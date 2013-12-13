@@ -73,7 +73,7 @@ public class HintAction extends AbstractAction {
         if (value == null) {
             dm.getHints().remove(hint);
         } else {
-            dm.getHints().put(hint, getValue());
+            dm.getHints().put(hint, (Serializable) eval(getValue()));
         }
     }
 }
