@@ -67,7 +67,7 @@ public abstract class AbstractAction extends Action {
                     goImmutable();
 
                     if (parameters == null) {
-                        parameters = Collections.EMPTY_MAP;
+                        parameters = Collections.emptyMap();
                     }
                     else {
                         parameters = Collections.unmodifiableMap(parameters);
