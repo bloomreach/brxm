@@ -45,20 +45,71 @@ public abstract class AbstractAction extends Action {
     private static Logger log = LoggerFactory.getLogger(AbstractAction.class);
 
     private static ThreadLocal<SCInstance> tlSCInstance = new ThreadLocal<SCInstance>();
+    private static ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
+
+    private boolean immutable = false;
 
     @Override
     public final void execute(EventDispatcher evtDispatcher, ErrorReporter errRep, SCInstance scInstance, Log appLog,
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
         try {
             tlSCInstance.set(scInstance);
+            if (getContext() == null) {
+                tlContext.set(scInstance.getContext(getParentTransitionTarget()));
+            }
+            synchronized (this) {
+                if (!immutable) {
+                    goImmutable();
+                    immutable = true;
+                }
+            }
             doExecute(evtDispatcher, errRep, appLog, derivedEvents);
         } catch (WorkflowException e) {
             throw new ModelException(e);
         } catch (RepositoryException e) {
             throw new ModelException(e);
         } finally {
+            tlContext.remove();
             tlSCInstance.remove();
         }
+    }
+
+    /**
+     * @return true once {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * for this instance is about to be invoked for the first time, after which no instance state should be mutable anymore
+     */
+    protected boolean isImmutable() {
+        return immutable;
+    }
+
+    /**
+     * Called before {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)} is to be invoked for the first time.
+     * {@link Action} instance state must be immutable from that moment on,  as they may be executed concurrently from
+     * different threads, and even multiple times within one thread (but only sequentially).
+     */
+    protected void goImmutable() {}
+
+
+    /**
+     * @return the current {@link Context} of this action. Only not null when invoked within the context of
+     * {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     */
+    protected Context getContext() {
+        return tlContext.get();
+    }
+
+    /**
+     * Evaluates the expression by the {@link org.apache.commons.scxml2.Evaluator} using the current {@link #getContext()} and returns the evaluation result.
+     * May only be invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     * @param expr
+     * @return
+     * @throws org.apache.commons.scxml2.model.ModelException
+     * @throws org.apache.commons.scxml2.SCXMLExpressionException
+     */
+    @SuppressWarnings("unchecked")
+    protected <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
+        Context ctx = tlContext.get();
+        return (T) tlSCInstance.get().getEvaluator().eval(ctx, expr);
     }
 
     /**
@@ -74,62 +125,4 @@ public abstract class AbstractAction extends Action {
      */
     abstract protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException, WorkflowException, RepositoryException;
-
-    /**
-     * Returns the context object by the name.
-     * @param scInstance
-     * @param name
-     * @return
-     * @throws org.apache.commons.scxml2.model.ModelException
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T getContextAttribute(String name) {
-        try {
-            Context ctx = getCurrentSCInstance().getContext(getParentTransitionTarget());
-            return (T) ctx.get(name);
-        } catch (ModelException e) {
-            log.error("Failed to retrieve the parent transition target from the current execution context.", e);
-        }
-
-        return null;
-    }
-
-    /**
-     * Sets a context object attribute by the name
-     * @param name
-     * @param value
-     */
-    public void setContextAttribute(String name, Object value) {
-        try {
-            Context ctx = getCurrentSCInstance().getContext(getParentTransitionTarget());
-            ctx.set(name, value);
-        } catch (ModelException e) {
-            log.error("Failed to retrieve the parent transition target from the current execution context.", e);
-        }
-    }
-
-    /**
-     * Evaluates the expression and returns the last evaluated value.
-     * @param scInstance
-     * @param expr
-     * @return
-     * @throws org.apache.commons.scxml2.model.ModelException
-     * @throws org.apache.commons.scxml2.SCXMLExpressionException
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T eval(String expr) throws ModelException, SCXMLExpressionException {
-        Context ctx = getCurrentSCInstance().getContext(getParentTransitionTarget());
-        return (T) getCurrentSCInstance().getEvaluator().eval(ctx, expr);
-    }
-
-    private static SCInstance getCurrentSCInstance() {
-        final SCInstance scInstance = tlSCInstance.get();
-
-        if (scInstance == null) {
-            throw new IllegalStateException("No SCInstance in the current SCXML execution context.");
-        }
-
-        return scInstance;
-    }
-
 }

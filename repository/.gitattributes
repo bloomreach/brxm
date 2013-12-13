@@ -496,7 +496,7 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RenameDocum
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RequestTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ScheduleRequestTask.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/AbstractAction.java -text
-workflow/src/main/java/org/onehippo/repository/scxml/AbstractTaskAction.java -text
+workflow/src/main/java/org/onehippo/repository/scxml/AbstractWorkflowTaskAction.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/HippoScxmlErrorReporter.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLDefinition.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLExecutionError.java -text
@@ -525,7 +525,6 @@ workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecord.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordTestUtils.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/ErrorRecordingErrorReporterWrapper.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/test/LogRecordTestUtils.java -text
-workflow/src/test/java/org/onehippo/repository/test/scxml/MockAbstractWorkflowTaskDelegatingAction.java -text
 workflow/src/test/resources/log4j-filters.txt -text
 workflow/src/test/resources/org/onehippo/repository/documentworkflow/model/example/example-workflow-parallel-model.scxml.xml svneol=native#text/plain
 workflow/src/test/resources/org/onehippo/repository/documentworkflow/test-document-workflow.scxml -text

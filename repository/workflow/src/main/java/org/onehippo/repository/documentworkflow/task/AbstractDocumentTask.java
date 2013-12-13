@@ -83,7 +83,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
 
     /**
      * Execute this workflow task
-     * @param properties execution time properties
      * @throws WorkflowException
      */
     @Override
@@ -115,7 +114,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
 
     /**
      * Returns the document handle object from the current SCXML execution context.
-     * @param scInstance
      * @return
      */
     public DocumentHandle getDataModel() {
