@@ -161,6 +161,7 @@ public class PowerpackResource extends BaseResource {
         projectRestful.setNamespace(context.getProjectNamespacePrefix());
         powerpacks.setProject(projectRestful);
         // add steps:
+        // TODO this should be loaded dynamically, but we still need a mechanism for powerpacks
         final StepRestful stepOne = new StepRestful();
         stepOne.setName("Select a powerpack");
         stepOne.setButtonText("Next");
