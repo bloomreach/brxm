@@ -58,13 +58,17 @@ public class HintDelegatingActionTest {
 
         delegatingAction = new HintAction() {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            protected void goImmutable() {}
+
             @Override
             protected HintTask createWorkflowTask() {
                 return task;
             }
             @Override
-            public <T> T getContextAttribute(String name) {
-                return (T) context.get(name);
+            protected Context getContext() {
+                return context;
             }
             @Override
             public <T> T eval(String expr) throws ModelException, SCXMLExpressionException {

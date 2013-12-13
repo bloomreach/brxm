@@ -17,32 +17,32 @@
 package org.onehippo.repository.documentworkflow.action;
 
 import java.io.Serializable;
-import java.util.Map;
 
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.HintTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * HintAction delegates the execution to HintTask.
  */
-public class HintAction extends AbstractTaskAction<HintTask> {
+public class HintAction extends AbstractDocumentTaskAction<HintTask> {
 
     private static final long serialVersionUID = 1L;
 
     public String getHint() {
-        return getPropertiesMap().get("hint");
+        return getParameter("hint");
     }
 
     public void setHint(final String hint) {
-        getPropertiesMap().put("hint", hint);
+        setParameter("hint", hint);
     }
 
     public String getValue() {
-        return (String) getRuntimePropertiesMap().get("value");
+        return getParameter("valueExpr");
     }
 
     public void setValue(final String value) {
-        getRuntimePropertiesMap().put("value", value);
+        setParameter("valueExpr", value);
     }
 
     @Override
@@ -51,16 +51,9 @@ public class HintAction extends AbstractTaskAction<HintTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(HintTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-        task.setHint(propertiesMap.get("hint"));
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(HintTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
-
-        Serializable value = (Serializable) runtimePropertiesMap.get("value");
-        task.setValue(value);
+    protected void initTask(HintTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        task.setHint(getHint());
+        task.setValue((Serializable)eval(getValue()));
     }
 }

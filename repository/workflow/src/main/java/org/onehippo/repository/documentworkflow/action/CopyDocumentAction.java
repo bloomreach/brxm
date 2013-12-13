@@ -16,33 +16,32 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Map;
-
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.Document;
 import org.onehippo.repository.documentworkflow.task.CopyDocumentTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * CopyDocumentAction delegating the execution to CopyDocumentTask.
  */
-public class CopyDocumentAction extends AbstractTaskAction<CopyDocumentTask> {
+public class CopyDocumentAction extends AbstractDocumentTaskAction<CopyDocumentTask> {
 
     private static final long serialVersionUID = 1L;
 
     public String getDestinationExpr() {
-        return (String) getRuntimePropertiesMap().get("destination");
+        return getParameter("destinationExpr");
     }
 
     public void setDestinationExpr(String destinationExpr) {
-        getRuntimePropertiesMap().put("destination", destinationExpr);
+       setParameter("destinationExpr", destinationExpr);
     }
 
     public String getNewNameExpr() {
-        return (String) getRuntimePropertiesMap().get("newName");
+        return getParameter("newNameExpr");
     }
 
     public void setNewNameExpr(String newNameExpr) {
-        getRuntimePropertiesMap().put("newName",newNameExpr);
+        setParameter("newNameExpr", newNameExpr);
     }
 
     @Override
@@ -51,14 +50,9 @@ public class CopyDocumentAction extends AbstractTaskAction<CopyDocumentTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(CopyDocumentTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(CopyDocumentTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
-        task.setDestination((Document) runtimePropertiesMap.get("destination"));
-        task.setNewName((String) runtimePropertiesMap.get("newName"));
+    protected void initTask(CopyDocumentTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        task.setDestination((Document) eval(getDestinationExpr()));
+        task.setNewName((String) eval(getNewNameExpr()));
     }
 }

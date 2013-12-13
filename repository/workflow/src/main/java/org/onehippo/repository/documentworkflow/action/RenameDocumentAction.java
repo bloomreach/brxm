@@ -16,24 +16,23 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Map;
-
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.RenameDocumentTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * RenameDocumentAction delegating the execution to RenameDocumentTask.
  */
-public class RenameDocumentAction extends AbstractTaskAction<RenameDocumentTask> {
+public class RenameDocumentAction extends AbstractDocumentTaskAction<RenameDocumentTask> {
 
     private static final long serialVersionUID = 1L;
 
     public String getNewNameExpr() {
-        return (String) getRuntimePropertiesMap().get("newName");
+        return getParameter("newNameExpr");
     }
 
     public void setNewNameExpr(String newNameExpr) {
-        getRuntimePropertiesMap().put("newName", newNameExpr);
+        setParameter("newNameExpr", newNameExpr);
     }
 
     @Override
@@ -42,13 +41,8 @@ public class RenameDocumentAction extends AbstractTaskAction<RenameDocumentTask>
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(RenameDocumentTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(RenameDocumentTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
-        task.setNewName((String) runtimePropertiesMap.get("newName"));
+    protected void initTask(RenameDocumentTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        task.setNewName((String) eval(getNewNameExpr()));
     }
 }

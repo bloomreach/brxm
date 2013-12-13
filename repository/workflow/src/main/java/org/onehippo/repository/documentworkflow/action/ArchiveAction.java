@@ -16,30 +16,17 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Map;
-
 import org.onehippo.repository.documentworkflow.task.ArchiveTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * ArchiveAction delegating the execution to ArchiveTask.
  */
-public class ArchiveAction extends AbstractTaskAction<ArchiveTask> {
+public class ArchiveAction extends AbstractDocumentTaskAction<ArchiveTask> {
 
     private static final long serialVersionUID = 1L;
 
     @Override
     protected ArchiveTask createWorkflowTask() {
         return new ArchiveTask();
-    }
-
-    @Override
-    protected void initTaskBeforeEvaluation(ArchiveTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(ArchiveTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
     }
 }

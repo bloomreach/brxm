@@ -16,65 +16,63 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Map;
-
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.CopyVariantTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * CopyVariantAction delegating the execution to CopyVariantTask.
  */
-public class CopyVariantAction extends AbstractTaskAction<CopyVariantTask> {
+public class CopyVariantAction extends AbstractDocumentTaskAction<CopyVariantTask> {
 
     private static final long serialVersionUID = 1L;
 
     public String getSourceState() {
-        return getPropertiesMap().get("sourceState");
+        return getParameter("sourceState");
     }
 
     public void setSourceState(String sourceState) {
-        getPropertiesMap().put("sourceState", sourceState);
+        setParameter("sourceState", sourceState);
     }
 
     public String getTargetState() {
-        return getPropertiesMap().get("targetState");
+        return getParameter("targetState");
     }
 
     public void setTargetState(String targetState) {
-        getPropertiesMap().put("targetState", targetState);
+        setParameter("targetState", targetState);
     }
 
     public String getAvailabilities() {
-        return getPropertiesMap().get("availabilities");
+        return getParameter("availabilities");
     }
 
     public void setAvailabilities(String availabilities) {
-        getPropertiesMap().put("availabilities", availabilities);
+        setParameter("availabilities", availabilities);
     }
 
     public boolean isApplyModified() {
-        return BooleanUtils.toBoolean(getPropertiesMap().get("applyModified"));
+        return Boolean.parseBoolean(getParameter("applyModified"));
     }
 
     public void setApplyModified(String applyModified) {
-        getPropertiesMap().put("applyModified", applyModified);
+        setParameter("applyModified", applyModified);
     }
 
     public boolean isSkipIndex() {
-        return BooleanUtils.toBoolean(getPropertiesMap().get("skipIndex"));
+        return Boolean.parseBoolean(getParameter("skipIndex"));
     }
 
     public void setSkipIndex(String skipIndex) {
-        getPropertiesMap().put("skipIndex", skipIndex);
+        getParameter("skipIndex", skipIndex);
     }
 
     public boolean isVersionable() {
-        return BooleanUtils.toBoolean(getPropertiesMap().get("versionable"));
+        return Boolean.parseBoolean(getParameter("versionable"));
     }
 
     public void setVersionable(String versionable) {
-        getPropertiesMap().put("versionable", versionable);
+        setParameter("versionable", versionable);
     }
 
     @Override
@@ -83,18 +81,13 @@ public class CopyVariantAction extends AbstractTaskAction<CopyVariantTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(CopyVariantTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-        task.setSourceState((String) propertiesMap.get("sourceState"));
-        task.setTargetState((String) propertiesMap.get("targetState"));
-        task.setAvailabilities((String) propertiesMap.get("availabilities"));
-        task.setApplyModified(BooleanUtils.toBoolean(propertiesMap.get("applyModified")));
-        task.setSkipIndex(BooleanUtils.toBoolean(propertiesMap.get("skipIndex")));
-        task.setVersionable(BooleanUtils.toBoolean(propertiesMap.get("versionable")));
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(CopyVariantTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
+    protected void initTask(CopyVariantTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        task.setSourceState(getSourceState());
+        task.setTargetState(getTargetState());
+        task.setAvailabilities(getAvailabilities());
+        task.setApplyModified(isApplyModified());
+        task.setSkipIndex(isSkipIndex());
+        task.setVersionable(isVersionable());
     }
 }

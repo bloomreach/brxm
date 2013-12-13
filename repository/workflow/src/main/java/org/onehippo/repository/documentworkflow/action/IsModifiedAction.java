@@ -16,30 +16,17 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Map;
-
 import org.onehippo.repository.documentworkflow.task.IsModifiedTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * IsModifiedAction delegating the execution to IsModifiedTask.
  */
-public class IsModifiedAction extends AbstractTaskAction<IsModifiedTask> {
+public class IsModifiedAction extends AbstractDocumentTaskAction<IsModifiedTask> {
 
     private static final long serialVersionUID = 1L;
 
     @Override
     protected IsModifiedTask createWorkflowTask() {
         return new IsModifiedTask();
-    }
-
-    @Override
-    protected void initTaskBeforeEvaluation(IsModifiedTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(IsModifiedTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
     }
 }

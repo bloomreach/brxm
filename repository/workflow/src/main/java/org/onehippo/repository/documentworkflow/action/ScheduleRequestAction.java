@@ -17,32 +17,32 @@
 package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Date;
-import java.util.Map;
 
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.ScheduleRequestTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * ScheduleRequestAction delegating the execution to ScheduleRequestTask.
  */
-public class ScheduleRequestAction extends AbstractTaskAction<ScheduleRequestTask> {
+public class ScheduleRequestAction extends AbstractDocumentTaskAction<ScheduleRequestTask> {
 
     private static final long serialVersionUID = 1L;
 
     public String getType() {
-        return getPropertiesMap().get("type");
+        return getParameter("type");
     }
 
-    public void setType(final String type) {
-        getPropertiesMap().put("type", type);
+    public void setType(String type) {
+        setParameter("type", type);
     }
 
     public String getTargetDateExpr() {
-        return (String) getRuntimePropertiesMap().get("targetDate");
+        return getParameter("targetDateExpr");
     }
 
-    public void setTargetDateExpr(final String targetDateExpr) {
-        getRuntimePropertiesMap().put("targetDate", targetDateExpr);
+    public void setTargetDateExpr(String targetDateExpr) {
+        setParameter("targetDateExpr", targetDateExpr);
     }
 
     @Override
@@ -51,13 +51,10 @@ public class ScheduleRequestAction extends AbstractTaskAction<ScheduleRequestTas
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(ScheduleRequestTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
+    protected void initTask(ScheduleRequestTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        task.setType(getType());
+        task.setTargetDate((Date) eval(getTargetDateExpr()));
     }
 
-    @Override
-    protected void initTaskAfterEvaluation(ScheduleRequestTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
-        task.setTargetDate((Date) runtimePropertiesMap.get("targetDate"));
-    }
 }

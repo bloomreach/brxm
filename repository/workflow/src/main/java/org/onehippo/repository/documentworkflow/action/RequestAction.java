@@ -17,41 +17,41 @@
 package org.onehippo.repository.documentworkflow.action;
 
 import java.util.Date;
-import java.util.Map;
 
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.PublishableDocument;
 import org.onehippo.repository.documentworkflow.task.RequestTask;
-import org.onehippo.repository.scxml.AbstractTaskAction;
 
 /**
  * RequestAction delegating the execution to RequestTask.
  */
-public class RequestAction extends AbstractTaskAction<RequestTask> {
+public class RequestAction extends AbstractDocumentTaskAction<RequestTask> {
 
     private static final long serialVersionUID = 1L;
 
     public String getType() {
-        return getPropertiesMap().get("type");
+        return getParameter("type");
     }
 
     public void setType(String type) {
-        getPropertiesMap().put("type", type);
+        setParameter("type", type);
     }
 
     public String getContextVariantExpr() {
-        return (String) getRuntimePropertiesMap().get("contextVariant");
+        return getParameter("contextVariantExpr");
     }
 
     public void setContextVariantExpr(String contextVariantExpr) {
-        getRuntimePropertiesMap().put("contextVariant", contextVariantExpr);
+        setParameter("contextVariantExpr", contextVariantExpr);
     }
 
     public String getTargetDateExpr() {
-        return (String) getRuntimePropertiesMap().get("targetDate");
+        return getParameter("targetDateExpr");
     }
 
     public void setTargetDateExpr(String targetDateExpr) {
-        getRuntimePropertiesMap().put("targetDate", targetDateExpr);
+        setParameter("targetDateExpr", targetDateExpr);
     }
 
     @Override
@@ -60,15 +60,10 @@ public class RequestAction extends AbstractTaskAction<RequestTask> {
     }
 
     @Override
-    protected void initTaskBeforeEvaluation(RequestTask task, Map<String, String> propertiesMap) {
-        super.initTaskBeforeEvaluation(task, propertiesMap);
-        task.setType(propertiesMap.get("type"));
-    }
-
-    @Override
-    protected void initTaskAfterEvaluation(RequestTask task, Map<String, Object> runtimePropertiesMap) {
-        super.initTaskAfterEvaluation(task, runtimePropertiesMap);
-        task.setContextVariant((PublishableDocument) runtimePropertiesMap.get("contextVariant"));
-        task.setTargetDate((Date) runtimePropertiesMap.get("targetDate"));
+    protected void initTask(RequestTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        task.setType(getType());
+        task.setContextVariant((PublishableDocument) eval(getContextVariantExpr()));
+        task.setTargetDate((Date) eval(getTargetDateExpr()));
     }
 }
