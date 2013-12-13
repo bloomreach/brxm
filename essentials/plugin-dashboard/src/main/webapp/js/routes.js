@@ -41,7 +41,7 @@ app.config(function ($routeProvider) {
 });
 
 var checkPackInstalled = function ($q, $rootScope, $location, $http, $log, MyHttpInterceptor) {
-
+    $rootScope.checkDone = true;
     if ($rootScope.packsInstalled) {
         $log.info("powerpack is installed");
         return true;

@@ -77,8 +77,21 @@ var app;
 //############################################
 
 
-    APP.run(function ($rootScope, $log, $http, $templateCache, MyHttpInterceptor) {
+    APP.run(function ($rootScope, $location, $log, $http, $templateCache, MyHttpInterceptor) {
         $rootScope.headerMessage = "Welcome on the Hippo Trail";
+        // routing listener
+        $rootScope.$on('$routeChangeStart', function (event, next, current) {
+            // check if we need powerpacks install check
+            if(!$rootScope.checkDone && ($location.url() != "/" || $location.url() != "")){
+                var url = $location.url();
+                $log.info("Redirecting to [/]: needs powerpack install check:");
+                $location.path('/');
+            }
+
+        });
+
+
+
         var root = 'http://localhost:8080/essentials/rest';
         var plugins = root + "/plugins";
         /* TODO generate this server side */
@@ -135,6 +148,9 @@ var app;
                     });
 
         };
+
+
+
         $rootScope.initData();
     });
 

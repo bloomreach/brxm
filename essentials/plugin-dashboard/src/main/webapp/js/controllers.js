@@ -14,9 +14,6 @@ app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $ht
 
 
 app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-    // hack
-    $rootScope.packsInstalled = true;
-
     $scope.resultMessages = null;
     $scope.runBeanWriter = function () {
         $http({
@@ -30,8 +27,6 @@ app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHt
 });
 // loads plugin list
 app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-    // hack
-    $rootScope.packsInstalled = true;
 
     $scope.tabs = [
         {name: "Installed Plugins", link: "/plugins"},
