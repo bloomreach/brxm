@@ -140,11 +140,25 @@ public class PowerpackResource extends BaseResource {
 
     @GET
     @Path("/")
-    public PowerpackListRestful getPowerpacks() {
+    public PowerpackListRestful getPowerpacks(@Context ServletContext servletContext) {
         final PowerpackListRestful powerpacks = new PowerpackListRestful();
         final ProjectRestful projectRestful = getProjectRestful();
-        // TODO enable:
-        projectRestful.setNamespace("marketplace");
+
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
+        // inject project settings:
+        final PluginConfigService service = context.getConfigService();
+
+        final ProjectSettingsBean document = service.read(className);
+        if (document != null) {
+            context.setBeansPackageName(document.getSelectedBeansPackage());
+            context.setComponentsPackageName(document.getSelectedComponentsPackage());
+            context.setRestPackageName(document.getSelectedRestPackage());
+            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        }
+
+
+        projectRestful.setNamespace(context.getProjectNamespacePrefix());
         powerpacks.setProject(projectRestful);
         // add steps:
         final StepRestful stepOne = new StepRestful();
