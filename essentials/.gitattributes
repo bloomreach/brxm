@@ -316,6 +316,9 @@ dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/ess
 dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/EasyFormsPlugin.java -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/installer/EasyFormsInstaller.java -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/resources/META-INF/plugin.xml -text
+dashboard-plugins/dashboard-gallery-plugin/pom.xml -text
+dashboard-plugins/dashboard-gallery-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/gallery/GalleryPlugin.java -text
+dashboard-plugins/dashboard-gallery-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/pom.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/HasRelatedDocMatcher.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/NotRelatedDocMatcher.java -text
@@ -954,6 +957,8 @@ plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/index.html -text
+plugin-dashboard/src/main/webapp/plugins/galleryPlugin/controller.js -text
+plugin-dashboard/src/main/webapp/plugins/galleryPlugin/index.html -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/index.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text

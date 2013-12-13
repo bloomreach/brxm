@@ -1,26 +1,13 @@
 package org.onehippo.cms7.essentials.dashboard.relateddocs.query;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.update.UpdateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * @version "$Id$"
@@ -41,9 +28,9 @@ public class RelatedDocQueryBuilder {
         }
 
         public Builder setDocumentTypes(final List<String> documentTypes) {
-           for(String type: documentTypes){
-               addDocumentType(type);
-           }
+            for (String type : documentTypes) {
+                addDocumentType(type);
+            }
             return this;
         }
 
@@ -71,7 +58,7 @@ public class RelatedDocQueryBuilder {
     }
 
     public void addToRegistry(PluginContext context) {
-        Writer out = null;
+     /*   Writer out = null;
         InputStream is = null;
 
         try {
@@ -97,6 +84,6 @@ public class RelatedDocQueryBuilder {
         } finally {
             IOUtils.closeQuietly(out);
             IOUtils.closeQuietly(is);
-        }
+        }*/
     }
 }

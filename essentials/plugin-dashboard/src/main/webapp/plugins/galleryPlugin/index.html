@@ -14,18 +14,6 @@
   limitations under the License.
   -->
 
-<ul class="nav nav-tabs">
-
-    <li ng-repeat="tab in tabs" ng-class="{true:'active', false:''}[isPageSelected('{{tab.link}}')]"><a href="#{{tab.link}}"><span>{{tab.name}}</span></a></li>
-</ul>
-<div class="tab-panel">
-    <div class="col-lg-2" style="padding-left: 0;">
-
-        <div class="list-group">
-            <a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item" ng-repeat="plugin in plugins.items">{{plugin.title}}</a>
-        </div>
-    </div>
-    <div class="col-lg-10">
-        <!-- TODO add some content-->
-    </div>
+<div ng-controller="galleryPluginCtrl">
+    <h1>{{message}}</h1>
 </div>

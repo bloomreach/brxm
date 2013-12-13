@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2013 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,18 +15,14 @@
   limitations under the License.
   -->
 
-<ul class="nav nav-tabs">
+<plugin
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.onehippo.org/essentials /plugin.xsd" xmlns="http://www.onehippo.org/essentials">
+  <name>Gallery Plugin</name>
+  <plugin-class>org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin</plugin-class>
+  <type>system</type>
+  <vendor>Hippo B.V.</vendor>
+  <description>Gallery configurator</description>
+  <pluginLink>galleryPlugin</pluginLink>
 
-    <li ng-repeat="tab in tabs" ng-class="{true:'active', false:''}[isPageSelected('{{tab.link}}')]"><a href="#{{tab.link}}"><span>{{tab.name}}</span></a></li>
-</ul>
-<div class="tab-panel">
-    <div class="col-lg-2" style="padding-left: 0;">
-
-        <div class="list-group">
-            <a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item" ng-repeat="plugin in plugins.items">{{plugin.title}}</a>
-        </div>
-    </div>
-    <div class="col-lg-10">
-        <!-- TODO add some content-->
-    </div>
-</div>
+</plugin>

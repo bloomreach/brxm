@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,11 +26,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
@@ -49,8 +53,18 @@ public class ControllersResource extends BaseResource {
     @Path("/")
     public RestfulList<ControllerRestful> getControllers(@Context ServletContext servletContext) {
         final RestfulList<ControllerRestful> controllers = new RestfulList<>();
+        final List<Plugin> plugins = getPlugins(servletContext);
+        for (Plugin plugin : plugins) {
+            final String pluginLink = plugin.getPluginLink();
+            if (Strings.isNullOrEmpty(pluginLink)) {
+                log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
+                continue;
+            }
+            controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
+
+        }
         // TODO implement
-        controllers.add(new ControllerRestful("contentBlocks", "contentBlocksCtrl", "plugins/contentBlocks/index.html"));
+
         return controllers;
 
     }

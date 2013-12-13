@@ -41,6 +41,7 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
@@ -103,6 +104,10 @@ public class PluginResource extends BaseResource {
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             final PluginRestful resource = new PluginRestful();
+            if (Strings.isNullOrEmpty(plugin.getPluginLink())) {
+                log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
+                continue;
+            }
             resource.setTitle(plugin.getName());
             resource.setPluginLink(plugin.getPluginLink());
             resource.setInstalled(checkInstalled(plugin));
@@ -118,6 +123,10 @@ public class PluginResource extends BaseResource {
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
             if(plugin.getPluginClass().equals(className)){
+                if(Strings.isNullOrEmpty(plugin.getPluginLink())){
+                    log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
+                    continue;
+                }
                 resource.setTitle(plugin.getName());
                 resource.setPluginLink(plugin.getPluginLink());
                 resource.setInstalled(checkInstalled(plugin));
