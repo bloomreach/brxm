@@ -199,29 +199,6 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
             }
         });
 
-        add(depublishAction = new StdWorkflow("depublish", new StringResourceModel("depublish-label", this, null), context, getModel()) {
-
-            @Override
-            protected ResourceReference getIcon() {
-                return new PackageResourceReference(getClass(), "unpublish-16.png");
-            }
-
-            @Override
-            protected Dialog createRequestDialog() {
-                final IModel docName = getDocumentName();
-                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null, docName);
-                IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this, null, docName);
-                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
-                workflow.depublish();
-                return null;
-            }
-        });
-
         add(schedulePublishAction = new StdWorkflow("schedulePublish", new StringResourceModel(
                 "schedule-publish-label", this, null), context, getModel()) {
             public Date date = new Date();
@@ -248,6 +225,29 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
                 } else {
                     workflow.publish();
                 }
+                return null;
+            }
+        });
+
+        add(depublishAction = new StdWorkflow("depublish", new StringResourceModel("depublish-label", this, null), context, getModel()) {
+
+            @Override
+            protected ResourceReference getIcon() {
+                return new PackageResourceReference(getClass(), "unpublish-16.png");
+            }
+
+            @Override
+            protected Dialog createRequestDialog() {
+                final IModel docName = getDocumentName();
+                IModel title = new StringResourceModel("depublish-title", FullReviewedActionsWorkflowPlugin.this, null, docName);
+                IModel message = new StringResourceModel("depublish-message", FullReviewedActionsWorkflowPlugin.this, null, docName);
+                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
+                workflow.depublish();
                 return null;
             }
         });
