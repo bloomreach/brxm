@@ -16,9 +16,6 @@
 package org.onehippo.repository.scxml;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -46,21 +43,7 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
 
     private static Logger log = LoggerFactory.getLogger(AbstractWorkflowTaskAction.class);
 
-    private Map<String, String> parameters;
-
     public AbstractWorkflowTaskAction() {
-    }
-
-    @Override
-    protected void goImmutable() {
-        if (!isImmutable()) {
-            if (parameters == null) {
-                parameters = Collections.EMPTY_MAP;
-            }
-            else {
-                parameters = Collections.unmodifiableMap(parameters);
-            }
-        }
     }
 
     /**
@@ -89,31 +72,6 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
         if (taskResult != null) {
             context.set("eventResult", taskResult);
         }
-    }
-
-    /**
-     * Returns the properties map. If not exists, it creates a new map first.
-     * @return
-     */
-    protected Map<String, String> getParameters() {
-        if (parameters == null) {
-            parameters = new HashMap<>();
-        }
-
-        return parameters;
-    }
-
-    protected String getParameter(String name) {
-        return getParameters().get(name);
-    }
-
-    protected String getParameter(String name, String defaultValue) {
-        String value = getParameters().get(name);
-        return value != null ? value : defaultValue;
-    }
-
-    protected String setParameter(String name, String value) {
-        return getParameters().put(name, value);
     }
 
     /**

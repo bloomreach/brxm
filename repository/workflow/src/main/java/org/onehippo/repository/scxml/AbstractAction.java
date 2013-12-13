@@ -16,6 +16,9 @@
 package org.onehippo.repository.scxml;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -47,6 +50,8 @@ public abstract class AbstractAction extends Action {
     private static ThreadLocal<SCInstance> tlSCInstance = new ThreadLocal<SCInstance>();
     private static ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
 
+    private Map<String, String> parameters;
+
     private boolean immutable = false;
 
     @Override
@@ -60,6 +65,14 @@ public abstract class AbstractAction extends Action {
             synchronized (this) {
                 if (!immutable) {
                     goImmutable();
+
+                    if (parameters == null) {
+                        parameters = Collections.EMPTY_MAP;
+                    }
+                    else {
+                        parameters = Collections.unmodifiableMap(parameters);
+                    }
+
                     immutable = true;
                 }
             }
@@ -89,6 +102,31 @@ public abstract class AbstractAction extends Action {
      */
     protected void goImmutable() {}
 
+
+    /**
+     * Returns the properties map. If not exists, it creates a new map first.
+     * @return
+     */
+    protected Map<String, String> getParameters() {
+        if (parameters == null) {
+            parameters = new HashMap<>();
+        }
+
+        return parameters;
+    }
+
+    protected String getParameter(String name) {
+        return getParameters().get(name);
+    }
+
+    protected String getParameter(String name, String defaultValue) {
+        String value = getParameters().get(name);
+        return value != null ? value : defaultValue;
+    }
+
+    protected String setParameter(String name, String value) {
+        return getParameters().put(name, value);
+    }
 
     /**
      * @return the current {@link Context} of this action. Only not null when invoked within the context of

@@ -37,6 +37,6 @@ public abstract class AbstractDocumentTaskAction<T extends AbstractDocumentTask>
 
         Context ctx = getContext();
         task.setWorkflowContext((WorkflowContext) ctx.get("workflowContext"));
-        task.setDataModel((DocumentHandle)getContext().get("dm"));
+        task.setDataModel((DocumentHandle)ctx.get("dm"));
     }
 }
