@@ -31,6 +31,8 @@ import org.onehippo.repository.scxml.AbstractWorkflowTaskAction;
  */
 public abstract class AbstractDocumentTaskAction<T extends AbstractDocumentTask> extends AbstractWorkflowTaskAction<T> {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     protected void initTask(T task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);

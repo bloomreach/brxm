@@ -20,7 +20,6 @@ import java.util.Collection;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.scxml2.Context;
 import org.apache.commons.scxml2.ErrorReporter;
 import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
@@ -32,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * AbstractTaskAction
+ * AbstractWorkflowTaskAction
  * <p>
  * SCXML base class for {@link WorkflowTask} based actions
  * </p>
@@ -65,12 +64,18 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
 
         initTask(task);
 
-        processTaskResult(getContext(), task.execute());
+        processTaskResult(task.execute());
     }
 
-    protected void processTaskResult(Context context, Object taskResult) {
+    /**
+     * Process the task execution result. By default, it sets the result into 'eventResult' context attribute
+     * if it's a non-null value.
+     * This method can be overriden to do something else or more.
+     * @param taskResult
+     */
+    protected void processTaskResult(Object taskResult) {
         if (taskResult != null) {
-            context.set("eventResult", taskResult);
+            getContext().set("eventResult", taskResult);
         }
     }
 
