@@ -414,8 +414,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
 
             if (unpublishedDocument == null) {
                 createUnpublished(draftDocument);
-            } else if (!unpublishedDocument.isAvailable("preview")) {
-                unpublishedDocument.setAvailability(new String[] {"preview"});
+            } else {
+                if (!unpublishedDocument.isAvailable("preview")) {
+                    unpublishedDocument.setAvailability(new String[] {"preview"});
+                }
+                if (!unpublishedDocument.getNode().isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                    unpublishedDocument.getNode().addMixin(JcrConstants.MIX_VERSIONABLE);
+                }
             }
 
             if (!equals(draftDocument.getNode(), unpublishedDocument.getNode())) {
