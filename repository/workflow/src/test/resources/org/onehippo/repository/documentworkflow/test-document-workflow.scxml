@@ -120,7 +120,7 @@
           <hippo:hint hint="rejectRequest" value="false"/>
           <if cond="(!empty(dm.rr.owner) and dm.rr.owner==dm.user) or dm.pm('hippo:editor')">
             <hippo:hint hint="cancelRequest" value="true"/>
-            <else/>
+          <else/>
             <hippo:hint hint="cancelRequest" value="false"/>
           </if>
         </onentry>
@@ -130,14 +130,14 @@
         <onentry>
           <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
             <hippo:hint hint="cancelRequest" value="true"/>
-            <else/>
+          <else/>
             <hippo:hint hint="cancelRequest" value="false"/>
           </if>
           <if cond="dm.pm('hippo:editor')">
             <hippo:hint hint="acceptRequest" value="true"/>
             <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
               <hippo:hint hint="rejectRequest" value="false"/>
-              <else/>
+            <else/>
               <hippo:hint hint="rejectRequest" value="true"/>
             </if>
           </if>
@@ -218,7 +218,7 @@
             <hippo:hint hint="listVersions" value="true"/>
             <hippo:hint hint="restoreVersion" value="true"/>
             <hippo:hint hint="revertVersion" value="true"/>
-            <else/>
+          <else/>
             <hippo:hint hint="restoreVersionTo" value="true"/>
           </if>
         </onentry>
@@ -230,15 +230,33 @@
 
       <state id="no-terminate">
         <transition target="init-terminate"
-                    cond="dm.sf.document"/>
+                    cond="dm.sf.document and (empty(dm.p) or !dm.p.isAvailable('live')) and empty(dm.d.holder) and empty(dm.r)"/>
       </state>
 
       <state id="init-terminate">
+        <transition target="terminateable"
+                    cond="dm.ss=='unpublished' or (dm.ss=='published' and empty(dm.u)) or (dm.ss=='draft' and dm.s=='d')"/>
         <transition target="not-terminateable"/>
       </state>
 
-      <state id="not-terminateable"/>
-      <state id="terminateable"/>
+      <state id="terminateable">
+        <onentry>
+          <hippo:hint hint="delete" value="true"/>
+          <if cond="dm.pm('hippo:editor')">
+            <hippo:hint hint="move" value="true"/>
+            <hippo:hint hint="rename" value="true"/>
+          </if>
+        </onentry>
+      </state>
+      <state id="not-terminateable">
+        <onentry>
+          <hippo:hint hint="delete" value="false"/>
+          <if cond="dm.pm('hippo:editor')">
+            <hippo:hint hint="move" value="false"/>
+            <hippo:hint hint="rename" value="false"/>
+          </if>
+        </onentry>
+      </state>
 
     </state>
 
@@ -246,15 +264,25 @@
 
       <state id="no-copy">
         <transition target="init-copy"
-                    cond="dm.sf.document"/>
+                    cond="dm.sf.document and dm.ss!='' and dm.pm('hippo:editor')"/>
       </state>
 
       <state id="init-copy">
+        <transition target="copyable"
+                    cond="dm.ss=='unpublished' or (dm.ss=='published' and empty(dm.u))"/>
         <transition target="not-copyable"/>
       </state>
 
-      <state id="not-copyable"/>
-      <state id="copyable"/>
+      <state id="not-copyable">
+        <onentry>
+          <hippo:hint hint="copy" value="false"/>
+        </onentry>
+      </state>
+      <state id="copyable">
+        <onentry>
+          <hippo:hint hint="copy" value="true"/>
+        </onentry>
+      </state>
 
     </state>
 
