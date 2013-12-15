@@ -96,13 +96,13 @@ public class MoveDocumentTask extends AbstractDocumentTask {
 
         Document folder = getContainingFolder(document);
         String folderWorkflowCategory = "internal";
-        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
+        RepositoryMap config = dm.getWorkflowContext().getWorkflowConfiguration();
 
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
 
-        Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
+        Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
 
         if (workflow instanceof FolderWorkflow) {
             ((FolderWorkflow) workflow).move(document, destination, newName);

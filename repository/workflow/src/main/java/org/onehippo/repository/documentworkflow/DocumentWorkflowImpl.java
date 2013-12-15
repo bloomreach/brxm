@@ -94,7 +94,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
             SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
             scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxmlDef);
-            scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
             scxmlExecutor.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);
             dm.setResult(null);
 

@@ -16,14 +16,13 @@
 
 package org.onehippo.repository.scxml;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 class MockSCXMLDataModel implements SCXMLDataModel {
-    private HashMap<String, Serializable> actions = new HashMap<>();
+    private HashMap<String, Boolean> actions = new HashMap<>();
     private Object result;
 
-    public HashMap<String, Serializable> getActions() {
+    public HashMap<String, Boolean> getActions() {
         return actions;
     }
 

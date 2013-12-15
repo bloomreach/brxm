@@ -16,10 +16,7 @@
 
 package org.onehippo.repository.scxml;
 
-import java.io.Serializable;
 import java.util.Collection;
-
-import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,7 +25,6 @@ import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.hippoecm.repository.api.WorkflowException;
 
 /**
  * ActionAction sets a provided action value in the {@link SCXMLDataModel}, or removes it if empty/null
@@ -55,22 +51,24 @@ public class ActionAction extends AbstractAction {
 
     @Override
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            WorkflowException, RepositoryException {
+                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
         String action = getAction();
         if (StringUtils.isBlank(action)) {
-            throw new WorkflowException("No action specified");
+            throw new ModelException("No action specified");
         }
 
         String valueExpr = getValue();
-        Serializable value = (Serializable)(StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
+        Object value = (StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
+        if (value != null && ! (value instanceof Boolean)) {
+            throw new ModelException("Action "+action+" value must be of type boolean. Value: "+value.toString());
+        }
 
         SCXMLDataModel dm = getDataModel();
         if (value == null) {
             dm.getActions().remove(action);
         } else {
-            dm.getActions().put(action, (Serializable) eval(getValue()));
+            dm.getActions().put(action, (Boolean)value);
         }
     }
 }

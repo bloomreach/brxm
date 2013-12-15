@@ -73,7 +73,7 @@
               <hippo:action action="commitEditableInstance" value="true"/>
             </if>
             <if cond="dm.ss=='draft' and dm.d.holder!=dm.user">
-              <hippo:action action="inUseBy" value="dm.d.holder"/>
+              <hippo:info info="inUseBy" value="dm.d.holder"/>
             </if>
           </if>
           <if cond="dm.sf.unlock">

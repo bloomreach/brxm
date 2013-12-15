@@ -78,7 +78,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         Arrays.sort(PROTECTED_MIXINS);
     }
 
-    private WorkflowContext workflowContext;
     private DocumentHandle documentHandle;
 
     /**
@@ -95,22 +94,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
     }
 
     protected abstract Object doExecute() throws WorkflowException, RepositoryException, RemoteException;
-
-    /**
-     * Returns the current workflow context instance.
-     * @return
-     */
-    public WorkflowContext getWorkflowContext() {
-        return workflowContext;
-    }
-
-    /**
-     * Sets the workflow context instance
-     * @param workflowContext
-     */
-    public void setWorkflowContext(final WorkflowContext workflowContext) {
-        this.workflowContext = workflowContext;
-    }
 
     /**
      * Returns the document handle object from the current SCXML execution context.

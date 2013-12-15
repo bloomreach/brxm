@@ -55,7 +55,7 @@ public class ArchiveTask extends AbstractDocumentTask {
         }
 
         try {
-            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", dm.getUnpublished());
+            DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", dm.getUnpublished());
             defaultWorkflow.archive();
         } catch (MappingException ex) {
             log.warn("invalid default workflow, falling back in behaviour", ex);

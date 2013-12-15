@@ -17,7 +17,6 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.hippoecm.repository.api.WorkflowContext;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.task.AbstractDocumentTask;
 import org.onehippo.repository.scxml.AbstractWorkflowTaskAction;
@@ -36,7 +35,6 @@ public abstract class AbstractDocumentTaskAction<T extends AbstractDocumentTask>
     protected void initTask(T task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
 
-        task.setWorkflowContext((WorkflowContext) getContext().get("workflowContext"));
         task.setDocumentHandle((DocumentHandle) getDataModel());
     }
 }

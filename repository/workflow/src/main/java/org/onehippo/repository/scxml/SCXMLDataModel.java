@@ -16,7 +16,6 @@
 
 package org.onehippo.repository.scxml;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -39,7 +38,7 @@ public interface SCXMLDataModel {
 
     String CONTEXT_KEY = "dm";
 
-    Map<String,Serializable> getActions();
+    Map<String,Boolean> getActions();
     Object getResult();
     void setResult(Object result);
 }

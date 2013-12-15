@@ -72,7 +72,7 @@ public class CopyDocumentTask extends AbstractDocumentTask {
         DocumentHandle dm = getDocumentHandle();
 
         String folderWorkflowCategory = "embedded";
-        RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
+        RepositoryMap config = dm.getWorkflowContext().getWorkflowConfiguration();
 
         if (config != null && config.exists() && config.get("folder-workflow-category") instanceof String) {
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
@@ -80,18 +80,18 @@ public class CopyDocumentTask extends AbstractDocumentTask {
 
         if (dm.getUnpublished() == null) {
             Document folder = WorkflowUtils.getContainingFolder(dm.getPublished());
-            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
+            Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
                 Document copy = ((EmbedWorkflow) workflow).copyTo(folder, dm.getPublished(), newName, null);
-                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) getWorkflowContext().getWorkflow("default", copy);
+                FullReviewedActionsWorkflow copiedDocumentWorkflow = (FullReviewedActionsWorkflow) dm.getWorkflowContext().getWorkflow("default", copy);
                 copiedDocumentWorkflow.depublish();
             } else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
             }
         } else {
             Document folder = WorkflowUtils.getContainingFolder(dm.getUnpublished());
-            Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
+            Workflow workflow = dm.getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
 
             if (workflow instanceof EmbedWorkflow) {
                 ((EmbedWorkflow) workflow).copyTo(folder, dm.getUnpublished(), newName, null);

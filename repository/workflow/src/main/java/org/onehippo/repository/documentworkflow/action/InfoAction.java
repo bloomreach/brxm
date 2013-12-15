@@ -19,8 +19,6 @@ package org.onehippo.repository.documentworkflow.action;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.scxml2.ErrorReporter;
@@ -28,10 +26,8 @@ import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.scxml.AbstractAction;
-import org.onehippo.repository.scxml.SCXMLDataModel;
 
 /**
  * InfoAction stores a provided info value in the DocumentHandle
@@ -58,12 +54,11 @@ public class InfoAction extends AbstractAction {
 
     @Override
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            WorkflowException, RepositoryException {
+                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
         String info = getInfo();
         if (StringUtils.isBlank(info)) {
-            throw new WorkflowException("No info specified");
+            throw new ModelException("No info specified");
         }
 
         DocumentHandle dm = (DocumentHandle)getDataModel();
@@ -74,7 +69,7 @@ public class InfoAction extends AbstractAction {
         if (value == null) {
             dm.getInfo().remove(info);
         } else {
-            dm.getInfo().put(info, (Serializable) eval(getValue()));
+            dm.getInfo().put(info, value);
         }
     }
 }

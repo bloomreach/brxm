@@ -77,7 +77,7 @@ public class RenameDocumentTask extends AbstractDocumentTask {
         }
 
         // doDepublish();
-        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflowContext().getWorkflow("core", document);
+        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) dm.getWorkflowContext().getWorkflow("core", document);
         defaultWorkflow.rename(newName);
 
         return null;

@@ -16,10 +16,7 @@
 
 package org.onehippo.repository.scxml;
 
-import java.io.Serializable;
 import java.util.Collection;
-
-import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -28,7 +25,6 @@ import org.apache.commons.scxml2.EventDispatcher;
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
-import org.hippoecm.repository.api.WorkflowException;
 
 /**
  * ResultAction stores a provided result value in the {@link SCXMLDataModel}
@@ -47,8 +43,7 @@ public class ResultAction extends AbstractAction {
 
     @Override
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
-                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
-            WorkflowException, RepositoryException {
+                             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException {
 
         String valueExpr = getValue();
         Object value = StringUtils.isBlank(valueExpr) ? null : eval(valueExpr);

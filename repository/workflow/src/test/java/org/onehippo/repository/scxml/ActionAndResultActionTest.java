@@ -17,6 +17,7 @@ package org.onehippo.repository.scxml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.junit.Test;
@@ -64,10 +65,10 @@ public class ActionAndResultActionTest {
 
         SCXMLDataModel dm = new MockSCXMLDataModel();
         helloExec.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);
-        helloExec.getRootContext().set("world", "World!");
+        helloExec.getRootContext().set("world", Boolean.TRUE);
         helloExec.go();
 
-        assertEquals("World!", dm.getActions().get("hello"));
+        assertTrue(dm.getActions().get("hello"));
         assertEquals(dm, dm.getResult());
     }
 }

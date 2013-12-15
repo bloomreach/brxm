@@ -76,7 +76,7 @@ public class ScheduleRequestTask extends AbstractDocumentTask {
         if (targetDate == null) {
             throw new WorkflowException("ScheduledRequestAction: no target date specified");
         }
-        WorkflowContext wfCtx = getWorkflowContext();
+        WorkflowContext wfCtx = dm.getWorkflowContext();
         wfCtx = wfCtx.getWorkflowContext(targetDate);
         FullReviewedActionsWorkflow wf = (FullReviewedActionsWorkflow) wfCtx.getWorkflow("default");
 

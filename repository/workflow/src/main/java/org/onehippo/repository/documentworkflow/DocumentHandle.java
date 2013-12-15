@@ -45,7 +45,7 @@ public class DocumentHandle implements SCXMLDataModel {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
 
-    private Map<String, Serializable> actions = new HashMap<>();
+    private Map<String, Boolean> actions = new HashMap<>();
     private Object result;
 
     private WorkflowContext context;
@@ -230,6 +230,10 @@ public class DocumentHandle implements SCXMLDataModel {
         return getSupportedFeatures();
     }
 
+    public WorkflowContext getWorkflowContext() {
+        return context;
+    }
+
     /**
      * Get short notation representing the states of all existing Variants
      * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published variant exists. Never returns null
@@ -385,7 +389,7 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     @Override
-    public Map<String, Serializable> getActions() {
+    public Map<String, Boolean> getActions() {
             return actions;
     }
 
