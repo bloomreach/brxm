@@ -137,6 +137,15 @@ public abstract class AbstractAction extends Action {
     }
 
     /**
+     * @return the {@link SCXMLDataModel} from the {@link Context} of this action.
+     * May only be called when invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
+     */
+    protected SCXMLDataModel getDataModel() {
+        Context context = tlContext.get();
+        return context != null ? (SCXMLDataModel)context.get(SCXMLDataModel.CONTEXT_KEY) : null;
+    }
+
+    /**
      * Evaluates the expression by the {@link org.apache.commons.scxml2.Evaluator} using the current {@link #getContext()} and returns the evaluation result.
      * May only be invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
      * @param expr

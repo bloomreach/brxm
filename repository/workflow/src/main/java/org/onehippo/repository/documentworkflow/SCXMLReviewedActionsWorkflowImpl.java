@@ -70,7 +70,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     protected void checkAllowedOperation(String hint, String error) throws WorkflowException {
         Boolean allowed = null;
         try {
-            allowed = (Boolean) dm.getHints().get(hint);
+            allowed = (Boolean) dm.getActions().get(hint);
         }
         catch (Exception e) {
             // ignore
@@ -108,7 +108,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
             try {
                 scxmlExecutor.go();
                 log.info("scmxl.current.targets: {}", SCXMLUtils.getCurrentTransitionTargetIdList(scxmlExecutor));
-                log.info("scmxl.dm.hints: {}", dm.getHints());
+                log.info("scmxl.dm.hints: {}", dm.getActions());
             } catch (ModelException e) {
                 log.error("Failed to execute scxml", e);
             }
@@ -124,7 +124,7 @@ public class SCXMLReviewedActionsWorkflowImpl extends WorkflowImpl implements Fu
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> info = super.hints();
-        info.putAll(dm.getHints());
+        info.putAll(dm.getActions());
         return info;
     }
 

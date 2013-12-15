@@ -69,7 +69,7 @@ public class CopyDocumentTask extends AbstractDocumentTask {
             throw new WorkflowException("New document name is blank.");
         }
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         String folderWorkflowCategory = "embedded";
         RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();

@@ -33,6 +33,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.scxml.SCXMLDataModel;
 import org.onehippo.repository.scxml.SCXMLDefinition;
 import org.onehippo.repository.scxml.SCXMLException;
 import org.onehippo.repository.scxml.SCXMLExecutorFactory;
@@ -55,7 +56,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public DocumentWorkflowImpl() throws RemoteException {
     }
 
-    DocumentHandle getDocumentModel() {
+    DocumentHandle getDataModel() {
         return dm;
     }
 
@@ -64,15 +65,15 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     }
 
     protected Object triggerSCXMLEvent(String action) throws ModelException {
-        scxmlExecutor.getRootContext().set("eventResult", null);
+        dm.setResult(null);
         SCXMLUtils.triggerSignalEvents(scxmlExecutor, action);
-        return scxmlExecutor.getRootContext().get("eventResult");
+        return dm.getResult();
     }
 
     protected Object triggerSCXMLEvent(String action, Object payload) throws ModelException {
-        scxmlExecutor.getRootContext().set("eventResult", null);
+        dm.setResult(null);
         SCXMLUtils.triggerSignalEventWithPayload(scxmlExecutor, action, payload);
-        return scxmlExecutor.getRootContext().get("eventResult");
+        return dm.getResult();
     }
 
     // Workflow implementation / WorkflowImpl override
@@ -94,13 +95,13 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
             SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
             scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxmlDef);
             scxmlExecutor.getRootContext().set("workflowContext", getWorkflowContext());
-            scxmlExecutor.getRootContext().set("dm", dm);
-            scxmlExecutor.getRootContext().set("eventResult", null);
+            scxmlExecutor.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);
+            dm.setResult(null);
 
             try {
                 scxmlExecutor.go();
                 log.info("scmxl.current.targets: {}", SCXMLUtils.getCurrentTransitionTargetIdList(scxmlExecutor));
-                log.info("scmxl.dm.hints: {}", dm.getHints());
+                log.info("scmxl.dm.actions: {}", dm.getActions());
             } catch (ModelException e) {
                 log.error("Failed to execute scxml", e);
             }
@@ -115,9 +116,10 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public Map<String, Serializable> hints() {
-        Map<String, Serializable> info = super.hints();
-        info.putAll(dm.getHints());
-        return info;
+        Map<String, Serializable> hints = super.hints();
+        hints.putAll(dm.getInfo());
+        hints.putAll(dm.getActions());
+        return hints;
     }
 
     // EditableWorkflow implementation

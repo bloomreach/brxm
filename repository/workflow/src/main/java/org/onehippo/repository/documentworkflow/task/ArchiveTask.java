@@ -40,7 +40,7 @@ public class ArchiveTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         try {
             if (dm.getDraft() != null) {

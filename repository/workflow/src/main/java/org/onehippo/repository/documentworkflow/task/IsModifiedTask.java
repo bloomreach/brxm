@@ -48,11 +48,11 @@ public class IsModifiedTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         if (dm.getDraft() != null && dm.getUnpublished() != null && PublishableDocument.DRAFT.equals(dm.getSubjectState())) {
             // TODO: BasicReviewedActionsWorkflowImpl#hints() method retrieves a 'fresh' draftNode based on the dm.d.identifier. Why would that be needed?
-            dm.getHints().put("modified", !equals(dm.getDraft().getNode(), dm.getUnpublished().getNode()));
+            dm.getActions().put("modified", !equals(dm.getDraft().getNode(), dm.getUnpublished().getNode()));
         }
 
         return null;

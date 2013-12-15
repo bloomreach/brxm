@@ -70,7 +70,7 @@ public class MoveDocumentTask extends AbstractDocumentTask {
             throw new WorkflowException("New document name is blank.");
         }
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         PublishableDocument document = null;
 

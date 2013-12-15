@@ -68,14 +68,14 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
     }
 
     /**
-     * Process the task execution result. By default, it sets the result into 'eventResult' context attribute
+     * Process the task execution result. By default, it stores the result through {@link SCXMLDataModel#setResult(Object)}
      * if it's a non-null value.
      * This method can be overriden to do something else or more.
      * @param taskResult
      */
     protected void processTaskResult(Object taskResult) {
         if (taskResult != null) {
-            getContext().set("eventResult", taskResult);
+            getDataModel().setResult(taskResult);
         }
     }
 

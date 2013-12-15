@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.documentworkflow.action;
+package org.onehippo.repository.scxml;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -29,23 +29,13 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.scxml.AbstractAction;
 
 /**
- * HintAction sets a provided hint value in the DocumentHandle model, or removes it if empty/null
+ * ResultAction stores a provided result value in the {@link SCXMLDataModel}
  */
-public class HintAction extends AbstractAction {
+public class ResultAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
-
-    public String getHint() {
-        return getParameter("hint");
-    }
-
-    public void setHint(final String hint) {
-        setParameter("hint", hint);
-    }
 
     public String getValue() {
         return getParameter("valueExpr");
@@ -60,20 +50,8 @@ public class HintAction extends AbstractAction {
                              Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException,
             WorkflowException, RepositoryException {
 
-        String hint = getHint();
-        if (StringUtils.isBlank(hint)) {
-            throw new WorkflowException("No hint specified");
-        }
-
-        DocumentHandle dm = (DocumentHandle)getContext().get("dm");
-
         String valueExpr = getValue();
-        Serializable value = (Serializable)(StringUtils.isBlank(valueExpr) ? null : eval(valueExpr));
-
-        if (value == null) {
-            dm.getHints().remove(hint);
-        } else {
-            dm.getHints().put(hint, (Serializable) eval(getValue()));
-        }
+        Object value = StringUtils.isBlank(valueExpr) ? null : eval(valueExpr);
+        getDataModel().setResult(value);
     }
 }

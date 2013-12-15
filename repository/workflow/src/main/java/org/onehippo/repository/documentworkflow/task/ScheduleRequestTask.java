@@ -58,14 +58,14 @@ public class ScheduleRequestTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         if (getType() == null || !("publish".equals(getType()) || "depublish".equals(getType()))) {
             throw new WorkflowException("Unknown or undefined ScheduledRequestAction: "+getType());
         }
         Boolean allowed = null;
         try {
-            allowed = (Boolean)dm.getHints().get(getType());
+            allowed = (Boolean)dm.getActions().get(getType());
         }
         catch (Exception e) {
             //

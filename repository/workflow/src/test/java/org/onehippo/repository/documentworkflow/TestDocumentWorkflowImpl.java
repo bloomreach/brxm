@@ -40,7 +40,9 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.action.ArchiveAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
-import org.onehippo.repository.documentworkflow.action.HintAction;
+import org.onehippo.repository.scxml.ActionAction;
+import org.onehippo.repository.scxml.ResultAction;
+import org.onehippo.repository.documentworkflow.action.InfoAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
@@ -66,6 +68,9 @@ public class TestDocumentWorkflowImpl {
         String scxml = IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("test-document-workflow.scxml"));
         MockNode scxmlConfigNode = registry.createConfigNode();
         MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "document-workflow", scxml);
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "info", InfoAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyvariant", CopyVariantAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "request", RequestAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "archive", ArchiveAction.class.getName());
@@ -74,7 +79,6 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copydocument", CopyDocumentAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "movedocument", MoveDocumentAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renamedocument", RenameDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "hint", HintAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);

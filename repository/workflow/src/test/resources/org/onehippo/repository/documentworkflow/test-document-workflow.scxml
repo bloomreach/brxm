@@ -24,13 +24,13 @@
     <state id="status">
       <onentry>
         <if cond="dm.sf.document">
-          <hippo:hint hint="status" value="false"/>
-          <hippo:hint hint="checkModified" value="dm.ss=='draft' and !empty(dm.u)"/>
+          <hippo:info info="status" value="false"/>
+          <hippo:action action="checkModified" value="dm.ss=='draft' and !empty(dm.u)"/>
           <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
             <!--not draft in use by other user -->
             <if cond="dm.ss=='unpublished' or (empty(dm.u) and (dm.ss=='published' or (dm.ss=='draft' and empty(dm.p))))">
               <!-- status on unpublished or published if no unpublished or draft if also no published -->
-              <hippo:hint hint="status" value="true"/>
+              <hippo:info info="status" value="true"/>
             </if>
           </if>
         </if>
@@ -47,12 +47,12 @@
       <state id="init-edit">
         <onentry>
           <if cond="dm.sf.document">
-            <hippo:hint hint="disposeEditableInstance" value="false"/>
-            <hippo:hint hint="obtainEditableInstance" value="false"/>
-            <hippo:hint hint="commitEditableInstance" value="false"/>
+            <hippo:action action="disposeEditableInstance" value="false"/>
+            <hippo:action action="obtainEditableInstance" value="false"/>
+            <hippo:action action="commitEditableInstance" value="false"/>
           </if>
           <if cond="dm.sf.unlock">
-            <hippo:hint hint="unlock" value="false"/>
+            <hippo:action action="unlock" value="false"/>
           </if>
         </onentry>
         <transition target="not-editable"
@@ -68,17 +68,17 @@
         <onentry>
           <if cond="dm.sf.document">
             <if cond="dm.ss=='draft' and dm.d.holder==dm.user">
-              <hippo:hint hint="disposeEditableInstance" value="true"/>
-              <hippo:hint hint="obtainEditableInstance" value="true"/>
-              <hippo:hint hint="commitEditableInstance" value="true"/>
+              <hippo:action action="disposeEditableInstance" value="true"/>
+              <hippo:action action="obtainEditableInstance" value="true"/>
+              <hippo:action action="commitEditableInstance" value="true"/>
             </if>
             <if cond="dm.ss=='draft' and dm.d.holder!=dm.user">
-              <hippo:hint hint="inUseBy" value="dm.d.holder"/>
+              <hippo:action action="inUseBy" value="dm.d.holder"/>
             </if>
           </if>
           <if cond="dm.sf.unlock">
             <if cond="dm.ss=='draft' and (dm.d.holder==dm.user or dm.pm('hippo:admin'))">
-              <hippo:hint hint="unlock" value="true"/>
+              <hippo:action action="unlock" value="true"/>
             </if>
           </if>
         </onentry>
@@ -88,7 +88,7 @@
         <onentry>
           <if cond="dm.sf.document">
             <if cond="dm.ss=='unpublished' or (dm.ss=='draft' and empty(dm.u)) or dm.s=='p'">
-              <hippo:hint hint="obtainEditableInstance" value="true"/>
+              <hippo:action action="obtainEditableInstance" value="true"/>
             </if>
           </if>
         </onentry>
@@ -116,12 +116,12 @@
 
       <state id="request-rejected">
         <onentry>
-          <hippo:hint hint="acceptRequest" value="false"/>
-          <hippo:hint hint="rejectRequest" value="false"/>
+          <hippo:action action="acceptRequest" value="false"/>
+          <hippo:action action="rejectRequest" value="false"/>
           <if cond="(!empty(dm.rr.owner) and dm.rr.owner==dm.user) or dm.pm('hippo:editor')">
-            <hippo:hint hint="cancelRequest" value="true"/>
+            <hippo:action action="cancelRequest" value="true"/>
           <else/>
-            <hippo:hint hint="cancelRequest" value="false"/>
+            <hippo:action action="cancelRequest" value="false"/>
           </if>
         </onentry>
       </state>
@@ -129,16 +129,16 @@
       <state id="requested">
         <onentry>
           <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
-            <hippo:hint hint="cancelRequest" value="true"/>
+            <hippo:action action="cancelRequest" value="true"/>
           <else/>
-            <hippo:hint hint="cancelRequest" value="false"/>
+            <hippo:action action="cancelRequest" value="false"/>
           </if>
           <if cond="dm.pm('hippo:editor')">
-            <hippo:hint hint="acceptRequest" value="true"/>
+            <hippo:action action="acceptRequest" value="true"/>
             <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
-              <hippo:hint hint="rejectRequest" value="false"/>
+              <hippo:action action="rejectRequest" value="false"/>
             <else/>
-              <hippo:hint hint="rejectRequest" value="true"/>
+              <hippo:action action="rejectRequest" value="true"/>
             </if>
           </if>
         </onentry>
@@ -157,7 +157,7 @@
 
       <state id="init-publish">
         <onentry>
-          <hippo:hint hint="publish" value="false"/>
+          <hippo:action action="publish" value="false"/>
         </onentry>
         <transition target="publishable"
                     cond="!empty(dm.ss) and empty(dm.d.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))"/>
@@ -169,7 +169,7 @@
       <state id="publishable">
         <onentry>
           <if cond="(empty(dm.r) or dm.user=='system') and dm.ss=='unpublished'">
-            <hippo:hint hint="publish" value="true"/>
+            <hippo:action action="publish" value="true"/>
           </if>
         </onentry>
       </state>
@@ -185,7 +185,7 @@
 
       <state id="init-depublish">
         <onentry>
-          <hippo:hint hint="depublish" value="false"/>
+          <hippo:action action="depublish" value="false"/>
         </onentry>
         <transition target="depublishable"
                     cond="!empty(dm.ss) and empty(dm.d.holder) and !empty(dm.p) and dm.p.isAvailable('live')"/>
@@ -197,7 +197,7 @@
       <state id="depublishable">
         <onentry>
           <if cond="(empty(dm.r) or dm.user=='system') and (dm.ss=='unpublished' or dm.s=='p' or (dm.s=='dp' and dm.ss=='draft'))">
-            <hippo:hint hint="depublish" value="true"/>
+            <hippo:action action="depublish" value="true"/>
           </if>
         </onentry>
       </state>
@@ -214,12 +214,12 @@
       <state id="version">
         <onentry>
           <if cond="empty(dm.v)">
-            <hippo:hint hint="version" value="true"/>
-            <hippo:hint hint="listVersions" value="true"/>
-            <hippo:hint hint="restoreVersion" value="true"/>
-            <hippo:hint hint="revertVersion" value="true"/>
+            <hippo:action action="version" value="true"/>
+            <hippo:action action="listVersions" value="true"/>
+            <hippo:action action="restoreVersion" value="true"/>
+            <hippo:action action="revertVersion" value="true"/>
           <else/>
-            <hippo:hint hint="restoreVersionTo" value="true"/>
+            <hippo:action action="restoreVersionTo" value="true"/>
           </if>
         </onentry>
       </state>
@@ -241,19 +241,19 @@
 
       <state id="terminateable">
         <onentry>
-          <hippo:hint hint="delete" value="true"/>
+          <hippo:action action="delete" value="true"/>
           <if cond="dm.pm('hippo:editor')">
-            <hippo:hint hint="move" value="true"/>
-            <hippo:hint hint="rename" value="true"/>
+            <hippo:action action="move" value="true"/>
+            <hippo:action action="rename" value="true"/>
           </if>
         </onentry>
       </state>
       <state id="not-terminateable">
         <onentry>
-          <hippo:hint hint="delete" value="false"/>
+          <hippo:action action="delete" value="false"/>
           <if cond="dm.pm('hippo:editor')">
-            <hippo:hint hint="move" value="false"/>
-            <hippo:hint hint="rename" value="false"/>
+            <hippo:action action="move" value="false"/>
+            <hippo:action action="rename" value="false"/>
           </if>
         </onentry>
       </state>
@@ -275,12 +275,12 @@
 
       <state id="not-copyable">
         <onentry>
-          <hippo:hint hint="copy" value="false"/>
+          <hippo:action action="copy" value="false"/>
         </onentry>
       </state>
       <state id="copyable">
         <onentry>
-          <hippo:hint hint="copy" value="true"/>
+          <hippo:action action="copy" value="true"/>
         </onentry>
       </state>
 

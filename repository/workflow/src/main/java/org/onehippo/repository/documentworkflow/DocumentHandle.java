@@ -36,13 +36,17 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.repository.scxml.SCXMLDataModel;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentHandle {
+public class DocumentHandle implements SCXMLDataModel {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentHandle.class);
+
+    private Map<String, Serializable> actions = new HashMap<>();
+    private Object result;
 
     private WorkflowContext context;
     private Node subject;
@@ -59,9 +63,9 @@ public class DocumentHandle {
     private String subjectState;
     private String states;
 
-    private Map<String, Serializable> hints = new HashMap<>();
-
     private Map<String, Boolean> privilegesMap;
+
+    private Map<String, Serializable> info = new HashMap<>();
 
     public DocumentHandle(WorkflowContext context, Node workflowSubject) throws RepositoryException {
 
@@ -376,8 +380,23 @@ public class DocumentHandle {
         return getPublished();
     }
 
-    public Map<String, Serializable> getHints() {
-            return hints;
+    public Map<String, Serializable> getInfo() {
+        return info;
+    }
+
+    @Override
+    public Map<String, Serializable> getActions() {
+            return actions;
+    }
+
+    @Override
+    public Object getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Object result) {
+        this.result = result;
     }
 
     @Override

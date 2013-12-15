@@ -98,7 +98,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         PublishableDocument sourceDoc = dm.getDocumentVariantByState(getSourceState());
         PublishableDocument targetDoc = dm.getDocumentVariantByState(getTargetState());

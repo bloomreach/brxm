@@ -111,7 +111,7 @@ public class AbstractWorkflowTaskActionTest {
             protected void processTaskResult(Object taskResult) {
                 processTaskResultCallCount.incrementAndGet();
                 assertSame(expectedResult, taskResult);
-                super.processTaskResult(taskResult);
+                getContext().set("eventResult", taskResult);
             }
         };
         action.setParent(onEntry);

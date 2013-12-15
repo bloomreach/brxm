@@ -479,7 +479,6 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/PublishableDocum
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ArchiveAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyVariantAction.java -text
-workflow/src/main/java/org/onehippo/repository/documentworkflow/action/HintAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/IsModifiedAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/MoveDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/RenameDocumentAction.java -text
@@ -496,6 +495,7 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RequestTask
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ScheduleRequestTask.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/AbstractAction.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/AbstractWorkflowTaskAction.java -text
+workflow/src/main/java/org/onehippo/repository/scxml/ActionAction.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/HippoScxmlErrorReporter.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLDefinition.java -text
 workflow/src/main/java/org/onehippo/repository/scxml/SCXMLExecutionError.java -text
@@ -515,9 +515,9 @@ workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/pla
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-registry-module.xml svneol=native#text/plain
 workflow/src/test/java/org/hippoecm/faceteddate/DerivedDateTest.java -text
-workflow/src/test/java/org/onehippo/repository/documentworkflow/action/HintActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/AbstractWorkflowTaskActionTest.java -text
+workflow/src/test/java/org/onehippo/repository/scxml/ActionAndResultActionTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLExecutorFactoryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLRegistryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/SCXMLExecutorWrapperTest.java -text

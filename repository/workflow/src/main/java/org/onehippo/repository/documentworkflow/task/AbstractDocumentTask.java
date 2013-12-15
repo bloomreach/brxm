@@ -79,7 +79,7 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
     }
 
     private WorkflowContext workflowContext;
-    private DocumentHandle dataModel;
+    private DocumentHandle documentHandle;
 
     /**
      * Execute this workflow task
@@ -116,12 +116,12 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
      * Returns the document handle object from the current SCXML execution context.
      * @return
      */
-    public DocumentHandle getDataModel() {
-        return dataModel;
+    public DocumentHandle getDocumentHandle() {
+        return documentHandle;
     }
 
-    public void setDataModel(final DocumentHandle dataModel) {
-        this.dataModel = dataModel;
+    public void setDocumentHandle(final DocumentHandle dataModel) {
+        this.documentHandle = dataModel;
     }
 
     protected Node cloneDocumentNode(Node srcNode) throws RepositoryException {

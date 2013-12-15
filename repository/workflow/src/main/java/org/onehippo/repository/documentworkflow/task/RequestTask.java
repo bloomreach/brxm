@@ -67,7 +67,7 @@ public class RequestTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDataModel();
+        DocumentHandle dm = getDocumentHandle();
 
         if (dm.getRequest() == null) {
             PublicationRequest req = null;
