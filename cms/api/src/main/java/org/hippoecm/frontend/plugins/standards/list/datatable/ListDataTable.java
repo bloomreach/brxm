@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
+import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
@@ -42,11 +44,13 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
 import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
 
 /**
- * A datatable with sorting, pagination, selection notification.  Its columns can be defined 
+ * A datatable with sorting, pagination, selection notification.  Its columns can be defined
  * with a {@link TableDefinition}.  This component can be used with any data type, i.e. it is
  * not bound to JcrNodeModels.
  */
@@ -85,10 +89,27 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
                 @Override
                 protected WebMarkupContainer newSortableHeader(String borderId, String property,
-                        ISortStateLocator locator) {
-                    return new ListTableHeader(borderId, property, locator, ListDataTable.this, triState);
+                        ISortStateLocator<String> locator) {
+                    return new ListTableHeader<String>(borderId, property, locator) {
+                        @Override
+                        public void onClick(final AjaxRequestTarget target) {
+                            target.add(ListDataTable.this);
+                        }
+                    };
                 }
             });
+
+            if (!triState) {
+                //Initial sorting on the "Name" column (if any)
+                for (IColumn column : getColumns()) {
+                    ListColumn<?> listColumn = (ListColumn) column;
+                    if (listColumn.getRenderer() == null || listColumn.getRenderer() instanceof NameRenderer) {
+                        dataProvider.getSortState().setPropertySortOrder(listColumn.getSortProperty(), SortOrder.ASCENDING);
+                        break;
+                    }
+                }
+            }
+
         }
         addBottomToolbar(new ListNavigationToolBar(this, pagingDefinition));
 
@@ -108,13 +129,13 @@ public class ListDataTable<T> extends DataTable<T, String> {
         this.scrollSelectedIntoView = enabled;
         this.scrollSelectedTopAlign = topAlign;
     }
-    
+
     @Override
     public MarkupContainer setDefaultModel(IModel<?> model) {
         if(observers != null) {
             IModel<?> currentModel = getDefaultModel();
             if (currentModel == null || (model != null && !model.equals(currentModel))) {
-                for (Item it : observers.keySet()) {
+                for (Item<T> it : observers.keySet()) {
                     IModel checkModel = it.getModel();
                     if (checkModel.equals(currentModel) || model.equals(checkModel)) {
                         dirty.add(it);
@@ -129,16 +150,16 @@ public class ListDataTable<T> extends DataTable<T, String> {
     public IModel<T> getModel() {
         return (IModel<T>) getDefaultModel();
     }
-    
+
     @SuppressWarnings("unchecked")
     public T getModelObject() {
         return (T) getDefaultModelObject();
     }
-    
+
     public void setModel(IModel<T> model) {
         setDefaultModel(model);
     }
-    
+
     public void init(IPluginContext context) {
         this.context = context;
         this.dirty = new HashSet<Item<T>>();
@@ -196,7 +217,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
     }
 
     private boolean doesPageContainModel(long page) {
-        IModel<T> selected = (IModel<T>) getDefaultModel();
+        IModel<?> selected = getDefaultModel();
         long count = getItemsPerPage();
         long offset = page * getItemsPerPage();
         if (offset + count > provider.size()) {
@@ -213,8 +234,8 @@ public class ListDataTable<T> extends DataTable<T, String> {
     }
 
     @Override
-    protected Item newRowItem(final String id, int index, final IModel model) {
-        final OddEvenItem item = new OddEvenItem(id, index, model);
+    protected Item<T> newRowItem(final String id, int index, final IModel<T> model) {
+        final OddEvenItem<T> item = new OddEvenItem<T>(id, index, model);
         item.setOutputMarkupId(true);
 
         item.add(new AttributeAppender("class", new LoadableDetachableModel<String>() {
@@ -247,7 +268,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
         return item;
     }
 
-    protected final void redrawItem(Item item) {
+    protected final void redrawItem(Item<T> item) {
         dirty.add(item);
     }
 
