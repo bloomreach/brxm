@@ -87,6 +87,24 @@ public class DocumentHandleTest {
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), rejectedRequest2);
         assertEquals(rejectedRequest2, dm.getRejectedRequest().getNode());
         assertEquals(publishRequest, dm.getRequest().getNode());
+
+        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
+        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
+        MockNode frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
+        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
+
+        dm = new DocumentHandle(new MockWorkflowContext("testuser"), frozenNode);
+        assertEquals(versionNode, dm.getVersion());
+        assertEquals(draftVariant,dm.getDraft().getNode());
+        assertEquals(unpublishedVariant, dm.getUnpublished().getNode());
+        assertEquals(publishedVariant,dm.getPublished().getNode());
+
+        unpublishedVariant.remove();
+        dm = new DocumentHandle(new MockWorkflowContext("testuser"), frozenNode);
+        assertEquals(versionNode, dm.getVersion());
+        assertNull(dm.getDraft());
+        assertNull(dm.getUnpublished());
+        assertNull(dm.getPublished());
     }
 
     @Test

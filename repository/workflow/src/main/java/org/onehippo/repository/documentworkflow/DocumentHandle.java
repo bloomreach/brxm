@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
@@ -68,13 +69,21 @@ public class DocumentHandle {
 
         this.context = context;
         this.subject = workflowSubject;
+        this.user = context.getUserIdentity();
 
         if (workflowSubject.isNodeType(JcrConstants.NT_FROZEN_NODE)) {
             // only can support VersionWorkflow operations
             supportedFeatures = DocumentWorkflow.SupportedFeatures.version;
             supportedFeaturesPreset = true;
-            this.subject = workflowSubject.getSession().getNodeByIdentifier(workflowSubject.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
             this.version = (Version) workflowSubject.getParent();
+            try {
+            this.subject = workflowSubject.getSession().getNodeByIdentifier(workflowSubject.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+            }
+            catch (ItemNotFoundException e) {
+                // no version subject (anymore)
+                subject = null;
+                return;
+            }
         }
         else {
             if (workflowSubject.isNodeType(HippoNodeType.NT_REQUEST)) {
@@ -84,7 +93,6 @@ public class DocumentHandle {
             }
         }
         handle = subject.getParent();
-        this.user = context.getUserIdentity();
 
         if (!supportedFeaturesPreset) {
             RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
