@@ -25,9 +25,7 @@
       <onentry>
         <if cond="dm.sf.document">
           <hippo:info info="status" value="false"/>
-          <if cond="dm.ss=='draft' and !empty(dm.u)">
-            <hippo:isModified/>
-          </if>
+          <hippo:action action="checkModified" value="dm.ss=='draft' and !empty(dm.u)"/>
           <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
             <!--not draft in use by other user -->
             <if cond="dm.ss=='unpublished' or (empty(dm.u) and (dm.ss=='published' or (dm.ss=='draft' and empty(dm.p))))">
@@ -37,6 +35,11 @@
           </if>
         </if>
       </onentry>
+
+      <transition event="checkModified">
+        <hippo:isModified/>
+        <hippo:result value="dm.info['modified']"/>
+      </transition>
     </state>
 
     <state id="edit" initial="no-edit">
@@ -191,20 +194,41 @@
 
       <transition event="acceptRequest" target="reset">
         <if cond="dm.r.type=='delete'">
+          <hippo:workflowException errorExpr="'Cannot delete document when still published'"
+                                   cond="!empty(dm.p) and dm.p.isAvailable('live')"/>
+          <hippo:workflowException errorExpr="'Cannot delete document which is being edited'"
+                                   cond="!empty(dm.d.holder)"/>
+
           <hippo:deleteRequest/>
-          <hippo:invokeDocumentWorkflow action="delete" subjectExpr="dm.ss=='unpublished' ? dm.u : (dm.ss=='published' and empty(dm.u)) ? dm.p : dm.d"/>
-        <elseif cond="dm.r.type=='publish'"/>
+          <hippo:invokeDocumentWorkflow action="delete"
+                                        subjectExpr="dm.ss=='unpublished' ? dm.u : (dm.ss=='published' and empty(dm.u)) ? dm.p : dm.d"/>
+
+        <elseif cond="dm.r.type=='publish' or dm.r.type=='schedpublish"/>
+          <hippo:workflowException errorExpr="'Cannot publish document which is being edited'"
+                                   cond="!empty(dm.d.holder)"/>
+          <hippo:workflowException errorExpr="'Cannot publish document when no changes present'"
+                                   cond="!empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))" />
+
           <hippo:deleteRequest/>
-          <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.u"/>
-        <elseif cond="dm.r.type=='depublish'"/>
+          <if cond="dm.r.type=='publish'">
+            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.u"/>
+          <else/>
+            <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
+          </if>
+
+        <elseif cond="dm.r.type=='depublish' or dm.r.type=='schedpublish"/>
+          <hippo:workflowException errorExpr="'Cannot depublish document which is being edited'"
+                                   cond="!empty(dm.d.holder)"/>
+          <hippo:workflowException errorExpr="'Cannot depublish document when not published'"
+                                   cond="!empty(dm.p) and dm.p.isAvailable('live')" />
+
           <hippo:deleteRequest/>
-          <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.p"/>
-        <elseif cond="dm.r.type=='schedpublish'"/>
-          <hippo:deleteRequest/>
-          <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
-        <elseif cond="dm.r.type=='scheddepublish'"/>
-          <hippo:deleteRequest/>
-          <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.re.reference"/>
+          <if cond="dm.r.type='depublish'">
+            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.p"/>
+          <else/>
+            <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.re.reference"/>
+          </if>
+
         <elseif cond="dm.r.type=='rejected"/>
           <hippo:workflowException errorExpr="'Request has already been rejected'"/>
         <else/>

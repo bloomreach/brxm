@@ -223,28 +223,28 @@ public class TestDocumentWorkflowImpl {
         wf.setNode(unpublishedVariant);
 
         assertContainsHint(wf.hints(), "status", true);
-        assertNotContainsHint(wf.hints(), "checkModified");
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         wf.setNode(draftVariant);
 
         assertContainsHint(wf.hints(), "status", false);
-        assertContainsHint(wf.hints(), "modified", false);
+        assertContainsHint(wf.hints(), "checkModified", true);
 
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "status", false);
-        assertNotContainsHint(wf.hints(), "checkModified");
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         unpublishedVariant.remove();
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "status", true);
-        assertNotContainsHint(wf.hints(), "checkModified");
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         wf.setNode(draftVariant);
 
         assertContainsHint(wf.hints(), "status", false);
-        assertNotContainsHint(wf.hints(), "checkModified");
+        assertContainsHint(wf.hints(), "checkModified", false);
 
         publishedVariant.remove();
         wf.setNode(draftVariant);

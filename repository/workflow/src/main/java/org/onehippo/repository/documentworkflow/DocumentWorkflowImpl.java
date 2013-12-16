@@ -98,6 +98,11 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     // EditableWorkflow implementation
 
     @Override
+    public boolean isModified() throws WorkflowException, RepositoryException {
+        return (Boolean)workflowExecutor.triggerAction("checkModified");
+    }
+
+    @Override
     public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
         return workflowResultToUserDocument(workflowExecutor.triggerAction("obtainEditableInstance"));
     }

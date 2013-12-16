@@ -29,12 +29,19 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.scxml.AbstractAction;
 
 /**
- * WorkflowExceptionAction raises a WorkflowException with specified error message
+ * WorkflowExceptionAction raises a WorkflowException with specified error message optionally under a specific condition
  */
 public class WorkflowExceptionAction extends AbstractAction {
 
     private static final long serialVersionUID = 1L;
 
+    public String getCond() {
+        return getParameter("condExpr");
+    }
+
+    public void setCond(String condExpr) {
+        setParameter("condExpr", condExpr);
+    }
     public String getErrorExpr() {
         return getParameter("errorExpr");
     }
@@ -47,6 +54,10 @@ public class WorkflowExceptionAction extends AbstractAction {
     protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
                              Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException, WorkflowException {
 
+        String condExpr = getCond();
+        if (!StringUtils.isBlank(condExpr) && !((Boolean)eval(condExpr))) {
+            return;
+        }
         String errorExpr = getErrorExpr();
         if (StringUtils.isBlank(errorExpr)) {
             throw new ModelException("No error specified");
