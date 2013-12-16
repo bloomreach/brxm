@@ -21,15 +21,11 @@ import javax.jcr.Session;
 
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * SCXMLRegistryModule
  */
 public class SCXMLRegistryModule extends AbstractReconfigurableDaemonModule {
-
-    private static Logger log = LoggerFactory.getLogger(SCXMLRegistryModule.class);
 
     private RepositorySCXMLRegistry scxmlRegistry = new RepositorySCXMLRegistry();
     private RepositorySCXMLExecutorFactory scxmlExecutorFactory = new RepositorySCXMLExecutorFactory();

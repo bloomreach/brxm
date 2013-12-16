@@ -20,7 +20,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
@@ -43,22 +42,18 @@ public class MockWorkflowContext implements WorkflowContext {
         this.configuration = new MockRepositoryMap();
     }
 
-    public MockWorkflowContext(String userIdentity, MockNode rootNode) throws RepositoryException {
-        this(userIdentity, new MockSession(rootNode));
-    }
-
     @Override
-    public WorkflowContext getWorkflowContext(final Object specification) throws MappingException, RepositoryException {
+    public WorkflowContext getWorkflowContext(final Object specification) throws RepositoryException {
         return this;
     }
 
     @Override
-    public Workflow getWorkflow(final String category) throws MappingException, WorkflowException, RepositoryException {
+    public Workflow getWorkflow(final String category) throws WorkflowException, RepositoryException {
         return null;
     }
 
     @Override
-    public Workflow getWorkflow(final String category, final Document document) throws MappingException, WorkflowException, RepositoryException {
+    public Workflow getWorkflow(final String category, final Document document) throws WorkflowException, RepositoryException {
         return null;
     }
 

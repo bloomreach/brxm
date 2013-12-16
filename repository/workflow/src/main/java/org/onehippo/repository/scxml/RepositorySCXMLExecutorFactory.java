@@ -20,15 +20,11 @@ import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
 import org.apache.commons.scxml2.env.jexl.JexlContext;
 import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * RepositorySCXMLExecutorFactory
  */
 public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
-
-    static Logger log = LoggerFactory.getLogger(RepositorySCXMLExecutorFactory.class);
 
     private Evaluator evaluator;
 
@@ -45,7 +41,7 @@ public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
         }
 
         final JexlContext jexlCtx = new JexlContext();
-        SCXMLExecutor executor = new SCXMLExecutor(evaluator, new SimpleDispatcher(), new HippoScxmlErrorReporter(scxmlDef));
+        SCXMLExecutor executor = new SCXMLExecutor(evaluator, new SimpleDispatcher(), new SCXMLStrictErrorReporter(scxmlDef));
         executor.setRootContext(jexlCtx);
         executor.setStateMachine(scxmlDef.getSCXML());
         return executor;

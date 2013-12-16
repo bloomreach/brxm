@@ -46,7 +46,7 @@ public class MockAccessManagedSession extends MockSession {
 
         Set<String> permSet = null;
         if (permissions != null) {
-            permSet = new HashSet(Arrays.asList(permissions.split(",")));
+            permSet = new HashSet<>(Arrays.asList(permissions.split(",")));
             if (permSet.isEmpty()) {
                 permSet = null;
             }
@@ -69,7 +69,7 @@ public class MockAccessManagedSession extends MockSession {
     @Override
     public boolean hasPermission(final String absPath, final String actions) {
         if (actions != null) {
-            Set<String> actionSet = new HashSet(Arrays.asList(actions.split(",")));
+            Set<String> actionSet = new HashSet<>(Arrays.asList(actions.split(",")));
             if (!actionSet.isEmpty()) {
                 Set<String> permissions = deniedPermissions.get(absPath);
                 if (permissions != null) {
@@ -80,10 +80,7 @@ public class MockAccessManagedSession extends MockSession {
                     }
                 }
                 permissions = allowedPermissions.get(absPath);
-                if (permissions != null && !permissions.containsAll(actionSet)) {
-                    return false;
-                }
-                return true;
+                return (permissions == null || permissions.containsAll(actionSet));
             }
         }
         return false;

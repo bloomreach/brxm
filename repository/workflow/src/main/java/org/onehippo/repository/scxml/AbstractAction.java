@@ -32,8 +32,6 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * AbstractAction
@@ -45,10 +43,8 @@ public abstract class AbstractAction extends Action {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(AbstractAction.class);
-
-    private static ThreadLocal<SCInstance> tlSCInstance = new ThreadLocal<SCInstance>();
-    private static ThreadLocal<Context> tlContext = new ThreadLocal<Context>();
+    private static ThreadLocal<SCInstance> tlSCInstance = new ThreadLocal<>();
+    private static ThreadLocal<Context> tlContext = new ThreadLocal<>();
 
     private Map<String, String> parameters;
 
@@ -63,7 +59,7 @@ public abstract class AbstractAction extends Action {
                 tlContext.set(scInstance.getContext(getParentTransitionTarget()));
             }
             synchronized (this) {
-                if (!immutable) {
+                if (!isImmutable()) {
                     goImmutable();
 
                     if (parameters == null) {
@@ -77,9 +73,7 @@ public abstract class AbstractAction extends Action {
                 }
             }
             doExecute(evtDispatcher, errRep, appLog, derivedEvents);
-        } catch (WorkflowException e) {
-            throw new ModelException(e);
-        } catch (RepositoryException e) {
+        } catch (WorkflowException | RepositoryException e) {
             throw new ModelException(e);
         } finally {
             tlContext.remove();
@@ -105,7 +99,6 @@ public abstract class AbstractAction extends Action {
 
     /**
      * Returns the properties map. If not exists, it creates a new map first.
-     * @return
      */
     protected Map<String, String> getParameters() {
         if (parameters == null) {
@@ -148,8 +141,6 @@ public abstract class AbstractAction extends Action {
     /**
      * Evaluates the expression by the {@link org.apache.commons.scxml2.Evaluator} using the current {@link #getContext()} and returns the evaluation result.
      * May only be invoked within the context of {@link #doExecute(EventDispatcher, ErrorReporter, Log, Collection)}
-     * @param expr
-     * @return
      * @throws org.apache.commons.scxml2.model.ModelException
      * @throws org.apache.commons.scxml2.SCXMLExpressionException
      */
@@ -161,14 +152,6 @@ public abstract class AbstractAction extends Action {
 
     /**
      * An SCXML action implementation should implement this method to include the real execution code.
-     * @param evtDispatcher
-     * @param errRep
-     * @param appLog
-     * @param derivedEvents
-     * @throws ModelException
-     * @throws SCXMLExpressionException
-     * @throws WorkflowException
-     * @throws RepositoryException
      */
     abstract protected void doExecute(EventDispatcher evtDispatcher, ErrorReporter errRep, Log appLog,
             Collection<TriggerEvent> derivedEvents) throws ModelException, SCXMLExpressionException, WorkflowException, RepositoryException;

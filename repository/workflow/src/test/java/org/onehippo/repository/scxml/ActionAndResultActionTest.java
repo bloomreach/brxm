@@ -60,8 +60,6 @@ public class ActionAndResultActionTest {
         assertNotNull(helloScxml);
 
         SCXMLExecutor helloExec = execFactory.createSCXMLExecutor(helloScxml);
-        HippoScxmlErrorReporter errorReporter = new HippoScxmlErrorReporter(helloScxml);
-        helloExec.setErrorReporter(errorReporter);
 
         SCXMLDataModel dm = new MockSCXMLDataModel();
         helloExec.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);

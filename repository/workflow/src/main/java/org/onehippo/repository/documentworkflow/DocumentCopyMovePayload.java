@@ -22,11 +22,8 @@ import org.hippoecm.repository.api.Document;
  */
 public class DocumentCopyMovePayload {
 
-    private Document destination;
-    private String newName;
-
-    public DocumentCopyMovePayload() {
-    }
+    private final Document destination;
+    private final String newName;
 
     public DocumentCopyMovePayload(Document destination, String newName) {
         this.destination = destination;
@@ -37,16 +34,7 @@ public class DocumentCopyMovePayload {
         return destination;
     }
 
-    public void setDestination(Document destination) {
-        this.destination = destination;
-    }
-
     public String getNewName() {
         return newName;
     }
-
-    public void setNewName(String newName) {
-        this.newName = newName;
-    }
-
 }

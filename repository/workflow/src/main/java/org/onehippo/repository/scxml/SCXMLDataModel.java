@@ -38,7 +38,10 @@ public interface SCXMLDataModel {
 
     String CONTEXT_KEY = "dm";
 
+    String FINAL_RESET_STATE_ID = "reset";
+
     Map<String,Boolean> getActions();
     Object getResult();
     void setResult(Object result);
+    void reset();
 }

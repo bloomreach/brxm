@@ -52,7 +52,6 @@ public class DocumentHandle implements SCXMLDataModel {
     private Node subject;
     private Version version;
 
-    private Node handle;
     private String user;
     private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
@@ -96,7 +95,7 @@ public class DocumentHandle implements SCXMLDataModel {
                 supportedFeaturesPreset = true;
             }
         }
-        handle = subject.getParent();
+        Node handle = subject.getParent();
 
         if (!supportedFeaturesPreset) {
             RepositoryMap workflowConfiguration = context.getWorkflowConfiguration();
@@ -138,9 +137,7 @@ public class DocumentHandle implements SCXMLDataModel {
                     rejectedRequest = req;
                     subjectFound = true;
                 }
-                else {
-                    // ignore all other rejected requests
-                }
+                // else ignore all other rejected requests
                 continue;
             }
             if (request != null) {
@@ -191,7 +188,7 @@ public class DocumentHandle implements SCXMLDataModel {
             if (hasPrivilege == null) {
                 hasPrivilege = Boolean.FALSE;
                 try {
-                    hasPrivilege = Boolean.valueOf(context.getUserSession().hasPermission(subject.getPath(), priv));
+                    hasPrivilege = context.getUserSession().hasPermission(subject.getPath(), priv);
                 } catch (AccessControlException e) {
                 } catch (AccessDeniedException e) {
                 } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
@@ -199,7 +196,7 @@ public class DocumentHandle implements SCXMLDataModel {
                 }
                 this.privilegesMap.put(priv, hasPrivilege);
             }
-            if (!hasPrivilege.booleanValue()) {
+            if (!hasPrivilege) {
                 return false;
             }
         }
@@ -401,6 +398,13 @@ public class DocumentHandle implements SCXMLDataModel {
     @Override
     public void setResult(Object result) {
         this.result = result;
+    }
+
+    @Override
+    public void reset() {
+        actions.clear();
+        info.clear();
+        result = null;
     }
 
     @Override

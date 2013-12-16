@@ -27,8 +27,6 @@ import org.apache.commons.scxml2.TriggerEvent;
 import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.WorkflowTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * AbstractWorkflowTaskAction
@@ -40,14 +38,11 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(AbstractWorkflowTaskAction.class);
-
     public AbstractWorkflowTaskAction() {
     }
 
     /**
      * Can be overriden to initialize the workflow task
-     * @param task
      */
     protected void initTask(T task) throws ModelException, SCXMLExpressionException {
     }
@@ -71,7 +66,6 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
      * Process the task execution result. By default, it stores the result through {@link SCXMLDataModel#setResult(Object)}
      * if it's a non-null value.
      * This method can be overriden to do something else or more.
-     * @param taskResult
      */
     protected void processTaskResult(Object taskResult) {
         if (taskResult != null) {
@@ -82,7 +76,6 @@ public abstract class AbstractWorkflowTaskAction<T extends WorkflowTask> extends
     /**
      * Creates a workflow task.
      * This method is invoked to create a new workflow task.
-     * @return
      */
     protected abstract T createWorkflowTask();
 

@@ -16,21 +16,17 @@
 package org.onehippo.repository.scxml;
 
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
+import static org.junit.Assert.fail;
 
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.scxml.test.ErrorRecord;
-import org.onehippo.repository.scxml.test.ErrorRecordTestUtils;
-import org.onehippo.repository.scxml.test.ErrorRecordingErrorReporterWrapper;
 
 /**
- * RepositorySCXMLExecutorFactoryTest
+ * SCXMLStrictErrorReporterTest
  */
-public class RepositorySCXMLExecutorFactoryTest {
+public class SCXMLStrictErrorReporterTest {
 
     private static final String SCXML_HELLO_WITH_ERROR_JEXL_SCRIPTS =
             "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello\">\n" +
@@ -67,17 +63,13 @@ public class RepositorySCXMLExecutorFactoryTest {
 
         SCXMLDefinition helloScxml = registry.getSCXMLDefinition("hello-with-error-jexl-scripts");
         SCXMLExecutor helloExec = execFactory.createSCXMLExecutor(helloScxml);
-        // replace errorReporter to capture the error infos
-        ErrorRecordingErrorReporterWrapper errorReporter = new ErrorRecordingErrorReporterWrapper(helloScxml);
-        helloExec.setErrorReporter(errorReporter);
 
-        helloExec.go();
-
-        List<ErrorRecord> errorRecords = errorReporter.getErrorRecords();
-
-        // Note: Also, SimpleErrorReporter in commons-SCXML will log this as well: "... Expression error inside /hello/world ..."
-        //       But let's just assert for hippo specific path information here.
-        assertTrue(ErrorRecordTestUtils.containsErrorDetail(errorRecords, "in /hippo:moduleconfig/hipposcxml:definitions/hello-with-error-jexl-scripts"));
+        try {
+            helloExec.go();
+            fail("SCML should have failed loading");
+        }
+        catch (SCXMLExecutionError e) {
+            assertTrue(e.getErrorDetail().contains("in /hippo:moduleconfig/hipposcxml:definitions/hello-with-error-jexl-scripts"));
+        }
     }
-
 }

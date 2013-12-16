@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -46,9 +47,14 @@ public class DocumentHandleTest {
         return variant;
     }
 
+    @SuppressWarnings("unchecked")
+    protected void putWorkflowConfig(RepositoryMap workflowConfig, String key, String value) {
+        workflowConfig.put(key,value);
+    }
+
     @Test
     public void initDocumentHandle() throws Exception {
-        DocumentHandle dm = null;
+        DocumentHandle dm;
 
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
         MockNode publishRequest = addRequest(handle, PublicationRequest.PUBLISH);
@@ -59,9 +65,9 @@ public class DocumentHandleTest {
 
         MockNode publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
         MockNode unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
-        MockNode rejectedRequest1 = addRequest(handle, PublicationRequest.REJECTED);
+        addRequest(handle, PublicationRequest.REJECTED);
         MockNode rejectedRequest2 = addRequest(handle, PublicationRequest.REJECTED);
-        MockNode draftVariant = null;
+        MockNode draftVariant;
 
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), unpublishedVariant);
         assertEquals("up", dm.getStates());
@@ -112,19 +118,20 @@ public class DocumentHandleTest {
         MockWorkflowContext context = new MockWorkflowContext("testuser");
         MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
         MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        RepositoryMap workflowConfig = context.getWorkflowConfiguration();
 
         DocumentHandle dm = new DocumentHandle(context, draftVariant);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertTrue(dm.getSupportedFeatures().isRequest());
 
-        context.getWorkflowConfiguration().put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         dm = new DocumentHandle(context, draftVariant);
         assertEquals(DocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertFalse(dm.getSupportedFeatures().isRequest());
 
-        context.getWorkflowConfiguration().put("workflow.supportedFeatures", "undefined");
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", "undefined");
         dm = new DocumentHandle(context, draftVariant);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
 
@@ -134,7 +141,7 @@ public class DocumentHandleTest {
         dm = new DocumentHandle(context, request);
         assertEquals(DocumentWorkflow.SupportedFeatures.request, dm.getSupportedFeatures());
 
-        context.getWorkflowConfiguration().put("workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
+        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         dm = new DocumentHandle(context, request);
         assertEquals(DocumentWorkflow.SupportedFeatures.request, dm.getSupportedFeatures());
 

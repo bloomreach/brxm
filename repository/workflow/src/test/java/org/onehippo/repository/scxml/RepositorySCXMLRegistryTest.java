@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.scxml.test.LogRecordTestUtils.containsLogMessage;
 
 import java.util.Collection;
 import java.util.List;
@@ -109,6 +108,20 @@ public class RepositorySCXMLRegistryTest {
 
     private MockRepositorySCXMLRegistry registry;
 
+    private boolean containsLogMessage(final List<LogRecord> logRecords, String message) {
+        if (logRecords == null) {
+            return false;
+        }
+
+        for (LogRecord logRecord : logRecords) {
+            if (logRecord.toString().contains(message)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         recordingLogger = new LoggerRecordingWrapper(RepositorySCXMLRegistry.log);
@@ -165,7 +178,7 @@ public class RepositorySCXMLRegistryTest {
     @Test
     public void testLoadUnknownLocalCustomAction() throws Exception {
         MockNode scxmlConfigNode = registry.createConfigNode();
-        MockNode scxmlDefNode = (MockNode) registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
+        MockNode scxmlDefNode = registry.addScxmlNode(scxmlConfigNode, "hello-with-unknown-custom-actions", SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS);
         registry.addCustomAction(scxmlDefNode, "http://www.onehippo.org/cms7/repository/scxml", "known-custom-action", KnownAction.class.getName());
         registry.setUp(scxmlConfigNode);
 

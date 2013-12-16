@@ -60,7 +60,6 @@ public class AbstractActionTest {
     private State state;
     private OnEntry onEntry;
     private Context context;
-    private Evaluator evaluator;
 
     private AbstractAction action;
 
@@ -76,7 +75,7 @@ public class AbstractActionTest {
         state.setOnEntry(onEntry);
 
         context = new JexlContext();
-        evaluator = new JexlEvaluator();
+        Evaluator evaluator = new JexlEvaluator();
         scInstance = EasyMock.createNiceMock(SCInstance.class);
         EasyMock.expect(scInstance.getContext(state)).andReturn(context).anyTimes();
         EasyMock.expect(scInstance.getEvaluator()).andReturn(evaluator).anyTimes();

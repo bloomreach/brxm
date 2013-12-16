@@ -22,7 +22,7 @@ import org.apache.commons.scxml2.ErrorReporter;
 /**
  * SCXMLExecutionError capturing an error reported to {@link ErrorReporter} during SCXML execution.
  */
-public class SCXMLExecutionError implements Serializable {
+public class SCXMLExecutionError extends RuntimeException implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,7 +30,8 @@ public class SCXMLExecutionError implements Serializable {
     private final String errorDetail;
     private final Object errorContext;
 
-    public SCXMLExecutionError(final String errorCode, final String errorDetail, final Object errorContext) {
+    public SCXMLExecutionError(final String errorCode, final String errorDetail, final Object errorContext, final CharSequence errorMessage) {
+        super(errorMessage.toString());
         this.errorCode = errorCode;
         this.errorDetail = errorDetail;
         this.errorContext = errorContext;

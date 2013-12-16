@@ -120,7 +120,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
             return;
         }
 
-        Map<String, SCXMLDefinition> newScxmlDefMap = new HashMap<String, SCXMLDefinition>();
+        Map<String, SCXMLDefinition> newScxmlDefMap = new HashMap<>();
 
         try {
             if (scxmlDefsNode.hasNodes()) {
@@ -163,9 +163,9 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     }
 
     private SCXMLDefinition readSCXMLDefinition(final String scxmlDefId, final Node scxmlDefNode) throws SCXMLException {
-        String scxmlDefPath = null;
-        String scxmlSource = null;
-        final List<CustomAction> customActions = new ArrayList<CustomAction>();
+        String scxmlDefPath;
+        String scxmlSource;
+        final List<CustomAction> customActions = new ArrayList<>();
         String className = null;
 
         try {
@@ -212,7 +212,7 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         final String factoryId = null;
         final ClassLoader classLoader = null;
         final XMLEventAllocator allocator = null;
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         //properties.put(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
         final XMLResolver resolver = null;
         final XMLReporter xmlReporter = new XMLReporterImpl(scxmlDefPath);

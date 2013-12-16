@@ -26,54 +26,42 @@ import java.util.SortedMap;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.scxml2.SCXMLExecutor;
-import org.apache.commons.scxml2.model.ModelException;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.scxml.SCXMLDataModel;
-import org.onehippo.repository.scxml.SCXMLDefinition;
-import org.onehippo.repository.scxml.SCXMLException;
-import org.onehippo.repository.scxml.SCXMLExecutorFactory;
-import org.onehippo.repository.scxml.SCXMLRegistry;
-import org.onehippo.repository.scxml.SCXMLUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkflow {
-
-    private static final Logger log = LoggerFactory.getLogger(DocumentWorkflowImpl.class);
 
     private static final long serialVersionUID = 1L;
 
     private static final String SCXML_DEFINITION_ID = "document-workflow";
 
-    private SCXMLExecutor scxmlExecutor;
+    private SCXMLWorkflowExecutor workflowExecutor;
     private DocumentHandle dm;
 
     public DocumentWorkflowImpl() throws RemoteException {
     }
 
-    DocumentHandle getDataModel() {
-        return dm;
+    SCXMLWorkflowExecutor getWorkflowExecutor() {
+        return workflowExecutor;
     }
 
-    SCXMLExecutor getScxmlExecutor() {
-        return scxmlExecutor;
+    protected Document toUserDocument(Document document) throws RepositoryException {
+        return new Document(getWorkflowContext().getUserSession().getNodeByIdentifier(document.getIdentity()));
     }
 
-    protected Object triggerSCXMLEvent(String action) throws ModelException {
-        dm.setResult(null);
-        SCXMLUtils.triggerSignalEvents(scxmlExecutor, action);
-        return dm.getResult();
-    }
-
-    protected Object triggerSCXMLEvent(String action, Object payload) throws ModelException {
-        dm.setResult(null);
-        SCXMLUtils.triggerSignalEventWithPayload(scxmlExecutor, action, payload);
-        return dm.getResult();
+    protected Document workflowResultToUserDocument(Object obj) throws RepositoryException {
+        Document document = null;
+        if (obj != null) {
+            if (obj instanceof PublishableDocument) {
+                document = (PublishableDocument)obj;
+            }
+            if (obj instanceof Document) {
+                document = (Document)obj;
+            }
+        }
+        return document != null && document.getIdentity() != null ? toUserDocument(document) : null;
     }
 
     // Workflow implementation / WorkflowImpl override
@@ -85,179 +73,184 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
         dm = new DocumentHandle(getWorkflowContext(), node);
 
         try {
-            SCXMLRegistry scxmlRegistry = HippoServiceRegistry.getService(SCXMLRegistry.class);
-            SCXMLDefinition scxmlDef = scxmlRegistry.getSCXMLDefinition(SCXML_DEFINITION_ID);
-
-            if (scxmlDef == null) {
-                throw new WorkflowException("SCXML definition not found by id, '" + SCXML_DEFINITION_ID + "'.");
-            }
-
-            SCXMLExecutorFactory scxmlExecutorFactory = HippoServiceRegistry.getService(SCXMLExecutorFactory.class);
-            scxmlExecutor = scxmlExecutorFactory.createSCXMLExecutor(scxmlDef);
-            scxmlExecutor.getRootContext().set(SCXMLDataModel.CONTEXT_KEY, dm);
-            dm.setResult(null);
-
-            try {
-                scxmlExecutor.go();
-                log.info("scmxl.current.targets: {}", SCXMLUtils.getCurrentTransitionTargetIdList(scxmlExecutor));
-                log.info("scmxl.dm.actions: {}", dm.getActions());
-            } catch (ModelException e) {
-                log.error("Failed to execute scxml", e);
-            }
+            workflowExecutor = new SCXMLWorkflowExecutor(SCXML_DEFINITION_ID, dm);
+            workflowExecutor.start();
         }
         catch (WorkflowException wfe) {
+            if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
+                throw (RepositoryException)wfe.getCause();
+            }
             throw new RepositoryException(wfe);
-        }
-        catch (SCXMLException hse) {
-            throw new RepositoryException(hse);
         }
     }
 
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> hints = super.hints();
-        hints.putAll(dm.getInfo());
-        hints.putAll(dm.getActions());
+        if (workflowExecutor.isStarted()) {
+            hints.putAll(dm.getInfo());
+            hints.putAll(dm.getActions());
+        }
         return hints;
     }
 
     // EditableWorkflow implementation
 
     @Override
-    public Document obtainEditableInstance() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("obtainEditableInstance"));
     }
 
     @Override
-    public Document commitEditableInstance() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document commitEditableInstance() throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("commitEditableInstance"));
     }
 
     @Override
-    public Document disposeEditableInstance() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("disposeEditableInstance"));
     }
 
     // BasicReviewedActionsWorkflow implementation
 
     @Override
-    public void requestDepublication() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void requestDeletion() throws WorkflowException {
+        workflowExecutor.triggerAction("requestDelete");
     }
 
     @Override
-    public void requestDepublication(final Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void requestDepublication() throws WorkflowException {
+        workflowExecutor.triggerAction("requestDepublish");
     }
 
     @Override
-    public void requestPublication() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void requestDepublication(final Date publicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("requestDepublish", publicationDate);
     }
 
     @Override
-    public void requestPublication(final Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void requestPublication() throws WorkflowException {
+        workflowExecutor.triggerAction("publish");
     }
 
     @Override
-    public void requestPublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void requestPublication(final Date publicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("requestPublish", publicationDate);
+    }
+
+    @Override
+    public void requestPublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
+        throw new WorkflowException("unsupported");
     }
 
     // FullReviewedActionsWorkflow implementation
 
     @Override
-    public void delete() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void delete() throws WorkflowException {
+        workflowExecutor.triggerAction("delete");
     }
 
     @Override
-    public void rename(final String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void rename(final String newName) throws WorkflowException {
+        workflowExecutor.triggerAction("rename", newName);
     }
 
     @Override
-    public void copy(final Document target, final String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void copy(final Document destination, final String newName) throws WorkflowException {
+        workflowExecutor.triggerAction("copy", new DocumentCopyMovePayload(destination, newName));
     }
 
     @Override
-    public void move(final Document target, final String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void move(final Document destination, final String newName) throws WorkflowException {
+        workflowExecutor.triggerAction("move", new DocumentCopyMovePayload(destination, newName));
     }
 
     @Override
-    public void depublish() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void depublish() throws WorkflowException {
+        workflowExecutor.triggerAction("depublish");
     }
 
     @Override
-    public void depublish(final Date depublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void depublish(final Date depublicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("depublish", depublicationDate);
     }
 
     @Override
-    public void publish() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void publish() throws WorkflowException {
+        workflowExecutor.triggerAction("publish");
     }
 
     @Override
-    public void publish(final Date publicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void publish(final Date publicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("publish", publicationDate);
     }
 
     @Override
-    public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
+        throw new WorkflowException("unsupported");
     }
 
     // BasicRequestWorkflow implementation
 
     @Override
-    public void cancelRequest() throws WorkflowException, RepositoryException, RemoteException {
-    }
-
-    @Override
-    public void requestDeletion() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void cancelRequest() throws WorkflowException {
+        workflowExecutor.triggerAction("cancelRequest");
     }
 
     // FullRequestWorkflow implementation
 
     @Override
-    public void acceptRequest() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void acceptRequest() throws WorkflowException {
+        workflowExecutor.triggerAction("acceptRequest");
     }
 
     @Override
-    public void rejectRequest(final String reason) throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void rejectRequest(final String reason) throws WorkflowException {
+        workflowExecutor.triggerAction("rejecctRequest", reason);
     }
 
     // UnlockWorkflow implementation
 
     @Override
-    public void unlock() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void unlock() throws WorkflowException {
+        workflowExecutor.triggerAction("unlock");
     }
 
     // VersionWorkflow implementation
 
     @Override
-    public Document version() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document version() throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("version"));
     }
 
     @Override
-    public Document revert(final Calendar historic) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document revert(final Calendar historic) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("revert", historic));
     }
 
     @Override
-    public Document restoreTo(final Document target) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document restoreTo(final Document target) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreTo", target));
     }
 
     @Override
-    public Document restore(final Calendar historic) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document restore(final Calendar historic) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("restore", historic));
     }
 
     @Override
-    public Document restore(final Calendar historic, final Map<String, String[]> replacements) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document restore(final Calendar historic, final Map<String,String[]> replacements) throws WorkflowException {
+        throw new WorkflowException("unsupported");
     }
 
     @Override
-    public SortedMap<Calendar, Set<String>> list() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public SortedMap<Calendar, Set<String>> list() throws WorkflowException {
+        return (SortedMap<Calendar, Set<String>>) workflowExecutor.triggerAction("listVersions");
     }
 
     @Override
-    public Document retrieve(final Calendar historic) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        return null;
+    public Document retrieve(final Calendar historic) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("retrieve", historic));
     }
 }

@@ -33,4 +33,9 @@ class MockSCXMLDataModel implements SCXMLDataModel {
     public void setResult(Object result) {
         this.result = result;
     }
+
+    public void reset() {
+        actions.clear();
+        result = null;
+    }
 }

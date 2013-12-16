@@ -57,10 +57,8 @@ public class AbstractWorkflowTaskActionTest {
     private Log appLog;
     private Collection<TriggerEvent> derivedEvents;
 
-    private State state;
     private OnEntry onEntry;
     private Context context;
-    private Evaluator evaluator;
 
     private AbstractWorkflowTaskAction action;
 
@@ -71,12 +69,12 @@ public class AbstractWorkflowTaskActionTest {
         appLog = new SimpleLog(getClass().getName());
         derivedEvents = Collections.emptyList();
 
-        state = new State();
+        final State state = new State();
         onEntry = new OnEntry();
         state.setOnEntry(onEntry);
 
         context = new JexlContext();
-        evaluator = new JexlEvaluator();
+        final Evaluator evaluator = new JexlEvaluator();
         scInstance = EasyMock.createNiceMock(SCInstance.class);
         EasyMock.expect(scInstance.getContext(state)).andReturn(context).anyTimes();
         EasyMock.expect(scInstance.getEvaluator()).andReturn(evaluator).anyTimes();
@@ -95,7 +93,7 @@ public class AbstractWorkflowTaskActionTest {
         final AtomicInteger createWorkflowTaskCallCount = new AtomicInteger();
         final AtomicInteger processTaskResultCallCount = new AtomicInteger();
 
-        action = new AbstractWorkflowTaskAction() {
+        action = new AbstractWorkflowTaskAction<WorkflowTask>() {
             @Override
             protected void initTask(WorkflowTask task) throws ModelException, SCXMLExpressionException {
                 initTaskCallCount.incrementAndGet();
