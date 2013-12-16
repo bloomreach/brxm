@@ -470,6 +470,7 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/DerivedDataFuncti
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/FullRequestWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/FullReviewedActionsWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationRequest.java -text
+workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationState.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocument.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
