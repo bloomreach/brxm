@@ -26,7 +26,7 @@
         <if cond="dm.sf.document">
           <hippo:info info="status" value="false"/>
           <if cond="dm.ss=='draft' and !empty(dm.u)">
-            <hippo:isModified userDraft="true"/>
+            <hippo:isModified/>
           </if>
           <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
             <!--not draft in use by other user -->
@@ -118,7 +118,7 @@
       <transition event="commitEditableInstance" target="reset">
         <hippo:setHolder holder="null"/>
         <if cond="!empty(dm.u)">
-          <hippo:isModified userDraft="false"/>
+          <hippo:isModified/>
         </if>
         <if cond="empty(dm.u) or dm.info['modified']">
           <hippo:copyVariant sourceState="draft" targetState="unpublished"/>

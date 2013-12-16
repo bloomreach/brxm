@@ -16,8 +16,6 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import org.apache.commons.scxml2.SCXMLExpressionException;
-import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.IsModifiedTask;
 
 /**
@@ -27,22 +25,8 @@ public class IsModifiedAction extends AbstractDocumentTaskAction<IsModifiedTask>
 
     private static final long serialVersionUID = 1L;
 
-    public boolean isUserDraft() {
-        return Boolean.parseBoolean(getParameter("userDraft"));
-    }
-
-    public void setUserDraft(String userDraft) {
-        getParameter("userDraft", userDraft);
-    }
-
     @Override
     protected IsModifiedTask createWorkflowTask() {
         return new IsModifiedTask();
-    }
-
-    @Override
-    protected void initTask(final IsModifiedTask task) throws ModelException, SCXMLExpressionException {
-        super.initTask(task);
-        task.setUserDraft(isUserDraft());
     }
 }

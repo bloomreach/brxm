@@ -39,16 +39,6 @@ public class IsModifiedTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean userDraft;
-
-    public boolean isUserDraft() {
-        return userDraft;
-    }
-
-    public void setUserDraft(final boolean userDraft) {
-        this.userDraft = userDraft;
-    }
-
     @Override
     public Object doExecute() throws RepositoryException {
 
@@ -56,7 +46,8 @@ public class IsModifiedTask extends AbstractDocumentTask {
 
         if (dm.getDraft() != null && dm.getUnpublished() != null) {
             Node draftNode = dm.getDraft().getNode();
-            if (isUserDraft()) {
+            if (dm.getUser().equals(dm.getDraft().getHolder())) {
+                // use user session bound draftNode which might contain outstanding changes
                 draftNode = dm.getWorkflowContext().getUserSession().getNodeByIdentifier(draftNode.getIdentifier());
             }
             dm.getInfo().put("modified", !equals(draftNode, dm.getUnpublished().getNode()));
