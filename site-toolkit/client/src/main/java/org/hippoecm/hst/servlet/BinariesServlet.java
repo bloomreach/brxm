@@ -546,6 +546,11 @@ public class BinariesServlet extends HttpServlet {
         
         if (clientComponentManager != null) {
             cache = clientComponentManager.getComponent(binariesCacheComponentName);
+            if (cache != null) {
+                log.warn("ClientComponentManager is deprecated. Use HstService#getComponentManager() instead and replace " +
+                        "client-assembly spring configuration with hst-assemply/overrides configuration. Remove " +
+                        "clientComponentManagerClass init-param from web.xml for HstFilter as well.");
+            }
         }
         
         if (cache == null) {

@@ -93,9 +93,26 @@ public class HstFilter implements Filter {
     /* moved here from HstContainerServlet initialization */
     public static final String CONTEXT_NAMESPACE_INIT_PARAM = "hstContextNamespace";
     public static final String CLIENT_REDIRECT_AFTER_JAAS_LOGIN_BEHIND_PROXY = "clientRedirectAfterJaasLoginBehindProxy";
+    /**
+     * @deprecated  since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} instead
+     */
+    @Deprecated
     public static final String CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM = "clientComponentManagerClass";
+    /**
+     * @deprecated  since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} instead
+     */
+    @Deprecated
     public static final String CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM = "clientComponentManagerConfigurations";
+    /**
+     * @deprecated  since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} instead
+     */
+    @Deprecated
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
+    /**
+     * @deprecated since 2.28.00 client component manager should not be used any more. Instead use the core
+     * {@link org.hippoecm.hst.site.HstServices#getComponentManager()}
+     */
+    @Deprecated
     public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstFilter.class.getName() + ".clientComponentManager";
 
     public static final String PREFIX_EXCLUSIONS_INIT_PARAM = "prefixExclusions";
@@ -105,10 +122,27 @@ public class HstFilter implements Filter {
 
     protected String contextNamespace;
     protected boolean doClientRedirectAfterJaasLoginBehindProxy;
+    /**
+     * @deprecated  since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} instead
+     */
+    @Deprecated
     protected String clientComponentManagerClassName;
+    /**
+     * @deprecated  since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} instead
+     */
+    @Deprecated
     protected String [] clientComponentManagerConfigurations;
     protected volatile boolean initialized;
+    /**
+     * @deprecated  since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} instead
+     */
+    @Deprecated
     protected ComponentManager clientComponentManager;
+    /**
+     * @deprecated since 2.28.00 client component manager should not be used any more. Instead use the core
+     * {@link org.hippoecm.hst.site.HstServices#getComponentManager()}
+     */
+    @Deprecated
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected volatile HstContainerConfig requestContainerConfig;
 
@@ -150,6 +184,8 @@ public class HstFilter implements Filter {
     protected void doInit(FilterConfig config) {
 
         if (clientComponentManager != null) {
+            log.warn("clientComponentManager is deprecated. Remove clientComponentManagerClass init-param " +
+                    "from web.xml for HstFilter");
             try {
                 clientComponentManager.stop();
                 clientComponentManager.close();
@@ -185,7 +221,10 @@ public class HstFilter implements Filter {
      * Returns the client component manager instance if available.
      * @param servletContext
      * @return
+     * @deprecated since 2.28.00 client component manager should not be used any more. Instead use the core
+     * {@link org.hippoecm.hst.site.HstServices#getComponentManager()}
      */
+    @Deprecated
     public static ComponentManager getClientComponentManager(ServletContext servletContext) {
         String attributeName = ServletConfigUtils.getInitParameter(null, servletContext,
                 CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);

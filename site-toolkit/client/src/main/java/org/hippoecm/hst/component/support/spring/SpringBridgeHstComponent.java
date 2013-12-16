@@ -26,6 +26,8 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -84,7 +86,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version $Id$
  */
 public class SpringBridgeHstComponent extends GenericHstComponent implements ApplicationListener {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(SpringBridgeHstComponent.class);
+
     protected String delegatedBeanNameParamName = "spring-delegated-bean";
     protected String contextNameSeparator = "::";
     
@@ -201,6 +205,11 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
                 
                 if (componentManager != null) {
                     delegatedBean = componentManager.getComponent(beanName);
+                    if (delegatedBean != null) {
+                        log.warn("ClientComponentManager is deprecated. Use HstService#getComponentManager() instead and replace " +
+                                "client-assembly spring configuration with hst-assemply/overrides configuration. Remove " +
+                                "clientComponentManagerClass init-param from web.xml for HstFilter as well.");
+                    }
                 }
             }
             

@@ -399,7 +399,10 @@ public class BaseHstComponent extends GenericHstComponent {
      * This returns the client ComponentManager if one is configured with its default name. If set on the context with a different
      * attribute name, you need to fetch it yourself with a different attr name
      * @return the client ComponentManager or <code>null</code> if none configured 
+     * @deprecated since 2.28.00 client component manager should not be used any more. Instead use the core
+     * {@link org.hippoecm.hst.site.HstServices#getComponentManager()}
      */
+    @Deprecated
     public ComponentManager getDefaultClientComponentManager(){
         ComponentManager clientComponentManager = HstFilter.getClientComponentManager(servletContext);
         if(clientComponentManager == null) {

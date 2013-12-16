@@ -45,6 +45,10 @@ import org.springframework.context.support.AbstractRefreshableConfigApplicationC
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+/**
+ * @deprecated since 2.28.00 (cms 7.9.0). Use {@link org.hippoecm.hst.site.HstServices#getComponentManager()} only
+ */
+@Deprecated
 public class ClientComponentManager implements ComponentManager, ServletContextAware, BeanPostProcessor {
 
     private static final String LOGGER_FQCN = ClientComponentManager.class.getName();
@@ -67,6 +71,9 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
     }
 
     public ClientComponentManager(Configuration configuration) {
+        logger.warn("ClientComponentManager is deprecated. Use HstService#getComponentManager() instead and replace " +
+                "client-assembly spring configuration with hst-assemply/overrides configuration. Remove " +
+                "clientComponentManagerClass init-param from web.xml for HstFilter as well.");
         this.configuration = configuration;
     }
 

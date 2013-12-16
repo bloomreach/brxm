@@ -385,7 +385,6 @@ client/src/test/java/org/hippoecm/hst/component/support/spring/util/TestMetadata
 client/src/test/java/org/hippoecm/hst/servlet/BinariesServletTest.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/tag/TestHeadContributionsTag.java -text
 client/src/test/java/org/hippoecm/hst/tag/TestHstFacetNavigationLinkTag.java -text
-client/src/test/java/org/hippoecm/hst/test/AbstractClientSpringTestCase.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/utils/TestBeanUtilsIsReadable.java -text svneol=unset#text/plain
 client/src/test/java/org/hippoecm/hst/utils/TestFoldToASCIIReplacer.java -text svneol=unset#text/plain
 client/src/test/java/org/hippoecm/hst/utils/TestIsoLatin1AccentReplacer.java -text svneol=unset#text/plain
