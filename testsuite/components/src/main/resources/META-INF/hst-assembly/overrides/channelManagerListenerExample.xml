@@ -14,15 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans" 
-       xmlns:lang="http://www.springframework.org/schema/lang" 
+<beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-3.0.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <!-- Custom channel manager event listeners in the following may be overriden in their project specific assembly. -->
   <bean id="customChannelManagerEventListeners" class="org.springframework.beans.factory.config.ListFactoryBean">
