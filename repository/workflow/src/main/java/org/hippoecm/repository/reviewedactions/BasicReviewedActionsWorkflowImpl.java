@@ -37,6 +37,7 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.CopyHandler;
@@ -122,29 +123,20 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             final String userIdentity = super.getWorkflowContext().getUserIdentity();
             final String state = JcrUtils.getStringProperty(getNode(), HippoStdNodeType.HIPPOSTD_STATE, "");
 
-            boolean editing = draftDocument != null && draftDocument.getOwner() != null;
-            boolean draftInUse = editing && !draftDocument.getOwner().equals(userIdentity);
-            boolean publishedLive = publishedDocument != null && publishedDocument.isAvailable("live");
-            boolean unpublishedDirty = unpublishedDocument != null &&
-                    (publishedDocument == null
-                            || !publishedLive
-                            || publishedDocument.getLastModificationDate().getTime() == 0
-                            || !publishedDocument.getLastModificationDate().equals(unpublishedDocument.getLastModificationDate()));
-            boolean pendingRequest = current != null;
+            final PublicationState publicationState =
+                    new PublicationState(publishedDocument, unpublishedDocument, draftDocument, current);
 
-            boolean status = !draftInUse;
-            boolean editable = !draftInUse && !pendingRequest;
-            boolean publishable = unpublishedDirty && !editing && !pendingRequest;
-            boolean depublishable = publishedLive && !editing && !pendingRequest;
-            Boolean deleteable = !publishedLive;
+            boolean status = !publicationState.isDraftInUse(userIdentity);
+            boolean editable = !publicationState.isDraftInUse(userIdentity) && !publicationState.isRequestPending();
+            boolean publishable = publicationState.isDirty() && !publicationState.isEditing() && !publicationState.isRequestPending();
+            boolean depublishable = publicationState.isLive() && !publicationState.isEditing() && !publicationState.isRequestPending();
+            Boolean deleteable = !publicationState.isLive();
 
             // put everything on the unpublished; unless it doesn't exist
             if (unpublishedDocument != null && !PublishableDocument.UNPUBLISHED.equals(state)) {
                 status = editable = publishable = depublishable = false;
                 deleteable = null;
             } else if (unpublishedDocument == null) {
-                // unpublished is null
-                // put edit action on draft, depublish, delete on published.
                 if (PublishableDocument.DRAFT.equals(state)) {
                     if (publishedDocument != null) {
                         depublishable = status = false;
@@ -158,12 +150,10 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
 
             if (PublishableDocument.DRAFT.equals(state) && unpublishedDocument != null) {
-                Node draftNode = getWorkflowContext().getUserSession().getNodeByIdentifier(draftDocument.getIdentity());
-                Node unpublishedNode = unpublishedDocument.getNode();
-                info.put("modified", !equals(draftNode, unpublishedNode));
+                info.put("checkModified", true);
             }
 
-            if (PublishableDocument.DRAFT.equals(state) && draftInUse) {
+            if (PublishableDocument.DRAFT.equals(state) && publicationState.isDraftInUse(userIdentity)) {
                 info.put("inUseBy", draftDocument.getOwner());
             }
             info.put("obtainEditableInstance", editable);
@@ -174,9 +164,16 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
             info.put("status", status);
         } catch (RepositoryException ex) {
-            // TODO DEJDO: ignore?
+            log.error("Failed to calculate hints", ex);
         }
         return info;
+    }
+
+    @Override
+    public boolean isModified() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node draftNode = getWorkflowContext().getUserSession().getNodeByIdentifier(draftDocument.getIdentity());
+        Node unpublishedNode = unpublishedDocument.getNode();
+        return !equals(draftNode, unpublishedNode);
     }
 
     protected Node cloneDocumentNode(Document document) throws RepositoryException {

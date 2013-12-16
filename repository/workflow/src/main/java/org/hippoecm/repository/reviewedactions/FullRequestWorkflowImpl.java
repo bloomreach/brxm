@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -37,10 +38,11 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     private static final long serialVersionUID = 1L;
 
     protected PublishableDocument publishedDocument;
-
     protected PublishableDocument unpublishedDocument;
-
     protected PublishableDocument draftDocument;
+
+    public FullRequestWorkflowImpl() throws RemoteException {
+    }
 
     public void setNode(Node node) throws RepositoryException {
         super.setNode(node);
@@ -49,14 +51,14 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
 
         draftDocument = unpublishedDocument = publishedDocument = null;
         for (Node sibling : new NodeIterable(parent.getNodes(parent.getName()))) {
-            String state = JcrUtils.getStringProperty(sibling, "hippostd:state", "");
-            if ("draft".equals(state)) {
+            String state = JcrUtils.getStringProperty(sibling, HippoStdNodeType.HIPPOSTD_STATE, null);
+            if (HippoStdNodeType.DRAFT.equals(state)) {
                 draftDocument = new PublishableDocument(sibling);
             }
-            else if ("unpublished".equals(state)) {
+            else if (HippoStdNodeType.UNPUBLISHED.equals(state)) {
                 unpublishedDocument = new PublishableDocument(sibling);
             }
-            else if ("published".equals(state)) {
+            else if (HippoStdNodeType.PUBLISHED.equals(state)) {
                 publishedDocument = new PublishableDocument(sibling);
             }
         }
@@ -96,42 +98,40 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
         return info;
     }
 
-    public FullRequestWorkflowImpl() throws RemoteException {
-    }
-
     public void acceptRequest() throws WorkflowException, RepositoryException, RemoteException {
         log.info("accepting request for document ");
         String requestType = request.getType();
+        final PublicationState state = new PublicationState(publishedDocument, unpublishedDocument, draftDocument, request);
         if(PublicationRequest.DELETE.equals(requestType)) {
-            if (publishedDocument != null) {
+            if (state.isLive()) {
                 throw new WorkflowException("cannot delete document when still published");
             }
-            if (draftDocument != null) {
+            if (state.isEditing()) {
                 throw new WorkflowException("cannot delete document which is being edited");
             }
             deleteRequest();
             ((FullReviewedActionsWorkflow)getWorkflowContext().getWorkflow("default", unpublishedDocument)).delete();
         } else if(PublicationRequest.PUBLISH.equals(requestType)) {
-            if (unpublishedDocument == null) {
+            if (state.isDirty()) {
                 throw new WorkflowException("cannot publish document when no changes present");
             }
             deleteRequest();
             ((FullReviewedActionsWorkflow)getWorkflowContext().getWorkflow("default", unpublishedDocument)).publish();
         } else if(PublicationRequest.DEPUBLISH.equals(requestType)) {
-            if (publishedDocument == null) {
+            if (!state.isLive()) {
                 throw new WorkflowException("cannot depublish document when not published");
             }
             deleteRequest();
             ((FullReviewedActionsWorkflow)getWorkflowContext().getWorkflow("default", publishedDocument)).depublish();
         } else if(PublicationRequest.SCHEDPUBLISH.equals(requestType)) {
-            if (unpublishedDocument == null) {
+            if (!state.isDirty()) {
                 throw new WorkflowException("cannot publish document when no changes present");
             }
             Workflow wf = getWorkflowContext().getWorkflow("default", request.getReference());
             ((FullReviewedActionsWorkflow)wf).publish(request.getScheduledDate());
             deleteRequest();
         } else if(PublicationRequest.SCHEDDEPUBLISH.equals(requestType)) {
-            if (publishedDocument == null) {
+            if (!state.isLive()) {
                 throw new WorkflowException("cannot depublish document when not published");
             }
             Workflow wf = getWorkflowContext().getWorkflow("default", request.getReference());

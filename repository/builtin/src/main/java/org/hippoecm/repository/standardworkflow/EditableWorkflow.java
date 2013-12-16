@@ -22,6 +22,7 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * This interface is available as work-flow interface on documents which implement a default flow how to edit the documents.
@@ -67,5 +68,20 @@ public interface EditableWorkflow extends Workflow {
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
     public Document disposeEditableInstance()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Compare the editable copy of the document with the last persisted version.
+     * The hint for availability of this method is 'checkModified'.
+     *
+     * @return true if the content is different, false otherwise
+     *
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     */
+    @WorkflowAction(loggable = false)
+    public boolean isModified()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }

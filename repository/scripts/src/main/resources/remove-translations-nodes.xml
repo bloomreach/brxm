@@ -37,6 +37,10 @@ import javax.jcr.Node&#xd;
 class RemoveTranslationsNodes extends BaseNodeUpdateVisitor {&#xd;
 &#xd;
   boolean doUpdate(Node node) {&#xd;
+    if (!node.isNodeType("hippotranslation:translations")) {&#xd;
+        log.warn("Script must be executed with query //element(*, hippotranslation:translations)");&#xd;
+        return false;&#xd;
+    }&#xd;
     log.debug "Removing node ${node.path}"&#xd;
     node.remove()&#xd;
     return true&#xd;
@@ -52,3 +56,4 @@ class RemoveTranslationsNodes extends BaseNodeUpdateVisitor {&#xd;
     <sv:value>1000</sv:value>
   </sv:property>
 </sv:node>
+

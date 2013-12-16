@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
@@ -241,6 +242,11 @@ public class DeprecatedBasicReviewedActionsWorkflowImpl extends WorkflowImpl imp
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean isModified() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        return false;
     }
 
     public void requestDeletion() throws WorkflowException {

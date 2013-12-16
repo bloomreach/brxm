@@ -138,7 +138,6 @@ public class ContentUpgrade79 {
 
     private boolean isDeprecatedHippoTranslationNode(final Element element, final Attribute nameAttr) {
         if ("hippotranslation:translations".equals(nameAttr.getValue())) {
-            System.out.println("CHeck");
             final List<Element> properties = element.getChildren("property", SV);
             for (Element property : properties) {
                 String propName = property.getAttribute("name", SV).getValue();
