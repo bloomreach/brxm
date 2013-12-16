@@ -109,6 +109,13 @@
     <appender-ref ref="console"/>
   </logger>
 
+
+  <logger additivity="false" name="org.hippoecm.hst.configuration.model.HstManagerImpl">
+    <level value="info"/>
+    <appender-ref ref="site"/>
+    <appender-ref ref="console"/>
+  </logger>
+
   <logger additivity="false" name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
     <level value="info"/>
     <appender-ref ref="site-diagnostic"/>

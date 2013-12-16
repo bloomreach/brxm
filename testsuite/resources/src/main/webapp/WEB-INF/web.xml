@@ -81,28 +81,6 @@
       <param-name>suffixExclusions</param-name>
       <param-value>.do, .jsp, .css, .js, .pdf, .ico, .gif, .GIF, .jpg, .jpeg, .JPEG, .JPG, .png, .PNG</param-value>
     </init-param>
-    <!--
-      HST Application Context Namespace Prefix. This should be unique
-      among multiple HST-based application contexts.
-    -->
-    <!--
-      <init-param> <param-name>hstContextNamespace</param-name>
-      <param-value>news</param-value> </init-param>
-    -->
-    <!--
-      HST-2 based SITE application can define and assemble its own
-      components by uncommenting the following two init parameters and
-      set the spring configuration files properly. The spring
-      configuration resources are loaded by the context classloader.
-    -->
-    <init-param>
-      <param-name>clientComponentManagerClass</param-name>
-      <param-value>org.hippoecm.hst.component.support.ClientComponentManager</param-value>
-    </init-param>
-    <init-param>
-      <param-name>clientComponentManagerConfigurations</param-name>
-      <param-value>/META-INF/client-assembly/*.xml</param-value>
-    </init-param>
   </filter>
 
   <filter>

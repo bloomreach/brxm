@@ -24,6 +24,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.channel.DemoChannelInfo;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ public class Home extends BaseHstComponent {
             return;
         }
         
-        String greetingComponent = getDefaultClientComponentManager().getComponent("greeting");
+        String greetingComponent = HstServices.getComponentManager().getComponent("greeting");
         if (!greetingComponent.equals("Hello, HST-2!")) {
             throw new HstComponentException("Client component 'greeting' should state 'Hello, HST-2'");
         }
