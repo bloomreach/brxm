@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -27,6 +28,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
@@ -58,7 +60,9 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     }
 
     public Map<String,Serializable> hints() {
-        return null;
+        Map<String, Serializable> map = new TreeMap<>();
+        map.put("checkModified", true);
+        return map;
     }
 
     public Document obtainEditableInstance()
@@ -74,6 +78,13 @@ public class DefaultWorkflowImpl implements DefaultWorkflow, EditableWorkflow, I
     public Document disposeEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException {
         throw new WorkflowException("Document type does not allow for reverting changes");
+    }
+
+    @Override
+    public boolean isModified() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        final HippoSession session = (HippoSession) context.getUserSession();
+        final Node node = session.getNodeByIdentifier(document.getIdentity());
+        return session.pendingChanges(node, "nt:base", true).hasNext();
     }
 
     public void delete() throws WorkflowException, MappingException, RepositoryException, RemoteException {

@@ -37,6 +37,7 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.util.CopyHandler;
@@ -158,9 +159,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             }
 
             if (PublishableDocument.DRAFT.equals(state) && unpublishedDocument != null) {
-                Node draftNode = getWorkflowContext().getUserSession().getNodeByIdentifier(draftDocument.getIdentity());
-                Node unpublishedNode = unpublishedDocument.getNode();
-                info.put("modified", !equals(draftNode, unpublishedNode));
+                info.put("checkModified", true);
             }
 
             if (PublishableDocument.DRAFT.equals(state) && draftInUse) {
@@ -177,6 +176,13 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             // TODO DEJDO: ignore?
         }
         return info;
+    }
+
+    @Override
+    public boolean isModified() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+        Node draftNode = getWorkflowContext().getUserSession().getNodeByIdentifier(draftDocument.getIdentity());
+        Node unpublishedNode = unpublishedDocument.getNode();
+        return !equals(draftNode, unpublishedNode);
     }
 
     protected Node cloneDocumentNode(Document document) throws RepositoryException {
