@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.documentworkflow.task;
 
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,34 +26,41 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.PublishableDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Custom workflow task for determining if current draft is modified compared to the unpublished variant
- * and save this state in the handle hints.
+ * and save this state in the handle info map.
  */
 public class IsModifiedTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(IsModifiedTask.class);
+    private boolean userDraft;
+
+    public boolean isUserDraft() {
+        return userDraft;
+    }
+
+    public void setUserDraft(final boolean userDraft) {
+        this.userDraft = userDraft;
+    }
 
     @Override
-    public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
+    public Object doExecute() throws RepositoryException {
 
         DocumentHandle dm = getDocumentHandle();
 
-        if (dm.getDraft() != null && dm.getUnpublished() != null && PublishableDocument.DRAFT.equals(dm.getSubjectState())) {
-            // TODO: BasicReviewedActionsWorkflowImpl#hints() method retrieves a 'fresh' draftNode based on the dm.d.identifier. Why would that be needed?
-            dm.getActions().put("modified", !equals(dm.getDraft().getNode(), dm.getUnpublished().getNode()));
+        if (dm.getDraft() != null && dm.getUnpublished() != null) {
+            Node draftNode = dm.getDraft().getNode();
+            if (isUserDraft()) {
+                draftNode = dm.getWorkflowContext().getUserSession().getNodeByIdentifier(draftNode.getIdentifier());
+            }
+            dm.getInfo().put("modified", !equals(draftNode, dm.getUnpublished().getNode()));
         }
-
         return null;
     }
 

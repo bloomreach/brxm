@@ -106,7 +106,10 @@ public class SCXMLWorkflowExecutor {
                     resetRequired = true;
                 }
             }
-            if (!resetRequired) {
+            if (resetRequired) {
+                getDataModel().reset();
+            }
+            else {
                 terminated = true;
             }
         }

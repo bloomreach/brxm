@@ -404,7 +404,6 @@ public class DocumentHandle implements SCXMLDataModel {
     public void reset() {
         actions.clear();
         info.clear();
-        result = null;
     }
 
     @Override

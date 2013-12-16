@@ -18,31 +18,30 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.task.IsModifiedTask;
+import org.onehippo.repository.documentworkflow.task.SetHolderTask;
 
-/**
- * IsModifiedAction delegating the execution to IsModifiedTask.
- */
-public class IsModifiedAction extends AbstractDocumentTaskAction<IsModifiedTask> {
+public class SetHolderAction extends AbstractDocumentTaskAction<SetHolderTask> {
 
     private static final long serialVersionUID = 1L;
 
-    public boolean isUserDraft() {
-        return Boolean.parseBoolean(getParameter("userDraft"));
+    public void setHolder(String holder) {
+        setParameter("holderExpr", holder);
     }
 
-    public void setUserDraft(String userDraft) {
-        getParameter("userDraft", userDraft);
+    public String getHolder() {
+        return getParameter("holderExpr");
+    }
+    @Override
+    protected SetHolderTask createWorkflowTask() {
+        return new SetHolderTask();
     }
 
     @Override
-    protected IsModifiedTask createWorkflowTask() {
-        return new IsModifiedTask();
-    }
-
-    @Override
-    protected void initTask(final IsModifiedTask task) throws ModelException, SCXMLExpressionException {
+    protected void initTask(SetHolderTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setUserDraft(isUserDraft());
+        String holder = getHolder();
+        if (holder != null) {
+            task.setHolder((String) eval(getHolder()));
+        }
     }
 }

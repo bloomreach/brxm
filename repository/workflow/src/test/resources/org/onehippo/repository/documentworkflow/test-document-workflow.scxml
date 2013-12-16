@@ -25,7 +25,9 @@
       <onentry>
         <if cond="dm.sf.document">
           <hippo:info info="status" value="false"/>
-          <hippo:action action="checkModified" value="dm.ss=='draft' and !empty(dm.u)"/>
+          <if cond="dm.ss=='draft' and !empty(dm.u)">
+            <hippo:isModified userDraft="true"/>
+          </if>
           <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
             <!--not draft in use by other user -->
             <if cond="dm.ss=='unpublished' or (empty(dm.u) and (dm.ss=='published' or (dm.ss=='draft' and empty(dm.p))))">
@@ -93,6 +95,47 @@
           </if>
         </onentry>
       </state>
+
+      <transition event="disposeEditableInstance" target="reset">
+        <hippo:setHolder holder="null"/>
+        <if cond="!empty(dm.u) and dm.u.isAvailable('preview')">
+          <hippo:result value="dm.u"/>
+        <elseif cond="!empty(dm.p)"/>
+          <hippo:result value="dm.p"/>
+        </if>
+      </transition>
+
+      <transition event="obtainEditableInstance" target="reset">
+        <if cond="!empty(dm.u)">
+          <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+        <elseif cond="!empty(dm.p)"/>
+          <hippo:copyVariant sourceState="published" targetState="draft"/>
+        </if>
+        <hippo:configVariant variant="dm.d" skipIndex="true" applyModified="true" setHolder="true"/>
+        <hippo:result value="dm.d"/>
+      </transition>
+
+      <transition event="commitEditableInstance" target="reset">
+        <hippo:setHolder holder="null"/>
+        <if cond="!empty(dm.u)">
+          <hippo:isModified userDraft="false"/>
+        </if>
+        <if cond="empty(dm.u) or dm.info['modified']">
+          <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
+          <hippo:configVariant variant="dm.u" versionable="true" applyModified="true" availabilities="preview"/>
+          <if cond="!empty(dm.p)">
+            <if cond="dm.p.isAvailable('live')">
+              <hippo:configVariant variant="dm.p" availabilities="live"/>
+            <else/>
+              <hippo:configVariant variant="dm.p" availabilities="null"/>
+            </if>
+          </if>
+        </if>
+      </transition>
+
+      <transition event="unlock" target="reset">
+        <hippo:setHolder holder="dm.user"/>
+      </transition>
 
     </state>
 
@@ -170,6 +213,7 @@
         <onentry>
           <if cond="(empty(dm.r) or dm.user=='system') and dm.ss=='unpublished'">
             <hippo:action action="publish" value="true"/>
+            <hippo:action action="requestPublish" value="true"/>
           </if>
         </onentry>
       </state>
@@ -198,6 +242,7 @@
         <onentry>
           <if cond="(empty(dm.r) or dm.user=='system') and (dm.ss=='unpublished' or dm.s=='p' or (dm.s=='dp' and dm.ss=='draft'))">
             <hippo:action action="depublish" value="true"/>
+            <hippo:action action="requestDepublish" value="true"/>
           </if>
         </onentry>
       </state>
@@ -242,6 +287,7 @@
       <state id="terminateable">
         <onentry>
           <hippo:action action="delete" value="true"/>
+          <hippo:action action="requestDelete" value="true"/>
           <if cond="dm.pm('hippo:editor')">
             <hippo:action action="move" value="true"/>
             <hippo:action action="rename" value="true"/>
@@ -251,6 +297,7 @@
       <state id="not-terminateable">
         <onentry>
           <hippo:action action="delete" value="false"/>
+          <hippo:action action="requestDelete" value="false"/>
           <if cond="dm.pm('hippo:editor')">
             <hippo:action action="move" value="false"/>
             <hippo:action action="rename" value="false"/>
@@ -288,6 +335,7 @@
 
   </parallel>
 
+  <final id="reset"/>
   <final id="terminated" />
 
 </scxml>

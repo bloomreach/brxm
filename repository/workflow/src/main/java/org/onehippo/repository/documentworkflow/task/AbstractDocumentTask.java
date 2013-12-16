@@ -124,6 +124,15 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         return copyTo(srcNode, destNode);
     }
 
+    /**
+     * Copies {@link Node} {@code srcNode} to {@code destNode}.
+     * Special properties and mixins are filtered out; those are actively maintained by the workflow.
+     *
+     * @param srcNode the node to copy
+     * @param destNode the node that the contents of srcNode will be copied to
+     * @return destNode
+     * @throws RepositoryException
+     */
     protected Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
         final CopyHandler chain = new OverwritingCopyHandler(destNode) {
 
@@ -131,15 +140,12 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
             public void startNode(final NodeInfo nodeInfo) throws RepositoryException {
                 String[] oldMixins = nodeInfo.getMixinNames();
                 Set<String> mixins = new HashSet<>();
-
                 for (String mixin : oldMixins) {
                     if (Arrays.binarySearch(PROTECTED_MIXINS, mixin) >= 0) {
                         continue;
                     }
-
                     mixins.add(mixin);
                 }
-
                 String[] newMixins = mixins.toArray(new String[mixins.size()]);
                 final NodeInfo newInfo = new NodeInfo(nodeInfo.getName(), nodeInfo.getIndex(), nodeInfo.getNodeTypeName(), newMixins);
                 super.startNode(newInfo);
@@ -151,13 +157,10 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
                     if (property.getDefinition().isProtected()) {
                         continue;
                     }
-
                     String name = property.getName();
-
                     if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
                         continue;
                     }
-
                     property.remove();
                 }
             }
@@ -166,10 +169,8 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
             protected void replaceMixins(final Node node, final NodeInfo nodeInfo) throws RepositoryException {
                 Set<String> mixinSet = new TreeSet<>();
                 Collections.addAll(mixinSet, nodeInfo.getMixinNames());
-
                 for (NodeType nodeType : node.getMixinNodeTypes()) {
                     final String mixinName = nodeType.getName();
-
                     if (!mixinSet.contains(mixinName)) {
                         if (Arrays.binarySearch(PROTECTED_MIXINS, mixinName) < 0) {
                             node.removeMixin(mixinName);
@@ -178,7 +179,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
                         mixinSet.remove(mixinName);
                     }
                 }
-
                 for (String mixinName : mixinSet) {
                     node.addMixin(mixinName);
                 }
@@ -187,18 +187,14 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
             @Override
             public void setProperty(final PropInfo propInfo) throws RepositoryException {
                 String name = propInfo.getName();
-
                 if (Arrays.binarySearch(PROTECTED_PROPERTIES, name) >= 0) {
                     return;
                 }
-
                 super.setProperty(propInfo);
             }
         };
-
         JcrUtils.copyTo(srcNode, chain);
 
         return destNode;
     }
-
 }

@@ -36,6 +36,5 @@ class MockSCXMLDataModel implements SCXMLDataModel {
 
     public void reset() {
         actions.clear();
-        result = null;
     }
 }

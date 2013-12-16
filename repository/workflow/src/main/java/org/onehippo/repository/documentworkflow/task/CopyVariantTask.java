@@ -20,32 +20,20 @@ import java.rmi.RemoteException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.PublishableDocument;
-import org.onehippo.repository.util.JcrConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Custom workflow task for copying (creating if necessary) from one varaint node to another variant node
- * with workflow properties setting options. 
+ * Custom workflow task for copying (creating if necessary) from one variant node to another variant node
  */
 public class CopyVariantTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(CopyVariantTask.class);
-
     private String sourceState;
     private String targetState;
-    private String availabilities;
-    private boolean applyModified;
-    private boolean versionable;
-    private boolean skipIndex;
 
     public String getSourceState() {
         return sourceState;
@@ -63,38 +51,6 @@ public class CopyVariantTask extends AbstractDocumentTask {
         this.targetState = targetState;
     }
 
-    public String getAvailabilities() {
-        return availabilities;
-    }
-
-    public void setAvailabilities(String availabilities) {
-        this.availabilities = availabilities;
-    }
-
-    public boolean isApplyModified() {
-        return applyModified;
-    }
-
-    public void setApplyModified(boolean applyModified) {
-        this.applyModified = applyModified;
-    }
-
-    public boolean isSkipIndex() {
-        return skipIndex;
-    }
-
-    public void setSkipIndex(boolean skipIndex) {
-        this.skipIndex = skipIndex;
-    }
-
-    public boolean isVersionable() {
-        return versionable;
-    }
-
-    public void setVersionable(boolean versionable) {
-        this.versionable = versionable;
-    }
-
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
@@ -108,10 +64,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
         }
 
         final Node sourceNode = sourceDoc.getNode();
-        final Node parent = sourceNode.getParent();
-        Node targetNode = null;
-
-        JcrUtils.ensureIsCheckedOut(parent);
+        Node targetNode;
 
         boolean saveNeeded = false;
 
@@ -136,23 +89,6 @@ public class CopyVariantTask extends AbstractDocumentTask {
                         "The target document variant (node) is the same as the source document variant (node).");
             }
             copyTo(sourceNode, targetNode);
-        }
-
-        if (!targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
-            targetNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
-        }
-
-        if (isVersionable() && !targetNode.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-            targetNode.addMixin(JcrConstants.MIX_VERSIONABLE);
-        }
-
-        if (isSkipIndex() && !targetNode.isNodeType((HippoNodeType.NT_SKIPINDEX))) {
-            targetNode.addMixin(HippoNodeType.NT_SKIPINDEX);
-        }
-
-        targetDoc.setAvailability(getAvailabilities() != null ? StringUtils.split(getAvailabilities(), "\t\r\n, ") : null);
-        if (isApplyModified()) {
-            targetDoc.setModified(dm.getUser());
         }
 
         if (saveNeeded) {

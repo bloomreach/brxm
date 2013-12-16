@@ -477,6 +477,7 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestW
 workflow/src/main/java/org/onehippo/repository/documentworkflow/PublicationRequest.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/PublishableDocument.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ArchiveAction.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ConfigVariantAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyVariantAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/IsModifiedAction.java -text
@@ -484,8 +485,10 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/action/MoveDocum
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/RenameDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/RequestAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ScheduleRequestAction.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/action/SetHolderAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/AbstractDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ArchiveTask.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ConfigVariantTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyVariantTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/IsModifiedTask.java -text

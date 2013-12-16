@@ -43,38 +43,6 @@ public class CopyVariantAction extends AbstractDocumentTaskAction<CopyVariantTas
         setParameter("targetState", targetState);
     }
 
-    public String getAvailabilities() {
-        return getParameter("availabilities");
-    }
-
-    public void setAvailabilities(String availabilities) {
-        setParameter("availabilities", availabilities);
-    }
-
-    public boolean isApplyModified() {
-        return Boolean.parseBoolean(getParameter("applyModified"));
-    }
-
-    public void setApplyModified(String applyModified) {
-        setParameter("applyModified", applyModified);
-    }
-
-    public boolean isSkipIndex() {
-        return Boolean.parseBoolean(getParameter("skipIndex"));
-    }
-
-    public void setSkipIndex(String skipIndex) {
-        getParameter("skipIndex", skipIndex);
-    }
-
-    public boolean isVersionable() {
-        return Boolean.parseBoolean(getParameter("versionable"));
-    }
-
-    public void setVersionable(String versionable) {
-        setParameter("versionable", versionable);
-    }
-
     @Override
     protected CopyVariantTask createWorkflowTask() {
         return new CopyVariantTask();
@@ -85,9 +53,5 @@ public class CopyVariantAction extends AbstractDocumentTaskAction<CopyVariantTas
         super.initTask(task);
         task.setSourceState(getSourceState());
         task.setTargetState(getTargetState());
-        task.setAvailabilities(getAvailabilities());
-        task.setApplyModified(isApplyModified());
-        task.setSkipIndex(isSkipIndex());
-        task.setVersionable(isVersionable());
     }
 }

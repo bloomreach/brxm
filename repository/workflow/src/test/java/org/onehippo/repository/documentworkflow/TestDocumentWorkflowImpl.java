@@ -39,8 +39,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.action.ArchiveAction;
+import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
+import org.onehippo.repository.documentworkflow.action.SetHolderAction;
 import org.onehippo.repository.scxml.ActionAction;
 import org.onehippo.repository.scxml.ResultAction;
 import org.onehippo.repository.documentworkflow.action.InfoAction;
@@ -71,14 +73,16 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "info", InfoAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyvariant", CopyVariantAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyVariant", CopyVariantAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "configVariant", ConfigVariantAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "request", RequestAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "archive", ArchiveAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "ismodified", IsModifiedAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "schedulerequest", ScheduleRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copydocument", CopyDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "movedocument", MoveDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renamedocument", RenameDocumentAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "isModified", IsModifiedAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "scheduleRequest", ScheduleRequestAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyDocument", CopyDocumentAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "moveDocument", MoveDocumentAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renameDocument", RenameDocumentAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setHolder", SetHolderAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
@@ -213,28 +217,28 @@ public class TestDocumentWorkflowImpl {
         wf.setNode(unpublishedVariant);
 
         assertContainsHint(wf.hints(), "status", true);
-        assertContainsHint(wf.hints(), "checkModified", false);
+        assertNotContainsHint(wf.hints(), "checkModified");
 
         wf.setNode(draftVariant);
 
         assertContainsHint(wf.hints(), "status", false);
-        assertContainsHint(wf.hints(), "checkModified", true);
+        assertContainsHint(wf.hints(), "modified", false);
 
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "status", false);
-        assertContainsHint(wf.hints(), "checkModified", false);
+        assertNotContainsHint(wf.hints(), "checkModified");
 
         unpublishedVariant.remove();
         wf.setNode(publishedVariant);
 
         assertContainsHint(wf.hints(), "status", true);
-        assertContainsHint(wf.hints(), "checkModified", false);
+        assertNotContainsHint(wf.hints(), "checkModified");
 
         wf.setNode(draftVariant);
 
         assertContainsHint(wf.hints(), "status", false);
-        assertContainsHint(wf.hints(), "checkModified", false);
+        assertNotContainsHint(wf.hints(), "checkModified");
 
         publishedVariant.remove();
         wf.setNode(draftVariant);
