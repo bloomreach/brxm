@@ -265,14 +265,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     }
 
     @Override
-    public void finalize() {
-        if (context.getSessionState().isAlive()) {
-            log.info("Unclosed session detected.");
-            logout();
-        }
-    }
-
-    @Override
     public LocalItemStateManager createItemStateManager(RepositoryContext repositoryContext, WorkspaceImpl workspace, SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory, String attribute, ItemStateCacheFactory cacheFactory) {
         RepositoryImpl repository = (RepositoryImpl) repositoryContext.getRepository();
         LocalItemStateManager mgr = new HippoLocalItemStateManager(sharedStateMgr, workspace, repositoryContext.getItemStateCacheFactory(), attribute, repository.getNodeTypeRegistry(), repository.isStarted(), repositoryContext.getRootNodeId());

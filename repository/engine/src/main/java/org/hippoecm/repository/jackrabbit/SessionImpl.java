@@ -252,18 +252,6 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     }
 
     @Override
-    public void finalize() {
-        if(log.isDebugEnabled()) {
-            super.finalize();
-        } else {
-            if (context.getSessionState().isAlive()) {
-                log.info("Unclosed session detected.");
-                logout();
-            }
-        }
-    }
-
-    @Override
     public LocalItemStateManager createItemStateManager(RepositoryContext repositoryContext, WorkspaceImpl workspace, SharedItemStateManager sharedStateMgr, EventStateCollectionFactory factory, String attribute, ItemStateCacheFactory cacheFactory) {
         LocalItemStateManager mgr = new HippoLocalItemStateManager(sharedStateMgr, context.getWorkspace(), context.getRepositoryContext().getItemStateCacheFactory(), attribute, ((RepositoryImpl)context.getRepository()).getNodeTypeRegistry(), ((RepositoryImpl)context.getRepository()).isStarted(), ((RepositoryImpl)context.getRepository()).getRootNodeId());
         sharedStateMgr.addListener(mgr);
