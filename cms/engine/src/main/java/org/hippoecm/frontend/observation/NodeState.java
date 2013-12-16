@@ -156,6 +156,7 @@ class NodeState {
         for (Value value : values) {
             digest.update(value.getString().getBytes());
         }
+        digest.update(BigInteger.valueOf(values.length).toByteArray());
         return new BigInteger(digest.digest());
     }
 
