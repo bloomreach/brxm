@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -249,8 +248,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     public AbstractDialog(IModel<T> model) {
         super("form", model);
-
-        setOutputMarkupId(true);
 
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
@@ -536,23 +533,18 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     @Override
     protected final void onSubmit() {
-        Page page = findParent(Page.class);
-        if (page != null) {
-            if (fmm != null) {
-                fmm.reset();
-            }
-        }
+        tryResetFeedbackModel();
     }
 
     @Override
     protected final void onError() {
-        Page page = findParent(Page.class);
-        if (page != null) {
-            if (fmm != null) {
-                fmm.reset();
-            }
+        tryResetFeedbackModel();
+    }
+
+    private void tryResetFeedbackModel() {
+        if (!isRemoved && fmm != null) {
+            fmm.reset();
         }
-        super.onError();
     }
 
     /**

@@ -117,6 +117,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
                 remove(getContent());
                 target.add(this);
                 close(target);
+            } else {
+                cleanup();
             }
         }
     }
