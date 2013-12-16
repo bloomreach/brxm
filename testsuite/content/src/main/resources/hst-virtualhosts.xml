@@ -315,7 +315,7 @@
               <sv:value>/hst:hst/hst:channels/demosite-fr</sv:value>
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
-              <sv:value>/hst:hst/hst:sites/demosite_fr-preview</sv:value>
+              <sv:value>/hst:hst/hst:sites/demosite_fr</sv:value>
             </sv:property>
             <sv:property sv:name="hst:locale" sv:type="String">
               <sv:value>fr_FR</sv:value>
