@@ -238,8 +238,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 EditableWorkflow workflow = (BasicReviewedActionsWorkflow) manager.getWorkflow("editing", node);
                 Map<String,Serializable> hints = workflow.hints();
-                if (hints.containsKey("modified")) {
-                    modified = (Boolean) hints.get("modified");
+                if (hints.containsKey("checkModified")) {
+                    modified = workflow.isModified();
                     return modified;
                 }
             }
