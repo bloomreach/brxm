@@ -64,6 +64,11 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     }
 
     @Override
+    public String rewrite(String html, HstRequestContext requestContext) {
+        return getInnerHtml(html);
+    }
+
+    @Override
     public String rewrite(String html, Node node, HstRequestContext requestContext) {
         return rewrite(html, node, requestContext, (Mount)null);
     }
@@ -75,49 +80,40 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     }
     
     @Override
-    public String rewrite(String html, Node node, HstRequestContext requestContext, Mount targetMount) {
+    public String rewrite(final String html, Node node, HstRequestContext requestContext, Mount targetMount) {
+
+        // strip off html & body tag
+        String rewrittenHtml = getInnerHtml(html);
+        if (StringUtils.isEmpty(rewrittenHtml)) {
+            return rewrittenHtml;
+        }
+
         // only create if really needed
         StringBuilder sb = null;
-        
-        // strip off html & body tag
-        String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
-        
-        if (innerHTML == null) {
-            if (html == null || HTML_TAG_PATTERN.matcher(html).find() || BODY_TAG_PATTERN.matcher(html).find()) {
-                return null;
-            }
-        } else {
-            html = innerHTML;
-        }
-        
-        if ("".equals(html)) {
-            return "";
-        }
-        
         int globalOffset = 0;
-        while (html.indexOf(LINK_TAG, globalOffset) > -1) {
-            int offset = html.indexOf(LINK_TAG, globalOffset);
+        while (rewrittenHtml.indexOf(LINK_TAG, globalOffset) > -1) {
+            int offset = rewrittenHtml.indexOf(LINK_TAG, globalOffset);
 
-            int hrefIndexStart = html.indexOf(HREF_ATTR_NAME, offset);
+            int hrefIndexStart = rewrittenHtml.indexOf(HREF_ATTR_NAME, offset);
             if (hrefIndexStart == -1) {
                 break;
             }
 
             if (sb == null) {
-                sb = new StringBuilder(html.length());
+                sb = new StringBuilder(rewrittenHtml.length());
             }
 
             hrefIndexStart += HREF_ATTR_NAME.length();
             offset = hrefIndexStart;
-            int endTag = html.indexOf(END_TAG, offset);
+            int endTag = rewrittenHtml.indexOf(END_TAG, offset);
             boolean appended = false;
             if (hrefIndexStart < endTag) {
-                int hrefIndexEnd = html.indexOf(ATTR_END, hrefIndexStart);
+                int hrefIndexEnd = rewrittenHtml.indexOf(ATTR_END, hrefIndexStart);
                 if (hrefIndexEnd > hrefIndexStart) {
-                    String documentPath = html.substring(hrefIndexStart, hrefIndexEnd);
+                    String documentPath = rewrittenHtml.substring(hrefIndexStart, hrefIndexEnd);
 
                     offset = endTag;
-                    sb.append(html.substring(globalOffset, hrefIndexStart));
+                    sb.append(rewrittenHtml.substring(globalOffset, hrefIndexStart));
                     
                     if(isExternal(documentPath)) {
                         sb.append(documentPath);
@@ -142,46 +138,46 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         }
                     }
                     
-                    sb.append(html.substring(hrefIndexEnd, endTag));
+                    sb.append(rewrittenHtml.substring(hrefIndexEnd, endTag));
                     appended = true;
                 }
             }
             if (!appended && offset > globalOffset) {
-                sb.append(html.substring(globalOffset, offset));
+                sb.append(rewrittenHtml.substring(globalOffset, offset));
             }
             globalOffset = offset;
         }
 
         if (sb != null) {
-            sb.append(html.substring(globalOffset, html.length()));
-            html = String.valueOf(sb);
+            sb.append(rewrittenHtml.substring(globalOffset, rewrittenHtml.length()));
+            rewrittenHtml = String.valueOf(sb);
             sb = null;
         }
 
         globalOffset = 0;
-        while (html.indexOf(IMG_TAG, globalOffset) > -1) {
-            int offset = html.indexOf(IMG_TAG, globalOffset);
+        while (rewrittenHtml.indexOf(IMG_TAG, globalOffset) > -1) {
+            int offset = rewrittenHtml.indexOf(IMG_TAG, globalOffset);
 
-            int srcIndexStart = html.indexOf(SRC_ATTR_NAME, offset);
+            int srcIndexStart = rewrittenHtml.indexOf(SRC_ATTR_NAME, offset);
 
             if (srcIndexStart == -1) {
                 break;
             }
 
             if (sb == null) {
-                sb = new StringBuilder(html.length());
+                sb = new StringBuilder(rewrittenHtml.length());
             }
             srcIndexStart += SRC_ATTR_NAME.length();
             offset = srcIndexStart;
-            int endTag = html.indexOf(END_TAG, offset);
+            int endTag = rewrittenHtml.indexOf(END_TAG, offset);
             boolean appended = false;
             if (srcIndexStart < endTag) {
-                int srcIndexEnd = html.indexOf(ATTR_END, srcIndexStart);
+                int srcIndexEnd = rewrittenHtml.indexOf(ATTR_END, srcIndexStart);
                 if (srcIndexEnd > srcIndexStart) {
-                    String srcPath = html.substring(srcIndexStart, srcIndexEnd);
+                    String srcPath = rewrittenHtml.substring(srcIndexStart, srcIndexEnd);
                     
                     offset = endTag;
-                    sb.append(html.substring(globalOffset, srcIndexStart));
+                    sb.append(rewrittenHtml.substring(globalOffset, srcIndexStart));
                    
                     if(isExternal(srcPath)) {
                         sb.append(srcPath);
@@ -196,24 +192,39 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         }
                     }
                     
-                    sb.append(html.substring(srcIndexEnd, endTag));
+                    sb.append(rewrittenHtml.substring(srcIndexEnd, endTag));
                     appended = true;
                 }
             }
             if (!appended && offset > globalOffset) {
-                sb.append(html.substring(globalOffset, offset));
+                sb.append(rewrittenHtml.substring(globalOffset, offset));
             }
             globalOffset = offset;
         }
 
         if (sb == null) {
-            return html;
+            return rewrittenHtml;
         } else {
-            sb.append(html.substring(globalOffset, html.length()));
+            sb.append(rewrittenHtml.substring(globalOffset, rewrittenHtml.length()));
             return sb.toString();
         }
     }
-    
+
+    private String getInnerHtml(final String html) {
+        if (html == null) {
+            return null;
+        }
+        String innerHTML = SimpleHtmlExtractor.getInnerHtml(html, "body", false);
+        if (innerHTML == null) {
+            if (HTML_TAG_PATTERN.matcher(html).find() || BODY_TAG_PATTERN.matcher(html).find()) {
+                return null;
+            }
+            return html;
+        } else {
+            return innerHTML;
+        }
+    }
+
     protected HstLink getDocumentLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
         return getLink(path, node, requestContext, targetMount);
     }

@@ -39,7 +39,12 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     public AbstractContentRewriter() {
         
     }
-    
+
+    @Override
+    public T rewrite(final T content, final HstRequestContext requestContext) {
+        return null;
+    }
+
     @Override
     public T rewrite(T content, Node contentNode, HstRequestContext requestContext) {
         return null;

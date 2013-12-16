@@ -117,7 +117,7 @@ public class HstHtmlTag extends TagSupport {
                 html = contentRewriter.rewrite(hippoHtml.getContent(), hippoHtml.getNode(), requestContext);
                 break;
             case FORMATTEDTEXT:
-                html = contentRewriter.rewrite(formattedText, null, requestContext);
+                html = contentRewriter.rewrite(formattedText, requestContext);
                 break;
             case TEXT:
                 html = lineEndingsToHTML(text);
