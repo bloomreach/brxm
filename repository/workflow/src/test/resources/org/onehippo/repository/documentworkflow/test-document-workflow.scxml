@@ -189,6 +189,29 @@
 
       <state id="not-requested"/>
 
+      <transition event="acceptRequest" target="reset">
+        <if cond="dm.r.type=='delete'">
+          <hippo:deleteRequest/>
+          <hippo:invokeDocumentWorkflow action="delete" subjectExpr="dm.ss=='unpublished' ? dm.u : (dm.ss=='published' and empty(dm.u)) ? dm.p : dm.d"/>
+        <elseif cond="dm.r.type=='publish'"/>
+          <hippo:deleteRequest/>
+          <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.u"/>
+        <elseif cond="dm.r.type=='depublish'"/>
+          <hippo:deleteRequest/>
+          <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.p"/>
+        <elseif cond="dm.r.type=='schedpublish'"/>
+          <hippo:deleteRequest/>
+          <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
+        <elseif cond="dm.r.type=='scheddepublish'"/>
+          <hippo:deleteRequest/>
+          <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.re.reference"/>
+        <elseif cond="dm.r.type=='rejected"/>
+          <hippo:workflowException errorExpr="'Request has already been rejected'"/>
+        <else/>
+          <hippo:workflowException errorExpr="'Unknown request type '+dm.r.type"/>
+        </if>
+      </transition>
+
     </state>
 
     <state id="publish" initial="no-publish">

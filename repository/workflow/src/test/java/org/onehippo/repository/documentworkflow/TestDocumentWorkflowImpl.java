@@ -42,7 +42,10 @@ import org.onehippo.repository.documentworkflow.action.ArchiveAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
+import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
+import org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.SetHolderAction;
+import org.onehippo.repository.documentworkflow.action.WorkflowExceptionAction;
 import org.onehippo.repository.scxml.ActionAction;
 import org.onehippo.repository.scxml.ResultAction;
 import org.onehippo.repository.documentworkflow.action.InfoAction;
@@ -83,6 +86,9 @@ public class TestDocumentWorkflowImpl {
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "moveDocument", MoveDocumentAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renameDocument", RenameDocumentAction.class.getName());
         registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setHolder", SetHolderAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "deleteRequest", DeleteRequestAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "invokeDocumentWorkflow", InvokeDocumentWorkflowAction.class.getName());
+        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowException", WorkflowExceptionAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);

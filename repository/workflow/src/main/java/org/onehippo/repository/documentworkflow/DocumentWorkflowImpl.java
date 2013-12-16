@@ -70,7 +70,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
 
-        dm = new DocumentHandle(getWorkflowContext(), node);
+        // Critical: MUST use getNonChainingWorkflowContext() or getWorkflowContext(null), NOT getWorkflowContext()!
+        dm = new DocumentHandle(getNonChainingWorkflowContext(), node);
 
         try {
             workflowExecutor = new SCXMLWorkflowExecutor(SCXML_DEFINITION_ID, dm);

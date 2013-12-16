@@ -480,6 +480,8 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ArchiveAc
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ConfigVariantAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyVariantAction.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/action/DeleteRequestAction.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/action/InvokeDocumentWorkflowAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/IsModifiedAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/MoveDocumentAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/RenameDocumentAction.java -text
@@ -491,6 +493,7 @@ workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ArchiveTask
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/ConfigVariantTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/CopyVariantTask.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/task/InvokeDocumentWorkflowTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/IsModifiedTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/MoveDocumentTask.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/task/RenameDocumentTask.java -text
