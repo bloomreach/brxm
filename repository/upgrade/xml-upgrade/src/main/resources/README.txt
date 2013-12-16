@@ -23,8 +23,6 @@ The program can be run by starting the bin/xml-upgrade script (on Unix).
 
    bin/xml-upgrade [<folder>]
 
-ps make xml-upgrade executable through chmod a+x
-
 By default, i.e. when no folder is specified, it will traverse all child
 folders of the current working directory.  If a (relative or absolute) path to
 a folder is provided, it will be traversed.
