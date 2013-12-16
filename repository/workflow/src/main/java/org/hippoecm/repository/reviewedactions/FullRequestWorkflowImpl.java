@@ -113,7 +113,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             deleteRequest();
             ((FullReviewedActionsWorkflow)getWorkflowContext().getWorkflow("default", unpublishedDocument)).delete();
         } else if(PublicationRequest.PUBLISH.equals(requestType)) {
-            if (state.isDirty()) {
+            if (!state.isDirty()) {
                 throw new WorkflowException("cannot publish document when no changes present");
             }
             deleteRequest();
