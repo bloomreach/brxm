@@ -28,27 +28,31 @@
     <sv:value>//element(*, hippotranslation:translations)</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>
-package org.hippoecm.frontend.plugins.cms.dev.updater&#xd;
-&#xd;
-import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
-import javax.jcr.Node&#xd;
-&#xd;
-class RemoveTranslationsNodes extends BaseNodeUpdateVisitor {&#xd;
-&#xd;
-  boolean doUpdate(Node node) {&#xd;
-    log.debug "Removing node ${node.path}"&#xd;
-    node.remove()&#xd;
-    return true&#xd;
-  }&#xd;
-&#xd;
-  boolean undoUpdate(Node node) {&#xd;
-    throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
-  }&#xd;
-&#xd;
-}</sv:value>
+    <sv:value>package org.hippoecm.frontend.plugins.cms.dev.updater&#xd;
+      &#xd;
+      import org.onehippo.repository.update.BaseNodeUpdateVisitor&#xd;
+      import javax.jcr.Node&#xd;
+      &#xd;
+      class RemoveTranslationsNodes extends BaseNodeUpdateVisitor {&#xd;
+      &#xd;
+      boolean doUpdate(Node node) {&#xd;
+      if (!node.isNodeType("hippotranslation:translations")) {&#xd;
+        log.warn("Script must be executed with query //element(*, hippotranslation:translations)");&#xd;
+      return false;&#xd;
+      }&#xd;
+      log.debug "Removing node ${node.path}"&#xd;
+      node.remove()&#xd;
+      return true&#xd;
+      }&#xd;
+      &#xd;
+      boolean undoUpdate(Node node) {&#xd;
+      throw new UnsupportedOperationException('Updater does not implement undoUpdate method')&#xd;
+      }&#xd;
+      &#xd;
+      }</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:throttle" sv:type="Long">
     <sv:value>1000</sv:value>
   </sv:property>
 </sv:node>
+
