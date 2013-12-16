@@ -50,7 +50,7 @@ public class Home extends BaseHstComponent {
             throw new HstComponentException(e);
         }
 
-        HippoBean n = this.getContentBean(request);
+        HippoBean n = request.getRequestContext().getContentBean();
         if (n == null) {
             return;
         }

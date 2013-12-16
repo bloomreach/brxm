@@ -25,6 +25,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
@@ -140,7 +141,7 @@ public class TodoList extends BaseHstComponent {
 
                 if (requestNode != null) {
                     try {
-                        HippoRequestBean requestBean = (HippoRequestBean) getObjectConverter().getObject(requestNode);
+                        HippoRequestBean requestBean = (HippoRequestBean) RequestContextProvider.get().getContentBeansTool().getObjectConverter().getObject(requestNode);
                         todoList.add(requestBean);
                     } catch (ObjectBeanManagerException e) {
                         if (log.isDebugEnabled()) {
