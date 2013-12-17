@@ -51,9 +51,9 @@ class ChannelResourceModel extends LoadableDetachableModel<String> {
             }
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
-                log.warn("Could not resource values for channel with id '" + channel.getId() + "'", ce);
+                log.warn("Could not resolve values for channel with id '" + channel.getId() + "'", ce);
             } else {
-                log.warn("Could not resource values for channel with id '{}' - {}", channel.getId(), ce.toString());
+                log.warn("Could not resolve values for channel with id '{}' - {}", channel.getId(), ce.toString());
             }
         }
 
