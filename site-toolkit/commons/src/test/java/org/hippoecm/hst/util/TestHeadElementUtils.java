@@ -15,13 +15,21 @@
  */
 package org.hippoecm.hst.util;
 
-import static org.junit.Assert.assertEquals;
-
+import java.io.StringReader;
 import java.io.StringWriter;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.hippoecm.hst.core.component.HeadElement;
 import org.hippoecm.hst.core.component.HeadElementImpl;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestHeadElementUtils {
 
@@ -47,7 +55,7 @@ public class TestHeadElementUtils {
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
     }
-    
+
     @Test
     public void testScriptContribution() throws Exception {
         HeadElement headElem = new HeadElementImpl("script");
@@ -57,7 +65,41 @@ public class TestHeadElementUtils {
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<script language=\"javascript\">alert('Hello, World!');</script>", sw.toString());
     }
-    
+
+    @Ignore("Ignored while HSTTWO-2763 not fixed")
+    @Test
+    public void testHtmlTagInScriptContribution() throws Exception {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+
+        String xmlString = "<script type=\"text/javascript\">var jsflag = $('<html><body><span><input type=\"hidden\" name=\"js_enabled\" value=\"true\"/></span></body></html>');</script>";
+        Document doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
+
+        Element element = doc.getDocumentElement();
+        HeadElement head = new HeadElementImpl(element);
+
+        StringWriter sw = new StringWriter();
+        HeadElementUtils.writeHeadElement(sw, head, true, true, false, false);
+        assertEquals("<script type=\"text/javascript\">var jsflag = $('<html><body><span><input name=\"js_enabled\" value=\"true\" type=\"hidden\"></input></span></body></html>');</script>", sw.toString());
+    }
+
+    @Ignore("Ignored while HSTTWO-2763 not fixed: Note that not only <script> tag must work but also for any html")
+    @Test
+    public void testHtmlTagParagraphContribution() throws Exception {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+
+        String xmlString = "<p>This is a paragraph with a <strong>bold</strong> text</p>";
+        Document doc = docBuilder.parse(new InputSource(new StringReader(xmlString)));
+
+        Element element = doc.getDocumentElement();
+        HeadElement head = new HeadElementImpl(element);
+
+        StringWriter sw = new StringWriter();
+        HeadElementUtils.writeHeadElement(sw, head, true, true, false, false);
+        assertEquals(xmlString, sw.toString());
+    }
+
     @Test
     public void testEmptyOrBlankScriptContributionInCDATASection() throws Exception {
         HeadElement headElem = new HeadElementImpl("script");
