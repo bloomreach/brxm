@@ -50,13 +50,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
 
         public void onClose(AjaxRequestTarget target) {
-            dialog.onClose();
-            if (pending.size() > 0) {
-                Dialog dialog = pending.remove(0);
-                internalShow(dialog);
-            } else {
-                cleanup();
-            }
+            closeDialog(dialog);
         }
     }
 
@@ -69,6 +63,16 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         pending = new LinkedList<Dialog>();
 
         add(new EventStoppingBehavior("onclick"));
+    }
+
+    private void closeDialog(Dialog dialog) {
+        dialog.onClose();
+        if (pending.size() > 0) {
+            Dialog removedDialog = pending.remove(0);
+            internalShow(removedDialog);
+        } else {
+            cleanup();
+        }
     }
 
     @Override
@@ -118,7 +122,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
                 target.add(this);
                 close(target);
             } else {
-                cleanup();
+                closeDialog(shown);
             }
         }
     }
