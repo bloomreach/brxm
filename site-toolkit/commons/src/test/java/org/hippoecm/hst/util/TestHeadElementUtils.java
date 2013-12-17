@@ -15,188 +15,144 @@
  */
 package org.hippoecm.hst.util;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import static org.junit.Assert.assertEquals;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 
-import static org.junit.Assert.assertEquals;
+import org.hippoecm.hst.core.component.HeadElement;
+import org.hippoecm.hst.core.component.HeadElementImpl;
+import org.junit.Test;
 
 public class TestHeadElementUtils {
 
-    public Document buildDocumentFrom(final String xmlString) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
-        return docBuilder.parse(new InputSource(new StringReader(xmlString)));
-    }
-
     @Test
     public void testTitleContribution() throws Exception {
-        Document doc = buildDocumentFrom("<title>Hello World! Homepage</title>");
-
-        Element headElem = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("title");
+        headElem.setTextContent("Hello World! Homepage");
         StringWriter sw = new StringWriter();
         HeadElementUtils.writeHeadElement(sw, headElem, true, false, false, false);
         assertEquals("<title>Hello World! Homepage</title>", sw.toString());
     }
-
+    
     @Test
     public void testEmptyScriptContribution() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\"></script>");
-        Element headElem = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
         StringWriter sw = new StringWriter();
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
-
+        
         headElem.setTextContent("");
         sw = new StringWriter();
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
     }
-
+    
     @Test
     public void testScriptContribution() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\">alert('Hello, World!');</script>");
-        Element headElem = doc.getDocumentElement();
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
+        headElem.setTextContent("alert('Hello, World!');");
         StringWriter sw = new StringWriter();
         HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<script language=\"javascript\">alert('Hello, World!');</script>", sw.toString());
     }
-
-
-    @Test
-    public void testHtmlTagInScriptContribution() throws Exception {
-        String xmlString = "<script type=\"text/javascript\">var jsflag = $('<html><body><span><input name=\"js_enabled\"></input></span></body></html>');</script>";
-        Document doc = buildDocumentFrom(xmlString);
-
-        Element element = doc.getDocumentElement();
-        StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, false, false);
-        assertEquals(xmlString, sw.toString());
-    }
-
-    @Test
-    public void testHtmlTagParagraphContribution() throws Exception {
-        String xmlString = "<p>This is a paragraph with a <strong>bold</strong> text</p>";
-        Document doc = buildDocumentFrom(xmlString);
-
-        Element element = doc.getDocumentElement();
-
-        StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, false, false);
-        assertEquals(xmlString, sw.toString());
-    }
-
+    
     @Test
     public void testEmptyOrBlankScriptContributionInCDATASection() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\"></script>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, false);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
-
-        element.setTextContent("");
+        
+        headElem.setTextContent("");
         sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, false);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
-
-        element.setTextContent(" ");
+        
+        headElem.setTextContent(" ");
         sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, false);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
         assertEquals("<script language=\"javascript\"><![CDATA[ ]]></script>", sw.toString());
     }
 
     @Test
     public void testScriptContributionInCDATASection() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\"><![CDATA[ alert('Hello, World!'); ]]></script>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
+        headElem.setTextContent("alert('Hello, World!');");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, false);
-
-        assertEquals("<script language=\"javascript\"><![CDATA[ alert('Hello, World!'); ]]></script>", sw.toString());
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
+        assertEquals("<script language=\"javascript\"><![CDATA[alert('Hello, World!');]]></script>", sw.toString());
     }
     
     @Test
     public void testEmptyOrBlankScriptContributionInCommentedOutCDATASection() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\"></script>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, true);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, true);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
         
-        element.setTextContent("");
+        headElem.setTextContent("");
         sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, true);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, true);
         assertEquals("<script language=\"javascript\"></script>", sw.toString());
         
-        element.setTextContent(" ");
+        headElem.setTextContent(" ");
         sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, true);
-        assertEquals("<script language=\"javascript\">//<![CDATA[ //]]></script>", sw.toString());
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, true);
+        assertEquals("<script language=\"javascript\">\n//<![CDATA[\n \n//]]>\n</script>", sw.toString());
     }
     
     @Test
     public void testScriptContributionInCommentedOutCDATASection() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\">alert('Hello, World!');</script>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
+        headElem.setTextContent("alert('Hello, World!');");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, true);
-        assertEquals("<script language=\"javascript\">//<![CDATA[alert('Hello, World!');//]]></script>", sw.toString());
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, true);
+        assertEquals("<script language=\"javascript\">\n//<![CDATA[\nalert('Hello, World!');\n//]]>\n</script>", sw.toString());
     }
     
     @Test
     public void testStyleContribution() throws Exception {
-        Document doc = buildDocumentFrom("<style>body { background-color: red }</style>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("style");
+        headElem.setTextContent("body { background-color: red }");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, false, false);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, false, false);
         assertEquals("<style>body { background-color: red }</style>", sw.toString());
     }
 
     @Test
     public void testStyleContributionInCDATASection() throws Exception {
-        Document doc = buildDocumentFrom("<style>body { background-color: red }</style>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("style");
+        headElem.setTextContent("body { background-color: red }");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, false);
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
         assertEquals("<style><![CDATA[body { background-color: red }]]></style>", sw.toString());
     }
     
     @Test
     public void testStyleContributionInCommentedOutCDATASection() throws Exception {
-        Document doc = buildDocumentFrom("<style>body { background-color: red }</style>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("style");
+        headElem.setTextContent("body { background-color: red }");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, true);
-        assertEquals("<style>/*<![CDATA[*/body { background-color: red }/*]]>*/</style>", sw.toString());
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, true);
+        assertEquals("<style>\n/*<![CDATA[*/\nbody { background-color: red }\n/*]]>*/\n</style>", sw.toString());
     }
+
 
     @Test
     public void testAttributesAccordingInsertionOrder() throws Exception {
-        Document doc = buildDocumentFrom("<script language=\"javascript\" type=\"text/javascript\" src=\"test.js\"></script>");
-        Element element = doc.getDocumentElement();
-
+        HeadElement headElem = new HeadElementImpl("script");
+        headElem.setAttribute("language", "javascript");
+        headElem.setAttribute("type", "text/javascript");
+        headElem.setAttribute("src", "test.js");
         StringWriter sw = new StringWriter();
-        HeadElementUtils.writeHeadElement(sw, element, true, true, true, false);
-        assertEquals("<script language=\"javascript\" src=\"test.js\" type=\"text/javascript\"></script>", sw.toString());
+        HeadElementUtils.writeHeadElement(sw, headElem, true, true, true, false);
+        assertEquals("<script language=\"javascript\" type=\"text/javascript\" src=\"test.js\"></script>", sw.toString());
     }
 
 }

@@ -23,6 +23,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.hippoecm.hst.core.component.HeadElementImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.util.HeadElementUtils;
@@ -95,7 +96,7 @@ public class HeadContributionTag extends BodyTagSupport {
 
             if (element != null) {
                 if (this.keyHint == null) {
-                    this.keyHint = HeadElementUtils.toHtmlString(element);
+                    this.keyHint = HeadElementUtils.toHtmlString(new HeadElementImpl(element));
 
                     if (hstResponse.containsHeadElement(this.keyHint)) {
                         return SKIP_BODY;

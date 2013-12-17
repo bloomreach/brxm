@@ -24,10 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.hst.core.component.HeadElement;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * HeadElementUtils
@@ -49,30 +45,30 @@ public class HeadElementUtils {
     private HeadElementUtils() {
     }
     
-    public static String toHtmlString(final Element headElement) {
+    public static String toHtmlString(final HeadElement headElement) {
         String tagName = headElement.getTagName().toUpperCase();
         boolean isExpanedEmptyElements = EXPANDABLE_HEAD_ELEMENT_TAG_NAME_SET.contains(tagName);
         boolean isPreformattedTextContent = PREFORMATTED_HEAD_ELEMENT_TAG_NAME_SET.contains(tagName);
         return toString(headElement, isExpanedEmptyElements, isPreformattedTextContent, false);
     }
 
-    public static String toXhtmlString(final Element headElement) {
+    public static String toXhtmlString(final HeadElement headElement) {
         return toXhtmlString(headElement, false);
     }
     
-    public static String toXhtmlString(final Element headElement, boolean commentedOutCDATAMarker) {
+    public static String toXhtmlString(final HeadElement headElement, boolean commentedOutCDATAMarker) {
         String tagName = headElement.getTagName().toUpperCase();
         boolean isExpanedEmptyElements = EXPANDABLE_HEAD_ELEMENT_TAG_NAME_SET.contains(tagName);
         boolean isPreformattedTextContent = PREFORMATTED_HEAD_ELEMENT_TAG_NAME_SET.contains(tagName);
         return toString(headElement, isExpanedEmptyElements, isPreformattedTextContent, true, commentedOutCDATAMarker);
     }
 
-    public static String toString(final Element headElement, boolean isExpanedEmptyElements,
+    public static String toString(final HeadElement headElement, boolean isExpanedEmptyElements,
             boolean isPreformattedTextContent, boolean isPreformattedTextContentInCDATA) {
         return toString(headElement, isExpanedEmptyElements, isPreformattedTextContent, isPreformattedTextContentInCDATA, false);
     }
     
-    public static String toString(final Element headElement, boolean isExpanedEmptyElements,
+    public static String toString(final HeadElement headElement, boolean isExpanedEmptyElements,
             boolean isPreformattedTextContent, boolean isPreformattedTextContentInCDATA, boolean commentedOutCDATAMarker) {
         StringWriter writer = new StringWriter(80);
 
@@ -86,117 +82,85 @@ public class HeadElementUtils {
         return writer.toString();
     }
 
-    public static void writeHeadElement(final Writer writer, final Node headElement,
+    public static void writeHeadElement(final Writer writer, final HeadElement headElement,
             boolean isExpandEmptyElements, boolean isPreformattedTextContent, boolean isPreformattedTextContentInCDATA)
             throws IOException {
         writeHeadElement(writer, headElement, isExpandEmptyElements, isPreformattedTextContent, isPreformattedTextContentInCDATA, false);
     }
 
-    public static void writeHeadElement(final Writer writer, final Node headElement,
+    public static void writeHeadElement(final Writer writer, final HeadElement headElement,
             boolean isExpandEmptyElements, boolean isPreformattedTextContent, boolean isPreformattedTextContentInCDATA,
             boolean commentedOutCDATAMarker) throws IOException {
+        String tagName = headElement.getTagName();
+        writer.write('<');
+        writer.write(tagName);
 
-        String tagName = headElement.getNodeName();
-        String capitalizedTagName = tagName.toUpperCase();
-        String textContent = headElement.getTextContent();
+        for (Map.Entry<String, String> entry : headElement.getAttributeMap().entrySet()) {
+            writer.write(' ');
+            writer.write(entry.getKey());
+            writer.write("=\"");
+            writer.write(XmlUtils.encode(entry.getValue()));
+            writer.write("\"");
+        }
 
-        if (!writeStartTag(writer, headElement, isExpandEmptyElements)) return;
+        if (!headElement.hasChildHeadElements()) {
+            String textContent = headElement.getTextContent();
 
-        if (textContent != null && !"".equals(textContent)) {
-            if (writeTextContent(writer, headElement, isPreformattedTextContent, isPreformattedTextContentInCDATA, commentedOutCDATAMarker)) {
-                return;
+            if (!isExpandEmptyElements && (textContent == null || "".equals(textContent))) {
+                writer.write("/>");
+            } else {
+                writer.write('>');
+
+                if (textContent != null) {
+                    if (isPreformattedTextContent) {
+                        if (isPreformattedTextContentInCDATA) {
+                            if (!"".equals(textContent)) {
+                                if (commentedOutCDATAMarker) {
+                                    String capitalizedTagName = tagName.toUpperCase();
+                                    if ("SCRIPT".equals(capitalizedTagName)) {
+                                        writer.write("\n//<![CDATA[\n");
+                                        writer.write(textContent);
+                                        writer.write("\n//]]>\n");
+                                    } else if ("STYLE".equals(capitalizedTagName)) {
+                                        writer.write("\n/*<![CDATA[*/\n");
+                                        writer.write(textContent);
+                                        writer.write("\n/*]]>*/\n");
+                                    } else {
+                                        writer.write("<![CDATA[");
+                                        writer.write(textContent);
+                                        writer.write("]]>");
+                                    }
+                                } else {
+                                    writer.write("<![CDATA[");
+                                    writer.write(textContent);
+                                    writer.write("]]>");
+                                }
+                            }
+                        } else {
+                            writer.write(textContent);
+                        }
+                    } else {
+                        writer.write(XmlUtils.encode(textContent));
+                    }
+                }
+
+                writer.write("</");
+                writer.write(tagName);
+                writer.write('>');
             }
-        }
+        } else {
+            writer.write(">\n");
 
-        NodeList childNodes = headElement.getChildNodes();
-        for (int i=0; i<childNodes.getLength(); i++) {
-            Node childNode = childNodes.item(i);
-
-            writeHeadElement(writer, childNode,
-                    isExpandEmptyElements,
-                    isPreformattedTextContent,
-                    isPreformattedTextContentInCDATA,
-                    commentedOutCDATAMarker);
-        }
-
-        writeEndTag(writer, tagName, capitalizedTagName);
-    }
-
-    private static boolean writeStartTag(Writer writer, Node headElement, boolean isExpandEmptyElements) throws IOException {
-        String tagName = headElement.getNodeName();
-        String capitalizedTagName = tagName.toUpperCase();
-        String textContent = headElement.getTextContent();
-
-        if (!"#CDATA-SECTION".equals(capitalizedTagName) && !"#TEXT".equals(capitalizedTagName)) {
-            writer.write('<');
-            writer.write(tagName);
-        }
-
-        if (headElement.hasAttributes()) {
-            NamedNodeMap attributes = headElement.getAttributes();
-            for (int i=0; i<attributes.getLength(); i++) {
-                Node attribute = attributes.item(i);
-                writer.write(' ');
-                writer.write(attribute.getNodeName());
-                writer.write("=\"");
-                writer.write(XmlUtils.encode(attribute.getNodeValue()));
-                writer.write("\"");
+            for (HeadElement childHeadElement : headElement.getChildHeadElements()) {
+                writeHeadElement(writer, childHeadElement, isPreformattedTextContent, isExpandEmptyElements,
+                        isPreformattedTextContentInCDATA);
+                writer.write('\n');
             }
-        }
 
-        if (!isExpandEmptyElements && !headElement.hasChildNodes() && (textContent == null || "".equals(textContent))) {
-            writer.write("/>");
-            return false;
-        } else if (!"#CDATA-SECTION".equals(capitalizedTagName) && !"#TEXT".equals(capitalizedTagName)) {
-            writer.write('>');
-        }
-        return true;
-    }
-
-    private static void writeEndTag(Writer writer, String tagName, String capitalizedTagName) throws IOException {
-        if (!"#CDATA-SECTION".equals(capitalizedTagName) && !"#TEXT".equals(capitalizedTagName)) {
             writer.write("</");
             writer.write(tagName);
             writer.write('>');
         }
-    }
-
-    private static boolean writeTextContent(Writer writer, Node headElement, boolean isPreformattedTextContent, boolean isPreformattedTextContentInCDATA, boolean commentedOutCDATAMarker) throws IOException {
-        String tagName = headElement.getNodeName();
-        String capitalizedTagName = tagName.toUpperCase();
-        String textContent = headElement.getTextContent();
-
-        if (commentedOutCDATAMarker) {
-            if ("SCRIPT".equals(capitalizedTagName)) {
-                writer.write("//<![CDATA[");
-                writer.write(textContent);
-                writer.write("//]]>");
-            } else if ("STYLE".equals(capitalizedTagName)) {
-                writer.write("/*<![CDATA[*/");
-                writer.write(textContent);
-                writer.write("/*]]>*/");
-            } else {
-                writer.write("<![CDATA[");
-                writer.write(textContent);
-                writer.write("]]>");
-            }
-            writeEndTag(writer, tagName, capitalizedTagName);
-            return true;
-        } else if (!headElement.hasChildNodes()) {
-            if (isPreformattedTextContent) {
-                if (isPreformattedTextContentInCDATA && !"".equals(textContent)) {
-                    writer.write("<![CDATA[");
-                    writer.write(textContent);
-                    writer.write("]]>");
-                } else {
-                    writer.write(textContent);
-                }
-            } else {
-                writer.write(XmlUtils.encode(textContent));
-            }
-            return true;
-        }
-        return false;
     }
 
 }

@@ -398,6 +398,7 @@ commons/src/main/java/org/hippoecm/hst/container/RequestContextProvider.java -te
 commons/src/main/java/org/hippoecm/hst/container/XSSUrlFilter.java -text
 commons/src/main/java/org/hippoecm/hst/content/rewriter/impl/DefaultImageVariant.java -text
 commons/src/main/java/org/hippoecm/hst/core/channelmanager/AbstractComponentWindowResponseAppender.java -text
+commons/src/main/java/org/hippoecm/hst/core/component/HeadElementImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstServletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/SerializableElement.java -text
