@@ -23,6 +23,7 @@ import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,7 +35,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -87,7 +87,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(false);
-                RequestCycle.get().find(AjaxRequestTarget.class).add(feedback);
+                tryRenderFeedback(target);
             }
 
             @Override
@@ -107,7 +107,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUndo();
-                RequestCycle.get().find(AjaxRequestTarget.class).add(feedback);
+                tryRenderFeedback(target);
             }
 
             @Override
@@ -127,7 +127,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(true);
-                RequestCycle.get().find(AjaxRequestTarget.class).add(feedback);
+                tryRenderFeedback(target);
             }
 
             @Override
@@ -149,7 +149,7 @@ public class UpdaterEditor extends Panel {
                 saveUpdater();
                 target.add(executeButton);
                 target.add(dryRunButton);
-                target.add(feedback);
+                tryRenderFeedback(target);
             }
 
             @Override
@@ -168,7 +168,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 stopUpdater();
-                target.add(feedback);
+                tryRenderFeedback(target);
             }
 
             @Override
@@ -308,6 +308,18 @@ public class UpdaterEditor extends Panel {
         loadProperties();
     }
 
+    private void tryRenderFeedback(AjaxRequestTarget target) {
+        if (feedback.findParent(Page.class) != null) {
+            target.add(feedback);
+        }
+    }
+
+    @Override
+    protected void onDetach() {
+        form.detach();
+        super.onDetach();
+    }
+
     protected void loadProperties() {
         script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
         if (isUpdater()) {
@@ -395,11 +407,6 @@ public class UpdaterEditor extends Panel {
     protected void deleteUpdater() {
         IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
         dialogService.show(new DeleteUpdaterDialog(getDefaultModel(), container));
-    }
-
-    @Override
-    protected void onBeforeRender() {
-        super.onBeforeRender();
     }
 
     private boolean saveUpdater() {

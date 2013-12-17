@@ -108,7 +108,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             @Override
             protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
                 if (event.getPath().equals(getNodePath())) {
-                    setDefaultModel(getDefaultModel());
+                    updateUI();
                 }
                 return super.newTreeModelEvent(event);
             }
@@ -216,14 +216,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         setOutputMarkupId(true);
     }
 
-    @Override
-    public void render(final PluginRequestTarget target) {
-        super.render(target);
-        if (target != null) {
-            tree.updateTree();
-        }
-    }
-
     private String getUpdaterTitle() {
         if (isQueuedUpdater()) {
             return "Monitoring updater run " + getUpdaterName();
@@ -244,6 +236,10 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     @Override
     protected void onModelChanged() {
         super.onModelChanged();
+        updateUI();
+    }
+
+    private void updateUI() {
         expandAndSelectNodeInTree();
         updateEditor();
         path = null;
