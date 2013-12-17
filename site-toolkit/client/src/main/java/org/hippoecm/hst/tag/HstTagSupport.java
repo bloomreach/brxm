@@ -42,7 +42,7 @@ public class HstTagSupport extends TagSupport {
     private static final long serialVersionUID = 1L;
     
     protected static final Logger logger = LoggerFactory.getLogger(HstTagSupport.class);
-    
+
     @Override
     public int doEndTag() throws JspException {
         try {
@@ -106,7 +106,7 @@ public class HstTagSupport extends TagSupport {
      */
     @Deprecated
     protected ComponentManager getDefaultClientComponentManager() {
-        logger.info("Do not use clientComponentManager any more but core HstServices#getComponentManager()");
+        logger.warn("Do not use deprecated clientComponentManager any more but core HstServices#getComponentManager()");
         ComponentManager clientComponentManager = HstFilter.getClientComponentManager(pageContext.getServletContext());
         if(clientComponentManager == null) {
             logger.warn("Cannot get a client component manager (although deprecated) from servlet context for attribute name '{}'", HstFilter.CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME);
