@@ -33,7 +33,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -47,6 +46,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
+import org.hippoecm.frontend.service.preferences.IPreferencesStore;
 import org.hippoecm.frontend.widgets.ManagedReuseStrategy;
 
 /**
@@ -63,7 +63,8 @@ public class ListDataTable<T> extends DataTable<T, String> {
     private Set<Item<T>> dirty;
     private TableDefinition definition;
     private TableSelectionListener<T> selectionListener;
-    private final IDataProvider<T> provider;
+    private final ISortableDataProvider<T, String> provider;
+    private IPreferencesStore preferences;
     private boolean scrollSelectedIntoView = false;
     private boolean scrollSelectedTopAlign = false;
 
@@ -88,28 +89,21 @@ public class ListDataTable<T> extends DataTable<T, String> {
                 private static final long serialVersionUID = 1L;
 
                 @Override
-                protected WebMarkupContainer newSortableHeader(String borderId, String property,
-                        ISortStateLocator<String> locator) {
+                protected WebMarkupContainer newSortableHeader(String borderId, final String property,
+                                                               final ISortStateLocator<String> locator) {
                     return new ListTableHeader<String>(borderId, property, locator) {
                         @Override
                         public void onClick(final AjaxRequestTarget target) {
                             target.add(ListDataTable.this);
+
+                            if (preferences != null) {
+                                preferences.set("ListDataTable", "SortProperty", property);
+                                preferences.set("ListDataTable", "SortOrder", locator.getSortState().getPropertySortOrder(property).toString());
+                            }
                         }
                     };
                 }
             });
-
-            if (!triState) {
-                //Initial sorting on the "Name" column (if any)
-                for (IColumn column : getColumns()) {
-                    ListColumn<?> listColumn = (ListColumn) column;
-                    if (listColumn.getRenderer() == null || listColumn.getRenderer() instanceof NameRenderer) {
-                        dataProvider.getSortState().setPropertySortOrder(listColumn.getSortProperty(), SortOrder.ASCENDING);
-                        break;
-                    }
-                }
-            }
-
         }
         addBottomToolbar(new ListNavigationToolBar(this, pagingDefinition));
 
@@ -165,6 +159,45 @@ public class ListDataTable<T> extends DataTable<T, String> {
         this.dirty = new HashSet<Item<T>>();
         this.observers = new HashMap<Item<T>, IObserver>();
         definition.init(context);
+        preferences = context.getService(IPreferencesStore.SERVICE_ID, IPreferencesStore.class);
+        provider.getSortState().setPropertySortOrder(getInitialSortProperty(), getInitialSortOrder());
+    }
+
+    private String getInitialSortProperty() {
+        String property = null;
+
+        if (preferences != null) {
+            property = preferences.getString("ListDataTable", "SortProperty");
+        }
+
+        if (property == null) {
+            //Initial sorting on the "Name" column, otherwise on the first column
+            for (IColumn column : getColumns()) {
+                ListColumn<?> listColumn = (ListColumn) column;
+                if (property == null) {
+                    //Use the first column of no NameRendered is found later on
+                    property = listColumn.getSortProperty();
+                }
+
+                if (listColumn.getRenderer() == null || listColumn.getRenderer() instanceof NameRenderer) {
+                    property = listColumn.getSortProperty();
+                    break;
+                }
+            }
+        }
+
+        return property;
+    }
+
+    //Load sort order from IPreferencesStore, otherwise return ASCENDING
+    private SortOrder getInitialSortOrder() {
+        if (preferences != null) {
+            String sortOrder = preferences.getString("ListDataTable", "SortOrder");
+            if (sortOrder != null) {
+                return SortOrder.valueOf(sortOrder);
+            }
+        }
+        return SortOrder.ASCENDING;
     }
 
     public void destroy() {
@@ -177,6 +210,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
         observers = null;
         context = null;
         dirty = null;
+        preferences = null;
     }
 
     public void render(PluginRequestTarget target) {
