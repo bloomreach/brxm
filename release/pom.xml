@@ -59,7 +59,6 @@
     <forge.ecm-tagging.version>4.06.01-SNAPSHOT</forge.ecm-tagging.version>
     <forge.gallerypicker.version>1.12.01-SNAPSHOT</forge.gallerypicker.version>
     <forge.poll.version>1.07.01-SNAPSHOT</forge.poll.version>
-    <forge.properties.version>2.09.01-SNAPSHOT</forge.properties.version>
     <forge.relateddocs.version>2.09.01-SNAPSHOT</forge.relateddocs.version>
     <forge.robotstxt.version>1.07.01-SNAPSHOT</forge.robotstxt.version>
     <forge.selection.version>2.07.01-SNAPSHOT</forge.selection.version>
@@ -684,7 +683,6 @@
       </dependency>
 
       <!-- Hippo forge plugins -->
-
       <dependency>
         <groupId>org.onehippo.forge</groupId>
         <artifactId>dashboard-document-wizard</artifactId>
@@ -805,16 +803,6 @@
         <groupId>org.onehippo.forge</groupId>
         <artifactId>ecm-tagging</artifactId>
         <version>${forge.ecm-tagging.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.forge.properties</groupId>
-        <artifactId>properties-addon-repository</artifactId>
-        <version>${forge.properties.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.forge.properties</groupId>
-        <artifactId>properties-hst-client</artifactId>
-        <version>${forge.properties.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.forge.robotstxt</groupId>
