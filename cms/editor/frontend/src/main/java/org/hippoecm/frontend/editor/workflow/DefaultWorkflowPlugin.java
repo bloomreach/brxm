@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.workflow;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -449,7 +450,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     }
 
     private Map<String, Serializable> obtainWorkflowHints(WorkflowDescriptorModel model) {
-        Map<String, Serializable> info = null;
+        Map<String, Serializable> info = Collections.emptyMap();
         try {
             Node documentNode = model.getNode();
             if (documentNode != null) {
@@ -476,12 +477,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
     }
 
     private void updateWorkflowVisibilities(Map<String, Serializable> workflowHints) {
-        editAction.setVisible(Boolean.TRUE.equals(workflowHints.get("edit")));
-        deleteAction.setVisible(Boolean.TRUE.equals(workflowHints.get("delete")));
-        renameAction.setVisible(Boolean.TRUE.equals(workflowHints.get("rename")));
-        moveAction.setVisible(Boolean.TRUE.equals(workflowHints.get("move")));
-        copyAction.setVisible(Boolean.TRUE.equals(workflowHints.get("copy")));
-        whereUsedAction.setVisible(Boolean.TRUE.equals(workflowHints.get("status")));
+        editAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("edit")));
+        deleteAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("delete")));
+        renameAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("rename")));
+        moveAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("move")));
+        copyAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("copy")));
+        whereUsedAction.setVisible(!Boolean.FALSE.equals(workflowHints.get("status")));
     }
 
     public class RenameDocumentDialog extends AbstractWorkflowDialog {
