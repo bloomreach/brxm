@@ -58,6 +58,10 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String PREFERENCES_CONTEXT = "ListDataTable";
+    private static final String PREFERENCE_SORT_PROPERTY = "SortProperty";
+    private static final String PREFERENCE_SORT_ORDER = "SortOrder";
+
     private IPluginContext context;
     private Map<Item<T>, IObserver> observers;
     private Set<Item<T>> dirty;
@@ -97,8 +101,8 @@ public class ListDataTable<T> extends DataTable<T, String> {
                             target.add(ListDataTable.this);
 
                             if (preferences != null) {
-                                preferences.set("ListDataTable", "SortProperty", property);
-                                preferences.set("ListDataTable", "SortOrder", locator.getSortState().getPropertySortOrder(property).toString());
+                                preferences.set(PREFERENCES_CONTEXT, PREFERENCE_SORT_PROPERTY, property);
+                                preferences.set(PREFERENCES_CONTEXT, PREFERENCE_SORT_ORDER, locator.getSortState().getPropertySortOrder(property).toString());
                             }
                         }
                     };
@@ -167,7 +171,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
         String property = null;
 
         if (preferences != null) {
-            property = preferences.getString("ListDataTable", "SortProperty");
+            property = preferences.getString(PREFERENCES_CONTEXT, PREFERENCE_SORT_PROPERTY);
         }
 
         if (property == null) {
@@ -175,7 +179,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
             for (IColumn column : getColumns()) {
                 ListColumn<?> listColumn = (ListColumn) column;
                 if (property == null) {
-                    //Use the first column of no NameRendered is found later on
+                    //Use the first column if no NameRenderer is found later on
                     property = listColumn.getSortProperty();
                 }
 
@@ -192,7 +196,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
     //Load sort order from IPreferencesStore, otherwise return ASCENDING
     private SortOrder getInitialSortOrder() {
         if (preferences != null) {
-            String sortOrder = preferences.getString("ListDataTable", "SortOrder");
+            String sortOrder = preferences.getString(PREFERENCES_CONTEXT, PREFERENCE_SORT_ORDER);
             if (sortOrder != null) {
                 return SortOrder.valueOf(sortOrder);
             }
