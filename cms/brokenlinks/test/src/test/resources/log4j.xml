@@ -42,7 +42,7 @@
   <!-- ====================================================================== -->
 
   <logger additivity="false" name="org.onehippo.cms7.brokenlinks">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </logger>
 

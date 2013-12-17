@@ -124,10 +124,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
         TestWorkflowImpl.invocationCountDateArg = 0;
 
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
-        int countDocuments = 0;
-        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            ++countDocuments;
-        }
+        int countDocuments = countDocuments(result);
         assertEquals(0, countDocuments);
     }
 
@@ -225,6 +222,8 @@ public class BrokenLinksTest extends RepositoryTestCase {
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
 
+        Thread.sleep(1000l);
+
         new BrokenLinksCheckingJob().execute(jobContext);
 
         session.refresh(false);
@@ -245,94 +244,12 @@ public class BrokenLinksTest extends RepositoryTestCase {
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
 
+        Thread.sleep(1000l);
 
         new BrokenLinksCheckingJob().execute(jobContext);
 
         session.refresh(false);
-        final int brokenCount = countBrokenDocuments(session.getRootNode().getNode("test"));
-        try {
-            assertEquals(total, brokenCount);
-        } catch (AssertionError e) {
-            System.out.println("testManyFaultyLinks failed. Found '"+brokenCount+"' documents with broken links instead of expected '"+total+"'");
-            System.out.println("Computing number of documents with broken links again.....");
-            final int brokenCountSecondTime = countBrokenDocuments(session.getRootNode().getNode("test"));
-            System.out.println("Second round found '"+brokenCountSecondTime+"' documents with broken links.");
-
-            if (brokenCountSecondTime != total) {
-                // search number of documents through hippostd:html node
-                final Query query = session.getWorkspace().getQueryManager().createQuery("/jcr:root/test//element(*,hippostd:html) order by @jcr:score", "xpath");
-                query.setLimit(100000);
-                final QueryResult result = query.execute();
-                System.out.println("Expected to find '"+total+"' documents. Found number of documents with hippostd:html node:" + result.getNodes().getSize());
-
-                // search number of brokenlinks nodes
-
-                final Query query2 = session.getWorkspace().getQueryManager().createQuery("/jcr:root/test//element(*,brokenlinks:brokenlinks) order by @jcr:score", "xpath");
-                query.setLimit(100000);
-                final QueryResult result2 = query2.execute();
-                System.out.println("Expected to find '" + total + "' brokenlinks nodes. Found number of brokenlinks nodes::" + result2.getNodes().getSize());
-
-                System.out.println("Test a new run now.....");
-
-                new BrokenLinksCheckingJob().execute(jobContext);
-                final int newRunCount = countBrokenDocuments(session.getRootNode().getNode("test"));
-                System.out.println("Second run found '"+String.valueOf(newRunCount)+"' documents with broken links.");
-
-            }
-            throw e;
-        }
-    }
-
-    @Test
-    public void testSearch() throws Exception {
-        DocumentText documents = new DocumentText() {
-            public String getTextForDocument(int index) {
-                return TEXT1;
-            }
-        };
-        for (int count : new int[] {10, 10, 10}) {
-            levels.push(count);
-        }
-        createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
-        final SetTuple firstResult = getSearchResults();
-        for (int i = 0; i < 1000; i++) {
-            final SetTuple latestResult = getSearchResults();
-            if (!firstResult.set1.equals(latestResult.set1)) {
-                fail("Results don't match during run " + i);
-            }
-            if (!firstResult.set2.equals(latestResult.set2)) {
-                assertFalse("Null handle detected", latestResult.set2.contains("<null>"));
-                fail("Handles don't match during run " + i);
-            }
-        }
-    }
-
-    private SetTuple getSearchResults() throws Exception {
-        SetTuple result = new SetTuple();
-        final NodeIterator nodes = session.getWorkspace().getQueryManager().createQuery("//element(*,hippostd:html)", "xpath").execute().getNodes();
-        while (nodes.hasNext()) {
-            final Node node = nodes.nextNode();
-            final Node handleNode = getHandleNode(node);
-            result.set1.add(node.getIdentifier());
-            result.set2.add(handleNode == null ? "<null>" : handleNode.getIdentifier());
-        }
-        return result;
-    }
-
-    private static final class SetTuple {
-        private final Set<String> set1 = new HashSet<>();
-        private final Set<String> set2 = new HashSet<>();
-    }
-
-    private Node getHandleNode(final Node node) throws RepositoryException {
-        Node parent = node.getParent();
-        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-            return parent;
-        }
-        if (parent.isSame(parent.getSession().getRootNode())) {
-            return null;
-        }
-        return getHandleNode(parent);
+        assertEquals(total, countBrokenDocuments(session.getRootNode().getNode("test")));
     }
 
     @Test
@@ -346,6 +263,8 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
+
+        Thread.sleep(1000l);
 
         new BrokenLinksCheckingJob().execute(jobContext);
 
@@ -376,15 +295,13 @@ public class BrokenLinksTest extends RepositoryTestCase {
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
 
+        Thread.sleep(1000l);
+
         new BrokenLinksCheckingJob().execute(jobContext);
 
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
-        int countDocuments = 0;
-        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            ++countDocuments;
-        }
+        int countDocuments = countDocuments(result);
         assertEquals(0, countDocuments);
     }
 
@@ -401,6 +318,8 @@ public class BrokenLinksTest extends RepositoryTestCase {
             levels.push(count);
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
+
+        Thread.sleep(1000l);
 
         new BrokenLinksCheckingJob().execute(jobContext);
 
@@ -424,10 +343,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
 
         session.refresh(false);
         result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
-        countDocuments = 0;
-        for (NodeIterator iter = result.getNodes(); iter.hasNext(); iter.nextNode()) {
-            ++countDocuments;
-        }
+        countDocuments = countDocuments(result);
         assertEquals(0, countDocuments);
     }
 
@@ -443,16 +359,13 @@ public class BrokenLinksTest extends RepositoryTestCase {
         }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
 
+        Thread.sleep(1000l);
+
         new BrokenLinksCheckingJob().execute(jobContext);
 
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
-        int countDocuments = 0;
-        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            ++countDocuments;
-        }
-        assertEquals(100, countDocuments);
+        assertEquals(100, countDocuments(result));
     }
 
     @Test
@@ -490,12 +403,16 @@ public class BrokenLinksTest extends RepositoryTestCase {
 
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
+        assertEquals(100, countDocuments(result));
+    }
+
+    private int countDocuments(final QueryResult result) throws RepositoryException {
         int countDocuments = 0;
         for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
+            iter.nextNode();
             ++countDocuments;
         }
-        assertEquals(100, countDocuments);
+        return countDocuments;
     }
 
     @Test
@@ -533,12 +450,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
 
         session.refresh(false);
         QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
-        int countDocuments = 0;
-        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
-            Node child = iter.nextNode();
-            ++countDocuments;
-        }
-        assertEquals(0, countDocuments);
+        assertEquals(0, countDocuments(result));
     }
 
     interface DocumentText {
@@ -669,19 +581,7 @@ public class BrokenLinksTest extends RepositoryTestCase {
                 }
                 session.save();
                 session.logout();
-            } catch (InterruptedException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                scheduledTaskDone = false;
-            } catch (MappingException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                scheduledTaskDone = false;
-            } catch (WorkflowException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                scheduledTaskDone = false;
-            } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                scheduledTaskDone = false;
-            } catch (RemoteException ex) {
+            } catch (InterruptedException | WorkflowException | RepositoryException | RemoteException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 scheduledTaskDone = false;
             }
