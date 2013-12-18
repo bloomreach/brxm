@@ -12,18 +12,20 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.providerInput = "";
     $scope.selectedItem = [];
     $scope.documentTypes = [
-        {"key": "News document", "value": "namespace:news", "providers": [
-        ]},
-        {"key": "News document2", "value": "namespace:news2", "providers": [
-        ]},
-        {"key": "Events document", "value": "namespace:events", "providers": [
-        ]}
+        {"key": "News document", "value": "namespace:news", "providers": {"items": [
+            {"key": "provider 1", "value": "provider:1"},
+            {"key": "provider 2", "value": "provider:2"}
+        ]}},
+        {"key": "Events document", "value": "namespace:events", "providers": {"items": [
+            {"key": "provider 2", "value": "provider:1"}
+        ]}}
     ];
     $scope.providers = [
         {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
         {"key": "Provider 2", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
         {"key": "Provider 3", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
     ];
+
     $scope.baseCmsNamespaceUrl = "https://cms.demo.onehippo.com/?path=/hippo:namespaces/";
 
 
@@ -39,17 +41,32 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         $log.info(docName);
         $scope.providers.push({"key": docName});
         $scope.providerInput = "";
+
+        // TODO: fetch providers
+        $http({
+            method: 'PUT',
+            url: $rootScope.REST.contentblocks,
+            data: docName
+        }).success(function (data) {
+                    $log.info(data);
+                    //$scope.documentTypes.providers = [];
+
+                });
     };
     $scope.addProviderToDocType = function (prov, docName) {
         var index = $scope.documentTypes.indexOf(docName)
-        $scope.documentTypes[index].providers.push(prov);
+        //check if is empty
+        if ($scope.documentTypes[index].providers == "") {
+            $scope.documentTypes[index].providers = {"items": []};
+        }
+        $scope.documentTypes[index].providers.items.push(prov);
 
     };
     $scope.removeProviderFromDocType = function (prov, docName) {
         var index = $scope.documentTypes.indexOf(docName)
-        var providers = $scope.documentTypes[index].providers
+        var providers = $scope.documentTypes[index].providers.items
         var providerIndex = providers.indexOf(prov);
-        $scope.documentTypes[index].providers.splice(providerIndex, 1);
+        $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
     };
 
     $scope.installPlugin = function () {
@@ -92,13 +109,16 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
                 });
 
         // TODO: fetch docTypes
-        /* $http({
-         method: 'GET',
-         url: $rootScope.REST.documentTypes
-         }).success(function (data) {
-         $scope.documentTypes = data.items;
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.documentTypes
+        }).success(function (data) {
+                    $scope.documentTypes = data.items;
+                    //$scope.documentTypes.providers = [];
 
-         });*/
+                });
+
+
     };
 
 

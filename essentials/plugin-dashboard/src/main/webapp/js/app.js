@@ -82,14 +82,13 @@ var app;
         // routing listener
         $rootScope.$on('$routeChangeStart', function (event, next, current) {
             // check if we need powerpacks install check
-            if(!$rootScope.checkDone && ($location.url() != "/" || $location.url() != "")){
+            if (!$rootScope.checkDone && ($location.url() != "/" || $location.url() != "")) {
                 var url = $location.url();
                 $log.info("Redirecting to [/]: needs powerpack install check:");
                 $location.path('/');
             }
 
         });
-
 
 
         var root = 'http://localhost:8080/essentials/rest';
@@ -126,6 +125,8 @@ var app;
             powerpacks: root + '/powerpacks/',
             beanwriter: root + '/beanwriter/',
             documentTypes: root + '/documenttypes/',
+            compounds: root + '/documenttypes/compounds',
+            contentblocks: root + '/documenttypes/createCompound',
             controllers: root + '/controllers/',
             powerpacks_install: root + '/powerpacks/install/'
 
@@ -148,7 +149,6 @@ var app;
                     });
 
         };
-
 
 
         $rootScope.initData();

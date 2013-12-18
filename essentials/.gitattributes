@@ -716,6 +716,9 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulLi
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StepRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/Compounds.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentTypes.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
 plugin-dashboard/src/main/resources/log4j.xml -text

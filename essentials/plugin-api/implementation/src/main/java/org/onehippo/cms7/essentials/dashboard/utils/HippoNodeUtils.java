@@ -7,10 +7,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -21,16 +23,17 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id: HippoNodeUtils.java 169724 2013-07-05 08:32:08Z dvandiepen $"
@@ -203,8 +206,8 @@ public final class HippoNodeUtils {
     }
 
     /**
-     * Retrieve the namespace prefix from a prefixed node type. This method
-     * will return null when the type is not prefixed.
+     * Retrieve the namespace prefix from a prefixed node type. This method will return null when the type is not
+     * prefixed.
      *
      * @param type the namespace type, e.g. 'hippo:type'
      * @return the namespace prefix or null, e.g. 'hippo'
@@ -221,9 +224,8 @@ public final class HippoNodeUtils {
     }
 
     /**
-     * Retrieve the namespace from a prefixed node type. This method
-     * will return null when the type empty. When the type is not
-     * emtpy, but not prefixed as well, it will return the original type.
+     * Retrieve the namespace from a prefixed node type. This method will return null when the type empty. When the type
+     * is not emtpy, but not prefixed as well, it will return the original type.
      *
      * @param type the namespace type, e.g. 'hippo:type'
      * @return the non prefixed name or null, e.g. 'type'
@@ -236,7 +238,7 @@ public final class HippoNodeUtils {
         if (i < 0) {
             return type;
         }
-        return type.substring(i+1);
+        return type.substring(i + 1);
     }
 
     //############################################
@@ -295,8 +297,9 @@ public final class HippoNodeUtils {
     }
 
     /**
-     * Partially ripped from org.hippoecm.repository.standardworkflow.FolderWorkflowImpl#prototypes() to retrieve a list of all used hippo document.
-     * Which match to the rule according to the specified implementation of the org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher
+     * Partially ripped from org.hippoecm.repository.standardworkflow.FolderWorkflowImpl#prototypes() to retrieve a list
+     * of all used hippo document. Which match to the rule according to the specified implementation of the
+     * org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher
      *
      * @param session
      * @param matcher
@@ -306,7 +309,7 @@ public final class HippoNodeUtils {
      */
     private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates) throws RepositoryException {
         Map<String, Set<String>> types = new LinkedHashMap<>();
-        if(session ==null){
+        if (session == null) {
             // WHEN RUNNING WITHOUT CMS
             log.warn("Session was null, returning empty types");
             return types;
@@ -352,7 +355,9 @@ public final class HippoNodeUtils {
     }
 
     /**
-     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session, java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session,
+     * java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     *
      * @param session
      * @return
      * @throws RepositoryException
@@ -362,7 +367,9 @@ public final class HippoNodeUtils {
     }
 
     /**
-     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session, java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session,
+     * java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     *
      * @param session
      * @param matcher
      * @return
@@ -391,6 +398,7 @@ public final class HippoNodeUtils {
 
     /**
      * Retrieves a list of available primary types which are retrieved with the #prototype method
+     *
      * @param session
      * @param templates
      * @return
@@ -407,7 +415,9 @@ public final class HippoNodeUtils {
     }
 
     /**
-     * Retrieves a list of available primary types which are retrieved with the #prototype method  and filtererd with the org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher implementation
+     * Retrieves a list of available primary types which are retrieved with the #prototype method  and filtererd with
+     * the org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher implementation
+     *
      * @param session
      * @param templates
      * @return
@@ -421,6 +431,65 @@ public final class HippoNodeUtils {
             set.addAll(collection);
         }
         return set;
+    }
+
+
+    public static String getDisplayValue(final Session session, final String type) throws RepositoryException {
+        String name = type;
+        final String resolvedPath = resolvePath(type);
+        if (session.itemExists(resolvedPath)) {
+            Node node = session.getNode(resolvedPath);
+            try {
+                name = NodeNameCodec.decode(node.getName());
+                if (node.isNodeType("hippo:translated")) {
+                    Locale locale = Locale.getDefault();
+                    NodeIterator nodes = node.getNodes("hippo:translation");
+                    while (nodes.hasNext()) {
+                        Node child = nodes.nextNode();
+                        if (child.isNodeType("hippo:translation") && !child.hasProperty("hippo:property")) {
+                            String language = child.getProperty("hippo:language").getString();
+                            if (locale.getLanguage().equals(language)) {
+                                return child.getProperty("hippo:message").getString();
+                            }
+                        }
+                    }
+                }
+            } catch (RepositoryException ex) {
+                log.error(ex.getMessage());
+            }
+        }
+        return name;
+    }
+
+    public static String resolvePath(String type) {
+        if (type.contains(":")) {
+            return "/hippo:namespaces/" + type.replace(':', '/');
+        } else {
+            return "/hippo:namespaces/system/" + type;
+        }
+    }
+
+
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]+$");
+    private static final Pattern URL_PATTERN = Pattern.compile("^http:.*/[0-9].[0-9]$");
+
+
+    public static void checkName(String name) throws Exception {
+        if (name == null || "".equals(name)) {
+            throw new Exception("No name specified");
+        }
+        if (!NAME_PATTERN.matcher(name).matches()) {
+            throw new Exception("Invalid name; only alphabetic characters allowed in lower- or uppercase");
+        }
+    }
+
+    public static void checkURI(String name) throws Exception {
+        if (name == null) {
+            throw new Exception("No URI specified");
+        }
+        if (!URL_PATTERN.matcher(name).matches()) {
+            throw new Exception("Invalid URL; ");
+        }
     }
 
 
