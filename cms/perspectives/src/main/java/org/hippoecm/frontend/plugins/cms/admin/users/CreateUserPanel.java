@@ -26,6 +26,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IFormSubmitter;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -71,7 +72,31 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
         // add form with markup id setter so it can be updated via ajax
         final User user = new User();
-        final Form<User> form = new Form<User>("form", new CompoundPropertyModel<User>(user));
+        final Form<User> form = new Form<User>("form", new CompoundPropertyModel<User>(user)) {
+
+            @Override
+            protected void onValidateModelObjects() {
+                if (password != null && passwordValidationService != null) {
+                    try {
+                        List<PasswordValidationStatus> statuses =
+                                passwordValidationService.checkPassword(password, user);
+                        for (PasswordValidationStatus status : statuses) {
+                            if (!status.accepted()) {
+                                error(status.getMessage());
+                            }
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("Failed to validate password using password validation service", e);
+                    }
+                }
+            }
+
+            @Override
+            protected void onError() {
+                password = null;
+                passwordCheck = null;
+            }
+        };
         form.setOutputMarkupId(true);
         add(form);
 
@@ -112,48 +137,26 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
                 String username = user.getUsername();
 
-                boolean passwordValidated = true;
-                if (passwordValidationService != null) {
-                    try {
-                        List<PasswordValidationStatus> statuses =
-                                passwordValidationService.checkPassword(password, user);
-                        for (PasswordValidationStatus status : statuses) {
-                            if (!status.accepted()) {
-                                error(status.getMessage());
-                                passwordValidated = false;
-                            }
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Failed to validate password using password validation service", e);
+                try {
+                    user.create();
+                    user.savePassword(password);
+                    HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+                    if (eventBus != null) {
+                        UserSession userSession = UserSession.get();
+                        HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                                .user(userSession.getJcrSession().getUserID())
+                                .action("create-user")
+                                .category(HippoEventConstants.CATEGORY_USER_MANAGEMENT)
+                                .message("created user " + username);
+                        eventBus.post(event);
                     }
-                }
-
-                if (passwordValidated) {
-                    try {
-                        user.create();
-                        user.savePassword(password);
-                        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-                        if (eventBus != null) {
-                            UserSession userSession = UserSession.get();
-                            HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                                    .user(userSession.getJcrSession().getUserID())
-                                    .action("create-user")
-                                    .category(HippoEventConstants.CATEGORY_USER_MANAGEMENT)
-                                    .message("created user " + username);
-                            eventBus.post(event);
-                        }
-                        Session.get().info(getString("user-created", new Model<User>(user)));
-                        // one up
-                        List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                        breadCrumbModel.setActive(l.get(l.size() - 2));
-                    } catch (RepositoryException e) {
-                        Session.get().warn(getString("user-create-failed", new Model<User>(user)));
-                        log.error("Unable to create user '" + username + "' : ", e);
-                    }
-
-                } else {
-                    password = null;
-                    passwordCheck = null;
+                    Session.get().info(getString("user-created", new Model<User>(user)));
+                    // one up
+                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
+                    breadCrumbModel.setActive(l.get(l.size() - 2));
+                } catch (RepositoryException e) {
+                    Session.get().warn(getString("user-create-failed", new Model<User>(user)));
+                    log.error("Unable to create user '" + username + "' : ", e);
                 }
             }
 

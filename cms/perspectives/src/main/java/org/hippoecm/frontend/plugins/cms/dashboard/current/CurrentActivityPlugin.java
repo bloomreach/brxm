@@ -44,6 +44,7 @@ import org.hippoecm.frontend.plugins.standards.NodeFilter;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,7 +198,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
     }
 
     /**
-     * We only display messages for 'top-level' items and we don't display
+     * We only display messages for 'top-level' workflow items and we don't display
      * actions of system users.
      */
     private static class DefaultNodeFilter implements NodeFilter, Serializable {
@@ -206,7 +207,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         public boolean accept(final JcrNodeModel nodeModel) {
             final Node node = nodeModel.getNode();
             try {
-                return isValidUser(node) && isTopLevelEvent(node);
+                return isValidUser(node) && isWorkflowOrLoginEvent(node) && isTopLevelEvent(node);
             } catch (RepositoryException ignored) {
             }
             return false;
@@ -221,6 +222,18 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 return interaction.equals(category + ":" + workflowName + ":" + methodName);
             }
             return true;
+        }
+
+        private boolean isWorkflowOrLoginEvent(final Node node) throws RepositoryException {
+            final String category = JcrUtils.getStringProperty(node, "hippolog:category", null);
+            if (category != null) {
+                switch (category) {
+                    case HippoEventConstants.CATEGORY_WORKFLOW:
+                    case HippoEventConstants.CATEGORY_SECURITY:
+                        return true;
+                }
+            }
+            return false;
         }
 
         private boolean isValidUser(final Node node) throws RepositoryException {
