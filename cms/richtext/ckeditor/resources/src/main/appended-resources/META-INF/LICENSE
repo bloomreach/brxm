@@ -5,7 +5,7 @@ and license terms. Your use of the code for the these sub-components is subject
 to the terms and conditions of the following licenses.
 
 ------------------------------------------------------------------------------------------------------------------------
-src/main/resources/ckeditor/**
+ckeditor/**
 
      The contents of this file are subject to the Mozilla Public License
      Version 1.1 (the "License"); you may not use this file except in
