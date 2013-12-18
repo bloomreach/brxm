@@ -394,6 +394,7 @@ test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
 test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/java/org/onehippo/repository/LocalRefreshTest.java -text
+test/src/test/java/org/onehippo/repository/search/SearchTransactionalityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerSimilarityTest.java -text
 test/src/test/java/org/onehippo/repository/search/ServicingNodeIndexerTest.java -text
 test/src/test/java/org/onehippo/repository/update/UpdaterExecutorTest.java -text
