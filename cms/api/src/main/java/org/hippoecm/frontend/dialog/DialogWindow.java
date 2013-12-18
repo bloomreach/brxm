@@ -24,6 +24,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
@@ -127,6 +128,15 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             } else {
                 closeDialog(shown);
             }
+        }
+    }
+
+    @Override
+    public void renderHead(final HtmlHeaderContainer container) {
+        super.renderHead(container);
+
+        if (!container.getWebRequest().isAjax() && isShown()) {
+            container.getHeaderResponse().render(OnDomReadyHeaderItem.forScript(getWindowOpenJavaScript()));
         }
     }
 
