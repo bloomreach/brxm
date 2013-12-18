@@ -58,7 +58,7 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
 
     }
 
-//    @Ignore
+    @Ignore
     @Test
     public void testSearchRepeatedly() throws Exception {
         for (int i = 0; i < 1000; i++) {
