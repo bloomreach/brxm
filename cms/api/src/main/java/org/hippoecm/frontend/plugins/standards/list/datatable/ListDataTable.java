@@ -71,6 +71,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
     private IPreferencesStore preferences;
     private boolean scrollSelectedIntoView = false;
     private boolean scrollSelectedTopAlign = false;
+    private final boolean triState;
 
     public interface TableSelectionListener<T> extends IClusterable {
 
@@ -87,6 +88,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
         this.definition = tableDefinition;
         this.provider = dataProvider;
         this.selectionListener = selectionListener;
+        this.triState = triState;
 
         if (tableDefinition.showColumnHeaders()) {
             addTopToolbar(new AjaxFallbackHeadersToolbar<String>(this, dataProvider) {
@@ -174,7 +176,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
             property = preferences.getString(PREFERENCES_CONTEXT, PREFERENCE_SORT_PROPERTY);
         }
 
-        if (property == null) {
+        if (property == null && !triState) {
             //Initial sorting on the "Name" column, otherwise on the first column
             for (IColumn column : getColumns()) {
                 ListColumn<?> listColumn = (ListColumn) column;
@@ -195,7 +197,7 @@ public class ListDataTable<T> extends DataTable<T, String> {
 
     //Load sort order from IPreferencesStore, otherwise return ASCENDING
     private SortOrder getInitialSortOrder() {
-        if (preferences != null) {
+        if (preferences != null && !triState) {
             String sortOrder = preferences.getString(PREFERENCES_CONTEXT, PREFERENCE_SORT_ORDER);
             if (sortOrder != null) {
                 return SortOrder.valueOf(sortOrder);
