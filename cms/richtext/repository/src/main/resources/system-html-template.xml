@@ -86,7 +86,7 @@
         <sv:value/>
       </sv:property>
       <sv:property sv:name="htmlcleaner.id" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService</sv:value>
+        <sv:value/>
       </sv:property>
       <sv:property sv:name="frontend:properties" sv:type="String">
         <sv:value>mode</sv:value>
