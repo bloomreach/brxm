@@ -943,9 +943,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     protected void setRenderPath(Map<String, HstNode> templateResourceMap) {
-        if(getHstTemplate()  != null) {
+        if(StringUtils.isNotEmpty(hstTemplate)) {
             String templateRenderPath = null;
-            HstNode template = templateResourceMap.get(getHstTemplate());
+            HstNode template = templateResourceMap.get(hstTemplate);
             if (template != null) {
                 ValueProvider valueProvider = template.getValueProvider();
                 
@@ -956,8 +956,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (StringUtils.isBlank(templateRenderPath) && valueProvider.hasProperty(HstNodeTypes.TEMPLATE_PROPERTY_SCRIPT)) {
                     templateRenderPath = "jcr:" + valueProvider.getPath();
                 }
-                
                 this.isNamedRenderer = valueProvider.getBoolean(HstNodeTypes.TEMPLATE_PROPERTY_IS_NAMED);
+            } else {
+                log.warn("Cannot find hst:template '{}' for hst component '{}'.", hstTemplate, this.toString());
             }
             renderPath = StringPool.get(templateRenderPath);
             if(renderPath == null) {
@@ -1161,4 +1162,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("HstCompoonentConfiguration [id=");
+        builder.append(id).append(", stored jcr location=").append(canonicalStoredLocation)
+                .append(", className=").append(this.componentClassName)
+                .append(", template=").append(this.hstTemplate).append("]");
+        return  builder.toString();
+    }
 }
