@@ -417,6 +417,7 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/src/test/res
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/pom.xml -text
 marketplace/.gitignnore -text
+marketplace/README.md -text
 marketplace/application.properties -text
 marketplace/grails-app/conf/ApplicationResources.groovy -text
 marketplace/grails-app/conf/BootStrap.groovy -text
