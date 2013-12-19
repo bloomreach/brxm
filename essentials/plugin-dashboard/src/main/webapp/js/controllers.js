@@ -39,7 +39,7 @@ app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope
     $scope.init = function () {
         $http({
             method: 'GET',
-            url: $rootScope.REST.plugins
+            url: 'http://localhost:9090/marketplace/pluginRest/index'
         }).success(function (data) {
                     $scope.plugins = data;
                 });
