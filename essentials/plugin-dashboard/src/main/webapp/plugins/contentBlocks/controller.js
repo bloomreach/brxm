@@ -13,8 +13,9 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.selectedItem = [];
     $scope.documentTypes = [
         {"key": "News document", "value": "namespace:news", "providers": {"items": [
-            {"key": "provider 1", "value": "provider:1"},
-            {"key": "provider 2", "value": "provider:2"}
+            // {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
+            {"key": "provider 2", "value": "provider:2", "path": "hippogogreen/testprov"}    ,
+            {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
         ]}},
         {"key": "Events document", "value": "namespace:events", "providers": {"items": [
             {"key": "provider 2", "value": "provider:1"}
@@ -26,7 +27,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         {"key": "Provider 3", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
     ];
 
-    $scope.baseCmsNamespaceUrl = "https://cms.demo.onehippo.com/?path=/hippo:namespaces/";
+    $scope.baseCmsNamespaceUrl = "https://localhost:8080/cms/console/?path=/hippo:namespaces/";
 
 
     $scope.selectChange = function (docName, selectedItem) {
@@ -42,10 +43,12 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         $scope.providers.push({"key": docName});
         $scope.providerInput = "";
 
-        // TODO: fetch providers
+        //$scope.documentTypes[1].providers.items.push({"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"});
+
+        // TODO: put providers
         $http({
             method: 'PUT',
-            url: $rootScope.REST.contentblocks,
+            url: $rootScope.REST.compoundsCreate + docName,
             data: docName
         }).success(function (data) {
                     $log.info(data);
@@ -114,7 +117,30 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             url: $rootScope.REST.documentTypes
         }).success(function (data) {
                     $scope.documentTypes = data.items;
-                    //$scope.documentTypes.providers = [];
+//                    $log.info('test');
+//                    $log.info($scope.documentTypes);
+//                    angular.forEach(data.items, function (value, key) {
+//                        var docKey = key;
+//                        $log.info('value');
+//                        $log.info(value);
+//                        if (angular.isArray(value.providers.items)) {
+//
+//                            angular.forEach(value.providers.items, function (value, key) {
+//                                $log.info("bla" + key);
+//                                $log.info(value);
+//                                $scope.documentTypes[docKey].
+//                            });
+//
+//                        }
+//                    });
+
+                });
+
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.compounds
+        }).success(function (data) {
+                    $scope.providers = data.items;
 
                 });
 

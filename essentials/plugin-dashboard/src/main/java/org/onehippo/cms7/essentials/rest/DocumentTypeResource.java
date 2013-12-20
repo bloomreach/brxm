@@ -37,6 +37,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 import org.hippoecm.editor.repository.NamespaceWorkflow;
+import org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -85,8 +86,8 @@ public class DocumentTypeResource extends BaseResource {
 
         //example  if empty
         final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
-        keyValueRestfulRestfulList.add(new KeyValueRestful("provider 1", "provider:1"));
-        keyValueRestfulRestfulList.add(new KeyValueRestful("provider 2", "provider:2"));
+        keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 1", "Provider 1"));
+        keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 2", "Provider 2"));
         types.add(new DocumentTypes("News document", "namespace:news", keyValueRestfulRestfulList));
         return types;
     }
@@ -122,17 +123,25 @@ public class DocumentTypeResource extends BaseResource {
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         boolean success = false;
-
+        //todo rg.apache.cxf.interceptor.Fault: com.sun.proxy.$Proxy32 cannot be cast to org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl
         try {
             if (session.itemExists("/hippo:namespaces/mydemoessentials")) {
                 final Node namespace = session.getNode("/hippo:namespaces/mydemoessentials");
                 final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 final Workflow editor = workflowManager.getWorkflow("editor", namespace);
-                final NamespaceWorkflow namespaceWorkflow = (NamespaceWorkflow) editor;
-                namespaceWorkflow.addCompoundType(name);
-                if (session.itemExists("/hippo:namespaces/mydemoessentials/" + name)) {
-                    success = true;
+                //if (editor instanceof NamespaceWorkflow) {
+                System.out.println(editor.getClass().getMethods());
+                System.out.println(editor);
+                if (editor instanceof NamespaceWorkflow) {
+                    final NamespaceWorkflowImpl namespaceWorkflowI = (NamespaceWorkflowImpl) editor;
+                    namespaceWorkflowI.addCompoundType(name);
+                    if (session.itemExists("/hippo:namespaces/mydemoessentials/" + name)) {
+                        success = true;
+                    }
                 }
+
+
+                //}
             }
         } catch (RepositoryException e) {
             log.error("", e);

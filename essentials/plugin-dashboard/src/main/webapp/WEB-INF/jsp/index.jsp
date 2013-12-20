@@ -5,10 +5,16 @@
   <link rel="stylesheet" href="${pageContext.request.contextPath}/theme/hippo-theme/main.css"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hippo-essentials.css"/>
   <%--<script src="${pageContext.request.contextPath}/js/jquery.js"></script>--%>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
   <script src="${pageContext.request.contextPath}/js/lib/angular.js"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-route.min.js"></script>
 
+  <script src="${pageContext.request.contextPath}/js/lib/chosen.jquery.js"></script>
+  <script src="${pageContext.request.contextPath}/js/lib/chosen.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chosen.css"/>
+  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chosen-spinner.css"/>
   <%--<script src="${pageContext.request.contextPath}/js/require.js" data-main="${pageContext.request.contextPath}/js/main.js"></script>--%>
   <%--<script src="${pageContext.request.contextPath}/js/require.js"></script>--%>
 
@@ -23,6 +29,8 @@
   <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
+
+
 
 </head>
 <body>

@@ -900,10 +900,15 @@ plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/variables.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/less/wells.less -text
 plugin-dashboard/src/main/webapp/bootstrap-3.0.0/package.json -text
 plugin-dashboard/src/main/webapp/css/bootstrap.css -text
+plugin-dashboard/src/main/webapp/css/chosen-spinner.css -text
+plugin-dashboard/src/main/webapp/css/chosen-sprite.png -text
+plugin-dashboard/src/main/webapp/css/chosen-sprite@2x.png -text
+plugin-dashboard/src/main/webapp/css/chosen.css -text
 plugin-dashboard/src/main/webapp/css/hippo-essentials.css -text
 plugin-dashboard/src/main/webapp/css/media.css -text
 plugin-dashboard/src/main/webapp/css/normalize.css -text
 plugin-dashboard/src/main/webapp/css/print.css -text
+plugin-dashboard/src/main/webapp/css/spinner.gif -text
 plugin-dashboard/src/main/webapp/css/theme.css -text
 plugin-dashboard/src/main/webapp/fonts/glyphicons-halflings-regular.eot -text
 plugin-dashboard/src/main/webapp/fonts/glyphicons-halflings-regular.svg -text
@@ -947,6 +952,8 @@ plugin-dashboard/src/main/webapp/js/lib/angular-route.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/angular.js -text
 plugin-dashboard/src/main/webapp/js/lib/angular.min.js.map -text
 plugin-dashboard/src/main/webapp/js/lib/bootstrap.js -text
+plugin-dashboard/src/main/webapp/js/lib/chosen.jquery.js -text
+plugin-dashboard/src/main/webapp/js/lib/chosen.js -text
 plugin-dashboard/src/main/webapp/js/lib/domReady.js -text
 plugin-dashboard/src/main/webapp/js/lib/jquery.js -text
 plugin-dashboard/src/main/webapp/js/lib/jquery.validate.min.js -text
