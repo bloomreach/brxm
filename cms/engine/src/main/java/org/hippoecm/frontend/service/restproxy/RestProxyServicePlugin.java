@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.service.restproxy;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -29,6 +28,8 @@ import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.ws.rs.core.MediaType;
+
+import com.google.common.base.Optional;
 
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -83,7 +84,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     private final static int PING_SERVLET_TIMEOUT = 1000;
     private final static int MAX_CONNECTIONS = 50;
     private final String pingServiceUri;
-    private boolean siteIsAlive;
+    private Optional<Boolean> siteIsAlive;
     private final String restUri;
 
     static {
@@ -130,7 +131,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         pingServiceUri = (restUri + config.getString(PING_SERVICE_URI, "/sites/_isAlive")).replaceAll("^://", "/");
         log.debug("Using ping REST uri '{}'", pingServiceUri);
 
-        siteIsAlive = checkSiteIsAlive(pingServiceUri);
     }
 
     @Override
@@ -156,11 +156,13 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
      */
     @Override
     public <T> T createRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
-        // Check whether the site is up and running or not
-        if (!siteIsAlive) {
+        if (siteIsAlive == null) {
+            checkSiteIsAlive(pingServiceUri);
+        }
+        if (!siteIsAlive.get()) {
             log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = checkSiteIsAlive(pingServiceUri);
-            if (!siteIsAlive) {
+            checkSiteIsAlive(pingServiceUri);
+            if (!siteIsAlive.get()) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
                 return null;
             } else {
@@ -186,11 +188,13 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
      */
     @Override
     public <T> T createSecureRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
-        // Check whether the site is up and running or not
-        if (!siteIsAlive) {
+        if (siteIsAlive == null) {
+            checkSiteIsAlive(pingServiceUri);
+        }
+        if (!siteIsAlive.get()) {
             log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = checkSiteIsAlive(pingServiceUri);
-            if (!siteIsAlive) {
+            checkSiteIsAlive(pingServiceUri);
+            if (!siteIsAlive.get()) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
                 return null;
             } else {
@@ -236,8 +240,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
     }
 
-    protected boolean checkSiteIsAlive(final String pingServiceUri) {
-        boolean siteIsAlive;
+    protected void checkSiteIsAlive(final String pingServiceUri) {
         String normalizedPingServiceUri = "";
 
         // Check whether the site is up and running or not
@@ -254,26 +257,23 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e639
             final HttpContext httpContext = new BasicHttpContext();
             final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
-            siteIsAlive = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
-
-            if (!siteIsAlive) {
+            boolean ok = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
+            if (!ok) {
                 log.warn("The response status ('{}') is not okay from the pinging site service URI, '{}'.", httpResponse.getStatusLine(), normalizedPingServiceUri);
             }
+            siteIsAlive = Optional.of(new Boolean(ok));
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
             } else {
                 log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, e.toString());
             }
-
-            siteIsAlive = false;
+            siteIsAlive = Optional.of(Boolean.FALSE);
         } finally {
             if ((httpGet != null) && (!httpGet.isAborted())) {
                 httpGet.reset();
             }
         }
-
-        return siteIsAlive;
     }
 
     protected List<Object> getProviders(final List<Object> additionalProviders) {
