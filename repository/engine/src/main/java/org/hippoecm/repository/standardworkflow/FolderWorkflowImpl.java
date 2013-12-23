@@ -360,31 +360,29 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         }
     }
 
-    private void doArchive(String source, String destination) throws RepositoryException {
-        rootSession.move(source, destination);
+    private void doArchive(final Node handle, final String atticPath) throws RepositoryException {
+        rootSession.move(handle.getPath(), atticPath + "/" + atticName(atticPath, handle));
         rootSession.save();
-        String targetParentPath = destination.substring(0, destination.lastIndexOf("/"));
-        String targetName = destination.substring(destination.lastIndexOf("/")+1);
-        for (final Node target : new NodeIterable(rootSession.getNode(targetParentPath).getNodes(targetName))) {
-            try {
-                if (target.isNodeType(HippoNodeType.NT_HANDLE) && target.hasNodes()) {
-                    JcrUtils.ensureIsCheckedOut(target);
-                    for (final Node child : new NodeIterable(target.getNodes(target.getName()))) {
-                        if (child.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-                            final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
-                            versionManager.checkpoint(child.getPath());
-                            clear(child);
-                            child.setPrimaryType(HippoNodeType.NT_DELETED);
-                        } else {
-                            child.remove();
-                        }
-                        rootSession.save();
+        try {
+            if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (final Node child : new NodeIterable(handle.getNodes(handle.getName()))) {
+                    if (child.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+                        final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
+                        versionManager.checkpoint(child.getPath());
+                        clear(child);
+                        child.setPrimaryType(HippoNodeType.NT_DELETED);
+                        child.setProperty(HippoNodeType.HIPPO_DELETED_DATE, Calendar.getInstance());
+                        child.setProperty(HippoNodeType.HIPPO_DELETED_BY, userSession.getUserID());
+                    } else {
+                        child.remove();
                     }
+                    rootSession.save();
                 }
-            } catch(RepositoryException ex) {
-                log.error("error while deleting document variants from attic", ex);
             }
+        } catch(RepositoryException ex) {
+            log.error("error while deleting document variants from attic", ex);
         }
+
     }
 
     private void clear(final Node node) throws RepositoryException {
@@ -431,8 +429,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 offspring.remove();
                 folder.save();
             } else {
-                doArchive(folder.getPath() + "/" + offspring.getName(),
-                        atticPath + "/" + atticName(atticPath, offspring.getName(), true));            }
+                doArchive(offspring, atticPath);
+            }
         }
     }
 
@@ -448,7 +446,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String path = subject.getPath();
         Node folderNode = rootSession.getNode(path);
         Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
-        if (documentNode.getPath().startsWith(path+"/")) {
+        if (documentNode.getPath().startsWith(path + "/")) {
             if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                 documentNode = documentNode.getParent();
             }
@@ -456,36 +454,26 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 documentNode.remove();
                 folderNode.save();
             } else {
-                doArchive(documentNode.getPath(), atticPath + "/" + atticName(atticPath, documentNode.getName(), true));
+                doArchive(documentNode, atticPath);
             }
         }
     }
 
-    private String atticName(String atticPath, String documentName, boolean createPath) throws RepositoryException {
-        Calendar now = Calendar.getInstance();
-        String year = Integer.toString(now.get(Calendar.YEAR));
-        String month = Integer.toString(now.get(Calendar.MONTH) + 1);
-        String day = Integer.toString(now.get(Calendar.DAY_OF_MONTH));
-        if(createPath) {
-            Node destination, attic = rootSession.getRootNode().getNode(atticPath.substring(1));
-            if(!attic.hasNode(year)) {
-                destination = attic.addNode(year, "nt:unstructured");
+    private String atticName(String atticPath, Node handle) throws RepositoryException {
+        String handleId = handle.getIdentifier();
+        String elt1 = handleId.substring(0,1);
+        String elt2 = handleId.substring(1,2);
+        String elt3 = handleId.substring(2,3);
+        Node parent = rootSession.getNode(atticPath);
+        for (String pathElement : new String[] { elt1, elt2, elt3 }) {
+            if(!parent.hasNode(pathElement)) {
+                parent = parent.addNode(pathElement, JcrConstants.NT_UNSTRUCTURED);
             } else {
-                destination = attic.getNode(year);
+                parent = parent.getNode(pathElement);
             }
-            if(!destination.hasNode(month)) {
-                destination = destination.addNode(month, "nt:unstructured");
-            } else {
-                destination = destination.getNode(month);
-            }
-            if(!destination.hasNode(day)) {
-                destination = destination.addNode(day, "nt:unstructured");
-            } else {
-                destination = destination.getNode(day);
-            }
-            attic.save();
         }
-        return year + "/" + month + "/" + day + "/" + documentName;
+        rootSession.save();
+        return elt1 + "/" + elt2 + "/" + elt3 + "/" + handle.getName();
     }
 
     public void reorder(List<String> newOrder) throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -550,7 +538,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private void renameChildDocument(Node folderNode, String newName) throws RepositoryException {
-        Node documentNode = folderNode.getSession().getRootNode().getNode(folderNode.getPath().substring(1)+"/"+newName);
+        Node documentNode = folderNode.getSession().getRootNode().getNode(folderNode.getPath().substring(1) + "/" + newName);
         renameChildDocument(documentNode);
     }
 
@@ -600,7 +588,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
             documentNode = documentNode.getParent();
         }
-        if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
+        if (documentNode.getPath().startsWith(folderNode.getPath() + "/")) {
             if (folderNode.hasNode(newName)) {
                 throw new WorkflowException("Cannot rename document to same name");
             }
@@ -704,7 +692,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             throw new MappingException("copied destination is not a document");
         }
-        return copyFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/")+1), arguments);
+        return copyFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/") + 1), arguments);
     }
     public Document copy(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -729,7 +717,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if(!target.isNodeType(HippoNodeType.NT_DOCUMENT)) {
             throw new MappingException("copied destination is not a document");
         }
-        return moveFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/")+1), arguments);
+        return moveFrom(new Document(source), new Document(target), absPath.substring(absPath.lastIndexOf("/") + 1), arguments);
     }
     public Document move(Document offspring, Document targetFolder, String targetName, Map<String,String> arguments)
         throws WorkflowException, MappingException, RepositoryException, RemoteException {
