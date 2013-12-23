@@ -15,7 +15,9 @@
  */
 package org.onehippo.repository.search;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
@@ -25,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
@@ -32,7 +35,6 @@ import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.util.NodeIterable;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -42,6 +44,8 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
 
     private Set<String> previousResult = new HashSet<>();
     private Set<String> previouslyAdded = new HashSet<>();
+    private Map<String, Integer> nodes = new HashMap<>();
+    private int run;
 
     @Override
     public void setUp() throws Exception {
@@ -58,25 +62,26 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
 
     }
 
-    @Ignore
     @Test
     public void testSearchRepeatedly() throws Exception {
         for (int i = 0; i < 1000; i++) {
+            run = i + 1;
             testSearch();
         }
     }
 
     public void testSearch() throws Exception {
 
-        final Node test = session.getRootNode().getNode("test");
+        final Node test = getSession().getRootNode().getNode("test");
         final Set<String> removed = removeRandomNodes(test);
-        session.save();
+        getSession().save();
         getSearchIndex().flush();
 
         Set<String> result = getSearchResults();
         try {
             assertEquals(previousResult.size()-removed.size(), result.size());
         } catch (AssertionError e) {
+            System.out.println("Failure during run " + run);
             System.out.println("Checking failure conditions");
             if (intersection(removed, result).size() > 0) {
                 System.out.println("Result still contains removed nodes");
@@ -84,12 +89,10 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
             Set<String> remaining = new HashSet<>(previousResult);
             remaining.removeAll(removed);
             if (!isFullSubSet(remaining, result)) {
-                System.out.println("Previously existing nodes not in result");
-                remaining.removeAll(previouslyAdded);
-                if (isFullSubSet(remaining, result)) {
-                    System.out.println("Missing nodes added in previous run");
-                } else {
-                    System.out.println("At least some missing nodes older than previous run");
+                System.out.println("Previously existing nodes not in result:");
+                final Set<String> difference = difference(remaining, result);
+                for (String s : difference) {
+                    System.out.println("Node " + s + " added during run " + nodes.get(s));
                 }
             }
             Thread.sleep(300l);
@@ -112,25 +115,31 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
         }
 
         Set<String> added = new HashSet<>();
-        final int created = createDocuments(test, levels, added);
+        createDocuments(test, levels, added);
         getSearchIndex().flush();
 
-        System.out.println(created + " documents created");
+        System.out.println(added.size() + " documents created");
         result = getSearchResults();
         try {
-            assertEquals(created, result.size() - initialSize);
+            assertEquals(added.size(), result.size() - initialSize);
         } catch (AssertionError e) {
+            System.out.println("Failure during run " + run);
             System.out.println("Checking failure conditions");
             if (intersection(removed, result).size() > 0) {
                 System.out.println("Result still contains removed nodes");
+            }
+            if (!isFullSubSet(added, result)) {
+                System.out.println("Newly added nodes not in result");
             }
             Set<String> remaining = new HashSet<>(previousResult);
             remaining.removeAll(removed);
             if (!isFullSubSet(remaining, result)) {
                 System.out.println("Previously existing nodes not in result");
             }
-            if (!isFullSubSet(added, result)) {
-                System.out.println("Newly added nodes not in result");
+            Set<String> all = union(remaining, added);
+            Set<String> difference = difference(all, result);
+            for (String s : difference) {
+                System.out.println("Node " + s + " added during run " + nodes.get(s));
             }
             throw e;
         }
@@ -143,12 +152,15 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
         test.accept(documentRemover);
         test.getSession().save();
         System.out.println(documentRemover.deleted.size() + " documents deleted");
+        for (String s : documentRemover.deleted) {
+            nodes.remove(s);
+        }
         return documentRemover.deleted;
     }
 
     private Set<String> getSearchResults() throws Exception {
         Set<String> result = new HashSet<>();
-        final NodeIterator nodes = session.getWorkspace().getQueryManager().createQuery("//element(*,hippo:mydocument)", "xpath").execute().getNodes();
+        final NodeIterator nodes = getSession().getWorkspace().getQueryManager().createQuery("//element(*,hippo:mydocument)", "xpath").execute().getNodes();
         while (nodes.hasNext()) {
             final Node node = nodes.nextNode();
             result.add(node.getIdentifier());
@@ -175,10 +187,11 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
                 final Node document = folder.addNode("document" + i, "hippo:mydocument");
                 document.setProperty("html", "<html/>");
                 added.add(document.getIdentifier());
+                nodes.put(document.getIdentifier(), run);
                 numof += 1;
             }
         }
-        session.save();
+        getSession().save();
         return numof;
     }
 
@@ -216,6 +229,12 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
         return result;
     }
 
+    private Set<String> union(Set<String> set1, Set<String> set2) {
+        Set<String> result = new HashSet<>(set1);
+        result.addAll(set2);
+        return result;
+    }
+
     private boolean isFullSubSet(Set<String> subset, Set<String> superset) {
         for (String s : subset) {
             if (!superset.contains(s)) {
@@ -225,7 +244,26 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
         return true;
     }
 
+    private Set<String> difference(Set<String> set1, Set<String> set2) {
+        final Set<String> result = new HashSet<>();
+        for (String s : set1) {
+            if (!set2.contains(s)) {
+                result.add(s);
+            }
+        }
+        for (String s : set2) {
+            if (!set1.contains(s)) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+
     private SearchIndex getSearchIndex() throws RepositoryException {
         return (SearchIndex)((RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository())).getSearchManager("default").getQueryHandler();
+    }
+
+    private Session getSession() {
+        return session;
     }
 }
