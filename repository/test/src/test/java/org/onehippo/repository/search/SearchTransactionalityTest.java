@@ -35,6 +35,7 @@ import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.util.NodeIterable;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -63,6 +64,7 @@ public class SearchTransactionalityTest extends RepositoryTestCase {
     }
 
     @Test
+    @Ignore
     public void testSearchRepeatedly() throws Exception {
         for (int i = 0; i < 1000; i++) {
             run = i + 1;
