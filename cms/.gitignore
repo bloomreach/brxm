@@ -293,6 +293,7 @@ repository-dependencies/target
 richtext/*.iml
 richtext/.project
 richtext/.settings
+richtext/ckeditor/*.iml
 richtext/ckeditor/frontend/*.iml
 richtext/ckeditor/frontend/target
 richtext/ckeditor/plugins/*.iml
