@@ -79,7 +79,6 @@
     <module>perspectives</module>
     <module>richtext</module>
     <module>translation</module>
-    <module>versioning</module>
     <module>workflow</module>
 
     <module>shared-dependencies</module>
