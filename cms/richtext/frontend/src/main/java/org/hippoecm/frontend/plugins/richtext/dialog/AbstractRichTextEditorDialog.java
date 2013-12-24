@@ -32,31 +32,11 @@ import org.hippoecm.frontend.plugins.richtext.model.AbstractPersistedMap;
 public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMap> extends AbstractDialog<T> {
     private static final long serialVersionUID = 1L;
 
-    private boolean hasExistingLink;
     private RichTextEditorAction<T> cancelAction;
     private RichTextEditorAction<T> closeAction;
 
     public AbstractRichTextEditorDialog(IModel<T> model) {
         super(model);
-
-        hasExistingLink = getModelObject().isExisting();
-
-        addButton(new AjaxButton("button", new ResourceModel("remove", "Remove")) {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                onRemoveLink();
-                if (!hasError()) {
-                    closeDialog();
-                }
-            }
-
-            @Override
-            public boolean isVisible() {
-                return hasRemoveButton();
-            }
-        });
     }
 
     public IModel<String> getTitle() {
@@ -65,10 +45,6 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
 
     protected void checkState() {
         setOkEnabled(getModelObject().isValid() && getModelObject().hasChanged());
-    }
-
-    protected boolean hasRemoveButton() {
-        return hasExistingLink;
     }
 
     public void setCancelAction(final RichTextEditorAction<T> cancelAction) {
@@ -94,10 +70,6 @@ public abstract class AbstractRichTextEditorDialog<T extends AbstractPersistedMa
         super.onClose();
     }
 
-    protected void onRemoveLink() {
-        getModelObject().delete();
-    }
-    
     protected static class StringPropertyModel extends PropertyModel<String> {
         private static final long serialVersionUID = 1L;
 
