@@ -104,6 +104,14 @@ public class HstNodeLoadingCache implements HstEventConsumer {
                 long start = System.currentTimeMillis();
                 for (HstEvent event : events) {
                     HstNode nodeForEvent = fetchHstNode(event.getNodePath());
+                    if (nodeForEvent == rootNode) {
+                        if (!lazyCloseableSession.getSession().nodeExists(rootPath)) {
+                            // root config node is not present any more
+                            rootNode = null;
+                            throw new ModelLoadingException("Cannot load hst model since root config node " +
+                                    "'"+rootPath+"' missing");
+                        }
+                    }
                     boolean orderedReload;
                     if (event.isPropertyEvent() && nodeForEvent != null) {
                         // if already marked stale due to 'node event' we should not mark it now stale
