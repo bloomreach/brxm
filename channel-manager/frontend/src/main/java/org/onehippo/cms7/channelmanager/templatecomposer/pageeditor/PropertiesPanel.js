@@ -787,14 +787,13 @@
                     border: false
                 });
 
-                // layout this panel so the 'a' tag is rendered and can be looked up by ID to attach the on-click listener
-                this.doLayout(false, true);
-
-                Ext.get(createDocumentLinkId).on("click", this._createDocument, this, {
-                    docType: record.get('docType'),
-                    docLocation: record.get('docLocation'),
-                    comboId: propertyField.id
-                });
+                this.on('afterlayout', function() {
+                    Ext.get(createDocumentLinkId).on("click", this._createDocument, this, {
+                        docType: record.get('docType'),
+                        docLocation: record.get('docLocation'),
+                        comboId: propertyField.id
+                    });
+                }, this, { single: true });
             }
         },
 
