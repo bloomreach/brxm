@@ -31,6 +31,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -126,6 +127,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
     private final IRestProxyService restProxyService;
+    private final Map<String, Properties> channelResourcesCache;
     private String channelRegionIconPath = DEFAULT_CHANNEL_ICON_PATH;
     private String channelTypeIconPath = DEFAULT_CHANNEL_ICON_PATH;
 
@@ -137,6 +139,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
         this.restProxyService = restProxyService;
+        this.channelResourcesCache = new HashMap<>();
 
         if (this.restProxyService == null) {
             log.warn("No RESTful proxy service configured!");
@@ -433,8 +436,27 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public Properties getChannelResourceValues(Channel channel) throws ChannelException {
-        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
-        return channelService.getChannelResourceValues(channel.getId(), Session.get().getLocale().toString());
+        return getCachedChannelResources(channel.getId());
+    }
+
+    private Properties getCachedChannelResources(final String channelId) throws ChannelException {
+        Properties resources = channelResourcesCache.get(channelId);
+
+        if (resources == null || Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
+            resources = fetchChannelResources(channelId);
+            channelResourcesCache.put(channelId, resources);
+        } else {
+            log.info("Using cached i18n resources for channel '{}'", channelId);
+        }
+
+        return resources;
+    }
+
+    private Properties fetchChannelResources(final String channelId) throws ChannelException {
+        log.info("Fetching i18n resources for channel '{}'", channelId);
+        final ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
+        final String locale = Session.get().getLocale().toString();
+        return channelService.getChannelResourceValues(channelId, locale);
     }
 
     public void saveChannel(Channel channel) throws ActionFailedException {
