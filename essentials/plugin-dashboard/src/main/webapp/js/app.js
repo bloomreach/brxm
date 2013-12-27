@@ -130,7 +130,8 @@ var app;
             powerpacks_install: root + '/powerpacks/install/'  ,
 
             compounds: root + '/documenttypes/compounds',
-            compoundsCreate: root + '/documenttypes/compounds/create/'
+            compoundsCreate: root + '/documenttypes/compounds/create/' ,
+            contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/'
 
 
         };

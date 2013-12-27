@@ -5,6 +5,7 @@
                 <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
                     <h4> Available Content Blocks:</h4>
+                    <pre>{{documentTypes}}</pre>
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
@@ -38,23 +39,26 @@
                             <td>
 
                                 <!--<div class="btn-group">-->
-                                    <!--<button ng-repeat="provider in docType.providers.items" type="button" class="btn btn-default">{{provider.key}}-->
-                                        <!--<span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>-->
-                                    <!--</button>-->
+                                <!--<button ng-repeat="provider in docType.providers.items" type="button" class="btn btn-default">{{provider.key}}-->
+                                <!--<span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>-->
+                                <!--</button>-->
                                 <!--</div>-->
                                 <!--<select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">-->
-                                    <!--<option>--Choose one--</option>-->
-                                <!--</select>-->
-                                {{docType.providers.items}}
+                                <!--<option>--Choose one--</option>-->
+                                <!--</select>-- ng-model="docType.providers.items"
+                                        ng-options="c.key for c in providers">
+                                <!--{{docType.providers.items}}-->
                                 <!--ng-model="docType.providers.items"-->
                                 <!--ng-selected="docType.providers.items"-->
                                 <select
-                                        style="width:100%"
                                         chosen
-                                        multiple
+                                        style="width:100%"
                                         ng-model="docType.providers.items"
+                                        ng-selected="docType.providers.items"
                                         ng-options="c.key for c in providers"
+                                        multiple
                                         >
+                                    <!--<option ng-repeat="c in providers"  value="{{c.value}}" selected>{{c.key}}</option>-->
                                     <!--<option value="4" selected>Provider 2</option>-->
                                 </select>
                             </td>

@@ -8,6 +8,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.welcomeMessage = "Content blocks plugin";
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
     $scope.pluginInstalled = true;
+    $scope.payload = {"cbpayload": {"items": []}};
     $scope.selection = [];
     $scope.providerInput = "";
     $scope.selectedItem = [];
@@ -71,7 +72,17 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         var providerIndex = providers.indexOf(prov);
         $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
     };
-
+//    $scope.saveBlocksConfiguration = function () {
+//        $http({
+//            method: 'POST',
+//            url: $rootScope.REST.contentblocksCreate,
+//            data: $scope.documentTypes
+//        }).success(function (data) {
+//                    $log.info(data);
+//                    //$scope.documentTypes.providers = [];
+//
+//                });
+//    };
     $scope.installPlugin = function () {
         $log.info("installing plugin");
         $http({
@@ -85,6 +96,20 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
     $scope.saveBlocksConfiguration = function () {
         $log.info("Saving configuration for:");
+        $scope.payload = {"cbpayload": {"items": []}};
+        $scope.payload.cbpayload.items.push($scope.documentTypes)
+        $log.info($scope.documentTypes);
+        $log.info($scope.payload);
+        $http({
+            method: 'POST',
+            url: $rootScope.REST.contentblocksCreate,
+            data: $scope.payload
+        }).success(function (data) {
+                    $log.info(data);
+                    //$scope.documentTypes.providers = [];
+
+                });
+        $log.info("Saved");
     };
 
     $scope.toggleCheckBox = function (docName) {

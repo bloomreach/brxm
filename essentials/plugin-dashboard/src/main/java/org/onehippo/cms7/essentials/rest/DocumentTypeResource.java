@@ -26,12 +26,14 @@ import javax.jcr.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
@@ -48,7 +50,9 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
+import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
 import org.slf4j.Logger;
@@ -129,9 +133,9 @@ public class DocumentTypeResource extends BaseResource {
                 final Node namespace = session.getNode("/hippo:namespaces/mydemoessentials");
                 final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 final Workflow editor = workflowManager.getWorkflow("editor", namespace);
-                //if (editor instanceof NamespaceWorkflow) {
-                System.out.println(editor.getClass().getMethods());
-                System.out.println(editor);
+                //if (editor instanceof NamespaceWorkflow) { todo something doesnt work here
+                //System.out.println(editor.getClass().getMethods());
+                //System.out.println(editor);
                 if (editor instanceof NamespaceWorkflow) {
                     final NamespaceWorkflowImpl namespaceWorkflowI = (NamespaceWorkflowImpl) editor;
                     namespaceWorkflowI.addCompoundType(name);
@@ -152,6 +156,25 @@ public class DocumentTypeResource extends BaseResource {
         }
 
         return keyValueRestful;
+    }
+
+    //see org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource.updateContainer()
+    @POST
+    @Path("/compounds/contentblocks/create")
+//    @Consumes("application/json")
+    public Response createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
+        System.out.println(body);
+        return Response.status(201).build();
+    }
+
+
+    @POST
+    @Path("/compounds/contentblocks/save")
+//    @Consumes("application/json")
+    public Response saveContentBlocks(CBPayload body, @Context ServletContext servletContext) {
+        System.out.println(body);
+        //new Gson().fromJson(json, type);
+        return Response.status(201).build();
     }
 
 }
