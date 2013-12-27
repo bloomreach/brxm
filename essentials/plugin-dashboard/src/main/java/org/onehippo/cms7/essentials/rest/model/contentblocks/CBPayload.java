@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.rest.model.contentblocks;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -43,4 +40,5 @@ public class CBPayload implements Restful {
     public void setItems(final RestfulList<DocumentTypes> items) {
         this.items = items;
     }
+
 }

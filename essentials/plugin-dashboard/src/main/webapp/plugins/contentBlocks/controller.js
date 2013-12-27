@@ -8,7 +8,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.welcomeMessage = "Content blocks plugin";
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
     $scope.pluginInstalled = true;
-    $scope.payload = {"cbpayload": {"items": []}};
+    $scope.payload = {"cbpayload": {"items": {"items": []}}};
     $scope.selection = [];
     $scope.providerInput = "";
     $scope.selectedItem = [];
@@ -96,8 +96,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
     $scope.saveBlocksConfiguration = function () {
         $log.info("Saving configuration for:");
-        $scope.payload = {"cbpayload": {"items": []}};
-        $scope.payload.cbpayload.items.push($scope.documentTypes)
+        $scope.payload = {"cbpayload": {"items": {"items": []}}};
+        $scope.payload.cbpayload.items.items = $scope.documentTypes
         $log.info($scope.documentTypes);
         $log.info($scope.payload);
         $http({

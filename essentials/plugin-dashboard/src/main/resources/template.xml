@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="{{path}}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="caption" sv:type="String">
+    <sv:value>{{name}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="contentPickerType" sv:type="String">
+    <sv:value>{{type}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="cpItemsPath" sv:type="String">
+    <sv:value>{{provider}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="engine" sv:type="String">
+    <sv:value>${engine}</sv:value>
+  </sv:property>
+  <sv:property sv:name="field" sv:type="String">
+    <sv:value>{{path}}</sv:value>
+  </sv:property>
+  <sv:property sv:name="mode" sv:type="String">
+    <sv:value>${mode}</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="validator.id" sv:type="String">
+    <sv:value>${validator.id}</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>${cluster.id}.field</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>${wicket.model}</sv:value>
+  </sv:property>
+</sv:node>

@@ -16,10 +16,17 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -38,19 +45,25 @@ import javax.ws.rs.core.Response;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
-import org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
+import org.onehippo.cms7.essentials.dashboard.contentblocks.model.ContentBlockModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
-import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
@@ -137,7 +150,7 @@ public class DocumentTypeResource extends BaseResource {
                 //System.out.println(editor.getClass().getMethods());
                 //System.out.println(editor);
                 if (editor instanceof NamespaceWorkflow) {
-                    final NamespaceWorkflowImpl namespaceWorkflowI = (NamespaceWorkflowImpl) editor;
+                    final NamespaceWorkflow namespaceWorkflowI = (NamespaceWorkflow) editor;
                     namespaceWorkflowI.addCompoundType(name);
                     if (session.itemExists("/hippo:namespaces/mydemoessentials/" + name)) {
                         success = true;
@@ -163,8 +176,144 @@ public class DocumentTypeResource extends BaseResource {
     @Path("/compounds/contentblocks/create")
 //    @Consumes("application/json")
     public Response createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
-        System.out.println(body);
+        final List<DocumentTypes> docTypes = body.getItems().getItems();
+        for (DocumentTypes documentType : docTypes) {
+            for (KeyValueRestful item : documentType.getProviders().getItems()) {
+                ContentBlockModel model = new ContentBlockModel(item.getValue(), ContentBlocksPlugin.Prefer.LEFT, ContentBlocksPlugin.Type.LINKS, item.getKey(), documentType.getValue());
+                addContentBlockToType(model);
+            }
+        }
+        // final Object o = new Gson().fromJson(body, );
         return Response.status(201).build();
+    }
+
+
+    private boolean addContentBlockToType(final ContentBlockModel contentBlockModel) {
+        final String documentType = contentBlockModel.getDocumentType();
+        final Session session = GlobalUtils.createSession();
+        InputStream in = null;
+
+        try {
+            Node docType;
+            if (documentType.contains(":")) {
+                docType = session.getNode("/hippo:namespaces/" + documentType.replace(':', '/'));
+            } else {
+                docType = session.getNode("/hippo:namespaces/system/" + documentType);
+            }
+
+            Node nodeType = null;
+            if (docType.hasNode("hipposysedit:nodetype/hipposysedit:nodetype")) {
+                nodeType = docType.getNode("hipposysedit:nodetype/hipposysedit:nodetype");
+            }
+            if (docType.hasNode("editor:templates/_default_/root")) {
+                final Node ntemplate = docType.getNode("editor:templates/_default_");
+                final Node root = docType.getNode("editor:templates/_default_/root");
+                PluginType pluginType = null;
+                if (root.hasProperty("plugin.class")) {
+                    pluginType = PluginType.get(root.getProperty("plugin.class").getString());
+                }
+                if (pluginType != null) {
+                    //Load template from source folder
+                    /*Template template = cfg.getTemplate("nodetype.xml");
+                    Template template2 = cfg.getTemplate("template.xml");*/
+                    // Build the data-model
+                    Map<String, Object> data = new HashMap<>();
+
+                    data.put("name", contentBlockModel.getName());
+                    data.put("path", new StringCodecFactory.UriEncoding().encode(contentBlockModel.getName()));
+                    data.put("documenttype", documentType);
+                    data.put("namespace", documentType.substring(0, documentType.indexOf(':')));
+                    data.put("type", contentBlockModel.getType().getType());
+                    data.put("provider", contentBlockModel.getProvider());
+
+                    String fieldType = "${cluster.id}.field";
+
+                    if (pluginType.equals(PluginType.TWOCOLUMN)) {
+                        // switch (selected) {
+                        //  case LEFT:
+                        fieldType = "${cluster.id}.left.item";
+                        //      break;
+                        ///   case RIGHT:
+                        //     fieldType = "${cluster.id}.right.item";
+                        //     break;
+                        //}
+                    }
+                    data.put("fieldType", fieldType);
+
+                    String parsed = TemplateUtils.injectTemplate("nodetype.xml", data, getClass());
+
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
+
+                    ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+
+                    parsed = TemplateUtils.injectTemplate("template.xml", data, getClass());
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
+
+                    ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+                    session.save();
+                    return true;
+                }
+            }
+
+        } catch (RepositoryException | IOException e) {
+            GlobalUtils.refreshSession(session, false);
+            log.error("Error in content bocks plugin", e);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+        return false;
+    }
+
+    public enum Prefer implements Serializable {
+        LEFT("left"), RIGHT("right");
+        String prefer;
+
+        private Prefer(String prefer) {
+            this.prefer = prefer;
+        }
+
+        public String getPrefer() {
+            return prefer;
+        }
+    }
+
+    public enum Type implements Serializable {
+        LINKS("links"), DROPDOWN("dropdown");
+        String type;
+
+        private Type(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
+    }
+
+    public enum PluginType {
+
+        LISTVIEWPLUGIN("org.hippoecm.frontend.service.render.ListViewPlugin"), TWOCOLUMN("org.hippoecm.frontend.editor.layout.TwoColumn"), UNKNOWN("unknown");
+        String clazz;
+
+        PluginType(String clazz) {
+            this.clazz = clazz;
+        }
+
+        public static PluginType get(String clazz) {
+            for (PluginType a : PluginType.values()) {
+                if (a.clazz.equals(clazz)) {
+                    return a;
+                }
+            }
+            return UNKNOWN;
+        }
+
+        public String getClazz() {
+            return clazz;
+        }
+
     }
 
 
