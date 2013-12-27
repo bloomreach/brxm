@@ -83,6 +83,10 @@ grails.exceptionresolver.params.exclude = ['password']
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
 
+cors.url.pattern = ['/pluginRest/*', '/marketplace/pluginRest/*']
+cors.headers = ['Access-Control-Allow-Origin': 'http://localhost:8080']
+cors.enabled = true
+
 environments {
     development {
         grails.logging.jul.usebridge = true
@@ -107,9 +111,10 @@ log4j = {
            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
            'org.codehaus.groovy.grails.web.mapping',        // URL mapping
            'org.codehaus.groovy.grails.commons',            // core / classloading
-           'org.codehaus.groovy.grails.plugins',            // plugins
            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+
+    debug  'org.codehaus.groovy.grails.plugins'            // plugins
 }

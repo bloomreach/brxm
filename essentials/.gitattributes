@@ -431,6 +431,7 @@ marketplace/grails-app/controllers/marketplace/PluginController.groovy -text
 marketplace/grails-app/controllers/marketplace/PluginRestController.groovy -text
 marketplace/grails-app/controllers/marketplace/VendorController.groovy -text
 marketplace/grails-app/domain/marketplace/Artifact.groovy -text
+marketplace/grails-app/domain/marketplace/ArtifactType.groovy -text
 marketplace/grails-app/domain/marketplace/Asset.groovy -text
 marketplace/grails-app/domain/marketplace/Plugin.groovy -text
 marketplace/grails-app/domain/marketplace/Screenshot.groovy -text

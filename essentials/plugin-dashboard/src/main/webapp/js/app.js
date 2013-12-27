@@ -101,7 +101,7 @@ var app;
             /**
              * Returns list of all plugins
              */
-            plugins: root + '/plugins/',
+            plugins: 'http://localhost:9090/marketplace/pluginRest',
             /**
              * Returns list of all plugins that need configuration
              */
