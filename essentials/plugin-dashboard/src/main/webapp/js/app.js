@@ -127,7 +127,11 @@ var app;
             beanwriter: root + '/beanwriter/',
             documentTypes: root + '/documenttypes/',
             controllers: root + '/controllers/',
-            powerpacks_install: root + '/powerpacks/install/'
+            powerpacks_install: root + '/powerpacks/install/'  ,
+
+            compounds: root + '/documenttypes/compounds',
+            compoundsCreate: root + '/documenttypes/compounds/create/'
+
 
         };
 
@@ -171,7 +175,7 @@ var app;
             return collection;
         }
     });
-})(angular.module('Essentials', ['ngRoute']));
+})(angular.module('Essentials', ['ngRoute','localytics.directives']));
 
 /*
 

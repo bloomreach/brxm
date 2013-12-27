@@ -2528,6 +2528,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/*.iml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/.DS_Store
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/.idea
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/target

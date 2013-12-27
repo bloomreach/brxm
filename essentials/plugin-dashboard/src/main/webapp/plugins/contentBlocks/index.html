@@ -20,7 +20,8 @@
                     </div>
                 </div>
                 <div class="panel-body">
-                    <div class="alert-warning" ng-hide="providers.length > 0"><strong>No content blocks found</strong></div>
+                    <div class="alert-warning" ng ng-hide="providers.length > 0">
+                        <strong>No content blocks found</strong></div>
                     <h4 ng-show="providers.length > 0"> Configure Content Blocks:</h4>
                     <table ng-show="providers.length > 0" class="table table-striped table-bordered">
                         <thead>
@@ -35,13 +36,26 @@
                         <tr ng-repeat="docType in documentTypes">
                             <td>{{docType.key}}</td>
                             <td>
-                                <div class="btn-group">
-                                    <button ng-repeat="provider in docType.providers" type="button" class="btn btn-default">{{provider.key}}
-                                        <span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>
-                                    </button>
-                                </div>
-                                <select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">
-                                    <option>--Choose one--</option>
+
+                                <!--<div class="btn-group">-->
+                                    <!--<button ng-repeat="provider in docType.providers.items" type="button" class="btn btn-default">{{provider.key}}-->
+                                        <!--<span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>-->
+                                    <!--</button>-->
+                                <!--</div>-->
+                                <!--<select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">-->
+                                    <!--<option>--Choose one--</option>-->
+                                <!--</select>-->
+                                {{docType.providers.items}}
+                                <!--ng-model="docType.providers.items"-->
+                                <!--ng-selected="docType.providers.items"-->
+                                <select
+                                        style="width:100%"
+                                        chosen
+                                        multiple
+                                        ng-model="docType.providers.items"
+                                        ng-options="c.key for c in providers"
+                                        >
+                                    <!--<option value="4" selected>Provider 2</option>-->
                                 </select>
                             </td>
                             <td>

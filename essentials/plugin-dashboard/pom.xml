@@ -108,6 +108,25 @@
       <artifactId>hippo-repository-connector</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-repository</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>datanucleus-core</artifactId>
+          <groupId>org.datanucleus</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-cms-editor-common</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7</groupId>-->
+      <!--<artifactId>hippo-repository-api</artifactId>-->
+    <!--</dependency>-->
+
+    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf-rt-frontend-jaxrs.version}</version>

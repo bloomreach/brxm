@@ -15,6 +15,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.Lists;
 
+import org.onehippo.cms7.essentials.rest.DocumentTypeResource;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
+
 /**
  * @version "$Id: RestfulList.java 174870 2013-08-23 13:56:24Z mmilicevic $"
  */
@@ -27,7 +31,6 @@ public class RestfulList<T extends Restful> implements Serializable {
     public void add(T resource) {
         items.add(resource);
     }
-
 
     public void addAll(Collection<T> items) {
         items.addAll(items);
@@ -45,7 +48,9 @@ public class RestfulList<T extends Restful> implements Serializable {
             @XmlElementRef(type = MessageRestful.class),
             @XmlElementRef(type = ControllerRestful.class),
             /*@XmlElementRef(type = DocumentTypeRestful.class),*/
-            @XmlElementRef(type = KeyValueRestful.class)
+            @XmlElementRef(type = KeyValueRestful.class),
+            @XmlElementRef(type = DocumentTypes.class),
+            @XmlElementRef(type = Compounds.class)
     })
     public List<T> getItems() {
         return items;
