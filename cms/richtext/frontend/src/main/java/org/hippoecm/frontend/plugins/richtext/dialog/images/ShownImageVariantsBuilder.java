@@ -24,7 +24,7 @@ class ShownImageVariantsBuilder {
     private List<String> allImageVariants;
     private List<String> includedImageVariants;
     private List<String> excludedImageVariants;
-    private final List<String> shownImageVariants = new ArrayList<String>();
+    private final List<String> shownImageVariants = new ArrayList<>();
 
     /**
      * Constructs a list based on all image variants, the excluded image variants and the included image variants
@@ -74,6 +74,6 @@ class ShownImageVariantsBuilder {
     }
 
     private boolean useIncludedImageVariants() {
-        return includedImageVariants !=null;
+        return includedImageVariants != null && !includedImageVariants.isEmpty();
     }
 }

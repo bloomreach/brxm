@@ -54,7 +54,7 @@ public class ShownImageVariantsBuilderTest {
         whiteBlackListResolver.setIncludedImageVariants(Arrays.asList("A","E"));
         whiteBlackListResolver.build();
         final List<String> actual = whiteBlackListResolver.getShownImageVariants();
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
@@ -76,6 +76,21 @@ public class ShownImageVariantsBuilderTest {
         ShownImageVariantsBuilder whiteBlackListResolver = new ShownImageVariantsBuilder();
         List<String> allImageVariants = Arrays.asList("A", "B", "C", "D");
         List<String> includedImageVariants = null;
+        List<String> excludedImageVariants = Arrays.asList("C");
+        whiteBlackListResolver.setAllImageVariants(allImageVariants);
+        whiteBlackListResolver.setExcludedImageVariants(excludedImageVariants);
+        whiteBlackListResolver.setIncludedImageVariants(includedImageVariants);
+        whiteBlackListResolver.build();
+        final List<String> actual = whiteBlackListResolver.getShownImageVariants();
+        final List<String> expected = Arrays.asList("A","B","D");
+        Assert.assertArrayEquals(expected.toArray(), actual.toArray());
+    }
+
+    @Test
+    public void getShownImageVariants_IncludedEmpty_ExcludedFilled_returnAllMinusExcluded(){
+        ShownImageVariantsBuilder whiteBlackListResolver = new ShownImageVariantsBuilder();
+        List<String> allImageVariants = Arrays.asList("A", "B", "C", "D");
+        List<String> includedImageVariants = new ArrayList<>();
         List<String> excludedImageVariants = Arrays.asList("C");
         whiteBlackListResolver.setAllImageVariants(allImageVariants);
         whiteBlackListResolver.setExcludedImageVariants(excludedImageVariants);
