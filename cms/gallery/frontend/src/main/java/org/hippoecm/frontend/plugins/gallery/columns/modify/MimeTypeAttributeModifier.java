@@ -131,6 +131,7 @@ public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
 
             @Override
             public void bind(Component hostComponent) {
+                super.bind(hostComponent);
                 hostComponent.add(new Behavior() {
 
                     @Override
