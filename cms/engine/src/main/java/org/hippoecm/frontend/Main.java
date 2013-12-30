@@ -418,6 +418,15 @@ public class Main extends PluginApplication {
         }
     }
 
+    @Override
+    public void internalDestroy() {
+        super.internalDestroy();
+        if (log.isInfoEnabled()) {
+            String applicationName = getPluginApplicationName();
+            log.info("Hippo CMS application " + applicationName + " has stopped");
+        }
+    }
+
     /**
      * Tries to get the output witcket paths parameter from:
      * <ol>
