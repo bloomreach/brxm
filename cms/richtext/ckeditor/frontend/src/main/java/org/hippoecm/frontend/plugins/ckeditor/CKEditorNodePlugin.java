@@ -76,6 +76,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
             + "    [ 'Ctrl', 'm', 'maximize' ],"
             + "    [ 'Alt', 'b', 'showblocks' ]"
             + "  ],"
+            + "  linkTypes: 'url,email',"
             + "  linkShowAdvancedTab: false,"
             + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tabletools,toolbar,undo,youtube',"
             + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
