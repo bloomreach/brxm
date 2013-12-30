@@ -87,9 +87,9 @@ import org.slf4j.LoggerFactory;
  */
 public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, InternalWorkflow {
 
-    static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
-
+    private static final Logger log = LoggerFactory.getLogger(FolderWorkflowImpl.class);
     private static final long serialVersionUID = 1L;
+    private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
 
     private final Session userSession;
     private final Session rootSession;
@@ -144,7 +144,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         try {
             QueryManager qmgr = userSession.getWorkspace().getQueryManager();
             Vector<Node> foldertypes = new Vector<Node>();
-            Node templates = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
+            Node templates = userSession.getNode(TEMPLATES_PATH);
             Value[] foldertypeRefs = null;
             if (subject.hasProperty("hippostd:foldertype")) {
                 try {
@@ -274,34 +274,33 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public String add(String category, String template, Map<String,String> arguments) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String name = arguments.get("name");
         rootSession.save();
-        QueryManager qmgr = userSession.getWorkspace().getQueryManager();
-        Node foldertype = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
-        if (!foldertype.hasNode(category)) {
-            throw new WorkflowException("No category defined for add to folder");
+
+        final QueryManager qmgr = userSession.getWorkspace().getQueryManager();
+        final Node queryFolder = userSession.getRootNode().getNode(TEMPLATES_PATH);
+        if (!queryFolder.hasNode(category)) {
+            throw new WorkflowException("No template query called '" + category + "' at " + TEMPLATES_PATH);
         }
-        foldertype = foldertype.getNode(category);
-        Query query = qmgr.getQuery(foldertype);
-        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage());
+        final Node templateQuery = queryFolder.getNode(category);
+        Query query = qmgr.getQuery(templateQuery);
+        query = qmgr.createQuery(templateQuery.getProperty("jcr:statement").getString(), query.getLanguage());
         QueryResult rs = query.execute();
+
         Node result = null;
-        Node target = rootSession.getRootNode();
-        if (!subject.getPath().substring(1).equals("")) {
-            target = target.getNode(subject.getPath().substring(1));
-        }
+        final Node target = rootSession.getNodeByIdentifier(subject.getIdentifier());
         Map<String, String[]> renames = new TreeMap<String, String[]>();
-        if (foldertype.hasProperty("hippostd:modify")) {
-            Value[] values = foldertype.getProperty("hippostd:modify").getValues();
+        if (templateQuery.hasProperty("hippostd:modify")) {
+            Value[] values = templateQuery.getProperty("hippostd:modify").getValues();
             String[] params = new String[values.length];
             for (int i = 0; i < values.length; i++) {
                 params[i] = values[i].getString();
             }
             populateRenames(renames, params, target, arguments);
         }
+
         try {
             Node handleNode = null;
-            for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
-                Node prototypeNode = iter.nextNode();
-                prototypeNode = rootSession.getNode(prototypeNode.getPath());
+            for (Node prototypeNode : new NodeIterable(rs.getNodes())) {
+                prototypeNode = rootSession.getNodeByIdentifier(prototypeNode.getIdentifier());
                 if (prototypeNode.getName().equals("hipposysedit:prototype")) {
                     String documentType = prototypeNode.getPrimaryNodeType().getName();
                     if (documentType.equals(template)) {
@@ -353,7 +352,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 rootSession.save();
                 return handleNode.getPath();
             } else {
-                throw new WorkflowException("No template defined for add to folder");
+                throw new WorkflowException("No document or folder was added: the query at " + TEMPLATES_PATH + "/" + category
+                        + " did not return a matching prototype for '" + template + "'");
             }
         } finally {
             rootSession.refresh(false);
