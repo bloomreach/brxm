@@ -36,6 +36,16 @@
                 channelPropertiesContainer.setAttribute('class', 'hide-channel-properties');
             }
 
+            this.saveButton = new Ext.Button({
+                text: self.resources['channel-properties-save'],
+                listeners: {
+                    click: {
+                        fn: self.saveChannel,
+                        scope: this
+                    }
+                }
+            });
+
             Ext.apply(config, {
                 id: 'channel-properties-window',
                 cls: 'channel-properties-window',
@@ -50,18 +60,7 @@
                 hidden: true,
                 bodyStyle: 'background-color: #ffffff',
                 padding: 10,
-                buttons: [
-                    {
-                        id: 'save-button',
-                        text: self.resources['channel-properties-save'],
-                        listeners: {
-                            click: {
-                                fn: self.saveChannel,
-                                scope: this
-                            }
-                        }
-                    }
-                ]
+                buttons: [ this.saveButton ]
             });
 
             this.addEvents('savechannel');
@@ -79,20 +78,28 @@
             this.on('hide', function() {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
             });
-
             this.addEvents('selectchannel', 'savechannel');
             Hippo.ChannelManager.ChannelPropertiesWindow.superclass.initComponent.apply(this, arguments);
         },
 
-        show: function(channel) {
-            this.channelId = channel.channelId;
-            if (channel.channelName) {
-                this.setTitle(channel.channelName);
+        show: function(data) {
+            this.channelId = data.channelId;
+            if (data.channelName) {
+                this.setTitle(data.channelName);
             }
-            this.channelName = channel.channelName;
+            this.channelName = data.channelName;
+
+            if (!Ext.isEmpty(data.channelNodeLockedBy) && data.channelNodeLockedBy !== data.cmsUser) {
+                this.saveButton.setDisabled(true);
+                this.saveButton.setTooltip(this.resources['locked-by'].format(data.channelNodeLockedBy));
+            } else {
+                this.saveButton.setDisabled(false);
+                this.saveButton.setTooltip('');
+            }
+
             this.render(Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getEl());
             this.expand();
-            this.fireEvent('selectchannel', channel.channelId);
+            this.fireEvent('selectchannel', data.channelId);
             Hippo.ChannelManager.ChannelPropertiesWindow.superclass.show.apply(this, arguments);
         },
 

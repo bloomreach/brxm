@@ -63,6 +63,10 @@
         }
     }
 
+    function stringEndsWith(str, suffix) {
+        return str.indexOf(suffix, str.length - suffix.length) !== -1;
+    }
+
     Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
         constructor: function(config) {
@@ -226,7 +230,8 @@
                 'lock',
                 'unlock',
                 'edit-document',
-                'documents'
+                'documents',
+                'previewCreated'
             ]);
         },
 
@@ -484,7 +489,9 @@
                                     if (button.mode === 'show') {
                                         propertiesWindow.show({
                                             channelId: this.channelId,
-                                            channelName: this.channelName
+                                            channelName: this.channelName,
+                                            cmsUser: this.cmsUser,
+                                            channelNodeLockedBy: this.channel.channelNodeLockedBy
                                         });
                                         propertiesWindow.on('hide', function() {
                                             button.mode = 'show';
@@ -812,6 +819,23 @@
                 this.enableUI(pageContext);
             }, this);
 
+            this.on('previewCreated', function() {
+                var self = this,
+                    previewChannelId;
+                if (!stringEndsWith(this.channelId, "-preview")) {
+                    previewChannelId = this.channelId + "-preview";
+                    this.channelId = null;
+                    this.channelStoreFuture.when(function(config) {
+                        config.store.on('load', function() {
+                            self.browseTo({ channelId: previewChannelId, isEditMode: true });
+                        }, this, { single: true });
+                        config.store.reload();
+                    });
+                } else {
+                    this.pageContainer.refreshIframe.call(this.pageContainer);
+                }
+            }, this);
+
             this.on('selectItem', function(record, forcedVariant, containerDisabled) {
                 if (record.get('type') === HST.CONTAINERITEM && containerDisabled !== true) {
                     this.showProperties(record, forcedVariant);
@@ -949,8 +973,8 @@
             this.fireEvent('channelChanged');
         },
 
-        initComposer: function() {
-            this.pageContainer.initComposer.call(this.pageContainer).when(function() {
+        initComposer: function(isEditMode) {
+            this.pageContainer.initComposer.call(this.pageContainer, isEditMode).when(function() {
                 if (this.areVariantsEnabled()) {
                     this.globalVariantsStore.load();
                 }
@@ -969,7 +993,7 @@
                 this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
                 this.pageContainer.renderHost = record.get('hostname');
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hide();
-                this.initComposer();
+                this.initComposer(data.isEditMode);
             }.createDelegate(this));
         },
 

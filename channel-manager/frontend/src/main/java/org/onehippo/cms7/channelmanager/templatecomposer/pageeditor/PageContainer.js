@@ -131,7 +131,7 @@
 
         // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
-        initComposer: function() {
+        initComposer: function(isEditMode) {
             return new Hippo.Future(function(success, failure) {
                 if (typeof this.contextPath === 'undefined'
                         || typeof this.renderHost === 'undefined'
@@ -142,7 +142,7 @@
                     return;
                 }
 
-                this.previewMode = true;
+                this.previewMode = !isEditMode;
 
                 this._lock();
 
@@ -340,7 +340,7 @@
                             // reset pageContext, the page and toolkit stores must be reloaded
                             self.pageContext = null;
                             // refresh iframe to get new hst config uuids.
-                            self.refreshIframe.call(self, null);
+                            self.fireEvent('previewCreated');
                         },
                         failure: function(result) {
                             if (result.isTimeout) {

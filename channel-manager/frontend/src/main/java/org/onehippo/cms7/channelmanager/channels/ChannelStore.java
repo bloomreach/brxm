@@ -83,6 +83,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         hstMountPoint,
         id, // channel id
         locale,
+        channelNodeLockedBy,
         mountId,
         name,
         mountPath,

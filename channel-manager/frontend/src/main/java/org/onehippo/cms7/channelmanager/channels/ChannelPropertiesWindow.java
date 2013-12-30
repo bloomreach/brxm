@@ -37,6 +37,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -129,18 +130,16 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
     }
 
     public ChannelPropertiesWindow(final IPluginContext context, final ChannelStore channelStore) {
-        super();
-
         this.channelStore = channelStore;
 
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
         container.add(new AttributeModifier("class", true, new PropertyModel(this, "channelPropertiesContainerClass")));
         container.add(new ListView<FieldGroupInfo>(WICKET_ID_FIELDGROUPS, new LoadableDetachableModel<List<FieldGroupInfo>>() {
             @Override
-            protected List<FieldGroupInfo> load() {
-                return getFieldGroups();
-            }
-        }) {
+                    protected List<FieldGroupInfo> load() {
+                        return getFieldGroups();
+                    }
+                }) {
             @Override
             protected void populateItem(final ListItem<FieldGroupInfo> item) {
                 final FieldGroupInfo fieldGroup = item.getModelObject();
@@ -175,11 +174,20 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         final String key = item.getModelObject();
                         final HstPropertyDefinitionInfo propDefInfo = getPropertyDefinition(key);
                         Annotation parameterAnnotation = propDefInfo.getAnnotation(Parameter.class);
-                        if (parameterAnnotation != null && ((Parameter)parameterAnnotation).hideInChannelManager()) {
+                        if (parameterAnnotation != null && ((Parameter) parameterAnnotation).hideInChannelManager()) {
                             return;
                         }
-                        item.add(new Label(WICKET_ID_KEY, new ChannelResourceModel(key, channel, channelStore)));
-                        item.add(getWidget(context, channel, propDefInfo, key));
+                         final Label label = new Label(WICKET_ID_KEY, new ChannelResourceModel(key, channel, channelStore));
+                        item.add(label);
+                        final Component widget = getWidget(context, channel, propDefInfo, key);
+                        item.add(widget);
+
+                        final String cmsUser = UserSession.get().getJcrSession().getUserID();
+                        final String channelNodeLockedBy = channel.getChannelNodeLockedBy();
+                        if (StringUtils.isNotEmpty(channelNodeLockedBy) && !channelNodeLockedBy.equals(cmsUser)) {
+                            label.setEnabled(false);
+                            widget.setEnabled(false);
+                        }
 
                         // add help text
                         final IModel<String> helpModel = new ChannelResourceModel(key + HELP_SUFFIX, channel, channelStore);
@@ -198,10 +206,14 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
                 if (parameters.containsKey(EVENT_SELECT_CHANNEL_PARAM_ID)) {
-                    JSONArray channelId = parameters.get(EVENT_SELECT_CHANNEL_PARAM_ID);
-                    if (channelId.length() > 0) {
+                    JSONArray jsonChannelId = parameters.get(EVENT_SELECT_CHANNEL_PARAM_ID);
+                    if (jsonChannelId.length() > 0) {
                         try {
-                            channel = getChannel((String) channelId.get(0));
+                            String channelId = (String) jsonChannelId.get(0);
+                            if (!channelId.endsWith("-preview")) {
+                                channelId = channelId + "-preview";
+                            }
+                            channel = getChannel(channelId);
                             channelPropertiesContainerClass = "channel-properties";
                         } catch (JSONException e) {
                             log.error("Invalid JSON", e);
