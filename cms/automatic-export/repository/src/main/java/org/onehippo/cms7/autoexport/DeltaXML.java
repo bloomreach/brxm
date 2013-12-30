@@ -85,13 +85,15 @@ class DeltaXML {
     boolean processEvent(ExportEvent event) {
         String path = event.getPath();
         
-        if (contextPath.startsWith(path) && event.getType() == NODE_REMOVED) {
-            // parent node needs to be overlayed, we don't handle that
-            log.warn("Change not handled by export: " 
-                    + ExportEvent.valueOf(event.getType()) + " on " + path
-                    + ". You will need to do this manually.");
-            instruction.clear();
-            // parent node was removed, we need to be deleted
+        if (contextPath.startsWith(path)) {
+            if (event.getType() == NODE_REMOVED) {
+                // parent node needs to be overlayed, we don't handle that
+                log.warn("Change not handled by export: "
+                        + ExportEvent.valueOf(event.getType()) + " on " + path
+                        + ". You will need to do this manually.");
+                instruction.clear();
+                // parent node was removed, we need to be deleted
+            }
             return true;
         }
         
