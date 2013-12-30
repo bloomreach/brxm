@@ -47,7 +47,6 @@ class NodeTypesEditor extends WebMarkupContainer {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
-    private IModel<Node> model;
 
     NodeTypesEditor(String id, IModel<Node> nodeModel) {
         super(id, nodeModel);
@@ -149,17 +148,14 @@ class NodeTypesEditor extends WebMarkupContainer {
     }
 
     private static class MixinModel extends NodeModelWrapper<Boolean> {
+
         private static final long serialVersionUID = 1L;
 
-        String type;
+        private String type;
 
-        MixinModel(IModel<Node> nodeModel, String mixin) {
+        private MixinModel(IModel<Node> nodeModel, String mixin) {
             super(nodeModel);
             this.type = mixin;
-        }
-
-        public String getMixin() {
-            return type;
         }
 
         public Boolean getObject() {
@@ -186,7 +182,6 @@ class NodeTypesEditor extends WebMarkupContainer {
                         node.removeMixin(type);
                     }
                 }
-                node.save();
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
@@ -197,17 +192,7 @@ class NodeTypesEditor extends WebMarkupContainer {
             if (node == null) {
                 return false;
             }
-            if (!node.hasProperty(JcrConstants.JCR_MIXIN_TYPES)) {
-                return false;
-            }
-            NodeTypeManager ntMgr = node.getSession().getWorkspace().getNodeTypeManager();
-            for (Value value : node.getProperty(JcrConstants.JCR_MIXIN_TYPES).getValues()) {
-                NodeType nt = ntMgr.getNodeType(value.getString());
-                if (nt.isNodeType(type)) {
-                    return true;
-                }
-            }
-            return false;
+            return node.isNodeType(type);
         }
 
         private boolean hasMixin() throws RepositoryException {
@@ -215,11 +200,8 @@ class NodeTypesEditor extends WebMarkupContainer {
             if (node == null) {
                 return false;
             }
-            if (!node.hasProperty(JcrConstants.JCR_MIXIN_TYPES)) {
-                return false;
-            }
-            for (Value value : node.getProperty(JcrConstants.JCR_MIXIN_TYPES).getValues()) {
-                if (value.getString().equals(type)) {
+            for (NodeType nodeType : node.getMixinNodeTypes()) {
+                if (nodeType.getName().equals(type)) {
                     return true;
                 }
             }
