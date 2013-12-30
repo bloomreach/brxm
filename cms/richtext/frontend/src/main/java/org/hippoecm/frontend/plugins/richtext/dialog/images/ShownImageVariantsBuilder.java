@@ -19,6 +19,8 @@ package org.hippoecm.frontend.plugins.richtext.dialog.images;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 class ShownImageVariantsBuilder {
 
     private List<String> allImageVariants;
@@ -73,7 +75,11 @@ class ShownImageVariantsBuilder {
         this.excludedImageVariants = excludedImageVariants;
     }
 
+    /**
+     * @return true if {@link #includedImageVariants} has at least one filled element
+     */
     private boolean useIncludedImageVariants() {
-        return includedImageVariants != null && !includedImageVariants.isEmpty();
+        return (includedImageVariants!=null && includedImageVariants.size()>=1 && StringUtils.isNotEmpty(includedImageVariants.get(0)));
     }
+
 }

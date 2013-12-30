@@ -100,4 +100,19 @@ public class ShownImageVariantsBuilderTest {
         final List<String> expected = Arrays.asList("A","B","D");
         Assert.assertArrayEquals(expected.toArray(), actual.toArray());
     }
+
+    @Test
+    public void getShownImageVariants_IncludedOneEmptyElement_ExcludedFilled_returnAllMinusExcluded(){
+        ShownImageVariantsBuilder whiteBlackListResolver = new ShownImageVariantsBuilder();
+        List<String> allImageVariants = Arrays.asList("A", "B", "C", "D");
+        List<String> includedImageVariants = Arrays.asList("");
+        List<String> excludedImageVariants = Arrays.asList("C");
+        whiteBlackListResolver.setAllImageVariants(allImageVariants);
+        whiteBlackListResolver.setExcludedImageVariants(excludedImageVariants);
+        whiteBlackListResolver.setIncludedImageVariants(includedImageVariants);
+        whiteBlackListResolver.build();
+        final List<String> actual = whiteBlackListResolver.getShownImageVariants();
+        final List<String> expected = Arrays.asList("A","B","D");
+        Assert.assertArrayEquals(expected.toArray(), actual.toArray());
+    }
 }
