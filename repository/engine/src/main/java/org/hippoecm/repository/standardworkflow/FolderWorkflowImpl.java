@@ -276,7 +276,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         rootSession.save();
 
         final QueryManager qmgr = userSession.getWorkspace().getQueryManager();
-        final Node queryFolder = userSession.getRootNode().getNode(TEMPLATES_PATH);
+        final Node queryFolder = userSession.getNode(TEMPLATES_PATH);
         if (!queryFolder.hasNode(category)) {
             throw new WorkflowException("No template query called '" + category + "' at " + TEMPLATES_PATH);
         }
