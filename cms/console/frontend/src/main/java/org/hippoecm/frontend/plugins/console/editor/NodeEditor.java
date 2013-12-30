@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.console.editor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -28,9 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -56,8 +53,6 @@ class NodeEditor extends Form<Node> {
     static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
 
     @SuppressWarnings("unused")
-    private String mixinTypes;
-    @SuppressWarnings("unused")
     private String name;
     @SuppressWarnings("unused")
     private String uuid;
@@ -81,7 +76,10 @@ class NodeEditor extends Form<Node> {
         final TextFieldWidget primaryTypeWidget = new TextFieldWidget("primarytype", new PropertyModel<String>(this, "primaryType"));
         primaryTypeWidget.setSize("40");
         add(primaryTypeWidget);
-        add(new Label("types", new PropertyModel<String>(this, "mixinTypes")));
+
+        typesEditor = new NodeTypesEditor("mixintypes", model);
+        add(typesEditor);
+        add(new Label("types", new PropertyModel<String>(typesEditor, "mixinTypes")));
 
         add(new ToggleHeader("toggle-header-2", "2", "Properties"));
         namespaceProvider = new NamespaceProvider(new EmptyDataProvider());
@@ -89,8 +87,6 @@ class NodeEditor extends Form<Node> {
         add(namespacePropertiesEditor);
 
         add(new ToggleHeader("toggle-header-3", "3", "Mixin Types"));
-        typesEditor = new NodeTypesEditor("mixintypes", null);
-        add(typesEditor);
         onModelChanged();
     }
 
@@ -107,15 +103,7 @@ class NodeEditor extends Form<Node> {
                 name = node.getName();
                 uuid = node.getIdentifier();
 
-                final Collection<String> declaredMixinTypes = getDeclaredMixinTypes(node);
-                final Collection<String> inheritedMixinTypes = getInheritedMixinTypes(node);
-                final Collection<String> allMixinTypes = new ArrayList<String>(declaredMixinTypes);
-                allMixinTypes.addAll(inheritedMixinTypes);
-                mixinTypes = createTypesString(allMixinTypes);
-
-                typesEditor.setModelObject(allMixinTypes);
-                typesEditor.setInheritedMixinTypes(inheritedMixinTypes);
-                typesEditor.setNodeModel(model);
+                typesEditor.setModel(getModel());
                 typesEditor.setVisible(true);
 
                 namespacePropertiesEditor.setVisible(true);
@@ -129,44 +117,7 @@ class NodeEditor extends Form<Node> {
         }
     }
 
-    private Collection<String> getDeclaredMixinTypes(final Node node) throws RepositoryException {
-        final List<String> result = new ArrayList<String>();
-        for (NodeType nodeType : node.getMixinNodeTypes()) {
-            result.add(nodeType.getName());
-        }
-        return result;
-    }
-
-    private Collection<String> getInheritedMixinTypes(final Node node) throws RepositoryException {
-        final List<String> result = new ArrayList<String>();
-        for (NodeType nodeType : node.getMixinNodeTypes()) {
-            for (NodeType superType : nodeType.getSupertypes()) {
-                if (superType.isMixin()) {
-                    result.add(superType.getName());
-                }
-            }
-        }
-        for (NodeType nodeType : node.getPrimaryNodeType().getSupertypes()) {
-            if (nodeType.isMixin()) {
-                result.add(nodeType.getName());
-            }
-        }
-        return result;
-    }
-
-    private String createTypesString(Collection<String> nodeTypes) {
-        final StringBuilder result = new StringBuilder();
-        String concat = StringUtils.EMPTY;
-
-        for (String type: nodeTypes) {
-            result.append(concat);
-            result.append(type);
-            concat = ", ";
-        }
-
-        return result.toString();
-    }
-
+    @SuppressWarnings("unused")
     public String getPrimaryType() {
         final Node node = getModelObject();
         if (node != null) {
@@ -179,6 +130,7 @@ class NodeEditor extends Form<Node> {
         return null;
     }
 
+    @SuppressWarnings("unused")
     public void setPrimaryType(String primaryType) {
         final Node node = getModelObject();
         if (node != null) {
