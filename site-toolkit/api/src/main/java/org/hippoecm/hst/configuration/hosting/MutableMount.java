@@ -28,17 +28,19 @@ public interface MutableMount extends Mount {
     /**
      * Set the channel info for the mount.  The info must be constant,
      * i.e. it must always return the same values.
-     * @param info
      */
-    void setChannelInfo(ChannelInfo info);
+    void setChannelInfo(ChannelInfo info, ChannelInfo previewInfo);
 
     /**
-     * Sets the {@Channel} info for this {@link Mount}. If the  {@link Mount} impl does not support {@link #setChannel(org.hippoecm.hst.configuration.channel.Channel)}, it can
+     * Sets the {@Channel} info for this {@link Mount}. If the  {@link Mount} impl does not support
+     * {@link #setChannel(Channel, Channel)}, it can
      * throw an {@link UnsupportedOperationException}
      * @param channel the channel to set, not allowed to be <code>null</code>
+     * @param previewChannel the channel to set, not allowed to be <code>null</code>. if there is no preview, the
+     *                       <code>previewChannel</code> is the same as <code>channel</code>
      * @throws  {@link UnsupportedOperationException} when the implementation does not support to set a {@link Channel} and {@link IllegalArgumentException} when <code>channel</code> is <code>null</code>
      */
-    void setChannel(Channel channel) throws UnsupportedOperationException;
+    void setChannel(Channel channel, Channel previewChannel) throws UnsupportedOperationException;
     
     /**
      * 

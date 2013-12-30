@@ -81,6 +81,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     private Channel channel;
 
     /**
+     * The preview {@link Channel} for this {@link Mount}
+     */
+    private Channel previewChannel;
+
+    /**
      * The parent of this {@link Mount} or null when this {@link Mount} is the root
      */
     private Mount parent;
@@ -216,6 +221,7 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private String formLoginPage;
     private ChannelInfo channelInfo;
+    private ChannelInfo previewChannelInfo;
 
     private String[] defaultSiteMapItemHandlerIds;
 
@@ -914,21 +920,33 @@ public class MountService implements ContextualizableMount, MutableMount {
         return channel;
     }
 
+    @Override
+    public Channel getPreviewChannel() {
+        return previewChannel;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends ChannelInfo> T getChannelInfo() {
         return (T) channelInfo;
     }
 
-    public void setChannelInfo(final ChannelInfo channelInfo) {
+    @Override
+    public <T extends ChannelInfo> T getPreviewChannelInfo() {
+        return (T) previewChannelInfo;
+    }
+
+    public void setChannelInfo(final ChannelInfo channelInfo, final ChannelInfo previewChannelInfo) {
         this.channelInfo = channelInfo;
+        this.previewChannelInfo = previewChannelInfo;
     }
 
     @Override
-    public void setChannel(final Channel channel) throws UnsupportedOperationException {
-        if (channel == null) {
+    public void setChannel(final Channel channel, final Channel previewChannel) throws UnsupportedOperationException {
+        if (channel == null || previewChannel == null) {
             throw new IllegalArgumentException("Channel to set is not allowed to be null");
         }
         this.channel = channel;
+        this.previewChannel = previewChannel;
     }
 
 

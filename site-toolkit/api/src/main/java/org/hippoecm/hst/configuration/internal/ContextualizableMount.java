@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.internal;
 
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -31,5 +33,18 @@ public interface ContextualizableMount extends MutableMount {
      * Returned value can be <code>null</code> if this mount does not point to a hst:site as mountpoint
      */
     HstSite getPreviewHstSite();
-    
+
+    /**
+     * internal only : not api
+     * @return the preview {@link Channel} of this mount. If this mount is already a preview mount, the same is returned as {@link #getChannel()}.
+     * Returned value can be <code>null</code> if this mount does not have a channel
+     */
+    Channel getPreviewChannel();
+
+    /**
+     * The preview channel properties for this mount.
+     * @param <T> Type of the channel info.  Only checked at runtime on assignment.
+     * @return A preview channel properties instance.
+     */
+    <T extends ChannelInfo> T getPreviewChannelInfo();
 }

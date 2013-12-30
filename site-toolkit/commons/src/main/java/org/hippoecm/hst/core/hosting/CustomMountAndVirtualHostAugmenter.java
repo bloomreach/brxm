@@ -687,12 +687,12 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
-        public void setChannelInfo(ChannelInfo info) {
+        public void setChannelInfo(final ChannelInfo info, final ChannelInfo previewInfo) {
             // nothing
         }
 
         @Override
-        public void setChannel(final Channel channel) throws UnsupportedOperationException {
+        public void setChannel(final Channel channel, final Channel previewChannel) throws UnsupportedOperationException {
             throw new UnsupportedOperationException(this.getClass().getName() + " does not support setChannel");
         }
 

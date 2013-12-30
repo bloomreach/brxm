@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -56,6 +57,20 @@ public class AbstractConfigResource {
         final Mount liveMount = getEditingMount(requestContext);
         assertIsContextualizableMount(liveMount);
         return ((ContextualizableMount)liveMount).getPreviewHstSite();
+    }
+
+    protected String getEditingPreviewChannelPath(final HstRequestContext requestContext) {
+        final Mount liveMount = getEditingMount(requestContext);
+        assertIsContextualizableMount(liveMount);
+        final String previewChannelPath =  liveMount.getChannelPath()+ "-preview";
+        return previewChannelPath;
+    }
+    /**
+     * @return the preview {@link Channel} and <code>null</code> if there is no preview channel available
+     */
+    protected Channel getEditingPreviewChannel(final HstRequestContext requestContext) {
+        final String previewChannelPath =  getEditingPreviewChannelPath(requestContext);
+        return requestContext.getVirtualHost().getVirtualHosts().getChannelByJcrPath(previewChannelPath);
     }
 
     protected boolean hasPreviewConfiguration(final Mount mount) {

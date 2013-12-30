@@ -164,7 +164,14 @@ public class MountDecoratorImpl implements MountDecorator {
         @SuppressWarnings("unchecked")
         @Override
         public <T extends ChannelInfo> T getChannelInfo() {
-            return (T) delegatee.getChannelInfo();
+            // always return preview for preview decorated mounts
+            return (T) delegatee.getPreviewChannelInfo();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T extends ChannelInfo> T getPreviewChannelInfo() {
+            return (T) delegatee.getPreviewChannelInfo();
         }
 
         @Override
@@ -177,7 +184,13 @@ public class MountDecoratorImpl implements MountDecorator {
          */
         @Override
         public Channel getChannel() {
-            return delegatee.getChannel();  //To change body of implemented methods use File | Settings | File Templates.
+            // always return preview for preview decorated mounts
+            return delegatee.getPreviewChannel();
+        }
+
+        @Override
+        public Channel getPreviewChannel() {
+            return delegatee.getPreviewChannel();
         }
 
         @Override
@@ -369,12 +382,12 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public void setChannelInfo(ChannelInfo info) {
+        public void setChannelInfo(ChannelInfo info, ChannelInfo previewInfo) {
             throw new UnsupportedOperationException("setChannelInfo not allowed on decorated mounts");
         }
 
         @Override
-        public void setChannel(final Channel channel) throws UnsupportedOperationException {
+        public void setChannel(final Channel channel, Channel previewChannel) throws UnsupportedOperationException {
             throw new UnsupportedOperationException("setChannel not allowed on decorated mounts");
         }
 

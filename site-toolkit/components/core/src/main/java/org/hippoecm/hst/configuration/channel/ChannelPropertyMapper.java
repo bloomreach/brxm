@@ -15,20 +15,25 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.parameters.HstValueType;
@@ -64,6 +69,21 @@ public class ChannelPropertyMapper {
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES)) {
             final String[] devices = channelNode.getValueProvider().getStrings(HstNodeTypes.CHANNEL_PROPERTY_DEVICES);
             channel.setDevices(Arrays.asList(devices));
+        }
+
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        }
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY)) {
+            channel.setLastmodifiedby(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY));
+        }
+
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
+            channel.setLastmodified(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+        }
+
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+            channel.setLockedon(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
         }
 
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
@@ -103,7 +123,12 @@ public class ChannelPropertyMapper {
         }
     }
 
-    public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException {
+    public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException, IllegalStateException {
+        long validateLastModifiedTimestamp = -1L;
+        if (channel.getLastmodified() != null) {
+            validateLastModifiedTimestamp = channel.getLastmodified().getTimeInMillis();
+        }
+        tryLockOnNodeIfNeeded(channelNode, validateLastModifiedTimestamp);
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_NAME, channel.getName());
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_TYPE, channel.getType());
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE, channel.getDefaultDevice());
@@ -128,7 +153,8 @@ public class ChannelPropertyMapper {
                 Class<? extends ChannelInfo> channelInfoClass = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
                 ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), channel.getProperties());
             } catch (ClassNotFoundException e) {
-                log.error("Could not find channel info class " + channelInfoClassName, e);
+                log.warn("Could not find channel info class " + channelInfoClassName, e);
+                throw new IllegalStateException("Could not find channel info class ", e);
             }
         } else {
             if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
@@ -318,4 +344,69 @@ public class ChannelPropertyMapper {
                 throw new RuntimeException("Unexpected HstValueType " + propDef.getDefaultValue().getClass().getName());
         }
     }
+
+    public static  boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
+        final String holder = getLockedBy(configurationNode);
+        if (StringUtils.isEmpty(holder)) {
+            return false;
+        }
+        return !configurationNode.getSession().getUserID().equals(holder);
+    }
+
+    public static  boolean isLockedBySession(Node configurationNode) throws RepositoryException {
+        final String holder = getLockedBy(configurationNode);
+        if (StringUtils.isEmpty(holder)) {
+            return false;
+        }
+        return configurationNode.getSession().getUserID().equals(holder);
+    }
+
+    public static  String getLockedBy(Node configurationNode) throws RepositoryException {
+        if (!configurationNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+            return null;
+        }
+        return configurationNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+    }
+
+    /**
+     * tries to set a lock. If there is not yet a lock, then also
+     * a timestamp validation is done whether the configuration node that needs to be locked has not been modified
+     * by someone else
+     *
+     */
+    public static void tryLockOnNodeIfNeeded(final Node nodeToLock, final long validateLastModifiedTimestamp) throws RepositoryException, IllegalStateException {
+        Session session = nodeToLock.getSession();
+        if (isLockedBySomeoneElse(nodeToLock)) {
+            log.info("Node '{}' is already locked by someone else.", nodeToLock.getPath());
+            throw new IllegalStateException("Node '"+nodeToLock.getPath()+"' is already locked by someone else.");
+        }
+        if (isLockedBySession(nodeToLock)) {
+            log.debug("Container '{}' already has a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
+            return;
+        }
+
+        if (nodeToLock.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
+            long existingTimeStamp = nodeToLock.getProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED).getDate().getTimeInMillis();
+            if (existingTimeStamp != validateLastModifiedTimestamp) {
+                Calendar existing = Calendar.getInstance();
+                existing.setTimeInMillis(existingTimeStamp);
+                Calendar validate = Calendar.getInstance();
+                validate.setTimeInMillis(validateLastModifiedTimestamp);
+                DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss:SSS zzz", Locale.US);
+                log.info("Node '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
+                        new String[]{nodeToLock.getPath(), dateFormat.format(existing.getTime()),
+                                dateFormat.format(validate.getTime()) , session.getUserID()});
+                throw new IllegalStateException("Node '"+nodeToLock.getPath()+"' cannot be changed because timestamp validation did not pass.");
+            }
+        }
+        log.info("Node '{}' gets a lock for user '{}'.", nodeToLock.getPath(), session.getUserID());
+        nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, session.getUserID());
+        Calendar now = Calendar.getInstance();
+        if (!nodeToLock.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+            nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, now);
+        }
+        nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+        nodeToLock.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
+    }
+
 }

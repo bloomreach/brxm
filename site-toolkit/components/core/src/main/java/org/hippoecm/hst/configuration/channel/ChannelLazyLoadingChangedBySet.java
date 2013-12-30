@@ -31,12 +31,13 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
     private transient Set<String> delegatee;
     private transient final HstNode channelRootConfigNode;
     private transient final HstSite previewHstSite;
+    private transient final Channel channel;
 
-    public ChannelLazyLoadingChangedBySet(final HstNode channelRootConfigNode, final HstSite previewHstSite) {
+    public ChannelLazyLoadingChangedBySet(final HstNode channelRootConfigNode, final HstSite previewHstSite, final Channel channel) {
         this.channelRootConfigNode = channelRootConfigNode;
         this.previewHstSite = previewHstSite;
+        this.channel = channel;
     }
-
     private void load(){
         if (delegatee != null) {
             return;
@@ -47,6 +48,10 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
             if (lockedBy != null) {
                 delegatee.add(lockedBy);
             }
+        }
+        // check preview channel node itself
+        if (channel.getChannelNodeLockedBy() != null) {
+            delegatee.add(channel.getChannelNodeLockedBy());
         }
     }
 

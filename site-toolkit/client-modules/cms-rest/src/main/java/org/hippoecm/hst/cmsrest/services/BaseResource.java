@@ -19,11 +19,15 @@ package org.hippoecm.hst.cmsrest.services;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An abstract base class represents functionality common among different RESTful resources
  */
 public abstract class BaseResource {
+
+    private static final Logger log = LoggerFactory.getLogger(BaseResource.class);
 
 	protected ChannelManager channelManager;
 
@@ -38,5 +42,6 @@ public abstract class BaseResource {
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
     }
+
 
 }

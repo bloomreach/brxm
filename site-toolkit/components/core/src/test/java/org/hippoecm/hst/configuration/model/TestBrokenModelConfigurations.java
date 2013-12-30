@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.model;
 
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.jcr.Repository;
@@ -28,10 +29,12 @@ import junit.framework.Assert;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentConfigurationService;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.configuration.hosting.VirtualHostService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.configuration.sitemap.HstNoopSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -41,6 +44,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.ResolvedSiteMapItemImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -60,7 +64,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
 
     private HstManager hstManager;
     private EventPathsInvalidator invalidator;
-    private  Session session;
+    private Session session;
 
     @Override
     @Before
@@ -69,7 +73,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         session = createSession();
         createHstConfigBackup(session);
         hstManager = getComponent(HstManager.class.getName());
-        invalidator   = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+        invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
     }
 
     @Override
@@ -99,7 +103,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
 
         session.getNode("/hst:hst").remove();
         session.save();
-        invalidator.eventPaths("/hst:hst/hst:sites");
+        invalidator.eventPaths("/hst:hst");
         assertTrue(((HstManagerImpl) hstManager).state == HstManagerImpl.BuilderState.STALE);
 
         ExecuteOnLogLevel.fatal(new Runnable() {
@@ -155,7 +159,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         assertTrue(resolvedMount.getMount().getChannel() == channels.values().iterator().next());
         // now remove sites node
         session.getNode("/hst:hst/hst:sites").remove();
-        invalidator.eventPaths("/hst:hst/hst:sites");
+        invalidator.eventPaths("/hst:hst");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
         session.save();
 
@@ -197,7 +201,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
         // now remove /hst:hst/hst:sites/unittestproject node
         session.getNode("/hst:hst/hst:sites/unittestproject").remove();
-        invalidator.eventPaths("/hst:hst/hst:sites/unittestproject");
+        invalidator.eventPaths("/hst:hst/hst:sites");
         assertTrue( ((HstManagerImpl)hstManager).state == HstManagerImpl.BuilderState.STALE);
         session.save();
 
@@ -498,7 +502,7 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
                         fail(e.toString());
                     }
                 }
-            }, ExecuteOnLogLevel.class.getName());
+            }, HstComponentConfigurationService.class.getName());
         }
     }
 
@@ -520,12 +524,22 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
     public void testProjectAndDefaultNoSiteMap() throws Exception {
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:sitemap").remove();
         session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap").remove();
-        session.save();final VirtualHosts firstModel = hstManager.getVirtualHosts();
-        final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
-        assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
-        final HstSiteService hstSite = (HstSiteService)resolvedMount.getMount().getHstSite();
-        final HstSiteMap siteMap = hstSite.getSiteMap();
-        assertTrue(siteMap instanceof HstNoopSiteMap);
+        session.save();
+        ExecuteOnLogLevel.fatal(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final VirtualHosts firstModel = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = firstModel.matchMount("localhost", "/site", "home");
+                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+                    final HstSiteService hstSite = (HstSiteService) resolvedMount.getMount().getHstSite();
+                    final HstSiteMap siteMap = hstSite.getSiteMap();
+                    assertTrue(siteMap instanceof HstNoopSiteMap);
+                } catch (ContainerException e) {
+                    fail(e.toString());
+                }
+            }
+        }, HstSiteService.class.getName());
     }
 
     @Test
@@ -617,22 +631,33 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
 
         // now remove templates
         session.getNode("/hst:hst/hst:configurations/unittestcommon/hst:templates").remove();
-        invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon/hst:templates");
+        invalidator.eventPaths("/hst:hst/hst:configurations/unittestcommon");
         session.save();
         {
-            final VirtualHosts model = hstManager.getVirtualHosts();
-            final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-            assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+            ExecuteOnLogLevel.fatal(new Runnable() {
+                @Override
+                public void run() {
+                    try {
 
-            final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
-            assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
+                        final VirtualHosts model = hstManager.getVirtualHosts();
+                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                        assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-            final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
-            final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
+                        final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
+                        assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
 
-            assertEquals("webpage", hstTemplate);
-            assertNull(renderPath);
+                        final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
+                        final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
+
+                        assertEquals("webpage", hstTemplate);
+                        assertNull(renderPath);
+                    } catch (ContainerException e) {
+                        fail(e.toString());
+                    }
+                }
+            }, HstComponentConfigurationService.class.getName());
         }
+
     }
 
     @Test
@@ -642,16 +667,27 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         session.getNode("/hst:hst/hst:configurations/hst:default/hst:templates").remove();
         session.save();
 
-        final VirtualHosts model = hstManager.getVirtualHosts();
-        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
-        assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
+        ExecuteOnLogLevel.fatal(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final VirtualHosts model = hstManager.getVirtualHosts();
+                    final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                    assertEquals("/hst:hst/hst:sites/unittestproject", resolvedMount.getMount().getMountPoint());
 
-        final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
-        assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
-        final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
+                    final ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem("/home");
+                    assertNotNull(resolvedSiteMapItem.getHstComponentConfiguration());
+                    final String renderPath = resolvedSiteMapItem.getHstComponentConfiguration().getRenderPath();
+                    final String hstTemplate = ((HstComponentConfigurationService) resolvedSiteMapItem.getHstComponentConfiguration()).getHstTemplate();
 
-        assertEquals("webpage", hstTemplate);
-        assertNull(renderPath);
+                    assertEquals("webpage", hstTemplate);
+                    assertNull(renderPath);
+                } catch (ContainerException e) {
+                    fail(e.toString());
+                }
+            }
+        }, HstComponentConfigurationService.class.getName());
+
     }
 
 
@@ -690,6 +726,84 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
         }
     }
 
+    @Test
+    public void testPreviewConfigurationButNoPreviewChannel() throws Exception {
+        String configPath;
+        String channelPath;
+        {
+            VirtualHosts model = hstManager.getVirtualHosts();
+            final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+            final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
+            assertTrue("there is no preview channel thus live instance and preview should be the same",
+                    mount.getChannel() == mount.getPreviewChannel());
+
+            channelPath = mount.getChannelPath();
+            configPath = mount.getHstSite().getConfigurationPath();
+        }
+
+        // create a preview hst configuration and a preview channel
+        JcrUtils.copy(session, channelPath, channelPath+"-preview");
+        JcrUtils.copy(session, configPath, configPath+"-preview");
+        String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+
+        {
+            VirtualHosts model = hstManager.getVirtualHosts();
+            final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+            final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
+            assertFalse("there is *a* preview channel thus live instance and preview should NOT be the same",
+                    mount.getChannel() == mount.getPreviewChannel());
+        }
+
+        // only remove channel preview : This is an invalid configuration state since there is a preview configuration
+        // a error should be logged : We need to add 'logging' expectation for this.
+        session.getNode(channelPath+"-preview").remove();
+        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+        {
+            ExecuteOnLogLevel.fatal(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        VirtualHosts model = hstManager.getVirtualHosts();
+                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                        final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
+                        assertTrue("there is no preview channel thus live instance and preview should be the same",
+                                mount.getChannel() == mount.getPreviewChannel());
+                    } catch (ContainerException e) {
+                        fail(e.toString());
+                    }
+                }
+            }, VirtualHostsService.class.getName());
+        }
+
+        // restore preview channel but remove the preview configuration now
+
+        JcrUtils.copy(session, channelPath, channelPath+"-preview");
+        session.getNode(configPath+"-preview").remove();
+        pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+        session.save();
+        invalidator.eventPaths(pathsToBeChanged);
+        {
+            ExecuteOnLogLevel.fatal(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        VirtualHosts model = hstManager.getVirtualHosts();
+                        final ResolvedMount resolvedMount = model.matchMount("localhost", "/site", "home");
+                        final ContextualizableMount mount = (ContextualizableMount) resolvedMount.getMount();
+                        assertFalse("there is a preview channel thus live instance and preview should NOT be the same",
+                                mount.getChannel() == mount.getPreviewChannel());
+                    } catch (ContainerException e) {
+                        fail(e.toString());
+                    }
+                }
+            }, VirtualHostsService.class.getName());
+        }
+
+    }
 
     protected Session createSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");

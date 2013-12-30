@@ -17,8 +17,11 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -40,12 +43,44 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
 	@Override
 	public List<Channel> getChannels() {
-		return new ArrayList(getVirtualHosts().getChannels().values());
+        final Collection<Channel> allChannels = getVirtualHosts().getChannels().values();
+        Map<String, Channel> liveChannels = new HashMap<>();
+        Map<String, Channel> previewChannels = new HashMap<>();
+        for (Channel channel : allChannels) {
+            if (channel.isPreview()) {
+                if (channel.getId().endsWith("-preview")) {
+                    previewChannels.put(channel.getId().substring(0, channel.getId().length() - "-preview".length()), channel);
+                } else {
+                    log.warn("Unexpected preview channel id '{}'. Preview channels should have id that end with " +
+                            "-preview.", channel.getId());
+                    previewChannels.put(channel.getId(), channel);
+                }
+
+            } else {
+                liveChannels.put(channel.getId(), channel);
+            }
+        }
+
+        List<Channel> liveOrPreviewChannels = new ArrayList<>();
+        liveOrPreviewChannels.addAll(previewChannels.values());
+        for (Channel liveChannel : liveChannels.values()) {
+            if (previewChannels.containsKey(liveChannel.getId())) {
+                log.info("Skip live channel {} as already present as preview channel", liveChannel.getId());
+            } else {
+                liveOrPreviewChannels.add(liveChannel);
+            }
+        }
+
+        return liveOrPreviewChannels;
 	}
 
     @Override
     public void save(Channel channel) throws ChannelException {
         try {
+            if (!channel.isPreview()) {
+                log.warn("Error while trying to save channel: Can only save preview channels", channel);
+                throw new ChannelException("Error while trying to save channel + " +channel.getId()+" : Can only save preview channels ");
+            }
             channelManager.save(channel);
         } catch (ChannelException ce) {
             log.warn("Error while saving a channel - Channel: {} - {} : {}", new Object[]{channel, ce.getClass().getName(), ce.toString()});

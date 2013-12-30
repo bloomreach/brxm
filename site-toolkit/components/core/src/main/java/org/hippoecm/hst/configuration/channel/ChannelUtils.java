@@ -27,7 +27,8 @@ import org.hippoecm.hst.proxy.ProxyFactory;
 public class ChannelUtils {
 
     @SuppressWarnings("unchecked")
-    public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values, Class<? extends ChannelInfo> parametersInfoType) {
+    public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
+                                                           final Class<? extends ChannelInfo> parametersInfoType) {
 
         if (!parametersInfoType.isInterface()) {
             throw new IllegalArgumentException("The ParametersInfo annotation type must be an interface.");
@@ -39,6 +40,12 @@ public class ChannelUtils {
 
             public Object invoke(Object object, Method method, Object[] args) throws Throwable {
                 String methodName = method.getName();
+
+                if ("toString".equals(methodName) && (args == null || args.length == 0)) {
+                    StringBuilder builder = new StringBuilder("ChannelInfoProxy [parametersInfoType=");
+                    builder.append(parametersInfoType.getName()).append(", properties=").append(values).append("]");
+                    return  builder.toString();
+                }
 
                 if ("getProperties".equals(methodName) && (args == null || args.length == 0)) {
                     return Collections.unmodifiableMap(values);

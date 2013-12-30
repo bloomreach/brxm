@@ -17,8 +17,16 @@ package org.hippoecm.hst.configuration.site;
 
 import java.util.HashSet;
 
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+
+import junit.framework.Assert;
+
 import com.google.common.base.Optional;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
@@ -27,6 +35,8 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
+import org.hippoecm.hst.util.JcrSessionUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -85,7 +95,7 @@ public class TestSiteService extends AbstractTestConfigurations {
     }
 
     @Test
-    public void previewSiteComponentsConfigurationLoadedLazilyForCurrentHostGroup() throws Exception {
+    public void previewSiteComponentsConfigurationNotLoadedForCurrentHostGroupIfNoPreviewChannel() throws Exception {
         // via the channel manager, the channels for the current hostgroup get loaded. For this, some
         // lazy loading is introduced in the channel manager. This test is for confirming that. The
         // unittest content has
@@ -110,10 +120,68 @@ public class TestSiteService extends AbstractTestConfigurations {
         final VirtualHosts virtualHosts = resMount.getResolvedVirtualHost().getVirtualHost().getVirtualHosts();
         assertTrue(virtualHosts.getChannelById("testchannel").getChangedBySet() instanceof HashSet);
 
-        // after invoking a method on LazyFilteredAutoLoadingSet, the backing previewHstSite.componentsConfiguration
-        // gets populated
         virtualHosts.getChannelById("testchannel").getChangedBySet().size();
-        assertNotNull(previewHstSite.componentsConfiguration);
+        // only when there is a PREVIEW channel, a ChannelLazyLoadingChangedBySet is created. When there is not preview channel
+        // the componentsConfiguration is still not loaded
+        assertNull(previewHstSite.componentsConfiguration);
+
+    }
+
+
+    @Test
+    public void previewSiteComponentsConfigurationLoadedLazilyForCurrentHostGroup() throws Exception {
+        // first make sure there is a preview channel
+        Session session = createSession();
+        try {
+            createHstConfigBackup(session);
+            {
+                final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+                final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+                // since we do not have a preview yet, previewChannel and live channel should be same instance
+                Assert.assertTrue("Since there is not preview, the preview channel instance should be same as the live channel" +
+                        " instance",mount.getPreviewChannel() == mount.getChannel());
+
+                final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
+                // create preview configuration and preview channel
+                String configPath = hstSite.getConfigurationPath();
+                JcrUtils.copy(session, configPath, configPath+"-preview");
+                String channelPath = mount.getChannelPath();
+                JcrUtils.copy(session, channelPath, channelPath+"-preview");
+                // add a change by setting 'lockedby' on preview channel node
+                session.getNode(channelPath+"-preview").setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, "someonelikeyou");
+            }
+            String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
+            session.save();
+            invalidator = HstServices.getComponentManager().getComponent(EventPathsInvalidator.class.getName());
+            invalidator.eventPaths(pathsToBeChanged);
+
+            {
+                final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+                final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
+                Assert.assertFalse("Since there is *a* preview, the preview channel instance should NOT be same as the live channel" +
+                        " instance", mount.getPreviewChannel() == mount.getChannel());
+                final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
+                // componentsConfiguration is laoded lazily
+                assertNull(hstSite.componentsConfiguration);
+                final VirtualHosts virtualHosts = resMount.getResolvedVirtualHost().getVirtualHost().getVirtualHosts();
+
+                assertTrue(virtualHosts.getChannelById("testchannel").getChangedBySet().size() == 0);
+
+                final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
+                // only when changes from preview channel are loaded the lazy component configuration gets populated
+                assertNull(previewHstSite.componentsConfiguration);
+
+                assertTrue(virtualHosts.getChannelById("testchannel-preview").getChangedBySet().size() == 1);
+                assertTrue(virtualHosts.getChannelById("testchannel-preview").getChangedBySet().contains("someonelikeyou"));
+                // since changedBySet is request on preview channel, we expect previewHstSite.componentsConfiguration not to be
+                // null any more.
+                assertNull(hstSite.componentsConfiguration);
+                assertNotNull(previewHstSite.componentsConfiguration);
+            }
+
+        } finally {
+            restoreHstConfigBackup(session);
+        }
 
     }
 
@@ -321,5 +389,28 @@ public class TestSiteService extends AbstractTestConfigurations {
 
     public static Optional<HstSiteMap> getSiteMapInstanceVariable(HstSiteService siteService) {
         return siteService.siteMap;
+    }
+
+    protected Session createSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+    }
+
+    protected void createHstConfigBackup(Session session) throws RepositoryException {
+        if (!session.nodeExists("/hst-backup")) {
+            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
+            session.save();
+        }
+    }
+
+    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
+        if (session.nodeExists("/hst-backup")) {
+            if (session.nodeExists("/hst:hst")) {
+                session.removeItem("/hst:hst");
+            }
+            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
+            session.removeItem("/hst-backup");
+            session.save();
+        }
     }
 }

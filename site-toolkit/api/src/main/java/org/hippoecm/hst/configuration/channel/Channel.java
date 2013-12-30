@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,16 +44,23 @@ public class Channel implements Serializable {
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
-    private final Map<String, Object> properties = new HashMap<String, Object>();
+    private final Map<String, Object> properties = new HashMap<>();
     private String channelInfoClassName;
     private String mountId;
     private String locale;
     private boolean previewHstConfigExists;
-    private Set<String> changedBySet = new HashSet<String>();
+
+    // the set of users that have changes for the channel: Can be the channel node itself or some
+    // hst configuration belonging to the channel
+    private Set<String> changedBySet = new HashSet<>();
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.EMPTY_LIST;
     private int hashCode;
-
+    private boolean isPreview = false;
+    private String channelNodeLockedBy;
+    private String lastmodifiedby;
+    private Calendar lockedon;
+    private Calendar lastmodified;
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
      */
@@ -263,6 +271,46 @@ public class Channel implements Serializable {
         this.devices = devices;
     }
 
+    public void setPreview(final boolean preview) {
+        isPreview = preview;
+    }
+
+    public boolean isPreview() {
+        return isPreview;
+    }
+
+    public String getChannelNodeLockedBy() {
+        return channelNodeLockedBy;
+    }
+
+    public void setChannelNodeLockedBy(final String channelNodeLockedBy) {
+        this.channelNodeLockedBy = channelNodeLockedBy;
+    }
+
+    public String getLastmodifiedby() {
+        return lastmodifiedby;
+    }
+
+    public void setLastmodifiedby(final String lastmodifiedby) {
+        this.lastmodifiedby = lastmodifiedby;
+    }
+
+    public Calendar getLockedon() {
+        return lockedon;
+    }
+
+    public void setLockedon(final Calendar lockedon) {
+        this.lockedon = lockedon;
+    }
+
+    public Calendar getLastmodified() {
+        return lastmodified;
+    }
+
+    public void setLastmodified(final Calendar lastmodified) {
+        this.lastmodified = lastmodified;
+    }
+
     @Override
     public int hashCode() {
         if (hashCode != 0) {
@@ -287,9 +335,15 @@ public class Channel implements Serializable {
         result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
         result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
         result = 31 * result + (devices != null ? devices.hashCode() : 0);
+        result = 31 * result + (isPreview ? 1 : 0);
+        result = 31 * result + (channelNodeLockedBy != null ? channelNodeLockedBy.hashCode() : 0);
+        result = 31 * result + (lastmodifiedby != null ? lastmodifiedby.hashCode() : 0);
+        result = 31 * result + (lockedon != null ? lockedon.hashCode() : 0);
+        result = 31 * result + (lastmodified != null ? lastmodified.hashCode() : 0);
         hashCode = result;
         return hashCode;
     }
+
 
     public boolean equals(Object other) {
         if (other == this) {
@@ -320,6 +374,10 @@ public class Channel implements Serializable {
         b.append(",changedBySet=").append(changedBySet);
         b.append(",devices=").append(devices);
         b.append(",defaultDevice=").append(defaultDevice);
+        b.append(",isPreview=").append(isPreview);
+        if (channelNodeLockedBy != null) {
+            b.append(",lockedBy=").append(channelNodeLockedBy);
+        }
         b.append('}');
 
         return b.toString();

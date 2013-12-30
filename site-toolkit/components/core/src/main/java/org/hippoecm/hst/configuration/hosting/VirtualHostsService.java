@@ -880,15 +880,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
         final HstSite previewHstSite = mount.getPreviewHstSite();
         channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
 
-
-        HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
-        if (channelRootConfigNode == null) {
-            final Set<String> empty = Collections.emptySet();
-            channel.setChangedBySet(empty);
-        } else {
-            channel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite));
-        }
-
         String mountPath = mount.getMountPath();
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
@@ -920,7 +911,45 @@ public class VirtualHostsService implements MutableVirtualHosts {
             url.append(mountPath);
         }
         channel.setUrl(url.toString());
-        mount.setChannel(channel);
+
+        Channel previewChannel = channels.get((channelPath+"-preview").substring(channelsRoot.length()));
+        if (previewChannel == null) {
+            // validate there is also ***no*** preview hst:configuration node: otherwise we have an invalid configuration
+            if (mount.getPreviewHstSite().hasPreviewConfiguration()) {
+                log.error("Ambiguous HST configuration found. There is a preview configuration present at '{}' but there " +
+                        "is NO preview channel node at '{}'. Channel manager won't function correct for this channel. Remove the " +
+                        "preview configuration or add a preview channel.", mount.getPreviewHstSite().getConfigurationPath(),
+                        channelPath+"-preview");
+            }
+            mount.setChannel(channel, channel);
+        } else {
+            // validate there is also ***a*** preview hst:configuration node: otherwise we have an invalid configuration
+            if (!mount.getPreviewHstSite().hasPreviewConfiguration()) {
+                log.error("Ambiguous HST configuration found. There is NO preview configuration present at '{}' but there " +
+                        "is a preview channel node at '{}'. Channel manager won't function correct for this channel. Add the " +
+                        "preview configuration or remove the preview channel.", mount.getPreviewHstSite().getConfigurationPath(),
+                        channelPath+"-preview");
+            }
+            populatePreviewChannel(previewChannel, channel);
+            previewChannel.setPreview(true);
+            HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
+            previewChannel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite, previewChannel));
+            mount.setChannel(channel, previewChannel);
+        }
+    }
+
+    private void populatePreviewChannel(final Channel preview, final Channel live) {
+        preview.setHstMountPoint(live.getHstMountPoint());
+        preview.setContentRoot(live.getContentRoot());
+        preview.setHstConfigPath(live.getHstConfigPath() + "-preview");
+        preview.setPreviewHstConfigExists(live.isPreviewHstConfigExists());
+        preview.setLocale(live.getLocale());
+        preview.setMountId(live.getMountId());
+        preview.setMountPath(live.getMountPath());
+        preview.setCmsPreviewPrefix(live.getCmsPreviewPrefix());
+        preview.setContextPath(live.getContextPath());
+        preview.setHostname(live.getHostname());
+        preview.setUrl(live.getUrl());
     }
 
     private void loadChannelsAndBluePrints(HstNodeLoadingCache hstNodeLoadingCache) {
@@ -956,21 +985,26 @@ public class VirtualHostsService implements MutableVirtualHosts {
                     try {
                         String channelPath = mount.getChannelPath();
                         if (StringUtils.isEmpty(channelPath)) {
-                            log.debug(
-                                    "Mount '{}' does not have a channelpath configured. Skipping setting channelInfo.",
+                            log.info("Mount '{}' does not have a channelpath configured. Skipping setting channelInfo.",
                                     mount);
                             continue;
                         }
                         String channelNodeName = channelPath.substring(channelPath.lastIndexOf("/") + 1);
-                        Channel channel = this.channels.get(channelNodeName);
+                        final Channel channel = this.channels.get(channelNodeName);
+                        Channel previewChannel;
                         if (channel == null) {
-                            log.debug(
-                                    "Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
+                            log.info("Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
                                     mount);
                             continue;
+                        } else {
+                            previewChannel = this.channels.get(channelNodeName + "-preview");
+                            if (previewChannel == null) {
+                                log.info("No preview channel available. Use live channel");
+                                previewChannel = channel;
+                            }
                         }
                         log.debug("Setting channel info for mount '{}'.", mount);
-                        ((MutableMount) mount).setChannelInfo(getChannelInfo(channel));
+                        ((MutableMount) mount).setChannelInfo(getChannelInfo(channel), getChannelInfo(previewChannel));
                     } catch (ChannelException e) {
                         log.error("Could not set channel info to mount", e);
                     }

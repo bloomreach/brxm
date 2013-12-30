@@ -243,6 +243,10 @@
 - hst:type (string)
 - hst:defaultdevice (string)
 - hst:devices (string) multiple
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 // properties of the channel
 + hst:channelinfo (hst:channelinfo)
 

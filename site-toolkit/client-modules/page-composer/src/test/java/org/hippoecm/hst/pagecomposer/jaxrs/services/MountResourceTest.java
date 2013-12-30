@@ -22,6 +22,8 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
@@ -78,6 +80,12 @@ public class MountResourceTest extends AbstractPageComposerTest {
             assertTrue("Preview config node should exist",
                     session.nodeExists(previewConfigurationPath));
 
+
+            assertTrue("Live channel path node should exist",
+                    session.nodeExists(ctx.getResolvedMount().getMount().getChannelPath()));
+            assertTrue("Preview channel path node should exist",
+                    session.nodeExists(ctx.getResolvedMount().getMount().getChannelPath()+ "-preview"));
+
             Set<String> usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) setup.session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
 
@@ -87,6 +95,12 @@ public class MountResourceTest extends AbstractPageComposerTest {
             final MockHttpServletRequest secondRequest = new MockHttpServletRequest();
             final  HstRequestContext secondCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(secondRequest, "localhost", "/home");
             ((HstMutableRequestContext) secondCtx).setSession(session);
+
+            final ContextualizableMount mount =  (ContextualizableMount)secondCtx.getResolvedMount().getMount();
+            assertTrue(mount.getPreviewHstSite().getConfigurationPath().equals(mount.getHstSite().getConfigurationPath() + "-preview"));
+            assertTrue(mount.getPreviewChannel().getHstConfigPath().equals(mount.getPreviewHstSite().getConfigurationPath()));
+            assertTrue(mount.getPreviewChannel().getChangedBySet().size() == 0);
+            assertTrue(mount.getPreviewChannel().getId().equals(mount.getChannel().getId()+"-preview"));
 
             final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
                     .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
@@ -112,10 +126,9 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
-
         }
-
     }
+
 
     @Test
     public void testXpathQueries(){

@@ -48,7 +48,9 @@ public interface ChannelService {
     /**
      * List all managed channels, identified by their channel IDs
      * 
-     * @return {@link List} of {@link Channel} of all available channels, empty list otherwise
+     * @return {@link List} of {@link Channel}s of all available channels, empty list otherwise. Note that if for
+     * a {@link Channel} there is both a live <b>and</b> preview version, the <b>preview</b> version is returned as
+     * that is typically the version that is needed to work with through this {@link ChannelService}
      */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
