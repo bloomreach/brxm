@@ -19,11 +19,14 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.apache.lucene.util.OpenBitSet;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class SetDocIdSetBuilderTest {
+
+    private static final int BITSETSIZE = 10 * 1000 * 1000;
 
     @Test
     public void testCombineBigDocIdSets() throws IOException {
@@ -32,7 +35,7 @@ public class SetDocIdSetBuilderTest {
         OpenBitSet[] bitSets = new OpenBitSet[nBitsets];
         for (int i = 0; i < nBitsets; i++) {
             OpenBitSet bitSet = new OpenBitSet();
-            for (int j = 0; j < 100 * 1000 * 1000; j++) {
+            for (int j = 0; j < BITSETSIZE; j++) {
                 if (rand.nextInt(i + 1) == 0) {
                     bitSet.set(j);
                 }
@@ -49,7 +52,7 @@ public class SetDocIdSetBuilderTest {
             }
             final OpenBitSet result = builder.toBitSet();
             builtCardinality = result.cardinality();
-            //System.out.println("docidsetbuilder time: " + (System.currentTimeMillis() - start) + ", cardinality: " + builtCardinality);
+//            System.out.println("docidsetbuilder time: " + (System.currentTimeMillis() - start) + ", cardinality: " + builtCardinality);
         }
 
         /*
@@ -81,7 +84,7 @@ public class SetDocIdSetBuilderTest {
                 bitSet.and(bitSets[i]);
             }
             expectedCardinality = bitSet.cardinality();
-            System.out.println("cardinality: " + expectedCardinality + ", pure bitset time: " + (System.currentTimeMillis() - start));
+//            System.out.println("cardinality: " + expectedCardinality + ", pure bitset time: " + (System.currentTimeMillis() - start));
         }
 
         assertEquals(expectedCardinality, builtCardinality);
