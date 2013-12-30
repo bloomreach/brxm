@@ -306,7 +306,10 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<RichTextEditorImag
         if (!getPluginConfig().containsKey(key)){
             return null;
         }
-        final String[] stringArray = getPluginConfig().getStringArray(key);
+        final String[] stringArray = getPluginConfig().getString(key).split(",");
+        for (String s : stringArray) {
+            s.trim();
+        }
         if (stringArray != null) {
             result = new ArrayList<String>();
             Collections.addAll(result, stringArray);
