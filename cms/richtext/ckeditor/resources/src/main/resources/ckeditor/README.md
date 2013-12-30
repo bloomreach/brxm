@@ -6,15 +6,26 @@ CKEditor 4 for Hippo CMS
 This repository contains Hippo-specific modifications of CKEditor 4.
 The build includes only the plugins used in Hippo CMS (see dev/builder/build-config.js).
 
+### External plugins
+
 The following external plugins are included:
 
   - [codemirror](https://github.com/w8tcha/CKEditor-CodeMirror-Plugin)
   - [wordcount](https://github.com/w8tcha/CKEditor-WordCount-Plugin)
   - [youtube](https://github.com/fonini/ckeditor-youtube-plugin)
 
+### Link types
+
+The list of link types in the Link Info tab of the Link dialog can be
+configured via the configuration property `linkTypes` (string), which
+contains a comma-separated list of link types. The default value is
+`url,anchor,email`, so by default the Link dialog will show the same
+options as before. The option selected by default is the first item
+in the comma-separated list.
+
 ## Versions
 
-A Hippo-specific CKEditor build adds a 1-based nano version to the CKEditor version it extends, prefix with `-h`.
+A Hippo-specific CKEditor build adds a 1-based nano version to the CKEditor version it extends, prefixed with `-h`.
 For example, version `4.3.0-h1` extends CKEditor `4.3.0`.
 
 Each branch `hippo/<version>` contains all commits in the CKEditor branch `release/<version>`

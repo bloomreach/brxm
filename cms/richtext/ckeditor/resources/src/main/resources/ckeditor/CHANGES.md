@@ -1,6 +1,16 @@
 CKEditor 4 Changelog
 ====================
 
+## CKEditor 4.3.0-h2
+
+* [CMS7-7615](https://issues.onehippo.com/browse/CMS7-7615) Added configuration option 'linkTypes'
+
+## CKEditor 4.3.0-h1
+
+* Added the plugins [codemirror](https://github.com/w8tcha/CKEditor-CodeMirror-Plugin),
+  [wordcount](https://github.com/w8tcha/CKEditor-WordCount-Plugin) and [youtube](https://github.com/fonini/ckeditor-youtube-plugin).
+* Explicitly enabled all plugins shipped with Hippo CMS, disabled the rest.
+
 ## CKEditor 4.3
 
 New Features:
