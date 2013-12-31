@@ -397,6 +397,36 @@ public final class HippoNodeUtils {
     }
 
     /**
+     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session,
+     * java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     *
+     * @param session
+     * @param matcher
+     * @return
+     * @throws RepositoryException
+     */
+    public static Set<String> getContentBlocksProviders(final Session session, final JcrMatcher matcher) throws RepositoryException {
+        String query = "//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)[@editor:templates/_default_/cbprovider='true']";
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        @SuppressWarnings("deprecation")
+        final QueryResult queryResult = queryManager.createQuery(query, Query.XPATH).execute();
+        Set<String> prototypes = new TreeSet<>();
+        for (NodeIterator iter = queryResult.getNodes(); iter.hasNext(); ) {
+            Node typeNode = iter.nextNode();
+            if (typeNode.getName().equals("hipposysedit:prototype")) {
+                String documentType = typeNode.getPrimaryNodeType().getName();
+                if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
+                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
+                    prototypes.add(documentType);
+                }
+            } else {
+                prototypes.add(typeNode.getName());
+            }
+        }
+        return prototypes;
+    }
+
+    /**
      * Retrieves a list of available primary types which are retrieved with the #prototype method
      *
      * @param session

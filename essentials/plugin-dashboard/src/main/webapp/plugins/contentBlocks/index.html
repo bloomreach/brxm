@@ -5,12 +5,12 @@
                 <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
                     <h4> Available Content Blocks:</h4>
-                    <pre>{{documentTypes}}</pre>
+                    <!--<pre>{{documentTypes}}</pre>-->
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
                             <!--<span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>-->
-                            <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
+                            <a href="{{baseCmsNamespaceUrl}}{{provider.value}}" target="_blank">{{provider.key}} </a>
                         </li>
                     </ul>
                     <div class="input-group">
@@ -30,12 +30,13 @@
                             <th class="col-sm-7">Select document types:</th>
                             <th class="col-sm-7">Current Providers:</th>
                             <th class="col-sm-4">Select perfered</th>
+                            <th class="col-sm-4">Links / Dropdown</th>
                         </tr>
                         </thead>
                         <tbody>
 
                         <tr ng-repeat="docType in documentTypes">
-                            <td>{{docType.key}}</td>
+                            <td><a href="{{baseCmsNamespaceUrl}}{{docType.value}}">{{docType.key}}</a></td>
                             <td>
 
                                 <!--<div class="btn-group">-->
@@ -63,13 +64,14 @@
                                 </select>
                             </td>
                             <td>
-                                <select ng-change="selectChange(docType.key, selectedItem[$index])"
-                                        ng-options="option.value as option.key for option in columns.items"
-                                        ng-model="selectedItem[$index]">
-                                </select>
+                                <span class="badge"><a title="Standard prefered option is on the left, you can change this in the configuration section of the CMS" href="" >i</a></span>
+                            </td>
+                            <td>
+                                <span class="badge"><a title="Standard option is links, you can change this in the console" href="" >i</a></span>
                             </td>
                         </tr>
                         <tr>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td>

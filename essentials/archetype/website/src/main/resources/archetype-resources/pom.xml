@@ -51,6 +51,10 @@
       <version>${essentials.version}</version>
       <type>war</type>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-common</artifactId>
+    </dependency>
   </dependencies>
 
 
@@ -221,6 +225,13 @@
                 </configfiles>
               </configuration>
               <container>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-cms-editor-common</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
                 <systemProperties>
                   <derby.stream.error.file>${dollar}{project.basedir}/target/derby.log</derby.stream.error.file>
                   <log4j.configuration>file:${dollar}{project.basedir}/conf/log4j-dev.xml</log4j.configuration>

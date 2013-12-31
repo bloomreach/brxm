@@ -49,6 +49,12 @@
       <groupId>org.onehippo.cms7.essentials</groupId>
       <artifactId>hippo-essentials-plugin-api-implementation</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>hippo-cms-editor-common</artifactId>
+          <groupId>org.onehippo.cms7</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.essentials</groupId>
@@ -114,23 +120,13 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-editor-repository</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>datanucleus-core</artifactId>
-          <groupId>org.datanucleus</groupId>
-        </exclusion>
-      </exclusions>
+      <artifactId>hippo-repository-api</artifactId>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-cms-editor-common</artifactId>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>org.onehippo.cms7</groupId>-->
-      <!--<artifactId>hippo-repository-api</artifactId>-->
-    <!--</dependency>-->
-
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-common</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>

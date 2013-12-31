@@ -28,7 +28,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         {"key": "Provider 3", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
     ];
 
-    $scope.baseCmsNamespaceUrl = "https://localhost:8080/cms/console/?path=/hippo:namespaces/";
+    $scope.baseCmsNamespaceUrl = "https://localhost:8080/cms/?path=";
+    $scope.baseConsoleNamespaceUrl = "https://localhost:8080/cms/console/?path=";
 
 
     $scope.selectChange = function (docName, selectedItem) {
@@ -41,7 +42,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     };
     $scope.onAdd = function (docName) {
         $log.info(docName);
-        $scope.providers.push({"key": docName});
+       // $scope.providers.push({"key": docName});
         $scope.providerInput = "";
 
         //$scope.documentTypes[1].providers.items.push({"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"});
@@ -52,7 +53,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             url: $rootScope.REST.compoundsCreate + docName,
             data: docName
         }).success(function (data) {
-                    $log.info(data);
+                    $scope.providers.push(data);
+                    //$log.info(data);
                     //$scope.documentTypes.providers = [];
 
                 });

@@ -46,6 +46,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -55,11 +56,14 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
+import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.model.ContentBlockModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -126,49 +130,64 @@ public class DocumentTypeResource extends BaseResource {
         }
 
         //example if empty
-        types.add(new Compounds("Events document", "namespace:events", "test/test/test"));
+        //types.add(new Compounds("Events document", "namespace:events", "test/test/test"));
         return types;
     }
 
     @PUT
     @Path("/compounds/create/{name}")
     public KeyValueRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) {
-        KeyValueRestful keyValueRestful = new KeyValueRestful(name, "path" + name);
-
         final Session session = GlobalUtils.createSession();
-        //GlobalUtils
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
+        final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
-        boolean success = false;
-        //todo rg.apache.cxf.interceptor.Fault: com.sun.proxy.$Proxy32 cannot be cast to org.hippoecm.editor.repository.impl.NamespaceWorkflowImpl
+
+        String nameSpace = "/hippo:namespaces/" + projectNamespacePrefix;
+        String item = "/hippo:namespaces/" + projectNamespacePrefix + "/" + name;
+
         try {
-            if (session.itemExists("/hippo:namespaces/mydemoessentials")) {
-                final Node namespace = session.getNode("/hippo:namespaces/mydemoessentials");
+            if (session.itemExists(item)) {
+                throw new RuntimeException("Item exists already");
+            }
+
+            if (StringUtils.isNotEmpty(projectNamespacePrefix) && session.itemExists(nameSpace)) {
+                final Node namespace = session.getNode(nameSpace);
                 final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+
                 final Workflow editor = workflowManager.getWorkflow("editor", namespace);
-                //if (editor instanceof NamespaceWorkflow) { todo something doesnt work here
-                //System.out.println(editor.getClass().getMethods());
-                //System.out.println(editor);
+
                 if (editor instanceof NamespaceWorkflow) {
                     final NamespaceWorkflow namespaceWorkflowI = (NamespaceWorkflow) editor;
                     namespaceWorkflowI.addCompoundType(name);
-                    if (session.itemExists("/hippo:namespaces/mydemoessentials/" + name)) {
-                        success = true;
-                    }
                 }
-
-
-                //}
+                if(session.itemExists(item)){
+                    final Node node = session.getNode(item);
+                }
+            } else {
+                throw new RuntimeException("Namespace doesn't exist");
             }
-        } catch (RepositoryException e) {
-            log.error("", e);
-        } catch (RemoteException e) {
-            log.error("", e);
-        } catch (WorkflowException e) {
-            log.error("", e);
+        } catch (RepositoryException | RemoteException | WorkflowException e) {
+            log.error("Exception happened while trying to access the namespace workflow {}", e);
         }
 
+        KeyValueRestful keyValueRestful = new KeyValueRestful(name, item);
         return keyValueRestful;
+    }
+
+
+    public PluginContext getContext(ServletContext servletContext) {
+        final String className = ProjectSetupPlugin.class.getName();
+        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
+        // final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
+        final PluginConfigService service = context.getConfigService();
+
+        final ProjectSettingsBean document = service.read(className);
+        if (document != null) {
+            context.setBeansPackageName(document.getSelectedBeansPackage());
+            context.setComponentsPackageName(document.getSelectedComponentsPackage());
+            context.setRestPackageName(document.getSelectedRestPackage());
+            context.setProjectNamespacePrefix(document.getProjectNamespace());
+        }
+        return context;
     }
 
     //see org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource.updateContainer()
