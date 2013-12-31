@@ -17,8 +17,12 @@
 package org.hippoecm.repository.jackrabbit.xml;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.util.Collection;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -27,6 +31,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.conversion.ParsingNameResolver;
@@ -51,6 +56,8 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
     private static final String NS_XMLSCHEMA_INSTANCE_PREFIX = "xsi";
     private static final String NS_XMLSCHEMA_URI = "http://www.w3.org/2001/XMLSchema";
     private static final String NS_XMLSCHEMA_PREFIX = "xs";
+    private static final String NS_XMLIMPORT_URI = "http://www.onehippo.org/jcr/xmlimport";
+    private static final String NS_XMLIMPORT_PREFIX = "h";
     
     private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
 
@@ -69,6 +76,8 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
      */
     private final NameResolver resolver;
 
+    private Collection<File> binaries;
+
     /**
      * Constructor
      *
@@ -86,6 +95,11 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
             throws RepositoryException {
         super(node, noRecurse, skipBinary, contentHandler);
         resolver = new ParsingNameResolver(NameFactoryImpl.getInstance(), nsResolver);
+    }
+
+    public SysViewSAXEventGenerator(Node node, boolean noRecurse, ContentHandler handler, Collection<File> binaries) throws RepositoryException {
+        this(node, noRecurse, false, handler);
+        this.binaries = binaries;
     }
 
     /**
@@ -179,74 +193,90 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
             } else {
                 vals = new Value[]{prop.getValue()};
             }
-            for (int i = 0; i < vals.length; i++) {
-                Value val = vals[i];
-
-                Attributes attributes = ATTRS_EMPTY;
-                boolean mustSendBinary = false;
-
-                if (val.getType() != PropertyType.BINARY) {
-                    String ser = val.getString();
-                    for (int ci = 0; ci < ser.length() && mustSendBinary == false; ci++) {
-                        char c = ser.charAt(ci);
-                        if (c >= 0 && c < 32 && c != '\r' && c != '\n' && c != '\t') {
-                            mustSendBinary = true;
-                        }
-                    }
-
-                    if (mustSendBinary) {
-                        contentHandler.startPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX, NS_XMLSCHEMA_INSTANCE_URI);
-                        contentHandler.startPrefixMapping(NS_XMLSCHEMA_PREFIX, NS_XMLSCHEMA_URI);
-                        attributes = ATTRS_BINARY_ENCODED_VALUE;
-                    }
-                }
-
-                // start value element
-                startElement(NameConstants.SV_VALUE, attributes);
-
-                // characters
-                Writer writer = new Writer() {
-                    @Override
-                    public void close() /*throws IOException*/ {
-                    }
-
-                    @Override
-                    public void flush() /*throws IOException*/ {
-                    }
-
-                    @Override
-                    public void write(char[] cbuf, int off, int len) throws IOException {
-                        try {
-                            contentHandler.characters(cbuf, off, len);
-                        } catch (SAXException se) {
-                            throw new IOException(se.toString());
-                        }
-                    }
-                };
-                try {
-                    ValueHelper.serialize(val, false, mustSendBinary, writer);
-                    // no need to close our Writer implementation
-                    //writer.close();
-                } catch (IOException ioe) {
-                    // check if the exception wraps a SAXException
-                    // (see Writer.write(char[], int, int) above)
-                    Throwable t = ioe.getCause();
-                    if (t != null && t instanceof SAXException) {
-                        throw (SAXException) t;
-                    } else {
-                        throw new SAXException(ioe);
-                    }
-                }
-
-                // end value element
-                endElement(NameConstants.SV_VALUE);
-
-                if (mustSendBinary) {
-                    contentHandler.endPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX);
-                    contentHandler.endPrefixMapping(NS_XMLSCHEMA_PREFIX);
-                }
+            for (final Value val : vals) {
+                exportValue(val);
             }
         }
+    }
+
+    private void exportValue(final Value val) throws RepositoryException, SAXException {
+
+        if (val.getType() == PropertyType.BINARY && binaries != null) {
+            File file = createBinaryFile(val);
+            binaries.add(file);
+            AttributesImpl attributes = new AttributesImpl();
+            attributes.addAttribute(NS_XMLIMPORT_URI, "file", "h:file", CDATA_TYPE, file.getName());
+            contentHandler.startPrefixMapping(NS_XMLIMPORT_PREFIX, NS_XMLIMPORT_URI);
+            startElement(NameConstants.SV_VALUE, attributes);
+            endElement(NameConstants.SV_VALUE);
+            contentHandler.endPrefixMapping(NS_XMLIMPORT_PREFIX);
+        } else {
+            Attributes attributes = ATTRS_EMPTY;
+            boolean mustSendBinary = false;
+
+            if (val.getType() != PropertyType.BINARY) {
+                String ser = val.getString();
+                for (int ci = 0; ci < ser.length() && mustSendBinary == false; ci++) {
+                    char c = ser.charAt(ci);
+                    if (c >= 0 && c < 32 && c != '\r' && c != '\n' && c != '\t') {
+                        mustSendBinary = true;
+                    }
+                }
+
+                if (mustSendBinary) {
+                    contentHandler.startPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX, NS_XMLSCHEMA_INSTANCE_URI);
+                    contentHandler.startPrefixMapping(NS_XMLSCHEMA_PREFIX, NS_XMLSCHEMA_URI);
+                    attributes = ATTRS_BINARY_ENCODED_VALUE;
+                }
+            }
+
+            // start value element
+            startElement(NameConstants.SV_VALUE, attributes);
+
+
+            // characters
+            Writer writer = new Writer() {
+                @Override
+                public void close() /*throws IOException*/ {
+                }
+
+                @Override
+                public void flush() /*throws IOException*/ {
+                }
+
+                @Override
+                public void write(char[] cbuf, int off, int len) throws IOException {
+                    try {
+                        contentHandler.characters(cbuf, off, len);
+                    } catch (SAXException se) {
+                        throw new IOException(se.toString());
+                    }
+                }
+            };
+            try {
+                ValueHelper.serialize(val, false, mustSendBinary, writer);
+                // no need to close our Writer implementation
+                //writer.close();
+            } catch (IOException ioe) {
+                // check if the exception wraps a SAXException
+                // (see Writer.write(char[], int, int) above)
+                Throwable t = ioe.getCause();
+                if (t != null && t instanceof SAXException) {
+                    throw (SAXException) t;
+                } else {
+                    throw new SAXException(ioe);
+                }
+            }
+
+            // end value element
+            endElement(NameConstants.SV_VALUE);
+
+            if (mustSendBinary) {
+                contentHandler.endPrefixMapping(NS_XMLSCHEMA_INSTANCE_PREFIX);
+                contentHandler.endPrefixMapping(NS_XMLSCHEMA_PREFIX);
+            }
+        }
+
     }
 
     /**
@@ -306,6 +336,23 @@ public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
         contentHandler.endElement(
                 name.getNamespaceURI(), name.getLocalName(),
                 resolver.getJCRName(name));
+    }
+
+    private File createBinaryFile(final Value value) throws SAXException, RepositoryException {
+        try {
+            final File file = File.createTempFile("binary", ".bin");
+            final InputStream in = value.getBinary().getStream();
+            final FileOutputStream out = new FileOutputStream(file);
+            try {
+                IOUtils.copy(in, out);
+            } finally {
+                IOUtils.closeQuietly(in);
+                IOUtils.closeQuietly(out);
+            }
+            return file;
+        } catch (IOException e) {
+            throw new RepositoryException(e);
+        }
     }
 
 }

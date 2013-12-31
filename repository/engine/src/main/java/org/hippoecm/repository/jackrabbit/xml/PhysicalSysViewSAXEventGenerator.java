@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import java.io.File;
+import java.util.Collection;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -31,6 +34,14 @@ public class PhysicalSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
             ContentHandler contentHandler) throws RepositoryException {
         super(node, noRecurse, skipBinary, contentHandler);
     }
+
+    public PhysicalSysViewSAXEventGenerator(Node node, boolean noRecurse,
+                                            ContentHandler contentHandler,
+                                            Collection<File> binaries)
+            throws RepositoryException {
+        super(node, noRecurse, contentHandler, binaries);
+    }
+
 
     @Override
     protected void process(Node node, int level) throws RepositoryException, SAXException {

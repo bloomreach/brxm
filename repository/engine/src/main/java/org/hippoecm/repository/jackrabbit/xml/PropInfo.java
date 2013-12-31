@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
@@ -54,53 +58,23 @@ import org.slf4j.LoggerFactory;
 public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
 
 
-    /**
-     * Logger instance.
-     */
     private static Logger log = LoggerFactory.getLogger(PropInfo.class);
 
 
-    /**
-     * Resolver
-     */
     private final NamePathResolver resolver;
-    /**
-     * Name of the property being imported.
-     */
     private final Name name;
-
-    /**
-     * Type of the property being imported.
-     */
     private final int type;
-
-    /**
-     * Whether property being imported is multiple
-     */
     private final Boolean multiple;
-    
-    /**
-     * True if the property being imported is a path reference.
-     */
     private boolean isPathReference = false;
-
     private String mergeBehavior = null;
-
     private String mergeLocation = null;
-
-    /**
-     * Value(s) of the property being imported.
-     */
     private final TextValue[] values;
+    private final File[] binaryFiles;
+    private final ValueFactory valueFactory;
 
-    /**
-     * Creates a property information instance.
-     *
-     * @param name name of the property being imported
-     * @param type type of the property being imported
-     * @param values value(s) of the property being imported
-     */
-    public PropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior, String mergeLocation) {
+
+    public PropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior,
+                    String mergeLocation, final File[] binaryFiles, final ValueFactory valueFactory) {
         super(name, type, values);
         this.multiple = multiple != null ? multiple : Boolean.FALSE;
         this.mergeBehavior = mergeBehavior;
@@ -119,6 +93,8 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
         this.values = values.clone();
         this.resolver = resolver;
+        this.binaryFiles = binaryFiles;
+        this.valueFactory = valueFactory;
     }
 
     public boolean mergeOverride() {
@@ -165,6 +141,22 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         } else {
             return PropertyType.STRING;
         }
+    }
+
+    @Override
+    public Value[] getValues(final int targetType, final NamePathResolver resolver) throws RepositoryException {
+        if (targetType == PropertyType.BINARY && binaryFiles.length != 0) {
+            try {
+                Value[] values = new Value[binaryFiles.length];
+                for (int i = 0; i < binaryFiles.length; i++) {
+                    values[i] = valueFactory.createValue(valueFactory.createBinary(new FileInputStream(binaryFiles[i])));
+                }
+                return values;
+            } catch (FileNotFoundException e) {
+                throw new RepositoryException(e);
+            }
+        }
+        return super.getValues(targetType, resolver);
     }
 
     @Override

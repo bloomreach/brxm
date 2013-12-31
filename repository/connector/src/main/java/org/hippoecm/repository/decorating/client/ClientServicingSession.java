@@ -17,6 +17,7 @@ package org.hippoecm.repository.decorating.client;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -144,6 +145,16 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
         } catch (RemoteException ex) {
             throw new RemoteRepositoryException(ex);
         }
+    }
+
+    @Override
+    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
     }
 
     @Override

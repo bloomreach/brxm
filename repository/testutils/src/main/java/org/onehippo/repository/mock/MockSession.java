@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.mock;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -353,6 +354,16 @@ public class MockSession implements HippoSession {
 
     @Override
     public void importDereferencedXML(final String parentAbsPath, final InputStream in, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

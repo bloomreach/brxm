@@ -16,10 +16,12 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,8 +54,10 @@ import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.tika.io.IOUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
+import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewPackage;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
@@ -198,16 +202,19 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
         namePathResolver = new HippoNamePathResolver(this, true);
     }
 
+    @Override
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {
         return helper.pendingChanges(node, nodeType, prune);
     }
 
+    @Override
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
+        return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior, Collections.<String, File>emptyMap());
     }
 
+    @Override
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
@@ -217,14 +224,29 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
         new DefaultContentHandler(handler).parse(in);
     }
 
+    @Override
+    public void importEnhancedSystemViewBinaryPackage(final String parentAbsPath, final File archive, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+        final EnhancedSystemViewPackage pckg = EnhancedSystemViewPackage.create(archive);
+        final ContentHandler handler = helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehaviour, referenceBehaviour, mergeBehaviour, pckg.getBinaries());
+        final InputStream in = new FileInputStream(pckg.getXml());
+        try {
+            new DefaultContentHandler(handler).parse(in);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    @Override
     public HippoSessionItemStateManager getItemStateManager() {
         return (HippoSessionItemStateManager) context.getItemStateManager();
     }
 
+    @Override
     public Node getCanonicalNode(Node node) throws RepositoryException {
         return helper.getCanonicalNode((NodeImpl)node);
     }
 
+    @Override
     public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {
         helper.registerSessionCloseCallback(callback);
     }

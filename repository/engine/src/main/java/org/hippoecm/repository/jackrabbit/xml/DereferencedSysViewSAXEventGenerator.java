@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -66,6 +68,13 @@ public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEven
         // strip node name of base path
         basePath = node.getPath();
         log.info("Starting export of '" + basePath + "' noRecurse:" + noRecurse + " skipBinary:" + skipBinary);
+    }
+
+    public DereferencedSysViewSAXEventGenerator(Node node, boolean noRecurse,
+                                                ContentHandler handler, Collection<File> binaries)
+        throws RepositoryException {
+        super(node, noRecurse, handler, binaries);
+        basePath = node.getPath();
     }
 
     @Override

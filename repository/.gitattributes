@@ -159,6 +159,7 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedImportHa
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSessionImporter.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSysViewImportHandler.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSysViewSAXEventGenerator.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/EnhancedSystemViewPackage.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/HippoDocumentViewExporter.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/NamespaceContext.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEventGenerator.java svneol=native#text/plain
@@ -245,6 +246,7 @@ engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svne
 engine/src/test/java/org/hippoecm/repository/UnlockTest.java -text
 engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
+engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ExportPackageTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
