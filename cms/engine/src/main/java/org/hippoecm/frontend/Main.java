@@ -428,7 +428,7 @@ public class Main extends PluginApplication {
     }
 
     /**
-     * Tries to get the output witcket paths parameter from:
+     * Tries to get the output wicket paths parameter from:
      * <ol>
      *     <li>The servlet init parameter</li>
      *     <li>The servlet context if the init parameter isn't set</li>
