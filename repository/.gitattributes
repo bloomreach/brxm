@@ -435,7 +435,6 @@ testutils/src/main/java/org/onehippo/repository/testutils/JcrState.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/log4j/StringMatchFilter.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/slf4j/LogRecord.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapper.java -text
-testutils/src/main/java/org/onehippo/repository/util/GlobCompiler.java -text
 testutils/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml -text
 testutils/src/main/resources/org/hippoecm/repository/repository.xml -text
 testutils/src/test/java/org/onehippo/repository/mock/MockSessionTest.java -text
