@@ -35,7 +35,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class ExportPackageTest extends RepositoryTestCase {
+public class ExportImportPackageTest extends RepositoryTestCase {
 
     @Override
     public void setUp() throws Exception {
@@ -48,7 +48,7 @@ public class ExportPackageTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testExportPackage() throws Exception {
+    public void testExportImportPackage() throws Exception {
         HippoSession session = (HippoSession) this.session;
         final File file = session.exportEnhancedSystemViewPackage("/test", true);
         final EnhancedSystemViewPackage pckg = EnhancedSystemViewPackage.create(file);
@@ -63,8 +63,11 @@ public class ExportPackageTest extends RepositoryTestCase {
                 ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW,
                 ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
         assertTrue(session.nodeExists("/test/test"));
-//        final Node test = session.getNode("/test/test");
-//        session.exportDereferencedView(test.getPath(), System.out, false, true);
+        final Node test = session.getNode("/test/test");
+        assertTrue(test.hasProperty("test"));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        IOUtils.copy(test.getProperty("test").getBinary().getStream(), baos);
+        assertEquals("test", baos.toString());
     }
 
 }

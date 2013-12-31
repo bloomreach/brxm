@@ -155,8 +155,18 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
             } catch (FileNotFoundException e) {
                 throw new RepositoryException(e);
             }
+        } else {
+            Value[] va = new Value[values.length];
+            for (int i = 0; i < values.length; i++) {
+                if (isPathReference) {
+                    // the string value is needed, but the target type is reference
+                    va[i] = values[i].getValue(PropertyType.STRING, resolver);
+                } else {
+                    va[i] = values[i].getValue(targetType, resolver);
+                }
+            }
+            return va;
         }
-        return super.getValues(targetType, resolver);
     }
 
     @Override
@@ -169,7 +179,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         if (isPathReference) {
             checkType = PropertyType.REFERENCE;
         }
-        if (values.length == 1) {
+        if (values.length == 1 || binaryFiles.length == 1) {
             // could be single- or multi-valued (n == 1)
             return ent.getApplicablePropertyDef(name, checkType);
         } else {
@@ -195,16 +205,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
 
         // convert serialized values to Value objects
-        Value[] va = new Value[values.length];
-        int targetType = getTargetType(def);
-        for (int i = 0; i < values.length; i++) {
-            if (isPathReference) {
-                // the string value is needed, but the target type is reference
-                va[i] = values[i].getValue(PropertyType.STRING, resolver);
-            } else {
-                va[i] = values[i].getValue(targetType, resolver);
-            }
-        }
+        Value[] va = getValues(getTargetType(def), resolver);
 
         if (node.hasProperty(name)) {
             if (mergeOverride()) {

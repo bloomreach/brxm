@@ -246,7 +246,7 @@ engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svne
 engine/src/test/java/org/hippoecm/repository/UnlockTest.java -text
 engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
-engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ExportPackageTest.java -text
+engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ExportImportPackageTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
