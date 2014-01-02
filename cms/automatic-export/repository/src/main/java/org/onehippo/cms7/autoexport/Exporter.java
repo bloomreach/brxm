@@ -115,6 +115,11 @@ final class Exporter {
     }
     
     private void exportContentResource(InitializeItem item) {
+        if (!item.isEnabled()) {
+            log.warn("Export in this context is disabled: "
+                    + item.getContextPath() + "You need to do this manually.");
+            return;
+        }
         log.info("Exporting " + item.getContentResource() + " to module " + module.getModulePath());
         try {
             doExportContentResource(item);
@@ -173,11 +178,6 @@ final class Exporter {
     }
     
     private void exportDeltaXML(InitializeItem item, ContentHandler handler) throws SAXException, RepositoryException {
-        if (!item.isEnabled()) {
-            log.warn("Export in this context is disabled: " + item.getContextPath() + "You need to do this manually.");
-            return;
-        }
-        
         DeltaXMLInstruction rootInstruction = item.getDeltaXML().getRootInstruction();
         handler.startDocument();
         handler.startPrefixMapping(SV_PREFIX, SV_URI);

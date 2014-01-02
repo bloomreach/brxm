@@ -62,6 +62,9 @@ final class InitializeItem {
         this.namespace = namespace;
         this.exportDir = exportDir;
         this.module = module;
+        if (contentResource != null && contentResource.endsWith(".zip")) {
+            enabled = false;
+        }
     }
 
     // Constructor for testing
@@ -182,6 +185,9 @@ final class InitializeItem {
     }
     
     private void initContentResourceValues() {
+        if (contentResource.endsWith(".zip")) {
+            return;
+        }
         File file = new File(exportDir, contentResource);
         if (!file.exists()) {
             return;
