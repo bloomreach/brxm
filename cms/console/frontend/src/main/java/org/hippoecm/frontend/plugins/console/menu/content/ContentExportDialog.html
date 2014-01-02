@@ -1,5 +1,5 @@
 <!--
-    * Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
+    * Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
     *
     * Licensed under the Apache License, Version 2.0 (the  "License");
     * you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:extend>
-        <div wicket:id="message" class="message"/>
-        <div style="padding-left:10px;padding-bottom:10px;">
-            <input type="checkbox" wicket:id="skip-binaries"> <span wicket:id="skip-binaries-text"/></input>
-        </div>
-        <ul>
-            <li>
-                <a wicket:id="download-link">
-                    - <span wicket:id="download-link-text"/>
-                </a>
-            </li>
-            <li style="padding-top: 4px;">
-            <a wicket:id="view-link">
-                    - <span wicket:id="view-link-text"/>
-                </a>
-            </li>
-        </ul>
-        <div class="xml-dump">
-          <textarea readonly="true" style="width: 820px; height: 280px;" wicket:id="dump" /> 
-        </div>
-    </wicket:extend>
+  <wicket:extend>
+    <div wicket:id="message" class="message"/>
+    <ul>
+      <li>
+        <a wicket:id="download-package-link">
+          - <span wicket:id="download-package-link-text"/>
+        </a>
+      </li>
+      <li style="padding-top: 4px;">
+        <a wicket:id="view-link">
+          - <span wicket:id="view-link-text"/>
+        </a>
+        &nbsp;
+        (<input type="checkbox" wicket:id="skip-binaries">&nbsp;<span wicket:id="skip-binaries-text"/></input>)
+      </li>
+    </ul>
+    <br/>
+    <div class="xml-dump">
+      <textarea readonly="true" style="width: 820px; height: 300px;" wicket:id="dump"/>
+    </div>
+  </wicket:extend>
 </html>

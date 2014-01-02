@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,8 +45,9 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class ContentExportDialog extends AbstractDialog<Node> {
-    private static final Logger log = LoggerFactory.getLogger(ContentExportDialog.class);
+
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ContentExportDialog.class);
 
     private boolean skipBinary = false;
 
@@ -63,20 +64,19 @@ public class ContentExportDialog extends AbstractDialog<Node> {
             throw new RuntimeException("Error getting node from model for contant import: " + e.getMessage());
         }
 
-        IModel<Boolean> skipBinaryModel = new PropertyModel<Boolean>(this, "skipBinary");
+        IModel<Boolean> skipBinaryModel = new PropertyModel<>(this, "skipBinary");
         AjaxCheckBox skipBinaries = new AjaxCheckBox("skip-binaries", skipBinaryModel) {
             private static final long serialVersionUID = 1L;
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
             }
         };
-        skipBinaries.add(new Label("skip-binaries-text", new Model<String>("Do not include binary properties in export")));
+        skipBinaries.add(new Label("skip-binaries-text", new Model<>("Do not include binary properties in export")));
         add(skipBinaries);
 
-        DownloadExportLink link = new DownloadExportLink("download-link", modelReference.getModel(), skipBinaryModel);
-        link.add(new Label("download-link-text", "Download (or right click and choose \"Save as...\")"));
-        add(link);
-        setFocus(link);
+        DownloadExportAsPackageLink downloadPackageLink = new DownloadExportAsPackageLink("download-package-link", modelReference.getModel());
+        downloadPackageLink.add(new Label("download-package-link-text", "Download as zip (or right click and choose \"Save as...\")"));
+        add(downloadPackageLink);
 
         final Label dump = new Label("dump");
         dump.setOutputMarkupId(true);
@@ -98,7 +98,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
                 } catch (Exception e) {
                     export = e.getMessage();
                 }
-                dump.setDefaultModel(new Model<String>(export));
+                dump.setDefaultModel(new Model<>(export));
                 target.add(dump);
             }
         };
@@ -116,7 +116,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         } catch (RepositoryException e) {
             path = e.getMessage();
         }
-        return new Model<String>("Export " + path);
+        return new Model<>("Export " + path);
     }
     
     public boolean isSkipBinary() {

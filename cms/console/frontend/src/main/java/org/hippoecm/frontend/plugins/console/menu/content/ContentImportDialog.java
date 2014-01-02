@@ -17,8 +17,12 @@ package org.hippoecm.frontend.plugins.console.menu.content;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +37,8 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -158,30 +164,14 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
         int mergeOpt = mergeOpts.getFirstKey(mergeBehavior);
         int derefOpt = derefOpts.getFirstKey(derefBehavior);
 
-        // do import
         try {
-            InputStream contentStream = null;
 
-            if (upload != null) {
-                info("File uploaded. Start import..");
-                contentStream = new BufferedInputStream(upload.getInputStream());
-            } else if (StringUtils.isNotEmpty(xmlInput)) {
-                info("Xml dump uploaded. Start import..");
-                contentStream = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
-            } else {
+            if (upload == null && StringUtils.isEmpty(xmlInput)) {
                 warn("No file was uploaded and no xml input provided. Nothing to import");
                 return;
             }
 
             String absPath = nodeModel.getNode().getPath();
-            log.info("Starting import: importDereferencedXML({}, {}, {}, {}, {})", new Object[]{
-                    absPath,
-                    (upload != null ? upload.getClientFileName() : "from xml input"),
-                    uuidBehavior,
-                    mergeBehavior,
-                    derefBehavior
-            });
-
 
             // If save-after-import is enabled and the import fails, we do a Session.refresh(false) to revert any
             // changes done by the import. However, any changes done *before* the import will then also be lost.
@@ -191,10 +181,34 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 nodeModel.getNode().getSession().save();
             }
 
+            File tempFile = null;
+            InputStream in = null;
+            OutputStream out = null;
             try {
-                ((HippoSession)UserSession.get().getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
+                final HippoSession session = (HippoSession) UserSession.get().getJcrSession();
 
-                info("Import done.");
+                if (upload != null) {
+                    final String fileName = upload.getClientFileName();
+                    if (fileName.endsWith(".zip")) {
+                        tempFile = File.createTempFile("package", "zip");
+                        out = new FileOutputStream(tempFile);
+                        in = upload.getInputStream();
+                        IOUtils.copy(in, out);
+                        session.importEnhancedSystemViewPackage(absPath, tempFile, uuidOpt, derefOpt, mergeOpt);
+                    }
+                    else if (fileName.endsWith(".xml")) {
+                        in = new BufferedInputStream(upload.getInputStream());
+                        session.importDereferencedXML(absPath, in, uuidOpt, derefOpt, mergeOpt);
+                    }
+                    else {
+                        warn("Unrecognized file: only .xml and .zip can be processed");
+                        return;
+                    }
+                }
+                else {
+                    in = new ByteArrayInputStream(xmlInput.getBytes("UTF-8"));
+                    session.importDereferencedXML(absPath, in, uuidOpt, derefOpt, mergeOpt);
+                }
 
                 if (saveBehavior) {
                     nodeModel.getNode().getSession().save();
@@ -203,6 +217,9 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 if (saveBehavior) {
                     nodeModel.getNode().getSession().refresh(false);
                 }
+                IOUtils.closeQuietly(out);
+                IOUtils.closeQuietly(in);
+                FileUtils.deleteQuietly(tempFile);
             }
 
         } catch (RepositoryException ex) {
