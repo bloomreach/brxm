@@ -5,12 +5,11 @@
                 <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
                     <h4> Available Content Blocks:</h4>
-                    <!--<pre>{{documentTypes}}</pre>-->
+                    <pre>{{documentTypes}}</pre>
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
-                            <!--<span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>-->
-                            <a href="{{baseCmsNamespaceUrl}}{{provider.value}}" target="_blank">{{provider.key}} </a>
+                            <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
                         </li>
                     </ul>
                     <div class="input-group">
@@ -38,19 +37,7 @@
                         <tr ng-repeat="docType in documentTypes">
                             <td><a href="{{baseCmsNamespaceUrl}}{{docType.value}}">{{docType.key}}</a></td>
                             <td>
-
-                                <!--<div class="btn-group">-->
-                                <!--<button ng-repeat="provider in docType.providers.items" type="button" class="btn btn-default">{{provider.key}}-->
-                                <!--<span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>-->
-                                <!--</button>-->
-                                <!--</div>-->
-                                <!--<select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">-->
-                                <!--<option>--Choose one--</option>-->
-                                <!--</select>-- ng-model="docType.providers.items"
-                                        ng-options="c.key for c in providers">
-                                <!--{{docType.providers.items}}-->
-                                <!--ng-model="docType.providers.items"-->
-                                <!--ng-selected="docType.providers.items"-->
+                                <pre>{{docType.providers.items}}</pre>
                                 <select
                                         chosen
                                         style="width:100%"
@@ -59,15 +46,17 @@
                                         ng-options="c.key for c in providers"
                                         multiple
                                         >
-                                    <!--<option ng-repeat="c in providers"  value="{{c.value}}" selected>{{c.key}}</option>-->
-                                    <!--<option value="4" selected>Provider 2</option>-->
                                 </select>
+                                <!--<select chosen multiple>-->
+                                    <!--<option selected value="0">test1</option>-->
+                                    <!--<option  value="1">test2</option>-->
+                                <!--</select>-->
                             </td>
                             <td>
-                                <span class="badge"><a title="Standard prefered option is on the left, you can change this in the configuration section of the CMS" href="" >i</a></span>
+                                <span class="badge"><a title="Standard prefered option is on the left, you can change this in the configuration section of the CMS" href="">i</a></span>
                             </td>
                             <td>
-                                <span class="badge"><a title="Standard option is links, you can change this in the console" href="" >i</a></span>
+                                <span class="badge"><a title="Standard option is links, you can change this in the console" href="">i</a></span>
                             </td>
                         </tr>
                         <tr>

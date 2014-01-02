@@ -413,7 +413,8 @@ public final class HippoNodeUtils {
         Set<String> prototypes = new TreeSet<>();
         for (NodeIterator iter = queryResult.getNodes(); iter.hasNext(); ) {
             Node typeNode = iter.nextNode();
-            if (typeNode.getName().equals("hipposysedit:prototype")) {
+
+            if (typeNode.getName().equals("")&&typeNode.getParent().getName().equals("hipposysedit:prototype")) {
                 String documentType = typeNode.getPrimaryNodeType().getName();
                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {

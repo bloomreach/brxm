@@ -12,6 +12,11 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.selection = [];
     $scope.providerInput = "";
     $scope.selectedItem = [];
+    $scope.test = [
+        {"key": "1f2f3r4g", "value": "mydemoessentials:1f2f3r4g", "path": "/hippo:namespaces/mydemoessentials/1f2f3r4g"},
+        {"key": 23131232143324, "value": "mydemoessentials:23131232143324", "path": "/hippo:namespaces/mydemoessentials/23131232143324"},
+        {"key": "dfgdfgdfgdfgdfgdfgdfgdfg", "value": "mydemoessentials:dfgdfgdfgdfgdfgdfgdfgdfg", "path": "/hippo:namespaces/mydemoessentials/dfgdfgdfgdfgdfgdfgdfgdfg"}
+    ];
     $scope.documentTypes = [
         {"key": "News document", "value": "namespace:news", "providers": {"items": [
             // {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
@@ -28,8 +33,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         {"key": "Provider 3", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
     ];
 
-    $scope.baseCmsNamespaceUrl = "https://localhost:8080/cms/?path=";
-    $scope.baseConsoleNamespaceUrl = "https://localhost:8080/cms/console/?path=";
+    $scope.baseCmsNamespaceUrl = "http://localhost:8080/cms?path=";
+    $scope.baseConsoleNamespaceUrl = "http://localhost:8080/cms/console?path=";
 
 
     $scope.selectChange = function (docName, selectedItem) {
@@ -144,22 +149,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             url: $rootScope.REST.documentTypes
         }).success(function (data) {
                     $scope.documentTypes = data.items;
-//                    $log.info('test');
-//                    $log.info($scope.documentTypes);
-//                    angular.forEach(data.items, function (value, key) {
-//                        var docKey = key;
-//                        $log.info('value');
-//                        $log.info(value);
-//                        if (angular.isArray(value.providers.items)) {
-//
-//                            angular.forEach(value.providers.items, function (value, key) {
-//                                $log.info("bla" + key);
-//                                $log.info(value);
-//                                $scope.documentTypes[docKey].
-//                            });
-//
-//                        }
-//                    });
+                    $log.info('document types loaded');
+                    $log.info($scope.documentTypes);
 
                 });
 

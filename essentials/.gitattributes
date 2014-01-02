@@ -716,6 +716,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulLi
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StepRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/AllDocumentMatcher.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/CBPayload.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/Compounds.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/ContentBlockModel.java -text

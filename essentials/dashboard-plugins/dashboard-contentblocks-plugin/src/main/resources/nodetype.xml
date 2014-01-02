@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="${path}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="{{path}}" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:field</sv:value>
   </sv:property>
@@ -10,7 +10,7 @@
     <sv:value>true</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:path" sv:type="String">
-    <sv:value>${namespace}:${path}</sv:value>
+    <sv:value>{{namespace}}:{{path}}</sv:value>
   </sv:property>
   <sv:property sv:name="hipposysedit:type" sv:type="String">
     <sv:value>nt:base</sv:value>

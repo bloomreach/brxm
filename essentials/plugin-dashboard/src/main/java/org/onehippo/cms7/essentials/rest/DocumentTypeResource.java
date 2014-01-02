@@ -28,8 +28,12 @@ import java.util.Set;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -47,6 +51,7 @@ import com.google.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -69,6 +74,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
@@ -95,22 +101,53 @@ public class DocumentTypeResource extends BaseResource {
         // TODO implement
 
         final Session session = GlobalUtils.createSession();
+        final PluginContext context = getContext(servletContext);
+        final String projectNamespacePrefix = context.getProjectNamespacePrefix();
+        String nameSpace = "hippo:namespaces/" + projectNamespacePrefix;
+        String prefix = projectNamespacePrefix + ":";
+
         try {
-            final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new HasProviderMatcher(), "new-document");
+            final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new AllDocumentMatcher(), "new-document");
+            final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
+
             for (String primaryType : primaryTypes) {
                 final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
+                final NodeIterator it = executeQuery(nameSpace + "//element(*, frontend:plugin)[@contentPickerType]");
+                while (it.hasNext()){
+                    final String name = it.nextNode().getName();
+                    String namespaceName = prefix + name;
+                    if(compoundMap.containsKey(namespaceName)){
+                        final Compounds compounds = compoundMap.get(namespaceName);
+                        keyValueRestfulRestfulList.add(compounds);
+                    }
+                }
+
                 types.add(new DocumentTypes(HippoNodeUtils.getDisplayValue(session, primaryType), primaryType, keyValueRestfulRestfulList));
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve document types from repository {}", e);
         }
 
-        //example  if empty
-        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
-        keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 1", "Provider 1"));
-        keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 2", "Provider 2"));
-        types.add(new DocumentTypes("News document", "namespace:news", keyValueRestfulRestfulList));
         return types;
+    }
+
+    private NodeIterator executeQuery(String queryString) throws RepositoryException {
+        final Session session = GlobalUtils.createSession();
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        final Query query = queryManager.createQuery(queryString, Query.XPATH);
+        final QueryResult execute = query.execute();
+        final NodeIterator nodes = execute.getNodes();
+        return nodes;
+
+    }
+
+    private Map<String, Compounds> getCompoundMap(final ServletContext servletContext) {
+        final RestfulList<Compounds> compounds = getCompounds(servletContext);
+        Map<String, Compounds> compoundMap = new HashMap<>();
+        for (Compounds compound : compounds.getItems()) {
+            compoundMap.put(compound.getValue(), compound);
+        }
+        return compoundMap;
     }
 
     @GET
@@ -159,8 +196,17 @@ public class DocumentTypeResource extends BaseResource {
                     final NamespaceWorkflow namespaceWorkflowI = (NamespaceWorkflow) editor;
                     namespaceWorkflowI.addCompoundType(name);
                 }
-                if(session.itemExists(item)){
+                if (session.nodeExists(item)) {
                     final Node node = session.getNode(item);
+                    final Workflow workflow = workflowManager.getWorkflow("default", node);
+                    if (workflow instanceof EditmodelWorkflow) {
+                        EditmodelWorkflow editmodelWorkflow = (EditmodelWorkflow) workflow;
+                        editmodelWorkflow.edit();
+                        editmodelWorkflow.commit();
+                        final Node protoType = node.getNode("hipposysedit:prototypes/hipposysedit:prototype");
+                        protoType.setProperty("cbitem", true);
+                        session.save();
+                    }
                 }
             } else {
                 throw new RuntimeException("Namespace doesn't exist");
@@ -177,7 +223,6 @@ public class DocumentTypeResource extends BaseResource {
     public PluginContext getContext(ServletContext servletContext) {
         final String className = ProjectSetupPlugin.class.getName();
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
-        // final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
         final PluginConfigService service = context.getConfigService();
 
         final ProjectSettingsBean document = service.read(className);
