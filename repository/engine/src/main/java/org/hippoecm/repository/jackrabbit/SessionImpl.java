@@ -40,6 +40,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.WorkspaceImpl;
@@ -227,12 +228,17 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     @Override
     public void importEnhancedSystemViewBinaryPackage(final String parentAbsPath, final File archive, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
         final EnhancedSystemViewPackage pckg = EnhancedSystemViewPackage.create(archive);
-        final ContentHandler handler = helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehaviour, referenceBehaviour, mergeBehaviour, pckg.getBinaries());
-        final InputStream in = new FileInputStream(pckg.getXml());
+        InputStream in = null;
         try {
+            in = new FileInputStream(pckg.getXml());
+            final ContentHandler handler = helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehaviour, referenceBehaviour, mergeBehaviour, pckg.getBinaries());
             new DefaultContentHandler(handler).parse(in);
         } finally {
             IOUtils.closeQuietly(in);
+            FileUtils.deleteQuietly(pckg.getXml());
+            for (File file : pckg.getBinaries().values()) {
+                FileUtils.deleteQuietly(file);
+            }
         }
     }
 

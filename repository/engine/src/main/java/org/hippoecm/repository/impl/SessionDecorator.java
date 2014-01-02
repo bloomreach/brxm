@@ -357,7 +357,6 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                 FileUtils.deleteQuietly(binary);
             }
         }
-
     }
 
     /**
