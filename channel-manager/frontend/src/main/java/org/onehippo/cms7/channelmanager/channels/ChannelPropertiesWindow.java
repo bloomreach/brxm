@@ -177,7 +177,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                         if (parameterAnnotation != null && ((Parameter) parameterAnnotation).hideInChannelManager()) {
                             return;
                         }
-                         final Label label = new Label(WICKET_ID_KEY, new ChannelResourceModel(key, channel, channelStore));
+                        final Label label = new Label(WICKET_ID_KEY, new ChannelResourceModel(key, channel, channelStore));
                         item.add(label);
                         final Component widget = getWidget(context, channel, propDefInfo, key);
                         item.add(widget);
