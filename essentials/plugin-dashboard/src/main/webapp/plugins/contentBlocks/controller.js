@@ -1,14 +1,5 @@
 app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-    function escapeHtml(unsafe) {
-        return unsafe
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-    }
-
     // TODO fetch columns
     $scope.columns = {"items": [
         {"key": "Left column", "value": "left"},
@@ -29,8 +20,16 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.baseConsoleNamespaceUrl = "http://localhost:8080/cms/console?path=";
     $scope.map = {};
 
-    $scope.selectChange = function (docName, selectedItem) {
-        $log.info(docName, selectedItem);
+    $scope.selectChange = function () {
+        $log.info('monitor change4');
+        angular.forEach($scope.documentTypes, function (docType, key) {
+            docType.providers.items = [];
+            angular.forEach(docType.providers.ritems, function (providerItem, key) {
+                $log.info($scope.map[providerItem.key]);
+                $log.info(docType.providers.items.push($scope.map[providerItem.key]));
+            });
+        });
+        //$log.info(docName);
     };
     $scope.onDelete = function (docName) {
         var index = $scope.providers.indexOf(docName)
@@ -82,8 +81,10 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         $log.info("Saving configuration for:");
         $scope.payload = {"cbpayload": {"items": {"items": []}}};
         $scope.payload.cbpayload.items.items = $scope.documentTypes
+        $log.info('monitor');
         $log.info($scope.documentTypes);
         $log.info($scope.payload);
+        $log.info('/monitor');
         $http({
             method: 'POST',
             url: $rootScope.REST.contentblocksCreate,
@@ -142,6 +143,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
                             $log.info(docType.providers.ritems.push($scope.map[providerItem.key]));
                         });
                     });
+
+
 
                 });
 

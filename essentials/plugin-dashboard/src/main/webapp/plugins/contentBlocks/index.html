@@ -7,6 +7,7 @@
                     <p>{{introMessage}}</p>
                     <p ng-bind-html="deliberatelyTrustDangerousSnippet()"></p>
                     <h4> Available Content Blocks:</h4>
+                    <!--<pre>{{documentTypes}}</pre>-->
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
@@ -43,6 +44,7 @@
                                         ng-model="docType.providers.ritems"
                                         ng-selected="docType.providers.ritems"
                                         ng-options="c.key for c in providers"
+                                        ng-change="selectChange()"
                                         multiple
                                         >
                                 </select>

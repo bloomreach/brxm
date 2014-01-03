@@ -111,7 +111,7 @@ public class ContentBlocksResource extends BaseResource {
 
             for (String primaryType : primaryTypes) {
                 final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
-                final NodeIterator it = executeQuery(nameSpace + "//element(*, frontend:plugin)[@contentPickerType]");
+                final NodeIterator it = executeQuery(HippoNodeUtils.resolvePath(primaryType).substring(1) + "//element(*, frontend:plugin)[@cpItemsPath]");
                 while (it.hasNext()) {
                     final String name = it.nextNode().getName();
                     String namespaceName = prefix + name;
