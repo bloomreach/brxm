@@ -29,6 +29,7 @@ if [ $# -ne 1 ]; then
 fi
 
 TAG=$1
+BUILD_VERSION=${TAG#hippo/}
 TMP_DIR=`mktemp -d`
 SCRIPT_DIR="$(pwd)/$(dirname $0)"
 GITHUB_REPO=https://github.com/onehippo/ckeditor
@@ -55,7 +56,7 @@ rm -rf ./src/main/resources/ckeditor/*
 cp -r $TMP_DIR/ckeditor/* ./src/main/resources/ckeditor/
 
 log "Building optimized files..."
-$TMP_DIR/ckeditor/dev/builder/build.sh
+$TMP_DIR/ckeditor/dev/builder/build.sh $BUILD_VERSION
 
 log "Updating optimized files..."
 mkdir ./src/main/resources/ckeditor/optimized
