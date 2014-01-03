@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.rest.config;
 
 import org.onehippo.cms7.essentials.rest.BeanWriterResource;
+import org.onehippo.cms7.essentials.rest.ContentBlocksResource;
 import org.onehippo.cms7.essentials.rest.ControllersResource;
 import org.onehippo.cms7.essentials.rest.DocumentTypeResource;
 import org.onehippo.cms7.essentials.rest.KeyValueResource;
@@ -43,7 +44,7 @@ public class RestModule extends CXFServerModule {
     protected void configure() {
         publish(BeanWriterResource.class);
         publish(ControllersResource.class);
-        publish(DocumentTypeResource.class);
+        publish(ContentBlocksResource.class);
         publish(KeyValueResource.class);
         publish(MenuResource.class);
         publish(PluginResource.class);

@@ -1,11 +1,23 @@
 app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
+    function escapeHtml(unsafe) {
+        return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+
     // TODO fetch columns
     $scope.columns = {"items": [
         {"key": "Left column", "value": "left"},
         {"key": "Right column", "value": "right"}
     ]};
-    $scope.welcomeMessage = "Content blocks plugin";
+    $scope.deliberatelyTrustDangerousSnippet = function () {
+        return $sce.trustAsHtml('<a target="_blank" href="http://content-blocks.forge.onehippo.org">Detailed documentation</a>');
+    };
+    $scope.introMessage = "Content Blocks plugin provides the content/document editor an ability to add multiple pre-configured compound type blocks to a document. You can configure the available content blocks on per document type basis.";
     $scope.pluginClass = "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin";
     $scope.pluginInstalled = true;
     $scope.payload = {"cbpayload": {"items": {"items": []}}};
@@ -124,7 +136,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
                     $scope.documentTypes = data.items;
 
                     angular.forEach($scope.documentTypes, function (docType, key) {
-                        docType.providers.ritems = [] ;
+                        docType.providers.ritems = [];
                         angular.forEach(docType.providers.items, function (providerItem, key) {
                             $log.info($scope.map[providerItem.key]);
                             $log.info(docType.providers.ritems.push($scope.map[providerItem.key]));

@@ -4,9 +4,9 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
-                    <p>{{welcomeMessage}}</p>
+                    <p>{{introMessage}}</p>
+                    <p ng-bind-html="deliberatelyTrustDangerousSnippet()"></p>
                     <h4> Available Content Blocks:</h4>
-                    <!--<pre>{{documentTypes}}</pre>-->
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
@@ -36,7 +36,6 @@
                         <tr ng-repeat="docType in documentTypes">
                             <td><a href="{{baseCmsNamespaceUrl}}{{docType.value}}">{{docType.key}}</a></td>
                             <td>
-                                <!--<pre>{{docType.providers.items}}</pre>-->
                                 <!--<pre>{{docType.providers.ritems}}</pre>-->
                                 <select
                                         chosen
@@ -63,23 +62,7 @@
         <p></p>
         <p></p>
         <div class="col-md-4">
-            <!--<div class="panel panel-primary" ng-show="selection.length > 0">
-                <div class="panel-heading">Selected</div>
-                <table class="table table-hover">
-                    <tbody>
-                    <tr ng-repeat="docType in selection">
-                        <td>{{docType}}</td>
-                        <td>{{selectedItem[$index]}}</td>
-                    </tr>
-                    <tr >
-                        <td></td>
-                        <td>
-                            <button class="btn btn-primary">Save</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>-->
+
         </div>
         <div class="col-md-4">
 

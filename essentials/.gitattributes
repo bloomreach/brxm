@@ -688,6 +688,7 @@ plugin-dashboard/src/main/java/com/google/code/inject/jaxrs/util/ScopeUtils.java
 plugin-dashboard/src/main/java/com/google/code/inject/jaxrs/util/ScopeValidator.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BaseResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BeanWriterResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ControllersResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentTypeResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/KeyValueResource.java -text

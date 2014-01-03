@@ -82,17 +82,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id$"        TODO change, this is too content blocks specific.
+ * @version "$Id$"
  */
-
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/documenttypes/")
-public class DocumentTypeResource extends BaseResource {
+public class ContentBlocksResource extends BaseResource {
 
     @Inject
     private EventBus eventBus;
-    private static Logger log = LoggerFactory.getLogger(DocumentTypeResource.class);
+    private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
 
 
     @GET
