@@ -52,7 +52,7 @@ cd $SCRIPT_DIR
 
 log "Updating sources..."
 rm -rf ./src/main/resources/ckeditor/*
-cp -r /tmp/ckeditor/* ./src/main/resources/ckeditor/
+cp -r $TMP_DIR/ckeditor/* ./src/main/resources/ckeditor/
 
 log "Building optimized files..."
 $TMP_DIR/ckeditor/dev/builder/build.sh
