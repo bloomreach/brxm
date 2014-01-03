@@ -1,6 +1,10 @@
 CKEditor 4 Changelog
 ====================
 
+## CKEditor 4.3.0-h4
+
+* [CMS7-7615](https://issues.onehippo.com/browse/CMS7-7615) Added configuration option 'linkShowSurroundingAnchors', removed option 'linkTypes'
+
 ## CKEditor 4.3.0-h3
 
 * [CMS7-7615](https://issues.onehippo.com/browse/CMS7-7615) Changed icon of the 'link' button

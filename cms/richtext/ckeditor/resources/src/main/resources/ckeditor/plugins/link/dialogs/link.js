@@ -84,7 +84,6 @@ CKEDITOR.dialog.add( 'link', function( editor ) {
 
 	var popupRegex = /\s*window.open\(\s*this\.href\s*,\s*(?:'([^']*)'|null)\s*,\s*'([^']*)'\s*\)\s*;\s*return\s*false;*\s*/;
 	var popupFeaturesRegex = /(?:^|,)([^=]+)=(\d+|yes|no)/gi;
-	var linkTypes = ( editor.config.linkTypes || 'url,anchor,email' ).split( ',' );
 
 	var parseLink = function( editor, element ) {
 			var href = ( element && ( element.data( 'cke-saved-href' ) || element.getAttribute( 'href' ) ) ) || '',
@@ -147,7 +146,7 @@ CKEDITOR.dialog.add( 'link', function( editor ) {
 					retval.url.protocol = urlMatch[ 1 ];
 					retval.url.url = urlMatch[ 2 ];
 				} else
-					retval.type = linkTypes[0];
+					retval.type = 'url';
 			}
 
 			// Load target and popup settings.
@@ -206,11 +205,12 @@ CKEDITOR.dialog.add( 'link', function( editor ) {
 
 			// Find out whether we have any anchors in the editor.
 			var anchors = retval.anchors = [],
+				anchorScope = editor.config.linkShowSurroundingAnchors ? editor.document : editor.editable(),
 				i, count, item;
 
 			// For some browsers we set contenteditable="false" on anchors, making document.anchors not to include them, so we must traverse the links manually (#7893).
-			if ( CKEDITOR.plugins.link.emptyAnchorFix ) {
-				var links = editor.document.getElementsByTag( 'a' );
+			if ( CKEDITOR.plugins.link.emptyAnchorFix || !editor.config.linkShowSurroundingAnchors ) {
+				var links = anchorScope.getElementsByTag( 'a' );
 				for ( i = 0, count = links.count(); i < count; i++ ) {
 					item = links.getItem( i );
 					if ( item.data( 'cke-saved-name' ) || item.hasAttribute( 'name' ) )
@@ -225,7 +225,7 @@ CKEDITOR.dialog.add( 'link', function( editor ) {
 			}
 
 			if ( CKEDITOR.plugins.link.fakeAnchor ) {
-				var imgs = editor.document.getElementsByTag( 'img' );
+				var imgs = anchorScope.getElementsByTag( 'img' );
 				for ( i = 0, count = imgs.count(); i < count; i++ ) {
 					if ( ( item = CKEDITOR.plugins.link.tryRestoreFakeAnchor( editor, imgs.getItem( i ) ) ) )
 						anchors.push({ name: item.getAttribute( 'name' ), id: item.getAttribute( 'id' ) } );
@@ -323,15 +323,7 @@ CKEDITOR.dialog.add( 'link', function( editor ) {
 	}
 
 	var commonLang = editor.lang.common,
-		linkLang = editor.lang.link,
-		linkTypeItems = [];
-
-	for ( var i = 0; i < linkTypes.length; i++ ) {
-		linkTypeItems.push( [
-			linkLang[ 'to' + CKEDITOR.tools.capitalize( linkTypes[i] ) ],
-			linkTypes[ i ]
-		] );
-	}
+		linkLang = editor.lang.link;
 
 	return {
 		title: linkLang.title,
@@ -347,8 +339,12 @@ CKEDITOR.dialog.add( 'link', function( editor ) {
 				id: 'linkType',
 				type: 'select',
 				label: linkLang.type,
-				'default': linkTypes[0],
-				items: linkTypeItems,
+				'default': 'url',
+				items: [
+					[ linkLang.toUrl, 'url' ],
+					[ linkLang.toAnchor, 'anchor' ],
+					[ linkLang.toEmail, 'email' ]
+					],
 				onChange: linkTypeChanged,
 				setup: function( data ) {
 					if ( data.type )
