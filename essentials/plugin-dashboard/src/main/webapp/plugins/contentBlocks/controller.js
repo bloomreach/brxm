@@ -12,30 +12,10 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.selection = [];
     $scope.providerInput = "";
     $scope.selectedItem = [];
-    $scope.test = [
-        {"key": "1f2f3r4g", "value": "mydemoessentials:1f2f3r4g", "path": "/hippo:namespaces/mydemoessentials/1f2f3r4g"},
-        {"key": 23131232143324, "value": "mydemoessentials:23131232143324", "path": "/hippo:namespaces/mydemoessentials/23131232143324"},
-        {"key": "dfgdfgdfgdfgdfgdfgdfgdfg", "value": "mydemoessentials:dfgdfgdfgdfgdfgdfgdfgdfg", "path": "/hippo:namespaces/mydemoessentials/dfgdfgdfgdfgdfgdfgdfgdfg"}
-    ];
-    $scope.documentTypes = [
-        {"key": "News document", "value": "namespace:news", "providers": {"items": [
-            // {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
-            {"key": "provider 2", "value": "provider:2", "path": "hippogogreen/testprov"}    ,
-            {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
-        ]}},
-        {"key": "Events document", "value": "namespace:events", "providers": {"items": [
-            {"key": "provider 2", "value": "provider:1"}
-        ]}}
-    ];
-    $scope.providers = [
-        {"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
-        {"key": "Provider 2", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"},
-        {"key": "Provider 3", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"}
-    ];
 
     $scope.baseCmsNamespaceUrl = "http://localhost:8080/cms?path=";
     $scope.baseConsoleNamespaceUrl = "http://localhost:8080/cms/console?path=";
-
+    $scope.map = {};
 
     $scope.selectChange = function (docName, selectedItem) {
         $log.info(docName, selectedItem);
@@ -47,11 +27,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     };
     $scope.onAdd = function (docName) {
         $log.info(docName);
-       // $scope.providers.push({"key": docName});
         $scope.providerInput = "";
-
-        //$scope.documentTypes[1].providers.items.push({"key": "Provider 1", "value": "hippogogreen:testprov", "path": "hippogogreen/testprov"});
-
         // TODO: put providers
         $http({
             method: 'PUT',
@@ -79,17 +55,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         var providerIndex = providers.indexOf(prov);
         $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
     };
-//    $scope.saveBlocksConfiguration = function () {
-//        $http({
-//            method: 'POST',
-//            url: $rootScope.REST.contentblocksCreate,
-//            data: $scope.documentTypes
-//        }).success(function (data) {
-//                    $log.info(data);
-//                    //$scope.documentTypes.providers = [];
-//
-//                });
-//    };
     $scope.installPlugin = function () {
         $log.info("installing plugin");
         $http({
@@ -129,7 +94,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             $scope.selection.push(docName);
         }
     };
-
     $scope.init = function () {
         // check if plugin is installed
         $http({
@@ -146,19 +110,26 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         // TODO: fetch docTypes
         $http({
             method: 'GET',
-            url: $rootScope.REST.documentTypes
-        }).success(function (data) {
-                    $scope.documentTypes = data.items;
-                    $log.info('document types loaded');
-                    $log.info($scope.documentTypes);
-
-                });
-
-        $http({
-            method: 'GET',
             url: $rootScope.REST.compounds
         }).success(function (data) {
                     $scope.providers = data.items;
+                    angular.forEach($scope.providers, function (provider, key) {
+                        $scope.map[provider.key] = provider;
+                    });
+                });
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.documentTypes
+        }).success(function (data) {
+                    $scope.documentTypes = data.items;
+
+                    angular.forEach($scope.documentTypes, function (docType, key) {
+                        docType.providers.ritems = [] ;
+                        angular.forEach(docType.providers.items, function (providerItem, key) {
+                            $log.info($scope.map[providerItem.key]);
+                            $log.info(docType.providers.ritems.push($scope.map[providerItem.key]));
+                        });
+                    });
 
                 });
 

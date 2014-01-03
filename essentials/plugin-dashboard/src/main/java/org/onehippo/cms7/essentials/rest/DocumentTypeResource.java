@@ -113,10 +113,10 @@ public class DocumentTypeResource extends BaseResource {
             for (String primaryType : primaryTypes) {
                 final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
                 final NodeIterator it = executeQuery(nameSpace + "//element(*, frontend:plugin)[@contentPickerType]");
-                while (it.hasNext()){
+                while (it.hasNext()) {
                     final String name = it.nextNode().getName();
                     String namespaceName = prefix + name;
-                    if(compoundMap.containsKey(namespaceName)){
+                    if (compoundMap.containsKey(namespaceName)) {
                         final Compounds compounds = compoundMap.get(namespaceName);
                         keyValueRestfulRestfulList.add(compounds);
                     }
