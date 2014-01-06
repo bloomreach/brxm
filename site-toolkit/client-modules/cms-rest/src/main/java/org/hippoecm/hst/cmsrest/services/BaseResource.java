@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseResource {
 
-    private static final Logger log = LoggerFactory.getLogger(BaseResource.class);
-
 	protected ChannelManager channelManager;
 
     protected static VirtualHosts getVirtualHosts() {

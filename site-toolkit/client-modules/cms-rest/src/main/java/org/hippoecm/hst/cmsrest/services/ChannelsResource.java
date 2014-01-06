@@ -78,7 +78,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public void save(Channel channel) throws ChannelException {
         try {
             if (!channel.isPreview()) {
-                log.warn("Error while trying to save channel: Can only save preview channels", channel);
+                log.warn("Error while trying to save channel {}: Can only save preview channels", channel);
                 throw new ChannelException("Error while trying to save channel + " +channel.getId()+" : Can only save preview channels ");
             }
             channelManager.save(channel);

@@ -42,6 +42,7 @@ public interface ContextualizableMount extends MutableMount {
     Channel getPreviewChannel();
 
     /**
+     * internal only : not api
      * The preview channel properties for this mount.
      * @param <T> Type of the channel info.  Only checked at runtime on assignment.
      * @return A preview channel properties instance.

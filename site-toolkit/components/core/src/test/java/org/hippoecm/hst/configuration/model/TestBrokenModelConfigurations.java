@@ -756,8 +756,8 @@ public class TestBrokenModelConfigurations extends AbstractTestConfigurations {
                     mount.getChannel() == mount.getPreviewChannel());
         }
 
-        // only remove channel preview : This is an invalid configuration state since there is a preview configuration
-        // a error should be logged : We need to add 'logging' expectation for this.
+        // TODO only remove channel preview : This is an invalid configuration state since there is a preview configuration
+        // TODO a error should be logged : We need to add 'logging' expectation for this.
         session.getNode(channelPath+"-preview").remove();
         pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode("/hst:hst"), false);
         session.save();

@@ -40,6 +40,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertNull;
@@ -96,16 +97,6 @@ public class TestSiteService extends AbstractTestConfigurations {
 
     @Test
     public void previewSiteComponentsConfigurationNotLoadedForCurrentHostGroupIfNoPreviewChannel() throws Exception {
-        // via the channel manager, the channels for the current hostgroup get loaded. For this, some
-        // lazy loading is introduced in the channel manager. This test is for confirming that. The
-        // unittest content has
-        //
-        // +hst:hst
-        //    + hst:hosts (hst:channelmanagerhostgroup = dev-localhost)
-        //        + dev-localhost
-        //              + localhost
-        //                    + hst:root (hst:channelpath = /hst:hst/hst:channels/testchannel)
-        //
 
         final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
@@ -138,8 +129,8 @@ public class TestSiteService extends AbstractTestConfigurations {
                 final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
                 final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
                 // since we do not have a preview yet, previewChannel and live channel should be same instance
-                Assert.assertTrue("Since there is not preview, the preview channel instance should be same as the live channel" +
-                        " instance",mount.getPreviewChannel() == mount.getChannel());
+                assertSame("Since there is not preview, the preview channel instance should be same as the live channel" +
+                        " instance", mount.getPreviewChannel(), mount.getChannel());
 
                 final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
                 // create preview configuration and preview channel
@@ -158,20 +149,20 @@ public class TestSiteService extends AbstractTestConfigurations {
             {
                 final ResolvedMount resMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
                 final ContextualizableMount mount = (ContextualizableMount)resMount.getMount();
-                Assert.assertFalse("Since there is *a* preview, the preview channel instance should NOT be same as the live channel" +
-                        " instance", mount.getPreviewChannel() == mount.getChannel());
+                assertNotSame("Since there is *a* preview, the preview channel instance should NOT be same as the live channel" +
+                        " instance", mount.getPreviewChannel(), mount.getChannel());
                 final HstSiteService hstSite = (HstSiteService)mount.getHstSite();
                 // componentsConfiguration is laoded lazily
                 assertNull(hstSite.componentsConfiguration);
                 final VirtualHosts virtualHosts = resMount.getResolvedVirtualHost().getVirtualHost().getVirtualHosts();
 
-                assertTrue(virtualHosts.getChannelById("testchannel").getChangedBySet().size() == 0);
+                assertEquals(0, virtualHosts.getChannelById("testchannel").getChangedBySet().size());
 
                 final HstSiteService previewHstSite = (HstSiteService)mount.getPreviewHstSite();
                 // only when changes from preview channel are loaded the lazy component configuration gets populated
                 assertNull(previewHstSite.componentsConfiguration);
 
-                assertTrue(virtualHosts.getChannelById("testchannel-preview").getChangedBySet().size() == 1);
+                assertEquals(1, virtualHosts.getChannelById("testchannel-preview").getChangedBySet().size());
                 assertTrue(virtualHosts.getChannelById("testchannel-preview").getChangedBySet().contains("someonelikeyou"));
                 // since changedBySet is request on preview channel, we expect previewHstSite.componentsConfiguration not to be
                 // null any more.

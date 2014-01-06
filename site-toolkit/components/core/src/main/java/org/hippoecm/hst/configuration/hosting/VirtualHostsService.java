@@ -917,7 +917,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             // validate there is also ***no*** preview hst:configuration node: otherwise we have an invalid configuration
             if (mount.getPreviewHstSite().hasPreviewConfiguration()) {
                 log.error("Ambiguous HST configuration found. There is a preview configuration present at '{}' but there " +
-                        "is NO preview channel node at '{}'. Channel manager won't function correct for this channel. Remove the " +
+                        "is NO preview channel node at '{}'. Channel manager won't function correctly for this channel. Remove the " +
                         "preview configuration or add a preview channel.", mount.getPreviewHstSite().getConfigurationPath(),
                         channelPath+"-preview");
             }
@@ -926,7 +926,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             // validate there is also ***a*** preview hst:configuration node: otherwise we have an invalid configuration
             if (!mount.getPreviewHstSite().hasPreviewConfiguration()) {
                 log.error("Ambiguous HST configuration found. There is NO preview configuration present at '{}' but there " +
-                        "is a preview channel node at '{}'. Channel manager won't function correct for this channel. Add the " +
+                        "is a preview channel node at '{}'. Channel manager won't function correctly for this channel. Add the " +
                         "preview configuration or remove the preview channel.", mount.getPreviewHstSite().getConfigurationPath(),
                         channelPath+"-preview");
             }

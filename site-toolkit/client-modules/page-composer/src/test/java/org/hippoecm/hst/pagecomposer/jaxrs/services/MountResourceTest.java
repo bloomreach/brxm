@@ -99,7 +99,7 @@ public class MountResourceTest extends AbstractPageComposerTest {
             final ContextualizableMount mount =  (ContextualizableMount)secondCtx.getResolvedMount().getMount();
             assertTrue(mount.getPreviewHstSite().getConfigurationPath().equals(mount.getHstSite().getConfigurationPath() + "-preview"));
             assertTrue(mount.getPreviewChannel().getHstConfigPath().equals(mount.getPreviewHstSite().getConfigurationPath()));
-            assertTrue(mount.getPreviewChannel().getChangedBySet().size() == 0);
+            assertEquals(0, mount.getPreviewChannel().getChangedBySet().size());
             assertTrue(mount.getPreviewChannel().getId().equals(mount.getChannel().getId()+"-preview"));
 
             final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)

@@ -75,15 +75,15 @@ public class ChannelPropertyMapper {
             channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
         }
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY)) {
-            channel.setLastmodifiedby(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY));
+            channel.setLastModifiedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY));
         }
 
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED)) {
-            channel.setLastmodified(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
+            channel.setLastModified(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED));
         }
 
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            channel.setLockedon(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
+            channel.setLockedOn(channelNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
         }
 
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
@@ -125,8 +125,8 @@ public class ChannelPropertyMapper {
 
     public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException, IllegalStateException {
         long validateLastModifiedTimestamp = -1L;
-        if (channel.getLastmodified() != null) {
-            validateLastModifiedTimestamp = channel.getLastmodified().getTimeInMillis();
+        if (channel.getLastModified() != null) {
+            validateLastModifiedTimestamp = channel.getLastModified().getTimeInMillis();
         }
         tryLockOnNodeIfNeeded(channelNode, validateLastModifiedTimestamp);
         savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_NAME, channel.getName());

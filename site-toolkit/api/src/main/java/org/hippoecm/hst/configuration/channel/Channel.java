@@ -56,11 +56,11 @@ public class Channel implements Serializable {
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.EMPTY_LIST;
     private int hashCode;
-    private boolean isPreview = false;
+    private boolean isPreview;
     private String channelNodeLockedBy;
-    private String lastmodifiedby;
-    private Calendar lockedon;
-    private Calendar lastmodified;
+    private String lastModifiedBy;
+    private Calendar lockedOn;
+    private Calendar lastModified;
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
      */
@@ -287,28 +287,28 @@ public class Channel implements Serializable {
         this.channelNodeLockedBy = channelNodeLockedBy;
     }
 
-    public String getLastmodifiedby() {
-        return lastmodifiedby;
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
     }
 
-    public void setLastmodifiedby(final String lastmodifiedby) {
-        this.lastmodifiedby = lastmodifiedby;
+    public void setLastModifiedBy(final String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Calendar getLockedon() {
-        return lockedon;
+    public Calendar getLockedOn() {
+        return lockedOn;
     }
 
-    public void setLockedon(final Calendar lockedon) {
-        this.lockedon = lockedon;
+    public void setLockedOn(final Calendar lockedOn) {
+        this.lockedOn = lockedOn;
     }
 
-    public Calendar getLastmodified() {
-        return lastmodified;
+    public Calendar getLastModified() {
+        return lastModified;
     }
 
-    public void setLastmodified(final Calendar lastmodified) {
-        this.lastmodified = lastmodified;
+    public void setLastModified(final Calendar lastModified) {
+        this.lastModified = lastModified;
     }
 
     @Override
@@ -337,9 +337,9 @@ public class Channel implements Serializable {
         result = 31 * result + (devices != null ? devices.hashCode() : 0);
         result = 31 * result + (isPreview ? 1 : 0);
         result = 31 * result + (channelNodeLockedBy != null ? channelNodeLockedBy.hashCode() : 0);
-        result = 31 * result + (lastmodifiedby != null ? lastmodifiedby.hashCode() : 0);
-        result = 31 * result + (lockedon != null ? lockedon.hashCode() : 0);
-        result = 31 * result + (lastmodified != null ? lastmodified.hashCode() : 0);
+        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0);
+        result = 31 * result + (lockedOn != null ? lockedOn.hashCode() : 0);
+        result = 31 * result + (lastModified != null ? lastModified.hashCode() : 0);
         hashCode = result;
         return hashCode;
     }
