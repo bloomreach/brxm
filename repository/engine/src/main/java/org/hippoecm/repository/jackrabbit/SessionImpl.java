@@ -235,10 +235,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
             new DefaultContentHandler(handler).parse(in);
         } finally {
             IOUtils.closeQuietly(in);
-            FileUtils.deleteQuietly(pckg.getXml());
-            for (File file : pckg.getBinaries().values()) {
-                FileUtils.deleteQuietly(file);
-            }
+            pckg.destroy();
         }
     }
 

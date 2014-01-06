@@ -340,7 +340,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             postMountEnabled(false);
             new DereferencedSysViewSAXEventGenerator((Node) item, !recurse, handler, binaries).serialize();
             final EnhancedSystemViewPackage pckg = EnhancedSystemViewPackage.create(xml, binaries);
-            return pckg.getArchive();
+            return pckg.toZipFile();
         } catch (SAXException e) {
             if (e.getException() instanceof IOException) {
                 throw (IOException) e.getException();

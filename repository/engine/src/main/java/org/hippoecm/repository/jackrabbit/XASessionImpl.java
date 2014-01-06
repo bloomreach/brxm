@@ -245,10 +245,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
             new DefaultContentHandler(handler).parse(in);
         } finally {
             IOUtils.closeQuietly(in);
-            FileUtils.deleteQuietly(pckg.getXml());
-            for (File file : pckg.getBinaries().values()) {
-                FileUtils.deleteQuietly(file);
-            }
+            pckg.destroy();
         }
     }
 
