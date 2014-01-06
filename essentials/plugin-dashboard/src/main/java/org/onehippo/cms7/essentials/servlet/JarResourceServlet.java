@@ -67,10 +67,8 @@ public class JarResourceServlet extends HttpServlet {
                 return;
             }
             final ZipEntry zipEntry = ((JarURLConnection) url.openConnection()).getJarEntry();
-            if (zipEntry != null) {
-                if (!zipEntry.isDirectory()) {
-                    new StaticFile(zipEntry.getTime(), getServletContext().getMimeType(path), zipEntry.getSize(), url).respondGet(resp);
-                }
+            if (zipEntry != null && !zipEntry.isDirectory()) {
+                new StaticFile(zipEntry.getTime(), getServletContext().getMimeType(path), zipEntry.getSize(), url).respondGet(resp);
             }
         } catch (MalformedURLException e) {
             log.error("Invalid url", e);

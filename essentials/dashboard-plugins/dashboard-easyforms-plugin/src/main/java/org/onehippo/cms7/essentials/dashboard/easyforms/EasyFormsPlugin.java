@@ -13,7 +13,7 @@ import javax.jcr.Session;
 
 public class EasyFormsPlugin extends InstallablePlugin<EasyFormsInstaller> {
 
-    private final static Logger log = LoggerFactory.getLogger(EasyFormsPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(EasyFormsPlugin.class);
     private static final long serialVersionUID = 1L;
     private transient Session session;
 

@@ -321,7 +321,7 @@ public class DocumentTypeResource extends BaseResource {
     @Path("/compounds/contentblocks/save")
 //    @Consumes("application/json")
     public Response saveContentBlocks(CBPayload body, @Context ServletContext servletContext) {
-        System.out.println(body);
+        log.debug(body.toString());
         //new Gson().fromJson(json, type);
         return Response.status(201).build();
     }

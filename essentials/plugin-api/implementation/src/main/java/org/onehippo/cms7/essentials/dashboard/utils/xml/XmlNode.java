@@ -78,7 +78,7 @@ public class XmlNode implements NodeOrProperty {
             return null;
         }
         final Collection<XmlNode> editNodes = editNode.getChildNodesByName(HIPPOSYSEDIT_NODETYPE);
-        if(editNodes.size() < 1){
+        if(editNodes.isEmpty()){
             return null;
         }
         editNode = editNodes.iterator().next();

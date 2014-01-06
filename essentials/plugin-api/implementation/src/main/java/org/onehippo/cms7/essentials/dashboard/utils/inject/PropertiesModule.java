@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +35,10 @@ public class PropertiesModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        try {
-
-            final Properties properties = new Properties();
-            final InputStream stream = getClass().getResourceAsStream("/essentials_messages.properties");
+        final Properties properties = new Properties();
+        try (final InputStream stream = getClass().getResourceAsStream("/essentials_messages.properties")) {
             properties.load(stream);
             Names.bindProperties(binder(), properties);
-            IOUtils.closeQuietly(stream);
         } catch (IOException e) {
             log.error("Error injecting properties [essentials_messages.properties]", e);
         }

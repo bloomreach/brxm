@@ -2,20 +2,15 @@ package org.onehippo.cms7.essentials.rest.model;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.Lists;
 
-import org.onehippo.cms7.essentials.rest.DocumentTypeResource;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
 
@@ -55,7 +50,6 @@ public class RestfulList<T extends Restful> implements Serializable {
     public List<T> getItems() {
         return items;
     }
-
 
 
 }
