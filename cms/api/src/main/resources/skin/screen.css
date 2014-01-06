@@ -2210,3 +2210,8 @@ body.hippo-root div.yui-log-container {
 	font-weight: bold;
 }
 
+.hippo-referring-documents-list .link {
+    display: block;
+    height: 16px;
+    overflow: hidden;
+}
