@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -49,11 +50,13 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     Subject getSubject();
 
-    NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException;
+    NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;
 
-    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException, VersionException, LockException, RepositoryException;
+    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws RepositoryException;
 
-    void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException;
+    void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException;
+
+    void importEnhancedSystemViewBinaryPackage(String parentAbsPath, File archive, int uuidBehaviour, int referenceBehaviour, int mergeBehaviour) throws IOException, RepositoryException;
 
     Node getCanonicalNode(Node node) throws RepositoryException;
 

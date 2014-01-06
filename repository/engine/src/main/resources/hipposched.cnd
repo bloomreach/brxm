@@ -36,7 +36,7 @@
 [hipposched:triggers] > nt:base
 + * (hipposched:trigger) = hipposched:trigger
 
-[hipposched:job] > hippo:request, mix:versionable
+[hipposched:job] > hippo:request
 + hipposched:triggers (hipposched:triggers) = hipposched:triggers
 - hipposched:data (binary) // deprecated
 - hippo:document (string) // deprecated

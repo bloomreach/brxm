@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,25 +38,19 @@ public class DereferencedImportHandler extends ImportHandler {
 
     private static Logger log = LoggerFactory.getLogger(DereferencedImportHandler.class);
 
-    protected final Importer importer;
-    protected final NamespaceRegistryImpl nsReg;
-    protected final SessionImpl session;
-
-    /**
-     * The local namespace mappings reported by
-     * {@link #startPrefixMapping(String, String)}. These mappings are used
-     * to instantiate the local namespace context in
-     * {@link #startElement(String, String, String, Attributes)}.
-     */
+    private final Importer importer;
+    private final NamespaceRegistryImpl nsReg;
+    private final SessionImpl session;
+    private final Map<String, File> binaries;
     private Map<String, String> localNamespaceMappings;
-
     private DereferencedSysViewImportHandler targetHandler;
 
-    public DereferencedImportHandler(Importer importer, SessionImpl session, NamespaceRegistryImpl nsReg) throws RepositoryException {
+    public DereferencedImportHandler(Importer importer, SessionImpl session, NamespaceRegistryImpl nsReg, Map<String, File> binaries) throws RepositoryException {
         super(importer, session);
         this.importer = importer;
         this.nsReg = nsReg;
         this.session = session;
+        this.binaries = binaries;
     }
 
     //---------------------------------------------------------< ErrorHandler >
@@ -148,7 +143,7 @@ public class DereferencedImportHandler extends ImportHandler {
             // the namespace of the first element determines the type of XML
             // (system view/document view)
             if (Name.NS_SV_URI.equals(namespaceURI)) {
-                targetHandler = new DereferencedSysViewImportHandler(importer);
+                targetHandler = new DereferencedSysViewImportHandler(importer, binaries, session.getValueFactory());
             } else {
                 throw new SAXException("Only sys views are supported, unknow: " + namespaceURI);
             }

@@ -219,6 +219,10 @@ public interface HippoNodeType {
 
     public static final String HIPPO_COUNT = "hippo:count";
 
+    public static final String HIPPO_DELETED_DATE = "hippo:deletedDate";
+
+    public static final String HIPPO_DELETED_BY = "hippo:deletedBy";
+
     public static final String HIPPO_DIRLEVELS = "hipposys:dirlevels";
 
     public static final String HIPPO_DISCRIMINATOR = "hippo:discriminator";

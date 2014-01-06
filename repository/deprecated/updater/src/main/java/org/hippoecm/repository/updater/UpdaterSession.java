@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.updater;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -546,6 +547,16 @@ final public class UpdaterSession implements HippoSession {
 
     @Deprecated
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Override
+    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Override
+    public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 

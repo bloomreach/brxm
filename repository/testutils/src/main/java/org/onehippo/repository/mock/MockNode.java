@@ -17,6 +17,10 @@ package org.onehippo.repository.mock;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -50,7 +54,6 @@ import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Localized;
-import org.onehippo.repository.util.GlobCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -528,14 +531,13 @@ public class MockNode extends MockItem implements HippoNode {
         Set<MockNode> childrenCopy = new LinkedHashSet<MockNode>();
 
         for (String nameGlob : nameGlobs) {
-            GlobCompiler compiler = new GlobCompiler();
-            Pattern pattern = compiler.compile(nameGlob);
+            PathMatcher globMatcher = FileSystems.getDefault().getPathMatcher("glob:" + nameGlob);
 
             for (List<MockNode> childList : children.values()) {
                 for (MockNode child : childList) {
-                    Matcher m = pattern.matcher(child.getName());
+                    Path path = Paths.get(child.getName());
 
-                    if (m.matches()) {
+                    if (globMatcher.matches(path)) {
                         childrenCopy.add(child);
                     }
                 }
@@ -559,13 +561,12 @@ public class MockNode extends MockItem implements HippoNode {
         Set<MockProperty> propsCopy = new LinkedHashSet<MockProperty>();
 
         for (String nameGlob : nameGlobs) {
-            GlobCompiler compiler = new GlobCompiler();
-            Pattern pattern = compiler.compile(nameGlob);
+            PathMatcher globMatcher = FileSystems.getDefault().getPathMatcher("glob:" + nameGlob);
 
             for (MockProperty prop : properties.values()) {
-                Matcher m = pattern.matcher(prop.getName());
+                Path path = Paths.get(prop.getName());
 
-                if (m.matches()) {
+                if (globMatcher.matches(path)) {
                     propsCopy.add(prop);
                 }
             }

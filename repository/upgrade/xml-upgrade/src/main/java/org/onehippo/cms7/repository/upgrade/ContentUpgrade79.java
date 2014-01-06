@@ -156,7 +156,6 @@ public class ContentUpgrade79 {
     }
 
     private void convertMixins(Element property, boolean doc, final String state, final boolean prototype) {
-        boolean hasSkipIndex = false;
         for (Element value : property.getChildren("value", SV)) {
             String mixin = value.getText();
             if ("hippo:hardhandle".equals(mixin)) {
@@ -167,40 +166,8 @@ public class ContentUpgrade79 {
                 } else {
                     value.setText("mix:referenceable");
                 }
-            } else if ("hippo:skipindex".equals(mixin)) {
-                hasSkipIndex = true;
             }
         }
-        if ("draft".equals(state) && !hasSkipIndex && !prototype) {
-            addSkipIndex(property);
-        }
-    }
-
-    private void addSkipIndex(final Element property) {
-        final List<Node> children = property.getNodes();
-        int lastValue = children.size() - 1;
-        for (; lastValue >= 0; lastValue--) {
-            if (children.get(lastValue) instanceof Element) {
-                break;
-            }
-        }
-        int lastText = lastValue - 1;
-        for (; lastText >= 0; lastText--) {
-            if (children.get(lastText) instanceof Text) {
-                break;
-            }
-        }
-        final Element value = new Element("value", SV);
-        value.setBeginName("sv:value");
-        value.setEndName("sv:value");
-        value.addNode(new Text("hippo:skipindex"));
-        if (lastText >= 0) {
-            property.addNode(lastValue + 1, children.get(lastText).copy());
-        } else {
-            property.addNode(lastValue + 1, new Text("\n"));
-        }
-        lastValue++;
-        property.addNode(lastValue + 1, value);
     }
 
     public static void main(String[] args) throws IOException {

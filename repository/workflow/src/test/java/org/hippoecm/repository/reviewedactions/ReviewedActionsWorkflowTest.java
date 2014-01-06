@@ -236,7 +236,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         reviewedWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         Serializable value = reviewedWorkflow.hints().get("publish");
         assertNotNull("No publish hint provided where there should be one", value);
-        assertTrue("Publish hint should be true", value instanceof Boolean && ((Boolean)value).booleanValue());
+        assertTrue("Publish hint should be true", value instanceof Boolean && (Boolean) value);
     }
 
     @Test

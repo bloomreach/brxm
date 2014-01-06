@@ -15,9 +15,13 @@
  */
 package org.hippoecm.repository.impl;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -51,8 +55,10 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
+import org.apache.tika.io.IOUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -64,6 +70,7 @@ import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
+import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewPackage;
 import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.onehippo.repository.security.User;
@@ -198,6 +205,16 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     @Override
+    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+        try {
+            postMountEnabled(false);
+            getInternalHippoSession().importEnhancedSystemViewBinaryPackage(parentAbsPath, pckg, uuidBehaviour, referenceBehaviour, mergeBehaviour);
+        } finally {
+            postMountEnabled(true);
+        }
+    }
+
+    @Override
     public void importXML(String parentAbsPath, InputStream in, int uuidBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         try {
             postMountEnabled(false);
@@ -308,6 +325,39 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
+    public File exportEnhancedSystemViewPackage(final String parentAbsPath, final boolean recurse) throws IOException, RepositoryException {
+        Item item = getItem(parentAbsPath);
+        if (!item.isNode()) {
+            // there's a property, though not a node at the specified path
+            throw new PathNotFoundException(parentAbsPath);
+        }
+        final File xml = File.createTempFile("esv", "xml");
+        final Collection<File> binaries = new ArrayList<>();
+        final FileOutputStream out = new FileOutputStream(xml);
+        try {
+            final ContentHandler handler = getExportContentHandler(out);
+            postMountEnabled(false);
+            new DereferencedSysViewSAXEventGenerator((Node) item, !recurse, handler, binaries).serialize();
+            final EnhancedSystemViewPackage pckg = EnhancedSystemViewPackage.create(xml, binaries);
+            return pckg.toZipFile();
+        } catch (SAXException e) {
+            if (e.getException() instanceof IOException) {
+                throw (IOException) e.getException();
+            }
+            if (e.getException() instanceof RepositoryException) {
+                throw (RepositoryException) e.getException();
+            }
+            throw new RepositoryException(e);
+        } finally {
+            postMountEnabled(true);
+            IOUtils.closeQuietly(out);
+            FileUtils.deleteQuietly(xml);
+            for (File binary : binaries) {
+                FileUtils.deleteQuietly(binary);
+            }
+        }
+    }
 
     /**
      * Convenience function to copy a node to a destination path in the same workspace

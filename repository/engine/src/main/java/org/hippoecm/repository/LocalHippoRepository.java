@@ -162,6 +162,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             repoPath = RepoUtils.stripFileProtocol(pathProp);
         }
 
+        if (repoPath.startsWith("~" + File.separator)) {
+            repoPath = System.getProperty("user.home") + repoPath.substring(1);
+        }
+
         log.info("Using repository path: " + repoPath);
         return repoPath;
     }

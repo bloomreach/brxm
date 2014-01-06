@@ -52,14 +52,6 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         setParameter("applyModified", applyModified);
     }
 
-    public boolean isSkipIndex() {
-        return Boolean.parseBoolean(getParameter("skipIndex"));
-    }
-
-    public void setSkipIndex(String skipIndex) {
-        getParameter("skipIndex", skipIndex);
-    }
-
     public boolean isVersionable() {
         return Boolean.parseBoolean(getParameter("versionable"));
     }
@@ -87,7 +79,6 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
         task.setVariant((PublishableDocument)eval(getVariant()));
         task.setAvailabilities(getAvailabilities());
         task.setApplyModified(isApplyModified());
-        task.setSkipIndex(isSkipIndex());
         task.setVersionable(isVersionable());
         task.setSetHolder(isSetHolder());
     }

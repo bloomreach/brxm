@@ -114,7 +114,7 @@
         <elseif cond="!empty(dm.p)"/>
           <hippo:copyVariant sourceState="published" targetState="draft"/>
         </if>
-        <hippo:configVariant variant="dm.d" skipIndex="true" applyModified="true" setHolder="true"/>
+        <hippo:configVariant variant="dm.d" applyModified="true" setHolder="true"/>
         <hippo:result value="dm.d"/>
       </transition>
 

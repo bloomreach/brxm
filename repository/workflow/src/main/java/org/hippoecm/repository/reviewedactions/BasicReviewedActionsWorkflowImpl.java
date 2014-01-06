@@ -63,8 +63,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             HippoNodeType.NT_HARDDOCUMENT,
             HippoStdNodeType.NT_PUBLISHABLE,
             HippoStdNodeType.NT_PUBLISHABLESUMMARY,
-            HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT,
-            HippoNodeType.NT_SKIPINDEX
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT
     };
     private static final String[] PROTECTED_PROPERTIES = new String[]{
             HippoNodeType.HIPPO_AVAILABILITY,
@@ -384,9 +383,6 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             draftDocument.setAvailability(new String[0]);
             // make sure drafts nor their descendant nodes get indexed
             final Node draftNode = draftDocument.getNode();
-            if (!draftNode.isNodeType(HippoNodeType.NT_SKIPINDEX)) {
-                draftNode.addMixin(HippoNodeType.NT_SKIPINDEX);
-            }
             if (draftNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                 draftNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
                 draftNode.addMixin(JcrConstants.MIX_REFERENCEABLE);

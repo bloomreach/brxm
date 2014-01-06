@@ -60,8 +60,7 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         HippoNodeType.NT_HARDDOCUMENT,
         HippoStdNodeType.NT_PUBLISHABLE,
         HippoStdNodeType.NT_PUBLISHABLESUMMARY,
-        HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT,
-        HippoNodeType.NT_SKIPINDEX
+        HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT
     };
 
     protected static final String[] PROTECTED_PROPERTIES = new String[] {

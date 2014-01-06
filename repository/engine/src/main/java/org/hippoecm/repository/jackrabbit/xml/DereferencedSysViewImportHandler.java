@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.ValueFactory;
 
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.xml.ImportHandler;
@@ -45,8 +47,7 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
 
     
     private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
-    
-    private final String NS_XMLIMPORT = "http://www.onehippo.org/jcr/xmlimport";
+    private static final String NS_XMLIMPORT = "http://www.onehippo.org/jcr/xmlimport";
 
     /**
      * stack of ImportState instances; an instance is pushed onto the stack
@@ -67,24 +68,18 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     // list of AppendableValue objects
     private ArrayList<BufferedStringValue> currentPropValues = new ArrayList<BufferedStringValue>();
     private BufferedStringValue currentPropValue;
+    private ArrayList<File> currentBinaryPropValueFiles = new ArrayList<>();
+    private File currentBinaryPropValueFile;
+    private final Map<String, File> binaries;
+    private final ValueFactory valueFactory;
+    private final Importer importer;
+    private NamespaceContext nsContext;
+    private NamePathResolver resolver;
 
-    protected final Importer importer;
-
-    protected Name referencePropName;
-
-    /**
-     * The current namespace context. A new namespace context is created
-     * for each XML element and the parent reference is used to link the
-     * namespace contexts together in a tree hierarchy. This variable contains
-     * a reference to the namespace context associated with the XML element
-     * that is currently being processed.
-     */
-    protected NamespaceContext nsContext;
-
-    protected NamePathResolver resolver;
-
-    protected DereferencedSysViewImportHandler(Importer importer) {
+    protected DereferencedSysViewImportHandler(Importer importer, Map<String, File> binaries, ValueFactory valueFactory) {
         this.importer = importer;
+        this.binaries = binaries;
+        this.valueFactory = valueFactory;
     }
 
     /**
@@ -266,9 +261,15 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             }
         } else if (name.equals(NameConstants.SV_VALUE)) {
             // sv:value element
-
-            // reset temp fields
-            currentPropValue = new BufferedStringValue(resolver, ValueFactoryImpl.getInstance());
+            final String fileName = atts.getValue(NS_XMLIMPORT, "file");
+            if (fileName != null) {
+                currentBinaryPropValueFile = binaries != null ? binaries.get(fileName) : null;
+                if (currentBinaryPropValueFile == null) {
+                    throw new SAXException("Missing binary " + fileName);
+                }
+            } else {
+                currentPropValue = new BufferedStringValue(resolver, ValueFactoryImpl.getInstance());
+            }
         } else {
             throw new SAXException(new InvalidSerializedDataException(
                     "Unexpected element in system view xml document: " + name));
@@ -376,16 +377,24 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
                 }
             } else {
                 PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
-                        .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation);
+                        .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation,
+                        currentBinaryPropValueFiles.toArray(new File[currentBinaryPropValueFiles.size()]), valueFactory);
                 state.props.add(prop);
             }
             // reset temp fields
             currentPropValues.clear();
+            currentBinaryPropValueFiles.clear();
         } else if (name.equals(NameConstants.SV_VALUE)) {
             // sv:value element
-            currentPropValues.add(currentPropValue);
+            if (currentPropValue != null) {
+                currentPropValues.add(currentPropValue);
+            }
+            if (currentBinaryPropValueFile != null) {
+                currentBinaryPropValueFiles.add(currentBinaryPropValueFile);
+            }
             // reset temp fields
             currentPropValue = null;
+            currentBinaryPropValueFile = null;
         } else {
             throw new SAXException(new InvalidSerializedDataException("invalid element in system view xml document: "
                     + localName));

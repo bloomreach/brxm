@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.File;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -558,7 +559,7 @@ abstract class SessionImplHelper {
      * {@inheritDoc}
      */
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
-            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
+            int referenceBehavior, int mergeBehavior, Map<String, File> binaries) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
 
         // check sanity of this session
@@ -610,7 +611,7 @@ abstract class SessionImplHelper {
         }
 
         DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
-        return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry());
+        return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry(), binaries);
     }
 
     public Node getCanonicalNode(NodeImpl node) throws RepositoryException {

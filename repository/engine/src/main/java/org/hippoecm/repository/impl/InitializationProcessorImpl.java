@@ -19,6 +19,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -35,8 +36,6 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -47,14 +46,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.Workspace;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
@@ -154,9 +152,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             session.refresh(false);
             initializeFolder.remove();
             session.save();
-        } catch (IOException ex) {
-            getLogger().error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-        } catch (RepositoryException ex) {
+        } catch (IOException | RepositoryException ex) {
             getLogger().error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
     }
@@ -377,6 +373,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
         String contentResource = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
         InputStream contentStream = getResourceStream(node, contentResource);
+        boolean pckg = contentResource.endsWith(".zip");
 
         if (contentStream == null) {
             getLogger().error("Cannot locate content configuration '" + contentResource + "', initialization skipped");
@@ -395,7 +392,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 final String contextNodePath = contentRoot.equals("/") ? contentRoot + contextNodeName : contentRoot + "/" + contextNodeName;
                 final int index = getNodeIndex(session, contextNodePath);
                 if (removeNode(session, contextNodePath, false)) {
-                    initializeNodecontent(session, contentRoot, contentStream, contentResource);
+                    initializeNodecontent(session, contentRoot, contentStream, contentResource, pckg);
                     if (index != -1) {
                         reorderNode(session, contextNodePath, index);
                     }
@@ -406,7 +403,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 getLogger().error("Cannot reload item {} because context node could not be determined", node.getName());
             }
         } else {
-            initializeNodecontent(session, contentRoot, contentStream, contentResource);
+            initializeNodecontent(session, contentRoot, contentStream, contentResource, pckg);
         }
 
     }
@@ -726,11 +723,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
         try {
             final String contentResource = StringUtils.trim(item.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
+            if (contentResource.endsWith(".zip")) {
+                return null;
+            }
             InputStream contentStream = getResourceStream(item, contentResource);
             if (contentStream != null) {
                 try {
                     // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
-                    boolean removeSupported = true;
                     String contextNodeName = null;
                     String deltaDirective = null;
                     XmlPullParser xpp = factory.newPullParser();
@@ -911,70 +910,46 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, String location) {
+        initializeNodecontent(session, parentAbsPath, istream, location, false);
+    }
+
+    public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, String location, boolean pckg) {
         getLogger().info("Initializing content from: " + location + " to " + parentAbsPath);
+        File tempFile = null;
+        FileOutputStream out = null;
         try {
             String relpath = (parentAbsPath.startsWith("/") ? parentAbsPath.substring(1) : parentAbsPath);
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }
             if (session instanceof HippoSession) {
-                ((HippoSession) session).importDereferencedXML(parentAbsPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                        ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
+                HippoSession hippoSession = (HippoSession) session;
+                int uuidBehaviour = ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
+                int referenceBehaviour = ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE;
+                int mergeBehaviour = ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP;
+                if (pckg) {
+                    tempFile = File.createTempFile("package", ".zip");
+                    out = new FileOutputStream(tempFile);
+                    IOUtils.copy(istream, out);
+                    hippoSession.importEnhancedSystemViewPackage(parentAbsPath, tempFile,
+                            uuidBehaviour, referenceBehaviour, mergeBehaviour);
+                }
+                else {
+                    hippoSession.importDereferencedXML(parentAbsPath, istream,
+                            uuidBehaviour, referenceBehaviour, mergeBehaviour);
+                }
             } else {
                 session.importXML(parentAbsPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
             }
-        } catch (IOException ex) {
+        } catch (IOException | RepositoryException e) {
             if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                getLogger().error("Error initializing content for " + location + " in '" + parentAbsPath + "' : " + e.getClass().getName() + ": " + e.getMessage(), e);
             } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + e.getClass().getName() + ": " + e.getMessage());
             }
-        } catch (PathNotFoundException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (ItemExistsException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                if(!ex.getMessage().startsWith("Node with the same UUID exists:") || getLogger().isDebugEnabled()) {
-                    getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-                }
-            }
-        } catch (ConstraintViolationException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (VersionException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (InvalidSerializedDataException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                if(!ex.getMessage().startsWith("Node with the same UUID exists:") || getLogger().isDebugEnabled()) {
-                    getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-                }
-            }
-        } catch (LockException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
-        } catch (RepositoryException ex) {
-            if (getLogger().isDebugEnabled()) {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } else {
-                getLogger().error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
-            }
+        } finally {
+            IOUtils.closeQuietly(out);
+            FileUtils.deleteQuietly(tempFile);
         }
     }
 

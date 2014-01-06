@@ -22,10 +22,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.rmi.Remote;
 import java.security.AccessControlException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -350,14 +351,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public Workflow getWorkflow(String category, Node item) throws RepositoryException {
         Node workflowNode = getWorkflowNode(category, item);
         if (workflowNode != null) {
-            String workflowName = workflowNode.getName();
             final Workflow workflow = getRealWorkflow(item, workflowNode);
             if (workflow != null) {
-                boolean objectPersist = !InternalWorkflow.class.isInstance(workflow);
-                String path = item.getPath();
-                String uuid = item.getIdentifier();
-                Class[] interfaces = getRemoteInterfaces(workflow.getClass());
-                InvocationHandler handler = new WorkflowInvocationHandler(category, workflowName, workflow, uuid, path, objectPersist);
+                final String workflowName = workflowNode.getName();
+                final boolean objectPersist = !InternalWorkflow.class.isInstance(workflow);
+                final String path = item.getPath();
+                final String uuid = item.getIdentifier();
+                final Class[] interfaces = getRemoteInterfaces(workflow.getClass());
+                final InvocationHandler handler = new WorkflowInvocationHandler(category, workflowName, workflow, uuid, path, objectPersist);
                 return createWorkflow(workflow.getClass(), interfaces, handler);
             }
         }
@@ -456,12 +457,16 @@ public class WorkflowManagerImpl implements WorkflowManager {
     }
 
     private Class[] getRemoteInterfaces(Class<? extends Workflow> workflowClass) {
-        Class[] interfaces = workflowClass.getInterfaces();
-        List<Class> result = new ArrayList<Class>();
-        for (final Class anInterface : interfaces) {
-            if (Remote.class.isAssignableFrom(anInterface)) {
-                result.add(anInterface);
+        Set<Class> result = new HashSet<>();
+        Class<?> klass = workflowClass;
+        while (Workflow.class.isAssignableFrom(klass)) {
+            Class[] interfaces = workflowClass.getInterfaces();
+            for (final Class anInterface : interfaces) {
+                if (Remote.class.isAssignableFrom(anInterface)) {
+                    result.add(anInterface);
+                }
             }
+            klass = klass.getSuperclass();
         }
         return result.toArray(new Class[result.size()]);
     }

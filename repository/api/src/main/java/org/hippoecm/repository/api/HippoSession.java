@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.api;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -168,6 +169,12 @@ public interface HippoSession extends Session {
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException;
+
+    public void importEnhancedSystemViewPackage(String parentAbsPath, File pckg, int uuidBehaviour, int referenceBehaviour, int mergeBehaviour)
+        throws IOException, RepositoryException;
+
+    public File exportEnhancedSystemViewPackage(String parentAbsPath, boolean recurse)
+            throws IOException, RepositoryException;
 
     /**
      * Retrieves an {@link XAResource} object that the transaction manager

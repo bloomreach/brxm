@@ -39,7 +39,6 @@ public class ConfigVariantTask extends AbstractDocumentTask {
     private String availabilities;
     private boolean applyModified;
     private boolean versionable;
-    private boolean skipIndex;
     private boolean setHolder;
 
     public PublishableDocument getVariant() {
@@ -64,14 +63,6 @@ public class ConfigVariantTask extends AbstractDocumentTask {
 
     public void setApplyModified(boolean applyModified) {
         this.applyModified = applyModified;
-    }
-
-    public boolean isSkipIndex() {
-        return skipIndex;
-    }
-
-    public void setSkipIndex(boolean skipIndex) {
-        this.skipIndex = skipIndex;
     }
 
     public boolean isVersionable() {
@@ -110,10 +101,6 @@ public class ConfigVariantTask extends AbstractDocumentTask {
 
         if (isVersionable() && !targetNode.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
             targetNode.addMixin(JcrConstants.MIX_VERSIONABLE);
-        }
-
-        if (isSkipIndex() && !targetNode.isNodeType((HippoNodeType.NT_SKIPINDEX))) {
-            targetNode.addMixin(HippoNodeType.NT_SKIPINDEX);
         }
 
         if (isApplyModified()) {
