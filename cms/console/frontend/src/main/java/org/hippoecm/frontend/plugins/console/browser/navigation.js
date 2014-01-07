@@ -23,7 +23,9 @@ Hippo.Tree.addShortcuts = function(callbackUrl) {
 
     var register = function(key) {
         shortcut.add(key, function() {
-            Wicket.Ajax.get(callbackUrl+'&key=' + key);
+            Wicket.Ajax.get({
+                u : callbackUrl+'&key='+key
+            });
         }, {
             'disable_in_input': true
         });
