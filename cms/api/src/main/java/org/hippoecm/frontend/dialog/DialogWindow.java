@@ -55,7 +55,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         }
     }
 
-    private Dialog shown;
+    private Dialog dialog;
     private List<Dialog> pending;
 
     public DialogWindow(String id) {
@@ -103,7 +103,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             pending.remove(dialog);
         }
 
-        if (dialog == shown) {
+        if (dialog == this.dialog) {
             close();
         }
     }
@@ -125,8 +125,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
                 remove(getContent());
                 target.add(this);
                 close(target);
+                dialog = null;
             } else {
-                closeDialog(shown);
+                closeDialog(dialog);
             }
         }
     }
@@ -146,25 +147,25 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     public void render(PluginRequestTarget target) {
-        if (shown != null) {
-            shown.render(target);
+        if (dialog != null) {
+            dialog.render(target);
         }
     }
 
     @Override
     public boolean isShown() {
-        return shown != null && super.isShown();
+        return dialog != null && super.isShown();
     }
 
     private void cleanup() {
-        shown = null;
+        dialog = null;
         setTitle(new Model<String>("title"));
         remove(getContent());
         setWindowClosedCallback(null);
     }
 
     private void internalShow(Dialog dialog) {
-        shown = dialog;
+        this.dialog = dialog;
         dialog.setDialogService(this);
         setTitle(new StringWithoutLineBreaksModel(dialog.getTitle()));
         setContent(dialog.getComponent());
@@ -199,6 +200,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
     @Override
     protected boolean makeContentVisible() {
-        return shown != null;
+        return dialog != null;
     }
+
 }
