@@ -135,6 +135,7 @@ content/src/main/resources/hst-configurations.xml -text svneol=unset#text/plain
 content/src/main/resources/hst-sites.xml -text
 content/src/main/resources/hst-subsite-template.xml -text
 content/src/main/resources/hst-virtualhosts.xml svneol=native#text/plain
+content/src/main/resources/hstconfiguration/democommon/binaries/homepage.ftl -text
 content/src/main/resources/hstconfiguration/democommon/catalog.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/democommon/components.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/democommon/pages.xml svneol=native#text/plain

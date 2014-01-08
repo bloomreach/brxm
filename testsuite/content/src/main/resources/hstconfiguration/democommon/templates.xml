@@ -83,44 +83,8 @@
       <sv:value>hst:template</sv:value>
     </sv:property>
     <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value>&lt;#assign
-        hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;
-        &lt;div class="yui-u"&gt; &lt;h1&gt;${document.title}&lt;/h1&gt;
-        &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html
-        hippohtml=document.html/&gt;
-        &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;
-        &lt;#if "${document.resource!}" != ""&gt;
-        &lt;@hst.link var="resource"
-        hippobean=document.resource /&gt; &lt;#if
-        "${resource!}" != ""&gt; &lt;a
-        href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
-        &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
-        &lt;/div&gt;
-        &lt;div class="bannersHome" id="container-1"&gt;
-        &lt;@hst.include ref="container-1"/&gt;
-        &lt;/div&gt;
-        &lt;div class="bannersHome" id="container-2"&gt;
-        &lt;@hst.include ref="container-2"/&gt;
-        &lt;/div&gt;
-        &lt;hr/&gt;
-        &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
-        var="imageset" hippobean=image
-        mount="restapi-gallery" /&gt; &lt;@hst.link var="original"
-        hippobean=image subPath="original"
-        mount="restapi-gallery"/&gt; &lt;@hst.link var="thumbnail"
-        hippobean=image subPath="thumbnail"
-        mount="restapi-gallery"/&gt; &lt;p&gt; ImageSet : &lt;a
-        target="_blank"
-        href="${imageset}"&gt;${imageset}&lt;/a&gt;&lt;/p&gt; &lt;p&gt;
-        Thumbnail : &lt;a target="_blank"
-        href="${thumbnail}"&gt;${thumbnail}&lt;/a&gt;&lt;/p&gt;
-        &lt;p&gt; Original : &lt;a target="_blank"
-        href="${original}"&gt;${original}&lt;/a&gt;&lt;/p&gt;
-        &lt;br/&gt;
-        &lt;br/&gt;
-        &lt;div style="color:red"&gt;Note: this page is loaded by a repository freemarker template, see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &lt;/div&gt;
-        &lt;p
-        style="height: 30em;"&gt; &lt;/p&gt; &lt;/div&gt;</sv:value>
+      <sv:value xmlns:h="http://www.onehippo.org/jcr/xmlimport" 
+                h:file="/hstconfiguration/democommon/binaries/homepage.ftl" />
     </sv:property>
   </sv:node>
   <sv:node sv:name="homelayout">
