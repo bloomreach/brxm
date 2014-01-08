@@ -46,6 +46,8 @@ public final class Constants {
     static final String CDATA = "CDATA";
     static final String TYPE = "type";
     static final String QTYPE = "sv:type";
+    static final String FILE = "file";
+    static final String QFILE = "h:file";
 
     static final QName NAME_QNAME = new QName(NAME, SV_NAMESPACE);
     static final QName TYPE_QNAME = new QName(TYPE, SV_NAMESPACE);
@@ -53,6 +55,7 @@ public final class Constants {
     static final QName PROPERTY_QNAME = new QName(PROPERTY, SV_NAMESPACE);
     static final QName VALUE_QNAME = new QName(VALUE, SV_NAMESPACE);
     static final QName MERGE_QNAME = new QName(MERGE, H_NAMESPACE);
+    static final QName FILE_QNAME = new QName(FILE, H_NAMESPACE);
     static final QName AE_ID_QNAME = new QName("id", AE_NAMESPACE);
     
     public static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig";

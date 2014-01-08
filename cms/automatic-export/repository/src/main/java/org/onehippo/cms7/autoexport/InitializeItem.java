@@ -25,6 +25,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import static org.onehippo.cms7.autoexport.AutoExportModule.log;
+import static org.onehippo.cms7.autoexport.Constants.FILE_QNAME;
 import static org.onehippo.cms7.autoexport.Constants.MERGE_QNAME;
 import static org.onehippo.cms7.autoexport.Constants.NAME_QNAME;
 
@@ -213,6 +214,12 @@ final class InitializeItem {
                     enabled = false;
                 }
             }
+            if (enabled != Boolean.FALSE && containsFileReferenceValues(document)) {
+                log.info("Content resource " + contentResource + " uses external file reference values. " +
+                        "This is not supported by automatic export. Changes to the context " + contextPath
+                        + " must be exported manually.");
+                enabled = false;
+            }
         }
         catch (DocumentException e) {
             log.error("Failed to read content resource " + contentResource + " as xml.", e);
@@ -234,7 +241,7 @@ final class InitializeItem {
         String name = element.attributeValue(NAME_QNAME);
         String directive = element.attributeValue(MERGE_QNAME);
 
-        DeltaXMLInstruction instruction = null;
+        DeltaXMLInstruction instruction;
         if (parent == null) {
             instruction = new DeltaXMLInstruction(isNode, name, directive, contextPath);
         } else {
@@ -254,7 +261,23 @@ final class InitializeItem {
         }
         return instruction;
     }
-    
+
+    private boolean containsFileReferenceValues(Document document) {
+        return containsFileReferenceValues(document.getRootElement());
+    }
+
+    private boolean containsFileReferenceValues(final Element element) {
+        if (element.attribute(FILE_QNAME) != null) {
+            return true;
+        }
+        for (Object o : element.elements()) {
+            if (containsFileReferenceValues((Element) o)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         if (stringValue == null) {
