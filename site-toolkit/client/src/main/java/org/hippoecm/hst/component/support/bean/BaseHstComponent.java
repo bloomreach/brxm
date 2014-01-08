@@ -110,7 +110,7 @@ public class BaseHstComponent extends GenericHstComponent {
 
     /**
      * @see {@link #getComponentParameters()}
-     * @deprecated  since 2.26.01. Use #getComponentParameters(} instead
+     * @deprecated  since 2.26.01. Use #getComponentParameters()} instead
      */
     @Deprecated
     public  Map<String,String> getParameters(HstRequest request){
@@ -287,7 +287,7 @@ public class BaseHstComponent extends GenericHstComponent {
     public HippoBean getSiteContentBaseBean(HstRequest request) {
         return request.getRequestContext().getSiteContentBaseBean();
     }
-    
+
     /**
      * @param request
      * @return the root gallery HippoFolderBean at <code>/content/gallery</code> and <code>null</code> if it does not exist 
