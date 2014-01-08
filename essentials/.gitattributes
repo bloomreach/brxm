@@ -690,6 +690,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BaseResource.ja
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BeanWriterResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ControllersResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentTypeResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ImageGalleryResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/KeyValueResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
@@ -711,6 +712,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PostPaylo
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PowerpackListRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PowerpackRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ProjectRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/PropertyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/Restful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulList.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
@@ -721,6 +723,9 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/ContentBlockModel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentTypes.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageProcessorRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageSetRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/gallery/ImageVariantRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
 plugin-dashboard/src/main/resources/log4j.xml -text
@@ -971,8 +976,10 @@ plugin-dashboard/src/main/webapp/pages/plugins.html -text
 plugin-dashboard/src/main/webapp/pages/tools.html -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/contentBlocks/index.html -text
+plugin-dashboard/src/main/webapp/plugins/galleryPlugin/cmslanguages.json -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/index.html -text
+plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimageprocessor.json -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/index.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text

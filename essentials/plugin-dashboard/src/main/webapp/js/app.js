@@ -176,7 +176,7 @@ var app;
             return collection;
         }
     });
-})(angular.module('Essentials', ['ngRoute','localytics.directives']));
+})(angular.module('Essentials', ['ngRoute','localytics.directives','ui.bootstrap']));
 
 /*
 
