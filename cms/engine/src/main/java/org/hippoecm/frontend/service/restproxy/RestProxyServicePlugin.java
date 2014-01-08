@@ -29,8 +29,6 @@ import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Optional;
-
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -84,7 +82,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     private final static int PING_SERVLET_TIMEOUT = 1000;
     private final static int MAX_CONNECTIONS = 50;
     private final String pingServiceUri;
-    private Optional<Boolean> siteIsAlive;
+    private Boolean siteIsAlive;
     private final String restUri;
 
     static {
@@ -159,10 +157,11 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         if (siteIsAlive == null) {
             checkSiteIsAlive(pingServiceUri);
         }
-        if (!siteIsAlive.get()) {
+        if (!siteIsAlive) {
             log.info("It appears that the site might be down. Pinging site one more time!");
+            siteIsAlive = null;
             checkSiteIsAlive(pingServiceUri);
-            if (!siteIsAlive.get()) {
+            if (!siteIsAlive) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
                 return null;
             } else {
@@ -191,10 +190,11 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         if (siteIsAlive == null) {
             checkSiteIsAlive(pingServiceUri);
         }
-        if (!siteIsAlive.get()) {
+        if (!siteIsAlive) {
             log.info("It appears that the site might be down. Pinging site one more time!");
+            siteIsAlive = null;
             checkSiteIsAlive(pingServiceUri);
-            if (!siteIsAlive.get()) {
+            if (!siteIsAlive) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
                 return null;
             } else {
@@ -261,14 +261,14 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             if (!ok) {
                 log.warn("The response status ('{}') is not okay from the pinging site service URI, '{}'.", httpResponse.getStatusLine(), normalizedPingServiceUri);
             }
-            siteIsAlive = Optional.of(new Boolean(ok));
+            siteIsAlive = new Boolean(ok);
         } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
             } else {
                 log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, e.toString());
             }
-            siteIsAlive = Optional.of(Boolean.FALSE);
+            siteIsAlive = Boolean.FALSE;
         } finally {
             if ((httpGet != null) && (!httpGet.isAborted())) {
                 httpGet.reset();
