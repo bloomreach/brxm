@@ -63,17 +63,7 @@ public class ExportImportPackageTest extends RepositoryTestCase {
         final ValueFactory valueFactory = session.getValueFactory();
         final Binary binary = valueFactory.createBinary(new ByteArrayInputStream("test".getBytes()));
         test.setProperty("test", valueFactory.createValue(binary));
-
-        session.getRootNode().addNode("test2");
-
         session.save();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        session.getRootNode().getNode("test2").remove();
-        session.save();
-        super.tearDown();
     }
 
     @Test
@@ -133,18 +123,18 @@ public class ExportImportPackageTest extends RepositoryTestCase {
         tempDir.mkdir();
 
         InputStream xmlInput = null;
-        InputStream binaryInput = null;
+        InputStream binaryInput;
 
         try {
             Map<String, File> entryFilesMap = unzipFileTo(session.exportEnhancedSystemViewPackage("/test", true), tempDir);
             xmlInput = new FileInputStream(entryFilesMap.get("esv.xml"));
             ContentResourceLoader contentResourceLoader = new FileContentResourceLoader(tempDir);
-            session.importDereferencedXML("/test2", xmlInput, contentResourceLoader,
+            session.importDereferencedXML("/test", xmlInput, contentResourceLoader,
                     ImportUUIDBehavior.IMPORT_UUID_COLLISION_THROW,
                     ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_THROW,
                     ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
-            assertTrue(session.nodeExists("/test2/test"));
-            final Node test = session.getNode("/test2/test");
+            assertTrue(session.nodeExists("/test/test"));
+            final Node test = session.getNode("/test/test");
             assertTrue(test.hasProperty("test"));
             binaryInput = test.getProperty("test").getBinary().getStream();
             assertEquals("test", IOUtils.toString(binaryInput));
