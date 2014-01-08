@@ -717,6 +717,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/Restful.j
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/RestfulList.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StatusRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/StepRestful.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/TranslationRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/VendorRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/CBPayload.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/Compounds.java -text
@@ -968,6 +969,7 @@ plugin-dashboard/src/main/webapp/js/lib/jquery.js -text
 plugin-dashboard/src/main/webapp/js/lib/jquery.validate.min.js -text
 plugin-dashboard/src/main/webapp/js/lib/main.js -text
 plugin-dashboard/src/main/webapp/js/lib/require.js -text
+plugin-dashboard/src/main/webapp/js/lib/ui-bootstrap-tpls-0.7.0.min.js -text
 plugin-dashboard/src/main/webapp/js/routes.js -text
 plugin-dashboard/src/main/webapp/js/services/dependencyService.js -text
 plugin-dashboard/src/main/webapp/pages/find-plugins.html -text
@@ -980,6 +982,7 @@ plugin-dashboard/src/main/webapp/plugins/galleryPlugin/cmslanguages.json -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/index.html -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimageprocessor.json -text
+plugin-dashboard/src/main/webapp/plugins/galleryPlugin/testimagesets.json -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/index.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
