@@ -47,12 +47,11 @@ import org.slf4j.LoggerFactory;
 public class CXFJaxrsService extends AbstractJaxrsService {
 
     private static Logger log = LoggerFactory.getLogger(CXFJaxrsService.class);
-    
+
     private JAXRSServerFactoryBean jaxrsServerFactoryBean;
-    private Bus defaultBus;
     private Server server;
     private ServletController controller;
-    
+
     private List<Interceptor<? extends Message>> inInterceptors;
     private List<Interceptor<? extends Message>> inFaultInterceptors;
     private List<Interceptor<? extends Message>> outInterceptors;
@@ -63,19 +62,19 @@ public class CXFJaxrsService extends AbstractJaxrsService {
         parameters.put("disable-address-updates", "true");
         return parameters;
     }
-	
+
     public CXFJaxrsService(String serviceName) {
     	this(serviceName, new HashMap<String,String>());
     }
-    
+
     public CXFJaxrsService(String serviceName, Map<String, String> jaxrsConfigParameters) {
     	super(serviceName, injectRequiredJaxrsConfigParameters(jaxrsConfigParameters));
     }
-    
+
 	public synchronized void setJaxrsServerFactoryBean(JAXRSServerFactoryBean jaxrsServerFactoryBean) {
 		this.jaxrsServerFactoryBean = jaxrsServerFactoryBean;
 	}
-	
+
     public void setInInterceptors(List<Interceptor<? extends Message>> inInterceptors) {
         this.inInterceptors = inInterceptors;
     }
@@ -92,36 +91,47 @@ public class CXFJaxrsService extends AbstractJaxrsService {
         this.outFaultInterceptors = outFaultInterceptors;
     }
 
+    /**
+     * @deprecated  No longer to be used, CXF BusFactory.getDefaultBus() is used (as well as returned here) instead,
+     *              which can be pre-configured externally if desired. Interceptors are now configured on the
+     *              the created CXF Server Endpoint instead of on the (now shared) bus.
+     *
+     */
+    @Deprecated
     protected Bus createBus() {
-        Bus bus = BusFactory.newInstance().createBus();
-        if (inInterceptors != null && !inInterceptors.isEmpty()) {
-            bus.getInInterceptors().addAll(inInterceptors);
-        }
-        
-        if (inFaultInterceptors != null && !inFaultInterceptors.isEmpty()) {
-            bus.getInFaultInterceptors().addAll(inFaultInterceptors);
-        }
-        
-        if (outInterceptors != null && !outInterceptors.isEmpty()) {
-            bus.getOutInterceptors().addAll(outInterceptors);
-        }
-        
-        if (outFaultInterceptors != null && !outFaultInterceptors.isEmpty()) {
-            bus.getOutFaultInterceptors().addAll(outFaultInterceptors);
-        }
-        
-        return bus;
+        return BusFactory.getDefaultBus();
     }
 
+    /**
+     * @deprecated use {@link #getController(org.apache.cxf.Bus, javax.servlet.ServletContext)} instead
+     */
+    @Deprecated
     protected synchronized ServletController getController(ServletContext servletContext) {
+        return getController(BusFactory.getDefaultBus(), servletContext);
+    }
+
+    protected synchronized ServletController getController(Bus bus, ServletContext servletContext) {
         if (controller == null) {
-            defaultBus = createBus();
-            HTTPTransportFactory df = new HTTPTransportFactory(defaultBus);
+            HTTPTransportFactory df = new HTTPTransportFactory(bus);
             jaxrsServerFactoryBean.setDestinationFactory(df);
             server = jaxrsServerFactoryBean.create();
-            controller = new ServletController(df.getRegistry(), getJaxrsServletConfig(servletContext), new ServiceListGeneratorServlet(df.getRegistry(), defaultBus));
+            if (inInterceptors != null && !inInterceptors.isEmpty()) {
+                server.getEndpoint().getInInterceptors().addAll(inInterceptors);
+            }
+
+            if (inFaultInterceptors != null && !inFaultInterceptors.isEmpty()) {
+                server.getEndpoint().getInFaultInterceptors().addAll(inFaultInterceptors);
+            }
+
+            if (outInterceptors != null && !outInterceptors.isEmpty()) {
+                server.getEndpoint().getOutInterceptors().addAll(outInterceptors);
+            }
+
+            if (outFaultInterceptors != null && !outFaultInterceptors.isEmpty()) {
+                server.getEndpoint().getOutFaultInterceptors().addAll(outFaultInterceptors);
+            }
+            controller = new ServletController(df.getRegistry(), getJaxrsServletConfig(servletContext), new ServiceListGeneratorServlet(df.getRegistry(), bus));
         }
-        BusFactory.setThreadDefaultBus(defaultBus);
         return controller;
     }
 
@@ -130,7 +140,9 @@ public class CXFJaxrsService extends AbstractJaxrsService {
             throws ContainerException {
 
         try {
-            ServletController controller = getController(requestContext.getServletContext());
+            Bus bus = BusFactory.getDefaultBus();
+            BusFactory.setThreadDefaultBus(bus);
+            ServletController controller = getController(bus, requestContext.getServletContext());
             HttpServletRequest jaxrsRequest = getJaxrsRequest(requestContext, request);
             controller.invoke(jaxrsRequest, response);
         } catch (ContainerException e) {
@@ -151,14 +163,6 @@ public class CXFJaxrsService extends AbstractJaxrsService {
                 log.warn("Failed to destroy CXF JAXRS Server", e);
             }
         }
-
-        if (defaultBus != null) {
-            try {
-                BusFactory.clearDefaultBusForAnyThread(defaultBus);
-            } catch (Exception e) {
-                log.warn("Failed to clear default bus for any thread", e);
-            }
-        }
     }
 
     @Override
@@ -166,15 +170,15 @@ public class CXFJaxrsService extends AbstractJaxrsService {
         String requestURI = request.getRequestURI();
         HstContainerURL baseURL = requestContext.getBaseURL();
         String pathInfo = StringUtils.substringAfter(requestURI, baseURL.getContextPath() + baseURL.getResolvedMountPath());
-        
+
         if (StringUtils.startsWith(pathInfo, ";")) {
             pathInfo = "/" + StringUtils.substringAfter(pathInfo, "/");
         }
-        
+
         if (StringUtils.isEmpty(pathInfo)) {
             pathInfo = "/";
         }
-        
+
         return pathInfo;
     }
 }
