@@ -799,38 +799,43 @@ public class HstServletResponseState implements HstResponseState {
                         outputStream.flush();
                     }
 
-                    OutputStream realOutputStream = getResponseOutputStream();
+                    Writer writer = getParentWriter();
                     int len = byteOutputBuffer.size();
                     if (contentLength > -1 && contentLength < len) {
                         len = contentLength;
                     }
-                    printPreambleComments(preambleComments, realOutputStream);
-                    printPreambleElements(preambleElements, realOutputStream, len);
+
+                    printPreambleComments(preambleComments);
+                    printPreambleElements(preambleElements);
 
                     if (wrapperElement == null) {
                         if (len > 0) {
-                            realOutputStream.write(byteOutputBuffer.toByteArray(), 0, len);
+                            writer.write(new String(byteOutputBuffer.toByteArray()));
                         }
                     } else {
                         WrapperElement wrapperElem = new WrapperElementImpl(wrapperElement);
-                        WrapperElementUtils.writeWrapperElement(realOutputStream, characterEncoding, wrapperElem, byteOutputBuffer.toByteArray(), 0, len);
+                        WrapperElementUtils.writeWrapperElement(writer, wrapperElem, new String(byteOutputBuffer.toByteArray()).toCharArray(), 0, len);
                     }
+                    writer.flush();
                     outputStream.close();
                     outputStream = null;
                     byteOutputBuffer = null;
                 } else if (printWriter != null) {
                     if (!closed) {
                         printWriter.flush();
-                        printPreambleComments(preambleComments, null);
-                        printPreambleElements(preambleElements, null, 0);
+
+                        Writer writer = getParentWriter();
+                        printPreambleComments(preambleComments);
+                        printPreambleElements(preambleElements);
                         if (wrapperElement == null) {
                             if (charOutputBuffer.getCount() > 0) {
-                                getResponseWriter().write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
+                                writer.write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
                             }
                         } else {
                             WrapperElement wrapperElem = new WrapperElementImpl(wrapperElement);
-                            WrapperElementUtils.writeWrapperElement(getResponseWriter(), wrapperElem, charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
+                            WrapperElementUtils.writeWrapperElement(writer, wrapperElem, charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
                         }
+                        writer.flush();
                         printWriter.close();
 
                         printWriter = null;
@@ -838,8 +843,8 @@ public class HstServletResponseState implements HstResponseState {
                     }
                 } else {
                     if (!closed) {
-                        printPreambleComments(preambleComments, null);
-                        printPreambleElements(preambleElements, null, 0);
+                        printPreambleComments(preambleComments);
+                        printPreambleElements(preambleElements);
                     }
                 }
             }
@@ -854,24 +859,13 @@ public class HstServletResponseState implements HstResponseState {
     /**
      * Writes the list of preambles comments as comment into the output
      * @param preambles the list of preamble comments to write
-     * @param outputStream when not <code>null</code> we'll write to this outputStream, otherwise to {@link }#getResponseWriter()}
      */
-    private void printPreambleComments(final List<Comment> preambles, final OutputStream outputStream) throws IOException {
+    private void printPreambleComments(final List<Comment> preambles) throws IOException {
         if (preambles != null) {
-            if (outputStream == null) {
-                for (Comment comment : preambles) {
-                    getResponseWriter().write("<!-- " + comment.getTextContent() + " -->");
-                }
-            } else {
-                Writer writer;
-                if (characterEncoding != null) {
-                    writer = new OutputStreamWriter(outputStream, characterEncoding);
-                } else {
-                    writer = new OutputStreamWriter(outputStream);
-                }
-                for (Comment comment : preambles) {
-                    writer.write("<!-- "+comment.getTextContent()+" -->");
-                }
+            final Writer writer = getParentWriter();
+            for (Comment comment : preambles) {
+                writer.write("<!-- " + comment.getTextContent() + " -->");
+                writer.flush();
             }
         }
     }
@@ -880,27 +874,27 @@ public class HstServletResponseState implements HstResponseState {
      * Writes the list of preambles elements into the output. Note that only the Element itself and its text gets printed : Not any
      * descendant elements *in* the Element.
      * @param preambles the list of preamble elements to write
-     * @param outputStream when not <code>null</code> we'll write to this outputStream, otherwise to {@link }#getResponseWriter()}
-     * @param contentLength the contentLength in case we have a outputStream instead of printwriter
      */
-    private void printPreambleElements(final List<Element> preambles, final OutputStream outputStream, final int contentLength) throws IOException {
+    private void printPreambleElements(final List<Element> preambles) throws IOException {
         if (preambles != null) {
-            if (outputStream == null) {
-                for (Element element : preambles) {
-                    WrapperElement wrapperElem = new WrapperElementImpl(element);
-                    WrapperElementUtils.writeWrapperElement(getResponseWriter(), wrapperElem, null, 0, 0);
-                }
-            } else {
-                Writer writer;
+            final Writer writer = getParentWriter();
+            char[] chars = null;
+            int len = 0;
+            if (byteOutputBuffer != null) {
                 if (characterEncoding != null) {
-                    writer = new OutputStreamWriter(outputStream, characterEncoding);
+                    chars = byteOutputBuffer.toString(characterEncoding).toCharArray();
                 } else {
-                    writer = new OutputStreamWriter(outputStream);
+                    chars = byteOutputBuffer.toString().toCharArray();
                 }
-                for (Element element : preambles) {
-                    WrapperElement wrapperElem = new WrapperElementImpl(element);
-                    WrapperElementUtils.writeWrapperElement(outputStream, characterEncoding, wrapperElem, byteOutputBuffer.toByteArray(), 0, contentLength);
-                }
+                len = chars.length;
+            } else if (charOutputBuffer != null) {
+                chars = charOutputBuffer.toCharArray();
+                len = chars.length;
+            }
+            for (Element element : preambles) {
+                WrapperElement wrapperElem = new WrapperElementImpl(element);
+                WrapperElementUtils.writeWrapperElement(writer, wrapperElem, chars, 0, len);
+                writer.flush();
             }
         }
     }
@@ -919,6 +913,19 @@ public class HstServletResponseState implements HstResponseState {
 
     protected void setResponseLocale(Locale locale) {
         this.parentResponse.setLocale(locale);
+    }
+
+    protected Writer getParentWriter() throws IOException {
+        try {
+            return getResponseWriter();
+        } catch (IllegalStateException e) {
+            final OutputStream realOut = getResponseOutputStream();
+            if (characterEncoding != null) {
+                return new OutputStreamWriter(realOut, characterEncoding);
+            } else {
+                return new OutputStreamWriter(realOut);
+            }
+        }
     }
 
     protected void addResponseCookie(Cookie cookie) {
