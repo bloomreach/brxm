@@ -35,6 +35,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
@@ -170,8 +171,32 @@ public interface HippoSession extends Session {
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException;
 
-    public void importEnhancedSystemViewPackage(String parentAbsPath, File pckg, int uuidBehaviour, int referenceBehaviour, int mergeBehaviour)
-        throws IOException, RepositoryException;
+    /**
+     * <b>This call is not (yet) part of the API, but under evaluation.</b>
+     * Import a dereferenced export.
+     * @param parentAbsPath the parent node below which to in
+     * @param in the input stream from which to read the XML
+     * @param referredResourceLoader the content resouce loader to load the referred imported content resources
+     * @param uuidBehavior how to handle deserialized UUIDs in the input stream {@link javax.jcr.ImportUUIDBehavior}
+     * @param mergeBehavior an options flag containing one of the values of {@link ImportMergeBehavior} indicating how to merge nodes that already exist
+     * @param referenceBehavior an options flag containing one of the values of {@link ImportReferenceBehavior} indicating how to handle references
+     * @throws IOException if incoming stream is not a valid XML document.
+     * @throws PathNotFoundException in case the parentAbsPath parameter does not point to a valid node
+     * @throws ItemExistsException in case the to be imported node already exist below the parent and same-name siblings are not allowed, or when the merge behavior does not allow merging on an existing node and the node does exist
+     * @throws ConstraintViolationException when imported node is marked protected accoring to the node definition of the parent
+     * @throws InvalidSerializedDataException 
+     * @throws VersionException when the parent node is not in checked-out status
+     * @throws LockException when the parent node is locked
+     * @throws RepositoryException a generic error while accessing the repository
+     * @see #exportDereferencedView(String,OutputStream,boolean,boolean)
+     * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
+     * @see org.hippoecm.repository.api.ImportReferenceBehavior
+     * @see org.hippoecm.repository.api.ImportMergeBehavior
+     */
+    public void importDereferencedXML(String parentAbsPath, InputStream in,
+            ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior)
+            throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException,
+            VersionException, InvalidSerializedDataException, LockException, RepositoryException;
 
     public File exportEnhancedSystemViewPackage(String parentAbsPath, boolean recurse)
             throws IOException, RepositoryException;

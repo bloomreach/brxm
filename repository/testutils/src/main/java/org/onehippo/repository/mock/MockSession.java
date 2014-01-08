@@ -45,6 +45,7 @@ import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
@@ -358,7 +359,7 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+    public void importDereferencedXML(final String parentAbsPath, final InputStream in, final ContentResourceLoader referredResourceLoader, final int uuidBehavior, final int referenceBehavior, final int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         throw new UnsupportedOperationException();
     }
 

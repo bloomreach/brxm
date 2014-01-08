@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.io.File;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -84,6 +83,7 @@ import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.domain.QFacetRule;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
@@ -558,8 +558,8 @@ abstract class SessionImplHelper {
     /**
      * {@inheritDoc}
      */
-    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
-            int referenceBehavior, int mergeBehavior, Map<String, File> binaries) throws PathNotFoundException, ConstraintViolationException,
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, final ContentResourceLoader contentResourceLoader, int uuidBehavior,
+            int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
 
         // check sanity of this session
@@ -611,7 +611,7 @@ abstract class SessionImplHelper {
         }
 
         DereferencedSessionImporter importer = new DereferencedSessionImporter(parent, sessionImpl, uuidBehavior, referenceBehavior, mergeBehavior);
-        return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry(), binaries);
+        return new DereferencedImportHandler(importer, sessionImpl, rep.getNamespaceRegistry(), contentResourceLoader);
     }
 
     public Node getCanonicalNode(NodeImpl node) throws RepositoryException {

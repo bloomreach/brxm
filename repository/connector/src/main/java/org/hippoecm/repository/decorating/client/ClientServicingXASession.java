@@ -53,6 +53,7 @@ import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
@@ -150,7 +151,10 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     }
 
     @Override
-    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+    public void importDereferencedXML(String path, InputStream xml, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
         throw new UnsupportedOperationException();
     }
 

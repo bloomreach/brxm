@@ -15,22 +15,13 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
-import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.api.JackrabbitSession;
@@ -39,6 +30,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
 
@@ -54,9 +46,11 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws RepositoryException;
 
+    ContentHandler getDereferencedImportContentHandler(String parentAbsPath, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws RepositoryException;
+
     void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException;
 
-    void importEnhancedSystemViewBinaryPackage(String parentAbsPath, File archive, int uuidBehaviour, int referenceBehaviour, int mergeBehaviour) throws IOException, RepositoryException;
+    void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, RepositoryException;
 
     Node getCanonicalNode(Node node) throws RepositoryException;
 

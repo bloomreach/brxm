@@ -22,6 +22,7 @@ api/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 api/src/main/java/org/hippoecm/repository/util/NodeIterable.java -text
 api/src/main/java/org/hippoecm/repository/util/PropertyIterable.java -text
 api/src/main/java/org/onehippo/repository/RepositoryService.java -text
+api/src/main/java/org/onehippo/repository/api/ContentResourceLoader.java -text
 api/src/main/java/org/onehippo/repository/api/annotation/WorkflowAction.java -text
 api/src/main/java/org/onehippo/repository/cluster/RepositoryClusterService.java -text
 api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableDaemonModule.java -text
@@ -46,7 +47,9 @@ api/src/main/java/org/onehippo/repository/security/domain/FacetRule.java -text
 api/src/main/java/org/onehippo/repository/update/BaseNodeUpdateVisitor.java -text
 api/src/main/java/org/onehippo/repository/update/NodeUpdateVisitor.java -text
 api/src/main/java/org/onehippo/repository/update/NodeUpdaterService.java -text
+api/src/main/java/org/onehippo/repository/util/FileContentResourceLoader.java -text
 api/src/main/java/org/onehippo/repository/util/JcrConstants.java -text
+api/src/main/java/org/onehippo/repository/util/ZipFileContentResourceLoader.java -text
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflow.java -text
