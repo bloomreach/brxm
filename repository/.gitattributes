@@ -51,6 +51,7 @@ api/src/main/java/org/onehippo/repository/util/FileContentResourceLoader.java -t
 api/src/main/java/org/onehippo/repository/util/JcrConstants.java -text
 api/src/main/java/org/onehippo/repository/util/ZipFileContentResourceLoader.java -text
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
+api/src/test/java/org/hippoecm/repository/util/DateToolsTest.java -text
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflow.java -text

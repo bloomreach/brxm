@@ -20,20 +20,15 @@ package org.hippoecm.repository.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
 
 public class DateTools {
-
-    private static final Logger log = LoggerFactory.getLogger(DateTools.class);
 
     private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyyMM");
@@ -244,13 +239,23 @@ public class DateTools {
 
     }
 
-    private final static DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
+    private static final List<Resolution> SUPPORTED_RESOLUTIONS = unmodifiableList(asList(
+            DateTools.Resolution.YEAR,
             DateTools.Resolution.MONTH,
             DateTools.Resolution.DAY,
-            DateTools.Resolution.HOUR};
+            DateTools.Resolution.HOUR));
 
+    /**
+     * @return An array copy of the supported resolutions
+     * @deprecated Use {@link getSupportedResolutions()} instead
+     */
+    @Deprecated
     public static Resolution[] getSupportedDateResolutions() {
-        return supportedResolutions;
+        return SUPPORTED_RESOLUTIONS.toArray(new Resolution[SUPPORTED_RESOLUTIONS.size()]);
+    }
+
+    public static Iterable<Resolution> getSupportedResolutions() {
+        return SUPPORTED_RESOLUTIONS;
     }
 
     /** Specifies the time granularity. */
