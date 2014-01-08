@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.console.menu.content;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,16 +25,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipFile;
 
 import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.InvalidSerializedDataException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -53,13 +47,14 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.util.ZipFileContentResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,7 +177,9 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
             }
 
             File tempFile = null;
+            ZipFile zipFile = null;
             InputStream in = null;
+            InputStream esvIn = null;
             OutputStream out = null;
             try {
                 final HippoSession session = (HippoSession) UserSession.get().getJcrSession();
@@ -194,7 +191,12 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                         out = new FileOutputStream(tempFile);
                         in = upload.getInputStream();
                         IOUtils.copy(in, out);
-                        session.importEnhancedSystemViewPackage(absPath, tempFile, uuidOpt, derefOpt, mergeOpt);
+                        out.close();
+                        out = null;
+                        zipFile = new ZipFile(tempFile);
+                        ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
+                        esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
+                        session.importDereferencedXML(absPath, esvIn, contentResourceLoader, uuidOpt, derefOpt, mergeOpt);
                     }
                     else if (fileName.endsWith(".xml")) {
                         in = new BufferedInputStream(upload.getInputStream());
@@ -218,7 +220,14 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                     nodeModel.getNode().getSession().refresh(false);
                 }
                 IOUtils.closeQuietly(out);
+                IOUtils.closeQuietly(esvIn);
                 IOUtils.closeQuietly(in);
+                if (zipFile != null) {
+                    try {
+                        zipFile.close();
+                    } catch (Exception ignore) {
+                    }
+                }
                 FileUtils.deleteQuietly(tempFile);
             }
 
