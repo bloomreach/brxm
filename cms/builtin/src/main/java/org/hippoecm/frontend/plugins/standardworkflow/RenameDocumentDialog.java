@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
+
+import java.util.Locale;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
@@ -33,6 +35,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.StringCodec;
 
 public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentArguments> {
@@ -118,6 +121,12 @@ public class RenameDocumentDialog extends AbstractWorkflowDialog<RenameDocumentA
             }
         }));
         add(uriAction);
+
+        final Locale cmsLocale = UserSession.get().getLocale();
+        final RenameMessage message = new RenameMessage(cmsLocale, renameDocumentModel.getLocalizedNames());
+        if (message.shouldShow()) {
+            warn(message.forFolder());
+        };
     }
 
     @Override

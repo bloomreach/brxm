@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -66,6 +67,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
@@ -155,8 +157,9 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    uriName = getModel().getNode().getName();
-                    targetName = ((HippoNode) getModel().getNode()).getLocalizedName();
+                    final HippoNode node = (HippoNode) getModel().getNode();
+                    uriName = node.getName();
+                    targetName = getLocalizedNameForSession(node);
                 } catch (RepositoryException ex) {
                     uriName = targetName = "";
                 }
@@ -177,11 +180,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 }
                 WorkflowManager manager = obtainUserSession().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if (!getModel().getNode().getName().equals(nodeName)) {
+                if (!node.getName().equals(nodeName)) {
                     ((DefaultWorkflow) wf).rename(nodeName);
                 }
-                if (!node.getLocalizedName().equals(localName)) {
-                    defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
+                if (!getLocalizedNameForSession(node).equals(localName)) {
+                    defaultWorkflow.replaceAllLocalizedNames(localName);
                 }
                 return null;
             }
@@ -294,7 +297,7 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
                 if (!node.getLocalizedName().equals(localName)) {
                     WorkflowManager manager = UserSession.get().getWorkflowManager();
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                    defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
+                    defaultWorkflow.localizeName(localName);
                 }
                 browseTo(copyMode);
                 return null;
@@ -388,6 +391,12 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
 
     public WorkflowDescriptorModel getModel() {
         return (WorkflowDescriptorModel) getDefaultModel();
+    }
+
+    private static String getLocalizedNameForSession(final HippoNode node) throws RepositoryException {
+        final Locale cmsLocale = UserSession.get().getLocale();
+        final Localized cmsLocalized = Localized.getInstance(cmsLocale);
+        return node.getLocalizedName(cmsLocalized);
     }
 
     private JcrNodeModel getFolder() {
