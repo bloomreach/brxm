@@ -979,6 +979,8 @@ plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text
 plugin-dashboard/src/main/webapp/theme/styles.css -text
+plugin-dashboard/src/main/webapp/tools/beanwriter/controller.js -text
+plugin-dashboard/src/main/webapp/tools/beanwriter/index.html -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/JarResourceServletTest.java -text

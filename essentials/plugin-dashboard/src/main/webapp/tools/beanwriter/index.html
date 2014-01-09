@@ -1,0 +1,40 @@
+<div ng-controller="beanWriterCtrl">
+
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">Bean re-generation</div>
+            <div class="list-group">
+                <p class="list-group-item">
+                    The bean re-generation tool generates HST content beans for newly created content types or updates existing HST content beans after changing content types
+                </p>
+                <p class="list-group-item">
+                    <button class="btn btn-primary" ng-click="runBeanWriter()">Run HST bean re-generation</button>
+                </p>
+            </div>
+            <div class="list-group-item" ng-show="resultMessages.items.length > 0">
+                <div class="alert alert-info">
+                    <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
+                        <div ng-switch-when="PRE">
+                            <pre>{{message.value}}</pre>
+                        </div>
+                        <div ng-switch-when="A">
+                            <a href="{{message.value}}">{{message.value}}</a>
+                        </div>
+                        <div ng-switch-when="H3">
+                            <h3>{{message.value}}</h3>
+                        </div>
+                        <div ng-switch-when="H4">
+                            <h3>{{message.value}}</h3>
+                        </div>
+                        <div ng-switch-when="STRONG">
+                            <strong>{{message.value}}</strong>
+                        </div>
+                        <div ng-switch-default>{{message.value}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

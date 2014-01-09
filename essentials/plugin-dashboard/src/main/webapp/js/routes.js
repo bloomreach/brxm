@@ -36,6 +36,14 @@ app.config(function ($routeProvider) {
                 controller: 'pluginLoaderCtrl'
 
             })
+            .when('/tools/:toolId',
+            {
+                templateUrl: function (params) {
+                    return 'tools/' + params.toolId + '/index.html';
+                },
+                controller: 'toolCtrl'
+
+            })
             .otherwise({redirectTo: '/'})
 
 });
