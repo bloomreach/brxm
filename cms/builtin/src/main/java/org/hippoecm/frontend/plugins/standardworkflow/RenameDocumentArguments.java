@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.util.io.IClusterable;
