@@ -434,6 +434,7 @@ testcontent/src/main/resources/types/testcontent-type-news.xml -text
 testutils/pom.xml -text
 testutils/src/main/java/org/onehippo/repository/mock/MockItemDefinition.java -text
 testutils/src/main/java/org/onehippo/repository/mock/MockPropertyDefinition.java -text
+testutils/src/main/java/org/onehippo/repository/mock/observation/MockEvent.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/ExecuteOnLogLevel.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/JcrState.java -text
 testutils/src/main/java/org/onehippo/repository/testutils/log4j/StringMatchFilter.java -text
@@ -442,6 +443,7 @@ testutils/src/main/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingW
 testutils/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml -text
 testutils/src/main/resources/org/hippoecm/repository/repository.xml -text
 testutils/src/test/java/org/onehippo/repository/mock/MockSessionTest.java -text
+testutils/src/test/java/org/onehippo/repository/mock/observation/MockEventTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/ExecuteOnLogLevelTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/log4j/StringMatchFilterTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/slf4j/LoggerRecordingWrapperTest.java -text

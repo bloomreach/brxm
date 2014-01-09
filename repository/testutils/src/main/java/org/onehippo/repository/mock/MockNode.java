@@ -59,7 +59,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Mock version of a {@link Node}. Limitations:
+ * Mock version of a {@link Node}.
+ * 
+ * <P>
+ * Limitations:
  * <ul>
  *     <li>Only string properties can be retrieved and modified</li>
  *     <li>Child nodes can only be retrieved by their name, but not added by name</li>
