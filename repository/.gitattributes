@@ -256,6 +256,7 @@ engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/util/SetDocIdSetBuilderTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleManagerTest.java -text
 engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
+engine/src/test/java/org/onehippo/repository/update/ExampleRestFacade.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/java/org/onehippo/repository/util/AnnotationUtilsTest.java -text
 engine/src/test/resources/InvalidJobDetail.ser -text

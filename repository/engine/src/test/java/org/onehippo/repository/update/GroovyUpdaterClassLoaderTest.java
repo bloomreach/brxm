@@ -15,10 +15,12 @@
  */
 package org.onehippo.repository.update;
 
+import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
 import org.junit.Test;
-
-import static junit.framework.Assert.fail;
 
 
 public class GroovyUpdaterClassLoaderTest {
@@ -56,6 +58,14 @@ public class GroovyUpdaterClassLoaderTest {
         final String script = "import java.net.URL; class Test { }";
         GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
         fail("Script can import java.net class");
+    }
+
+    @Test
+    public void testBlacklistImportInOtherJavaClass() {
+        final String script = "class Test { void test() { new org.onehippo.repository.update.ExampleRestFacade().getSomething() } }";
+        Class clazz = GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        assertNotNull(clazz);
+        assertEquals("Test", clazz.getSimpleName());
     }
 
 }
