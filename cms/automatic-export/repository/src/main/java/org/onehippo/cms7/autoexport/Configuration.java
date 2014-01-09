@@ -15,6 +15,13 @@
  */
 package org.onehippo.cms7.autoexport;
 
+import static org.onehippo.cms7.autoexport.AutoExportModule.log;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_EXCLUDED_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_MODULES_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,13 +36,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.observation.Event;
-
-import static org.onehippo.cms7.autoexport.AutoExportModule.log;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_EXCLUDED_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_FILTER_UUID_PATHS_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_MODULES_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
 
 public class Configuration {
 
@@ -131,10 +131,10 @@ public class Configuration {
                 Node node = session.getNode(CONFIG_NODE_PATH);
                 enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME).getBoolean();
             } catch (PathNotFoundException e) {
-                enabled = true;
+                enabled = false;
                 log.debug("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
             } catch (RepositoryException e) {
-                enabled = true;
+                enabled = false;
                 log.error("Exception while reading export enabled flag.", e);
             }
         }

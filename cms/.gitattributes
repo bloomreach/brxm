@@ -1152,6 +1152,7 @@ automatic-export/repository/src/main/resources/hippo-configuration/hippo-modules
 automatic-export/repository/src/main/resources/hippoecm-extension.xml -text
 automatic-export/repository/src/main/resources/namespaces/autoexport.cnd -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/AutoExportTest.java -text
+automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/ConfigurationTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/EventComparatorTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/EventPreProcessorTest.java -text
 automatic-export/repository/src/test/java/org/onehippo/cms7/autoexport/EventTest.java -text

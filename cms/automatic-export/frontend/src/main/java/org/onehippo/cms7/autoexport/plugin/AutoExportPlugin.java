@@ -15,6 +15,11 @@
  */
 package org.onehippo.cms7.autoexport.plugin;
 
+import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_ENABLED_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
+import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
+import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
+
 import java.util.Iterator;
 
 import javax.jcr.Node;
@@ -43,11 +48,6 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_ENABLED_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
-import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
-import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class AutoExportPlugin extends RenderPlugin<Node> {
 
@@ -145,7 +145,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     }
 
     private boolean isExportEnabled() {
-        boolean enabled = true;
+        boolean enabled = false;
         try {
             Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
             enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME).getBoolean();
