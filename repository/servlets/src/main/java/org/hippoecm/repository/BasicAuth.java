@@ -39,7 +39,7 @@ public class BasicAuth {
         return (getAuthorizationHeader(request) != null);
     }
 
-    public static SimpleCredentials parseAuthoriztionHeader(HttpServletRequest request) {
+    public static SimpleCredentials parseAuthorizationHeader(HttpServletRequest request) {
         String authHeader = getAuthorizationHeader(request);
         String decoded = base64DecodeAuthHeader(authHeader);
         String[] creds = getUsernamePasswordFromAuth(decoded);

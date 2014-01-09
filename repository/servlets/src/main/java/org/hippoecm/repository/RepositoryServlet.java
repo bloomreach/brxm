@@ -34,16 +34,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -328,7 +325,7 @@ public class RepositoryServlet extends HttpServlet {
             return;
         }
 
-        SimpleCredentials creds = BasicAuth.parseAuthoriztionHeader(req);
+        SimpleCredentials creds = BasicAuth.parseAuthorizationHeader(req);
 
         String path = req.getRequestURI();
         if (!path.endsWith("/")) {
