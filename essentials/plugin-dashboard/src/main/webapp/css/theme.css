@@ -14,8 +14,8 @@
  * -------------------------- */
 @font-face {
     font-family: 'FontAwesome';
-    src: url('../../../../components/font-awesome/fonts/fontawesome-webfont.eot?v=4.0.3');
-    src: url('../../../../components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../../../../components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../../../../components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../../../../components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
+    src: url('../components/font-awesome/fonts/fontawesome-webfont.eot?v=4.0.3');
+    src: url('../components/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('../components/font-awesome/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('../components/font-awesome/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('../components/font-awesome/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -9572,11 +9572,11 @@ div[chart] {
 }
 
 .chosen-container .chosen-results-scroll-down span {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") no-repeat -4px -3px;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") no-repeat -4px -3px;
 }
 
 .chosen-container .chosen-results-scroll-up span {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") no-repeat -22px -3px;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") no-repeat -22px -3px;
 }
 
 .chosen-container-single .chosen-single {
@@ -9613,7 +9613,7 @@ div[chart] {
 }
 
 .chosen-container-single .chosen-single abbr {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") right top no-repeat;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") right top no-repeat;
     display: block;
     font-size: 1px;
     height: 10px;
@@ -9641,7 +9641,7 @@ div[chart] {
 }
 
 .chosen-container-single .chosen-single div b {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") no-repeat 0 7px;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") no-repeat 0 7px;
     display: block;
     height: 100%;
     width: 100%;
@@ -9660,7 +9660,7 @@ div[chart] {
 }
 
 .chosen-container-single .chosen-search input {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") no-repeat 100% -20px, #ffffff;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") no-repeat 100% -20px, #ffffff;
     border: 1px solid #cccccc;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
@@ -9759,7 +9759,7 @@ div[chart] {
 }
 
 .chosen-container-multi .chosen-choices .search-choice .search-choice-close {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") right top no-repeat;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") right top no-repeat;
     display: block;
     font-size: 1px;
     height: 10px;
@@ -9902,7 +9902,7 @@ div[chart] {
 }
 
 .chosen-rtl .chosen-search input {
-    background: url("/components/bootstrap-chosen/chosen-sprite.png") no-repeat -28px -20px, #ffffff;
+    background: url("../components/bootstrap-chosen/chosen-sprite.png") no-repeat -28px -20px, #ffffff;
     direction: rtl;
     padding: 4px 5px 4px 20px;
 }
