@@ -127,6 +127,7 @@ content/src/main/resources/demosite-types.cnd -text
 content/src/main/resources/hippo-configuration/broken-links-checker-config.xml -text
 content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
 content/src/main/resources/hippo-configuration/formdata.xml -text svneol=unset#text/plain
+content/src/main/resources/hippo-configuration/modules/autoexport-module.xml -text
 content/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 content/src/main/resources/hst-blueprint-reusecontent.xml -text
 content/src/main/resources/hst-blueprint.xml -text
