@@ -23,54 +23,39 @@ import static junit.framework.Assert.fail;
 
 public class GroovyUpdaterClassLoaderTest {
 
-    @Test
+    @Test (expected = MultipleCompilationErrorsException.class)
     public void testSystemExitIsUnauthorized() {
         final String script = "class Test { void test() { System.exit(0) } }";
-        try {
-            GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-            fail("Script can call System.exit");
-        } catch (MultipleCompilationErrorsException expected) {
-        }
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can call System.exit");
     }
 
-    @Test
+    @Test (expected = MultipleCompilationErrorsException.class)
     public void testClassForNameIsUnauthorized() {
         final String script = "class Test { void test() { Class.forName('java.lang.Object') }}";
-        try {
-            GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-            fail("Script can call Class.forName");
-        } catch (MultipleCompilationErrorsException expected) {
-        }
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can call Class.forName");
     }
 
-    @Test
+    @Test (expected = MultipleCompilationErrorsException.class)
     public void testImportJavaIOFileIsUnauthorized() {
         final String script = "import java.io.File; class Test { }";
-        try {
-            GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-            fail("Script can import java.io.File");
-        } catch (MultipleCompilationErrorsException expected) {
-        }
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can import java.io.File");
     }
 
-    @Test
+    @Test (expected = MultipleCompilationErrorsException.class)
     public void testIndirectImportJavaIOFileIsUnauthorized() {
         final String script = "class Test { void test() { java.io.File file = new java.io.File('/'); } }";
-        try {
-            GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-            fail("Script can use java.io.File");
-        } catch (MultipleCompilationErrorsException expected) {
-        }
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can use java.io.File");
     }
 
-    @Test
+    @Test (expected = MultipleCompilationErrorsException.class)
     public void testJavaNetImportIsUnauthorized() {
         final String script = "import java.net.URL; class Test { }";
-        try {
-            GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
-            fail("Script can import java.net class");
-        } catch (MultipleCompilationErrorsException expected) {
-        }
+        GroovyUpdaterClassLoader.createClassLoader().parseClass(script);
+        fail("Script can import java.net class");
     }
 
 }
