@@ -1,0 +1,22 @@
+[
+  {
+    "locale": "en",
+    "description": "English"
+  },
+  {
+    "locale": "fr",
+    "description": "Français"
+  },
+  {
+    "locale": "nl",
+    "description": "Nederlands"
+  },
+  {
+    "locale": "it",
+    "description": "Italiano"
+  },
+  {
+    "locale": "de",
+    "description": "Deutsch"
+  }
+]

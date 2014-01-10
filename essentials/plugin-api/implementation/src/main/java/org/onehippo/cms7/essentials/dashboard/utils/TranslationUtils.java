@@ -188,7 +188,8 @@ public final class TranslationUtils {
                     continue;
                 }
             } else if (StringUtils.isNotBlank(childProperty)) {
-                continue;
+                //TODO check
+                //continue;
             }
 
             // A match: add child to list

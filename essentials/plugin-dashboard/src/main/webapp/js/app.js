@@ -131,8 +131,12 @@ var app;
 
             compounds: root + '/documenttypes/compounds',
             compoundsCreate: root + '/documenttypes/compounds/create/' ,
-            contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/'
+            contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/',
 
+          galleryProcessor: root + '/imagegallery/',
+          imageSets: root + '/imagegallery/imagesets/',
+          galleryProcessorSave: root + '/imagegallery/save',
+          imageSetsSave: root + '/imagegallery/imagesets/save'
 
         };
 
@@ -176,7 +180,7 @@ var app;
             return collection;
         }
     });
-})(angular.module('Essentials', ['ngRoute','localytics.directives']));
+})(angular.module('Essentials', ['ngRoute','localytics.directives','ui.bootstrap']));
 
 /*
 
