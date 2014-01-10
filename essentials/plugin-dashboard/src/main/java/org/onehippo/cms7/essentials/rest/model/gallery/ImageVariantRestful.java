@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.rest.model.gallery;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,7 +29,7 @@ import org.onehippo.cms7.essentials.rest.model.TranslationRestful;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "imageProcessor")
+@XmlRootElement(name = "variant")
 public class ImageVariantRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
@@ -40,6 +41,7 @@ public class ImageVariantRestful implements Restful {
     private int height = 0;
     private List<PropertyRestful> properties = new ArrayList<>();
     private List<TranslationRestful> translations = new ArrayList<>();
+    private List<ImageSetRestful> imageSets = new ArrayList<>();
 
     public ImageVariantRestful() {
     }
@@ -106,12 +108,28 @@ public class ImageVariantRestful implements Restful {
         this.translations = translations;
     }
 
+    public List<ImageSetRestful> getImageSets() {
+        return imageSets;
+    }
+
+    public void setImageSets(final List<ImageSetRestful> imageSets) {
+        this.imageSets = imageSets;
+    }
+
     public void addTranslation(final TranslationRestful translation) {
         this.translations.add(translation);
     }
 
+    public void addTranslations(final Collection<TranslationRestful> translations) {
+        this.translations.addAll(translations);
+    }
+
     public void addProperty(final PropertyRestful property) {
         this.properties.add(property);
+    }
+
+    public String getNodeType() {
+        return getNamespace() + ':' + getName();
     }
 
 }

@@ -86,25 +86,59 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
   });
 */
 
-
+  $http({
+    method: 'GET',
+    url: $rootScope.REST.galleryProcessor
+  }).success(function (data) {
+      $scope.imageProcessor = data;
+    });
 
 
   // TODO populate image processors from rest service
+/*
   $http.get('plugins/galleryPlugin/testimageprocessor.json').success(function(data) {
     $scope.imageProcessor = data;
 
 
   });
+*/
+  $http({
+    method: 'GET',
+    url: $rootScope.REST.imageSets
+  }).success(function (data) {
+      $scope.imageSets = data.imageSets;
+    });
 
+/*
   // TODO populate image sets from rest service
     $http.get('plugins/galleryPlugin/testimagesets.json').success(function(data) {
         $scope.imageSets = data;
 
       //$scope.updateSelectedImageSetsAndVariants();
     });
+*/
 
+  $scope.saveGalleryProcessor = function() {
 
+    $http({
+      method: 'PUT',
+      url: $rootScope.REST.galleryProcessorSave,
+      data: "TODO replace"
+    }).success(function (data) {
+        $log.info(data);
+      });
+  };
 
+  $scope.saveImageSets = function() {
+
+    $http({
+      method: 'PUT',
+      url: $rootScope.REST.imageSetsSave,
+      data: "TODO replace"
+    }).success(function (data) {
+        $log.info(data);
+    });
+  };
 
 
 
@@ -318,6 +352,8 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
     }
     $scope.invalidated = false;
     $log.info('Save image sets');
+    $scope.saveGalleryProcessor();
+    $scope.saveImageSets();
   }
 
   $scope.validateVariants = function() {

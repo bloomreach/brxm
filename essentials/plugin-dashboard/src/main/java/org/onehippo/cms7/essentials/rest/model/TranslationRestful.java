@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
+@XmlRootElement(name = "translation")
 public class TranslationRestful implements Restful {
 
     private static final long serialVersionUID = 1L;

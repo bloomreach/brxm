@@ -21,17 +21,19 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 import org.onehippo.cms7.essentials.rest.model.Restful;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "imageProcessor")
+@XmlRootElement(name = "imageSets")
 public class ImageSetRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
 
+    private String namespace;
     private String name;
     private String path;
     private String id;
@@ -45,6 +47,14 @@ public class ImageSetRestful implements Restful {
 
         this.name = name;
         this.name = path;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(final String namespace) {
+        this.namespace = namespace;
     }
 
     public String getName() {
@@ -94,4 +104,18 @@ public class ImageSetRestful implements Restful {
     public void addProperty(final PropertyRestful property) {
         this.properties.add(property);
     }
+
+    public String getType() {
+        return namespace + ':' + name;
+    }
+
+    public boolean hasVariant(final String namespace, final String name) {
+        for(final ImageVariantRestful variant : getVariants()) {
+            if(StringUtils.equals(variant.getNamespace(), namespace) && StringUtils.equals(variant.getName(), name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
 import org.onehippo.cms7.essentials.rest.model.gallery.ImageProcessorRestful;
+import org.onehippo.cms7.essentials.rest.model.gallery.ImageSetRestful;
 import org.onehippo.cms7.essentials.rest.model.gallery.ImageVariantRestful;
 
 /**
@@ -48,6 +49,7 @@ public class RestfulList<T extends Restful> implements Serializable {
             @XmlElementRef(type = KeyValueRestful.class),
             @XmlElementRef(type = DocumentTypes.class),
             @XmlElementRef(type = ImageProcessorRestful.class),
+            @XmlElementRef(type = ImageSetRestful.class),
             @XmlElementRef(type = ImageVariantRestful.class),
             @XmlElementRef(type = TranslationRestful.class),
             @XmlElementRef(type = PropertyRestful.class),

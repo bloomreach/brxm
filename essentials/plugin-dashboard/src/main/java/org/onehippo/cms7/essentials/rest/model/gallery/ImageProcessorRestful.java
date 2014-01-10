@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.rest.model.gallery;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -95,6 +96,10 @@ public class ImageProcessorRestful implements Restful {
 
     public void setVariants(final List<ImageVariantRestful> variants) {
         this.variants = variants;
+    }
+
+    public void addVariants(final Collection<ImageVariantRestful> variants) {
+        this.variants.addAll(variants);
     }
 
     public void addVariant(final ImageVariantRestful variant) {
