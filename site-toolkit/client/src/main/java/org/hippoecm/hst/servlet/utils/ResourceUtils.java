@@ -171,7 +171,7 @@ public final class ResourceUtils {
                 }
             }
         }
-        log.warn("Node at path '{}' cannot be found.", resourcePath);
+        log.info("Node at path '{}' cannot be found.", resourcePath);
         return null;
     }
 
@@ -187,10 +187,10 @@ public final class ResourceUtils {
             if (resourceNode.isNodeType(binaryResourceNodeType)) {
                 return true;
             }
-            log.warn("Found node is not of type '{}' but was of type '{}'.", binaryResourceNodeType, resourceNode
+            log.info("Found node is not of type '{}' but was of type '{}'.", binaryResourceNodeType, resourceNode
                     .getPrimaryNodeType().getName());
         } catch (RepositoryException e) {
-            log.warn("Unable to determine if resource is of type " + binaryResourceNodeType, e);
+            log.info("Unable to determine if resource is of type " + binaryResourceNodeType, e);
         }
         return false;
     }
@@ -200,10 +200,10 @@ public final class ResourceUtils {
             if (resourceNode.hasProperty(binaryDataPropName)) {
                 return true;
             }
-            log.warn("Node at path '{}' does not have a binary property: {}.", resourceNode.getPath(),
+            log.info("Node at path '{}' does not have a binary property: {}.", resourceNode.getPath(),
                     binaryDataPropName);
         } catch (RepositoryException e) {
-            log.warn("Unable to determine if resource has binary property " + binaryDataPropName, e);
+            log.info("Unable to determine if resource has binary property " + binaryDataPropName, e);
         }
         return false;
     }
@@ -213,10 +213,10 @@ public final class ResourceUtils {
             if (resourceNode.hasProperty(binaryMimeTypePropName)) {
                 return true;
             }
-            log.warn("Node at path '{}' does not have a mime type property: {}.", resourceNode.getPath(),
+            log.info("Node at path '{}' does not have a mime type property: {}.", resourceNode.getPath(),
                     binaryMimeTypePropName);
         } catch (RepositoryException e) {
-            log.warn("Unable to determine resource mime  type " + binaryMimeTypePropName, e);
+            log.info("Unable to determine resource mime  type " + binaryMimeTypePropName, e);
         }
         return false;
     }

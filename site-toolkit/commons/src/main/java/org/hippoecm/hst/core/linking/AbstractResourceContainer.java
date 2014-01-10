@@ -90,10 +90,10 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
                 }
                 return path;
             } 
-            log.warn("'{}' is not mapped in mappings. Return null", resourceNode.getName());
+            log.info("'{}' is not mapped in mappings. Return null", resourceNode.getName());
             return null;
         } catch (RepositoryException e) {
-            log.error("RepositoryException: Return null", e);
+            log.warn("RepositoryException: Return null", e);
         }
         return null;
     }
@@ -128,7 +128,7 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
                try {
                    node = node.getNode(node.getName());
                } catch(PathNotFoundException e) {
-                   log.warn("Cannot return binary for a handle with no hippo document. Return null");
+                   log.info("Cannot return binary for a handle with no hippo document. Return null");
                    return null;
                }
            }
@@ -154,8 +154,8 @@ public abstract class AbstractResourceContainer implements ResourceContainer {
                Item primItem = node.getPrimaryItem();
                if (primItem.isNode()) {
                    Node resourceNode = (Node)primItem;
-                   if(((Node) resourceNode).isNodeType(HippoNodeType.NT_RESOURCE)) {
-                       return (Node)resourceNode;
+                   if(resourceNode.isNodeType(HippoNodeType.NT_RESOURCE)) {
+                       return resourceNode;
                    } else {
                        log.debug("Expected resource node of type '{}' but found node of type '{}'. Return null.", HippoNodeType.NT_RESOURCE, resourceNode.getPrimaryNodeType().getName());
                    }  
