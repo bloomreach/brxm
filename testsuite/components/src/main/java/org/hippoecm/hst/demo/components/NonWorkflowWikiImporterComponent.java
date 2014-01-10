@@ -259,7 +259,6 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
     class WikiPediaToJCRHandler extends DefaultHandler {
 
-        // five year of seconds : 157680000
         private static final int NUMBER_OF_SECONDS_IN_TWO_YEARS = 63072000;
         private final Node wikiFolder;
         private Node doc;
