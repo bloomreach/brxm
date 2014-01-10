@@ -155,11 +155,14 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
         $log.info(" **** gallery plugin called ***");
     };
 
+/*
     $scope.displayImageSet = function(imageSet) {
       $scope.currentImageSet = imageSet;
       $log.info("selected" + $scope.currentImageSet.name);
     }
+*/
 
+/*
     $scope.addImageSet = function() {
       $log.info("Add image set");
     }
@@ -167,6 +170,7 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.deleteCurrentImageSet = function() {
       $log.info("Add image set");
     }
+*/
 
   // TODO change this
   $scope.projectGalleryNamespace = "projectgallery";
@@ -260,10 +264,24 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
   }
 
   $scope.removeVariant = function(variant) {
-    var index = $scope.imageProcessor.variants.indexOf(translation)
-    $scope.imageProcessor.variant.splice(index,1);
+    var index = $scope.imageProcessor.variants.indexOf(variant)
+    if(index >= 0) {
+      $scope.imageProcessor.variants.splice(index,1);
+    }
   }
 
+  $scope.removeVariantFromImageSet = function(imageSet, variant) {
+    var index = imageSet.variants.indexOf(variant)
+    $log.info('removeVariantFromImageSet index:' + index);
+
+    if(index >= 0) {
+      imageSet.variants.splice(index,1);
+    }
+  }
+
+  $scope.addVariantToImageSet = function(imageSet,variant) {
+    imageSet.variants.push(angular.copy(variant));
+  }
 
 
   $scope.addVariantTranslation = function(variant, language, message) {
@@ -272,7 +290,9 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
   $scope.removeVariantTranslation = function(variant, translation) {
     var index = variant.translations.indexOf(translation)
-    variant.translations.splice(index,1);
+    if(index >= 0) {
+      variant.translations.splice(index,1);
+    }
   }
 
 
@@ -286,9 +306,21 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
   $scope.removeImageSet = function(imageSet) {
     var index = $scope.imageSets.indexOf(imageSet)
-    $scope.imageSets.splice(index,1);
+    if(index >= 0) {
+      $scope.imageSets.splice(index,1);
+    }
   }
 
+  $scope.removeImageSetFromVariant = function(variant, imageSet) {
+    var index = variant.imageSets.indexOf(imageSet)
+    if(index >= 0) {
+      variant.imageSets.splice(index,1);
+    }
+  }
+
+  $scope.addImageSetToVariant = function(variant, imageSet) {
+    variant.imageSets.push(angular.copy(imageSet));
+  }
 
 
   $scope.addImageSetTranslation = function(imageSet, language, message) {
@@ -297,7 +329,9 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
   $scope.removeImageSetTranslation = function(imageSet, translation) {
     var index = imageSet.translations.indexOf(translation)
-    imageSet.translations.splice(index,1);
+    if(index >= 0) {
+      imageSet.translations.splice(index,1);
+    }
   }
 
 
@@ -330,7 +364,49 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
   $scope.updateImageSetForVariant = function (imageSet, variant) {
     $log.info('Update image set ' + imageSet.name + ' for: ' + variant.name);
+    if($scope.variantContainsImageSet(variant,imageSet) && !$scope.imageSetContainsVariant(imageSet, variant)) {
+      $log.info('Add variant ' + variant.name + ' to image set: ' + imageSet.name);
+      $scope.addVariantToImageSet(imageSet, variant);
+    } else if(!$scope.variantContainsImageSet(variant,imageSet) && $scope.imageSetContainsVariant(imageSet, variant)) {
+      $log.info('Remove variant ' + variant.name + ' from: ' + imageSet.name);
+      $scope.removeVariantFromImageSet(imageSet, $scope.getVariantFromImageSet(imageSet,variant));
+    }
   };
+
+  $scope.variantContainsImageSet = function (variant,imageSet) {
+    for (var i = 0, length = variant.imageSets.length; i < length; ++i) {
+      if(variant.imageSets[i].id == imageSet.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+  $scope.getImageSetFromVariant = function (variant,imageSet) {
+    for (var i = 0, length = variant.imageSets.length; i < length; ++i) {
+      if(variant.imageSets[i].id == imageSet.id) {
+        return variant.imageSets[i];
+      }
+    }
+    return null;
+  }
+
+
+  $scope.imageSetContainsVariant = function (imageSet,variant) {
+    for (var i = 0, length = imageSet.variants.length; i < length; ++i) {
+      if(imageSet.variants[i].id == variant.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+  $scope.getVariantFromImageSet = function (imageSet,variant) {
+    for (var i = 0, length = imageSet.variants.length; i < length; ++i) {
+      if(imageSet.variants[i].id == variant.id) {
+        return imageSet.variants[i];
+      }
+    }
+    return null;
+  }
 
   $scope.updateVariantsForImageSet = function (imageSet) {
     for (var i = 0, length = $scope.imageProcessor.variants.length; i < length; ++i) {
@@ -341,6 +417,13 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
   $scope.updateVariantForImageSet = function (variant, imageSet) {
     $log.info('Update variant ' + variant.name + ' for: ' + imageSet.name);
+    if($scope.imageSetContainsVariant(imageSet, variant) && !$scope.variantContainsImageSet( variant,imageSet)) {
+      $log.info('Add image set ' + imageSet.name + ' to variant: ' + variant.name);
+      $scope.addImageSetToVariant(variant, imageSet);
+    } else if(!$scope.imageSetContainsVariant(imageSet, variant) && $scope.variantContainsImageSet(variant,imageSet)) {
+      $log.info('Remove image set ' + imageSet.name + ' from variant: ' + variant.name);
+      $scope.removeImageSetFromVariant(variant,$scope.getImageSetFromVariant(variant,imageSet));
+    }
   };
 
 
@@ -548,8 +631,6 @@ app.filter('hideHippoGalleryVariantsFilter', function () {
   return function (variants) {
     var shownVariants = [];
     angular.forEach(variants, function (variant) {
-      console.log('filter vairant: ' + variant.name);
-
       if (variant.namespace !== 'hippogallery') shownVariants.push(variant);
     });
     return shownVariants;
