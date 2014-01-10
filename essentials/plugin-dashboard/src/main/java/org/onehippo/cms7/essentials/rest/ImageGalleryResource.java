@@ -258,11 +258,34 @@ public class ImageGalleryResource extends BaseResource {
             imageSet.setName(node.getName());
             imageSet.setNamespace(node.getParent().getName());
             imageSet.setVariants(getVariantsForImageSetNamespaceNode(node));
+            imageSet.setTranslations(getImageSetTranslations(node));
 
             imageSets.add(imageSet);
         }
         return imageSets;
     }
+
+    private List<TranslationRestful> getImageSetTranslations(final Node imageSet) throws RepositoryException {
+        final List<TranslationRestful> translations = new ArrayList<>();
+
+        for(final Node node : TranslationUtils.getTranslationsFromNode(imageSet)) {
+            final TranslationRestful translation = new TranslationRestful();
+            translation.setLocale(TranslationUtils.getHippoLanguage(node));
+            translation.setMessage(TranslationUtils.getHippoMessage(node));
+
+            final String propertyName = TranslationUtils.getHippoProperty(node);
+            if(!StringUtils.isBlank(propertyName)) {
+                System.out.println("Skipping translation: " + node.getPath());
+                continue;
+            } else {
+                System.out.println("Adding translation: " + node.getPath());
+            }
+            translations.add(translation);
+        }
+        return translations;
+    }
+
+
 
     private List<Node> fetchFieldsFromNamespaceNode(final Node namespaceNode, final String fieldType) throws RepositoryException {
         if(!namespaceNode.isNodeType("hipposysedit:templatetype")) {

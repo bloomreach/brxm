@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 import org.onehippo.cms7.essentials.rest.model.Restful;
+import org.onehippo.cms7.essentials.rest.model.TranslationRestful;
 
 /**
  * @version "$Id$"
@@ -39,6 +40,7 @@ public class ImageSetRestful implements Restful {
     private String id;
     private List<PropertyRestful> properties = new ArrayList<>();
     private List<ImageVariantRestful> variants = new ArrayList<>();
+    private List<TranslationRestful> translations = new ArrayList<>();
 
     public ImageSetRestful() {
     }
@@ -99,6 +101,14 @@ public class ImageSetRestful implements Restful {
 
     public void addVariant(final ImageVariantRestful variant) {
         this.variants.add(variant);
+    }
+
+    public List<TranslationRestful> getTranslations() {
+        return translations;
+    }
+
+    public void setTranslations(final List<TranslationRestful> translations) {
+        this.translations = translations;
     }
 
     public void addProperty(final PropertyRestful property) {
