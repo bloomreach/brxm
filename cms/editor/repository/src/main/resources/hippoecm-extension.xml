@@ -397,6 +397,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>24.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.26.00</sv:value>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="templateeditor-type-query-fr.xml">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
