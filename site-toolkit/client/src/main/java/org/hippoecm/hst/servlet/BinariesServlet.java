@@ -94,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * caching reverse proxies in front of your application. In user-agent-agnostic mode, we try to convert filenames consisting non ascii chars to their
  * base form, in other words, replace diacritics. However for for example a language like Chinese this won't work. Then, you might want to opt for the 
  * user-agent-specific mode. You then have to take care of your reverse proxies taking care of the user-agent. They thus should take the user-agent into account.
- * Also see {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}. 
+ * Also see {@link org.hippoecm.hst.servlet.utils.ContentDispositionUtils#encodeFileName(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String)}.
  * Changing the default user-agent-agnostic mode to user-agent-specific mode can be done by adding the init-param:
  * 
  * <pre>
@@ -104,7 +104,25 @@ import org.slf4j.LoggerFactory;
  * &lt;/init-param&gt;
  * </pre>
  * 
- * You can also configure multiple JCR property names in the above init parameter by comma-separated value.
+ * <p>You can also configure multiple JCR property names in the above init parameter by comma-separated value.</p>
+ *
+ * <p>Sometimes you do not want to set the content disposition headers for all files of a certain mime-type.
+ * You can do this by adding a request parameter to the url to the resource. In the template you should be add the request param to the link.</p>
+ *
+ * <pre>
+ * &lt;hst:link var="link" hippobean="${item}"&gt;
+ *     &lt;hst:param name="forceDownload" value="true"/&gt;
+ * &lt;/hst:link&gt;
+ * </pre>
+ *
+ * <p>If you want to have a different name for the parameter you can explicitly set the name as an init parameter of the BinariesServlet.</p>
+ *
+ * <pre>
+ * &lt;init-param&gt;
+ *     &lt;param-name&gt;forceContentDispositionRequestParamName&lt;/param-name&gt;
+ *     &lt;param-value&gt;forceDownload&lt;/param-value&gt;
+ * &lt;/init-param&gt;
+ * </pre>
  */
 public class BinariesServlet extends HttpServlet {
 
@@ -130,9 +148,14 @@ public class BinariesServlet extends HttpServlet {
 
     /**
      * The init param indicating whether the fileName for the content disposition can be encoded 'user-agent-specific' or 
-     * 'user-agent-agnostic', also see {@link #encodeContentDispositionFileName(HttpServletRequest, HttpServletResponse, String)}
+     * 'user-agent-agnostic', also see {@link org.hippoecm.hst.servlet.utils.ContentDispositionUtils#encodeFileName(javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse, java.lang.String, java.lang.String)}
      */
     public static final String CONTENT_DISPOSITION_FILENAME_ENCODING_INIT_PARAM = "contentDispositionFilenameEncoding";
+
+    public static final String FORCE_CONTENT_DISPOSITION_INIT_PARAM = "forceContentDispositionRequestParamName";
+
+    public static final String DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME = "forceDownload";
 
     public static final String BINARY_RESOURCE_NODE_TYPE_INIT_PARAM = "binaryResourceNodeType";
 
@@ -171,6 +194,8 @@ public class BinariesServlet extends HttpServlet {
     private String binaryMimeTypePropName = ResourceUtils.DEFAULT_BINARY_MIME_TYPE_PROP_NAME;
 
     private String binaryLastModifiedPropName = ResourceUtils.DEFAULT_BINARY_LAST_MODIFIED_PROP_NAME;
+
+    private String forceContentDispositionRequestParamName = DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME;
 
     /** FIXME: BinariesCache is not serializable. */
     private BinariesCache binariesCache;
@@ -216,7 +241,9 @@ public class BinariesServlet extends HttpServlet {
         response.setStatus(page.getStatus());
         boolean setExpiresNeeded = setExpires;
         
-        if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes)) {
+        if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes) ||
+                (request.getParameter(forceContentDispositionRequestParamName)!=null &&
+                        Boolean.parseBoolean(request.getParameter(forceContentDispositionRequestParamName)))) {
             setExpiresNeeded = false;
             ContentDispositionUtils.addContentDispositionHeader(request, response, page.getFileName(),
                     contentDispositionFileNameEncoding);
@@ -506,6 +533,9 @@ public class BinariesServlet extends HttpServlet {
     }
 
     private void initContentDispostion() throws ServletException {
+
+        forceContentDispositionRequestParamName = getInitParameter(FORCE_CONTENT_DISPOSITION_INIT_PARAM, DEFAULT_FORCE_CONTENT_DISPOSITION_PARAM_NAME);
+
         contentDispositionFilenamePropertyNames = StringUtils.split(getInitParameter(
                 CONTENT_DISPOSITION_FILENAME_PROPERTY_INIT_PARAM, null), ", \t\r\n");
 
