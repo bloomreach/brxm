@@ -104,14 +104,14 @@ public class DocumentTypeResource extends BaseResource {
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         String nameSpace = "hippo:namespaces/" + projectNamespacePrefix;
-        String prefix = projectNamespacePrefix + ":";
+        String prefix = projectNamespacePrefix + ':';
 
         try {
             final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new AllDocumentMatcher(), "new-document");
             final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
 
             for (String primaryType : primaryTypes) {
-                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
+                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
                 final NodeIterator it = executeQuery(nameSpace + "//element(*, frontend:plugin)[@contentPickerType]");
                 while (it.hasNext()) {
                     final String name = it.nextNode().getName();
@@ -375,13 +375,6 @@ public class DocumentTypeResource extends BaseResource {
 
     }
 
-    @POST
-    @Path("/compounds/contentblocks/save")
-//    @Consumes("application/json")
-    public Response saveContentBlocks(CBPayload body, @Context ServletContext servletContext) {
-        log.debug(body.toString());
-        //new Gson().fromJson(json, type);
-        return Response.status(201).build();
-    }
+
 
 }
