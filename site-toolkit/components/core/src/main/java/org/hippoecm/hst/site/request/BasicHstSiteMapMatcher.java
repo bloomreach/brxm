@@ -168,6 +168,10 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
        }
        HstSiteMapItem s; 
        if( (s = hstSiteMapItemService.getChild(elements[position])) != null && !checkedSiteMapItems.contains(s)) {
+           if (s.isAny() || s.isWildCard()) {
+               // this can happen when the pathInfo to match contains _default_ or _any_  : It is a corner case
+               params.put(String.valueOf(params.size()+1), getStrippedParameter((HstSiteMapItemService)s, elements[position]));
+           }
            return traverseInToSiteMapItem(s, params, ++position, elements, checkedSiteMapItems);
        } else if( (s = hstSiteMapItemService.getWildCardPatternChild(elements[position], checkedSiteMapItems)) != null ) {
            String parameter = getStrippedParameter((HstSiteMapItemService)s, elements[position]);
@@ -234,8 +238,8 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     }
     
     private String getStrippedParameter(HstSiteMapItemService s, String parameter) {
-        String removePrefix = ((HstSiteMapItemService)s).getPrefix();
-        String removePostfix = ((HstSiteMapItemService)s).getPostfix();
+        String removePrefix = s.getPrefix();
+        String removePostfix = s.getPostfix();
         if(removePrefix != null && parameter.startsWith(removePrefix))  {
            parameter = parameter.substring(removePrefix.length());
         }
