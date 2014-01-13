@@ -29,6 +29,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             });
         });
     };
+
     $scope.onDelete = function (docName) {
         var index = $scope.providers.indexOf(docName);
         $scope.providers.splice(index, 1);

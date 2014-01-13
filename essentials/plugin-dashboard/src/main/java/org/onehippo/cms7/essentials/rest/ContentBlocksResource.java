@@ -46,9 +46,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
@@ -72,6 +69,7 @@ import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
+import org.onehippo.cms7.essentials.rest.exc.RestException;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
@@ -80,6 +78,9 @@ import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -168,17 +169,18 @@ public class ContentBlocksResource extends BaseResource {
 
     @PUT
     @Path("/compounds/create/{name}")
-    public KeyValueRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) {
+    public KeyValueRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
+
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
 
         String nameSpace = "/hippo:namespaces/" + projectNamespacePrefix;
-        String item = "/hippo:namespaces/" + projectNamespacePrefix + "/" + name;
+        String item = "/hippo:namespaces/" + projectNamespacePrefix + '/' + name;
 
         try {
             if (session.itemExists(item)) {
-                throw new RuntimeException("Item exists already");
+                throw new RestException("Item exists already", Response.Status.CONFLICT);
             }
 
             if (StringUtils.isNotEmpty(projectNamespacePrefix) && session.itemExists(nameSpace)) {
@@ -190,6 +192,9 @@ public class ContentBlocksResource extends BaseResource {
                 if (editor instanceof NamespaceWorkflow) {
                     final NamespaceWorkflow namespaceWorkflowI = (NamespaceWorkflow) editor;
                     namespaceWorkflowI.addCompoundType(name);
+                } else {
+                    log.error("editor was not instance of NamespaceWorkflow. Duplicated jars, we need org.onehippo.cms7:hippo-cms-editor-common to be within shared lib");
+                    throw new RestException("NamespaceWorkflow not found, check duplicate jars: org.onehippo.cms7:hippo-cms-editor-common jar needs to be in tomcat/lib", Response.Status.SERVICE_UNAVAILABLE);
                 }
                 if (session.nodeExists(item)) {
                     final Node node = session.getNode(item);
@@ -204,13 +209,12 @@ public class ContentBlocksResource extends BaseResource {
                     }
                 }
             } else {
-                throw new RuntimeException("Namespace doesn't exist");
+                throw new RestException("Namespace doesn't exist", Response.Status.NOT_FOUND);
             }
         } catch (RepositoryException | RemoteException | WorkflowException e) {
             log.error("Exception happened while trying to access the namespace workflow {}", e);
         }
-        KeyValueRestful keyValueRestful = new KeyValueRestful(name, item);
-        return keyValueRestful;
+        return new KeyValueRestful(name, item);
     }
 
 

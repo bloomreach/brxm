@@ -27,6 +27,8 @@ import com.google.inject.Injector;
 
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
+import org.onehippo.cms7.essentials.rest.exc.EssentialsExceptionMapper;
+import org.onehippo.cms7.essentials.rest.exc.ExceptionInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +64,7 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
         final JsonProvider provider = new JsonProvider();
         //provider.setIncludeRoot(false);
         providers.add(provider);
+        providers.add(new EssentialsExceptionMapper());
         return providers;
     }
 

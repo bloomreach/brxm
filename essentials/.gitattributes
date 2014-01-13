@@ -703,6 +703,9 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestAppl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestModule.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServlet.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/config/RestServletListener.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/EssentialsExceptionMapper.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/ExceptionInterceptor.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/exc/RestException.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/ControllerRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/DependencyRestful.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/KeyValueRestful.java -text

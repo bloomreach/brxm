@@ -85,9 +85,11 @@ import org.slf4j.LoggerFactory;
  * @version "$Id$"        TODO change, this is too content blocks specific.
  */
 
+// TODO mm: check with kenan what's going on here
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-@Path("/documenttypes/")
+@Path("/deprecated/")
+@Deprecated
 public class DocumentTypeResource extends BaseResource {
 
     @Inject
