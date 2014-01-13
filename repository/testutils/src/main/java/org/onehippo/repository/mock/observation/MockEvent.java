@@ -24,19 +24,6 @@ import javax.jcr.observation.Event;
 
 /**
  * Mock version of a {@link Event}.
- * 
- * <P>
- * Limitations:
- * <ul>
- *     <li>Only string properties can be retrieved and modified</li>
- *     <li>Child nodes can only be retrieved by their name, but not added by name</li>
- *     <li>Child nodes cannot be reordered</li>
- *     <li>Relative paths and patterns are not supported</li>
- *     <li>Saving changes is ignored</li>
- *     <li>Only primary node types are supported, without any inheritance (i.e. a type is of another type iff both
- *         types have the exact same name)</li>
- * </ul>
- * All methods that are not implemented throw an {@link UnsupportedOperationException}.
  */
 public class MockEvent implements Event {
 
@@ -48,6 +35,16 @@ public class MockEvent implements Event {
     private final String userData;
     private final Map<String, String> info = new HashMap<String, String>();
 
+    /**
+     * Constructor
+     * 
+     * @param session JCR session from which the <code>userID</code> is read.
+     * @param type JCR observation event type. If an invalid type is given, an <code>IllegalArgumentException</code> will be thrown.
+     * @param path JCR observation event node path.
+     * @param identifier JCR observation event node identifier.
+     * @param userData JCR observation event userData.
+     * @param timestamp JCR observation event date timestamp.
+     */
     public MockEvent(final Session session, final int type, final String path, final String identifier, final String userData, long timestamp) {
         if (type < NODE_ADDED || type > PERSIST) {
             throw new IllegalArgumentException("Invalid event type: " + type);
@@ -81,6 +78,9 @@ public class MockEvent implements Event {
         return identifier;
     }
 
+    /**
+     * Returns mutable {@link Map} in order to allow callers to manipulate mock infos easily.
+     */
     @Override
     public Map getInfo() throws RepositoryException {
         return info;
