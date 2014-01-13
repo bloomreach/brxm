@@ -59,7 +59,7 @@ public class ActionValve extends AbstractBaseOrderableValve {
         HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
         
         if (window == null) {
-            log.warn("Illegal request for action URL found because there is no component for id '{}' for matched " +
+            log.info("Illegal request for action URL found because there is no component for id '{}' for matched " +
                     "sitemap item '{}'. Set 404 on response.", actionWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
             try {
                 servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
