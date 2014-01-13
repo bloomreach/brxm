@@ -63,7 +63,7 @@ public class RestServicesPlugin extends DashboardPlugin {
     private String serviceType = SERVICE_TYPE_PLAIN;
 
     // Used to set on the mount on property hst:types
-    private final static String[] HST_REST_TYPES = new String[]{"rest"};
+    private static final String[] HST_REST_TYPES = new String[]{"rest"};
 
 
 

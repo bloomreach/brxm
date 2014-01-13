@@ -33,7 +33,7 @@ public class VersionUtils {
 
             int cmp;
             if (VERSION_NUMBER_PATTERN.matcher(p1).matches() && VERSION_NUMBER_PATTERN.matcher(p2).matches()) {
-                cmp = new Integer(p1).compareTo(new Integer(p2));
+                cmp = Integer.valueOf(p1).compareTo(Integer.valueOf(p2));
             } else {
                 cmp = part1[idx].compareTo(part2[idx]);
             }

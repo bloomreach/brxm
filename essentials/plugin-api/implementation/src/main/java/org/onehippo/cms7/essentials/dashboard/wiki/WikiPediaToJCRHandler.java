@@ -46,7 +46,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
     int offsetcount = 0;
     long startTime = 0;
 
-    private final String[] users = {"ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
+    private static final String[] users = {"ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
             "junaid", "ate", "tjeerd", "verberg", "simon", "jannis"};
 
     private final Random rand;
@@ -169,11 +169,11 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                     int publicaionDateSecondsAgo = new Random().nextInt(lastModifiedSecondsAgo);
 
                     final Calendar creationDate = Calendar.getInstance();
-                    creationDate.add(Calendar.SECOND, (-1 * creationDateSecondsAgo));
+                    creationDate.add(Calendar.SECOND, -1 * creationDateSecondsAgo);
                     final Calendar lastModificationDate = Calendar.getInstance();
-                    lastModificationDate.add(Calendar.SECOND, (-1 * lastModifiedSecondsAgo));
+                    lastModificationDate.add(Calendar.SECOND, -1 * lastModifiedSecondsAgo);
                     final Calendar publicationDate = Calendar.getInstance();
-                    publicationDate.add(Calendar.SECOND, (-1 * publicaionDateSecondsAgo));
+                    publicationDate.add(Calendar.SECOND, -1 * publicaionDateSecondsAgo);
 
                     String[] availability = {"live", "preview"};
                     doc.setProperty("hippo:availability", availability);

@@ -1,0 +1,13 @@
+{
+  "name": "bootstrap-chosen",
+  "homepage": "https://github.com/alxlit/bootstrap-chosen",
+  "_release": "972b807f0c",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "972b807f0c39d06c07c5b8a44bd67a70091b1ea3"
+  },
+  "_source": "https://github.com/alxlit/bootstrap-chosen.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/alxlit/bootstrap-chosen.git"
+}

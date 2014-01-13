@@ -41,13 +41,17 @@ import org.slf4j.LoggerFactory;
 public final class HippoNodeUtils {
 
     public static final String HIPPOSYSEDIT_PATH = HippoNodeType.HIPPO_PATH;
+    public static final String HIPPO_NAMESPACE_PREFIX = "hippo:";
+    public static final String HIPPOSYS_NAMESPACE_PREFIX = "hipposys:";
+    public static final String HIPPOSYSEDIT_NAMESAPCE_PREFIX = "hipposysedit:";
+    public static final String REPORTING_NAMESPACE_PREFIX = "reporting:";
     private static final Predicate<String> INTERNAL_TYPES_PREDICATE = new Predicate<String>() {
         @Override
         public boolean apply(String documentType) {
-            if (!documentType.startsWith("hippo:")
-                    && !documentType.startsWith("hipposys:")
-                    && !documentType.startsWith("hipposysedit:")
-                    && !documentType.startsWith("reporting:")
+            if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
+                    && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
+                    && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
+                    && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
                     && !documentType.equals("nt:unstructured")
                     && !documentType.startsWith("hippogallery:")) {
                 return true;
@@ -385,7 +389,7 @@ public final class HippoNodeUtils {
             Node typeNode = iter.nextNode();
             if (typeNode.getName().equals("hipposysedit:prototype")) {
                 String documentType = typeNode.getPrimaryNodeType().getName();
-                if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
+                if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX) && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
                     prototypes.add(documentType);
                 }

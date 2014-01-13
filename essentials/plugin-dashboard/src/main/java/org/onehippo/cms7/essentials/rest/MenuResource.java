@@ -19,17 +19,15 @@ package org.onehippo.cms7.essentials.rest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.code.inject.jaxrs.Injected;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -37,7 +35,7 @@ import com.google.inject.Inject;
 @Produces({MediaType.APPLICATION_JSON})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/menu/")
-public class MenuResource{
+public class MenuResource {
 
     @Inject
     private EventBus eventBus;

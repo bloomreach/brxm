@@ -183,7 +183,7 @@ public final class SiteUtils {
         Pattern pattern = Pattern.compile("(\\$\\{" + variableName + "*\\})");
         Matcher matcher = pattern.matcher(template);
         StringBuffer buffer = new StringBuffer();
-        while ((matcher.find())) {
+        while (matcher.find()) {
             matcher.appendReplacement(buffer, replacementValue);
         }
         matcher.appendTail(buffer);

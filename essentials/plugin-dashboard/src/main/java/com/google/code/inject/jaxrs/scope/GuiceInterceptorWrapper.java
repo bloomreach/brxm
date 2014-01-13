@@ -36,7 +36,7 @@ import com.google.inject.OutOfScopeException;
 
 public class GuiceInterceptorWrapper extends AbstractPhaseInterceptor<Message> {
 
-	private final static class Context {
+	private static final class Context {
 		final Exchange exchange;
 		volatile Thread owner;
 

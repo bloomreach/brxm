@@ -375,5 +375,13 @@ public class DocumentTypeResource extends BaseResource {
 
     }
 
+    @POST
+    @Path("/compounds/contentblocks/save")
+//    @Consumes("application/json")
+    public Response saveContentBlocks(CBPayload body, @Context ServletContext servletContext) {
+        log.debug(body.toString());
+        //new Gson().fromJson(json, type);
+        return Response.status(201).build();
+    }
 
 }

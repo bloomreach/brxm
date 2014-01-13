@@ -28,22 +28,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+
 import org.onehippo.cms7.essentials.dashboard.Plugin;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
-import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -115,6 +110,7 @@ public class PluginResource extends BaseResource {
         }
         return plugins;
     }
+
     @GET
     @Path("/installstate/{className}")
     public PluginRestful getPluginList(@Context ServletContext servletContext, @PathParam("className") String className) {
@@ -122,8 +118,8 @@ public class PluginResource extends BaseResource {
         final PluginRestful resource = new PluginRestful();
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
-            if(plugin.getPluginClass().equals(className)){
-                if(Strings.isNullOrEmpty(plugin.getPluginLink())){
+            if (plugin.getPluginClass().equals(className)) {
+                if (Strings.isNullOrEmpty(plugin.getPluginLink())) {
                     log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
                     continue;
                 }
@@ -145,9 +141,9 @@ public class PluginResource extends BaseResource {
         final MessageRestful message = new MessageRestful();
         final List<Plugin> pluginList = getPlugins(servletContext);
         for (Plugin plugin : pluginList) {
-            if(plugin.getPluginClass().equals(className)){
+            if (plugin.getPluginClass().equals(className)) {
                 final boolean installed = installPlugin(plugin);
-                if(installed){
+                if (installed) {
                     message.setValue("Plugin successfully installed");
                 }
             }

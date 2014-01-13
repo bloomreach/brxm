@@ -17,24 +17,18 @@
 package org.onehippo.cms7.essentials.rest.config;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.ws.rs.core.Application;
-
-import org.apache.cxf.common.util.StringUtils;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
-import org.apache.cxf.jaxrs.utils.ResourceUtils;
-import org.apache.cxf.message.MessageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
+
+import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -44,6 +38,7 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
     private static final Logger log = LoggerFactory.getLogger(RestServlet.class);
     public static final String ATTRIBUTE_INJECTOR = "GuiceCXF#Injector";
     private static final long serialVersionUID = 1L;
+
     @Override
     protected void createServerFromApplication(String cName, final ServletConfig servletConfig, final String splitChar) throws ServletException {
         final Injector injector = (Injector) servletConfig.getServletContext().getAttribute(ATTRIBUTE_INJECTOR);
@@ -79,7 +74,6 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
         }
         return theName;
     }
-
 
 
 }

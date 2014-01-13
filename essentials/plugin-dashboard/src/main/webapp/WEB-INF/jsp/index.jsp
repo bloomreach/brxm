@@ -29,6 +29,7 @@
   <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/tools/beanwriter/controller.js"></script>
 
 
 

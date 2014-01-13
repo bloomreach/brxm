@@ -16,12 +16,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.Persistent;
-import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 
 /**
@@ -29,7 +24,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
  */
 @PersistentNode(type = "hst:configuration")
 public class HstConfiguration extends BaseJcrModel {
-
 
 
     @Persistent
@@ -52,6 +46,7 @@ public class HstConfiguration extends BaseJcrModel {
         templates.addTemplate(template);
         return template;
     }
+
     public HstTemplate addTemplate(final String name, final String renderPath) {
         final HstTemplate template = new HstTemplate(name, renderPath);
         templates.addTemplate(template);
@@ -59,8 +54,7 @@ public class HstConfiguration extends BaseJcrModel {
     }
 
 
-
-    public HstSiteMenu addMenu(final String name){
+    public HstSiteMenu addMenu(final String name) {
         final HstSiteMenu hstSiteMenu = new HstSiteMenu(name);
         siteMenus.addMenu(hstSiteMenu);
         return hstSiteMenu;
