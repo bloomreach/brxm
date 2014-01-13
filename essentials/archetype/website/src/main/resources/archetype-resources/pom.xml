@@ -55,6 +55,15 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-common</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
   </dependencies>
 
 
@@ -229,6 +238,11 @@
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-cms-editor-common</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
                 </dependencies>
