@@ -21,7 +21,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.map = {};
 
     $scope.selectChange = function () {
-        $log.info('monitor change4');
         angular.forEach($scope.documentTypes, function (docType, key) {
             docType.providers.items = [];
             angular.forEach(docType.providers.ritems, function (providerItem, key) {
@@ -29,15 +28,12 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
                 $log.info(docType.providers.items.push($scope.map[providerItem.key]));
             });
         });
-        //$log.info(docName);
     };
     $scope.onDelete = function (docName) {
-        var index = $scope.providers.indexOf(docName)
+        var index = $scope.providers.indexOf(docName);
         $scope.providers.splice(index, 1);
-        $log.info(docName);
     };
     $scope.onAdd = function (docName) {
-        $log.info(docName);
         $scope.providerInput = "";
         // TODO: put providers
         $http({
@@ -45,14 +41,15 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             url: $rootScope.REST.compoundsCreate + docName,
             data: docName
         }).success(function (data) {
+            if(!$scope.providers){
+                $scope.providers = [];
+            }
                     $scope.providers.push(data);
-                    //$log.info(data);
-                    //$scope.documentTypes.providers = [];
 
                 });
     };
     $scope.addProviderToDocType = function (prov, docName) {
-        var index = $scope.documentTypes.indexOf(docName)
+        var index = $scope.documentTypes.indexOf(docName);
         //check if is empty
         if ($scope.documentTypes[index].providers == "") {
             $scope.documentTypes[index].providers = {"items": []};
@@ -67,7 +64,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
     };
     $scope.installPlugin = function () {
-        $log.info("installing plugin");
         $http({
             method: 'GET',
             url: $rootScope.REST.pluginInstall + $scope.pluginClass
@@ -78,23 +74,18 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     };
 
     $scope.saveBlocksConfiguration = function () {
-        $log.info("Saving configuration for:");
         $scope.payload = {"cbpayload": {"items": {"items": []}}};
-        $scope.payload.cbpayload.items.items = $scope.documentTypes
-        $log.info('monitor');
-        $log.info($scope.documentTypes);
-        $log.info($scope.payload);
-        $log.info('/monitor');
+        $scope.payload.cbpayload.items.items = $scope.documentTypes;
+
         $http({
             method: 'POST',
             url: $rootScope.REST.contentblocksCreate,
             data: $scope.payload
         }).success(function (data) {
-                    $log.info(data);
+                    // TODO on prviders
                     //$scope.documentTypes.providers = [];
 
                 });
-        $log.info("Saved");
     };
 
     $scope.toggleCheckBox = function (docName) {
@@ -138,10 +129,10 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
 
                     angular.forEach($scope.documentTypes, function (docType, key) {
                         docType.providers.ritems = [];
-                        angular.forEach(docType.providers.items, function (providerItem, key) {
+                        /*angular.forEach(docType.providers.items, function (providerItem, key) {
                             $log.info($scope.map[providerItem.key]);
                             $log.info(docType.providers.ritems.push($scope.map[providerItem.key]));
-                        });
+                        });*/
                     });
 
 

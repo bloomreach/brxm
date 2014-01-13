@@ -175,7 +175,7 @@ public class DocumentTypeResource extends BaseResource {
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
 
         String nameSpace = "/hippo:namespaces/" + projectNamespacePrefix;
-        String item = "/hippo:namespaces/" + projectNamespacePrefix + "/" + name;
+        String item = "/hippo:namespaces/" + projectNamespacePrefix + '/' + name;
 
         try {
             if (session.itemExists(item)) {
@@ -210,8 +210,7 @@ public class DocumentTypeResource extends BaseResource {
         } catch (RepositoryException | RemoteException | WorkflowException e) {
             log.error("Exception happened while trying to access the namespace workflow {}", e);
         }
-        KeyValueRestful keyValueRestful = new KeyValueRestful(name, item);
-        return keyValueRestful;
+        return new KeyValueRestful(name, item);
     }
 
 
