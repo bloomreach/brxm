@@ -15,7 +15,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.selection = [];
     $scope.providerInput = "";
     $scope.selectedItem = [];
-
+    $scope.providers = [];
     $scope.baseCmsNamespaceUrl = "http://localhost:8080/cms?path=";
     $scope.baseConsoleNamespaceUrl = "http://localhost:8080/cms/console?path=";
     $scope.map = {};
