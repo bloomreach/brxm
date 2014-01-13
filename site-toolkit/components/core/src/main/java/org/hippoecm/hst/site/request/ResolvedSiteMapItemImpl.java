@@ -72,19 +72,25 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
         for(Entry<String, String> entry : hstSiteMapItem.getParameters().entrySet()) {
             Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
-            resolvedParameters.put(entry.getKey(), o);
+            if (o != null) {
+                resolvedParameters.put(entry.getKey(), o);
+            }
         }
         for (Entry<String, String> mountParams : resolvedMount.getMount().getParameters().entrySet()) {
             if (resolvedParameters.contains(mountParams.getKey())) {
                 continue;
             }
             Object o = pp.resolveProperty(mountParams.getKey(), mountParams.getValue());
-            resolvedParameters.put(mountParams.getKey(), o);
+            if (o != null) {
+                resolvedParameters.put(mountParams.getKey(), o);
+            }
         }
 
         for(Entry<String, String> entry : hstSiteMapItem.getLocalParameters().entrySet()) {
             Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
-            localResolvedParameters.put(entry.getKey(), o);
+            if (o != null) {
+                localResolvedParameters.put(entry.getKey(), o);
+            }
         }
 
         relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
