@@ -67,7 +67,7 @@ public interface HippoRepository {
     /**
      * Creates a new Session for the user identifier with the indicated credentials.
      * @see javax.jcr.Repository#login(javax.jcr.Credentials)
-     * @deprecated use #login(javax.jcr.Credentials) instead
+     * @deprecated since 2.26.00 use #login(javax.jcr.Credentials) instead
      */
     @Deprecated
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException;
