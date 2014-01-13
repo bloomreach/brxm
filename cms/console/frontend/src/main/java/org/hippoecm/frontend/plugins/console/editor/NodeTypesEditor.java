@@ -93,15 +93,17 @@ class NodeTypesEditor extends WebMarkupContainer {
     @SuppressWarnings("unused")
     public String getMixinTypes() {
         Node node = (Node) getDefaultModelObject();
-        try {
-            final Collection<String> declaredMixinTypes = getDeclaredMixinTypes(node);
-            final Collection<String> inheritedMixinTypes = getInheritedMixinTypes(node);
-            final Collection<String> allMixinTypes = new ArrayList<>(declaredMixinTypes);
-            allMixinTypes.addAll(inheritedMixinTypes);
+        if (node != null) {
+            try {
+                final Collection<String> declaredMixinTypes = getDeclaredMixinTypes(node);
+                final Collection<String> inheritedMixinTypes = getInheritedMixinTypes(node);
+                final Collection<String> allMixinTypes = new ArrayList<>(declaredMixinTypes);
+                allMixinTypes.addAll(inheritedMixinTypes);
 
-            return StringUtils.join(allMixinTypes, ", ");
-        } catch (RepositoryException re) {
-            log.error(re.getMessage());
+                return StringUtils.join(allMixinTypes, ", ");
+            } catch (RepositoryException re) {
+                log.error(re.getMessage());
+            }
         }
         return "";
     }
