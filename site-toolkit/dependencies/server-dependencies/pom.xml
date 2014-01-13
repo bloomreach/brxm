@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -26,26 +26,26 @@
   <groupId>org.onehippo.cms7.hst.dependencies</groupId>
   <artifactId>hst-server-dependencies</artifactId>
   <packaging>pom</packaging>
-  
+
   <dependencies>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-content-beans</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
-  <dependency>
-	<groupId>org.onehippo.cms7.hst</groupId>
-	<artifactId>hst-api</artifactId>
-	<version>${project.version}</version>
-  </dependency>
 
-  <dependency>
-	<groupId>org.onehippo.cms7.hst</groupId>
-	<artifactId>hst-commons</artifactId>
-	<version>${project.version}</version>
-  </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.onehippo.cms7.hst.client-modules</groupId>
       <artifactId>hst-cms-rest</artifactId>
-	  <version>${project.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -64,14 +64,14 @@
       <artifactId>hst-security</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-core</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
-    
+
   </dependencies>
   
 </project>
