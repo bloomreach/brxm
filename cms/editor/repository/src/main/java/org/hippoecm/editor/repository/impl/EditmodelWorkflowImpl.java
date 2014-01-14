@@ -139,26 +139,26 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         
         void commit() throws RepositoryException {
             if (draft != null) {
-                if (current == null) {
-                    // register node type
-                    NodeTypeManager ntMgr = subject.getSession().getWorkspace().getNodeTypeManager();
-                    if (!ntMgr.hasNodeType(prefix + ":" + name)) {
-                        NodeTypeTemplate ntTpl = ntMgr.createNodeTypeTemplate();
-                        ntTpl.setName(prefix + ":" + name);
-                        if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
-                            Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
-                            String[] superStrings = new String[supers.length];
-                            for (int i = 0; i < supers.length; i++) {
-                                superStrings[i] = supers[i].getString();
-                            }
-                            ntTpl.setDeclaredSuperTypeNames(superStrings);
-                        }
-                        ntTpl.setOrderableChildNodes(true);
-                        ntMgr.registerNodeType(ntTpl, false);
-                    }
-                } else {
+                if (current != null) {
                     current.remove();
                 }
+                // register node type
+                NodeTypeManager ntMgr = subject.getSession().getWorkspace().getNodeTypeManager();
+                if (!ntMgr.hasNodeType(prefix + ":" + name)) {
+                    NodeTypeTemplate ntTpl = ntMgr.createNodeTypeTemplate();
+                    ntTpl.setName(prefix + ":" + name);
+                    if (draft.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
+                        Value[] supers = draft.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
+                        String[] superStrings = new String[supers.length];
+                        for (int i = 0; i < supers.length; i++) {
+                            superStrings[i] = supers[i].getString();
+                        }
+                        ntTpl.setDeclaredSuperTypeNames(superStrings);
+                    }
+                    ntTpl.setOrderableChildNodes(true);
+                    ntMgr.registerNodeType(ntTpl, false);
+                }
+
                 draft.addMixin(HippoNodeType.NT_REMODEL);
                 draft.setProperty(HippoNodeType.HIPPO_URI, uri);
                 current = draft;

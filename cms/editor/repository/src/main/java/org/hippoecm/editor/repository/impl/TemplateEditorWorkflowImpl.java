@@ -19,8 +19,10 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.MappingException;
@@ -28,6 +30,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
+import org.hippoecm.repository.util.NodeIterable;
 
 public class TemplateEditorWorkflowImpl extends WorkflowImpl implements TemplateEditorWorkflow {
     private static final long serialVersionUID = 1L;
@@ -45,10 +48,21 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
         repositoryWorkflow.createNamespace(prefix, uri);
 
         FolderWorkflow folderWorkflow = (FolderWorkflow) getNonChainingWorkflowContext().getWorkflow("internal");
-        Map<String, String> replacements = new TreeMap<String, String>();
+        Map<String, String> replacements = new TreeMap<>();
         replacements.put("name", prefix);
         replacements.put("uri", uri);
-        return folderWorkflow.add("Template Editor Namespace", "namespace", replacements);
+        final String namespacePath = folderWorkflow.add("Template Editor Namespace", "namespace", replacements);
+        final Node namespace = getWorkflowContext().getUserSession().getNode(namespacePath);
+        for (Node node : new NodeIterable(namespace.getNodes())) {
+            if (node.isNodeType("hipposysedit:templatetype")) {
+                final EditmodelWorkflow editModelWorkflow = (EditmodelWorkflow) getNonChainingWorkflowContext().
+                        getWorkflow("editing", new Document(node));
+                editModelWorkflow.edit();
+                editModelWorkflow.save();
+                editModelWorkflow.commit();
+            }
+        }
+        return namespacePath;
 
     }
 

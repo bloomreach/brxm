@@ -73,11 +73,7 @@ public class NewDocumentTypeAction extends Action {
         try {
             NamespaceWorkflow namespaceWorkflow = (NamespaceWorkflow) manager.getWorkflow(descriptor);
             documentTypes = (List<String>) namespaceWorkflow.hints().get("documentTypes");
-        } catch (RepositoryException e) {
-            log.error("Could not determine list of document types", e);
-        } catch (RemoteException e) {
-            log.error("Could not determine list of document types", e);
-        } catch (WorkflowException e) {
+        } catch (RepositoryException | RemoteException | WorkflowException e) {
             log.error("Could not determine list of document types", e);
         }
 
