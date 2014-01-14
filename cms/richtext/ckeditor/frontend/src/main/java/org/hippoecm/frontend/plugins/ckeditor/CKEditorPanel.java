@@ -147,13 +147,16 @@ public class CKEditorPanel extends Panel {
         }
     }
 
-    protected void renderContentsCss(IHeaderResponse response, JSONObject editorConfig) {
-        String contentsCss = "";
-        try {
-            contentsCss = editorConfig.getString(CKEditorConstants.CONFIG_CONTENTS_CSS);
-            response.render(CssHeaderItem.forUrl(contentsCss));
-        } catch (JSONException e) {
-            log.warn("Cannot render contents CSS '" + contentsCss + "', the default CKEditor CSS will be used instead", e);
+    static void renderContentsCss(IHeaderResponse response, JSONObject editorConfig) {
+        final JSONArray array = editorConfig.optJSONArray(CKEditorConstants.CONFIG_CONTENTS_CSS);
+        if (array != null) {
+            for (int i = 0; i < array.length(); i++) {
+                final String file = array.optString(i);
+                response.render(CssHeaderItem.forUrl(file));
+            }
+        } else {
+            final String file = editorConfig.optString(CKEditorConstants.CONFIG_CONTENTS_CSS);
+            response.render(CssHeaderItem.forUrl(file));
         }
     }
 
