@@ -76,6 +76,10 @@
     border-collapse: separate
 }
 
+.hippo-controlpanel-table-default .navigator {
+    padding-top: 10px;
+}
+
 .hippo-controlpanel-table-default tr th {
     background: url("images/hippo-panels-headerback.png") repeat-x;
     border-bottom: 1px solid #afafaf;
@@ -118,7 +122,8 @@
 }
 
 .hippo-controlpanel-table-default tr.navigation td em {
-    color: #cccccc
+    color: #cccccc;
+    display: inline-block;
 }
 
 .hippo-controlpanel-table-default tr td a {
