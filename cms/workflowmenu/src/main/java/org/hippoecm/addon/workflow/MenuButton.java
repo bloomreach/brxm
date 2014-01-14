@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 
 class MenuButton extends Panel implements IContextMenu {
 
@@ -112,7 +113,7 @@ class MenuButton extends Panel implements IContextMenu {
     public void collapse(AjaxRequestTarget target) {
         if (content.isVisible()) {
             content.setVisible(false);
-            target.add(MenuButton.this);
+            WebApplicationHelper.rerender(target, MenuButton.this);
         }
     }
 

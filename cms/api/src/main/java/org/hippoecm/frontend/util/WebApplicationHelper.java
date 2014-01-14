@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package org.hippoecm.frontend.util;
 
 import javax.servlet.http.Cookie;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -61,6 +64,30 @@ public class WebApplicationHelper {
 
     public static String getApplicationName() {
         return PluginApplication.get().getPluginApplicationName();
+    }
+
+    /**
+     * Rerenders a component in the given Ajax request, but only if it is still part of the page when the Ajax request
+     * begins to respond. Components can use this method to 'register' a component for rerendering. When the component
+     * is removed from the page later on in the rendering process it will not be rerendered and Wicket will not log a
+     * warning.
+     *
+     * @param target the Ajax request target
+     * @param component the component to register for re-rendering
+     */
+    public static void rerender(final AjaxRequestTarget target, final Component component) {
+        target.registerRespondListener(new AjaxRequestTarget.ITargetRespondListener() {
+            @Override
+            public void onTargetRespond(final AjaxRequestTarget target) {
+                if (isPartOfPage(component)) {
+                    target.add(component);
+                }
+            }
+        });
+    }
+
+    public static boolean isPartOfPage(final Component component) {
+        return component.findParent(Page.class) != null;
     }
 
     protected static void validateNotBlank(String value) {

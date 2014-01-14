@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.frontend.dialog;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -31,6 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 
 import wicket.contrib.input.events.EventType;
 import wicket.contrib.input.events.InputBehavior;
@@ -149,7 +149,7 @@ public class ButtonWrapper implements IClusterable {
 
     public void setEnabled(boolean isset) {
         enabled = isset;
-        if (button != null && isPresentOnPage(button)) {
+        if (button != null && WebApplicationHelper.isPartOfPage(button)) {
             button.setEnabled(isset);
             if (ajax) {
                 AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
@@ -171,10 +171,6 @@ public class ButtonWrapper implements IClusterable {
                 }
             }
         }
-    }
-
-    private static boolean isPresentOnPage(final Button button) {
-        return button.findParent(Page.class) != null;
     }
 
     /**
