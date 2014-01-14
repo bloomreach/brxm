@@ -8,4 +8,11 @@ class PluginRestController extends RestfulController {
     PluginRestController() {
         super(Plugin)
     }
+
+    def index(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        def wrapper = [:]
+        wrapper['items'] = Plugin.list(params)
+        respond wrapper
+    }
 }
