@@ -120,7 +120,7 @@ public class EditPerspective extends Perspective {
                 public void onValidation(IValidationResult result) {
                     AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
                     if (target != null) {
-                        target.add(feedback);
+                        renderFeedbackIfNeeded(target);
                     }
                 }
 
@@ -147,6 +147,10 @@ public class EditPerspective extends Perspective {
     @Override
     public void render(PluginRequestTarget target) {
         super.render(target);
+        renderFeedbackIfNeeded(target);
+    }
+
+    private void renderFeedbackIfNeeded(final AjaxRequestTarget target) {
         boolean hasMessage = feedback.anyMessage();
         UnitSettings topSettings = wfSettings.getUnit("top");
         boolean updateTop = false;
