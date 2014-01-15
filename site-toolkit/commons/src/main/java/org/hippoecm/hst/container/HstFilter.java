@@ -305,12 +305,12 @@ public class HstFilter implements Filter {
                 return;
             }
 
-            VirtualHosts vHosts = hstManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest));
-
-    		// we always want to have the virtualhost available, even when we do not have hst request processing:
-    		// We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
-    		// This info is on the virtual host.
+            // we always want to have the virtualhost available, even when we do not have hst request processing:
+            // We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
+            // This info is on the virtual host.
             String hostName = HstRequestUtils.getFarthestRequestHost(containerRequest);
+
+            VirtualHosts vHosts = hstManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest, hostName));
 
             String ip = HstRequestUtils.getFarthestRemoteAddr(containerRequest);
             if (vHosts.isDiagnosticsEnabled(ip)) {
@@ -606,9 +606,17 @@ public class HstFilter implements Filter {
      * we do never allow a stale model for cms sso logged in users as they need to see changes directly in the
      * channel manager
      */
-    private boolean isStaleConfigurationAllowedForRequest(final HttpServletRequest request) {
+    private boolean isStaleConfigurationAllowedForRequest(final HttpServletRequest request, String hostName) {
         HttpSession session = request.getSession(false);
         if (session == null) {
+            int index = hostName.indexOf(":");
+            if (index > -1) {
+                hostName = hostName.substring(0, index);
+            }
+            if ("127.0.0.1".equals(hostName)) {
+                // internal cms rest proxy call, see SpringComponentManager-cmsrest.xml
+                return false;
+            }
             return true;
         }
         if (Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
