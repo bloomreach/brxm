@@ -28,12 +28,12 @@
     display: none;
 }
 
-.hippo-hint-field a.info:hover span {
+.hippo-editor-field .hippo-hint-field a.info:hover span {
     display: block;
     position: absolute;
     z-index: 25;
     top: -9px;
-    left: 1.5em;
+    left: 2em;
     border: 1px dashed #B9B9B9;
     border-radius: 5px;
     background-color: #FFFFFF;
@@ -42,5 +42,25 @@
     padding: 5px 10px;
     margin-left: 10px;
     overflow: visible !important;
-    min-width: 200px;
+    width: 200px;
+}
+
+/* horizontal document type layout */
+td:last-child .hippo-editor-field .hippo-hint-field a.info:hover span {
+    left: -225px;
+}
+
+/* two columns document type layout */
+div.col30 .hippo-editor-field .hippo-hint-field a.info:hover span {
+    left: -225px;
+}
+
+/* horizontal compound */
+.hippo-editor-field td.even:first-child .hippo-hint-field a.info:hover span {
+    left: 2em;
+}
+
+/* horizontal compound */
+.hippo-editor-field td .hippo-hint-field a.info:hover span {
+    left: -225px;
 }
