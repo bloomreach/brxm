@@ -129,7 +129,7 @@ public class BasicReviewedActionsWorkflowImpl extends WorkflowImpl implements Ba
             boolean editable = !publicationState.isDraftInUse(userIdentity) && !publicationState.isRequestPending();
             boolean publishable = publicationState.isDirty() && !publicationState.isEditing() && !publicationState.isRequestPending();
             boolean depublishable = publicationState.isLive() && !publicationState.isEditing() && !publicationState.isRequestPending();
-            Boolean deleteable = !publicationState.isLive();
+            Boolean deleteable = !publicationState.isLive() && !publicationState.isRequestPending();
 
             // put everything on the unpublished; unless it doesn't exist
             if (unpublishedDocument != null && !PublishableDocument.UNPUBLISHED.equals(state)) {
