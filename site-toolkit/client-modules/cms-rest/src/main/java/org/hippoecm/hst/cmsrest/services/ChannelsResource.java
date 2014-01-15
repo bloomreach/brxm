@@ -27,10 +27,16 @@ import java.util.Properties;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,35 +49,27 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
 	@Override
 	public List<Channel> getChannels() {
-        final Collection<Channel> allChannels = getVirtualHosts().getChannels().values();
-        Map<String, Channel> liveChannels = new HashMap<>();
-        Map<String, Channel> previewChannels = new HashMap<>();
-        for (Channel channel : allChannels) {
-            if (channel.isPreview()) {
-                if (channel.getId().endsWith("-preview")) {
-                    previewChannels.put(channel.getId().substring(0, channel.getId().length() - "-preview".length()), channel);
-                } else {
-                    log.warn("Unexpected preview channel id '{}'. Preview channels should have id that end with " +
-                            "-preview.", channel.getId());
-                    previewChannels.put(channel.getId(), channel);
-                }
-
-            } else {
-                liveChannels.put(channel.getId(), channel);
+        final List<Channel> channels = new ArrayList<>();
+        // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
+        // virtualhosts object since we REALLY need the hst model instance for the current request!!
+        HstRequestContext requestContext = RequestContextProvider.get();
+        final VirtualHosts virtualHosts = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts();
+        final List<Mount> mountsForHostGroup = virtualHosts.getMountsByHostGroup(virtualHosts.getChannelManagerHostGroupName());
+        for (Mount mount : mountsForHostGroup) {
+            if (!(mount instanceof ContextualizableMount)) {
+                log.warn("Unexpected mount '{}' found because not an instance of ContextualizableMount. Skip " +
+                        "it for channel overview", mount);
+                continue;
             }
+            final Channel previewChannel = ((ContextualizableMount)mount).getPreviewChannel();
+            if (previewChannel == null) {
+                log.debug("Skipping link for mount '{}' since it does not have a channel", mount.getName());
+                continue;
+            }
+            channels.add(previewChannel);
         }
 
-        List<Channel> liveOrPreviewChannels = new ArrayList<>();
-        liveOrPreviewChannels.addAll(previewChannels.values());
-        for (Channel liveChannel : liveChannels.values()) {
-            if (previewChannels.containsKey(liveChannel.getId())) {
-                log.info("Skip live channel {} as already present as preview channel", liveChannel.getId());
-            } else {
-                liveOrPreviewChannels.add(liveChannel);
-            }
-        }
-
-        return liveOrPreviewChannels;
+        return channels;
 	}
 
     @Override
