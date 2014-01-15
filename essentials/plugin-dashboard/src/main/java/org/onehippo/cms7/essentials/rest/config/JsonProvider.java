@@ -39,11 +39,17 @@ public class JsonProvider extends JSONProvider {
     private static final ImmutableList<String> items = new ImmutableList.Builder<String>()
             .add("items")
             .add("item")
+            .add("properties")
+            .add("variants")
+            .add("imageSets")
+            .add("translations")
             .build();
     public JsonProvider() {
         setIgnoreNamespaces(true);
         setDropRootElement(true);
         setArrayKeys(items);
         setSerializeAsArray(true);
+
+
     }
 }
