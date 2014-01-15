@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -52,62 +53,62 @@ public class DocumentsResource extends BaseResource  implements DocumentService 
         if (handle == null) {
             return Collections.emptyList();
         }
+
+        // do not use HstServices.getComponentManager().getComponent(HstManager.class.getName()) to get to
+        // virtualhosts object since we REALLY need the hst model instance for the current request!!
         String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
         List<HstLink> canonicalLinks = hstLinkCreator.createAllAvailableCanonicals(handle, requestContext, null, hostGroupNameForChannelMngr);
         List<ChannelDocument> channelDocuments = new ArrayList<ChannelDocument>(canonicalLinks.size());
 
         for (HstLink link : canonicalLinks) {
             final Mount linkMount = link.getMount();
-            final String channelPath = linkMount.getChannelPath();
-            if (channelPath == null) {
-                log.debug("Skipping link for mount '{}' since it does not have a channel path", linkMount.getName());
+            if (!(linkMount instanceof ContextualizableMount)) {
+                log.warn("Unexpected mount '{}' found because not an instance of ContextualizableMount. Skip " +
+                        "it as cannot be used as input for Channel Document", linkMount);
                 continue;
             }
 
-            try {
-                final Channel channel = getVirtualHosts().getChannelByJcrPath(channelPath);
-                if (channel == null) {
-                    log.warn("Skipping link for mount '{}' since its channel path '{}' does not point to a channel",
-                            linkMount.getName(), channelPath);
-                    continue;
-                }
+            final Channel previewChannel = ((ContextualizableMount)linkMount).getPreviewChannel();
 
-                ChannelDocument document = new ChannelDocument();
-                document.setChannelId(channel.getId());
-                document.setChannelName(channel.getName());
-                if (StringUtils.isNotEmpty(link.getPath())) {
-                    document.setPathInfo("/"+link.getPath());
-                } else {
-                    document.setPathInfo(StringUtils.EMPTY);
-                }
-                document.setMountPath(link.getMount().getMountPath());
-                document.setHostName(link.getMount().getVirtualHost().getHostName());
-
-                // The preview in the cms always accesses the hst site through the hostname of the cms, but
-                // adds the contextpath of the website. By default it is site, but if a different contextpath is
-                // available for the mount that belongs to the HstLink, we take that one.
-                if (link.getMount().onlyForContextPath() != null) {
-                    document.setContextPath(link.getMount().onlyForContextPath());
-                } else {
-                    // if there is no contextpath configured on the Mount belonging to the HstLink, we use the contextpath
-                    // from the current HttpServletRequest
-                    document.setContextPath(requestContext.getServletRequest().getContextPath());
-                }
-                
-                // and set the contextpath through which the template composer is available
-                if(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
-                    document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
-                } else {
-                    document.setTemplateComposerContextPath(requestContext.getServletRequest().getContextPath());
-                }
-
-                // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
-                document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
-                
-                channelDocuments.add(document);
-            } catch (IllegalArgumentException e) {
-                log.warn("Error getting channel with path '" + channelPath + "'", e);
+            if (previewChannel == null) {
+                log.debug("Skipping link for mount '{}' since it does not have a channel", linkMount.getName());
+                continue;
             }
+
+            ChannelDocument document = new ChannelDocument();
+            document.setChannelId(previewChannel.getId());
+            document.setChannelName(previewChannel.getName());
+            if (StringUtils.isNotEmpty(link.getPath())) {
+                document.setPathInfo("/"+link.getPath());
+            } else {
+                document.setPathInfo(StringUtils.EMPTY);
+            }
+            document.setMountPath(link.getMount().getMountPath());
+            document.setHostName(link.getMount().getVirtualHost().getHostName());
+
+            // The preview in the cms always accesses the hst site through the hostname of the cms, but
+            // adds the contextpath of the website. By default it is site, but if a different contextpath is
+            // available for the mount that belongs to the HstLink, we take that one.
+            if (link.getMount().onlyForContextPath() != null) {
+                document.setContextPath(link.getMount().onlyForContextPath());
+            } else {
+                // if there is no contextpath configured on the Mount belonging to the HstLink, we use the contextpath
+                // from the current HttpServletRequest
+                document.setContextPath(requestContext.getServletRequest().getContextPath());
+            }
+
+            // and set the contextpath through which the template composer is available
+            if(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath() != null) {
+                document.setTemplateComposerContextPath(link.getMount().getVirtualHost().getVirtualHosts().getDefaultContextPath());
+            } else {
+                document.setTemplateComposerContextPath(requestContext.getServletRequest().getContextPath());
+            }
+
+            // set the cmsPreviewPrefix through which prefix after the contextPath the channels can be accessed
+            document.setCmsPreviewPrefix(link.getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
+
+            channelDocuments.add(document);
+
         }
 
         return channelDocuments;

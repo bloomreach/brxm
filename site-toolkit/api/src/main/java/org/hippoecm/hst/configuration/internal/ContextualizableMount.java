@@ -37,7 +37,8 @@ public interface ContextualizableMount extends MutableMount {
     /**
      * internal only : not api
      * @return the preview {@link Channel} of this mount. If this mount is already a preview mount, the same is returned as {@link #getChannel()}.
-     * Returned value can be <code>null</code> if this mount does not have a channel
+     * Returned value can be <code>null</code> if this mount does not have a channel. If there is no explicit preview
+     * channel, then the preview is the same as the live, and this method will return same instance as for {@link #getChannel()}
      */
     Channel getPreviewChannel();
 
