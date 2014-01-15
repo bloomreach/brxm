@@ -14,7 +14,7 @@
   </parent>
 
   <name>Hippo Essentials  plugins sdk</name>
-  <description>Hippo Essentials  plugins sdk</description>
+  <description>Hippo Essentials plugins sdk</description>
   <artifactId>hippo-essentials-plugin-sdk</artifactId>
   <groupId>org.onehippo.cms7.essentials</groupId>
   <version>1.01.00-SNAPSHOT</version>

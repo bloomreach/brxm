@@ -16,6 +16,6 @@ public class HasProviderMatcher implements JcrMatcher {
 
     @Override
     public boolean matches(final Node node) throws RepositoryException {
-        return true;
+        return (node.hasProperty("cbitem") && node.getProperty("cbitem").getBoolean());
     }
 }

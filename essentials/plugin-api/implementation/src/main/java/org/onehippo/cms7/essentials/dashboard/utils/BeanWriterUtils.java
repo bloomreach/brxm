@@ -167,7 +167,7 @@ public class BeanWriterUtils {
                             } else {
                                 log.error("####### FAILED to add [{}] method for type", type);
                             }
-
+                            break;
                     }
 
                 } else {

@@ -1,0 +1,36 @@
+{"items": {
+    "items": [
+        {
+            "providers": {
+                "items": [
+                    {
+                        "key": "Provider 1",
+                        "value": "Provider 1"
+                    },
+                    {
+                        "key": "Provider 2",
+                        "value": "Provider 2"
+                    }
+                ]
+            },
+            "key": "News document",
+            "value": "namespace:news"
+        },
+        {
+            "providers": {
+                "items": [
+                    {
+                        "key": "Provider 1",
+                        "value": "Provider 1"
+                    },
+                    {
+                        "key": "Provider 2",
+                        "value": "Provider 2"
+                    }
+                ]
+            },
+            "key": "News documen2",
+            "value": "namespace:news"
+        }
+    ]
+}}

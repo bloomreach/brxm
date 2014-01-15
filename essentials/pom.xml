@@ -36,6 +36,12 @@
     <cargo.tomcat.major.version>7</cargo.tomcat.major.version>
     <cargo.tomcat.full.version>7.0.42</cargo.tomcat.full.version>
 
+    <!-- Tells Sonar to run the unit tests -->
+    <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
+    <!-- Tells Sonar to use JaCoCo as the code coverage tool -->
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <sonar.jacoco.reportPath>${basedir}/target/target/jacoco.exec</sonar.jacoco.reportPath>
+
   </properties>
   <scm>
     <connection>scm:git:git@github.com:onehippo/essentials.git</connection>
@@ -152,6 +158,34 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.6.4.201312101107</version>
+        <executions>
+          <execution>
+            <id>jacoco-initialize</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>org.hippoecm.*</exclude>
+              </excludes>
+              <destFile>${basedir}/target/jacoco.exec</destFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>jacoco-site</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

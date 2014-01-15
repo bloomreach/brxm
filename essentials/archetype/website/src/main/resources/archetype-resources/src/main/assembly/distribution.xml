@@ -50,6 +50,7 @@
       <outputDirectory>/shared/lib</outputDirectory>
       <scope>provided</scope>
       <includes>
+        <include>org.onehippo.cms7:hippo-cms-editor-common</include>
         <include>org.onehippo.cms7:hippo-cms7-commons</include>
         <include>org.onehippo.cms7:hippo-services</include>
         <include>org.onehippo.cms7:hippo-repository-api</include>

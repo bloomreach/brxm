@@ -82,11 +82,11 @@ var app;
         // routing listener
         $rootScope.$on('$routeChangeStart', function (event, next, current) {
             // check if we need powerpacks install check
-            if(!$rootScope.checkDone && ($location.url() != "/" || $location.url() != "")){
+            /*if(!$rootScope.checkDone && ($location.url() != "/" || $location.url() != "")){
                 var url = $location.url();
                 $log.info("Redirecting to [/]: needs powerpack install check:");
                 $location.path('/');
-            }
+            }*/
 
         });
 
@@ -130,7 +130,8 @@ var app;
             powerpacks_install: root + '/powerpacks/install/'  ,
 
             compounds: root + '/documenttypes/compounds',
-            compoundsCreate: root + '/documenttypes/compounds/create/'
+            compoundsCreate: root + '/documenttypes/compounds/create/' ,
+            contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/'
 
 
         };

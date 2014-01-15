@@ -1,0 +1,12 @@
+{
+  "name": "chosen",
+  "homepage": "https://github.com/onehippo/chosen",
+  "_release": "96249101dc",
+  "_resolution": {
+    "type": "commit",
+    "commit": "96249101dc2c0f15e8e6223ad18bbebbd30290fd"
+  },
+  "_source": "https://github.com/onehippo/chosen.git",
+  "_target": "96249101dc2c0f15e8e6223ad18bbebbd30290fd",
+  "_originalSource": "https://github.com/onehippo/chosen.git"
+}

@@ -87,7 +87,6 @@
 }
 .wizard-steps li:before {
   /* the line running through each step*/
-
   display: block;
   content: "";
   width: 100%;
@@ -159,14 +158,12 @@
   width: 100%;
   height: 80px;
   /*background-color: #C84A4B;*/
-
   text-align: center;
   vertical-align: middle;
   table-layout: fixed;
   font-size: 20px;
   font-weight: bold;
   /*background: url("../images/top-back.png") repeat;*/
-
   color: #4f5e67;
 }
 .hippo-header-logo,

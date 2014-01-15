@@ -70,8 +70,7 @@ public class BeanWriterLogEntry {
     public String getMessage() {
         if(actionType==ActionType.CREATED_CLASS){
             return "Created HST bean: " + getBeanName();
-        }
-        else if(actionType==ActionType.CREATED_METHOD){
+        } else if(actionType==ActionType.CREATED_METHOD){
             return "Created Method: " + getMethodName();
         }
 

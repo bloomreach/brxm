@@ -50,7 +50,7 @@ public class ScopeValidator {
 
 	private static final Key<Injector> INJECTOR_KEY = Key.get(Injector.class);
 
-	private final static Logger logger = Logger.getLogger(ScopeValidator.class
+	private static final Logger logger = Logger.getLogger(ScopeValidator.class
 			.getName());
 
 	private static String formatAnnotation(final Annotation annotation) {

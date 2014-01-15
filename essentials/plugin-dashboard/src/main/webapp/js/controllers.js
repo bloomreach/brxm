@@ -4,26 +4,11 @@
 var _PROVIDER_QUEUE = 0;
 app.controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-    /*
-     *  method: "POST",
-     data: JSON.stringify({}),
-     headers: {'Content-Type': 'application/json'}
-    //{"payload":{"values":{"entry":[{"key":"foo2","value":"bar"},{"key":"foo","value":"bar"}]}}}
-     * */
 });
 
 
 app.controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
-    $scope.resultMessages = null;
-    $scope.runBeanWriter = function () {
-        $http({
-            method: 'POST',
-            url: $rootScope.REST.beanwriter
-        }).success(function (data) {
-                    $scope.resultMessages = data;
-                });
-
-    };
+   // does nothing for time being
 });
 // loads plugin list
 app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
@@ -80,6 +65,9 @@ app.controller('mainMenuCtrl', function ($scope, $log, $location, $rootScope, $h
         // stay in plugins for all /plugin paths
         if (myPath == "/find-plugins" || myPath.indexOf("/plugins") != -1) {
             myPath = '/plugins';
+        }
+        else if(myPath.slice(0, "/tools".length) == "/tools"){
+            myPath = '/tools';
         }
         return  '#' + myPath == path;
     };
