@@ -113,7 +113,7 @@ class MenuButton extends Panel implements IContextMenu {
     public void collapse(AjaxRequestTarget target) {
         if (content.isVisible()) {
             content.setVisible(false);
-            WebApplicationHelper.rerender(target, MenuButton.this);
+            WebApplicationHelper.rerender(MenuButton.this, target);
         }
     }
 

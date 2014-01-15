@@ -72,10 +72,10 @@ public class WebApplicationHelper {
      * is removed from the page later on in the rendering process it will not be rerendered and Wicket will not log a
      * warning.
      *
-     * @param target the Ajax request target
      * @param component the component to register for re-rendering
+     * @param target the Ajax request target
      */
-    public static void rerender(final AjaxRequestTarget target, final Component component) {
+    public static void rerender(final Component component, final AjaxRequestTarget target) {
         target.registerRespondListener(new AjaxRequestTarget.ITargetRespondListener() {
             @Override
             public void onTargetRespond(final AjaxRequestTarget target) {
