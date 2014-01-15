@@ -1779,6 +1779,12 @@ marketplace/web-app/js/atlassian-ide-plugin.xml
 marketplace/web-app/js/hippo-plugins.iws
 marketplace/web-app/js/target
 marketplace/web-app/target
+marketplace/wrapper/*.iml
+marketplace/wrapper/.DS_Store
+marketplace/wrapper/.idea
+marketplace/wrapper/atlassian-ide-plugin.xml
+marketplace/wrapper/hippo-plugins.iws
+marketplace/wrapper/target
 plugin-api/*.iml
 plugin-api/.DS_Store
 plugin-api/.idea

@@ -497,6 +497,9 @@ marketplace/web-app/images/skin/sorted_desc.gif -text
 marketplace/web-app/images/spinner.gif -text
 marketplace/web-app/images/springsource.png -text
 marketplace/web-app/js/application.js -text
+marketplace/wrapper/grails-wrapper-runtime-2.3.4.jar -text
+marketplace/wrapper/grails-wrapper.properties -text
+marketplace/wrapper/springloaded-core-1.1.4.jar -text
 plugin-api/api/pom.xml -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DashboardPlugin.html -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DashboardPlugin.java -text
