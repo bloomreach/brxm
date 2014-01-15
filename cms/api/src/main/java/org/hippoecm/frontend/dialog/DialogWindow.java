@@ -72,7 +72,8 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             Dialog removedDialog = pending.remove(0);
             internalShow(removedDialog);
         } else {
-            cleanup();
+            clear();
+            setWindowClosedCallback(null);
         }
     }
 
@@ -118,18 +119,22 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (isShown()) {
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
+                clear();
                 String contentMarkupId = getContent().getMarkupId();
                 target.appendJavaScript("var el = document.getElementById('" + contentMarkupId + "');"
                         + "if (el) { el.parentNode.removeChild(el); }");
-
-                remove(getContent());
                 target.add(this);
                 close(target);
-                dialog = null;
             } else {
                 closeDialog(dialog);
             }
         }
+    }
+
+    private void clear() {
+        setTitle(new Model<String>("title"));
+        remove(getContent());
+        dialog = null;
     }
 
     @Override
@@ -155,13 +160,6 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     @Override
     public boolean isShown() {
         return dialog != null && super.isShown();
-    }
-
-    private void cleanup() {
-        dialog = null;
-        setTitle(new Model<String>("title"));
-        remove(getContent());
-        setWindowClosedCallback(null);
     }
 
     private void internalShow(Dialog dialog) {
