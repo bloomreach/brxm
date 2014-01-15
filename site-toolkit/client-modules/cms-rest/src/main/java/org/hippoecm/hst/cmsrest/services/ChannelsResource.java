@@ -17,11 +17,8 @@
 package org.hippoecm.hst.cmsrest.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -36,7 +33,6 @@ import org.hippoecm.hst.rest.ChannelService;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
