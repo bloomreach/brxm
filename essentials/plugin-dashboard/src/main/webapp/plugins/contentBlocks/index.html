@@ -4,19 +4,23 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
+                    <p>{{introMessage}}</p>
+                    <p ng-bind-html="deliberatelyTrustDangerousSnippet()"></p>
                     <h4> Available Content Blocks:</h4>
+                    <!--<pre>{{documentTypes}}</pre>-->
                     <ul class="list-group">
                         <li class="list-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
-                            <!--<span class="badge"><a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">edit</a></span>-->
                             <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
                         </li>
                     </ul>
                     <div class="input-group">
+
                         <input type="text" class="form-control" ng-model="providerInput"/>
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" ng-click="onAdd(providerInput)">Add new</button>
+                        <button class="btn btn-default" type="submit" ng-click="onAdd(providerInput)">Add new</button>
                       </span>
+
                     </div>
                 </div>
                 <div class="panel-body">
@@ -28,45 +32,27 @@
                         <tr>
                             <th class="col-sm-7">Select document types:</th>
                             <th class="col-sm-7">Current Providers:</th>
-                            <th class="col-sm-4">Select perfered</th>
                         </tr>
                         </thead>
                         <tbody>
 
                         <tr ng-repeat="docType in documentTypes">
-                            <td>{{docType.key}}</td>
+                            <td><a href="{{baseCmsNamespaceUrl}}{{docType.value}}">{{docType.key}}</a></td>
                             <td>
-
-                                <!--<div class="btn-group">-->
-                                    <!--<button ng-repeat="provider in docType.providers.items" type="button" class="btn btn-default">{{provider.key}}-->
-                                        <!--<span class="badge" ng-click="removeProviderFromDocType(prov, docType)"><a>X</a></span>-->
-                                    <!--</button>-->
-                                <!--</div>-->
-                                <!--<select ng-model="prov" ng-change="addProviderToDocType(prov, docType)" ng-options="c.key for c in providers">-->
-                                    <!--<option>--Choose one--</option>-->
-                                <!--</select>-->
-                                {{docType.providers.items}}
-                                <!--ng-model="docType.providers.items"-->
-                                <!--ng-selected="docType.providers.items"-->
+                                <!--<pre>{{docType.providers.ritems}}</pre>-->
                                 <select
-                                        style="width:100%"
                                         chosen
-                                        multiple
-                                        ng-model="docType.providers.items"
+                                        style="width:100%"
+                                        ng-model="docType.providers.ritems"
+                                        ng-selected="docType.providers.ritems"
                                         ng-options="c.key for c in providers"
+                                        ng-change="selectChange()"
+                                        multiple
                                         >
-                                    <!--<option value="4" selected>Provider 2</option>-->
-                                </select>
-                            </td>
-                            <td>
-                                <select ng-change="selectChange(docType.key, selectedItem[$index])"
-                                        ng-options="option.value as option.key for option in columns.items"
-                                        ng-model="selectedItem[$index]">
                                 </select>
                             </td>
                         </tr>
                         <tr>
-                            <td></td>
                             <td></td>
                             <td>
                                 <button class="btn btn-primary" ng-click="saveBlocksConfiguration()">Save</button>
@@ -80,23 +66,7 @@
         <p></p>
         <p></p>
         <div class="col-md-4">
-            <!--<div class="panel panel-primary" ng-show="selection.length > 0">
-                <div class="panel-heading">Selected</div>
-                <table class="table table-hover">
-                    <tbody>
-                    <tr ng-repeat="docType in selection">
-                        <td>{{docType}}</td>
-                        <td>{{selectedItem[$index]}}</td>
-                    </tr>
-                    <tr >
-                        <td></td>
-                        <td>
-                            <button class="btn btn-primary">Save</button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>-->
+
         </div>
         <div class="col-md-4">
 
@@ -109,4 +79,5 @@
         <p></p>
         <div class="alert-info">{{installMessage}}</div>
     </div>
+
 </div>

@@ -1,5 +1,5 @@
 <div class="row">
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped">
         <thead>
         <tr>
             <th class="nav nav-justified" colspan="2">The following tools are available</th>
@@ -8,7 +8,7 @@
         <tbody>
         <tr>
             <td>
-                <button class="btn btn-primary" ng-click="runBeanWriter()">Run HST bean re-generation</button>
+                <a class="btn btn-primary" href="#/tools/beanwriter">HST bean re-generation</a>
             </td>
             <td>Creates (re-generates) HST beans</td>
         </tr>
@@ -17,24 +17,4 @@
 
 
 </div>
-<div class="alert alert-info" ng-show="resultMessages.items.length > 0">
 
-    <div ng-repeat="message in resultMessages.items" ng-switch="message.displayType">
-        <div ng-switch-when="PRE">
-            <pre>{{message.value}}</pre>
-        </div>
-        <div ng-switch-when="A">
-            <a href="{{message.value}}">{{message.value}}</a>
-        </div>
-        <div ng-switch-when="H3">
-            <h3>{{message.value}}</h3>
-        </div>
-        <div ng-switch-when="H4">
-            <h3>{{message.value}}</h3>
-        </div>
-        <div ng-switch-when="STRONG">
-            <strong>{{message.value}}</strong>
-        </div>
-        <div ng-switch-default>{{message.value}}</div>
-    </div>
-</div>

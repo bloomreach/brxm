@@ -45,7 +45,7 @@ public class ValidationEventListener implements PluginEventListener<ValidationEv
     }
 
     public boolean hasEvents() {
-        return events.size() > 0;
+        return !events.isEmpty();
     }
 
     public int size() {

@@ -207,8 +207,6 @@ public class RelatedDocsPlugin extends InstallablePlugin<RelatedDocsInstaller> {
 
                 if (root.canAddMixin("relateddocs:relatabledocs")) {
                     root.addMixin("relateddocs:relatabledocs");
-                } else {
-
                 }
 
                 if (root.hasProperty("plugin.class")) {

@@ -64,8 +64,7 @@ public @interface PersistentProperty {
                     final Node node = session.getNode(parentPath);
                     if (value instanceof String) {
                         node.setProperty(name, (String) value);
-                    }
-                    else if (value instanceof Boolean) {
+                    } else if (value instanceof Boolean) {
                         node.setProperty(name, (Boolean) value);
                     } else {
                         throw new NotImplementedException("Property writer not implemented for: " + value.getClass());

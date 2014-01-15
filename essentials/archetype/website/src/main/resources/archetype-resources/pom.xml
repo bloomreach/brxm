@@ -22,6 +22,8 @@
     <essentials.version>1.01.00-SNAPSHOT</essentials.version>
     <!-- ***END temporary override of versions*** -->
 
+    <!--Solving duplicate CMS dependencies-->
+    <hippo.cms.version>2.24.07</hippo.cms.version>
 
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
@@ -48,6 +50,19 @@
       <artifactId>plugin-dashboard</artifactId>
       <version>${essentials.version}</version>
       <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-editor-repository</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
     </dependency>
   </dependencies>
 
@@ -219,6 +234,18 @@
                 </configfiles>
               </configuration>
               <container>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.onehippo.cms7</groupId>
+                    <artifactId>hippo-cms-editor-common</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
                 <systemProperties>
                   <derby.stream.error.file>${dollar}{project.basedir}/target/derby.log</derby.stream.error.file>
                   <log4j.configuration>file:${dollar}{project.basedir}/conf/log4j-dev.xml</log4j.configuration>

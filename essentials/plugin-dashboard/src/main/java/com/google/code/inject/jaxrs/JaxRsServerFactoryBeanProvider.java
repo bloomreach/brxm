@@ -31,6 +31,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 
 import com.google.code.inject.jaxrs.CXFServerModule.ServerConfiguration;
@@ -45,7 +46,7 @@ class JaxRsServerFactoryBeanProvider implements
 	private static void verifySingletons(Iterable<Object> singletons) {
 		final Set<String> set = new HashSet<String>();
 		for (final Object s : singletons) {
-			final Class<? extends Object> type = s.getClass();
+			final Class<?> type = s.getClass();
 
 			if (!isValidResourceClass(type))
 				throw new ProvisionException("Type " + type + " is not valid");
@@ -96,13 +97,13 @@ class JaxRsServerFactoryBeanProvider implements
 			bean.setResourceProvider(entry.getKey(), entry.getValue());
 		}
 
-		bean.setProviders(new ArrayList<Object>(providers));
+		bean.setProviders(new ArrayList<>(providers));
 
 		if (!inInterceptors.isEmpty())
-			bean.setInInterceptors(new ArrayList<Interceptor<?>>(inInterceptors));
+			bean.setInInterceptors(new ArrayList<Interceptor<? extends Message>>(inInterceptors));
 
 		if (!outInterceptors.isEmpty())
-			bean.setOutInterceptors(new ArrayList<Interceptor<?>>(
+			bean.setOutInterceptors(new ArrayList<Interceptor<? extends Message>>(
 					outInterceptors));
 
 		if (!isDefault(invoker))
