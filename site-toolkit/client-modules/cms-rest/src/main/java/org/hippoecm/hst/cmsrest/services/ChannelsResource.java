@@ -57,8 +57,8 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         final List<Mount> mountsForHostGroup = virtualHosts.getMountsByHostGroup(virtualHosts.getChannelManagerHostGroupName());
         for (Mount mount : mountsForHostGroup) {
             if (!(mount instanceof ContextualizableMount)) {
-                log.warn("Unexpected mount '{}' found because not an instance of ContextualizableMount. Skip " +
-                        "it for channel overview", mount);
+                log.debug("Skip mount '{}' because not a ContextualizableMount (but instead for example a custom Mount used for" +
+                        "cms rest communication)", mount);
                 continue;
             }
             final Channel previewChannel = ((ContextualizableMount)mount).getPreviewChannel();
