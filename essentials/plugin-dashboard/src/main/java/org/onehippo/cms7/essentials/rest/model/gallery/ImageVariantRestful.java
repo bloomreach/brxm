@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 import org.onehippo.cms7.essentials.rest.model.Restful;
 import org.onehippo.cms7.essentials.rest.model.TranslationRestful;
@@ -130,6 +131,15 @@ public class ImageVariantRestful implements Restful {
 
     public String getNodeType() {
         return getNamespace() + ':' + getName();
+    }
+
+    public PropertyRestful getProperty(final String propertyName) {
+        for(PropertyRestful property : this.properties) {
+            if(StringUtils.equals(property.getName(), propertyName)) {
+                return property;
+            }
+        }
+        return null;
     }
 
 }

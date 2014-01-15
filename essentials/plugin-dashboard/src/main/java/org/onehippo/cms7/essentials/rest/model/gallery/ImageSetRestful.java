@@ -128,4 +128,22 @@ public class ImageSetRestful implements Restful {
         return false;
     }
 
+    public ImageVariantRestful getVariant(final String id) {
+        for(final ImageVariantRestful variant : this.variants) {
+            if(StringUtils.equals(variant.getId(), id)) {
+                return variant;
+            }
+        }
+        return null;
+    }
+
+    public ImageVariantRestful getVariant(final String namaspace, final String name) {
+        for(final ImageVariantRestful variant : this.variants) {
+            if(StringUtils.equals(variant.getNamespace(), namaspace) && StringUtils.equals(variant.getName(), name)) {
+                return variant;
+            }
+        }
+        return null;
+    }
+
 }

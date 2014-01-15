@@ -23,13 +23,14 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms7.essentials.rest.model.PropertyRestful;
 import org.onehippo.cms7.essentials.rest.model.Restful;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "imageProcessor")
+@XmlRootElement(name = "imageProcessors")
 public class ImageProcessorRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
@@ -104,6 +105,24 @@ public class ImageProcessorRestful implements Restful {
 
     public void addVariant(final ImageVariantRestful variant) {
         this.variants.add(variant);
+    }
+
+    public ImageVariantRestful getVariant(final String id) {
+        for(final ImageVariantRestful variant : this.variants) {
+            if(StringUtils.equals(variant.getId(), id)) {
+                return variant;
+            }
+        }
+        return null;
+    }
+
+    public ImageVariantRestful getVariant(final String namaspace, final String name) {
+        for(final ImageVariantRestful variant : this.variants) {
+            if(StringUtils.equals(variant.getNamespace(), namaspace) && StringUtils.equals(variant.getName(), name)) {
+                return variant;
+            }
+        }
+        return null;
     }
 
     public void addProperty(final PropertyRestful property) {

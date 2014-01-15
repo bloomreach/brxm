@@ -16,12 +16,13 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
+import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version "$Id$"
  */
-@XmlRootElement(name = "items")
+@XmlRootElement(name = "properties")
 public class PropertyRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
@@ -64,6 +65,19 @@ public class PropertyRestful implements Restful {
     public void setValue(final String value) {
         this.value = value;
     }
+
+    public Object getPropertyValue() {
+        switch (getType()) {
+            case BOOLEAN: ;
+                return Boolean.valueOf(getValue());
+            case STRING: ;
+                return getValue();
+            default:
+                return getValue();
+        }
+    }
+
+
 
     public PropertyType getType() {
         return type;

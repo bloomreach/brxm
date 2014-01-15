@@ -1,53 +1,3 @@
-/*app.directive("modalShow", function () {
-  return {
-    restrict: "A",
-    scope: {
-      modalVisible: "="
-    },
-    link: function (scope, element, attrs) {
-
-      //Hide or show the modal
-      scope.showModal = function (visible) {
-        if (visible)
-        {
-          element.modal("show");
-        }
-        else
-        {
-          element.modal("hide");
-        }
-      }
-
-      //Check to see if the modal-visible attribute exists
-      if (!attrs.modalVisible)
-      {
-
-        //The attribute isn't defined, show the modal by default
-        scope.showModal(true);
-
-      }
-      else
-      {
-
-        //Watch for changes to the modal-visible attribute
-        scope.$watch("modalVisible", function (newValue, oldValue) {
-          scope.showModal(newValue);
-        });
-
-        //Update the visible value when the dialog is closed through UI actions (Ok, cancel, etc.)
-        element.bind("hide.bs.modal", function () {
-          scope.modalVisible = false;
-          if (!scope.$$phase && !scope.$root.$$phase)
-            scope.$apply();
-        });
-
-      }
-
-    }
-  };
-
-})*/;
-
 
 app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor, $modal) {
 
@@ -58,55 +8,22 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
 
 
-  $scope.updateSelectedImageSetsAndVariants = function() {
-
-    $scope.imageSetVariants =
-      [$scope.imageProcessor.variants[2]];
-
-
-    $scope.variantImageSets =
-      [$scope.imageSets[2]];
-
-
-
-  };
-
-
-
-
-/*
-  var fruitsApp = angular.module('fruitsApp', [])
-
-  fruitsApp.factory('fruitsFactory', function($http) {
-    return {
-      getFruitsAsync: function(callback) {
-        $http.get('fruits.json').success(callback);
-      }
-    };
-  });
-*/
 
   $http({
     method: 'GET',
     url: $rootScope.REST.galleryProcessor
   }).success(function (data) {
-      $scope.imageProcessor = data;
+      $scope.imageProcessorData = data;
+      $scope.imageProcessor = data.imageProcessors[0];
     });
 
 
-  // TODO populate image processors from rest service
-/*
-  $http.get('plugins/galleryPlugin/testimageprocessor.json').success(function(data) {
-    $scope.imageProcessor = data;
-
-
-  });
-*/
   $http({
     method: 'GET',
     url: $rootScope.REST.imageSets
   }).success(function (data) {
-      $scope.imageSets = data.imageSets;
+      $scope.imageSetsData = data;
+      $scope.imageSets = $scope.imageSetsData.imageSets;
     });
 
 /*
@@ -122,8 +39,8 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
 
     $http({
       method: 'PUT',
-      url: $rootScope.REST.galleryProcessorSave,
-      data: "TODO replace"
+      url: $rootScope.REST.galleryProcessorSave + '2',
+      data: $scope.imageProcessor
     }).success(function (data) {
         $log.info(data);
       });
@@ -134,7 +51,7 @@ app.controller('galleryPluginCtrl', function ($scope, $sce, $log, $rootScope, $h
     $http({
       method: 'PUT',
       url: $rootScope.REST.imageSetsSave,
-      data: "TODO replace"
+      data: $scope.imageSetsData
     }).success(function (data) {
         $log.info(data);
     });
