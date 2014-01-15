@@ -24,27 +24,34 @@ import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-public class HstIntegrationTest extends RepositoryTestCase {
+public class HstRepositoryIntegrationTest extends RepositoryTestCase {
 
-    protected Session sourceSession;
-    protected Session targetSession;
+    protected Session localSession;
+    protected Session remoteSession;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        sourceSession = session;
+        localSession = session;
         final HippoRepository remoteRepository = HippoRepositoryFactory.
                 getHippoRepository("rmi://127.0.0.1:1101/hipporepository");
-        targetSession = remoteRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        remoteSession = remoteRepository.login(new SimpleCredentials("admin", "admin".toCharArray()));
     }
 
     @Test
     public void testSanity() throws Exception {
-        final String testId = sourceSession.getRootNode().addNode("test").getIdentifier();
-        sourceSession.save();
-        targetSession.refresh(false);
-        assertEquals("/test", targetSession.getNodeByIdentifier(testId).getPath());
+        final String testId = localSession.getRootNode().addNode("test").getIdentifier();
+        localSession.save();
+        remoteSession.refresh(false);
+        assertEquals("/test", remoteSession.getNodeByIdentifier(testId).getPath());
+
+        String testNodePath = remoteSession.getNodeByIdentifier(testId).getPath();
+        remoteSession.getNodeByIdentifier(testId).remove();
+        remoteSession.save();
+        localSession.refresh(false);
+        assertFalse(localSession.nodeExists(testNodePath));
     }
 
 }

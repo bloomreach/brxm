@@ -2,11 +2,36 @@ The integration tests reside in the tests module, the war module contains a web 
 that must be started before the integration tests are run. Tests connect to the remote repository over RMI.
 The test suite itself also starts up a repository that is clustered against the same database.
 
-To execute all integration tests at once, change to the tests directory and run:
+To execute all integration tests at once, change to the repository-tests or hst-tests directory and run:
 $ mvn -Pintegration
 This will automatically start cargo and deploy the clustered repository. The integration suite is then
 run and finally cargo is stopped again.
 
-For fast development you can also start cargo in standalone mode and run individual tests from your IDE.
-Change to the tests directory and run:
+*** For fast development ***
+
+You can start cargo in standalone mode and run individual tests
+Change to the repository-tests or hst-tests directory directory and run:
 $ mvn -Pcargo.run
+
+now you can  individual tests
+$ mvn -Pstandalone -Dtest=HstIntegrationTest
+
+or with external debugger (port 5005) attached:
+
+$ mvn -Pstandalone -Dtest=HstIntegrationTest -Dmaven.failsafe.debug=true
+
+
+// TODO running the tests from my IDE did not yet work
+*** Running tests from your IDE ***
+
+Change to the repository-tests or hst-tests directory directory and run:
+$ mvn -Pcargo.run
+
+In the test class debug configuration add VM arg:
+
+-Drepo.config=file:/abs/path/to/integration/hst-tests/conf/repository.xml
+
+or
+
+-Drepo.config=file:/abs/path/to/integration/repository-tests/conf/repository.xml
+

@@ -29,7 +29,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>tests</module>
+    <module>repository-tests</module>
+    <module>hst-tests</module>
     <module>war</module>
   </modules>
 

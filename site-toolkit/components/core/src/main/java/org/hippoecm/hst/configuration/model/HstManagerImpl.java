@@ -42,9 +42,9 @@ public class HstManagerImpl implements MutableHstManager {
     private volatile VirtualHosts virtualHostsModel;
 
 
-    volatile BuilderState state = BuilderState.UNDEFINED;
+    protected volatile BuilderState state = BuilderState.UNDEFINED;
 
-    enum BuilderState {
+    protected enum BuilderState {
         UNDEFINED,
         UP2DATE,
         FAILED,
