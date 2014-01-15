@@ -162,6 +162,17 @@ var app;
 //############################################
 // FILTERS
 //############################################
+
+    APP.filter('splitString', function () {
+        return function (input, splitOn, idx) {
+            if(input){
+                var split = input.split(splitOn);
+                if(split.length >= idx){
+                    return split[idx];
+                }
+            }
+            return "";
+        }});
     APP.filter('startsWith', function () {
         return function (inputCollection, inputString) {
             var collection = [];

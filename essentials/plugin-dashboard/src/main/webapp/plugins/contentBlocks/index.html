@@ -37,7 +37,7 @@
                         <tbody>
 
                         <tr ng-repeat="docType in documentTypes">
-                            <td><a href="{{baseCmsNamespaceUrl}}{{docType.value}}">{{docType.key}}</a></td>
+                            <td><a target="_cms" href="{{baseCmsNamespaceUrl}}/hippo:namespaces/{{docType.value | splitString:':':0}}/{{docType.key}}">{{docType.key}}</a></td>
                             <td>
                                 <!--<pre>{{docType.providers.ritems}}</pre>-->
                                 <select

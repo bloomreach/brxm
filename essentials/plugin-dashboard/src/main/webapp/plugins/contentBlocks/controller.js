@@ -99,6 +99,10 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             $scope.selection.push(docName);
         }
     };
+    $scope.splitString = function (string, nb) {
+        $scope.array = string.split(',');
+        return $scope.result = $scope.array[nb];
+    }
     $scope.init = function () {
         // check if plugin is installed
         $http({
@@ -119,6 +123,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         }).success(function (data) {
                     $scope.providers = data.items;
                     angular.forEach($scope.providers, function (provider, key) {
+
                         $scope.map[provider.key] = provider;
                     });
                 });
