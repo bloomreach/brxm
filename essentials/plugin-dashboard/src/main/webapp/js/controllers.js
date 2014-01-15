@@ -26,7 +26,7 @@ app.controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope
             method: 'GET',
             url: 'http://localhost:9090/marketplace/pluginRest/index'
         }).success(function (data) {
-                    $scope.plugins = data;
+                    $scope.plugins = data.items;
                 });
 
     };
