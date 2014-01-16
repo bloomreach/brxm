@@ -36,6 +36,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -44,24 +45,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.exc.RestException;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
+import org.onehippo.cms7.essentials.rest.model.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
@@ -160,37 +157,32 @@ public class ContentBlocksResource extends BaseResource {
 
     @PUT
     @Path("/compounds/create/{name}")
-    public KeyValueRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
+    public MessageRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
         String item = "/hippo:namespaces/" + projectNamespacePrefix + '/' + name;
         final RestWorkflow workflow = new RestWorkflow(session, context);
         workflow.addContentBlockCompound(name);
-        return new KeyValueRestful(name, item);
+        return new MessageRestful("Successfully created compound with name: " + name);
     }
 
-
-    public PluginContext getContext(ServletContext servletContext) {
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
-        final PluginConfigService service = context.getConfigService();
-
-        final ProjectSettingsBean document = service.read(className);
-        if (document != null) {
-            context.setBeansPackageName(document.getSelectedBeansPackage());
-            context.setComponentsPackageName(document.getSelectedComponentsPackage());
-            context.setRestPackageName(document.getSelectedRestPackage());
-            context.setProjectNamespacePrefix(document.getProjectNamespace());
-        }
-        return context;
+    @DELETE
+    @Path("/compounds/delete/{name}")
+    public MessageRestful deleteCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
+        final Session session = GlobalUtils.createSession();
+        final PluginContext context = getContext(servletContext);
+        final RestWorkflow workflow = new RestWorkflow(session, context);
+        workflow.removeDocumentType(name);
+        return new MessageRestful("Document type for name: " + name + " successfully deleted. You'll have to manually delete " + name + " entry from project CND file");
     }
+
 
     //see org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource.updateContainer()
     @POST
     @Path("/compounds/contentblocks/create")
-//    @Consumes("application/json")
-    public Response createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
+
+    public MessageRestful createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
         final List<DocumentTypes> docTypes = body.getItems().getItems();
         for (DocumentTypes documentType : docTypes) {
             for (KeyValueRestful item : documentType.getProviders().getItems()) {
@@ -198,8 +190,9 @@ public class ContentBlocksResource extends BaseResource {
                 addContentBlockToType(model);
             }
         }
+
         // final Object o = new Gson().fromJson(body, );
-        return Response.status(201).build();
+        return new MessageRestful("Successfully added content blocks");
     }
 
 
@@ -298,6 +291,7 @@ public class ContentBlocksResource extends BaseResource {
     public enum Type implements Serializable {
         LINKS("links"), DROPDOWN("dropdown");
         String type;
+
 
         private Type(String type) {
             this.type = type;

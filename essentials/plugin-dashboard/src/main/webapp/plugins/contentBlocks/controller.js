@@ -30,11 +30,21 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
         });
     };
 
-    $scope.onDelete = function (docName) {
-        var index = $scope.providers.indexOf(docName);
-        $scope.providers.splice(index, 1);
+    $scope.onDeleteProvider = function (provider) {
+        var index = $scope.providers.indexOf(provider);
+
+        $http({
+            method: 'DELETE',
+            url: $rootScope.REST.compoundsDelete + provider.key
+        }).success(function (data) {
+            // reload providers, we deleted one:
+            $scope.loadProviders();
+
+        });
+
+
     };
-    $scope.onAdd = function (docName) {
+    $scope.onAddProvider = function (docName) {
         $scope.providerInput = "";
         // TODO: put providers
         $http({
@@ -42,11 +52,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             url: $rootScope.REST.compoundsCreate + docName,
             data: docName
         }).success(function (data) {
-            if(!$scope.providers){
-                $scope.providers = [];
-            }
-                    $scope.providers.push(data);
-
+            // reload providers, we added new one:
+            $scope.loadProviders();
                 });
     };
     $scope.addProviderToDocType = function (prov, docName) {
@@ -102,6 +109,19 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     $scope.splitString = function (string, nb) {
         $scope.array = string.split(',');
         return $scope.result = $scope.array[nb];
+    };
+    $scope.loadProviders = function(){
+
+        $http({
+            method: 'GET',
+            url: $rootScope.REST.compounds
+        }).success(function (data) {
+            $scope.providers = data.items;
+            angular.forEach($scope.providers, function (provider, key) {
+
+                $scope.map[provider.key] = provider;
+            });
+        });
     }
     $scope.init = function () {
         // check if plugin is installed
@@ -117,16 +137,7 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
                 });
 
         // TODO: fetch docTypes
-        $http({
-            method: 'GET',
-            url: $rootScope.REST.compounds
-        }).success(function (data) {
-                    $scope.providers = data.items;
-                    angular.forEach($scope.providers, function (provider, key) {
-
-                        $scope.map[provider.key] = provider;
-                    });
-                });
+        $scope.loadProviders();
         $http({
             method: 'GET',
             url: $rootScope.REST.documentTypes

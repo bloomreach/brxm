@@ -10,7 +10,8 @@
                     <!--<pre>{{documentTypes}}</pre>-->
                     <ul class="list-group">
                         <li class="list-group-item essentials-group-item" ng-repeat="provider in providers">
-                            <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
+                            <span class="badge"><a href="" ng-click="onDeleteProvider(provider)">X</a></span>
+
                             <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
                         </li>
                     </ul>
@@ -18,7 +19,7 @@
 
                         <input type="text" class="form-control" ng-model="providerInput"/>
                       <span class="input-group-btn">
-                        <button class="btn btn-primary" type="submit" ng-click="onAdd(providerInput)">Add new</button>
+                        <button class="btn btn-primary" type="submit" ng-click="onAddProvider(providerInput)">Add new</button>
                       </span>
 
                     </div>

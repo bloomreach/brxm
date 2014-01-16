@@ -40,10 +40,15 @@
   <img src="${pageContext.request.contextPath}/images/loader.gif"/>
 </div>
 <!-- ERROR MESSAGES -->
-<div class="alert-danger" ng-show="globalError.length > 0">
+<div class="alert-danger messages" ng-show="globalError.length > 0">
   <strong>An error occurred:</strong>
   <div ng-repeat="message in globalError">
     {{message}}
+  </div>
+</div>
+<div class="alert-success messages" ng-show="feedbackMessages.length > 0">
+  <div ng-repeat="message in feedbackMessages">
+    <strong>{{message}}</strong>
   </div>
 </div>
 <%--

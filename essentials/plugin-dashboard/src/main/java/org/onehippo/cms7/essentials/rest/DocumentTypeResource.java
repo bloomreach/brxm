@@ -58,12 +58,8 @@ import org.hippoecm.repository.api.StringCodecFactory;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
-import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
-import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
@@ -215,20 +211,7 @@ public class DocumentTypeResource extends BaseResource {
     }
 
 
-    public PluginContext getContext(ServletContext servletContext) {
-        final String className = ProjectSetupPlugin.class.getName();
-        final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
-        final PluginConfigService service = context.getConfigService();
 
-        final ProjectSettingsBean document = service.read(className);
-        if (document != null) {
-            context.setBeansPackageName(document.getSelectedBeansPackage());
-            context.setComponentsPackageName(document.getSelectedComponentsPackage());
-            context.setRestPackageName(document.getSelectedRestPackage());
-            context.setProjectNamespacePrefix(document.getProjectNamespace());
-        }
-        return context;
-    }
 
     //see org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource.updateContainer()
     @POST

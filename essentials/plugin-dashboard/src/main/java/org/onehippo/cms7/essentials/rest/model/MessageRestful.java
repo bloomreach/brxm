@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest.model;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
@@ -45,6 +46,7 @@ public class MessageRestful implements Restful {
         this.displayType = displayType;
     }
 
+    @XmlElement(name = "successMessage")
     public String getValue() {
         return value;
     }

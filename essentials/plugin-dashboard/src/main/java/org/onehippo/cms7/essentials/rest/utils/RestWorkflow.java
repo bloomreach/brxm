@@ -122,4 +122,22 @@ public class RestWorkflow {
     }
 
 
+    /**
+     * Removes document type from cnd and also removes document template
+     * @param name name of the document type
+     * @return  true on success, throws exception otherwise
+     */
+    public boolean removeDocumentType(final String name) {
+        try {
+            session.getNode("/hippo:namespaces/" + namespace+'/'+name).remove();
+            session.save();
+            return true;
+            //return CndUtils.unRegisterDocumentType(context, namespace, name);
+        } catch (Exception e) {
+            log.error("Error removing document type", e);
+            throw new RestException("Error removing document type: " + name, Response.Status.INTERNAL_SERVER_ERROR, e);
+        }
+
+
+    }
 }
