@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class HippoEvent<E extends HippoEvent<E>> implements Cloneable {
     private static final String RESULT = "result";
     private static final String TIMESTAMP = "timestamp";
     private static final String USER = "user";
+    private static final String SYSTEM = "system";
 
     private final Map<String, Object> attributes = new HashMap<String, Object>();
     private boolean sealed;
@@ -124,6 +125,14 @@ public class HippoEvent<E extends HippoEvent<E>> implements Cloneable {
 
     public String message() {
         return get(MESSAGE);
+    }
+
+    public Boolean system() {
+        return get(SYSTEM);
+    }
+
+    public E system(Boolean system) {
+        return put(SYSTEM, system);
     }
 
     public E set(String key, Object value) {
