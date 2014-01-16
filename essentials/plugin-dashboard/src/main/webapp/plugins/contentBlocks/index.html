@@ -1,7 +1,7 @@
 <div ng-controller="contentBlocksCtrl">
     <div ng-show="pluginInstalled">
         <div class="col-md-12">
-            <div class="panel panel-default">
+            <div class="panel panel-primary">
                 <div class="panel-heading">Content Blocks</div>
                 <div class="panel-body">
                     <p>{{introMessage}}</p>
@@ -9,7 +9,7 @@
                     <h4> Available Content Blocks:</h4>
                     <!--<pre>{{documentTypes}}</pre>-->
                     <ul class="list-group">
-                        <li class="list-group-item" ng-repeat="provider in providers">
+                        <li class="list-group-item essentials-group-item" ng-repeat="provider in providers">
                             <span class="badge"><a href="" ng-click="onDelete(provider)">X</a></span>
                             <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
                         </li>
@@ -18,7 +18,7 @@
 
                         <input type="text" class="form-control" ng-model="providerInput"/>
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit" ng-click="onAdd(providerInput)">Add new</button>
+                        <button class="btn btn-primary" type="submit" ng-click="onAdd(providerInput)">Add new</button>
                       </span>
 
                     </div>

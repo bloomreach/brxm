@@ -301,9 +301,7 @@ dashboard-plugins/components-plugin/components-library/src/test/java/Installatio
 dashboard-plugins/components-plugin/components-library/src/test/resources/log4j.xml -text
 dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPlugin.html -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPlugin.java -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPlugin.properties -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/ContentBlocksInstaller.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/HasNotProviderMatcher.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/HasProviderMatcher.java -text
