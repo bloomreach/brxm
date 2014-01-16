@@ -459,6 +459,7 @@ marketplace/grails-app/views/index.gsp -text
 marketplace/grails-app/views/layouts/main.gsp -text
 marketplace/grailsw -text
 marketplace/grailsw.bat -text
+marketplace/plugins.json -text
 marketplace/test/unit/marketplace/ArtifactControllerSpec.groovy -text
 marketplace/test/unit/marketplace/ArtifactSpec.groovy -text
 marketplace/test/unit/marketplace/AssetSpec.groovy -text

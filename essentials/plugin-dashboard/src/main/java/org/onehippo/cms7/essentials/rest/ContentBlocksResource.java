@@ -317,6 +317,7 @@ public class ContentBlocksResource extends BaseResource {
                     session.save();
                     return true;
                 }
+
             }
 
         } catch (RepositoryException | IOException e) {
