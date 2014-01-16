@@ -16,15 +16,8 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.jcr.Session;
-
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -33,8 +26,6 @@ import static org.junit.Assert.assertTrue;
  * @version "$Id$"
  */
 public class DefaultDocumentManagerTest extends BaseRepositoryTest {
-
-    private static Logger log = LoggerFactory.getLogger(DefaultDocumentManagerTest.class);
 
     @Test
     public void testSaveDocument() throws Exception {

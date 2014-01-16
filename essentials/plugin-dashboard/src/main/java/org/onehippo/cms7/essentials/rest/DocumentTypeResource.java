@@ -46,9 +46,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
@@ -63,9 +60,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
-import org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
-import org.onehippo.cms7.essentials.dashboard.contentblocks.model.ContentBlockModel;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
@@ -77,9 +72,13 @@ import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.AllDocumentMatcher;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /**
  * @version "$Id$"        TODO change, this is too content blocks specific.
@@ -239,7 +238,7 @@ public class DocumentTypeResource extends BaseResource {
         final List<DocumentTypes> docTypes = body.getItems().getItems();
         for (DocumentTypes documentType : docTypes) {
             for (KeyValueRestful item : documentType.getProviders().getItems()) {
-                ContentBlockModel model = new ContentBlockModel(item.getValue(), ContentBlocksPlugin.Prefer.LEFT, ContentBlocksPlugin.Type.LINKS, item.getKey(), documentType.getValue());
+                ContentBlockModel model = new ContentBlockModel(item.getValue(), ContentBlockModel.Prefer.LEFT, ContentBlockModel.Type.LINKS, item.getKey(), documentType.getValue());
                 addContentBlockToType(model);
             }
         }

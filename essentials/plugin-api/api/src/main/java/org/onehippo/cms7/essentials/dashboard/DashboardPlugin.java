@@ -26,28 +26,6 @@ public abstract class DashboardPlugin extends Panel {
         this.descriptor = descriptor;
         setOutputMarkupId(true);
         setOutputMarkupPlaceholderTag(true);
-      /*  final Label label = new Label("title", descriptor.getName());
-        add(label);
-        //############################################
-        // ADD SCREENSHOTS
-        //############################################
-        final Class<?> referenceClass = this.getClass();
-        final List<Screenshot> screenshots = descriptor.getScreenshots();
-        final ListView<Screenshot> listView = new ListView<Screenshot>("screenshots", screenshots) {
-            private static final long serialVersionUID = 1L;
-
-            protected void populateItem(ListItem<Screenshot> item) {
-                Screenshot screenshot = item.getModelObject();
-                final PackageResourceReference resourceReference = new PackageResourceReference(referenceClass, screenshot.getPath());
-                final Image image = new Image("image", resourceReference);
-                final ResourceLink<String> link = new ResourceLink<>("link", resourceReference);
-                item.add(link);
-                link.add(image);
-            }
-        };*/
-
-        /*add(listView);*/
-
 
     }
 

@@ -5,15 +5,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.onehippo.cms7.essentials.dashboard.utils.JcrMatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public class HasRelatedDocMatcher implements JcrMatcher {
-
-    private static Logger log = LoggerFactory.getLogger(HasRelatedDocMatcher.class);
 
     @Override
     public boolean matches(final Node typeNode) throws RepositoryException {

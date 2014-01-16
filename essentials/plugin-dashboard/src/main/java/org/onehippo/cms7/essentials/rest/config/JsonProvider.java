@@ -22,8 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
@@ -35,7 +33,7 @@ import com.google.common.collect.ImmutableList;
 @Consumes({MediaType.APPLICATION_JSON})
 public class JsonProvider extends JSONProvider {
 
-    private static Logger log = LoggerFactory.getLogger(JsonProvider.class);
+
     private static final ImmutableList<String> items = new ImmutableList.Builder<String>()
             .add("items")
             .add("item")

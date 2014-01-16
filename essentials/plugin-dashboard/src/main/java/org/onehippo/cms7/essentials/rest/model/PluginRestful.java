@@ -1,11 +1,6 @@
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -14,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class PluginRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(PluginRestful.class);
+
     private VendorRestful vendor;
     private DependencyRestful dependency;
     private String title;

@@ -31,8 +31,6 @@ import org.onehippo.cms7.essentials.dashboard.model.hst.HstConfiguration;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstSiteMenu;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstSiteMenuItem;
 import org.onehippo.cms7.essentials.dashboard.model.hst.HstTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -41,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class JcrPersistenceWriterTest extends BaseRepositoryTest {
 
-    private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriterTest.class);
+
     private Session session;
 
     private final boolean useHippoSesson = false;

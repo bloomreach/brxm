@@ -16,19 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public abstract class BaseJcrModel implements JcrModel {
-
-    private static Logger log = LoggerFactory.getLogger(BaseJcrModel.class);
 
     private String name;
     private String parentPath;

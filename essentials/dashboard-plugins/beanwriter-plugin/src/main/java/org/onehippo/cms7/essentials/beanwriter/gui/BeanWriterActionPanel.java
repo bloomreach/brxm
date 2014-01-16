@@ -16,13 +16,7 @@
 
 package org.onehippo.cms7.essentials.beanwriter.gui;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.onehippo.cms7.essentials.dashboard.Panel;
-import org.onehippo.cms7.essentials.dashboard.model.BeanWriterLogEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 
@@ -32,22 +26,11 @@ import org.slf4j.LoggerFactory;
  */
 public class BeanWriterActionPanel extends Panel {
 
-    private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(BeanWriterActionPanel.class);
-
-    private List<BeanWriterLogEntry> displayItems;
-
-    public BeanWriterActionPanel(final String id, final  List<BeanWriterLogEntry> displayItems) {
+    public BeanWriterActionPanel(final String id) {
         super(id);
-
     }
 
 
-    public void replaceModel(final List<BeanWriterLogEntry> displayItems) {
-
-        displayItems.clear();
-        displayItems.addAll(new LinkedList<>(displayItems));
-    }
 
 
 }

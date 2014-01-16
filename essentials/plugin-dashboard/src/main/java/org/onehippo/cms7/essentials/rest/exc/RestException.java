@@ -18,9 +18,6 @@ package org.onehippo.cms7.essentials.rest.exc;
 
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id$"
  */
@@ -28,7 +25,7 @@ public class RestException extends Throwable {
 
     private final Response.Status errorCode;
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(RestException.class);
+
 
     public RestException(final Response.Status errorCode) {
         this.errorCode = errorCode;

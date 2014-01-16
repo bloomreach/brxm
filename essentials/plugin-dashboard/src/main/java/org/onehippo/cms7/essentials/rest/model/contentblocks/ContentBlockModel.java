@@ -1,3 +1,19 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.onehippo.cms7.essentials.rest.model.contentblocks;
 
 import java.io.Serializable;
@@ -6,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +34,12 @@ public class ContentBlockModel implements Serializable {
     private static Logger log = LoggerFactory.getLogger(ContentBlockModel.class);
 
     private String provider;
-    private ContentBlocksPlugin.Type type;
+    private Type type;
     private String documentType;
-    private ContentBlocksPlugin.Prefer prefer;
+    private Prefer prefer;
     private String name;
 
-    public ContentBlockModel(final String provider, final ContentBlocksPlugin.Prefer prefer, final ContentBlocksPlugin.Type type, final String name, final String documentType) {
+    public ContentBlockModel(final String provider, final Prefer prefer, final Type type, final String name, final String documentType) {
         this.provider = provider;
         this.type = type;
         this.documentType = documentType;
@@ -61,11 +76,11 @@ public class ContentBlockModel implements Serializable {
         this.provider = provider;
     }
 
-    public ContentBlocksPlugin.Type getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(final ContentBlocksPlugin.Type type) {
+    public void setType(final Type type) {
         this.type = type;
     }
 
@@ -77,11 +92,11 @@ public class ContentBlockModel implements Serializable {
         this.documentType = documentType;
     }
 
-    public ContentBlocksPlugin.Prefer getPrefer() {
+    public Prefer getPrefer() {
         return prefer;
     }
 
-    public void setPrefer(final ContentBlocksPlugin.Prefer prefer) {
+    public void setPrefer(final Prefer prefer) {
         this.prefer = prefer;
     }
 
@@ -93,6 +108,55 @@ public class ContentBlockModel implements Serializable {
         this.name = name;
     }
 
+
+    public enum Prefer implements Serializable {
+        LEFT("left"), RIGHT("right");
+        String prefer;
+
+        private Prefer(String prefer) {
+            this.prefer = prefer;
+        }
+
+        public String getPrefer() {
+            return prefer;
+        }
+    }
+
+    public enum WicketId {
+        LEFT("${cluster.id}.left.item"), RIGHT("${cluster.id}.right.item"), DEFAULT("${cluster.id}.field");
+        private String wicketId;
+
+        WicketId(final String wicketId) {
+            this.wicketId = wicketId;
+        }
+
+        public static WicketId get(String id) {
+            for (WicketId a : WicketId.values()) {
+                if (a.getWicketId().equals(id)) {
+                    return a;
+                }
+            }
+            return DEFAULT;
+        }
+
+        private String getWicketId() {
+            return wicketId;
+        }
+
+    }
+
+    public enum Type implements Serializable {
+        LINKS("links"), DROPDOWN("dropdown");
+        String type;
+
+        private Type(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
+    }
 
     @Override
     public String toString() {

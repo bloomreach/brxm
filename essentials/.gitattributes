@@ -307,7 +307,6 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/ContentBlocksInstaller.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/HasNotProviderMatcher.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/HasProviderMatcher.java -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/model/ContentBlockModel.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/template.xml -text

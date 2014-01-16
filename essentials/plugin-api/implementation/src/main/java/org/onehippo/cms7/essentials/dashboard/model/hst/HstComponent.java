@@ -22,8 +22,6 @@ import java.util.List;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -31,7 +29,6 @@ import org.slf4j.LoggerFactory;
 @PersistentNode(type = "hst:component")
 public class HstComponent extends BaseJcrModel{
 
-    private static Logger log = LoggerFactory.getLogger(HstComponent.class);
 
     @PersistentProperty(name = "hst:template")
     private String hstTemplate;

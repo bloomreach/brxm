@@ -4,46 +4,25 @@
 
 package org.onehippo.cms7.essentials.xinha.gui;
 
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-
-import org.eclipse.jface.text.projection.Fragment;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.utils.MultiValueJcrUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.XmlUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
-import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id: XinhaPlugin.java 174001 2013-08-16 09:24:04Z mmilicevic $"
  */
 public class XinhaPlugin extends DashboardPlugin {
 
-    private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(XinhaPlugin.class);
-
     public XinhaPlugin(final String id, final Plugin descriptor, final PluginContext context) {
         super(id, descriptor, context);
-
+/*
         final List<String> availableToolBarList = getAvailableList(Property.TOOLBAR);
         final List<String> currentlySelectedToolBarList = getSelectedList(Property.TOOLBAR);
 
         final List<String> availablePluginList = getAvailableList(Property.PLUGIN);
         final List<String> currentlySelectedPluginList = getSelectedList(Property.PLUGIN);
 
-        final List<XinhaEntry> mergedToolbarList = merge(availableToolBarList, currentlySelectedToolBarList);
+        final List<XinhaEntry> mergedToolbarList = merge(availableToolBarList, currentlySelectedToolBarList);*/
         //final XinhaPluginDataProvider xinhaToolbarDataProvider = new XinhaPluginDataProvider(mergedToolbarList);
         /*
         GridView<XinhaEntry> toolbar = new XinhaGridView("toolbar", xinhaToolbarDataProvider, Property.TOOLBAR);
@@ -98,7 +77,7 @@ public class XinhaPlugin extends DashboardPlugin {
 
     }*/
 
-    private boolean setItem(String item, int index, boolean enable, Property property) {
+   /* private boolean setItem(String item, int index, boolean enable, Property property) {
         final Session session = getContext().getSession();
         try {
             if (session.itemExists("/hippo:namespaces/hippostd/html/editor:templates/_default_/root")) {
@@ -140,7 +119,7 @@ public class XinhaPlugin extends DashboardPlugin {
             log.error("Repository exception while trying to retrieve the current xinha plug-ins. {}", e);
         }
         return list;
-    }
+    }*/
 
     /*private static class XinhaPluginDataProvider implements IDataProvider<XinhaEntry> {
 
@@ -172,6 +151,7 @@ public class XinhaPlugin extends DashboardPlugin {
         }
     }*/
 
+/*
     private enum Property {
         TOOLBAR("Xinha.config.toolbar"), PLUGIN("Xinha.plugins");
 
@@ -213,6 +193,7 @@ public class XinhaPlugin extends DashboardPlugin {
             return value;
         }
     }
+*/
 
 
 }

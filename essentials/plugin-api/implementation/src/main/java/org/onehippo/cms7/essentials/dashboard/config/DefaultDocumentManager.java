@@ -107,9 +107,6 @@ public class DefaultDocumentManager implements DocumentManager {
         }
 
         ObjectContentManager manager = createManager(session);
-        if (manager == null) {
-            return false;
-        }
         if (manager.objectExists(document.getPath())) {
             manager.update(document);
         } else {

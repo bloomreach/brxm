@@ -3,14 +3,11 @@ package org.onehippo.cms7.essentials.xinha;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.Collection;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.utils.XmlUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlNode;
 import org.onehippo.cms7.essentials.dashboard.utils.xml.XmlProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class XinhaTest {
 
-    private static Logger log = LoggerFactory.getLogger(XinhaTest.class);
+
 
     @Test
     public void testXML() throws Exception {

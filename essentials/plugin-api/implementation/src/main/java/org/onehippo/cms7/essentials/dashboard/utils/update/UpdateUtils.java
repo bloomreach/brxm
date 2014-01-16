@@ -73,9 +73,10 @@ public class UpdateUtils {
         addToUpdaterInfo(context, UpdateType.QUEUE, new UpdateConfig(name, script, query, batchSize, throttle, dryRun));
     }
 
-    private static void addToUpdaterInfo(final PluginContext context, final UpdateType type, final String query, final String script, final long batchSize, final long throttle, final boolean dryRun) {
+ /*   private static void addToUpdaterInfo(final PluginContext context, final UpdateType type, final String query, final String script, final long batchSize, final long throttle, final boolean dryRun) {
         addToUpdaterInfo(context, type, new UpdateConfig().setQuery(query).setScript(script).setBatchSize(batchSize).setDryRun(dryRun).setThrottle(throttle));
     }
+   */
 
     /**
      * Uses the updater model to create a new queue or registry entry in the updater engine api

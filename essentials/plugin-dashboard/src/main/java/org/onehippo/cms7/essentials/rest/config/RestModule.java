@@ -19,7 +19,6 @@ package org.onehippo.cms7.essentials.rest.config;
 import org.onehippo.cms7.essentials.rest.BeanWriterResource;
 import org.onehippo.cms7.essentials.rest.ContentBlocksResource;
 import org.onehippo.cms7.essentials.rest.ControllersResource;
-import org.onehippo.cms7.essentials.rest.DocumentTypeResource;
 import org.onehippo.cms7.essentials.rest.KeyValueResource;
 import org.onehippo.cms7.essentials.rest.MenuResource;
 import org.onehippo.cms7.essentials.rest.PluginResource;
@@ -27,20 +26,15 @@ import org.onehippo.cms7.essentials.rest.PowerpackResource;
 import org.onehippo.cms7.essentials.rest.PropertiesResource;
 import org.onehippo.cms7.essentials.rest.StatusResource;
 import org.onehippo.cms7.essentials.rest.exc.EssentialsExceptionMapper;
-import org.onehippo.cms7.essentials.rest.exc.ExceptionInterceptor;
-import org.onehippo.cms7.essentials.rest.model.StatusRestful;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.code.inject.jaxrs.CXFServerModule;
-import com.google.inject.Provides;
 
 /**
  * @version "$Id$"
  */
 public class RestModule extends CXFServerModule {
 
-    private static Logger log = LoggerFactory.getLogger(RestModule.class);
+
 
 
     @Override

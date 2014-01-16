@@ -18,8 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.model.hst;
 
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -27,7 +25,7 @@ import org.slf4j.LoggerFactory;
 @PersistentNode(type = "hst:sitemenuitem")
 public class HstSiteMenuItem extends BaseJcrModel {
 
-    private static Logger log = LoggerFactory.getLogger(HstSiteMenuItem.class);
+
     @PersistentProperty(name = "hst:referencesitemapitem")
     private String referenceSitemapItem;
     @PersistentProperty(name = "externallink")

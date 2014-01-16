@@ -1,14 +1,11 @@
 package org.onehippo.cms7.essentials.dashboard.utils.beansmodel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @version "$Id: MemoryProperty.java 172944 2013-08-06 16:37:37Z mmilicevic $"
  */
 public class MemoryProperty {
 
-    private static Logger log = LoggerFactory.getLogger(MemoryProperty.class);
+
     private String name;
     private String type;
     private boolean multiple;

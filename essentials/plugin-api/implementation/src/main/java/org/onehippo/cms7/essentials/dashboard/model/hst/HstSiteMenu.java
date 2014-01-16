@@ -21,8 +21,6 @@ import java.util.List;
 
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -30,7 +28,6 @@ import org.slf4j.LoggerFactory;
 @PersistentNode(type = "hst:sitemenu")
 public class HstSiteMenu extends BaseJcrModel{
 
-    private static Logger log = LoggerFactory.getLogger(HstSiteMenu.class);
 
     protected HstSiteMenu(final String name) {
         setName(name);

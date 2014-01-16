@@ -16,9 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * NOTE: TODO delete this after whole wicket migration is done
@@ -27,7 +24,6 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class Panel {
 
-    private static Logger log = LoggerFactory.getLogger(Panel.class);
 
     public Panel(final String id) {
 

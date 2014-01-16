@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -62,14 +63,14 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
         this.maxSubFolders = maxSubFolders;
         currentFolder = wikiFolder.addNode(prefix + System.currentTimeMillis(), "hippostd:folder");
         currentFolder.addMixin("hippo:harddocument");
-        currentFolder.setProperty("hippo:paths", new String[]{});
+        currentFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
         currentFolder.addMixin("hippotranslation:translated");
         currentFolder.setProperty("hippotranslation:locale", "en");
         currentFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
         currentSubFolder = currentFolder.addNode(prefix + System.currentTimeMillis(), "hippostd:folder");
         currentSubFolder.addMixin("hippo:harddocument");
         currentSubFolder.addMixin("hippotranslation:translated");
-        currentSubFolder.setProperty("hippo:paths", new String[]{});
+        currentSubFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
         currentSubFolder.setProperty("hippotranslation:locale", "en");
         currentSubFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
         rand = new Random(System.currentTimeMillis());
@@ -85,7 +86,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                 offsetcount++;
                 if ((offsetcount % maxDocsPerFolder) == 0) {
                     log.info("Offset '" + offset + "' not yet reached. Currently at '" + offsetcount
-                            + "'");
+                            + '\'');
                 }
             }
             if (offsetcount == offset) {
@@ -104,7 +105,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                             currentFolder = wikiFolder.addNode(prefix + System.currentTimeMillis(),
                                     "hippostd:folder");
                             currentFolder.addMixin("hippo:harddocument");
-                            currentFolder.setProperty("hippo:paths", new String[]{});
+                            currentFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                             currentFolder.addMixin("hippotranslation:translated");
                             currentFolder.setProperty("hippotranslation:locale", "en");
                             currentFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
@@ -113,7 +114,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                         currentSubFolder = currentFolder.addNode(prefix + System.currentTimeMillis(),
                                 "hippostd:folder");
                         currentSubFolder.addMixin("hippo:harddocument");
-                        currentSubFolder.setProperty("hippo:paths", new String[]{});
+                        currentSubFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                         currentSubFolder.addMixin("hippotranslation:translated");
                         currentSubFolder.setProperty("hippotranslation:locale", "en");
                         currentSubFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
@@ -159,14 +160,14 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
 
                     doc = handle.addNode(docName, strategy.getType());
                     doc.addMixin("hippo:harddocument");
-                    doc.setProperty("hippo:paths", new String[]{});
+                    doc.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                     doc.addMixin("hippotranslation:translated");
 
-                    int creationDateSecondsAgo = new Random().nextInt(NUMBER_OF_SECONDS_IN_TWO_YEARS);
+                    int creationDateSecondsAgo = rand.nextInt(NUMBER_OF_SECONDS_IN_TWO_YEARS);
                     // lastModifiedSecondsAgo = some random time after creationDateSecondsAgo
-                    int lastModifiedSecondsAgo = new Random().nextInt(creationDateSecondsAgo);
+                    int lastModifiedSecondsAgo = rand.nextInt(creationDateSecondsAgo);
                     // publicaionDateSecondsAgo = some random time after lastModifiedSecondsAgo
-                    int publicaionDateSecondsAgo = new Random().nextInt(lastModifiedSecondsAgo);
+                    int publicaionDateSecondsAgo = rand.nextInt(lastModifiedSecondsAgo);
 
                     final Calendar creationDate = Calendar.getInstance();
                     creationDate.add(Calendar.SECOND, -1 * creationDateSecondsAgo);
