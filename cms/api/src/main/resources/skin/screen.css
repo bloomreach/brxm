@@ -552,12 +552,15 @@ body.hippo-root #doc3 {
 }
 
 .hippo-list-paging .paging-label {
+  margin-top: 0px;
+  padding-top: 0px;
   color: #000;
 }
 
 .hippo-list-details tr.hippo-list-paging td {
   width: 630px;
   text-align: right;
+  padding-top: 0px;
 }
 
 .hippo-list-details .hippo-list-paging td {
@@ -2214,4 +2217,5 @@ body.hippo-root div.yui-log-container {
     display: block;
     height: 16px;
     overflow: hidden;
+    float: left;
 }
