@@ -15,17 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
@@ -42,12 +31,19 @@ import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
 import org.hippoecm.frontend.plugins.standards.NodeFilter;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
-import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
@@ -113,7 +109,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
             final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
             return new Iterator() {
 
-                private final Iterator upstream = dataProvider.iterator(0,0);
+                private final Iterator upstream = dataProvider.iterator(0, 0);
                 private Object next = null;
                 private int fetched = 0;
 
@@ -181,7 +177,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                     if ("rename".equals(label.getMethodName())) {
                         String[] arguments = label.getArguments();
                         if (arguments != null && arguments.length > 1) {
-                            target = new BrowseLinkTarget(path+"/"+arguments[1]);
+                            target = new BrowseLinkTarget(path + "/" + arguments[1]);
                         }
                     }
                     BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", target, label);
@@ -207,8 +203,9 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         public boolean accept(final JcrNodeModel nodeModel) {
             final Node node = nodeModel.getNode();
             try {
-                return isValidUser(node) && isWorkflowOrLoginEvent(node) && isTopLevelEvent(node);
+                return isValidEvent(node) && isWorkflowOrLoginEvent(node) && isTopLevelEvent(node);
             } catch (RepositoryException ignored) {
+                log.error("Ignored", ignored);
             }
             return false;
         }
@@ -236,15 +233,8 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
             return false;
         }
 
-        private boolean isValidUser(final Node node) throws RepositoryException {
-            final String userName = JcrUtils.getStringProperty(node, "hippolog:user", null);
-            if (userName != null) {
-                final SecurityService securityService = ((HippoWorkspace) node.getSession().getWorkspace()).getSecurityService();
-                if (securityService.hasUser(userName)) {
-                    return !securityService.getUser(userName).isSystemUser();
-                }
-            }
-            return false;
+        private boolean isValidEvent(final Node node) throws RepositoryException {
+            return !JcrUtils.getBooleanProperty(node, "hippolog:system", Boolean.FALSE);
         }
 
     }
