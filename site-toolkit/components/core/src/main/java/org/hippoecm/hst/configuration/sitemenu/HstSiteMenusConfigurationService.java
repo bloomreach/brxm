@@ -25,6 +25,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +35,19 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
     
     private HstSite hstSite;
     private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurations = new HashMap<String, HstSiteMenuConfiguration>();
+    private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurationsNyId = new HashMap<String, HstSiteMenuConfiguration>();
     private Map<String, List<HstSiteMenuItemConfiguration>> hstSiteMenuItemsBySiteMapId = new HashMap<String, List<HstSiteMenuItemConfiguration>>();
     
     public HstSiteMenusConfigurationService(final HstSite hstSite,
-                                            final CompositeConfigurationNodes.CompositeConfigurationNode siteMenusNode) {
+                                            final CompositeConfigurationNodes.CompositeConfigurationNode siteMenusNode,
+                                            final String rootConfigurationPathPrefix) {
         this.hstSite = hstSite;
         for(HstNode siteMenu: siteMenusNode.getCompositeChildren().values()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMENU.equals(siteMenu.getNodeTypeName())) {
-                HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu);
+                boolean inherited = !siteMenu.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
+                HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu, inherited);
                 HstSiteMenuConfiguration old = hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
+                hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getCanonicalIdentifier(), hstSiteMenuConfiguration);
                 if(old != null) {
                     log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");
                 }

@@ -503,6 +503,23 @@
   </tag>
 
   <tag>
+    <description>This tag can be used to show in the channel manager in the cms an editable menu. This tag
+      won't output anything when not in cms channel manager preview
+    </description>
+    <name>cmseditmenu</name>
+    <tag-class>org.hippoecm.hst.tag.HstCmsEditMenuTag</tag-class>
+    <tei-class>org.hippoecm.hst.tag.HstCmsEditMenuTag$TEI</tei-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>A HstSiteMenu object.</description>
+      <name>menu</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.core.sitemenu.HstSiteMenu</type>
+    </attribute>
+  </tag>
+
+  <tag>
     <description>This tag can be used to render a Rich Text, Formatted Text or Text field as html. Use the appropriate
       attribute for each type.
     </description>

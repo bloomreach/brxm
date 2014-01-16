@@ -29,11 +29,15 @@ public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
     private HstSiteMenus hstSiteMenus;
     private List<HstSiteMenuItem> hstSiteMenuItems = new ArrayList<HstSiteMenuItem>();
     private HstSiteMenuItem selectedSiteMenuItem;
-    
+
+    private final String canonicalIdentifier;
+    private final boolean inherited;
 
     public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenus = hstSiteMenus;
         this.name = siteMenuConfiguration.getName();
+        canonicalIdentifier = siteMenuConfiguration.getCanonicalIdentifier();
+        inherited = siteMenuConfiguration.isInherited();
         final boolean menuVisibleRegardlessRoles = hstRequestContext.isCmsRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
         for(HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
             if (hstSiteMenuItemConfiguration.getRoles() == null || menuVisibleRegardlessRoles) {
@@ -85,6 +89,14 @@ public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
 
     public EditableMenu getEditableMenu() {
         return new EditableMenuImpl(this);
+    }
+
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
+
+    public boolean isInherited() {
+        return inherited;
     }
 
 }

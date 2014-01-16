@@ -52,4 +52,18 @@ public interface HstSiteMenu extends CommonMenu{
      * @return an <code>EditableMenu</code> instance of this HstSiteMenu. 
      */
     EditableMenu getEditableMenu();
+
+    /**
+     * Returns the identifier of the menu configuration. Note that multiple <code>HstSiteMenu</code>'s can share the same
+     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers
+     *
+     * @return the identifier of the backing stored menu configuration
+     */
+    String getCanonicalIdentifier();
+
+    /**
+     * @return <code>true</code> when the backing provider of  {@link org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration}
+     * for this {@link HstSiteMenu} is inherited
+     */
+    boolean isInherited();
 }

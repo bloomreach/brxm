@@ -356,6 +356,7 @@ client/src/main/java/org/hippoecm/hst/tag/HeadContributionsTag.java svneol=nativ
 client/src/main/java/org/hippoecm/hst/tag/HstActionURLTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstAttributeTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstCmsEditLinkTag.java -text
+client/src/main/java/org/hippoecm/hst/tag/HstCmsEditMenuTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/HstElementTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstFacetNavigationLinkTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/HstHtmlTag.java svneol=native#text/plain

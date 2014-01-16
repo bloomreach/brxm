@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -62,8 +62,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
     protected String var;
     
     protected String scope;
-    
-    protected boolean skipTag;
+
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -85,9 +84,6 @@ public class HstCmsEditLinkTag extends TagSupport  {
     @Override
     public int doEndTag() throws JspException{
         try {
-            if(skipTag) {
-                return EVAL_PAGE;
-            }
             if(this.hippoBean == null || this.hippoBean.getNode() == null || !(this.hippoBean.getNode() instanceof HippoNode)) {
                 log.warn("Cannot create a cms edit url for a bean that is null or has a jcr node that is null or not an instanceof HippoNode");
                 return EVAL_PAGE;
@@ -102,13 +98,8 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 return EVAL_PAGE;
             }
 
-
-            if(!requestContext.isPreview()) {
-                log.debug("Skipping cms edit url because not in preview.");
-                return EVAL_PAGE;
-            }
-            if (var == null && servletRequest.getSession(false) != null && !Boolean.TRUE.equals(servletRequest.getSession(false).getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED)) ) {
-                log.debug("Skipping cms edit html comment snippet because request is not in a SSO CMS CONTEXT.");
+            if(!requestContext.isCmsRequest()) {
+                log.debug("Skipping cms edit url because not cms preview.");
                 return EVAL_PAGE;
             }
 
@@ -135,7 +126,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                     log.debug("Cannot create a 'surf and edit' link for a pure virtual jcr node: '{}'", node.getPath());
                     return EVAL_PAGE;
                 }  else {
-                    Node rootNode = (Node)editNode.getAncestor(0);
+                    Node rootNode = editNode.getSession().getRootNode();
                     if (editNode.isSame(rootNode)) {
                         log.warn("Cannot create a 'surf and edit' link for a jcr root node.");
                     }
@@ -206,7 +197,6 @@ public class HstCmsEditLinkTag extends TagSupport  {
         var = null;
         hippoBean = null;
         scope = null;
-        skipTag = false;
     }
 
     protected void write(String url, String nodeId) throws IOException {

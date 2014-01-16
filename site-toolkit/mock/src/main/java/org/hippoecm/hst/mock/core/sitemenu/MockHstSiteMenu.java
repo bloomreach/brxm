@@ -18,6 +18,7 @@ package org.hippoecm.hst.mock.core.sitemenu;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import org.hippoecm.hst.core.sitemenu.EditableMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
@@ -37,6 +38,8 @@ public class MockHstSiteMenu implements HstSiteMenu {
     private EditableMenu editableMenu;
     private String name;
     private boolean expanded;
+    private String canonicalIdentifier = UUID.randomUUID().toString();
+    private boolean inherited;
     
     public List<HstSiteMenuItem> getSiteMenuItems() {
         return Collections.unmodifiableList(siteMenuItems);
@@ -102,4 +105,13 @@ public class MockHstSiteMenu implements HstSiteMenu {
         this.expanded = expanded;
     }
 
+    @Override
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
+
+    @Override
+    public boolean isInherited() {
+        return inherited;
+    }
 }
