@@ -25,30 +25,34 @@ public class RestException extends RuntimeException {
 
     private final Response.Status errorCode;
     private static final long serialVersionUID = 1L;
+    private final String message;
 
+    public String getMessage() {
+        return message;
+    }
 
     public RestException(final Response.Status errorCode) {
         this.errorCode = errorCode;
+        this.message = "Server error: ";
     }
 
     public RestException(final String message, final Response.Status errorCode) {
         super(message);
         this.errorCode = errorCode;
+        this.message = message;
     }
 
     public RestException(final String message, final Response.Status errorCode, final Throwable cause) {
         super(message, cause);
         this.errorCode = errorCode;
+        this.message = message;
     }
 
-    public RestException(final Response.Status errorCode, final Throwable cause) {
-        super(cause);
-        this.errorCode = errorCode;
-    }
 
-    protected RestException(final String message, final Response.Status errorCode, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public RestException(final Throwable e, final Response.Status errorCode) {
+        super(e);
         this.errorCode = errorCode;
+        this.message = processMessage(e);
 
     }
 
@@ -56,5 +60,13 @@ public class RestException extends RuntimeException {
         return errorCode;
     }
 
+    private String processMessage(final Throwable e) {
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            return cause.getMessage() + ", " + e.getMessage();
+        } else {
+            return e.getMessage();
+        }
+    }
 
 }

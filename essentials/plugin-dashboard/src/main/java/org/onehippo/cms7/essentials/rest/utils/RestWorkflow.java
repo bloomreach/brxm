@@ -21,10 +21,21 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.InvalidSerializedDataException;
+import javax.jcr.ItemExistsException;
+import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
@@ -81,11 +92,31 @@ public class RestWorkflow {
             session.importXML("/hippo:namespaces/" + namespace, IOUtils.toInputStream(template), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             return true;
-
-
-        } catch (RepositoryException | IOException e) {
+        } catch (AccessDeniedException | ConstraintViolationException | LockException | ReferentialIntegrityException | InvalidItemStateException | InvalidSerializedDataException e) {
             log.error("Error in rest workflow: {}", e);
-            throw new RestException(e.getCause().getMessage() + ", " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+            throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (ItemExistsException e) {
+            String msg = "Item with name " + namespace + ':' + name + "already exists: ";
+            log.error(msg, e);
+            throw new RestException(msg, Response.Status.INTERNAL_SERVER_ERROR, e);
+        } catch (NamespaceException e) {
+            log.error("namespace exception in rest workflow: {}", e);
+            throw new RestException("Namespace exception in rest workflow: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (PathNotFoundException e) {
+            log.error("Path not found", e);
+            throw new RestException("Path not found"+e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (NoSuchNodeTypeException e) {
+            log.error("Node not found in rest workflow: {}", e);
+            throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (NodeTypeExistsException e) {
+            log.error("Error in rest workflow: {}", e);
+            throw new RestException("Node already exists: "+e.getMessage() ,Response.Status.INTERNAL_SERVER_ERROR);
+        }catch (RepositoryException e) {
+            log.error("Error in rest workflow: {}", e);
+            throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            log.error("Template error in rest workflow: {}", e);
+            throw new RestException("Template error in rest workflow: "+e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
 
     }

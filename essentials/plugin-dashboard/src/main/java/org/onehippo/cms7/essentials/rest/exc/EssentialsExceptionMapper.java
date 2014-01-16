@@ -31,6 +31,7 @@ import javax.ws.rs.ext.Provider;
 @Consumes(MediaType.WILDCARD)
 public class EssentialsExceptionMapper implements ExceptionMapper<Throwable> {
 
+    @SuppressWarnings("InstanceofInterfaces")
     @Override
     public Response toResponse(Throwable e) {
         if(e instanceof RestException){
