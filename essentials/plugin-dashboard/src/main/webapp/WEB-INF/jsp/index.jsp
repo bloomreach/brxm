@@ -71,9 +71,11 @@
   <div class="col-sm-9" ng-controller="homeCtrl">
     <div ng-view></div>
   </div>
+  <div class="clearfix"></div>
+  <div class="col-sm-12 footer">&copy; Hippo B.V., All Rights Reserved</div>
 </div>
 
-<div class="footer">&copy; Hippo B.V., All Rights Reserved</div>
+
 
 
 </body>
