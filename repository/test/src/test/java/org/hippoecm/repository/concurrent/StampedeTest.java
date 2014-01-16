@@ -218,26 +218,6 @@ public class StampedeTest {
         System.err.println("Successrate: " + (totalSuccesses + totalMisses) / (double)totalSteps);
         System.err.println("Total time it took: " + (endTime - startTime) / 1000.0 + " sec");
 
-
-        try {
-            int folders = 0, documents = 0;
-            Session session = hippoRepository.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
-            for (Node node : new NodeIterable(session.getNode("/content/documents/default").getNodes())) {
-                if (node.getName().startsWith("folder")) {
-                    folders++;
-                }
-                else if (node.getName().startsWith("document")) {
-                    documents++;
-                }
-            }
-            System.err.println("Number of folders in /content/documents: " + folders);
-            System.err.println("Number of documents in /content/documents: " + documents);
-
-        } catch (RepositoryException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-
         if (totalFailures > 0) {
             System.err.println("Failures:");
             for (ActionFailure failure : failures) {
