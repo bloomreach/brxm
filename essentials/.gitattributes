@@ -726,10 +726,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentTypes.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
 plugin-dashboard/src/main/resources/log4j.xml -text
 plugin-dashboard/src/main/resources/nodetype.xml -text
 plugin-dashboard/src/main/resources/rest.xml -text
+plugin-dashboard/src/main/resources/rest_workflow_content_block_template.xml -text
 plugin-dashboard/src/main/resources/template.xml -text
 plugin-dashboard/src/main/webapp/META-INF/context.xml -text
 plugin-dashboard/src/main/webapp/WEB-INF/jsp/index.jsp -text
@@ -1997,10 +1999,12 @@ plugin-dashboard/src/main/webapp/tools/beanwriter/controller.js -text
 plugin-dashboard/src/main/webapp/tools/beanwriter/index.html -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/ContentBlocksTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/RestClientTest.java -text
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflowTest.java -text
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/JarResourceServletTest.java -text
 plugin-dashboard/src/test/resources/contentblocks-compare.json -text
 plugin-dashboard/src/test/resources/contentblocks.json -text
 plugin-dashboard/src/test/resources/keystore -text
+plugin-dashboard/src/test/resources/log4j.xml -text
 plugin-dashboard/src/test/resources/nodetype.xml -text
 plugin-dashboard/src/test/resources/template.xml -text
 /pom.xml -text

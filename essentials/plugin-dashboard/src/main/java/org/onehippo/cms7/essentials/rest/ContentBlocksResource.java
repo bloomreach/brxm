@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,17 +47,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.editor.repository.EditmodelWorkflow;
-import org.hippoecm.editor.repository.NamespaceWorkflow;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
@@ -75,6 +68,7 @@ import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
+import org.onehippo.cms7.essentials.rest.utils.RestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,18 +96,18 @@ public class ContentBlocksResource extends BaseResource {
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
-        String prefix = projectNamespacePrefix + ":";
+        String prefix = projectNamespacePrefix + ':';
 
         try {
             final List<String> primaryTypes = HippoNodeUtils.getPrimaryTypes(session, new AllDocumentMatcher(), "new-document");
             final Map<String, Compounds> compoundMap = getCompoundMap(servletContext);
 
             for (String primaryType : primaryTypes) {
-                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
-                final NodeIterator it = executeQuery(HippoNodeUtils.resolvePath(primaryType).substring(1) + "//element(*, frontend:plugin)[@cpItemsPath]");
+                final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
+                final NodeIterator it = executeQuery(MessageFormat.format("{0}//element(*, frontend:plugin)[@cpItemsPath]", HippoNodeUtils.resolvePath(primaryType).substring(1)));
                 while (it.hasNext()) {
                     final String name = it.nextNode().getName();
-                    String namespaceName = prefix + name;
+                    String namespaceName = MessageFormat.format("{0}{1}", prefix, name);
                     if (compoundMap.containsKey(namespaceName)) {
                         final Compounds compounds = compoundMap.get(namespaceName);
                         keyValueRestfulRestfulList.add(compounds);
@@ -134,8 +128,7 @@ public class ContentBlocksResource extends BaseResource {
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         final Query query = queryManager.createQuery(queryString, Query.XPATH);
         final QueryResult execute = query.execute();
-        final NodeIterator nodes = execute.getNodes();
-        return nodes;
+        return execute.getNodes();
 
     }
 
@@ -168,50 +161,12 @@ public class ContentBlocksResource extends BaseResource {
     @PUT
     @Path("/compounds/create/{name}")
     public KeyValueRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
-
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
-
-        String nameSpace = "/hippo:namespaces/" + projectNamespacePrefix;
         String item = "/hippo:namespaces/" + projectNamespacePrefix + '/' + name;
-
-        try {
-            if (session.itemExists(item)) {
-                throw new RestException("Item exists already", Response.Status.CONFLICT);
-            }
-
-            if (StringUtils.isNotEmpty(projectNamespacePrefix) && session.itemExists(nameSpace)) {
-                final Node namespace = session.getNode(nameSpace);
-                final WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-
-                final Workflow editor = workflowManager.getWorkflow("editor", namespace);
-
-                if (editor instanceof NamespaceWorkflow) {
-                    final NamespaceWorkflow namespaceWorkflowI = (NamespaceWorkflow) editor;
-                    namespaceWorkflowI.addCompoundType(name);
-                } else {
-                    log.error("editor was not instance of NamespaceWorkflow. Duplicated jars, we need org.onehippo.cms7:hippo-cms-editor-common to be within shared lib");
-                    throw new RestException("NamespaceWorkflow not found, check duplicate jars: org.onehippo.cms7:hippo-cms-editor-common jar needs to be in tomcat/lib", Response.Status.SERVICE_UNAVAILABLE);
-                }
-                if (session.nodeExists(item)) {
-                    final Node node = session.getNode(item);
-                    final Workflow workflow = workflowManager.getWorkflow("default", node);
-                    if (workflow instanceof EditmodelWorkflow) {
-                        EditmodelWorkflow editmodelWorkflow = (EditmodelWorkflow) workflow;
-                        editmodelWorkflow.edit();
-                        editmodelWorkflow.commit();
-                        final Node protoType = node.getNode("hipposysedit:prototypes/hipposysedit:prototype");
-                        protoType.setProperty("cbitem", true);
-                        session.save();
-                    }
-                }
-            } else {
-                throw new RestException("Namespace doesn't exist", Response.Status.NOT_FOUND);
-            }
-        } catch (RepositoryException | RemoteException | WorkflowException e) {
-            log.error("Exception happened while trying to access the namespace workflow {}", e);
-        }
+        final RestWorkflow workflow = new RestWorkflow(session, context);
+        workflow.addContentBlockCompound(name);
         return new KeyValueRestful(name, item);
     }
 

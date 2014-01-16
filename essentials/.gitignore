@@ -2399,6 +2399,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/target
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/*.iml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/.DS_Store
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/.idea
@@ -14287,6 +14293,12 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/.idea
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/atlassian-ide-plugin.xml
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/hippo-plugins.iws
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/target
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/*.iml
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/.DS_Store
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/.idea
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/atlassian-ide-plugin.xml
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/hippo-plugins.iws
+plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/target
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/*.iml
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/.DS_Store
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/.idea

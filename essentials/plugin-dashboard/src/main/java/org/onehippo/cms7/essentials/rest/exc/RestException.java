@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 /**
  * @version "$Id$"
  */
-public class RestException extends Throwable {
+public class RestException extends RuntimeException {
 
     private final Response.Status errorCode;
     private static final long serialVersionUID = 1L;
