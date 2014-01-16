@@ -1014,6 +1014,7 @@ integration/hst-tests/conf/context.xml -text
 integration/hst-tests/conf/log4j.dtd -text
 integration/hst-tests/conf/log4j.xml -text
 integration/hst-tests/conf/repository.xml -text
+integration/hst-tests/pom.xml -text
 integration/hst-tests/src/test/java/org/hippoecm/hst/integration/AbstractHstIntegrationTest.java -text
 integration/hst-tests/src/test/java/org/hippoecm/hst/integration/HstIntegrationTest.java -text
 integration/hst-tests/src/test/java/org/hippoecm/hst/integration/IntegrationHstManagerImpl.java -text
