@@ -52,11 +52,11 @@ public class JanitorAction extends Action {
             if (count > 10) {
                 child.remove();
             }
-        }
-        try {
-            node.getSession().save();
-        } catch (AssertionError e) {
-            context.getLog().error("TODO: " + e);
+            try {
+                node.getSession().save();
+            } catch (AssertionError e) {
+                context.getLog().error("TODO: " + e);
+            }
         }
         return node;
     }
