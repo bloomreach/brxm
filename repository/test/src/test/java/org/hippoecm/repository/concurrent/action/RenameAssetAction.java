@@ -22,7 +22,11 @@ import javax.jcr.Node;
 public class RenameAssetAction extends AbstractAssetActionsWorkflowAction {
 
     private final Random random = new Random(System.currentTimeMillis());
-    
+
+    public RenameAssetAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "move";

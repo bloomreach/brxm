@@ -19,6 +19,10 @@ import javax.jcr.Node;
 
 public class PublishAction extends AbstractFullReviewedActionsWorkflowAction {
 
+    public PublishAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "publish";

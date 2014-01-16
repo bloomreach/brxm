@@ -22,8 +22,8 @@ import javax.jcr.lock.LockManager;
 
 public class LockAction extends Action {
 
-    public LockAction() {
-        super(null);
+    public LockAction(final ActionContext context) {
+        super(context);
     }
 
     @Override

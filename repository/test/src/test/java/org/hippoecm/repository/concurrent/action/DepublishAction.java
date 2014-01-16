@@ -19,6 +19,10 @@ import javax.jcr.Node;
 
 public class DepublishAction extends AbstractFullReviewedActionsWorkflowAction {
 
+    public DepublishAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "depublish";

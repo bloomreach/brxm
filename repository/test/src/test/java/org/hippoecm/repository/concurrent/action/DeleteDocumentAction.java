@@ -19,6 +19,10 @@ import javax.jcr.Node;
 
 public class DeleteDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
 
+    public DeleteDocumentAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "delete";

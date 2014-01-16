@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,14 +19,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.concurrent.action.Action;
+import org.hippoecm.repository.concurrent.action.ActionContext;
+import org.hippoecm.repository.concurrent.action.ActionFailure;
 import org.hippoecm.repository.concurrent.action.AddAssetAction;
 import org.hippoecm.repository.concurrent.action.AddAssetFolderAction;
 import org.hippoecm.repository.concurrent.action.AddDocumentFolderAction;
@@ -51,6 +57,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.fail;
 
@@ -61,76 +69,164 @@ import static org.junit.Assert.fail;
  * and StampedeTest.TIMEOUT respectively.
  */
 @RunWith(value = Parameterized.class)
-public class StampedeTest extends AbstractRandomActionTest {
+public class StampedeTest {
 
-    private final List<Action> actionSet = new ArrayList<Action>();
+    private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.concurrent.stampede");
 
-    public StampedeTest(int minutes, int nthreads) {
-        super(minutes, TimeUnit.MINUTES, nthreads);
+    private static final List<Class<? extends Action>> actions = new ArrayList<>();
+
+    static {
+        actions.add(GetDocumentBaseNodeAction.class);
+        actions.add(GetAssetBaseNodeAction.class);
+        actions.add(GetRandomChildNodeAction.class);
+        actions.add(AddDocumentFolderAction.class);
+        actions.add(AddAssetFolderAction.class);
+        actions.add(AddNewsDocumentAction.class);
+        actions.add(PublishAction.class);
+        actions.add(DepublishAction.class);
+        actions.add(DeleteDocumentAction.class);
+        actions.add(LoadDocumentAction.class);
+        actions.add(AddDocumentLinkAction.class);
+        actions.add(EditDocumentAction.class);
+        actions.add(AddAssetAction.class);
+        actions.add(DeleteAssetAction.class);
+        actions.add(RenameAssetAction.class);
+        actions.add(DeleteFolderAction.class);
+        actions.add(RenameDocumentAction.class);
+        actions.add(MoveDocumentAction.class);
+//        actions.add(LockAction.class);
+    }
+
+    private HippoRepository hippoRepository;
+
+    private final long duration;
+    private final int nthreads;
+    private final int throttle;
+    private final boolean prompt;
+
+    public StampedeTest(int minutes, int nthreads, int throttle, boolean prompt) {
+        this.duration = TimeUnit.MINUTES.toMillis(minutes);
+        this.nthreads = nthreads;
+        this.throttle = throttle;
+        this.prompt = prompt;
+
     }
 
     @Parameters
     public static Collection<Object[]> parameters() {
-        Object[][] data = new Object[][] {{ Integer.getInteger("stampede.minutes", 1), Integer.getInteger("stampede.threads", 3) }};
+        Object[][] data = new Object[][] {{
+                Integer.getInteger("stampede.minutes", 1),
+                Integer.getInteger("stampede.threads", 3),
+                Integer.getInteger("stampede.throttle", 0),
+                Boolean.getBoolean("stampede.prompt")}};
         return Arrays.asList(data);
     }
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        actionSet.add(new GetDocumentBaseNodeAction(context));
-        actionSet.add(new GetAssetBaseNodeAction(context));
-        actionSet.add(new GetRandomChildNodeAction());
-        actionSet.add(new AddDocumentFolderAction(context));
-        actionSet.add(new AddAssetFolderAction(context));
-        actionSet.add(new AddNewsDocumentAction(context));
-        actionSet.add(new PublishAction());
-        actionSet.add(new DepublishAction());
-        actionSet.add(new DeleteDocumentAction());
-        actionSet.add(new LoadDocumentAction());
-        actionSet.add(new AddDocumentLinkAction(context));
-        actionSet.add(new EditDocumentAction());
-        actionSet.add(new AddAssetAction(context));
-        actionSet.add(new DeleteAssetAction());
-        actionSet.add(new RenameAssetAction());
-        actionSet.add(new DeleteFolderAction(context));
-        actionSet.add(new RenameDocumentAction());
-        actionSet.add(new MoveDocumentAction(context));
-//        actionSet.add(new LockAction());
+        hippoRepository = HippoRepositoryFactory.getHippoRepository();
+        final Repository repository = hippoRepository.getRepository();
+        final Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        new ActionContext(session, log).start();
+        session.logout();
     }
 
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
+        if (hippoRepository != null) {
+            if (prompt) {
+                System.out.println("Press enter to stop repository...");
+                System.console().readLine();
+            }
+            hippoRepository.close();
+        }
     }
 
     @Test(timeout=3600000)
     public void stampede() throws Exception {
-        final RandomActionRunner[] runners = new RandomActionRunner[nthreads];
+        final ActionRunner[] runners = new ActionRunner[nthreads];
         for (int i = 0; i < nthreads; i++) {
-            Session runnerSession = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-            runners[i] = new RandomActionRunner(runnerSession, actionSet);
+            Session runnerSession = hippoRepository.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
+            runners[i] = new RandomActionRunner(runnerSession, log, actions, duration, throttle);
             runners[i].setDaemon(true);
         }
-        if (Boolean.getBoolean("stampede.prompt")) {
+        if (prompt) {
             System.out.println("Press enter to start test...");
             System.console().readLine();
         }
-        for(RandomActionRunner runner : runners) {
+        for(ActionRunner runner : runners) {
             runner.start();
         }
         long startTime;
         startTime = System.currentTimeMillis();
-        for(RandomActionRunner runner : runners) {
+        for(ActionRunner runner : runners) {
             runner.join();
         }
         long endTime = System.currentTimeMillis();
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        for(RandomActionRunner runner : runners) {
+        for(ActionRunner runner : runners) {
             runner.terminate(executor);
         }
-        if(!report(runners, startTime, endTime, actionSet)) {
+        if(!report(runners, startTime, endTime)) {
             fail();
         }
     }
+
+    public boolean report(ActionRunner[] runners, long startTime, long endTime) {
+        int totalSteps = 0;
+        int totalWriteSteps = 0;
+        for (Class<? extends Action> actionClass : actions) {
+
+            int actionCount = 0;
+            int actionFailures = 0;
+            int actionMissed = 0;
+            int timeSpent = 0;
+            for (ActionRunner runner : runners) {
+                final Action action = runner.getContext().getAction(actionClass);
+                totalSteps += action.getCount();
+                if (action.isWriteAction()) {
+                    totalWriteSteps += action.getCount();
+                }
+                for (ActionFailure failure : runner.getFailures()) {
+                    if (failure.getAction().getClass().equals(actionClass)) {
+                        actionFailures++;
+                    }
+                }
+                actionCount += action.getCount();
+                actionMissed += action.getMissed();
+                timeSpent += action.getTimeSpent();
+            }
+
+            int averageTime = (actionCount == 0 || timeSpent == 0) ? 0 : (timeSpent / actionCount);
+            System.err.println(actionClass.getSimpleName() + " executed " + actionCount + " times; " +
+                    "missed "+ actionMissed + " failed " + actionFailures + " times; " +
+                    "total time spent " + timeSpent + " ms; " +
+                    "average time " + averageTime);
+        }
+        int totalFailures = 0, totalSuccesses = 0, totalMisses = 0;
+        List<ActionFailure> failures = new ArrayList<ActionFailure>();
+        for (ActionRunner runner : runners) {
+            totalFailures += runner.getFailures().size();
+            failures.addAll(runner.getFailures());
+            totalSuccesses += runner.getSuccesses();
+            totalMisses += runner.getMisses();
+        }
+        System.err.println("Total actions run: " + totalSteps);
+        System.err.println("Total successful actions: " + totalSuccesses);
+        System.err.println("Total write actions run: " + totalWriteSteps);
+        // missed actions are those that have recoverable exceptions; added for completeness
+        System.err.println("Total missed actions: " + totalMisses);
+        System.err.println("Total failed actions: " + totalFailures);
+        System.err.println("Successrate: " + (totalSuccesses + totalMisses) / (double)totalSteps);
+        System.err.println("Total time it took: " + (endTime - startTime) / 1000.0 + " sec");
+        if (totalFailures > 0) {
+            System.err.println("Failures:");
+            for (ActionFailure failure : failures) {
+                failure.printFailure();
+            }
+            return false;
+        }
+        return true;
+    }
+
 }

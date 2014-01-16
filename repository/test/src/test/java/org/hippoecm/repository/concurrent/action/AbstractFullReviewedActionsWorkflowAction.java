@@ -30,10 +30,6 @@ public abstract class AbstractFullReviewedActionsWorkflowAction extends Abstract
     private static final String WORKFLOW_CATEGORY = "default";
     private static final Class<FullReviewedActionsWorkflow> WORKFLOW_CLASS = FullReviewedActionsWorkflow.class;
     
-    public AbstractFullReviewedActionsWorkflowAction() {
-        this(null);
-    }
-    
     public AbstractFullReviewedActionsWorkflowAction(ActionContext context) {
         super(context);
     }

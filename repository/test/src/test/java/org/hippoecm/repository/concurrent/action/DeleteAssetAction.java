@@ -19,6 +19,10 @@ import javax.jcr.Node;
 
 public class DeleteAssetAction extends AbstractAssetActionsWorkflowAction {
 
+    public DeleteAssetAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "delete";

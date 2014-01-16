@@ -347,7 +347,8 @@ test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#tex
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/SecurityDelegationTest.java -text
 test/src/test/java/org/hippoecm/repository/VersioningWorkflowTest.java -text
-test/src/test/java/org/hippoecm/repository/concurrent/AbstractRandomActionTest.java -text
+test/src/test/java/org/hippoecm/repository/concurrent/ActionRunner.java -text
+test/src/test/java/org/hippoecm/repository/concurrent/RandomActionRunner.java -text
 test/src/test/java/org/hippoecm/repository/concurrent/StampedeTest.java -text
 test/src/test/java/org/hippoecm/repository/concurrent/action/AbstractAssetActionsWorkflowAction.java -text
 test/src/test/java/org/hippoecm/repository/concurrent/action/AbstractFolderWorkflowAction.java -text

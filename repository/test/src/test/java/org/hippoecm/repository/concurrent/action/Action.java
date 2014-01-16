@@ -71,9 +71,6 @@ public abstract class Action {
         return timeSpent.get();
     }
     
-    /**
-     * Override to tweak the probably of this action to be run.
-     */
     public double getWeight() {
         return 1.0;
     }

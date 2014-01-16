@@ -26,8 +26,8 @@ import org.hippoecm.repository.api.HippoNode;
  */
 public class LoadDocumentAction extends Action {
 
-    public LoadDocumentAction() {
-        super(null);
+    public LoadDocumentAction(final ActionContext context) {
+        super(context);
     }
 
     @Override

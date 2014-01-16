@@ -23,6 +23,10 @@ import org.hippoecm.repository.api.Document;
 
 public class EditDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
 
+    public EditDocumentAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "obtainEditableInstance";

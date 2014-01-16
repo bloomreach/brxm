@@ -22,7 +22,11 @@ import javax.jcr.Node;
 public class RenameDocumentAction extends AbstractFullReviewedActionsWorkflowAction {
 
     private final Random random = new Random(System.currentTimeMillis());
-    
+
+    public RenameDocumentAction(final ActionContext context) {
+        super(context);
+    }
+
     @Override
     protected String getWorkflowMethodName() {
         return "move";

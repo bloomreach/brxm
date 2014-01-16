@@ -25,13 +25,10 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
  * If your action executes a method on FullReviewedActionsWorkflow then extend this class
  */
 public abstract class AbstractAssetActionsWorkflowAction extends AbstractWorkflowAction {
+
     private static final String WORKFLOW_CATEGORY = "default";
     private static final Class<DefaultWorkflow> WORKFLOW_CLASS = DefaultWorkflow.class;
-    
-    public AbstractAssetActionsWorkflowAction() {
-        this(null);
-    }
-    
+
     public AbstractAssetActionsWorkflowAction(ActionContext context) {
         super(context);
     }

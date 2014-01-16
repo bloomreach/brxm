@@ -25,8 +25,8 @@ public class GetRandomChildNodeAction extends Action {
 
     private Random random = new Random(System.currentTimeMillis());
     
-    public GetRandomChildNodeAction() {
-        super(null);
+    public GetRandomChildNodeAction(ActionContext context) {
+        super(context);
     }
     
     @Override
