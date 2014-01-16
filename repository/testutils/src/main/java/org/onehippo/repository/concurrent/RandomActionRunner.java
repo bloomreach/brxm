@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Random;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.onehippo.repository.concurrent.action.Action;
@@ -35,6 +37,45 @@ public class RandomActionRunner extends ActionRunner {
                               final long duration,
                               final long throttle) {
         super(session, log, actions, duration, throttle);
+    }
+
+    @Override
+    protected Node selectNode() throws RepositoryException {
+        Node root;
+        if (random.nextGaussian() < .75) {
+            root = context.getDocumentBase();
+        } else {
+            root = context.getAssetBase();
+        }
+        Node node = null;
+        while (node == null) {
+            try {
+                node = traverse(root);
+            } catch (RepositoryException e) {
+                log.debug("Failed to traverse nodes: " + e);
+            }
+        }
+        return node;
+    }
+
+    private Node traverse(final Node node) throws RepositoryException {
+        if (node.hasNodes() && random.nextGaussian() < .5) {
+            final NodeIterator nodes = node.getNodes();
+            final int size = (int)nodes.getSize();
+            if (size > 0) {
+                int index = random.nextInt(size);
+                if (index > 0) {
+                    nodes.skip(index-1);
+                }
+                Node child = nodes.nextNode();
+                if (child.isNodeType("hippo:handle")) {
+                    child = child.getNode(child.getName());
+                    return child;
+                }
+                return traverse(child);
+            }
+        }
+        return node;
     }
 
     @Override

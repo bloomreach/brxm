@@ -88,6 +88,10 @@ public final class ActionContext {
         return actions.get(actionClass);
     }
 
+    public Logger getLog() {
+        return log;
+    }
+
     private Action createAction(final Class<? extends Action> actionClass) {
         try {
             return actionClass.getConstructor(ActionContext.class).newInstance(this);

@@ -423,11 +423,8 @@ testutils/src/main/java/org/onehippo/repository/concurrent/action/DeleteDocument
 testutils/src/main/java/org/onehippo/repository/concurrent/action/DeleteFolderAction.java -text
 testutils/src/main/java/org/onehippo/repository/concurrent/action/DepublishAction.java -text
 testutils/src/main/java/org/onehippo/repository/concurrent/action/EditDocumentAction.java -text
-testutils/src/main/java/org/onehippo/repository/concurrent/action/GetAssetBaseNodeAction.java -text
-testutils/src/main/java/org/onehippo/repository/concurrent/action/GetDocumentBaseNodeAction.java -text
-testutils/src/main/java/org/onehippo/repository/concurrent/action/GetParentAction.java -text
-testutils/src/main/java/org/onehippo/repository/concurrent/action/GetRandomChildNodeAction.java -text
 testutils/src/main/java/org/onehippo/repository/concurrent/action/Hippo.pdf -text
+testutils/src/main/java/org/onehippo/repository/concurrent/action/JanitorAction.java -text
 testutils/src/main/java/org/onehippo/repository/concurrent/action/LoadDocumentAction.java -text
 testutils/src/main/java/org/onehippo/repository/concurrent/action/LockAction.java -text
 testutils/src/main/java/org/onehippo/repository/concurrent/action/MoveDocumentAction.java -text

@@ -39,7 +39,7 @@ public abstract class ActionRunner extends Thread {
 
     private static boolean stopRunning = false;
 
-    private final Session session;
+    protected final Session session;
     protected final Logger log;
     protected final ActionContext context;
     protected final List<Class<? extends Action>> actions;
@@ -105,19 +105,12 @@ public abstract class ActionRunner extends Thread {
         } catch (RepositoryException ex) {
             log.error("Failed to add event listener for thread " + Thread.currentThread().getName(), ex);
         }
-        Node node = null;
         while (keepRunning()) {
-            if (node == null) {
-                try {
-                    session.refresh(false);
-                    node = context.getDocumentBase();
-                } catch (RepositoryException e) {
-                    log.error("Failed to initialize runner", e);
-                    stopRunning = true;
-                }
-            }
-            if (node != null) {
-                node = step(node);
+            try {
+                step(selectNode());
+            } catch (RepositoryException e) {
+                log.error("Failed to select node: " + e);
+                stopRunning = true;
             }
         }
         try {
@@ -126,6 +119,8 @@ public abstract class ActionRunner extends Thread {
             log.error("Failed to remove event listener for thread " + Thread.currentThread().getName());
         }
     }
+
+    protected abstract Node selectNode() throws RepositoryException;
 
     public int getMisses() {
         return misses;
@@ -214,7 +209,10 @@ public abstract class ActionRunner extends Thread {
 
     private boolean isRecoverableException(Exception e) {
         if (e instanceof RepositoryException) {
-            return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException));
+            return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
+        }
+        if (e.getClass().getSimpleName().endsWith("ItemStateException")) {
+            return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
         }
         if (e instanceof WorkflowException) {
             if (!e.getMessage().equals("Cannot rename document to same name")) {

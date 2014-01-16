@@ -23,12 +23,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.concurrent.ActionRunner;
 import org.onehippo.repository.concurrent.RandomActionRunner;
 import org.onehippo.repository.concurrent.action.Action;
@@ -44,9 +47,7 @@ import org.onehippo.repository.concurrent.action.DeleteDocumentAction;
 import org.onehippo.repository.concurrent.action.DeleteFolderAction;
 import org.onehippo.repository.concurrent.action.DepublishAction;
 import org.onehippo.repository.concurrent.action.EditDocumentAction;
-import org.onehippo.repository.concurrent.action.GetAssetBaseNodeAction;
-import org.onehippo.repository.concurrent.action.GetDocumentBaseNodeAction;
-import org.onehippo.repository.concurrent.action.GetRandomChildNodeAction;
+import org.onehippo.repository.concurrent.action.JanitorAction;
 import org.onehippo.repository.concurrent.action.LoadDocumentAction;
 import org.onehippo.repository.concurrent.action.MoveDocumentAction;
 import org.onehippo.repository.concurrent.action.PublishAction;
@@ -74,29 +75,25 @@ public class StampedeTest {
 
     private static final Logger log = LoggerFactory.getLogger("org.hippoecm.repository.concurrent.stampede");
 
-    private static final List<Class<? extends Action>> actions = new ArrayList<>();
-
-    static {
-        actions.add(GetDocumentBaseNodeAction.class);
-        actions.add(GetAssetBaseNodeAction.class);
-        actions.add(GetRandomChildNodeAction.class);
-        actions.add(AddDocumentFolderAction.class);
-        actions.add(AddAssetFolderAction.class);
-        actions.add(AddNewsDocumentAction.class);
-        actions.add(PublishAction.class);
-        actions.add(DepublishAction.class);
-        actions.add(DeleteDocumentAction.class);
-        actions.add(LoadDocumentAction.class);
-        actions.add(AddDocumentLinkAction.class);
-        actions.add(EditDocumentAction.class);
-        actions.add(AddAssetAction.class);
-        actions.add(DeleteAssetAction.class);
-        actions.add(RenameAssetAction.class);
-        actions.add(DeleteFolderAction.class);
-        actions.add(RenameDocumentAction.class);
-        actions.add(MoveDocumentAction.class);
-//        actions.add(LockAction.class);
-    }
+    private static final List<Class<? extends Action>> actions = new ArrayList<Class<? extends Action>>() {{
+        add(AddDocumentFolderAction.class);
+        add(AddAssetFolderAction.class);
+        add(AddNewsDocumentAction.class);
+        add(PublishAction.class);
+        add(DepublishAction.class);
+        add(DeleteDocumentAction.class);
+        add(LoadDocumentAction.class);
+        add(AddDocumentLinkAction.class);
+        add(EditDocumentAction.class);
+        add(AddAssetAction.class);
+        add(DeleteAssetAction.class);
+        add(RenameAssetAction.class);
+        add(DeleteFolderAction.class);
+        add(RenameDocumentAction.class);
+        add(MoveDocumentAction.class);
+        add(JanitorAction.class);
+//        add(LockAction.class);
+    }};
 
     private HippoRepository hippoRepository;
 
@@ -220,6 +217,27 @@ public class StampedeTest {
         System.err.println("Total failed actions: " + totalFailures);
         System.err.println("Successrate: " + (totalSuccesses + totalMisses) / (double)totalSteps);
         System.err.println("Total time it took: " + (endTime - startTime) / 1000.0 + " sec");
+
+
+        try {
+            int folders = 0, documents = 0;
+            Session session = hippoRepository.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
+            for (Node node : new NodeIterable(session.getNode("/content/documents/default").getNodes())) {
+                if (node.getName().startsWith("folder")) {
+                    folders++;
+                }
+                else if (node.getName().startsWith("document")) {
+                    documents++;
+                }
+            }
+            System.err.println("Number of folders in /content/documents: " + folders);
+            System.err.println("Number of documents in /content/documents: " + documents);
+
+        } catch (RepositoryException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
         if (totalFailures > 0) {
             System.err.println("Failures:");
             for (ActionFailure failure : failures) {
