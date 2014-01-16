@@ -67,7 +67,7 @@ var app;
                     if(data.data.successMessage){
                         $rootScope.globalError = [];
                         $rootScope.feedbackMessages = [];
-                        $rootScope.feedbackMessages.push(data.data.successMessage);
+                        $rootScope.feedbackMessages.push(data.data.value);
                     }
                     $log.info(data);
                     return data || $q.when(data);
