@@ -295,7 +295,7 @@ public class JavaSourceUtils {
         generatedAnnotation.setTypeName(ast.newName(HippoEssentialsGenerated.class.getSimpleName()));
         // name
         final MemberValuePair generatedMemberValue = ast.newMemberValuePair();
-        generatedMemberValue.setName(ast.newSimpleName(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIUBUTE));
+        generatedMemberValue.setName(ast.newSimpleName(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE));
         final StringLiteral internalNameLiteral = ast.newStringLiteral();
         internalNameLiteral.setLiteralValue(internalName);
         generatedMemberValue.setValue(internalNameLiteral);

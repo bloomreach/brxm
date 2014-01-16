@@ -94,7 +94,7 @@ public final class EssentialConst {
     public static final String NODE_ANNOTATION_NAME = "Node";
     public static final String INVALID_METHOD_NAME = "getTODO";
     public static final String INVALID_CLASS_NAME = "InvalidClassName";
-    public static final String ANNOTATION_INTERNAL_NAME_ATTRIUBUTE = "internalName";
+    public static final String ANNOTATION_INTERNAL_NAME_ATTRIBUTE = "internalName";
 
     private EssentialConst() {
     }

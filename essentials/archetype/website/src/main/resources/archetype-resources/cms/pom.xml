@@ -1,5 +1,5 @@
 #set( $dollar = '$' )
-<?xml version="1.0" encoding="UTF-8"?>
+  <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -26,17 +26,11 @@
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
     </dependency>
- 
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-cms-dependencies</artifactId>
       <type>pom</type>
-      <exclusions>
-        <exclusion>
-          <artifactId>hippo-cms-editor-common</artifactId>
-          <groupId>org.onehippo.cms7</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -78,7 +72,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-   
+
   </dependencies>
 
   <profiles>
@@ -106,7 +100,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <packagingExcludes>WEB-INF/lib/hippo-cms-editor-common-*.jar</packagingExcludes>
           <archive>
             <manifestEntries>
               <Hippo-Release-Version>${hippo.release.version}</Hippo-Release-Version>
