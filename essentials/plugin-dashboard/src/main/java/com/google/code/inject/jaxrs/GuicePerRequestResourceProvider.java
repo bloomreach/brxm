@@ -15,9 +15,6 @@
  */
 package com.google.code.inject.jaxrs;
 
-import static com.google.code.inject.jaxrs.scope.CXFScopes.REQUEST;
-import static com.google.inject.Scopes.NO_SCOPE;
-
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.message.Message;
 
@@ -27,40 +24,44 @@ import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
 import com.google.inject.Scope;
 
+import static com.google.code.inject.jaxrs.scope.CXFScopes.REQUEST;
+import static com.google.inject.Scopes.NO_SCOPE;
+
 class GuicePerRequestResourceProvider<T> implements ResourceProvider {
 
-	private final Provider<T> provider;
-	private final Class<?> actualType;
+    private final Provider<T> provider;
+    private final Class<?> actualType;
 
-	@Inject
-	protected GuicePerRequestResourceProvider(BindingProvider<T> binding,
-			Provider<T> provider) {
-		final Scope scope = binding.getScope();
-		if (NO_SCOPE != scope && REQUEST != scope)
-			throw new ProvisionException("Invalid scope " + scope + " of "
-					+ binding.getKey());
-		this.actualType = binding.getActualType();
-		this.provider = provider;
-	}
+    @Inject
+    protected GuicePerRequestResourceProvider(BindingProvider<T> binding,
+                                              Provider<T> provider) {
+        final Scope scope = binding.getScope();
+        if (NO_SCOPE != scope && REQUEST != scope) {
+            throw new ProvisionException("Invalid scope " + scope + " of "
+                    + binding.getKey());
+        }
+        this.actualType = binding.getActualType();
+        this.provider = provider;
+    }
 
-	@Override
-	public Object getInstance(Message m) {
-		return provider.get();
-	}
+    @Override
+    public Object getInstance(Message m) {
+        return provider.get();
+    }
 
-	@Override
-	public void releaseInstance(Message m, Object o) {
-		// NOOP
-	}
+    @Override
+    public void releaseInstance(Message m, Object o) {
+        // NOOP
+    }
 
-	@Override
-	public Class<?> getResourceClass() {
-		return actualType;
-	}
+    @Override
+    public Class<?> getResourceClass() {
+        return actualType;
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
 }

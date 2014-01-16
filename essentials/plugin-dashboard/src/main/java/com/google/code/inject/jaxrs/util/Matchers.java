@@ -15,12 +15,6 @@
  */
 package com.google.code.inject.jaxrs.util;
 
-import static java.lang.reflect.Modifier.isPublic;
-import static java.lang.reflect.Modifier.isStatic;
-import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getAnnotatedMethod;
-import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getHttpMethodValue;
-import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getMethodAnnotation;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
@@ -29,40 +23,47 @@ import javax.ws.rs.Path;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
 
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
+import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getAnnotatedMethod;
+import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getHttpMethodValue;
+import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getMethodAnnotation;
+
 public final class Matchers {
 
-	public static Matcher<Method> resourceMethod() {
+    public static Matcher<Method> resourceMethod() {
 
-		return new AbstractMatcher<Method>() {
-			@Override
-			public boolean matches(Method m) {
-				return isResourceMethod(m);
+        return new AbstractMatcher<Method>() {
+            @Override
+            public boolean matches(Method m) {
+                return isResourceMethod(m);
 
-			}
-		};
-	}
+            }
+        };
+    }
 
-	public static Matcher<Method> resourceMethod(
-			final Class<? extends Annotation> annotation) {
+    public static Matcher<Method> resourceMethod(
+            final Class<? extends Annotation> annotation) {
 
-		return new AbstractMatcher<Method>() {
-			@Override
-			public boolean matches(Method m) {
-				return isResourceMethod(m)
-						&& getAnnotatedMethod(m).getAnnotation(annotation) != null;
+        return new AbstractMatcher<Method>() {
+            @Override
+            public boolean matches(Method m) {
+                return isResourceMethod(m)
+                        && getAnnotatedMethod(m).getAnnotation(annotation) != null;
 
-			}
-		};
-	}
+            }
+        };
+    }
 
-	private static boolean isResourceMethod(Method m) {
-		final Method annotatedMethod = getAnnotatedMethod(m);
+    private static boolean isResourceMethod(Method m) {
+        final Method annotatedMethod = getAnnotatedMethod(m);
 
-		final int mod = m.getModifiers();
-		if (!isPublic(mod) || isStatic(mod))
-			return false;
+        final int mod = m.getModifiers();
+        if (!isPublic(mod) || isStatic(mod)) {
+            return false;
+        }
 
-		return getHttpMethodValue(annotatedMethod) != null
-				|| getMethodAnnotation(annotatedMethod, Path.class) != null;
-	}
+        return getHttpMethodValue(annotatedMethod) != null
+                || getMethodAnnotation(annotatedMethod, Path.class) != null;
+    }
 }

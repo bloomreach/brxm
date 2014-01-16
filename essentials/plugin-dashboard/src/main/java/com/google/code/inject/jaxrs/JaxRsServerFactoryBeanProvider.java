@@ -15,11 +15,6 @@
  */
 package com.google.code.inject.jaxrs;
 
-import static com.google.code.inject.jaxrs.CXFServerModule.DIRECTION_IN;
-import static com.google.code.inject.jaxrs.CXFServerModule.DIRECTION_OUT;
-import static com.google.code.inject.jaxrs.internal.DefaultInvoker.isDefault;
-import static org.apache.cxf.jaxrs.utils.ResourceUtils.isValidResourceClass;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,79 +35,90 @@ import com.google.inject.Inject;
 import com.google.inject.ProvisionException;
 import com.google.inject.name.Named;
 
+import static com.google.code.inject.jaxrs.CXFServerModule.DIRECTION_IN;
+import static com.google.code.inject.jaxrs.CXFServerModule.DIRECTION_OUT;
+import static com.google.code.inject.jaxrs.internal.DefaultInvoker.isDefault;
+import static org.apache.cxf.jaxrs.utils.ResourceUtils.isValidResourceClass;
+
 class JaxRsServerFactoryBeanProvider implements
-		com.google.inject.Provider<JAXRSServerFactoryBean> {
+        com.google.inject.Provider<JAXRSServerFactoryBean> {
 
-	private static void verifySingletons(Iterable<Object> singletons) {
-		final Set<String> set = new HashSet<String>();
-		for (final Object s : singletons) {
-			final Class<?> type = s.getClass();
+    private static void verifySingletons(Iterable<Object> singletons) {
+        final Set<String> set = new HashSet<String>();
+        for (final Object s : singletons) {
+            final Class<?> type = s.getClass();
 
-			if (!isValidResourceClass(type))
-				throw new ProvisionException("Type " + type + " is not valid");
+            if (!isValidResourceClass(type)) {
+                throw new ProvisionException("Type " + type + " is not valid");
+            }
 
-			if (type.getAnnotation(Provider.class) == null)
-				throw new ProvisionException("Type " + type
-						+ " is not annoatated with @Provider");
+            if (type.getAnnotation(Provider.class) == null) {
+                throw new ProvisionException("Type " + type
+                        + " is not annoatated with @Provider");
+            }
 
-			if (!set.add(type.getName())) {
-				throw new ProvisionException(
-						"More than one instance of the same singleton class "
-								+ type.getName() + " is available");
-			}
-		}
-	}
+            if (!set.add(type.getName())) {
+                throw new ProvisionException(
+                        "More than one instance of the same singleton class "
+                                + type.getName() + " is available");
+            }
+        }
+    }
 
-	private final JAXRSServerFactoryBean bean;
+    private final JAXRSServerFactoryBean bean;
 
-	@Inject
-	protected JaxRsServerFactoryBeanProvider(ServerConfiguration config,
-			Set<ResourceProvider> resourceProviders,
-			@Named(DIRECTION_IN) Set<Interceptor<?>> inInterceptors,
-			@Named(DIRECTION_OUT) Set<Interceptor<?>> outInterceptors,
-			@JaxRsProvider Set<Object> providers, Invoker invoker) {
+    @Inject
+    protected JaxRsServerFactoryBeanProvider(ServerConfiguration config,
+                                             Set<ResourceProvider> resourceProviders,
+                                             @Named(DIRECTION_IN) Set<Interceptor<?>> inInterceptors,
+                                             @Named(DIRECTION_OUT) Set<Interceptor<?>> outInterceptors,
+                                             @JaxRsProvider Set<Object> providers, Invoker invoker) {
 
-		final Class<?>[] resourceClasses = new Class<?>[resourceProviders
-				.size()];
-		final Map<Class<?>, ResourceProvider> map = new HashMap<Class<?>, ResourceProvider>();
+        final Class<?>[] resourceClasses = new Class<?>[resourceProviders
+                .size()];
+        final Map<Class<?>, ResourceProvider> map = new HashMap<Class<?>, ResourceProvider>();
 
-		verifySingletons(providers);
+        verifySingletons(providers);
 
-		int i = 0;
-		for (final ResourceProvider rp : resourceProviders) {
-			final Class<?> c = rp.getResourceClass();
-			if (!isValidResourceClass(c))
-				throw new ProvisionException(c
-						+ " is not a valid resource class");
-			resourceClasses[i++] = c;
-			map.put(c, rp);
-		}
+        int i = 0;
+        for (final ResourceProvider rp : resourceProviders) {
+            final Class<?> c = rp.getResourceClass();
+            if (!isValidResourceClass(c)) {
+                throw new ProvisionException(c
+                        + " is not a valid resource class");
+            }
+            resourceClasses[i++] = c;
+            map.put(c, rp);
+        }
 
-		bean = new JAXRSServerFactoryBean();
-		bean.setAddress(config.getAddress());
-		bean.setStaticSubresourceResolution(config.isStaticResourceResolution());
+        bean = new JAXRSServerFactoryBean();
+        bean.setAddress(config.getAddress());
+        bean.setStaticSubresourceResolution(config.isStaticResourceResolution());
 
-		bean.setResourceClasses(resourceClasses);
-		for (final Map.Entry<Class<?>, ResourceProvider> entry : map.entrySet()) {
-			bean.setResourceProvider(entry.getKey(), entry.getValue());
-		}
+        bean.setResourceClasses(resourceClasses);
+        for (final Map.Entry<Class<?>, ResourceProvider> entry : map.entrySet()) {
+            bean.setResourceProvider(entry.getKey(), entry.getValue());
+        }
 
-		bean.setProviders(new ArrayList<>(providers));
+        bean.setProviders(new ArrayList<>(providers));
 
-		if (!inInterceptors.isEmpty())
-			bean.setInInterceptors(new ArrayList<Interceptor<? extends Message>>(inInterceptors));
+        if (!inInterceptors.isEmpty()) {
+            bean.setInInterceptors(new ArrayList<Interceptor<? extends Message>>(inInterceptors));
+        }
 
-		if (!outInterceptors.isEmpty())
-			bean.setOutInterceptors(new ArrayList<Interceptor<? extends Message>>(
-					outInterceptors));
+        if (!outInterceptors.isEmpty()) {
+            bean.setOutInterceptors(new ArrayList<Interceptor<? extends Message>>(
+                    outInterceptors));
+        }
 
-		if (!isDefault(invoker))
-			bean.setInvoker(invoker);
+        if (!isDefault(invoker)) {
+            bean.setInvoker(invoker);
+        }
 
-	}
+    }
 
-	@Override
-	public JAXRSServerFactoryBean get() {
-		return bean;
-	}
+    @Override
+    public JAXRSServerFactoryBean get() {
+        return bean;
+    }
 }

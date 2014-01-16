@@ -23,20 +23,19 @@ import org.apache.cxf.service.invoker.Invoker;
  */
 public final class DefaultInvoker implements Invoker {
 
-	@Override
-	public Object invoke(Exchange arg0, Object arg1) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Object invoke(Exchange arg0, Object arg1) {
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * Is an invoker a default marker.
-	 *
-	 * @param invoker
-	 *            instance to check
-	 * @return true if invoker is an instance of DefaultInvoker
-	 */
-	public static boolean isDefault(Invoker invoker) {
-		return invoker instanceof DefaultInvoker;
-	}
+    /**
+     * Is an invoker a default marker.
+     *
+     * @param invoker instance to check
+     * @return true if invoker is an instance of DefaultInvoker
+     */
+    public static boolean isDefault(Invoker invoker) {
+        return invoker instanceof DefaultInvoker;
+    }
 
 }
