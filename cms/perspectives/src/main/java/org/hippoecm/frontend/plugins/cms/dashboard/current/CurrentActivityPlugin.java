@@ -204,8 +204,8 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
             final Node node = nodeModel.getNode();
             try {
                 return isValidEvent(node) && isWorkflowOrLoginEvent(node) && isTopLevelEvent(node);
-            } catch (RepositoryException ignored) {
-                log.error("Ignored", ignored);
+            } catch (RepositoryException e) {
+                log.warn("Node rejected due to an exception", e);
             }
             return false;
         }
