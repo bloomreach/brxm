@@ -28,6 +28,12 @@ public class RestClient {
         this.baseResourceUri = baseResourceUri;
     }
 
+    public String getPluginList(){
+        final WebClient client = WebClient.create(baseResourceUri);
+        return client.accept(MediaType.WILDCARD).get(String.class);
+    }
+
+
     @SuppressWarnings("unchecked")
     public RestfulList<PluginRestful> getPlugins() {
 

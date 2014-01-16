@@ -100,8 +100,9 @@ var app;
             menus: root + '/menus/',
             /**
              * Returns list of all plugins
+             * //TODO: change this once we have marketplace up and running
              */
-            plugins: 'http://localhost:9090/marketplace/pluginRest',
+            plugins: root +"/plugins/",
             /**
              * Returns list of all plugins that need configuration
              */

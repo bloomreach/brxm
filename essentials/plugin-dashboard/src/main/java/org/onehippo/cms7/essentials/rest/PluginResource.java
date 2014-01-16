@@ -33,6 +33,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
@@ -92,23 +93,12 @@ public class PluginResource extends BaseResource {
 
     @GET
     @Path("/")
-    public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
+    public String getPluginList(@Context ServletContext servletContext) {
+
+        RestClient client = new RestClient("https://api.github.com/gists/8453217");
+        return client.getPluginList();
 
 
-        final RestfulList<PluginRestful> plugins = new RestfulList<>();
-        final List<Plugin> pluginList = getPlugins(servletContext);
-        for (Plugin plugin : pluginList) {
-            final PluginRestful resource = new PluginRestful();
-            if (Strings.isNullOrEmpty(plugin.getPluginLink())) {
-                log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
-                continue;
-            }
-            resource.setTitle(plugin.getName());
-            resource.setPluginLink(plugin.getPluginLink());
-            resource.setInstalled(checkInstalled(plugin));
-            plugins.add(resource);
-        }
-        return plugins;
     }
 
     @GET
