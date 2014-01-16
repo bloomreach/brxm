@@ -107,7 +107,7 @@ import org.slf4j.LoggerFactory;
  * <p>You can also configure multiple JCR property names in the above init parameter by comma-separated value.</p>
  *
  * <p>Sometimes you do not want to set the content disposition headers for all files of a certain mime-type.
- * You can do this by adding a request parameter to the url to the resource. In the template you should be add the request param to the link.</p>
+ * You can do this by adding a request parameter to the url to the resource. In the template you should add the request param to the link.</p>
  *
  * <pre>
  * &lt;hst:link var="link" hippobean="${item}"&gt;
@@ -242,7 +242,7 @@ public class BinariesServlet extends HttpServlet {
         boolean setExpiresNeeded = setExpires;
         
         if (ContentDispositionUtils.isContentDispositionType(page.getMimeType(), contentDispositionContentTypes) ||
-                (request.getParameter(forceContentDispositionRequestParamName)!=null &&
+                (request.getParameter(forceContentDispositionRequestParamName) != null &&
                         Boolean.parseBoolean(request.getParameter(forceContentDispositionRequestParamName)))) {
             setExpiresNeeded = false;
             ContentDispositionUtils.addContentDispositionHeader(request, response, page.getFileName(),
