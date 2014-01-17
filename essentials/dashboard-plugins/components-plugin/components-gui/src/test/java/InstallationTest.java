@@ -1,4 +1,15 @@
-import com.google.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.Enumeration;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import javax.jcr.Session;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -18,16 +29,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Session;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Enumeration;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import com.google.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 

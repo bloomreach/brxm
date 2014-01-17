@@ -1,16 +1,10 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
-import org.apache.xmlbeans.impl.xb.xmlconfig.ConfigDocument;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.MemoryRepository;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 
 import static org.junit.Assert.assertEquals;

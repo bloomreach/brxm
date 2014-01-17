@@ -1,11 +1,11 @@
 package org.onehippo.cms7.essentials.dashboard.easyforms.installer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.AbstractCndInstaller;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EasyFormsInstaller extends AbstractCndInstaller {
 

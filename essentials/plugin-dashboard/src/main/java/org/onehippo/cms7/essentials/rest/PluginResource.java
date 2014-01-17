@@ -28,10 +28,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
@@ -40,6 +36,10 @@ import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /**
  * @version "$Id$"

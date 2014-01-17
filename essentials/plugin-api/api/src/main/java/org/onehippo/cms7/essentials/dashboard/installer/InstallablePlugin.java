@@ -1,6 +1,5 @@
 package org.onehippo.cms7.essentials.dashboard.installer;
 
-import org.apache.maven.model.Model;
 import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;

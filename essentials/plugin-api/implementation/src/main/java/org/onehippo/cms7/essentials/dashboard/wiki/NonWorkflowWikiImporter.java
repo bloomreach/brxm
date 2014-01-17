@@ -10,12 +10,12 @@ import javax.jcr.Session;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
-import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl;
 
 /**
  * @version "$Id$"

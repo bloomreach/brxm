@@ -16,7 +16,6 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import org.apache.jackrabbit.ocm.manager.ManagerConstant;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
