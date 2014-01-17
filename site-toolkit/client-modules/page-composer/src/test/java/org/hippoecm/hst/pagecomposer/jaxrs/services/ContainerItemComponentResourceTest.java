@@ -58,7 +58,6 @@ public class ContainerItemComponentResourceTest {
 
         List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node,
                                                                                                                    null,
-                                                                                                                   "",
                                                                                                                    "").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
@@ -69,7 +68,7 @@ public class ContainerItemComponentResourceTest {
     public void testGetParametersForDefaultPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
-        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "hippo-default", "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "hippo-default").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
         assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
@@ -79,7 +78,7 @@ public class ContainerItemComponentResourceTest {
     public void testGetParametersForPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
-        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "prefix", "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "prefix").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "baz", "");
         assertNameValueDefault(result.get(1), "parameterTwo", "", "test");

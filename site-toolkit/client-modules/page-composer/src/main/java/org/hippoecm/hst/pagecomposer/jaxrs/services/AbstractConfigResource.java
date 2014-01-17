@@ -91,17 +91,6 @@ public class AbstractConfigResource {
         return mount;
     }
 
-    protected void setCurrentMountCanonicalContentPath(HttpServletRequest servletRequest, String canonicalContentPath) {
-        HttpSession session = servletRequest.getSession(true);
-        session.setAttribute(CURRENT_MOUNT_CANONICAL_CONTENT_PATH, canonicalContentPath);
-    }
-
-    protected String getCurrentMountCanonicalContentPath(HttpServletRequest servletRequest) {
-        HttpSession session = servletRequest.getSession(true);
-        Object result = session.getAttribute(CURRENT_MOUNT_CANONICAL_CONTENT_PATH);
-        return result == null ? null : result.toString();
-    }
-
     protected Node getRequestConfigNode(final HstRequestContext requestContext, final String expectedNodeType) {
         String id = getRequestConfigIdentifier(requestContext);
         if(id == null) {

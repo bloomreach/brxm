@@ -45,6 +45,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -180,16 +181,15 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 log.warn("Failed to create Locale from string '{}'. Using default locale", localeString);
                 locale = Locale.getDefault();
             }
-            String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
-            return doGetParameters(getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant, currentMountCanonicalContentPath);
+            return doGetParameters(getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant);
         } catch (Exception e) {
             log.warn("Failed to retrieve parameters.", e);
         }
         return null;
     }
     
-    ContainerItemComponentRepresentation doGetParameters(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
-        return represent(node, locale, prefix, currentMountCanonicalContentPath);
+    ContainerItemComponentRepresentation doGetParameters(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
+        return represent(node, locale, prefix);
     }
 
 
@@ -202,7 +202,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
      * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
      */
-    private ContainerItemComponentRepresentation represent(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
+    private ContainerItemComponentRepresentation represent(Node node, Locale locale, String prefix) throws RepositoryException, ClassNotFoundException {
         List<ContainerItemComponentPropertyRepresentation> properties= new ArrayList<ContainerItemComponentPropertyRepresentation>();
 
         HstComponentParameters componentParameters = new HstComponentParameters(node);
@@ -212,12 +212,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
             componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
         }
-
         if (componentClassName != null) {
             Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
             if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
                 ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
-                properties = processor.getProperties(parametersInfo, locale, currentMountCanonicalContentPath);
+                String contentPath = "";
+                final HstRequestContext requestContext = RequestContextProvider.get();
+                if (requestContext != null) {
+                    contentPath = getEditingMount(requestContext).getContentPath();
+                }
+                properties = processor.getProperties(parametersInfo, locale, contentPath);
             }
             if (componentParameters.hasPrefix(prefix)) {
                 for (ContainerItemComponentPropertyRepresentation prop : properties) {
