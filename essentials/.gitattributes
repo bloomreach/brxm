@@ -460,7 +460,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/c
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/RecentlyInstalledPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DashboardPluginContext.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/PanelPluginContext.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/BaseEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/DisplayEvent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/event/InstructionEvent.java -text
@@ -492,11 +491,9 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginNamespaceMapper.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/PluginScreenshot.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/BaseJcrModel.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstComponent.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfiguration.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationBuilder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstConfigurationService.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMapItem.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMenu.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMenuItem.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/model/hst/HstSiteMenus.java -text
@@ -508,13 +505,10 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/m
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/setup/ProjectSetupPlugin.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/BeanWriterUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/CndUtils.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/ComponentsUtils.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/DocumentTemplateUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/EssentialConst.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GalleryUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/GlobalUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/HippoNodeUtils.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/HstUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JavaSourceUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JcrMatcher.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JcrPersistenceWriter.java -text
@@ -555,7 +549,6 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/w
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiNodeType.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiPediaToJCRHandler.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WikiStrategy.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/wiki/WorkflowWikiImporter.java -text
 plugin-api/implementation/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text
 plugin-api/implementation/src/main/resources/essentials_messages.properties -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/BaseRepositoryTest.java -text
