@@ -27,11 +27,12 @@ public class IntegrationHstManagerImpl extends HstManagerImpl {
         super.markStale();
     }
 
+    public boolean isBuilderStateFailed() {
+        return state == BuilderState.FAILED;
+    }
+
     public synchronized int getMarkStaleCounter() {
         return markStaleCounter;
     }
 
-    public BuilderState getState() {
-        return state;
-    }
 }
