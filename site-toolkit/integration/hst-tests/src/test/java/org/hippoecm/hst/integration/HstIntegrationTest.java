@@ -386,6 +386,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
         final int numberOfWrites;
         final int sleepTimeConfigurationWriter;
         int totalWriteAttempts;
+        Random rand = new Random();
 
         ConfigurationWriter(final Session remoteSession,
                             final Session localSession,
@@ -415,7 +416,12 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                                 path1);
                     }
                     remoteSession.save();
-                    localSession.refresh(false);
+
+                    // to include extra randomness, not always refresh the local session
+                    if (rand.nextBoolean()) {
+                      localSession.refresh(false);
+                    }
+
                 } catch (InterruptedException e) {
                     log.info("Thread interrupted. Finish thread");
                     break;
