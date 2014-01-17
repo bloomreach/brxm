@@ -149,6 +149,8 @@ public class RestWorkflow {
 
     }
 
+
+
     public boolean addContentBlockToType(final ContentBlockModel contentBlockModel) {
         final String documentType = contentBlockModel.getDocumentType();
         InputStream in = null;
@@ -188,7 +190,7 @@ public class RestWorkflow {
 
                     String fieldType = "${cluster.id}.field";
 
-                    if (pluginType.equals(ContentBlockModel.PluginType.TWOCOLUMN)) {
+                    if (pluginType.getClazz().equals(ContentBlockModel.PluginType.TWOCOLUMN.getClazz())) {
                         // switch (selected) {
                         //  case LEFT:
                         fieldType = "${cluster.id}.left.item";
@@ -212,6 +214,7 @@ public class RestWorkflow {
 
                     ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+
                     session.save();
                     return true;
                 }

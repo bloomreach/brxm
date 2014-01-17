@@ -178,6 +178,7 @@ public class ContentBlocksResource extends BaseResource {
             final List<KeyValueRestful> providers = documentType.getProviders().getItems();
             if (providers.isEmpty()) {
                 log.debug("DocumentType {} had no providers", documentType.getKey());
+                // TODO: remove them....
                 continue;
             }
             for (KeyValueRestful item : providers) {

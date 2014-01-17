@@ -156,7 +156,6 @@ public final class TemplateUtils {
         }
         try {
             final String content = GlobalUtils.readStreamAsText(stream);
-            log.info("content {}", content);
             return replaceTemplateData(content, data);
         } catch (Exception e) {
             log.error("Error processing template", e);

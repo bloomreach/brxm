@@ -31,7 +31,6 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
     };
 
     $scope.onDeleteProvider = function (provider) {
-        var index = $scope.providers.indexOf(provider);
 
         $http({
             method: 'DELETE',
