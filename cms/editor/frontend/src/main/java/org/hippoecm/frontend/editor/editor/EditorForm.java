@@ -237,7 +237,7 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
 
         @Override
         public void validate() throws ValidationException {
-            EditorForm.this.validate();
+            EditorForm.this.onValidateModelObjects();
         }
     }
 }
