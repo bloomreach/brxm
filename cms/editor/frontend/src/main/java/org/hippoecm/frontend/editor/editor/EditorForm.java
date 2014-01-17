@@ -114,30 +114,22 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IF
         };
         context.registerTracker(fieldTracker, engineId + ".wicket.root");
 
-        add(new IFormValidator() {
-
-            @Override
-            public FormComponent<?>[] getDependentFormComponents() {
-                return null;
-            }
-
-            @Override
-            public void validate(final Form<?> form) {
-                // do the validation
-                try {
-                    validation.doValidate();
-                    IValidationResult result = validation.getValidationResult();
-                    if (!result.isValid()) {
-                        log.debug("Invalid model {}", getModel());
-                    }
-                } catch (ValidationException e) {
-                    log.warn("Failed to validate " + getModel());
-                }
-            }
-        });
-
         add(new EmptyPanel("template"));
         createTemplate();
+    }
+
+    @Override
+    protected void onValidateModelObjects() {
+        // do the validation
+        try {
+            validation.doValidate();
+            IValidationResult result = validation.getValidationResult();
+            if (!result.isValid()) {
+                log.debug("Invalid model {}", getModel());
+            }
+        } catch (ValidationException e) {
+            log.warn("Failed to validate " + getModel());
+        }
     }
 
     public void destroy() {
