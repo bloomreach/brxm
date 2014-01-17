@@ -354,7 +354,7 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
             // multiple changes processed in a single RELOAD. Hence, the
             // modelReloadCounter is 99.99999999% sure expected to be lower than IntegrationHstManagerImpl#getMarkStaleCounter
 
-            assertTrue("modelReloadCounter should had been lower than hstManager.getMarkStaleCounter(). ",modelReloadCounter < hstManager.getMarkStaleCounter());
+            assertTrue("modelReloadCounter should had been lower than hstManager.getMarkStaleCounter(). ", modelReloadCounter < hstManager.getMarkStaleCounter());
             // SINCE THE remote session made totalNumberOfWritesToDo changes, the IntegrationHstManagerImpl#getMarkStaleCounter
             // should be totalNumberOfWritesToDo + 2 (the first one was of the copyPagesAndComponentsFromCommonConfig and
             // second for creating the preview)
