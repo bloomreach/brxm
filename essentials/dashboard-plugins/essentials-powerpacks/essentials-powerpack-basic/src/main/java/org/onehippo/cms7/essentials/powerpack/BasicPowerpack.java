@@ -23,6 +23,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
@@ -68,7 +69,7 @@ public class BasicPowerpack implements PowerpackPackage {
         }
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         InstructionStatus status = InstructionStatus.SUCCESS;
-        final PluginInstructionExecutor executor = new PluginInstructionExecutor();
+        final InstructionExecutor executor = new PluginInstructionExecutor();
         for (InstructionSet instructionSet : instructionSets) {
             // currently we return fail if any of instructions is failed
             if (status == InstructionStatus.FAILED) {
@@ -80,4 +81,5 @@ public class BasicPowerpack implements PowerpackPackage {
         // TODO
         return status;
     }
+
 }
