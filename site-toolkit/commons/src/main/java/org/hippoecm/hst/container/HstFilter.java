@@ -406,6 +406,7 @@ public class HstFilter implements Filter {
                             HttpSession session = containerRequest.getSession(false);
                             if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
                                 requestContext.setCmsRequest(true);
+                                session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, resolvedMount.getMount().getIdentifier());
                                 session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
                                 if (resolvedMount instanceof MutableResolvedMount) {
                                     Mount mount = resolvedMount.getMount();

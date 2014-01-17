@@ -24,6 +24,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
@@ -31,6 +32,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -63,8 +65,10 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             final MockHttpServletRequest request = new MockHttpServletRequest();
             final HstRequestContext ctx = getRequestContextWithResolvedSiteMapItemAndContainerURL(request, "localhost", "/home");
+            final String mountId = ctx.getResolvedMount().getMount().getIdentifier();
+            ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
 
-            ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ctx.getResolvedMount().getMount().getIdentifier());
+            setMountIdOnHttpSession(request, mountId);
 
             final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
             assertFalse("Preview config node should not exist yet.",
@@ -97,6 +101,8 @@ public class MountResourceTest extends AbstractPageComposerTest {
             ((HstMutableRequestContext) secondCtx).setSession(session);
 
             final ContextualizableMount mount =  (ContextualizableMount)secondCtx.getResolvedMount().getMount();
+
+            setMountIdOnHttpSession(secondRequest, mount.getIdentifier());
             assertTrue(mount.getPreviewHstSite().getConfigurationPath().equals(mount.getHstSite().getConfigurationPath() + "-preview"));
             assertTrue(mount.getPreviewChannel().getHstConfigPath().equals(mount.getPreviewHstSite().getConfigurationPath()));
             assertEquals(0, mount.getPreviewChannel().getChangedBySet().size());
@@ -120,13 +126,22 @@ public class MountResourceTest extends AbstractPageComposerTest {
             final  HstRequestContext thirdCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(thirdRequest, "localhost", "/home");
             ((HstMutableRequestContext) thirdCtx).setSession(session);
 
-            thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdCtx.getResolvedMount().getMount().getIdentifier());
+            final String thirdMountIdentifier = thirdCtx.getResolvedMount().getMount().getIdentifier();
+
+            setMountIdOnHttpSession(thirdRequest, thirdMountIdentifier);
+            thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdMountIdentifier);
 
             mountResource.publish(thirdRequest);
 
             usersWithLockedContainers = mountResource.findUsersWithLockedContainers((HippoSession) session, previewConfigurationPath);
             assertTrue(usersWithLockedContainers.isEmpty());
         }
+    }
+
+    private void setMountIdOnHttpSession(final MockHttpServletRequest request, final String mountId) {
+        final MockHttpSession httpSession = new MockHttpSession();
+        httpSession.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        request.setSession(httpSession);
     }
 
 
@@ -189,7 +204,9 @@ public class MountResourceTest extends AbstractPageComposerTest {
 
             assertEquals("/hst:hst/hst:configurations/7_8", ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath());
 
-            ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, ctx.getResolvedMount().getMount().getIdentifier());
+            final String mountId = ctx.getResolvedMount().getMount().getIdentifier();
+            ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, mountId);
+            setMountIdOnHttpSession(request, mountId);
 
             final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
             assertFalse("Preview config node should not exist yet.",
@@ -215,8 +232,14 @@ public class MountResourceTest extends AbstractPageComposerTest {
             final  HstRequestContext secondCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(secondRequest, "localhost", "/home");
             ((HstMutableRequestContext) secondCtx).setSession(setup.session);
 
+            final String secondMountId = secondCtx.getResolvedMount().getMount().getIdentifier();
+            ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, secondMountId);
+            setMountIdOnHttpSession(secondRequest, secondMountId);
+
+
             final String previewContainerNodeUUID = setup.session.getNode(previewConfigurationPath)
                     .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
+
             secondCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewContainerNodeUUID);
 
             final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
@@ -232,6 +255,10 @@ public class MountResourceTest extends AbstractPageComposerTest {
             final MockHttpServletRequest thirdRequest = new MockHttpServletRequest();
             final  HstRequestContext thirdCtx = getRequestContextWithResolvedSiteMapItemAndContainerURL(thirdRequest, "localhost", "/home");
             ((HstMutableRequestContext) thirdCtx).setSession(setup.session);
+
+            final String thirdMountId = thirdCtx.getResolvedMount().getMount().getIdentifier();
+            ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdMountId);
+            setMountIdOnHttpSession(thirdRequest, thirdMountId);
 
             thirdCtx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, thirdCtx.getResolvedMount().getMount().getIdentifier());
 

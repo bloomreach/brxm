@@ -79,10 +79,14 @@ public class AbstractConfigResource {
     }
 
     protected Mount getEditingMount(final HstRequestContext requestContext) {
-        final String hstMountIdentifier = getRequestConfigIdentifier(requestContext);
-        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
+        HttpSession session = requestContext.getServletRequest().getSession(true);
+        final String renderingMountId = (String)session.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID);
+        if (renderingMountId == null) {
+            throw new IllegalStateException("Cound not find rendering mount id '"+renderingMountId+"' on request session.");
+        }
+        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(renderingMountId);
         if (mount == null) {
-            throw new IllegalStateException("Cound not find a Mount for identifier + '"+hstMountIdentifier+"'");
+            throw new IllegalStateException("Cound not find a Mount for identifier + '"+renderingMountId+"'");
         }
         return mount;
     }

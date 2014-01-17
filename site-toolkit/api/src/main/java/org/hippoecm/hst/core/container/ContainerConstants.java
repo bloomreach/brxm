@@ -135,6 +135,11 @@ public interface ContainerConstants {
     String RENDERING_HOST = "org.hippoecm.hst.container.render_host";
 
     /**
+     * The mount id of the site that is being viewed in the channel manager
+     */
+    String CMS_REQUEST_RENDERING_MOUNT_ID =  "org.hippoecm.hst.container.render_mount";
+
+    /**
      * http session attribute to indicate a single sign on session is created through the cms
      */
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
