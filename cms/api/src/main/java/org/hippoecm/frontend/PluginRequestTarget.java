@@ -15,7 +15,10 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -26,6 +29,7 @@ import org.apache.wicket.request.ILogData;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 
 /**
  * Extension of Wicket's {@link AjaxRequestTarget} that filters the list of
@@ -37,9 +41,11 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 public final class PluginRequestTarget implements AjaxRequestTarget {
 
     private final AjaxRequestTarget upstream;
+    private final OnlyRenderComponentsOnPage componentsToRender;
 
     public PluginRequestTarget(final AjaxRequestTarget upstream) {
         this.upstream = upstream;
+        registerRespondListener(this.componentsToRender = new OnlyRenderComponentsOnPage());
     }
 
     @Override
@@ -47,9 +53,15 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
         upstream.add(component, markupId);
     }
 
+    /**
+     * Adds a component to this Ajax request, but only if it is still part of the page when this Ajax request
+     * begins to respond.
+     *
+     * @param components the components to add
+     */
     @Override
     public void add(final Component... components) {
-        upstream.add(components);
+        componentsToRender.add(components);
     }
 
     @Override
@@ -161,4 +173,25 @@ public final class PluginRequestTarget implements AjaxRequestTarget {
         return false;
     }
 
+    private static class OnlyRenderComponentsOnPage implements ITargetRespondListener {
+
+        private List<Component> components;
+
+        public OnlyRenderComponentsOnPage() {
+            this.components = new ArrayList<>();
+        }
+
+        void add(Component... components) {
+            this.components.addAll(Arrays.asList(components));
+        }
+
+        @Override
+        public void onTargetRespond(final AjaxRequestTarget target) {
+            for (Component component : components) {
+                if (WebApplicationHelper.isPartOfPage(component)) {
+                    target.add(component);
+                }
+            }
+        }
+    }
 }
