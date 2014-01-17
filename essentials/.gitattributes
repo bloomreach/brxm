@@ -303,8 +303,6 @@ dashboard-plugins/components-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPlugin.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/ContentBlocksInstaller.java -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/HasNotProviderMatcher.java -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/HasProviderMatcher.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/template.xml -text
@@ -718,6 +716,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/Compounds.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/ContentBlockModel.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/DocumentTypes.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/HasProviderMatcher.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/jaxb.properties -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
@@ -1997,9 +1996,6 @@ plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/rest/utils/RestWorkf
 plugin-dashboard/src/test/java/org/onehippo/cms7/essentials/servlet/JarResourceServletTest.java -text
 plugin-dashboard/src/test/resources/contentblocks-compare.json -text
 plugin-dashboard/src/test/resources/contentblocks.json -text
-plugin-dashboard/src/test/resources/keystore -text
 plugin-dashboard/src/test/resources/log4j.xml -text
-plugin-dashboard/src/test/resources/nodetype.xml -text
-plugin-dashboard/src/test/resources/template.xml -text
 /pom.xml -text
 src/main/assembly/distribution.xml -text

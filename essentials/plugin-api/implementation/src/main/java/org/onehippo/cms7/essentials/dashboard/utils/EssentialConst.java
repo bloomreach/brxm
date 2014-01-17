@@ -96,6 +96,8 @@ public final class EssentialConst {
     public static final String INVALID_CLASS_NAME = "InvalidClassName";
     public static final String ANNOTATION_INTERNAL_NAME_ATTRIBUTE = "internalName";
     public static final String POM_XML = "pom.xml";
+    public static final String XPATH = "xpath";
+
 
     private EssentialConst() {
     }

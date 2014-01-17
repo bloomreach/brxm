@@ -56,6 +56,8 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
             $scope.loadProviders();
                 });
     };
+
+
     $scope.addProviderToDocType = function (prov, docName) {
         var index = $scope.documentTypes.indexOf(docName);
         //check if is empty
@@ -81,6 +83,9 @@ app.controller('contentBlocksCtrl', function ($scope, $sce, $log, $rootScope, $h
                 });
     };
 
+    /**
+     * called on document save
+     */
     $scope.saveBlocksConfiguration = function () {
         $scope.payload = {"cbpayload": {"items": {"items": []}}};
         $scope.payload.cbpayload.items.items = $scope.documentTypes;

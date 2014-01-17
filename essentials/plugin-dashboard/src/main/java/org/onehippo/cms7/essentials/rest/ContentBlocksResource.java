@@ -16,17 +16,12 @@
 
 package org.onehippo.cms7.essentials.rest;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -46,16 +41,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportMergeBehavior;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.hippoecm.repository.api.StringCodecFactory;
-import org.onehippo.cms7.essentials.dashboard.contentblocks.matcher.HasProviderMatcher;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils;
-import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.exc.RestException;
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
@@ -65,13 +54,12 @@ import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.Compounds;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.HasProviderMatcher;
 import org.onehippo.cms7.essentials.rest.utils.RestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -81,9 +69,7 @@ import com.google.inject.Inject;
 @Path("/documenttypes/")
 public class ContentBlocksResource extends BaseResource {
 
-    public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
-    @Inject
-    private EventBus eventBus;
+
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
 
 
@@ -125,7 +111,7 @@ public class ContentBlocksResource extends BaseResource {
     private NodeIterator executeQuery(String queryString) throws RepositoryException {
         final Session session = GlobalUtils.createSession();
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
-        final Query query = queryManager.createQuery(queryString, Query.XPATH);
+        final Query query = queryManager.createQuery(queryString, EssentialConst.XPATH);
         final QueryResult execute = query.execute();
         return execute.getNodes();
 
@@ -187,100 +173,20 @@ public class ContentBlocksResource extends BaseResource {
 
     public MessageRestful createContentBlocks(CBPayload body, @Context ServletContext servletContext) {
         final List<DocumentTypes> docTypes = body.getItems().getItems();
+        final RestWorkflow workflow = new RestWorkflow(GlobalUtils.createSession(), getContext(servletContext));
         for (DocumentTypes documentType : docTypes) {
-            for (KeyValueRestful item : documentType.getProviders().getItems()) {
+            final List<KeyValueRestful> providers = documentType.getProviders().getItems();
+            if (providers.isEmpty()) {
+                log.debug("DocumentType {} had no providers", documentType.getKey());
+                continue;
+            }
+            for (KeyValueRestful item : providers) {
                 ContentBlockModel model = new ContentBlockModel(item.getValue(), ContentBlockModel.Prefer.LEFT, ContentBlockModel.Type.LINKS, item.getKey(), documentType.getValue());
-                addContentBlockToType(model);
+                workflow.addContentBlockToType(model);
             }
         }
-
-        // final Object o = new Gson().fromJson(body, );
         return new MessageRestful("Successfully added content blocks");
     }
-
-
-    private boolean addContentBlockToType(final ContentBlockModel contentBlockModel) {
-        final String documentType = contentBlockModel.getDocumentType();
-        final Session session = GlobalUtils.createSession();
-        InputStream in = null;
-
-        try {
-            Node docType;
-            if (documentType.contains(":")) {
-                docType = session.getNode("/hippo:namespaces/" + documentType.replace(':', '/'));
-            } else {
-                docType = session.getNode("/hippo:namespaces/system/" + documentType);
-            }
-
-            Node nodeType = null;
-            if (docType.hasNode(HIPPOSYSEDIT_NODETYPE)) {
-                nodeType = docType.getNode(HIPPOSYSEDIT_NODETYPE);
-            }
-            if (nodeType == null) {
-                throw new RestException("Node " + HIPPOSYSEDIT_NODETYPE + " not found", Response.Status.NOT_FOUND);
-            }
-            if (docType.hasNode("editor:templates/_default_/root")) {
-                final Node ntemplate = docType.getNode("editor:templates/_default_");
-                final Node root = docType.getNode("editor:templates/_default_/root");
-                ContentBlockModel.PluginType pluginType = null;
-                if (root.hasProperty("plugin.class")) {
-                    pluginType = ContentBlockModel.PluginType.get(root.getProperty("plugin.class").getString());
-                }
-                if (pluginType != null) {
-                    //Load template from source folder
-                    /*Template template = cfg.getTemplate("nodetype.xml");
-                    Template template2 = cfg.getTemplate("template.xml");*/
-                    // Build the data-model
-                    Map<String, Object> data = new HashMap<>();
-
-                    data.put("name", contentBlockModel.getName());
-                    data.put("path", new StringCodecFactory.UriEncoding().encode(contentBlockModel.getName()));
-                    data.put("documenttype", documentType);
-                    data.put("namespace", documentType.substring(0, documentType.indexOf(':')));
-                    data.put("type", contentBlockModel.getType().getType());
-                    data.put("provider", contentBlockModel.getProvider());
-
-                    String fieldType = "${cluster.id}.field";
-
-                    if (pluginType.equals(ContentBlockModel.PluginType.TWOCOLUMN)) {
-                        // switch (selected) {
-                        //  case LEFT:
-                        fieldType = "${cluster.id}.left.item";
-                        //      break;
-                        ///   case RIGHT:
-                        //     fieldType = "${cluster.id}.right.item";
-                        //     break;
-                        //}
-                    }
-                    data.put("fieldType", fieldType);
-
-                    String parsed = TemplateUtils.injectTemplate("nodetype.xml", data, getClass());
-
-                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-
-                    ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
-
-                    parsed = TemplateUtils.injectTemplate("template.xml", data, getClass());
-                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
-
-                    ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
-                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
-                    session.save();
-                    return true;
-                }
-
-            }
-
-        } catch (RepositoryException | IOException e) {
-            GlobalUtils.refreshSession(session, false);
-            log.error("Error in content bocks plugin", e);
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-        return false;
-    }
-
 
 
 }

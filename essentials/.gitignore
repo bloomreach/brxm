@@ -784,12 +784,6 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/atlassian-ide-plugin.xml
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/hippo-plugins.iws
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/target
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/*.iml
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/.DS_Store
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/.idea
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/atlassian-ide-plugin.xml
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/hippo-plugins.iws
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/matcher/target
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/target
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/hippo-plugins.iws
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/target

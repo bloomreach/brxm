@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -156,7 +155,7 @@ public final class TemplateUtils {
             return null;
         }
         try {
-            final String content = GlobalUtils.readStreamAsText(stream).toString();
+            final String content = GlobalUtils.readStreamAsText(stream);
             log.info("content {}", content);
             return replaceTemplateData(content, data);
         } catch (Exception e) {

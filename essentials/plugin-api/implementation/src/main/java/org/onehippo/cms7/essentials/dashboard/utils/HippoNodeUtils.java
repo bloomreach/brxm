@@ -391,7 +391,7 @@ public final class HippoNodeUtils {
         String query = "//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:compound)";
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         @SuppressWarnings("deprecation")
-        final QueryResult queryResult = queryManager.createQuery(query, Query.XPATH).execute();
+        final QueryResult queryResult = queryManager.createQuery(query, EssentialConst.XPATH).execute();
         Set<String> prototypes = new TreeSet<>();
         for (NodeIterator iter = queryResult.getNodes(); iter.hasNext(); ) {
             Node typeNode = iter.nextNode();
@@ -423,7 +423,7 @@ public final class HippoNodeUtils {
         String query = "//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)[@editor:templates/_default_/cbprovider='true']";
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         @SuppressWarnings("deprecation")
-        final QueryResult queryResult = queryManager.createQuery(query, Query.XPATH).execute();
+        final QueryResult queryResult = queryManager.createQuery(query, EssentialConst.XPATH).execute();
         Set<String> prototypes = new TreeSet<>();
         for (NodeIterator iter = queryResult.getNodes(); iter.hasNext(); ) {
             Node typeNode = iter.nextNode();

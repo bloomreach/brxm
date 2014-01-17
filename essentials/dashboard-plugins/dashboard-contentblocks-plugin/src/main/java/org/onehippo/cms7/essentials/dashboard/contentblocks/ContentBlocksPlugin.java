@@ -15,36 +15,8 @@ public class ContentBlocksPlugin extends InstallablePlugin<ContentBlocksInstalle
         super(id, descriptor, context);
     }
 
-
     @Override
     public ContentBlocksInstaller getInstaller() {
         return new ContentBlocksInstaller();
     }
-
-
-    public enum PluginType {
-
-        LISTVIEWPLUGIN("org.hippoecm.frontend.service.render.ListViewPlugin"), TWOCOLUMN("org.hippoecm.frontend.editor.layout.TwoColumn"), UNKNOWN("unknown");
-        String clazz;
-
-        PluginType(String clazz) {
-            this.clazz = clazz;
-        }
-
-        public static PluginType get(String clazz) {
-            for (PluginType a : PluginType.values()) {
-                if (a.clazz.equals(clazz)) {
-                    return a;
-                }
-            }
-            return UNKNOWN;
-        }
-
-        public String getClazz() {
-            return clazz;
-        }
-
-    }
-
-
 }

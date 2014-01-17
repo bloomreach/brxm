@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
@@ -39,11 +41,16 @@ import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.ImportMergeBehavior;
+import org.hippoecm.repository.api.ImportReferenceBehavior;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.exc.RestException;
+import org.onehippo.cms7.essentials.rest.model.contentblocks.ContentBlockModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RestWorkflow {
 
+    public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
     public static final String COMPOUND_TEMPLATE_NAME = "/rest_workflow_content_block_template.xml";
     private static Logger log = LoggerFactory.getLogger(RestWorkflow.class);
     private final Session session;
@@ -139,5 +147,83 @@ public class RestWorkflow {
         }
 
 
+    }
+
+    public boolean addContentBlockToType(final ContentBlockModel contentBlockModel) {
+        final String documentType = contentBlockModel.getDocumentType();
+        InputStream in = null;
+
+        try {
+            Node docType;
+            if (documentType.contains(":")) {
+                docType = session.getNode("/hippo:namespaces/" + documentType.replace(':', '/'));
+            } else {
+                docType = session.getNode("/hippo:namespaces/system/" + documentType);
+            }
+
+            Node nodeType = null;
+            if (docType.hasNode(HIPPOSYSEDIT_NODETYPE)) {
+                nodeType = docType.getNode(HIPPOSYSEDIT_NODETYPE);
+            }
+            if (nodeType == null) {
+                throw new RestException("Node " + HIPPOSYSEDIT_NODETYPE + " not found", Response.Status.NOT_FOUND);
+            }
+            if (docType.hasNode("editor:templates/_default_/root")) {
+                final Node ntemplate = docType.getNode("editor:templates/_default_");
+                final Node root = docType.getNode("editor:templates/_default_/root");
+                ContentBlockModel.PluginType pluginType = null;
+                if (root.hasProperty("plugin.class")) {
+                    pluginType = ContentBlockModel.PluginType.get(root.getProperty("plugin.class").getString());
+                }
+                if (pluginType != null) {
+
+                    Map<String, Object> data = new HashMap<>();
+
+                    data.put("name", contentBlockModel.getName());
+                    data.put("path", new StringCodecFactory.UriEncoding().encode(contentBlockModel.getName()));
+                    data.put("documenttype", documentType);
+                    data.put("namespace", documentType.substring(0, documentType.indexOf(':')));
+                    data.put("type", contentBlockModel.getType().getType());
+                    data.put("provider", contentBlockModel.getProvider());
+
+                    String fieldType = "${cluster.id}.field";
+
+                    if (pluginType.equals(ContentBlockModel.PluginType.TWOCOLUMN)) {
+                        // switch (selected) {
+                        //  case LEFT:
+                        fieldType = "${cluster.id}.left.item";
+                        //      break;
+                        ///   case RIGHT:
+                        //     fieldType = "${cluster.id}.right.item";
+                        //     break;
+                        //}
+                    }
+                    data.put("fieldType", fieldType);
+
+                    String parsed = TemplateUtils.injectTemplate("nodetype.xml", data, getClass());
+
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
+
+                    ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+
+                    parsed = TemplateUtils.injectTemplate("template.xml", data, getClass());
+                    in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
+
+                    ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                            ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
+                    session.save();
+                    return true;
+                }
+
+            }
+
+        } catch (RepositoryException | IOException e) {
+            GlobalUtils.refreshSession(session, false);
+            log.error("Error in content bocks plugin", e);
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+        return false;
     }
 }
