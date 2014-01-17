@@ -15,14 +15,15 @@
                             <a href="{{baseCmsNamespaceUrl}}{{provider.path}}" target="_blank">{{provider.key}} </a>
                         </li>
                     </ul>
-                    <div class="input-group">
-
-                        <input type="text" class="form-control" ng-model="providerInput"/>
+                    <form novalidate name="providerForm">
+                        <div class="input-group">
+                            <input type="text" class="form-control" ng-model="providerInput" ng-required="true"/>
                       <span class="input-group-btn">
-                        <button class="btn btn-primary" type="submit" ng-click="onAddProvider(providerInput)">Add new</button>
+                        <button ng-disabled="!providerForm.$valid" class="btn btn-primary" type="submit" ng-click="onAddProvider(providerInput)">Add new</button>
                       </span>
 
-                    </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="panel-body">
                     <div class="alert-warning" ng ng-hide="providers.length > 0">
@@ -38,7 +39,9 @@
                         <tbody>
 
                         <tr ng-repeat="docType in documentTypes">
-                            <td><a target="_cms" href="{{baseCmsNamespaceUrl}}/hippo:namespaces/{{docType.value | splitString:':':0}}/{{docType.key}}">{{docType.key}}</a></td>
+                            <td>
+                                <a target="_cms" href="{{baseCmsNamespaceUrl}}/hippo:namespaces/{{docType.value | splitString:':':0}}/{{docType.key}}">{{docType.key}}</a>
+                            </td>
                             <td>
                                 <!--<pre>{{docType.providers.ritems}}</pre>-->
                                 <select

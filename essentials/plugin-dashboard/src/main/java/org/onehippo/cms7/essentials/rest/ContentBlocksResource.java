@@ -45,6 +45,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.api.HippoSession;
@@ -69,6 +70,7 @@ import org.onehippo.cms7.essentials.rest.utils.RestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
@@ -158,6 +160,9 @@ public class ContentBlocksResource extends BaseResource {
     @PUT
     @Path("/compounds/create/{name}")
     public MessageRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
+        if(Strings.isNullOrEmpty(name)){
+            throw new RestException("Content block name was empty", Response.Status.NOT_ACCEPTABLE);
+        }
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
         final String projectNamespacePrefix = context.getProjectNamespacePrefix();
