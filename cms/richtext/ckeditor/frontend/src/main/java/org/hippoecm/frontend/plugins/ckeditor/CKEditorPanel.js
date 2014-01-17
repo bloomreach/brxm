@@ -50,13 +50,12 @@
         });
     }
 
-    function destroyEditorWhenElementIsDestroyed(editor, elementId) {
-        var element = $('#' + elementId)[0];
-        HippoAjax.registerDestroyFunction(element, editor.destroy, editor);
+    function destroyEditorWhenElementIsDestroyed(editor) {
+        HippoAjax.registerDestroyFunction(editor.element.$, editor.destroy, editor);
     }
 
-    function removeHippoEditorFieldBorder(elementId) {
-        $('#' + elementId).closest('.hippo-editor-field-subfield').css('border', '0');
+    function removeHippoEditorFieldBorder(editor) {
+        $(editor.element.$).closest('.hippo-editor-field-subfield').css('border', '0');
     }
 
     if (Hippo === undefined) {
@@ -71,8 +70,8 @@
                     var editor = CKEDITOR.replace(elementId, config);
                     if (editor !== null) {
                         updateEditorElementWhenDataChanged(editor);
-                        destroyEditorWhenElementIsDestroyed(editor, elementId);
-                        removeHippoEditorFieldBorder(elementId);
+                        destroyEditorWhenElementIsDestroyed(editor);
+                        removeHippoEditorFieldBorder(editor);
                     } else {
                         console.error("CKEditor instance with id '" + elementId + "' was not created");
                     }
