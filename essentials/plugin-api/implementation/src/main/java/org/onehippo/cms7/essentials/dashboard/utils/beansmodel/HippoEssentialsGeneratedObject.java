@@ -44,15 +44,4 @@ public class HippoEssentialsGeneratedObject {
     public void setFilePath(final Path filePath) {
         this.filePath = filePath;
     }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("HippoEssentialsGeneratedObject{");
-        sb.append("internalName='").append(internalName).append('\'');
-        sb.append(", dateGenerated='").append(dateGenerated).append('\'');
-        sb.append(", allowModifications=").append(allowModifications);
-        sb.append(", filePath=").append(filePath);
-        sb.append('}');
-        return sb.toString();
-    }
 }

@@ -38,12 +38,4 @@ public class BaseFolder extends BaseDocument implements Folder {
         setName(splitter[splitter.length -1]);
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("BaseFolder");
-        sb.append("{path='").append(getPath()).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
 }

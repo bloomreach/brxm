@@ -38,7 +38,11 @@ public class DefaultDocumentManagerTest extends BaseRepositoryTest {
         document.addProperty("foobar");
         final boolean saved = manager.saveDocument(document);
         assertTrue("Expected document to be saved", saved);
-        final Document fetched = manager.fetchDocument(path);
+        Document fetched = manager.fetchDocument(path, BaseDocument.class);
+        assertEquals(fetched.getProperties().get(0), "foo");
+        assertEquals(fetched.getProperties().get(1), "bar");
+        assertEquals(fetched.getProperties().get(2), "foobar");
+        fetched = manager.fetchDocument(path);
         assertEquals(fetched.getProperties().get(0), "foo");
         assertEquals(fetched.getProperties().get(1), "bar");
         assertEquals(fetched.getProperties().get(2), "foobar");
