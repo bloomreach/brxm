@@ -4,6 +4,11 @@
 
 package org.onehippo.cms7.essentials.components;
 
+import java.util.Date;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
@@ -19,10 +24,6 @@ import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import java.util.Date;
 
 /**
  * HST component used for listing of Event document types
