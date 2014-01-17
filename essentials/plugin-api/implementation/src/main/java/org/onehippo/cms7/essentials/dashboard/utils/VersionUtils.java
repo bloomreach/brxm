@@ -3,14 +3,16 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 import java.util.regex.Pattern;
 
 /**
- * @version "$Id: VersionUtils.java 171565 2013-07-24 14:38:15Z mmilicevic $"
+ * @version "$Id$"
  */
-public class VersionUtils {
+public final class VersionUtils {
+
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("[\\._\\-]");
     private static final Pattern VERSION_NUMBER_PATTERN = Pattern.compile("\\d+");
 
-
+    private VersionUtils() {
+    }
 
     //VersionUtils.compareVersionNumbers("1.00.00, 1.00.01) >= 0;
     @SuppressWarnings("CallToStringCompareTo")

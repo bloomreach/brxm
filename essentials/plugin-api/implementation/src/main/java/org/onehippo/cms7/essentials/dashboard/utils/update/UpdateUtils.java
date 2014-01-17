@@ -24,7 +24,10 @@ import org.slf4j.LoggerFactory;
  *
  * @version "$Id$"
  */
-public class UpdateUtils {
+public final class UpdateUtils {
+
+    private UpdateUtils() {
+    }
 
     private static Logger log = LoggerFactory.getLogger(UpdateUtils.class);
 

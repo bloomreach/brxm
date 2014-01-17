@@ -36,7 +36,11 @@ import com.google.inject.util.Providers;
 import static com.google.inject.Scopes.NO_SCOPE;
 import static com.google.inject.Scopes.SINGLETON;
 
-public class ScopeUtils {
+public final  class ScopeUtils {
+
+    private ScopeUtils() {
+    }
+
     public static final Class<?> PROVIDERS_OF_CLASS = Providers.of(null)
             .getClass();
 

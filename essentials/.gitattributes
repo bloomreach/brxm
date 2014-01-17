@@ -329,7 +329,6 @@ dashboard-plugins/dashboard-relateddocs-plugin/src/main/resources/listview.xml -
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/resources/related-doc-updater.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/resources/two_column_left.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/resources/two_column_right.xml -text
-dashboard-plugins/dashboard-relateddocs-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/relateddocs/RelatedDocPluginTest.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/relateddocs/RelatedDocsInstallerTest.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/relateddocs/query/RelatedDocQueryBuilderTest.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/java/org/onehippo/cms7/essentials/dashboard/relateddocs/template/TemplateTest.java -text
@@ -521,11 +520,9 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/u
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JavaSourceUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JcrMatcher.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/JcrPersistenceWriter.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/MultiValueJcrUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/PluginScanner.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/ProjectUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/TemplateUtils.java -text
-plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/TranslationUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/VersionUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/XmlUtils.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/utils/annotations/AnnotationUtils.java -text
@@ -687,7 +684,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BaseResource.ja
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/BeanWriterResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ControllersResource.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/DocumentTypeResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/KeyValueResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text

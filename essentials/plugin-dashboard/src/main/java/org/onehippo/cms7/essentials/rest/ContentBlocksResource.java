@@ -19,7 +19,6 @@ package org.onehippo.cms7.essentials.rest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +81,7 @@ import com.google.inject.Inject;
 @Path("/documenttypes/")
 public class ContentBlocksResource extends BaseResource {
 
+    public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype/hipposysedit:nodetype";
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(ContentBlocksResource.class);
@@ -160,13 +160,11 @@ public class ContentBlocksResource extends BaseResource {
     @PUT
     @Path("/compounds/create/{name}")
     public MessageRestful createCompound(@PathParam("name") String name, @Context ServletContext servletContext) throws RestException {
-        if(Strings.isNullOrEmpty(name)){
+        if (Strings.isNullOrEmpty(name)) {
             throw new RestException("Content block name was empty", Response.Status.NOT_ACCEPTABLE);
         }
         final Session session = GlobalUtils.createSession();
         final PluginContext context = getContext(servletContext);
-        final String projectNamespacePrefix = context.getProjectNamespacePrefix();
-        String item = "/hippo:namespaces/" + projectNamespacePrefix + '/' + name;
         final RestWorkflow workflow = new RestWorkflow(session, context);
         workflow.addContentBlockCompound(name);
         return new MessageRestful("Successfully created compound with name: " + name);
@@ -215,15 +213,18 @@ public class ContentBlocksResource extends BaseResource {
             }
 
             Node nodeType = null;
-            if (docType.hasNode("hipposysedit:nodetype/hipposysedit:nodetype")) {
-                nodeType = docType.getNode("hipposysedit:nodetype/hipposysedit:nodetype");
+            if (docType.hasNode(HIPPOSYSEDIT_NODETYPE)) {
+                nodeType = docType.getNode(HIPPOSYSEDIT_NODETYPE);
+            }
+            if (nodeType == null) {
+                throw new RestException("Node " + HIPPOSYSEDIT_NODETYPE + " not found", Response.Status.NOT_FOUND);
             }
             if (docType.hasNode("editor:templates/_default_/root")) {
                 final Node ntemplate = docType.getNode("editor:templates/_default_");
                 final Node root = docType.getNode("editor:templates/_default_/root");
-                PluginType pluginType = null;
+                ContentBlockModel.PluginType pluginType = null;
                 if (root.hasProperty("plugin.class")) {
-                    pluginType = PluginType.get(root.getProperty("plugin.class").getString());
+                    pluginType = ContentBlockModel.PluginType.get(root.getProperty("plugin.class").getString());
                 }
                 if (pluginType != null) {
                     //Load template from source folder
@@ -241,7 +242,7 @@ public class ContentBlocksResource extends BaseResource {
 
                     String fieldType = "${cluster.id}.field";
 
-                    if (pluginType.equals(PluginType.TWOCOLUMN)) {
+                    if (pluginType.equals(ContentBlockModel.PluginType.TWOCOLUMN)) {
                         // switch (selected) {
                         //  case LEFT:
                         fieldType = "${cluster.id}.left.item";
@@ -280,56 +281,6 @@ public class ContentBlocksResource extends BaseResource {
         return false;
     }
 
-    public enum Prefer implements Serializable {
-        LEFT("left"), RIGHT("right");
-        String prefer;
-
-        private Prefer(String prefer) {
-            this.prefer = prefer;
-        }
-
-        public String getPrefer() {
-            return prefer;
-        }
-    }
-
-    public enum Type implements Serializable {
-        LINKS("links"), DROPDOWN("dropdown");
-        String type;
-
-
-        private Type(String type) {
-            this.type = type;
-        }
-
-        public String getType() {
-            return type;
-        }
-    }
-
-    public enum PluginType {
-
-        LISTVIEWPLUGIN("org.hippoecm.frontend.service.render.ListViewPlugin"), TWOCOLUMN("org.hippoecm.frontend.editor.layout.TwoColumn"), UNKNOWN("unknown");
-        String clazz;
-
-        PluginType(String clazz) {
-            this.clazz = clazz;
-        }
-
-        public static PluginType get(String clazz) {
-            for (PluginType a : PluginType.values()) {
-                if (a.clazz.equals(clazz)) {
-                    return a;
-                }
-            }
-            return UNKNOWN;
-        }
-
-        public String getClazz() {
-            return clazz;
-        }
-
-    }
 
 
 }

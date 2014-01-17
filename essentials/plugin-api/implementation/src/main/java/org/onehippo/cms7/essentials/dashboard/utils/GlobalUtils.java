@@ -27,7 +27,7 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id: GlobalUtils.java 174806 2013-08-23 09:22:46Z mmilicevic $"
  */
-public class GlobalUtils {
+public final class GlobalUtils {
 
     private static final String PREFIX_GET = "get";
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");

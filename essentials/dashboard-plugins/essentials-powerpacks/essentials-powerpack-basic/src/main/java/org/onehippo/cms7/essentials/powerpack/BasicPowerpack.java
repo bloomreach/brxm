@@ -41,7 +41,7 @@ public class BasicPowerpack implements PowerpackPackage {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
 
-    protected Instructions instructions;
+    private Instructions instructions;
     @Inject
     private EventBus eventBus;
 

@@ -31,6 +31,9 @@ import static org.apache.cxf.jaxrs.utils.AnnotationUtils.getMethodAnnotation;
 
 public final class Matchers {
 
+    private Matchers() {
+    }
+
     public static Matcher<Method> resourceMethod() {
 
         return new AbstractMatcher<Method>() {

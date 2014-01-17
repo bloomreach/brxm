@@ -25,7 +25,7 @@ import org.onehippo.cms7.essentials.dashboard.utils.JcrPersistenceWriter;
 public class HstConfigurationService {
 
 
-    final HstConfiguration config;
+    private final HstConfiguration config;
     private final PluginContext context;
 
     public HstConfigurationService(final String name, final PluginContext context) {

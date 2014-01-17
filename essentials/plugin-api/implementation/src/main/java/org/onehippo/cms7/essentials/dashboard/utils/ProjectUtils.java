@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 /**
- * @version "$Id: ProjectUtils.java 164013 2013-05-11 14:05:39Z mmilicevic $"
+ * @version "$Id$"
  */
-public class ProjectUtils {
+public final class ProjectUtils {
 
     private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
 
@@ -125,7 +125,7 @@ public class ProjectUtils {
         Model model = null;
         try {
             final MavenXpp3Reader reader = new MavenXpp3Reader();
-            fileReader = new FileReader(path + File.separatorChar + "pom.xml");
+            fileReader = new FileReader(path + File.separatorChar + EssentialConst.POM_XML);
             model = reader.read(fileReader);
         } catch (XmlPullParserException | IOException e) {
             log.error("Error parsing pom", e);

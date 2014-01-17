@@ -43,9 +43,9 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
     private WikiStrategy strategy;
     private StringBuilder fieldText;
     private boolean recording;
-    int count = 0;
-    int offsetcount = 0;
-    long startTime = 0;
+    private int count = 0;
+    private int offsetcount = 0;
+    private long startTime = 0;
 
     private static final String[] users = {"ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
             "junaid", "ate", "tjeerd", "verberg", "simon", "jannis"};
@@ -149,8 +149,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                     String docTitle = stopRecording();
                     String docName = docTitle.toLowerCase().replaceAll("[^a-z]", "-");
 
-                    Node handle;
-                    handle = currentSubFolder.addNode(docName, "hippo:handle");
+                    Node handle = currentSubFolder.addNode(docName, "hippo:handle");
                     handle.addMixin("hippo:hardhandle");
                     handle.addMixin("hippo:translated");
 
@@ -186,7 +185,7 @@ public class WikiPediaToJCRHandler extends DefaultHandler {
                     doc.setProperty("hippostdpubwf:creationDate", creationDate);
                     doc.setProperty("hippostdpubwf:publicationDate", publicationDate);
                     doc.setProperty("hippotranslation:locale", "en");
-                    doc.setProperty("hippotranslation:id", "" + UUID.randomUUID().toString());
+                    doc.setProperty("hippotranslation:id", UUID.randomUUID().toString());
                         /**/
                     strategy.onTitle(doc, currentSubFolder, docTitle);
                 } else if (qName.equals("timestamp") && recording) {

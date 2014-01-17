@@ -37,8 +37,8 @@ import static org.apache.cxf.phase.Phase.INVOKE;
 public class GuiceInterceptorWrapper extends AbstractPhaseInterceptor<Message> {
 
     private static final class Context {
-        final Exchange exchange;
-        volatile Thread owner;
+       private final Exchange exchange;
+       private volatile Thread owner;
 
         private Context(Exchange exchange) {
             this.exchange = exchange;

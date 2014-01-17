@@ -52,7 +52,9 @@ public final class HippoNodeUtils {
     private static final Predicate<String> INTERNAL_TYPES_PREDICATE = new Predicate<String>() {
         @Override
         public boolean apply(String documentType) {
-            if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
+
+            if (documentType!=null
+                    && !documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
                     && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
                     && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
                     && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)

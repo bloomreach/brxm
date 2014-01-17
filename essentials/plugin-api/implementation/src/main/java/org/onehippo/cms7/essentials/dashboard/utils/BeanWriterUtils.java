@@ -34,7 +34,7 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id$"
  */
-public class BeanWriterUtils {
+public final class BeanWriterUtils {
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 

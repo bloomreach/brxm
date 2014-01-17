@@ -44,9 +44,9 @@ import com.google.common.base.Strings;
 /**
  * Utility class for manipulating java source files.
  *
- * @version "$Id: JavaSourceUtils.java 175636 2013-08-30 14:55:58Z mmilicevic $"
+ * @version "$Id$"
  */
-public class JavaSourceUtils {
+public final class JavaSourceUtils {
 
     private static final Pattern DOT_SPLITTER = Pattern.compile("\\.");
     /**

@@ -28,7 +28,11 @@ import com.google.common.base.Strings;
  */
 public final class CndUtils {
 
+
     private static Logger log = LoggerFactory.getLogger(CndUtils.class);
+
+    private CndUtils() {
+    }
 
     /**
      * Register a new namespace in the repository.
