@@ -16,13 +16,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 /**
  * @version "$Id: HippoNodeUtilsTest.java 167907 2013-06-17 08:34:55Z mmilicevic $"
  */
-@Ignore
 public class HippoNodeUtilsTest {
 
+    @Ignore
     @Test
     public void testGetProjectNamespaces() throws Exception {
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
@@ -35,6 +36,13 @@ public class HippoNodeUtilsTest {
 
         session.logout();
 
+    }
+
+    @Test
+    public void testGetNameFromType() throws Exception {
+        assertEquals(null,HippoNodeUtils.getNameFromType(""));
+        assertEquals("document",HippoNodeUtils.getNameFromType("hippo:document"));
+        assertEquals("document",HippoNodeUtils.getNameFromType("document"));
     }
 
     @Test
