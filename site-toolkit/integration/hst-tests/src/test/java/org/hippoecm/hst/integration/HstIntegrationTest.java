@@ -344,6 +344,8 @@ public class HstIntegrationTest extends AbstractHstIntegrationTest {
                 Thread.sleep(rand.nextInt(maxSleepTimeReading));
             }
 
+            localSession.refresh(false);
+
             // one more final reload after 1 second to make sure all asynchronous events must have been processed
             Thread.sleep(1000);
             hstManager.getVirtualHosts();
