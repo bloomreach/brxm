@@ -60,7 +60,7 @@ public class BasicPowerpack implements PowerpackPackage {
     @Override
     public InstructionStatus execute(final PluginContext context) {
         if (instructions == null) {
-            getInstructions();
+            instructions = getInstructions();
         }
         if (instructions == null) {
             eventBus.post(new DisplayEvent("Couldn't parse instructions"));
