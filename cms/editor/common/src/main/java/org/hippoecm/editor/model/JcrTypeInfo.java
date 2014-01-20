@@ -19,12 +19,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.repository.api.NodeNameCodec;
 
 /**
  * Information on a type, based on the repository storage model of CMS types.
  * This class is not intended to be used by plugin developers; instead, use the
- * ITypeDescriptor.
+ * {@link ITypeDescriptor}.
  */
 public final class JcrTypeInfo {
 

@@ -39,6 +39,12 @@
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
