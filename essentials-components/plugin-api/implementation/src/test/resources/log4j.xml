@@ -66,7 +66,7 @@
   </category>
 
   <category name="org.onehippo.cms7.essentials">
-    <level value="info"/>
+    <level value="warn"/>
   </category>
 
   <root>
