@@ -15,6 +15,9 @@
  */
 package org.hippoecm.frontend.observation;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,7 +51,9 @@ import org.slf4j.LoggerFactory;
 class NodeState {
 
     private final static Logger log = LoggerFactory.getLogger(NodeState.class);
-    
+
+    public static final int BINARY_HASH_SIZE = 64 * 1024;
+
     private static MessageDigest newDigest() {
         try {
             return MessageDigest.getInstance("MD5");
@@ -116,8 +121,8 @@ class NodeState {
         this.path = node.getPath();
         this.userId = node.getSession().getUserID();
 
-        properties = new HashMap<String, BigInteger>();
-        nodes = new LinkedHashMap<String, String>();
+        properties = new HashMap<>();
+        nodes = new LinkedHashMap<>();
 
         PropertyIterator propIter = node.getProperties();
         while (propIter.hasNext()) {
@@ -147,21 +152,44 @@ class NodeState {
     }
 
     private BigInteger getHashCode(Value value) throws RepositoryException {
-        byte[] md5 = newDigest().digest(value.getString().getBytes());
+        byte[] md5 = newDigest().digest(getBytes(value));
         return new BigInteger(md5);
     }
 
     private BigInteger getHashCode(Value[] values) throws RepositoryException {
         final MessageDigest digest = newDigest();
         for (Value value : values) {
-            digest.update(value.getString().getBytes());
+            digest.update(getBytes(value));
         }
         digest.update(BigInteger.valueOf(values.length).toByteArray());
         return new BigInteger(digest.digest());
     }
 
+    private byte[] getBytes(Value value) throws RepositoryException {
+        if (value.getType() == PropertyType.BINARY) {
+            final InputStream stream = value.getBinary().getStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(BINARY_HASH_SIZE);
+            int read = 0;
+            while (read < BINARY_HASH_SIZE) {
+                try {
+                    final int c = stream.read();
+                    if (c == -1) {
+                        break;
+                    }
+                    baos.write(c);
+                    read++;
+                } catch (IOException e) {
+                    log.error("Error hashing binary value", e);
+                    break;
+                }
+            }
+            return baos.toByteArray();
+        }
+        return value.getString().getBytes();
+    }
+
     Iterator<Event> getEvents(NodeState newState) throws RepositoryException {
-        List<Event> events = new LinkedList<Event>();
+        List<Event> events = new LinkedList<>();
 
         Map<String, BigInteger> newProperties = newState.properties;
         Map<String, String> newNodes = newState.nodes;
@@ -200,7 +228,7 @@ class NodeState {
             }
         }
             
-        List<String> moved = NodeStateUtil.moved(new ArrayList<String>(oldNodeIds), new ArrayList<String>(newNodeIds), added, removed);
+        List<String> moved = NodeStateUtil.moved(new ArrayList<>(oldNodeIds), new ArrayList<>(newNodeIds), added, removed);
         if (moved != null) {
             for (String child : moved) {
                 events.add(new NodeEvent(nodes.get(child), Event.NODE_MOVED));
