@@ -80,7 +80,6 @@ public class PluginScanner {
         for (File file : files) {
             JarFile jarFile = null;
             try {
-                log.debug("Scanning file: {}", file.getPath());
                 jarFile = new JarFile(file);
                 final JarEntry entry = jarFile.getJarEntry("META-INF/plugin.xml");
                 if (entry == null) {
