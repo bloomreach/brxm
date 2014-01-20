@@ -1012,12 +1012,6 @@ dependencies/spring-dependencies/src/site/site.xml -text
 dependencies/src/site/site.xml -text
 integration/README -text
 integration/pom.xml svneol=native#text/plain
-integration/repository-tests/conf/context.xml -text
-integration/repository-tests/conf/log4j.dtd -text
-integration/repository-tests/conf/log4j.xml -text
-integration/repository-tests/conf/repository.xml svneol=native#text/plain
-integration/repository-tests/pom.xml -text
-integration/repository-tests/src/test/java/org/hippoecm/hst/test/HstRepositoryIntegrationTest.java -text
 integration/tests/conf/context.xml -text
 integration/tests/conf/log4j.dtd -text
 integration/tests/conf/log4j.xml -text
