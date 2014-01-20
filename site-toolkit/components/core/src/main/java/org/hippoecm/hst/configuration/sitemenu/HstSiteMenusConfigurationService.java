@@ -35,7 +35,6 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
     
     private HstSite hstSite;
     private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurations = new HashMap<String, HstSiteMenuConfiguration>();
-    private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurationsNyId = new HashMap<String, HstSiteMenuConfiguration>();
     private Map<String, List<HstSiteMenuItemConfiguration>> hstSiteMenuItemsBySiteMapId = new HashMap<String, List<HstSiteMenuItemConfiguration>>();
     
     public HstSiteMenusConfigurationService(final HstSite hstSite,
