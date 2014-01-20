@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
@@ -115,14 +117,20 @@ public class PowerpackResource extends BaseResource {
             log.info("Config saved: {}", written);
         }
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
-        eventBus.post(new DisplayEvent("Below, you can see an overview of what has been installed, this overview is also saved at:" + System.getProperty("${catalina.base}") + "/logs/hippo-setup.log", DisplayEvent.DisplayType.P, true));
+
+
+        String filePath = ProjectUtils.getBaseProjectDirectory() + "/target/tomcat6x/logs/hippo-setup.log";
+
+        eventBus.post(new DisplayEvent(new File(filePath).getAbsolutePath(), DisplayEvent.DisplayType.A, true));
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+        eventBus.post(new DisplayEvent("Below, you can see an overview of what has been installed, this overview is also saved at:", DisplayEvent.DisplayType.P, true));
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
         eventBus.post(new DisplayEvent("http://www.onehippo.org", DisplayEvent.DisplayType.A, true));
 
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
         eventBus.post(new DisplayEvent("After that, you are all set to start customizing your application. For more information, also see: ", DisplayEvent.DisplayType.P, true));
-
         eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
 
 
