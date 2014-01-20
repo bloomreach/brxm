@@ -1,5 +1,5 @@
 <!doctype html>
-<html data-ng-app="Essentials">
+<html ng-app="hippo.essentials">
 <head>
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/theme/hippo-theme/main.css"/>

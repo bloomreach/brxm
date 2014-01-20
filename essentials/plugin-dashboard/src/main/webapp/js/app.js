@@ -1,30 +1,12 @@
-'use strict';
-/**
- * needed for dynamic loading of controllers
- * @type object {{$controllerProvider: $controllerProvider,
-        $compileProvider: $compileProvider,
-        $provide: $provide}}
- * @global
- */
-var _PROVIDERS = {};
+(function () {
+    "use strict";
 
-
-var app;
-(function (APP) {
-    'use strict';
-    // expose as global
-    app = APP;
+    angular.module('hippo.essentials', ['ngRoute', 'localytics.directives'])
 
 //############################################
 // GLOBAL LOADING
 //############################################
-    APP.config(function ($provide, $httpProvider, $controllerProvider, $compileProvider) {
-        _PROVIDERS = {
-            $controllerProvider: $controllerProvider,
-            $compileProvider: $compileProvider,
-            $provide: $provide
-        };
-
+    .config(function ($provide, $httpProvider, $controllerProvider, $compileProvider) {
 
         $provide.factory('MyHttpInterceptor', function ($q, $rootScope, $log) {
             return {
@@ -88,14 +70,14 @@ var app;
             };
         });
         $httpProvider.interceptors.push('MyHttpInterceptor');
-    });
+    })
 
 //############################################
 // RUN
 //############################################
 
 
-    APP.run(function ($rootScope, $location, $log, $http, $templateCache, MyHttpInterceptor) {
+    .run(function ($rootScope, $location, $log, $http, $templateCache, MyHttpInterceptor) {
         $rootScope.headerMessage = "Welcome on the Hippo Trail";
         // routing listener
         $rootScope.$on('$routeChangeStart', function (event, next, current) {
@@ -177,13 +159,13 @@ var app;
 
 
         $rootScope.initData();
-    });
+    })
 
 //############################################
 // FILTERS
 //############################################
 
-    APP.filter('splitString', function () {
+    .filter('splitString', function () {
         return function (input, splitOn, idx) {
             if(input){
                 var split = input.split(splitOn);
@@ -192,8 +174,8 @@ var app;
                 }
             }
             return "";
-        }});
-    APP.filter('startsWith', function () {
+        }})
+    .filter('startsWith', function () {
         return function (inputCollection, inputString) {
             var collection = [];
             if (inputCollection && inputString) {
@@ -207,20 +189,8 @@ var app;
             return collection;
         }
     });
-})(angular.module('Essentials', ['ngRoute','localytics.directives']));
-
-/*
-
- define([
- 'angular',
- 'angular-route',
- 'controllers',
- 'routes'
- ], function (angular) {
- 'use strict';
+})();
 
 
- });
- */
 
 
