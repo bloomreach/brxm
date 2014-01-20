@@ -20,30 +20,30 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>24.1-SNAPSHOT</version>
+    <version>24.1-iteration-9</version>
   </parent>
 
   <name>Hippo Product Packages</name>
   <description>Hippo Product Packages</description>
   <artifactId>hippo-packages</artifactId>
-  <version>2.25.02-SNAPSHOT</version>
+  <version>2.25.02-iteration-9</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
 
   <scm>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</developerConnection>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</url>
+    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/tags/hippo-packages-2.25.02-iteration-9</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/tags/hippo-packages-2.25.02-iteration-9</developerConnection>
+    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/tags/hippo-packages-2.25.02-iteration-9</url>
   </scm>
 
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
-    <hippo.utilities.version>1.02.01-SNAPSHOT</hippo.utilities.version>
-    <hippo.repository.version>2.25.05-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.25.04-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>2.27.03-SNAPSHOT</hippo.hst.version>
+    <hippo.utilities.version>1.02.01-iteration-9</hippo.utilities.version>
+    <hippo.repository.version>2.25.05-iteration-9</hippo.repository.version>
+    <hippo.cms.version>2.25.04-iteration-9</hippo.cms.version>
+    <hippo.hst.version>2.27.03-iteration-9</hippo.hst.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 
