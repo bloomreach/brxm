@@ -51,8 +51,7 @@ public abstract class DefaultStrategy implements WikiStrategy {
         if (document.hasNode(path)) {
             return document.getNode(path);
         } else {
-            final Node body = document.addNode(path, type);
-            return body;
+            return document.addNode(path, type);
         }
     }
 
