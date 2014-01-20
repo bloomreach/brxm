@@ -1,3 +1,16 @@
+/**
+ * NOTE: when creating classes which are part of the "hippo.essentials" module,
+ * do not include dependnecies like below, but add them to this (app.js) module). An example:
+ * <pre>
+  (function () {
+    "use strict";
+    angular.module('hippo.essentials')
+    })();
+ * </pre>
+ *
+ * Note that dependencies are missing (['ngRoute', 'localytics.directives'] etc.)
+ *
+ */
 (function () {
     "use strict";
 

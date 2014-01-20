@@ -129,7 +129,7 @@
                             $scope.map[provider.key] = provider;
                         });
                     });
-                }
+                };
                 $scope.init = function () {
                     // check if plugin is installed
                     $http({
