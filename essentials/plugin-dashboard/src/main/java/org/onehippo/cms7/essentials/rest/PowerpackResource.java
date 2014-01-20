@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpack;
 import org.onehippo.cms7.essentials.powerpack.BasicPowerpackWithSamples;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
@@ -107,30 +109,40 @@ public class PowerpackResource extends BaseResource {
 
 
         final InstructionStatus status = powerpackPackage.execute(context);
-        switch (status) {
-            case SUCCESS:
-                eventBus.post(new DisplayEvent("Power Pack successfully installed", DisplayEvent.DisplayType.H3));
-                break;
-            case FAILED:
-                eventBus.post("Not all parts of Power Pack were installed");
-
-        }
+        log.info("status {}", status);
         // save status:
-        if (document !=null) {
+        if (document != null) {
             document.setSetupDone(true);
             final boolean written = service.write(document, className);
             log.info("Config saved: {}", written);
         }
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+
+
+        String filePath = ProjectUtils.getBaseProjectDirectory() + "/target/tomcat6x/logs/hippo-setup.log";
+
+        eventBus.post(new DisplayEvent(new File(filePath).getAbsolutePath(), DisplayEvent.DisplayType.A, true));
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+        eventBus.post(new DisplayEvent("Below, you can see an overview of what has been installed, this overview is also saved at:", DisplayEvent.DisplayType.P, true));
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+        eventBus.post(new DisplayEvent("http://www.onehippo.org", DisplayEvent.DisplayType.A, true));
+
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+        eventBus.post(new DisplayEvent("After that, you are all set to start customizing your application. For more information, also see: ", DisplayEvent.DisplayType.P, true));
+        eventBus.post(new DisplayEvent(DisplayEvent.DisplayType.BR.name(), DisplayEvent.DisplayType.BR, true));
+
+
 
 
         // add documentation messages:
-        eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG));
         eventBus.post(new DisplayEvent(
                 "\nmvn clean package\n" +
-                "mvn -P cargo.run\n" , DisplayEvent.DisplayType.PRE));
+                        "mvn -P cargo.run\n", DisplayEvent.DisplayType.PRE, true));
+        //eventBus.post(new DisplayEvent("Please rebuild and restart your application:", DisplayEvent.DisplayType.STRONG, true));
 
-        eventBus.post(new DisplayEvent("Read more about Hippo Essentials at:"));
-        eventBus.post(new DisplayEvent("http://www.onehippo.org", DisplayEvent.DisplayType.A));
+        eventBus.post(new DisplayEvent("The installation of the powerpack was successfully completed. To view the changes reflected in the CMS and site, rebuild and restart your project by using following command:", DisplayEvent.DisplayType.P, true));
         final List<DisplayEvent> displayEvents = listener.consumeEvents();
         for (DisplayEvent displayEvent : displayEvents) {
             messageRestfulRestfulList.add(new MessageRestful(displayEvent.getMessage(), displayEvent.getDisplayType()));
@@ -179,7 +191,7 @@ public class PowerpackResource extends BaseResource {
         pack.setEnabled(true);
         // add dummy packs:
         final PowerpackRestful dummy1 = new PowerpackRestful();
-        dummy1.setName("A REST only site that contains only REST services and no pages.");
+        dummy1.setName("Headless REST based content repository.");
         dummy1.setValue("empty-rest");
 
         // add packs

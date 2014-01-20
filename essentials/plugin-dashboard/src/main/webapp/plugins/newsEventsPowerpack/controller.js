@@ -17,7 +17,6 @@
                 $scope.initCalled = false;
                 $scope.init = function () {
                     if ($scope.initCalled) {
-                        console.log("already called");
                         return;
                     }
 
@@ -37,10 +36,13 @@
                 $scope.selectChange = function () {
 
 
+
                     for (var i = 0; i < $scope.packs.items.length; i++) {
                         var powerpack = $scope.packs.items[i];
                         if (powerpack.value === $scope.selectedItem) {
-                            $scope.selectedDescription = powerpack.name;
+
+                            console.log(powerpack.name);
+                            $scope.selectedDescription = $scope.getDescription(powerpack.name);
                         }
                     }
                 };
@@ -77,6 +79,23 @@
                 };
 
                 $scope.init();
+
+                //############################################
+                // DESCRIPTIONS:
+                //############################################
+                $scope.getDescription = function (name) {
+                      if(name.trim() =="Basic News and Events site"){
+                          return  'A basic News and Events site that contains a homepage template, News   \
+    and Agenda components and detail pages  \
+    to render both News and Event articles. It comes with a standard navigational menu and URL structure. This is the \
+    most basic Power Pack to start with. \
+    You can easily extend with more components later on.'
+                      }
+                    return "A REST only site that contains only REST services and no pages.";
+                };
+
+
+
 
             })
 })();
