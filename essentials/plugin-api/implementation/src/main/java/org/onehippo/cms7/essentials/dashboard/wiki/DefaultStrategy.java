@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.imageio.ImageIO;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,21 +71,17 @@ public abstract class DefaultStrategy implements WikiStrategy {
             String imageName = matcher.group(1).trim();
             String imageUuid = createImage(doc, currentSubFolder, imageName);
             if (imageUuid != null) {
-                text = text.substring(0, matcher.start()) + "<img src=\"" + imageName
-                        + "/{_document}/hippogallery:original\"/>" + text.substring(matcher.end());
-                Node imageRef;
-                if (body.hasNode(imageName)) {
-                    imageRef = body.getNode(imageName);
-                } else {
-                    imageRef = body.addNode(imageName, "hippo:facetselect");
+                text = MessageFormat.format("{0}<img src=\"{1}/'{'_document'}'/hippogallery:original\"/>{2}", text.substring(0, matcher.start()), imageName, text.substring(matcher.end()));
+                if (!body.hasNode(imageName)) {
+                    Node imageRef = body.addNode(imageName, "hippo:facetselect");
                     imageRef.setProperty("hippo:docbase", imageUuid);
-                    String[] esa = {};
+                    String[] esa = ArrayUtils.EMPTY_STRING_ARRAY;
                     imageRef.setProperty("hippo:facets", esa);
                     imageRef.setProperty("hippo:modes", esa);
                     imageRef.setProperty("hippo:values", esa);
                 }
             } else {
-                text = text.substring(0, matcher.start()) + imageName + text.substring(matcher.end());
+                text = MessageFormat.format("{0}{1}{2}", text.substring(0, matcher.start()), imageName, text.substring(matcher.end()));
             }
             matcher = pattern.matcher(text);
         }
@@ -110,7 +108,7 @@ public abstract class DefaultStrategy implements WikiStrategy {
             if (!images.hasNode(containerName)) {
                 wikiImages = images.addNode(containerName, "hippogallery:stdImageGallery");
                 wikiImages.addMixin("hippo:harddocument");
-                wikiImages.setProperty("hippo:paths", new String[]{});
+                wikiImages.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] foldertype = {"new-image-folder"};
                 wikiImages.setProperty("hippostd:foldertype", foldertype);
                 String[] gallerytype = {"hippogallery:imageset"};
@@ -124,7 +122,7 @@ public abstract class DefaultStrategy implements WikiStrategy {
             if (!wikiImages.hasNode(currentSubFolder.getName())) {
                 imgSubFolder = wikiImages.addNode(currentSubFolder.getName(), "hippogallery:stdImageGallery");
                 imgSubFolder.addMixin("hippo:harddocument");
-                imgSubFolder.setProperty("hippo:paths", new String[]{});
+                imgSubFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] foldertype = {"new-image-folder"};
                 imgSubFolder.setProperty("hippostd:foldertype", foldertype);
                 String[] gallerytype = {"hippogallery:imageset"};
@@ -138,7 +136,7 @@ public abstract class DefaultStrategy implements WikiStrategy {
             if (!imgSubFolder.hasNode(doc.getName())) {
                 imgFolder = imgSubFolder.addNode(doc.getName(), "hippogallery:stdImageGallery");
                 imgFolder.addMixin("hippo:harddocument");
-                imgFolder.setProperty("hippo:paths", new String[]{});
+                imgFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] foldertype = {"new-image-folder"};
                 imgFolder.setProperty("hippostd:foldertype", foldertype);
                 String[] gallerytype = {"hippogallery:imageset"};
@@ -160,7 +158,7 @@ public abstract class DefaultStrategy implements WikiStrategy {
             if (!imgHandle.hasNode(name)) {
                 Node imgDoc = imgHandle.addNode(name, "hippogallery:imageset");
                 imgDoc.addMixin("hippo:harddocument");
-                imgDoc.setProperty("hippo:paths", new String[]{});
+                imgDoc.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                 String[] availability = {"live", "preview"};
                 imgDoc.setProperty("hippo:availability", availability);
                 imgDoc.setProperty("hippogallery:filename", name);

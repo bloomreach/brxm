@@ -33,8 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -44,8 +42,6 @@ import com.google.inject.Inject;
 @Path("/controllers/")
 public class ControllersResource extends BaseResource {
 
-    @Inject
-    private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(ControllersResource.class);
 
 

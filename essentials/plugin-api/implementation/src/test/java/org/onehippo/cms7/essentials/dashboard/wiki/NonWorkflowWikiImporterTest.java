@@ -30,8 +30,8 @@ public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
         final Node documents = content.getNode("documents");
         final Node gallery = content.addNode("gallery", "hippogallery:stdImageGallery");
 
-        final Node testDocuments = documents.addNode("test", "hippostd:folder");
-        final Node testGallery = gallery.addNode("test", "hippogallery:stdImageGallery");
+        documents.addNode("test", "hippostd:folder");
+        gallery.addNode("test", "hippogallery:stdImageGallery");
 
         session.save();
 

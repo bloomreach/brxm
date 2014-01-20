@@ -112,19 +112,19 @@ public class RestWorkflow {
             throw new RestException("Namespace exception in rest workflow: " + e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         } catch (PathNotFoundException e) {
             log.error("Path not found", e);
-            throw new RestException("Path not found"+e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+            throw new RestException("Path not found", Response.Status.INTERNAL_SERVER_ERROR, e);
         } catch (NoSuchNodeTypeException e) {
             log.error("Node not found in rest workflow: {}", e);
             throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
         } catch (NodeTypeExistsException e) {
             log.error("Error in rest workflow: {}", e);
-            throw new RestException("Node already exists: "+e.getMessage() ,Response.Status.INTERNAL_SERVER_ERROR);
-        }catch (RepositoryException e) {
+            throw new RestException("Node already exists: ", Response.Status.INTERNAL_SERVER_ERROR, e);
+        } catch (RepositoryException e) {
             log.error("Error in rest workflow: {}", e);
             throw new RestException(e, Response.Status.INTERNAL_SERVER_ERROR);
         } catch (IOException e) {
             log.error("Template error in rest workflow: {}", e);
-            throw new RestException("Template error in rest workflow: "+e.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
+            throw new RestException("Template error in rest workflow: ", Response.Status.INTERNAL_SERVER_ERROR, e);
         }
 
     }
@@ -132,12 +132,13 @@ public class RestWorkflow {
 
     /**
      * Removes document type from cnd and also removes document template
+     *
      * @param name name of the document type
-     * @return  true on success, throws exception otherwise
+     * @return true on success, throws exception otherwise
      */
     public boolean removeDocumentType(final String name) {
         try {
-            session.getNode("/hippo:namespaces/" + namespace+'/'+name).remove();
+            session.getNode("/hippo:namespaces/" + namespace + '/' + name).remove();
             session.save();
             return true;
             //return CndUtils.unRegisterDocumentType(context, namespace, name);
@@ -148,7 +149,6 @@ public class RestWorkflow {
 
 
     }
-
 
 
     public boolean addContentBlockToType(final ContentBlockModel contentBlockModel) {

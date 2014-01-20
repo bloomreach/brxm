@@ -112,17 +112,17 @@ public class CommonComponent extends BaseHstComponent {
      * @param path    document (or folder) path
      * @return null if document of folder exists
      */
-    public HippoBean getScopeBean(final HstRequest request, String path) {
+    public HippoBean getScopeBean(final HstRequest request, final String path) {
         HippoBean scope;
         final HippoBean siteBean = getSiteContentBaseBean(request);
         if (Strings.isNullOrEmpty(path)) {
             scope = siteBean;
         } else {
-            path = PathUtils.normalizePath(path);
-            log.debug("Looking for bean {}", path);
-            scope = siteBean.getBean(path);
+            final String myPath = PathUtils.normalizePath(path);
+            log.debug("Looking for bean {}", myPath);
+            scope = siteBean.getBean(myPath);
             if (scope == null) {
-                log.warn("Bean was null for selected path:  {}", path);
+                log.warn("Bean was null for selected path:  {}", myPath);
                 scope = siteBean;
             }
         }

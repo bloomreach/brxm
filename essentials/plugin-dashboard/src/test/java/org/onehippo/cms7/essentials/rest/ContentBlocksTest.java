@@ -13,8 +13,6 @@ import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,7 +25,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class ContentBlocksTest {
 
-    private static Logger log = LoggerFactory.getLogger(ContentBlocksTest.class);
 
     @Test
     public void testUnmarshalling() throws Exception {

@@ -74,7 +74,6 @@ public class NoAnnotationMethodVisitor extends ASTVisitor {
                                 }
                             } else if (arg instanceof SimpleName) {
                                 final SimpleName argument = (SimpleName) arg;
-                                final String identifier = argument.getIdentifier();
                                 final Object val = argument.resolveConstantExpressionValue();
                                 // TODO always null, upgrade to latest JDT and check if we can resolve this
                                 // @see org.onehippo.cms7.essentials.dashboard.utils.JavaSourceUtils.getAnnotateMethods()

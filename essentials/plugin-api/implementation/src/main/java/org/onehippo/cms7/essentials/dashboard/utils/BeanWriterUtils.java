@@ -36,6 +36,7 @@ import com.google.common.base.Strings;
  */
 public final class BeanWriterUtils {
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
+    public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
     private BeanWriterUtils() {
@@ -101,14 +102,14 @@ public final class BeanWriterUtils {
                             JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Boolean":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Long":
                             methodName = GlobalUtils.createMethodName(name);
@@ -116,35 +117,35 @@ public final class BeanWriterUtils {
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Double":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodDouble(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "hippostd:html":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "hippo:mirror":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "hippogallerypicker:imagelink":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         default:
                             methodName = GlobalUtils.createMethodName(name);

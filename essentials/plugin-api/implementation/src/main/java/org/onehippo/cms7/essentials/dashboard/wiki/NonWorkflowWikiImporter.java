@@ -10,6 +10,7 @@ import javax.jcr.Session;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,12 +72,9 @@ public class NonWorkflowWikiImporter implements Importer {
                     f = new File(wikiContentFileSystem);
                 }
 
-                DefaultHandler handler = null;
-
                 try {
                     String siteContentBasePath = properties.getProperty("siteContentBasePath");
-                    Session writableSession = session;
-                    Node baseNode = writableSession.getNode(siteContentBasePath);
+                    Node baseNode = session.getNode(siteContentBasePath);
 
                     Node wikiFolder;
 
@@ -85,7 +83,7 @@ public class NonWorkflowWikiImporter implements Importer {
                     if (!baseNode.hasNode(containerName)) {
                         wikiFolder = baseNode.addNode(containerName, "hippostd:folder");
                         wikiFolder.addMixin("hippo:harddocument");
-                        wikiFolder.setProperty("hippo:paths", new String[]{});
+                        wikiFolder.setProperty("hippo:paths", ArrayUtils.EMPTY_STRING_ARRAY);
                         wikiFolder.addMixin("hippotranslation:translated");
                         wikiFolder.setProperty("hippotranslation:locale", "en");
                         wikiFolder.setProperty("hippotranslation:id", UUID.randomUUID().toString());
@@ -95,7 +93,7 @@ public class NonWorkflowWikiImporter implements Importer {
 
                     String prefix = properties.containsKey("prefix") ? properties.getProperty("prefix") : "wiki-";
 
-                    handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset, maxDocsPerFolder,
+                    DefaultHandler handler = new WikiPediaToJCRHandler(wikiFolder, numberOfWikiDocs, offset, maxDocsPerFolder,
                             maxSubFolder, prefix, strategy);
 
                     if (wikiStream == null) {

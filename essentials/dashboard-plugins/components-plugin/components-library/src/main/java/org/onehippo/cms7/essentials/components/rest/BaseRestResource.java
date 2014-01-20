@@ -56,7 +56,7 @@ public abstract class BaseRestResource extends AbstractResource {
         } catch (QueryException e) {
             log.error("Error creating HST query", e);
         } catch (RepositoryException e) {
-            throw new WebServiceException(INVALID_SCOPE);
+            throw new WebServiceException(INVALID_SCOPE, e);
         }
         if (query == null) {
             throw new WebServiceException("Query was null (failed to create it)");

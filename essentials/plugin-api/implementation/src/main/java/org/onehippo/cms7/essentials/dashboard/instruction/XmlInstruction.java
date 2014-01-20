@@ -114,7 +114,7 @@ public class XmlInstruction extends PluginInstruction {
             }
 
             // Import XML with replaced NAMESPACE placeholder
-            final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream).toString(), context.getPlaceholderData());
+            final String myData = TemplateUtils.replaceTemplateData(GlobalUtils.readStreamAsText(stream), context.getPlaceholderData());
             session.importXML(destination.getPath(), IOUtils.toInputStream(myData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
             session.save();
             log.info("Added node to: {}", destination.getPath());
