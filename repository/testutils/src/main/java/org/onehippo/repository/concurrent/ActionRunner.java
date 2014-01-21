@@ -17,12 +17,11 @@ package org.onehippo.repository.concurrent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
@@ -35,14 +34,15 @@ import org.onehippo.repository.concurrent.action.ActionContext;
 import org.onehippo.repository.concurrent.action.ActionFailure;
 import org.slf4j.Logger;
 
-public abstract class ActionRunner extends Thread {
+public class ActionRunner extends Thread {
 
     private static boolean stopRunning = false;
 
+    protected final ActionContext context;
     protected final Session session;
     protected final Logger log;
-    protected final ActionContext context;
     protected final List<Class<? extends Action>> actions;
+    private final Random random = new Random();
     private final long duration;
     private final long throttle;
 
@@ -52,16 +52,18 @@ public abstract class ActionRunner extends Thread {
     private int successes = 0;
     private final List<ActionFailure> failures = new ArrayList<ActionFailure>();
 
-    public ActionRunner(Session session, Logger log, List<Class<? extends Action>> actions, long duration, long throttle) {
-        this.session = session;
-        this.log = log;
-        this.context = new ActionContext(session, log);
+    public ActionRunner(ActionContext actionContext, List<Class<? extends Action>> actions, long duration, long throttle) {
+        this.context = actionContext;
+        this.session = actionContext.getSession();
+        this.log = actionContext.getLog();
         this.actions = actions;
         this.duration = duration;
         this.throttle = throttle;
     }
 
-    public void terminate(ExecutorService executor) throws InterruptedException, ExecutionException {
+    public void initialize() throws Exception {}
+
+    public void terminate() throws InterruptedException, ExecutionException {
         if (isAlive()) {
             terminate = true;
             sleep(1000);
@@ -72,17 +74,6 @@ public abstract class ActionRunner extends Thread {
                 }
                 log.error("FAILURE: thread " + getName() + " seems to hang. Stacktrace:" + sb);
             }
-        }
-        try {
-            // log out on a separate thread to prevent deadlock
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    session.logout();
-                }
-            }).get(3, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            log.warn("Unable to log out session on thread " + getName() + ": timed out");
         }
     }
 
@@ -120,7 +111,43 @@ public abstract class ActionRunner extends Thread {
         }
     }
 
-    protected abstract Node selectNode() throws RepositoryException;
+    protected Node selectNode() throws RepositoryException {
+        Node root;
+        if (random.nextGaussian() < .75) {
+            root = context.getDocumentBase();
+        } else {
+            root = context.getAssetBase();
+        }
+        Node node = null;
+        while (node == null) {
+            try {
+                node = traverse(root);
+            } catch (RepositoryException e) {
+                log.debug("Failed to traverse nodes: " + e);
+            }
+        }
+        return node;
+    }
+
+    private Node traverse(final Node node) throws RepositoryException {
+        if (node.hasNodes() && random.nextGaussian() < .5) {
+            final NodeIterator nodes = node.getNodes();
+            final int size = (int)nodes.getSize();
+            if (size > 0) {
+                int index = random.nextInt(size);
+                if (index > 0) {
+                    nodes.skip(index-1);
+                }
+                Node child = nodes.nextNode();
+                if (child.isNodeType("hippo:handle")) {
+                    child = child.getNode(child.getName());
+                    return child;
+                }
+                return traverse(child);
+            }
+        }
+        return node;
+    }
 
     public int getMisses() {
         return misses;
@@ -146,6 +173,7 @@ public abstract class ActionRunner extends Thread {
         final Action action = getAction(node);
         if (action != null) {
             try {
+                log.debug("Executing {} on node {}", new String[] { action.getClass().getSimpleName(), node.getPath() });
                 final Node result = action.execute(node);
                 successes++;
                 throttle();
@@ -157,7 +185,39 @@ public abstract class ActionRunner extends Thread {
         return null;
     }
 
-    protected abstract Action getAction(final Node node);
+    protected Action getAction(final Node node) {
+        final List<Action> actions = new ArrayList<Action>(this.actions.size());
+        for (Class<? extends Action> actionClass : this.actions) {
+            try {
+                final Action action = context.getAction(actionClass);
+                if (action.canOperateOnNode(node)) {
+                    actions.add(action);
+                }
+            } catch (Exception ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to determine if action is able to operate on node", ex);
+                }
+            }
+        }
+        if (actions.size() > 0) {
+            Action action = null;
+            double weight = 0.0;
+            for (Action a : actions) {
+                weight += a.getWeight();
+            }
+            weight = (1.0 - random.nextDouble()) * weight;
+            for (Action a : actions) {
+                weight -= a.getWeight();
+                if (weight <= 0.0) {
+                    action = a;
+                    break;
+                }
+            }
+            return action;
+        }
+        return null;
+
+    }
 
     private void throttle() {
         try {

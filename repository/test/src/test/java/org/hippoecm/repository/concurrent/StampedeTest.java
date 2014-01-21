@@ -19,21 +19,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import javax.jcr.Node;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.util.NodeIterable;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.onehippo.repository.concurrent.ActionRunner;
-import org.onehippo.repository.concurrent.RandomActionRunner;
 import org.onehippo.repository.concurrent.action.Action;
 import org.onehippo.repository.concurrent.action.ActionContext;
 import org.onehippo.repository.concurrent.action.ActionFailure;
@@ -53,12 +53,6 @@ import org.onehippo.repository.concurrent.action.MoveDocumentAction;
 import org.onehippo.repository.concurrent.action.PublishAction;
 import org.onehippo.repository.concurrent.action.RenameAssetAction;
 import org.onehippo.repository.concurrent.action.RenameDocumentAction;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +139,8 @@ public class StampedeTest {
         final ActionRunner[] runners = new ActionRunner[nthreads];
         for (int i = 0; i < nthreads; i++) {
             Session runnerSession = hippoRepository.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
-            runners[i] = new RandomActionRunner(runnerSession, log, actions, duration, throttle);
+            runners[i] = new ActionRunner(new ActionContext(runnerSession, log), actions, duration, throttle);
+            runners[i].initialize();
             runners[i].setDaemon(true);
         }
         if (prompt) {
@@ -161,9 +156,9 @@ public class StampedeTest {
             runner.join();
         }
         long endTime = System.currentTimeMillis();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
         for(ActionRunner runner : runners) {
-            runner.terminate(executor);
+            runner.terminate();
+            runner.getContext().stop();
         }
         if(!report(runners, startTime, endTime)) {
             fail();

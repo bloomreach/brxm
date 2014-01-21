@@ -61,6 +61,19 @@ public final class ActionContext {
         }
     }
 
+    public void stop() throws Exception {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                session.logout();
+            }
+        }).start();
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
     public String getDocumentBasePath() {
         return documentBasePath;
     }
