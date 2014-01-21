@@ -25,7 +25,7 @@
 
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>2.25.03-iteration-9</version>
+  <version>2.25.03-page-mgmt-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -37,7 +37,7 @@
 
     <hippo.repository.version>2.25.05-iteration-9</hippo.repository.version>
     <hippo.cms.version>2.25.04-iteration-9</hippo.cms.version>
-    <hippo.hst.version>2.27.03-iteration-9</hippo.hst.version>
+    <hippo.hst.version>2.27.03-page-mgmt-SNAPSHOT</hippo.hst.version>
     <hippo.addon-hst-configuration-editor.version>1.12.03-iteration-9</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
 
@@ -123,9 +123,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/tags/hippo-addon-channel-manager-2.25.03-iteration-9</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/tags/hippo-addon-channel-manager-2.25.03-iteration-9</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/tags/hippo-addon-channel-manager-2.25.03-iteration-9</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/hippo-addon-channel-manager-page-management</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/hippo-addon-channel-manager-page-management</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/hippo-addon-channel-manager-page-management</url>
   </scm>
 
   <build>
