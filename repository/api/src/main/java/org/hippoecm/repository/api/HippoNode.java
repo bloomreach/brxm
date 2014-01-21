@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  *  limitations under the License.
  */
 package org.hippoecm.repository.api;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
@@ -76,6 +80,15 @@ public interface HippoNode extends Node {
      * @throws RepositoryException
      */
     public String getLocalizedName(Localized localized) throws RepositoryException;
+
+    /**
+     * Gets all localized names of this node, including the 'default' one
+     * (i.e. for {@link org.hippoecm.repository.api.Localized#getInstance()}) if available.
+     * @return all localized names of this node, or an empty list if this node does not have
+     * any localized names.
+     * @throws RepositoryException
+     */
+    public Map<Localized, String> getLocalizedNames() throws RepositoryException;
 
     /**
      * Get the most accurate and complete version available of the information

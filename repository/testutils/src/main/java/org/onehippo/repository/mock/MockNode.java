@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -58,7 +59,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Mock version of a {@link Node}. Limitations:
+ * Mock version of a {@link Node}.
+ * 
+ * <P>
+ * Limitations:
  * <ul>
  *     <li>Only string properties can be retrieved and modified</li>
  *     <li>Child nodes can only be retrieved by their name, but not added by name</li>
@@ -614,6 +618,16 @@ public class MockNode extends MockItem implements HippoNode {
         return false;
     }
 
+    @Override
+    public String getLocalizedName() throws RepositoryException {
+        return getName();
+    }
+
+    @Override
+    public Map<Localized, String> getLocalizedNames() throws RepositoryException {
+        return Collections.emptyMap();
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override
@@ -778,11 +792,6 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public String[] getAllowedLifecycleTransistions() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getLocalizedName() throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 

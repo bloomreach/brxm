@@ -73,6 +73,7 @@ import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerat
 import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewPackage;
 import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.slf4j.Logger;
@@ -192,23 +193,21 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-
-        try {
-            postMountEnabled(false);
-            getInternalHippoSession().importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
-            // run derived data engine
-            derivedEngine.save();
-            //session.save();
-        } finally {
-            postMountEnabled(true);
-        }
+        importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
     @Override
-    public void importEnhancedSystemViewPackage(final String parentAbsPath, final File pckg, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
+    public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader,  int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
+
         try {
             postMountEnabled(false);
-            getInternalHippoSession().importEnhancedSystemViewBinaryPackage(parentAbsPath, pckg, uuidBehaviour, referenceBehaviour, mergeBehaviour);
+            getInternalHippoSession().importDereferencedXML(parentAbsPath, in, referredResourceLoader, uuidBehavior, referenceBehavior, mergeBehavior);
+            // run derived data engine
+            derivedEngine.save();
+            //session.save();
         } finally {
             postMountEnabled(true);
         }

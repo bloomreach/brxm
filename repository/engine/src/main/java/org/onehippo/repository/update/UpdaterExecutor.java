@@ -415,8 +415,9 @@ public class UpdaterExecutor implements EventListener {
             report.startBatch();
             saveReport(session.getNodeByIdentifier(updaterInfo.getIdentifier()));
         }
-
-        throttle(updaterInfo.getThrottle());
+        if (batchCompleted) {
+            throttle(updaterInfo.getThrottle());
+        }
     }
 
     private void saveReport(final Node node) throws RepositoryException {

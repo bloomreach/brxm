@@ -93,7 +93,7 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
             }
         }
         catch (RepositoryException ex) {
-            // TODO DEDJO: ignore?
+            log.error("Failed to calculate hints", ex);
         }
         return info;
     }
@@ -114,6 +114,9 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
         } else if(PublicationRequest.PUBLISH.equals(requestType)) {
             if (!state.isDirty()) {
                 throw new WorkflowException("cannot publish document when no changes present");
+            }
+            if (state.isEditing()) {
+                throw new WorkflowException("cannot publish document which is being edited");
             }
             deleteRequest();
             ((FullReviewedActionsWorkflow)getWorkflowContext().getWorkflow("default", unpublishedDocument)).publish();

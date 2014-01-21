@@ -52,7 +52,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
-        this(manager, category, node, item.getUUID());
+        this(manager, category, node, item.getIdentifier());
     }
 
     private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, String uuid) throws RepositoryException {

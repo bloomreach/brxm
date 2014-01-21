@@ -15,15 +15,16 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.jcr.Binary;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Property;
-
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -31,6 +32,7 @@ import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
@@ -69,12 +71,12 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
     private String mergeBehavior = null;
     private String mergeLocation = null;
     private final TextValue[] values;
-    private final File[] binaryFiles;
+    private final URL[] binaryURLs;
     private final ValueFactory valueFactory;
 
 
     public PropInfo(NamePathResolver resolver, Name name, int type, Boolean multiple, TextValue[] values, String mergeBehavior,
-                    String mergeLocation, final File[] binaryFiles, final ValueFactory valueFactory) {
+                    String mergeLocation, final URL[] binaryURLs, final ValueFactory valueFactory) {
         super(name, type, values);
         this.multiple = multiple != null ? multiple : Boolean.FALSE;
         this.mergeBehavior = mergeBehavior;
@@ -93,7 +95,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         }
         this.values = values.clone();
         this.resolver = resolver;
-        this.binaryFiles = binaryFiles;
+        this.binaryURLs = binaryURLs;
         this.valueFactory = valueFactory;
     }
 
@@ -145,15 +147,40 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
 
     @Override
     public Value[] getValues(final int targetType, final NamePathResolver resolver) throws RepositoryException {
-        if (targetType == PropertyType.BINARY && binaryFiles.length != 0) {
+        if (targetType == PropertyType.BINARY && binaryURLs.length != 0) {
+            Value[] values = new Value[binaryURLs.length];
             try {
-                Value[] values = new Value[binaryFiles.length];
-                for (int i = 0; i < binaryFiles.length; i++) {
-                    values[i] = valueFactory.createValue(valueFactory.createBinary(new FileInputStream(binaryFiles[i])));
+                for (int i = 0; i < binaryURLs.length; i++) {
+                    values[i] = valueFactory.createValue(valueFactory.createBinary(binaryURLs[i].openStream()));
                 }
                 return values;
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
+                for (Value value : values) {
+                    if (value != null) {
+                        try {
+                            Binary binary = value.getBinary();
+                            binary.dispose();
+                        } catch (Exception ignore) {
+                        }
+                    }
+                }
                 throw new RepositoryException(e);
+            }
+        } else if (targetType == PropertyType.STRING && binaryURLs.length != 0) {
+            Value[] values = new Value[binaryURLs.length];
+            InputStream input = null;
+            try {
+                for (int i = 0; i < binaryURLs.length; i++) {
+                    input = binaryURLs[i].openStream();
+                    values[i] = valueFactory.createValue(IOUtils.toString(input, "UTF-8"));
+                    input.close();
+                    input = null;
+                }
+                return values;
+            } catch (IOException e) {
+                throw new RepositoryException(e);
+            } finally {
+                IOUtils.closeQuietly(input);
             }
         } else {
             Value[] va = new Value[values.length];
@@ -179,7 +206,7 @@ public class PropInfo extends org.apache.jackrabbit.core.xml.PropInfo {
         if (isPathReference) {
             checkType = PropertyType.REFERENCE;
         }
-        if (values.length == 1 || binaryFiles.length == 1) {
+        if (values.length == 1 || binaryURLs.length == 1) {
             // could be single- or multi-valued (n == 1)
             return ent.getApplicablePropertyDef(name, checkType);
         } else {

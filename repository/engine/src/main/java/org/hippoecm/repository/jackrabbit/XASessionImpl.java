@@ -16,12 +16,10 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +38,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.WorkspaceImpl;
@@ -55,13 +52,12 @@ import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.tika.io.IOUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
-import org.hippoecm.repository.jackrabbit.xml.EnhancedSystemViewPackage;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,30 +219,30 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        return helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior, Collections.<String, File>emptyMap());
+        return getDereferencedImportContentHandler(parentAbsPath, null, uuidBehavior, referenceBehavior, mergeBehavior);
+    }
+
+    @Override
+    public ContentHandler getDereferencedImportContentHandler(String parentAbsPath,
+            ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior, int mergeBehavior)
+            throws RepositoryException {
+        return helper.getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
             RepositoryException {
-        ContentHandler handler =
-            getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
-        new DefaultContentHandler(handler).parse(in);
+        importDereferencedXML(parentAbsPath, in, null, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
-    @Override
-    public void importEnhancedSystemViewBinaryPackage(final String parentAbsPath, final File archive, final int uuidBehaviour, final int referenceBehaviour, final int mergeBehaviour) throws IOException, RepositoryException {
-        final EnhancedSystemViewPackage pckg = EnhancedSystemViewPackage.create(archive);
-        InputStream in = null;
-        try {
-            in = new FileInputStream(pckg.getXml());
-            final ContentHandler handler = helper.getDereferencedImportContentHandler(parentAbsPath, uuidBehaviour, referenceBehaviour, mergeBehaviour, pckg.getBinaries());
-            new DefaultContentHandler(handler).parse(in);
-        } finally {
-            IOUtils.closeQuietly(in);
-            pckg.destroy();
-        }
+    public void importDereferencedXML(String parentAbsPath, InputStream in, ContentResourceLoader referredResourceLoader, int uuidBehavior, int referenceBehavior,
+            int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
+            ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
+            RepositoryException {
+        ContentHandler handler =
+            getDereferencedImportContentHandler(parentAbsPath, referredResourceLoader, uuidBehavior, referenceBehavior, mergeBehavior);
+        new DefaultContentHandler(handler).parse(in);
     }
 
     @Override
@@ -293,4 +289,5 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
         sharedStateMgr.addListener(mgr);
         return mgr;
     }
+
 }

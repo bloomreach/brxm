@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,19 @@
  */
 package org.hippoecm.repository.events;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-
-import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.PropertyValueGetterImpl;
+import org.hippoecm.repository.util.ValueGetter;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import java.util.*;
+
+import static org.hippoecm.repository.util.JcrUtils.getProperties;
+
 
 class BroadcastThread extends Thread {
 
@@ -100,7 +93,7 @@ class BroadcastThread extends Thread {
                     final HippoWorkflowEvent event = createEvent(logItem);
                     job.publish(event);
                     timeStamp = event.timestamp();
-                } catch (RepositoryException re) {
+                } catch (RepositoryException | RuntimeException re) {
                     logger.warn("Unable to process logItem at " + path, re);
                 }
             }
@@ -114,6 +107,7 @@ class BroadcastThread extends Thread {
 
     private final Session session;
     private final BroadcastService broadcastService;
+    private final ValueGetter<Property,?> propertyValueGetter;
 
     private long queryLimit;
     private long pollingTime;
@@ -122,6 +116,7 @@ class BroadcastThread extends Thread {
     public BroadcastThread(final Session session, final BroadcastService broadcastService) {
         this.session = session;
         this.broadcastService = broadcastService;
+        this.propertyValueGetter = new PropertyValueGetterImpl();
 
         this.queryLimit = DEFAULT_QUERY_LIMIT;
         this.pollingTime = DEFAULT_POLLING_TIME;
@@ -250,30 +245,19 @@ class BroadcastThread extends Thread {
      * @return HippoEvent with the workflow information
      */
     private HippoWorkflowEvent createEvent(Node logNode) throws RepositoryException {
-        HippoWorkflowEvent event = new HippoWorkflowEvent();
-        event.timestamp(JcrUtils.getLongProperty(logNode, "hippolog:timestamp", -1l));
-        event.user(JcrUtils.getStringProperty(logNode, "hippolog:user", null));
-        event.className(JcrUtils.getStringProperty(logNode, "hippolog:className", null));
-        event.methodName(JcrUtils.getStringProperty(logNode, "hippolog:methodName", null));
-        event.workflowCategory(JcrUtils.getStringProperty(logNode, "hippolog:workflowCategory", null));
-        event.workflowName(JcrUtils.getStringProperty(logNode, "hippolog:workflowName", null));
-        event.interaction(JcrUtils.getStringProperty(logNode, "hippolog:interaction", null));
-        event.interactionId(JcrUtils.getStringProperty(logNode, "hippolog:interactionId", null));
-        event.documentPath(JcrUtils.getStringProperty(logNode, "hippolog:documentPath", null));
-        event.handleUuid(JcrUtils.getStringProperty(logNode, "hippolog:handleUuid", null));
-        event.returnType(JcrUtils.getStringProperty(logNode, "hippolog:returnType", null));
-        event.returnValue(JcrUtils.getStringProperty(logNode, "hippolog:returnValue", null));
-        final Property argumentsProperty = JcrUtils.getPropertyIfExists(logNode, "hippolog:argumentså");
-        if (argumentsProperty != null) {
-            final Value[] values = argumentsProperty.getValues();
-            ArrayList<String> arguments = new ArrayList<String>(values.length);
-            for (Value value : values) {
-                arguments.add(value.getString());
-            }
-            event.arguments(arguments);
+        final HippoWorkflowEvent<?> event = new HippoWorkflowEvent();
+        for (Property property : getProperties(logNode)) {
+            final String key = getKeyFromPropertyName(property.getName());
+            final Object value = propertyValueGetter.getValue(property);
+            event.set(key, value);
         }
-
         return event;
     }
+
+    private String getKeyFromPropertyName(String name) {
+        int colonIndex = name.indexOf(':');
+        return colonIndex != -1 ? name.substring(colonIndex + 1) : name;
+    }
+
 
 }

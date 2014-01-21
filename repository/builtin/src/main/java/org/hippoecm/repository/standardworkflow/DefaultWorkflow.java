@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -104,13 +104,24 @@ public interface DefaultWorkflow extends CopyWorkflow {
      * name specified, and only a name set by this localizeName method, then when retrieving a Dutch name, the name set by
      * this localizeName method is retrieved.  If this method was not used to set a different name, the actual JCR node name
      * is returned, which has some limitations.
-     * @param newName the new name to be used for the locale
+     * @param newName the new name to be used
      * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
      * @throws MappingException indicates that the work-flow call failed because of configuration problems
      * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
      * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
     public void localizeName(String newName)
+      throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     * Identical to {@link #localizeName(String)}, except that all existing localized names will be removed.
+     * @param newName the new name
+     * @throws WorkflowException indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     */
+    public void replaceAllLocalizedNames(String newName)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**

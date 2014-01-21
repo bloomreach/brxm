@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.xml.ImportHandler;
 import org.apache.jackrabbit.core.xml.Importer;
 import org.apache.jackrabbit.spi.Name;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -41,16 +41,16 @@ public class DereferencedImportHandler extends ImportHandler {
     private final Importer importer;
     private final NamespaceRegistryImpl nsReg;
     private final SessionImpl session;
-    private final Map<String, File> binaries;
+    private final ContentResourceLoader contentResourceLoader;
     private Map<String, String> localNamespaceMappings;
     private DereferencedSysViewImportHandler targetHandler;
 
-    public DereferencedImportHandler(Importer importer, SessionImpl session, NamespaceRegistryImpl nsReg, Map<String, File> binaries) throws RepositoryException {
+    public DereferencedImportHandler(Importer importer, SessionImpl session, NamespaceRegistryImpl nsReg, final ContentResourceLoader contentResourceLoader) throws RepositoryException {
         super(importer, session);
         this.importer = importer;
         this.nsReg = nsReg;
         this.session = session;
-        this.binaries = binaries;
+        this.contentResourceLoader = contentResourceLoader;
     }
 
     //---------------------------------------------------------< ErrorHandler >
@@ -143,7 +143,7 @@ public class DereferencedImportHandler extends ImportHandler {
             // the namespace of the first element determines the type of XML
             // (system view/document view)
             if (Name.NS_SV_URI.equals(namespaceURI)) {
-                targetHandler = new DereferencedSysViewImportHandler(importer, binaries, session.getValueFactory());
+                targetHandler = new DereferencedSysViewImportHandler(importer, contentResourceLoader, session.getValueFactory());
             } else {
                 throw new SAXException("Only sys views are supported, unknow: " + namespaceURI);
             }

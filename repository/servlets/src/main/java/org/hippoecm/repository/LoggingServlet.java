@@ -22,7 +22,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessControlException;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -164,7 +163,7 @@ public class LoggingServlet extends HttpServlet {
         if (!BasicAuth.hasAuthorizationHeader(req)) {
             return false;
         }
-        SimpleCredentials creds = BasicAuth.parseAuthoriztionHeader(req);
+        SimpleCredentials creds = BasicAuth.parseAuthorizationHeader(req);
         try {
             return hasRepositoryPrivs(creds);
         } catch (LoginException e) {

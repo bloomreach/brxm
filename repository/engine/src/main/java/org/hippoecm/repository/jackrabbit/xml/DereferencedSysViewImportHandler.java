@@ -15,8 +15,9 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.value.ValueFactoryImpl;
+import org.onehippo.repository.api.ContentResourceLoader;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -68,17 +70,17 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
     // list of AppendableValue objects
     private ArrayList<BufferedStringValue> currentPropValues = new ArrayList<BufferedStringValue>();
     private BufferedStringValue currentPropValue;
-    private ArrayList<File> currentBinaryPropValueFiles = new ArrayList<>();
-    private File currentBinaryPropValueFile;
-    private final Map<String, File> binaries;
+    private ArrayList<URL> currentBinaryPropValueURLs = new ArrayList<>();
+    private URL currentBinaryPropValueURL;
+    private final ContentResourceLoader contentResourceLoader;
     private final ValueFactory valueFactory;
     private final Importer importer;
     private NamespaceContext nsContext;
     private NamePathResolver resolver;
 
-    protected DereferencedSysViewImportHandler(Importer importer, Map<String, File> binaries, ValueFactory valueFactory) {
+    protected DereferencedSysViewImportHandler(Importer importer, final ContentResourceLoader contentResourceLoader, ValueFactory valueFactory) {
         this.importer = importer;
-        this.binaries = binaries;
+        this.contentResourceLoader = contentResourceLoader;
         this.valueFactory = valueFactory;
     }
 
@@ -263,9 +265,13 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             // sv:value element
             final String fileName = atts.getValue(NS_XMLIMPORT, "file");
             if (fileName != null) {
-                currentBinaryPropValueFile = binaries != null ? binaries.get(fileName) : null;
-                if (currentBinaryPropValueFile == null) {
-                    throw new SAXException("Missing binary " + fileName);
+                try {
+                    currentBinaryPropValueURL = contentResourceLoader != null ? contentResourceLoader.getResource(fileName) : null;
+                    if (currentBinaryPropValueURL == null) {
+                        throw new SAXException("Missing file resource: " + fileName);
+                    }
+                } catch (MalformedURLException e) {
+                    throw new SAXException("Malformed file resource path: " + fileName);
                 }
             } else {
                 currentPropValue = new BufferedStringValue(resolver, ValueFactoryImpl.getInstance());
@@ -378,23 +384,23 @@ public class DereferencedSysViewImportHandler extends DefaultHandler {
             } else {
                 PropInfo prop = new PropInfo(resolver, currentPropName, currentPropType, currentPropMultiple, currentPropValues
                         .toArray(new TextValue[currentPropValues.size()]), currentMergeBehavior, currentMergeLocation,
-                        currentBinaryPropValueFiles.toArray(new File[currentBinaryPropValueFiles.size()]), valueFactory);
+                        currentBinaryPropValueURLs.toArray(new URL[currentBinaryPropValueURLs.size()]), valueFactory);
                 state.props.add(prop);
             }
             // reset temp fields
             currentPropValues.clear();
-            currentBinaryPropValueFiles.clear();
+            currentBinaryPropValueURLs.clear();
         } else if (name.equals(NameConstants.SV_VALUE)) {
             // sv:value element
             if (currentPropValue != null) {
                 currentPropValues.add(currentPropValue);
             }
-            if (currentBinaryPropValueFile != null) {
-                currentBinaryPropValueFiles.add(currentBinaryPropValueFile);
+            if (currentBinaryPropValueURL != null) {
+                currentBinaryPropValueURLs.add(currentBinaryPropValueURL);
             }
             // reset temp fields
             currentPropValue = null;
-            currentBinaryPropValueFile = null;
+            currentBinaryPropValueURL = null;
         } else {
             throw new SAXException(new InvalidSerializedDataException("invalid element in system view xml document: "
                     + localName));

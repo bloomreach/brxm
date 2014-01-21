@@ -19,14 +19,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
@@ -40,54 +36,6 @@ public class EnhancedSystemViewPackage {
     private EnhancedSystemViewPackage(final File xml, final Map<String, File> binaries) {
         this.xml = xml;
         this.binaries = binaries;
-    }
-
-    public static EnhancedSystemViewPackage create(File archive) throws IOException {
-        final File esvFile;
-        final Map<String, File> binaries = new HashMap<>();
-        final ZipFile zipFile = new ZipFile(archive);
-        try {
-            final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-            if (!zipEntries.hasMoreElements()) {
-                throw new IOException("Archive is empty");
-            }
-
-            final ZipEntry xmlEntry = zipFile.getEntry("esv.xml");
-            esvFile = File.createTempFile("esv", ".xml");
-            if (xmlEntry == null) {
-                throw new IOException("No entry called esv.xml in archive");
-            }
-            InputStream in = null;
-            OutputStream out = null;
-            try {
-                in = zipFile.getInputStream(xmlEntry);
-                out = new FileOutputStream(esvFile);
-                IOUtils.copy(in, out);
-            } finally {
-                IOUtils.closeQuietly(in);
-                IOUtils.closeQuietly(out);
-            }
-
-            while (zipEntries.hasMoreElements()) {
-                final ZipEntry zipEntry = zipEntries.nextElement();
-                if (zipEntry.getName().endsWith(".bin")) {
-                    final File file = File.createTempFile("binary", ".bin");
-                    try {
-                        in = zipFile.getInputStream(zipEntry);
-                        out = new FileOutputStream(file);
-                        IOUtils.copy(in, out);
-                    } finally {
-                        IOUtils.closeQuietly(in);
-                        IOUtils.closeQuietly(out);
-                    }
-                    binaries.put(zipEntry.getName(), file);
-                }
-            }
-        } finally {
-            try { zipFile.close(); } catch (IOException ignore) {}
-        }
-
-        return new EnhancedSystemViewPackage(esvFile, binaries);
     }
 
     public static EnhancedSystemViewPackage create(File xml, Collection<File> binaries) throws IOException {

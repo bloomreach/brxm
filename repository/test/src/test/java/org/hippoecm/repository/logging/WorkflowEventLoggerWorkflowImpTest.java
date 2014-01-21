@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 package org.hippoecm.repository.logging;
 
-import javax.jcr.Session;
-
 import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl;
 import org.junit.After;
 import org.junit.Before;
@@ -26,8 +25,13 @@ import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.repository.security.SecurityService;
+import org.onehippo.repository.security.User;
+
+import javax.jcr.Session;
 
 import static junit.framework.Assert.assertEquals;
+import static org.easymock.EasyMock.*;
 
 public class WorkflowEventLoggerWorkflowImpTest {
 
@@ -35,7 +39,7 @@ public class WorkflowEventLoggerWorkflowImpTest {
 
     @Before
     public void createService() {
-        eventBus = EasyMock.createNiceMock(HippoEventBus.class);
+        eventBus = createNiceMock(HippoEventBus.class);
         HippoServiceRegistry.registerService(eventBus, HippoEventBus.class);
     }
 
@@ -46,16 +50,25 @@ public class WorkflowEventLoggerWorkflowImpTest {
 
     @Test
     public void testEventIsPostedToEventBus() throws Exception {
-        Session session = EasyMock.createNiceMock(Session.class);
+        final Session session = createNiceMock(Session.class);
         WorkflowEventLoggerWorkflowImpl eventLogger = new WorkflowEventLoggerWorkflowImpl(null, session, null);
+
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final SecurityService securityService = createMock(SecurityService.class);
+        final User user = createMock(User.class);
+        expect(session.getWorkspace()).andReturn(workspace);
+        expect(workspace.getSecurityService()).andReturn(securityService);
+        expect(securityService.hasUser(EasyMock.anyObject(String.class))).andReturn(true);
+        expect(securityService.getUser(EasyMock.anyObject(String.class))).andReturn(user);
+        expect(user.isSystemUser()).andReturn(false);
 
         final Capture<HippoEvent> captured = new Capture<HippoEvent>();
         eventBus.post(EasyMock.capture(captured));
-        EasyMock.replay(eventBus, session);
+        replay(eventBus, session, workspace, securityService, user);
 
         eventLogger.logEvent("userName", "className", "methodName");
 
-        EasyMock.verify(eventBus, session);
+        verify(eventBus, session);
 
         final HippoEvent event = captured.getValue();
         assertEquals("repository", event.application());

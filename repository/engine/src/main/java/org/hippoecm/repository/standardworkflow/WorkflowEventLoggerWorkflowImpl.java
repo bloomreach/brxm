@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,18 +21,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.*;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
+import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,12 +80,20 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
             return;
         }
 
-        String returnType = getReturnType(returnObject);
-        String returnValue = getReturnValue(returnObject);
-        String[] arguments = replaceObjectsWithStrings(args);
-        String handleUuid = getHandleUuid(documentPath);
-        postEvent(userName, className, methodName, documentPath, handleUuid, returnType, returnValue, arguments,
-                interaction, interactionId, category, workflowName);
+        postEvent(userName, className, methodName, args, returnObject, documentPath, interaction, interactionId, category, workflowName);
+    }
+
+    private Boolean isSystemUser(String userName) {
+        try {
+            final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
+            return securityService.hasUser(userName) && securityService.getUser(userName).isSystemUser();
+        } catch (ItemNotFoundException ignore) {
+            // If hasUser returns true, we expect getUser to return a user, so it is very unlikely that
+            // securityService.getUser(userName) will throw this exception
+        } catch (RepositoryException e) {
+            log.error("Failed to determine system status of event", e);
+        }
+        return null;
     }
 
     private String getHandleUuid(final String documentPath) {
@@ -110,19 +117,25 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
         return null;
     }
 
-
-    private void postEvent(String who, String className, String methodName, String documentPath, String handleUuid, String returnType,
-                           String returnValue, String[] arguments, String interaction, String interactionId, String category, String workflowName) {
+    private void postEvent(String userName, String className, String methodName, Object[] args, Object returnObject,
+                           String documentPath, String interaction, String interactionId, String category, String workflowName) {
         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         if (eventBus != null) {
-            HippoWorkflowEvent event = new HippoWorkflowEvent();
-            event.user(who).action(className + "." + methodName).result(returnValue);
+            final HippoWorkflowEvent event = new HippoWorkflowEvent();
+            final String returnValue = getReturnValue(returnObject);
+            final String action = className + "." + methodName;
+            final String handleUuid = getHandleUuid(documentPath);
+            final String returnType = getReturnType(returnObject);
+            final String[] arguments = replaceObjectsWithStrings(args);
+            final Boolean system = isSystemUser(userName);
+            event.user(userName).action(action).result(returnValue);
             event.className(className).methodName(methodName).handleUuid(handleUuid);
             event.returnType(returnType).returnValue(returnValue).documentPath(documentPath);
             event.interactionId(interactionId);
             event.interaction(interaction);
             event.workflowCategory(category);
             event.workflowName(workflowName);
+            event.system(system);
             if (arguments != null) {
                 event.arguments(Arrays.asList(arguments));
             }

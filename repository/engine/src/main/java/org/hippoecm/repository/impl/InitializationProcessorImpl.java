@@ -17,12 +17,11 @@ package org.hippoecm.repository.impl;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +33,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.zip.ZipFile;
 
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.NamespaceException;
@@ -74,7 +74,9 @@ import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.api.ContentResourceLoader;
+import org.onehippo.repository.util.FileContentResourceLoader;
+import org.onehippo.repository.util.ZipFileContentResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParser;
@@ -372,10 +374,10 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
 
         String contentResource = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
-        InputStream contentStream = getResourceStream(node, contentResource);
-        boolean pckg = contentResource.endsWith(".zip");
+        URL contentURL = getResource(node, contentResource);
+        boolean pckg = contentResource.endsWith(".zip") || contentResource.endsWith(".jar");
 
-        if (contentStream == null) {
+        if (contentURL == null) {
             getLogger().error("Cannot locate content configuration '" + contentResource + "', initialization skipped");
             return;
         }
@@ -392,7 +394,16 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 final String contextNodePath = contentRoot.equals("/") ? contentRoot + contextNodeName : contentRoot + "/" + contextNodeName;
                 final int index = getNodeIndex(session, contextNodePath);
                 if (removeNode(session, contextNodePath, false)) {
-                    initializeNodecontent(session, contentRoot, contentStream, contentResource, pckg);
+                    InputStream is = null;
+                    BufferedInputStream bis = null;
+                    try {
+                        is = contentURL.openStream();
+                        bis = new BufferedInputStream(is); 
+                        initializeNodecontent(session, contentRoot, bis, contentURL.toString(), pckg);
+                    } finally {
+                        IOUtils.closeQuietly(bis);
+                        IOUtils.closeQuietly(is);
+                    }
                     if (index != -1) {
                         reorderNode(session, contextNodePath, index);
                     }
@@ -403,9 +414,17 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 getLogger().error("Cannot reload item {} because context node could not be determined", node.getName());
             }
         } else {
-            initializeNodecontent(session, contentRoot, contentStream, contentResource, pckg);
+            InputStream is = null;
+            BufferedInputStream bis = null;
+            try {
+                is = contentURL.openStream();
+                bis = new BufferedInputStream(is); 
+                initializeNodecontent(session, contentRoot, bis, contentURL.toString(), pckg);
+            } finally {
+                IOUtils.closeQuietly(bis);
+                IOUtils.closeQuietly(is);
+            }
         }
-
     }
 
     private void reorderNode(final Session session, final String nodePath, final int index) throws RepositoryException {
@@ -478,12 +497,21 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             getLogger().debug("Found nodetypes resource configuration");
         }
         String cndResource = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE).getString());
-        InputStream cndStream = getResourceStream(node, cndResource);
-        if (cndStream == null) {
+        URL cndURL = getResource(node, cndResource);
+        if (cndURL == null) {
             getLogger().error("Cannot locate nodetype configuration '" + cndResource + "', initialization skipped");
         } else {
             if (!dryRun) {
-                initializeNodetypes(session.getWorkspace(), cndStream, cndResource);
+                InputStream is = null;
+                BufferedInputStream bis = null;
+                try {
+                    is = cndURL.openStream();
+                    bis = new BufferedInputStream(is);
+                    initializeNodetypes(session.getWorkspace(), bis, cndURL.toString());
+                } finally {
+                    IOUtils.closeQuietly(bis);
+                    IOUtils.closeQuietly(is);
+                }
             }
         }
     }
@@ -723,17 +751,21 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
         try {
             final String contentResource = StringUtils.trim(item.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
-            if (contentResource.endsWith(".zip")) {
+            if (contentResource.endsWith(".zip") || contentResource.endsWith(".jar")) {
                 return null;
             }
-            InputStream contentStream = getResourceStream(item, contentResource);
-            if (contentStream != null) {
+            URL contentURL = getResource(item, contentResource);
+            if (contentURL != null) {
+                InputStream is = null;
+                BufferedInputStream bis = null;
                 try {
                     // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
                     String contextNodeName = null;
                     String deltaDirective = null;
                     XmlPullParser xpp = factory.newPullParser();
-                    xpp.setInput(contentStream, null);
+                    is = contentURL.openStream();
+                    bis = new BufferedInputStream(is);
+                    xpp.setInput(bis, null);
                     while(xpp.getEventType() != XmlPullParser.END_DOCUMENT) {
                         if (xpp.getEventType() == XmlPullParser.START_TAG) {
                             contextNodeName = xpp.getAttributeValue("http://www.jcp.org/jcr/sv/1.0", "name");
@@ -744,7 +776,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     }
                     return new ContentFileInfo(contextNodeName, deltaDirective);
                 } finally {
-                    try { contentStream.close(); } catch (IOException ignore) {}
+                    IOUtils.closeQuietly(bis);
+                    IOUtils.closeQuietly(is);
                 }
             }
         } catch (RepositoryException | XmlPullParserException | IOException e) {
@@ -753,26 +786,18 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return null;
     }
 
-    private InputStream getResourceStream(final Node item, String resourcePath) throws RepositoryException, IOException {
-        InputStream resourceStream = null;
+    private URL getResource(final Node item, String resourcePath) throws RepositoryException, IOException {
         if (resourcePath.startsWith("file:")) {
-            resourcePath = RepoUtils.stripFileProtocol(resourcePath);
-            File localFile = new File(resourcePath);
-            try {
-                resourceStream = new BufferedInputStream(new FileInputStream(localFile));
-            } catch (FileNotFoundException e) {
-                getLogger().error("Resource file not found: " + resourceStream, e);
-            }
+            return URI.create(resourcePath).toURL();
         } else {
             if (item.hasProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE)) {
                 URL resource = new URL(item.getProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE).getString());
                 resource = new URL(resource, resourcePath);
-                resourceStream = resource.openStream();
+                return resource;
             } else {
-                resourceStream = LocalHippoRepository.class.getResourceAsStream(resourcePath);
+                return LocalHippoRepository.class.getResource(resourcePath);
             }
         }
-        return resourceStream;
     }
 
     public void initializeNamespace(NamespaceRegistry nsreg, String prefix, String uri) throws RepositoryException {
@@ -916,6 +941,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     public void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, String location, boolean pckg) {
         getLogger().info("Initializing content from: " + location + " to " + parentAbsPath);
         File tempFile = null;
+        ZipFile zipFile = null;
+        InputStream esvIn = null;
         FileOutputStream out = null;
         try {
             String relpath = (parentAbsPath.startsWith("/") ? parentAbsPath.substring(1) : parentAbsPath);
@@ -931,11 +958,25 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     tempFile = File.createTempFile("package", ".zip");
                     out = new FileOutputStream(tempFile);
                     IOUtils.copy(istream, out);
-                    hippoSession.importEnhancedSystemViewPackage(parentAbsPath, tempFile,
+                    out.close();
+                    out = null;
+                    zipFile = new ZipFile(tempFile);
+                    ContentResourceLoader contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
+                    esvIn = contentResourceLoader.getResourceAsStream("esv.xml");
+                    hippoSession.importDereferencedXML(parentAbsPath, esvIn, contentResourceLoader,
                             uuidBehaviour, referenceBehaviour, mergeBehaviour);
                 }
                 else {
-                    hippoSession.importDereferencedXML(parentAbsPath, istream,
+                    ContentResourceLoader contentResourceLoader = null;
+                    if ((StringUtils.startsWith(location, "jar:file:") || StringUtils.startsWith(location, "file:")) && StringUtils.contains(location, "!")) {
+                        File sourceFile = new File(URI.create(StringUtils.removeStart(StringUtils.substringBefore(location, "!"), "jar:")));
+                        zipFile = new ZipFile(sourceFile);
+                        contentResourceLoader = new ZipFileContentResourceLoader(zipFile);
+                    } else if (StringUtils.startsWith(location, "file:")) {
+                        File sourceFile = new File(URI.create(location));
+                        contentResourceLoader = new FileContentResourceLoader(sourceFile.getParentFile());
+                    }
+                    hippoSession.importDereferencedXML(parentAbsPath, istream, contentResourceLoader,
                             uuidBehaviour, referenceBehaviour, mergeBehaviour);
                 }
             } else {
@@ -949,6 +990,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             }
         } finally {
             IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(esvIn);
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (Exception ignore) {
+                }
+            }
             FileUtils.deleteQuietly(tempFile);
         }
     }

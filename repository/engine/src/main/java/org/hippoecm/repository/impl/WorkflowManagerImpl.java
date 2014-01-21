@@ -138,11 +138,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for node {}", category, item.getPath());
 
-            if (!item.isNodeType("mix:referenceable") && !item.isNodeType("rep:root")) {
-                log.debug("No workflow for node because node is not mix:referenceable");
-                return null;
-            }
-
             Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
             if (node != null) {
                 for (Node workflowNode : new NodeIterable(node.getNodes())) {

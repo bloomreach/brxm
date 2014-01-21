@@ -140,6 +140,8 @@ resources/.classpath
 resources/.project
 resources/.settings
 resources/target
+scripts/.project
+scripts/.settings
 scripts/hippo-repository-scripts.iml
 scripts/target
 servlets/*.iml
@@ -223,7 +225,6 @@ upgrade/tm.out.lck
 upgrade/tmlog.lck
 upgrade/wdbp-error-log.txt
 upgrade/xml-upgrade/*.iml
-upgrade/xml-upgrade/.classpath
 upgrade/xml-upgrade/.project
 upgrade/xml-upgrade/.settings
 upgrade/xml-upgrade/target
