@@ -46,7 +46,6 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
                 boolean inherited = !siteMenu.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
                 HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu, inherited);
                 HstSiteMenuConfiguration old = hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
-                hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getCanonicalIdentifier(), hstSiteMenuConfiguration);
                 if(old != null) {
                     log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");
                 }
