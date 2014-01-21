@@ -40,6 +40,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private HstSiteMenuConfiguration hstSiteMenuConfiguration;
     private HstSiteMenuItemConfiguration parent;
     private String name;
+    private String canonicalIdentifier;
     private List<HstSiteMenuItemConfiguration> childItems = new ArrayList<HstSiteMenuItemConfiguration>();
     private String siteMapItemPath;
     private String externalLink;
@@ -56,7 +57,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
                                                HstSiteMenuConfiguration hstSiteMenuConfiguration) {
         this.parent = parent;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
-        
+        this.canonicalIdentifier = siteMenuItem.getValueProvider().getIdentifier();
         this.name = StringPool.get(siteMenuItem.getValueProvider().getName());
         
         if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK)) {
@@ -146,6 +147,10 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
 
     public String getName() {
         return this.name;
+    }
+
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
     }
 
     public HstSiteMenuItemConfiguration getParentItemConfiguration() {

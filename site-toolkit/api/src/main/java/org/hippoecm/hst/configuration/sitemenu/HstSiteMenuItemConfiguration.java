@@ -34,6 +34,14 @@ public interface HstSiteMenuItemConfiguration {
      * @return the name of this SiteMenuItem
      */
     String getName();
+
+    /**
+     * Returns the identifier of the backing stored menu item configuration. Note that multiple <code>HstSiteMenuItemConfiguration</code>'s can share the same
+     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers
+     *
+     * @return the identifier of the backing stored menu item configuration
+     */
+    String getCanonicalIdentifier();
     
     /**
      * The sitemapitem path can point to a sitemap item that contains wildcards. The sitemapitem path can be for example 'news/2009/may', and

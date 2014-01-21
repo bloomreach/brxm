@@ -31,7 +31,7 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
 
     public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu, boolean inherited) {
-       this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
+        this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
         this.name = StringPool.get(siteMenu.getValueProvider().getName());
         this.canonicalIdentifier = siteMenu.getValueProvider().getIdentifier();
         this.inherited = inherited;
