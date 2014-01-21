@@ -29,14 +29,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLReporter;
-import javax.xml.stream.XMLResolver;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.util.XMLEventAllocator;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.scxml2.PathResolver;
 import org.apache.commons.scxml2.io.SCXMLReader;
 import org.apache.commons.scxml2.io.SCXMLReader.Configuration;
 import org.apache.commons.scxml2.model.Action;
@@ -209,31 +206,9 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
     }
 
     private Configuration createSCXMLReaderConfiguration(final String scxmlDefPath, final List<CustomAction> customActions) {
-        final String factoryId = null;
-        final ClassLoader classLoader = null;
-        final XMLEventAllocator allocator = null;
-        final Map<String, Object> properties = new HashMap<>();
-        //properties.put(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
-        final XMLResolver resolver = null;
         final XMLReporter xmlReporter = new XMLReporterImpl(scxmlDefPath);
-        final String encoding = null;
-        final String systemId = null;
-        final boolean validate = false;
-        // TODO: for now, we set no pathResolver, which means we do not translate (context) relative paths into absolute URL string.
-        //       in the future, we may want to improve Commons SCXML to support more pluggable resource resolving/loading in order to
-        //       support resolution/loading from respository stored resources.
-        //       in the shorter term (within SCXML 2.0 version probably), it doesn't seem feasible or easy to have nicer path resolver.
-        final PathResolver pathResolver = null;
-        final ClassLoader customActionClassLoader = null;
-        final boolean useContextClassLoaderForCustomActions = true;
-
-        Configuration configuration = 
-                new Configuration(
-                        factoryId, classLoader, allocator, 
-                        properties, resolver, xmlReporter, 
-                        encoding, systemId, validate, 
-                        pathResolver, customActions, 
-                        customActionClassLoader, useContextClassLoaderForCustomActions);
+        Configuration configuration =
+                new Configuration(xmlReporter, null, customActions);
         configuration.setStrict(true);
         configuration.setSilent(false);
 
