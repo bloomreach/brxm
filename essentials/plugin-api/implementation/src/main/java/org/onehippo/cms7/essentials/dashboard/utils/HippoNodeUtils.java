@@ -276,12 +276,12 @@ public final class HippoNodeUtils {
                     foldertypes.add(hippoTemplates.getNode(template));
                 }
             }
-            for (Node foldertype : foldertypes) {
+            for (Node queryTemplate : foldertypes) {
                 try {
                     Set<String> prototypes = new TreeSet<>();
-                    if (foldertype.isNodeType("nt:query")) {
-                        Query query = qmgr.getQuery(foldertype);
-                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
+                    if (queryTemplate.isNodeType("nt:query")) {
+                        Query query = qmgr.getQuery(queryTemplate);
+                        query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
                             Node typeNode = iter.nextNode();
@@ -297,7 +297,7 @@ public final class HippoNodeUtils {
                             }
                         }
                     }
-                    types.put(foldertype.getName(), prototypes);
+                    types.put(queryTemplate.getName(), prototypes);
                 } catch (InvalidQueryException ex) {
                     log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 }
@@ -329,19 +329,13 @@ public final class HippoNodeUtils {
         }
         try {
             QueryManager qmgr = session.getWorkspace().getQueryManager();
-            List<Node> foldertypes = new Vector<>();
-            Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
-            for (String template : templates) {
-                if (hippoTemplates.hasNode(template)) {
-                    foldertypes.add(hippoTemplates.getNode(template));
-                }
-            }
-            for (Node foldertype : foldertypes) {
+            List<Node> queryTemplateNodes = getQueryTemplateNodes(session, templates);
+            for (Node queryTemplate : queryTemplateNodes) {
                 try {
                     Set<String> prototypes = new TreeSet<>();
-                    if (foldertype.isNodeType("nt:query")) {
-                        Query query = qmgr.getQuery(foldertype);
-                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
+                    if (queryTemplate.isNodeType("nt:query")) {
+                        Query query = qmgr.getQuery(queryTemplate);
+                        query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
                             Node typeNode = iter.nextNode();
@@ -356,7 +350,7 @@ public final class HippoNodeUtils {
                             }
                         }
                     }
-                    types.put(foldertype.getName(), prototypes);
+                    types.put(queryTemplate.getName(), prototypes);
                 } catch (InvalidQueryException ex) {
                     log.error(MessageFormat.format("{0}: {1}", ex.getClass().getName(), ex.getMessage()), ex);
                 }
@@ -365,6 +359,17 @@ public final class HippoNodeUtils {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
         return types;
+    }
+
+    private static List<Node> getQueryTemplateNodes(Session session, String[] templates) throws RepositoryException {
+        List<Node> queryTemplates = new Vector<>();
+        Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
+        for (String template : templates) {
+            if (hippoTemplates.hasNode(template)) {
+                queryTemplates.add(hippoTemplates.getNode(template));
+            }
+        }
+        return queryTemplates;
     }
 
     /**
