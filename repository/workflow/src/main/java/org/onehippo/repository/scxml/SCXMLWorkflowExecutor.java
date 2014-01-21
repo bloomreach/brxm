@@ -201,10 +201,10 @@ public class SCXMLWorkflowExecutor {
         if (terminated) {
             throw new WorkflowException("Workflow "+scxmlId+" already terminated");
         }
-        prepare();
         try {
             if (resetRequired) {
                 log.info("Resetting workflow {}", scxmlId);
+                prepare();
                 executor.go();
                 checkFinalState();
                 if (terminated || resetRequired) {
