@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
@@ -48,6 +49,7 @@ public class CKEditorPanel extends Panel {
     private static final String WICKET_ID_EDITOR = "editor";
     private static final ResourceReference CKEDITOR_PANEL_CSS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.css");
     private static final ResourceReference CKEDITOR_PANEL_JS = new PackageResourceReference(CKEditorPanel.class, "CKEditorPanel.js");
+    private static final String CKEDITOR_TIMESTAMP = RandomStringUtils.randomAlphanumeric(4);
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
@@ -97,6 +99,7 @@ public class CKEditorPanel extends Panel {
 
         response.render(CssHeaderItem.forReference(CKEDITOR_PANEL_CSS));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(getCKEditorJsReference()));
+        response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForCKEditorTimestamp()));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEDITOR_PANEL_JS));
 
         JSONObject editorConfig = getConfigurationForEditor();
@@ -111,6 +114,15 @@ public class CKEditorPanel extends Panel {
         }
         log.info("Using optimized CKEditor sources");
         return CKEditorConstants.CKEDITOR_OPTIMIZED_JS;
+    }
+
+    /**
+     * Generates the script to set a unique cache-busting timestamp value used by CKEditor's resource loader.
+     * This ensures that changes to plugins outside the minified CKEditor sources are picked up when the
+     * CKEditor source itself does not change.
+     */
+    private String getJavaScriptForCKEditorTimestamp() {
+        return "CKEDITOR.timestamp='" + CKEDITOR_TIMESTAMP + "';";
     }
 
     private JSONObject getConfigurationForEditor() {
