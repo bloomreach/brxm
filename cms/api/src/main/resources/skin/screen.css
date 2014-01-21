@@ -2219,3 +2219,7 @@ body.hippo-root div.yui-log-container {
     height: 14px;
     overflow: hidden;
 }
+
+.hippo-referring-documents-list .hippo-list-paging .paging-label {
+    margin-top: 0px;
+}
