@@ -89,7 +89,6 @@
     <jackrabbit.patched.version>2.6.5-h1</jackrabbit.patched.version>
     <jackrabbit.version>2.6.5</jackrabbit.version>
     <json-lib.version>2.2.2</json-lib.version>
-    <groovy.version>2.0.1</groovy.version>
     <easymock.version>3.1</easymock.version>
     <decentxml.version>1.4</decentxml.version>
   </properties>
