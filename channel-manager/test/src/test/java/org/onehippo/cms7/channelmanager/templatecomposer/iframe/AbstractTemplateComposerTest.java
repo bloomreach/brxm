@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -84,7 +84,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance");
+        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame");
         ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
         ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
         interceptMessages(hostToIFrame, hostToIFrameMessages);
@@ -141,7 +141,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         Gson gson = new Gson();
         String message = gson.toJson(argument);
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('init', " + message + ");");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.publish('init', " + message + ");");
     }
 
     protected static boolean isPublished(List<Message> messages, String message) {

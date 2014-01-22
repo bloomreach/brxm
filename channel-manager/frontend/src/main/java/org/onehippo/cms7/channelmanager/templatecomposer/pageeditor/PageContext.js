@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@
         },
 
         initialize: function(canEdit) {
-            var iframeLocation = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getLocation();
+            var iframeLocation = Ext.getCmp('pageEditorIFrame').getLocation();
 
             this._requestHstMetaData(iframeLocation, canEdit).when(function() {
                 this._initializeIFrameHead(this.previewMode).when(function() {
@@ -98,7 +98,7 @@
         },
 
         selectVariant: function(id, variant) {
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('selectVariant', id, variant);
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('selectVariant', id, variant);
         },
 
         _initToolkitStore: function(mountId) {
@@ -251,7 +251,7 @@
         },
 
         _initializeIFrameHead: function(previewMode) {
-            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            var iframe = Ext.getCmp('pageEditorIFrame');
 
             return new Hippo.Future(function(success, fail) {
                 this.iframeResourceCache.when(function(iframeResources) {
@@ -302,7 +302,7 @@
         },
 
         _buildOverlay: function() {
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('buildoverlay');
         }
 
     });

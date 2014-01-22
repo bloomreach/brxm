@@ -264,7 +264,7 @@
     filter: none;
 }
 
-#Iframe .ext-el-mask {
+#pageEditorIFrame .ext-el-mask {
     background: url(loading.gif) no-repeat center;
     -moz-opacity: 0.9;
     opacity: 0.9;

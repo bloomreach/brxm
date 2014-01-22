@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class TemplateComposerHeaderItem extends HeaderItem {
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.TOOLKIT_GRID_PANEL));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.ICON_TOOLBAR_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.MANAGE_CHANGES_WINDOW));
+        developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.EDIT_MENU_WINDOW));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.NOTIFICATION));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.REST_STORE));
         developmentRefs.add(new JavaScriptResourceReference(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));

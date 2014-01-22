@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -243,8 +243,9 @@
             Ext.apply(config, {
                 items: [
                     {
-                        id: 'Iframe',
+                        id: 'pageEditorIFrame',
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
+                        hidden: true,
                         tbar: {
                             id: 'pageEditorToolbar',
                             cls: 'channel-manager-toolbar',
@@ -282,7 +283,7 @@
                             this.fullscreen = fullscreen;
                             this.createViewToolbar();
                             this.registerResizeListener();
-                            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish(fullscreen ? 'fullscreen' : 'partscreen');
+                            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish(fullscreen ? 'fullscreen' : 'partscreen');
                         },
                         scope: this
                     }
@@ -379,6 +380,7 @@
                     toolbarButtons;
 
             toolbar.removeAll();
+
             if (this.fullscreen) {
                 toolbar.add(
                         variantsComboBoxLabel,
@@ -400,6 +402,24 @@
             }
             if (this.fullscreen || this.pageContainer.canEdit) {
                 this.addToolbarPlugins(toolbar, 'view');
+
+                // TODO: remove this test button once the 'Edit Menu' button is finished
+                toolbar.add(new Ext.Toolbar.Button({
+                    id: 'template-composer-toolbar-edit-menu',
+                    text: 'Test Edit Menu',
+                    width: 90,
+                    listeners: {
+                        click: {
+                            fn: function() {
+                                var editMenuWindow = new Hippo.ChannelManager.TemplateComposer.EditMenuWindow({
+                                    resources: this.resources
+                                });
+                                editMenuWindow.show();
+                            },
+                            scope: this
+                        }
+                    }
+                }));
             }
             if (toolbar.rendered) {
                 toolbar.doLayout();
@@ -620,7 +640,7 @@
         enableUI: function(pageContext) {
             var hostToIFrame, toolkitGrid, toolbar;
 
-            hostToIFrame = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+            hostToIFrame = Ext.getCmp('pageEditorIFrame').hostToIFrame;
 
             Hippo.Msg.hide();
 
@@ -670,14 +690,14 @@
                 Ext.getCmp('icon-toolbar-window').hide();
             }
 
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
+            Ext.getCmp('pageEditorIFrame').show();
         },
 
         updateChannelChangesNotification: function() {
             var iframe;
 
             if (this.pageContainer.pageContext !== null) {
-                iframe = Ext.getCmp('Iframe');
+                iframe = Ext.getCmp('pageEditorIFrame');
                 if (iframe.isVisible()) {
                     this.showOrHideChannelChangesNotification(this.fullscreen, this.pageContainer.pageContext);
                 } else {
@@ -734,7 +754,7 @@
                     domNode = this.getEl().dom,
                     relayout = false,
                     rootPanel = Ext.getCmp('rootPanel'),
-                    iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance,
+                    iframe = Ext.getCmp('pageEditorIFrame'),
                     location;
 
             if (this.fullscreen) {
@@ -919,7 +939,7 @@
                 constrainHeader: true,
                 bodyStyle: 'background-color: #ffffff',
                 cls: "component-properties",
-                renderTo: Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getEl(),
+                renderTo: Ext.getCmp('pageEditorIFrame').getEl(),
                 constrain: true,
                 hidden: true,
                 listeners: {
@@ -947,10 +967,10 @@
             // quickly it can end up outside the window above the iframe. The iframe should then send mouse events back
             // to the host in order to update the position of the dragged window.
             window.on('startdrag', function() {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('enablemouseevents');
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('enablemouseevents');
             });
             window.on('enddrag', function() {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('disablemouseevents');
             });
 
             return window;
@@ -992,19 +1012,19 @@
                 this.pageContainer.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
                 this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
                 this.pageContainer.renderHost = record.get('hostname');
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hide();
+                Ext.getCmp('pageEditorIFrame').hide();
                 this.initComposer(data.isEditMode);
             }.createDelegate(this));
         },
 
         mask: function() {
             this.body.addClass(['channel-manager-mask', 'ext-el-mask']);
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.mask();
+            Ext.getCmp('pageEditorIFrame').mask();
         },
 
         unmask: function() {
             this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.unmask();
+            Ext.getCmp('pageEditorIFrame').unmask();
         },
 
         selectVariant: function(id, variant) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     constructor: function (config) {
         this.store = config.deviceStore;
         this.templateComposer = config.templateComposer;
-        this.iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+        this.iframe = Ext.getCmp('pageEditorIFrame');
         if (!Hippo.ChannelManager.DeviceManager.deviceImage) {
             Hippo.ChannelManager.DeviceManager.deviceImage = this.iframe.getFrameElement().parent().createChild({
                 tag: 'img',

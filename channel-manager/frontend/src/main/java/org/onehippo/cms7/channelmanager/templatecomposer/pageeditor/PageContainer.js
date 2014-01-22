@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@
             this.pageContext = null;
 
             this.on('fatalIFrameException', function(data) {
-                var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+                var iframe = Ext.getCmp('pageEditorIFrame');
 
                 if (data.msg) {
                     this.on('afterIFrameDOMReady', function() {
@@ -69,7 +69,7 @@
             }, this);
 
             this.ping = window.setInterval(function() {
-                if (this.sessionId && this._hasFocus() && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionId)) {
+                if (this.sessionId && this._hasFocus() && Ext.getCmp('pageEditorIFrame').isValidSession(this.sessionId)) {
                     Ext.Ajax.request({
                         url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
                         failure: function() {
@@ -168,7 +168,7 @@
                         // The iframe url should therefore end with '/'.
                         iFrameUrl += '/';
                     }
-                    Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.setLocation(iFrameUrl);
+                    Ext.getCmp('pageEditorIFrame').setLocation(iFrameUrl);
 
                     success();
                 }.createDelegate(this));
@@ -223,7 +223,7 @@
         refreshIframe: function() {
             var iframe, scrollSave;
 
-            iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            iframe = Ext.getCmp('pageEditorIFrame');
             scrollSave = iframe.getScrollPosition();
 
             this._lock(function() {
@@ -303,7 +303,7 @@
             var self, hostToIFrame, mountId, hasPreviewHstConfig, doneCallback;
 
             self = this;
-            hostToIFrame = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+            hostToIFrame = Ext.getCmp('pageEditorIFrame').hostToIFrame;
             this._lock();
 
             this.previewMode = !this.previewMode;
@@ -398,7 +398,7 @@
         },
 
         deselectComponents: function() {
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('deselect');
+            Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('deselect');
         },
 
         // END PUBLIC METHODS THAT CHANGE THE iFrame
@@ -444,7 +444,7 @@
         },
 
         _initIFrameListeners: function() {
-            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            var iframe = Ext.getCmp('pageEditorIFrame');
 
             iframe.iframeToHost.unsubscribeAll();
             iframe.un('locationchanged', this._onIframeDOMReady, this);
@@ -482,7 +482,7 @@
                 this._complete();
             }, this);
             this.pageContext.on('pageContextInitializationFailed', function(error) {
-                var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+                var iframe = Ext.getCmp('pageEditorIFrame');
 
                 this.previewMode = this.pageContext.previewMode;
 
@@ -565,7 +565,7 @@
             }
 
             if (this.selectedRecord !== record) {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('select', record.data.id);
+                Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
                 this.fireEvent('selectItem', record, forcedVariant, containerDisabled);
             }
@@ -595,7 +595,7 @@
         },
 
         _hasFocus: function() {
-            var node = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.el.dom;
+            var node = Ext.getCmp('pageEditorIFrame').el.dom;
             while (node && node.style) {
                 if (node.style.visibility === 'hidden' || node.style.display === 'none') {
                     return false;
@@ -623,7 +623,7 @@
             var self, iframeToHost, tryOrReinitialize;
 
             self = this;
-            iframeToHost = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+            iframeToHost = Ext.getCmp('pageEditorIFrame').iframeToHost;
 
             tryOrReinitialize = function(callback, scope) {
                 return function() {

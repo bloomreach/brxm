@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-Ext.namespace('Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance');
+Ext.namespace('Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame');
 
-Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame = Hippo.ChannelManager.TemplateComposer.createMessageBus('host-to-iframe');
-Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost = Hippo.ChannelManager.TemplateComposer.createMessageBus('iframe-to-host');
+Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame = Hippo.ChannelManager.TemplateComposer.createMessageBus('host-to-iframe');
+Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.iframeToHost = Hippo.ChannelManager.TemplateComposer.createMessageBus('iframe-to-host');
 
-Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getPosition = function() {
+Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.getPosition = function() {
     return [0, 0];
 };
 
-Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getTopToolbar = function() {
+Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.getTopToolbar = function() {
     return {
         getHeight: function() {
             return 0;

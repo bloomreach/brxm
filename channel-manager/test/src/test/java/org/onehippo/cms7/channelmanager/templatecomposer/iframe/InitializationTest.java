@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,14 +33,14 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         setUp("test.html");
 
         page.executeJavaScript("var testListener = function(msg) { initTestOK=msg.initTest; };");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.subscribe('test', testListener, window);");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('test', {initTest: true})");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.subscribe('test', testListener, window);");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.publish('test', {initTest: true})");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.unsubscribe('test', testListener, window);");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('test', {initTest: false})");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.unsubscribe('test', testListener, window);");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.publish('test', {initTest: false})");
 
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
     }
@@ -68,7 +68,7 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         assertNotNull(containerDiv);
         assertFalse(isMetaDataConsumed(containerDiv));
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.publish('buildoverlay');");
         assertFalse(isPublished(hostToIFrameMessages, "exception"));
 
         // test if hst meta data is consumed
