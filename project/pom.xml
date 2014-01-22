@@ -72,7 +72,7 @@
     <jackson.version>1.9.5</jackson.version>
     <spring.version>3.2.5.RELEASE</spring.version>
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
-    <groovy.version>2.1.1</groovy.version>
+    <groovy.version>2.2.1</groovy.version>
 
     <!-- END properties versions with dependency management -->
 
