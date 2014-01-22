@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.scxml;
 
+import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.model.SCXML;
 
 /**
@@ -28,4 +29,5 @@ public interface SCXMLDefinition {
 
     public SCXML getSCXML();
 
+    public Evaluator getEvaluator();
 }

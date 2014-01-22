@@ -34,12 +34,15 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.scxml2.env.groovy.GroovyEvaluator;
+import org.apache.commons.scxml2.env.groovy.GroovyExtendableScriptCache;
 import org.apache.commons.scxml2.io.SCXMLReader;
 import org.apache.commons.scxml2.io.SCXMLReader.Configuration;
 import org.apache.commons.scxml2.model.Action;
 import org.apache.commons.scxml2.model.CustomAction;
 import org.apache.commons.scxml2.model.ModelException;
 import org.apache.commons.scxml2.model.SCXML;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,16 +265,55 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         }
     }
 
+    private static class CustomGroovyEvaluator extends GroovyEvaluator {
+
+        private static final GroovyExtendableScriptCache.ParentClassLoaderFactory parentClassLoaderFactory = new GroovyExtendableScriptCache.ParentClassLoaderFactory() {
+
+            @Override
+            public ClassLoader getClassLoader() {
+                return RepositorySCXMLRegistry.class.getClassLoader();
+            }
+        };
+
+        private final GroovyExtendableScriptCache.CompilerConfigurationFactory compilerConfigurationFactory = new GroovyExtendableScriptCache.CompilerConfigurationFactory() {
+
+            @Override
+            public CompilerConfiguration getCompilerConfiguration() {
+                if (compilerConfiguration == null) {
+                    compilerConfiguration = new CompilerConfiguration();
+                    // TODO: add AST transformations like for security/sandbox
+                }
+                return compilerConfiguration;
+            }
+        };
+
+        private transient CompilerConfiguration compilerConfiguration;
+
+        public CustomGroovyEvaluator() {
+            super(true);
+        }
+
+        @Override
+        protected GroovyExtendableScriptCache newScriptCache() {
+            GroovyExtendableScriptCache scriptCache = super.newScriptCache();
+            scriptCache.setParentClassLoaderFactory(parentClassLoaderFactory);
+            scriptCache.setCompilerConfigurationFactory(compilerConfigurationFactory);
+            return scriptCache;
+        }
+    }
+
     private static class SCXMLDefinitionImpl implements SCXMLDefinition {
 
         private final String id;
         private final String path;
         private final SCXML scxml;
+        private final GroovyEvaluator evaluator;
 
         public SCXMLDefinitionImpl(final String id, final String path, final SCXML scxml) {
             this.id = id;
             this.path = path;
             this.scxml = scxml;
+            this.evaluator = new CustomGroovyEvaluator();
         }
 
         @Override
@@ -287,6 +329,11 @@ public class RepositorySCXMLRegistry implements SCXMLRegistry {
         @Override
         public SCXML getSCXML() {
             return scxml;
+        }
+
+        @Override
+        public GroovyEvaluator getEvaluator() {
+            return evaluator;
         }
     }
 }

@@ -15,34 +15,22 @@
  */
 package org.onehippo.repository.scxml;
 
-import org.apache.commons.scxml2.Evaluator;
 import org.apache.commons.scxml2.SCXMLExecutor;
 import org.apache.commons.scxml2.env.SimpleDispatcher;
-import org.apache.commons.scxml2.env.jexl.JexlContext;
-import org.apache.commons.scxml2.env.jexl.JexlEvaluator;
 
 /**
  * RepositorySCXMLExecutorFactory
  */
 public class RepositorySCXMLExecutorFactory implements SCXMLExecutorFactory {
 
-    private Evaluator evaluator;
-
     void initialize() {
     }
 
     @Override
     public SCXMLExecutor createSCXMLExecutor(SCXMLDefinition scxmlDef) throws SCXMLException {
-        if (this.evaluator == null) {
-            JexlEvaluator evaluator = new JexlEvaluator();
-            evaluator.setJexlEngineSilent(false);
-            evaluator.setJexlEngineStrict(true);
-            this.evaluator = evaluator;
-        }
 
-        final JexlContext jexlCtx = new JexlContext();
-        SCXMLExecutor executor = new SCXMLExecutor(evaluator, new SimpleDispatcher(), new SCXMLStrictErrorReporter(scxmlDef));
-        executor.setRootContext(jexlCtx);
+        SCXMLExecutor executor = new SCXMLExecutor(scxmlDef.getEvaluator(), new SimpleDispatcher(), new SCXMLStrictErrorReporter(scxmlDef));
+        executor.setRootContext(scxmlDef.getEvaluator().newContext(null));
         executor.setStateMachine(scxmlDef.getSCXML());
         return executor;
     }

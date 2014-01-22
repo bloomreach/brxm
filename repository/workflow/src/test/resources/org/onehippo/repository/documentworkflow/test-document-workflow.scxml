@@ -21,12 +21,14 @@
 
   <parallel id="handle">
 
+    <transition target="invalid-context" cond="!var('dm')"/>
+
     <state id="status">
       <onentry>
         <if cond="dm.sf.document">
           <hippo:info info="status" value="false"/>
           <hippo:action action="checkModified" value="dm.ss=='draft' and !empty(dm.u)"/>
-          <if cond="!(!empty(dm.d.holder) and dm.d.holder!=dm.user)">
+          <if cond="!(!empty(dm.d?.holder) and dm.d.holder!=dm.user)">
             <!--not draft in use by other user -->
             <if cond="dm.ss=='unpublished' or (empty(dm.u) and (dm.ss=='published' or (dm.ss=='draft' and empty(dm.p))))">
               <!-- status on unpublished or published if no unpublished or draft if also no published -->
@@ -63,7 +65,7 @@
         <transition target="not-editable"
                     cond="!empty(dm.r) or !empty(dm.rr)"/>
         <transition target="editing"
-                    cond="!empty(dm.d) and !empty(dm.d.holder)"/>
+                    cond="!empty(dm.d?.holder)"/>
         <transition target="editable"/>
       </state>
 
@@ -197,7 +199,7 @@
           <hippo:workflowException errorExpr="'Cannot delete document when still published'"
                                    cond="!empty(dm.p) and dm.p.isAvailable('live')"/>
           <hippo:workflowException errorExpr="'Cannot delete document which is being edited'"
-                                   cond="!empty(dm.d.holder)"/>
+                                   cond="!empty(dm.d?.holder)"/>
 
           <hippo:deleteRequest/>
           <hippo:invokeDocumentWorkflow action="delete"
@@ -205,7 +207,7 @@
 
         <elseif cond="dm.r.type=='publish' or dm.r.type=='schedpublish"/>
           <hippo:workflowException errorExpr="'Cannot publish document which is being edited'"
-                                   cond="!empty(dm.d.holder)"/>
+                                   cond="!empty(dm.d?.holder)"/>
           <hippo:workflowException errorExpr="'Cannot publish document when no changes present'"
                                    cond="!empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))" />
 
@@ -218,7 +220,7 @@
 
         <elseif cond="dm.r.type=='depublish' or dm.r.type=='schedpublish"/>
           <hippo:workflowException errorExpr="'Cannot depublish document which is being edited'"
-                                   cond="!empty(dm.d.holder)"/>
+                                   cond="!empty(dm.d?.holder)"/>
           <hippo:workflowException errorExpr="'Cannot depublish document when not published'"
                                    cond="!empty(dm.p) and dm.p.isAvailable('live')" />
 
@@ -250,7 +252,7 @@
           <hippo:action action="publish" value="false"/>
         </onentry>
         <transition target="publishable"
-                    cond="!empty(dm.ss) and empty(dm.d.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))"/>
+                    cond="!empty(dm.ss) and empty(dm.d?.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))"/>
         <transition target="not-publishable"/>
       </state>
 
@@ -279,7 +281,7 @@
           <hippo:action action="depublish" value="false"/>
         </onentry>
         <transition target="depublishable"
-                    cond="!empty(dm.ss) and empty(dm.d.holder) and !empty(dm.p) and dm.p.isAvailable('live')"/>
+                    cond="!empty(dm.ss) and empty(dm.d?.holder) and !empty(dm.p) and dm.p.isAvailable('live')"/>
         <transition target="not-depublishable"/>
       </state>
 
@@ -322,7 +324,7 @@
 
       <state id="no-terminate">
         <transition target="init-terminate"
-                    cond="dm.sf.document and (empty(dm.p) or !dm.p.isAvailable('live')) and empty(dm.d.holder) and empty(dm.r)"/>
+                    cond="dm.sf.document and (empty(dm.p) or !dm.p.isAvailable('live')) and empty(dm.d?.holder) and empty(dm.r)"/>
       </state>
 
       <state id="init-terminate">
@@ -384,5 +386,6 @@
 
   <final id="reset"/>
   <final id="terminated" />
+  <final id="invalid-context" />
 
 </scxml>
