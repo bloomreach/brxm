@@ -35,10 +35,7 @@
 
                 $scope.onDeleteProvider = function (provider) {
 
-                    $http({
-                        method: 'DELETE',
-                        url: $rootScope.REST.compoundsDelete + provider.key
-                    }).success(function (data) {
+                    $http.delete($rootScope.REST.compoundsDelete + provider.key).success(function (data) {
                         // reload providers, we deleted one:
                         $scope.loadProviders();
 
@@ -76,11 +73,7 @@
                     $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
                 };
                 $scope.installPlugin = function () {
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.pluginInstall + $scope.pluginClass
-                    }).success(function (data) {
-
+                    $http.get($rootScope.REST.pluginInstall + $scope.pluginClass).success(function (data) {
                         $scope.installMessage = data.value;
                     });
                 };
@@ -92,11 +85,8 @@
                     $scope.payload = {"cbpayload": {"items": {"items": []}}};
                     $scope.payload.cbpayload.items.items = $scope.documentTypes;
 
-                    $http({
-                        method: 'POST',
-                        url: $rootScope.REST.contentblocksCreate,
-                        data: $scope.payload
-                    }).success(function (data) {
+                    $http.post($rootScope.REST.contentblocksCreate, $scope.payload
+                    ).success(function (data) {
                         // TODO on prviders
                         //$scope.documentTypes.providers = [];
 
@@ -119,10 +109,7 @@
                 };
                 $scope.loadProviders = function () {
 
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.compounds
-                    }).success(function (data) {
+                    $http.get($rootScope.REST.compounds).success(function (data) {
                         $scope.providers = data.items;
                         angular.forEach($scope.providers, function (provider, key) {
 
@@ -132,10 +119,7 @@
                 };
                 $scope.init = function () {
                     // check if plugin is installed
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.pluginInstallState + $scope.pluginClass
-                    }).success(function (data) {
+                    $http.get( $rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
                         //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
                         // TODO enable check:
                         $scope.pluginInstalled = true;
@@ -145,12 +129,8 @@
 
                     // TODO: fetch docTypes
                     $scope.loadProviders();
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.documentTypes
-                    }).success(function (data) {
+                    $http.get($rootScope.REST.documentTypes).success(function (data) {
                         $scope.documentTypes = data.items;
-
                         angular.forEach($scope.documentTypes, function (docType, key) {
                             docType.providers.ritems = [];
                             /*angular.forEach(docType.providers.items, function (providerItem, key) {
@@ -158,7 +138,6 @@
                              $log.info(docType.providers.ritems.push($scope.map[providerItem.key]));
                              });*/
                         });
-
 
                     });
 
