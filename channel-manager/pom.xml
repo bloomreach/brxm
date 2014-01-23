@@ -185,6 +185,10 @@
                 <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
                 <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
                 <exclude>frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
+
+                <!-- TODO: add licenses of included libraries to LICENSE file -->
+                <exclude>frontend/src/main/resources/angular/lib/*</exclude>
+
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
               </excludes>

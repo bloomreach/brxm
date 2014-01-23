@@ -1,4 +1,3 @@
-<!doctype html>
 <!--
   Copyright 2014 Hippo B.V. (http://www.onehippo.com)
 
@@ -14,23 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<html>
+<div ng-controller="hippo.channelManager.main as main">
+  <h1>TODO: show page management UI</h1>
+  <ul ng-clock >
+    <li ng-repeat="item in main.items">{{ item }}</li>
+  </ul>
 
-<head>
-  <title>Page Management</title>
-  <script src="vendors/jquery-1.10.2.min.js"></script>
-  <script src="vendors/angular-1.2.0-rc.2.js"></script>
-  <script src="vendors/angular-route-1.2.0-rc.2.js"></script>
-</head>
-
-<body>
-
-<div ng-app="hippo.channelManager.pageManagementApp">
-  <div ng-view></div>
+  <button ng-click="main.close()">Close</button>
 </div>
-
-<script src="app/app.js"></script>
-
-</body>
-
-</html>

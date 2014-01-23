@@ -412,7 +412,9 @@
                         click: {
                             fn: function() {
                                 var editMenuWindow = new Hippo.ChannelManager.TemplateComposer.EditMenuWindow({
-                                    resources: this.resources
+                                    resources: this.resources,
+                                    composerRestMountUrl: this.composerRestMountUrl,
+                                    menuId: 'dummyMenuId' // TODO: pass real ID of edited menu
                                 });
                                 editMenuWindow.show();
                             },

@@ -24,6 +24,7 @@
             var closeButton;
 
             this.resources = config.resources;
+            this.iframePanelId = Ext.id();
 
             closeButton = new Ext.Toolbar.Button({
                 text: 'Close',
@@ -45,14 +46,29 @@
                 items: [
                     {
                         xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
-                        url: './angular/index.html'
+                        id: this.iframePanelId,
+                        url: Ext.urlAppend('./angular/index.html', 'parentExtIFramePanelId=' + this.iframePanelId),
+                        pageManagementConfig: {
+                            apiUrlPrefix: config.composerRestMountUrl,
+                            menuId: config.menuId
+                        }
                     }
                 ],
                 buttons: [ closeButton ],
-                buttonAlign: 'right'
+                buttonAlign: 'right',
+                listeners: {
+                    'afterrender': function(self) {
+                        var iframePanel = Ext.getCmp(self.iframePanelId);
+                        iframePanel.iframeToHost.subscribe('close', self.close, self);
+                    }
+                }
             });
 
-            Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.constructor.apply(this, arguments);
+            Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.constructor.call(this, config);
+        },
+
+        initComponent: function() {
+            Hippo.ChannelManager.TemplateComposer.EditMenuWindow.superclass.initComponent.apply(this, arguments);
         }
 
     });
