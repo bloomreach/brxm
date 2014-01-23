@@ -80,11 +80,13 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
 
     protected void initializeIFrameHead() throws IOException {
         injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
+        injectJavascript(ExtBundle.class, ExtBundle.EXT_ALL_DEBUG);
         injectJavascript(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS);
+        injectJavascript(PageEditorBundle.class, PageEditorBundle.IFRAME_PANEL);
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame");
+        ScriptableObject instance = getScriptableObject(window, "Hippo.MockedPageEditorIFramePanel");
         ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
         ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
         interceptMessages(hostToIFrame, hostToIFrameMessages);
@@ -141,7 +143,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         Gson gson = new Gson();
         String message = gson.toJson(argument);
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame.publish('init', " + message + ");");
+        page.executeJavaScript("Ext.getCmp('pageEditorIFrame').hostToIFrame.publish('init', " + message + ");");
     }
 
     protected static boolean isPublished(List<Message> messages, String message) {

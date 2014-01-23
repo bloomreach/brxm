@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-Ext.namespace('Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame');
-
-Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.hostToIFrame = Hippo.ChannelManager.TemplateComposer.createMessageBus('host-to-iframe');
-Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.iframeToHost = Hippo.ChannelManager.TemplateComposer.createMessageBus('iframe-to-host');
-
-Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.getPosition = function() {
-    return [0, 0];
-};
-
-Hippo.ChannelManager.TemplateComposer.PageEditor.IFrame.getTopToolbar = function() {
-    return {
-        getHeight: function() {
-            return 0;
-        }
-    };
-};
-
-Ext.namespace('Ext.dd.DragDropMgr');
-
-Ext.dd.DragDropMgr.handleMouseMove = function() {};
-Ext.dd.DragDropMgr.handleMouseUp = function() {};
+Hippo.MockedPageEditorIFramePanel = new Hippo.ChannelManager.TemplateComposer.IFramePanel({
+    id: 'pageEditorIFrame'
+});
