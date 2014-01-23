@@ -27,7 +27,9 @@ public class XmlUtilsTest extends BaseTest {
     public void testFindingDocuments() throws Exception {
 
         final List<XmlNode> templateDocuments = XmlUtils.findTemplateDocuments(getProjectRoot(), getContext());
-        assertEquals("expected " + NAMESPACES_TEST_SET.size() + " templates", NAMESPACES_TEST_SET.size(), templateDocuments.size());
+        // NOTE: one ben is not mapped
+        final int expected = NAMESPACES_TEST_SET.size() - 1;
+        assertEquals("expected " + expected + " templates", expected, templateDocuments.size());
     }
 
     @Test

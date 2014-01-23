@@ -34,6 +34,17 @@ public class BeanWriterUtilsTest extends BaseTest {
         buildExisting();
     }
 
+/*
+    @Test
+    public void testAnnotationDuplicates() throws Exception {
+        final InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream("_test_annotation.txt");
+        final String myBean = GlobalUtils.readStreamAsText(resourceAsStream);
+        log.info("myBean {}", myBean);
+        BeanWriterUtils.annotateExistingBeans();
+
+
+    }*/
+
     @Test
     public void testMethodCreation() throws Exception {
         final List<Path> existing = BeanWriterUtils.findExitingBeans(getContext(), "txt");
@@ -91,11 +102,15 @@ public class BeanWriterUtilsTest extends BaseTest {
         final PluginContext context = getContext();
         context.setProjectNamespacePrefix(HIPPOPLUGINS_NAMESPACE);
         final List<MemoryBean> memoryBeans = BeanWriterUtils.buildBeansGraph(getProjectRoot(), context, "txt");
-        assertEquals(NAMESPACES_TEST_SET.size(), memoryBeans.size());
+        // NOTE: one bean is not mapped within XML (only java {@code DuplicateAnnotation.txt})
+        assertEquals(NAMESPACES_TEST_SET.size() -1, memoryBeans.size());
         for (MemoryBean memoryBean : memoryBeans) {
             final String namespaced = String.format("%s:%s", memoryBean.getNamespace(), memoryBean.getName());
             assertTrue("expected " + namespaced, NAMESPACES_TEST_SET.contains(namespaced));
             if (!namespaced.contains("extend")) {
+                if (memoryBean.getBeanPath() == null) {
+                    log.info("memoryBean {}", memoryBean);
+                }
                 assertTrue("Expected bean path to be none null:" + namespaced, memoryBean.getBeanPath() != null);
             }
         }

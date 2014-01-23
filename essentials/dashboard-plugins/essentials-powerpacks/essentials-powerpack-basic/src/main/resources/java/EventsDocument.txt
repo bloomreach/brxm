@@ -8,8 +8,8 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
-@Node(jcrType=EventsDocument.DOCUMENT_TYPE)
 @HippoEssentialsGenerated(internalName = "{{namespace}}:eventsdocument")
+@Node(jcrType="{{namespace}}:eventsdocument")
 public class EventsDocument extends HippoDocument {
 
     /**

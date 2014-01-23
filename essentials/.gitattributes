@@ -628,6 +628,7 @@ plugin-api/implementation/src/test/resources/project/instruction_file.txt -text
 plugin-api/implementation/src/test/resources/project/site/pom.xml -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/dummy/DummyClazz.java -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/BaseDocument.txt -text
+plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/DuplicatedAnnotations.txt -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/NewsDocument.txt -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/PluginDocument.txt -text
 plugin-api/implementation/src/test/resources/project/site/src/main/java/org/onehippo/cms7/essentials/dashboard/test/beans/TextDocument.txt -text

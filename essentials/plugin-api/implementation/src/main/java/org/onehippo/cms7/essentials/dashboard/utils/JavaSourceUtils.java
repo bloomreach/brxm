@@ -600,7 +600,13 @@ public final class JavaSourceUtils {
                 final NormalAnnotation annotation = (NormalAnnotation) modifier;
                 final Name typeName = annotation.getTypeName();
                 final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                if (!fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_FULLY_QUALIFIED) && !fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_NAME)) {
+                // check Node & HippoGenerated annotations
+                if (
+                        (!fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_FULLY_QUALIFIED) && !fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_NAME))
+                                &&
+                                (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getName()) && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName()))
+
+                        ) {
                     log.debug("Skipping annotation: {}", fullyQualifiedName);
                     continue;
                 }
@@ -615,11 +621,22 @@ public final class JavaSourceUtils {
                             final String identifier = name.getIdentifier();
                             if (identifier.equals("jcrType")) {
                                 final Expression literalValue = pair.getValue();
-                                if(literalValue instanceof StringLiteral){
+                                if (literalValue instanceof StringLiteral) {
                                     final StringLiteral ex = (StringLiteral) literalValue;
                                     jcrType = ex.getLiteralValue();
-                                }else{
-                                    log.warn("Couldn't resolve value for: {}", literalValue);
+                                } else {
+
+
+                                    log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", literalValue);
+                                }
+                            }
+                            if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
+                                final Expression literalValue = pair.getValue();
+                                if (literalValue instanceof StringLiteral) {
+                                    final StringLiteral ex = (StringLiteral) literalValue;
+                                    jcrType = ex.getLiteralValue();
+                                } else {
+                                    log.warn("Couldn't resolve value for internalName: {}", literalValue);
                                 }
                             }
                         }

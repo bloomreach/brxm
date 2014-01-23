@@ -30,6 +30,7 @@ public abstract class BaseTest {
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
+            .add("myproject:newsdocument")
             .add("hippoplugins:extendedbase")
             .add("hippoplugins:textdocument")
             .add("hippoplugins:basedocument")

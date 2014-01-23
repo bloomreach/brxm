@@ -229,7 +229,7 @@ public final class BeanWriterUtils {
             MemoryBean bean = processTemplate(templateDocument, projectNamespacePrefix);
             beans.add(bean);
         }
-        // we need to annotate existing beans before pro
+        // we need to annotate existing beans before we start processing
         BeanWriterUtils.annotateExistingBeans(context, sourceExtension);
         final List<Path> existing = BeanWriterUtils.findExitingBeans(context, sourceExtension);
         final Collection<HippoEssentialsGeneratedObject> generatedObjectList = new ArrayList<>();
@@ -239,12 +239,12 @@ public final class BeanWriterUtils {
                 generatedObjectList.add(generatedObject);
             }
         }
-        BeanWriterUtils.processSupertypes(beans, generatedObjectList);
+        BeanWriterUtils.processSuperTypes(beans, generatedObjectList);
         return beans;
 
     }
 
-    public static void processSupertypes(final Iterable<MemoryBean> allBeans, final Iterable<HippoEssentialsGeneratedObject> descriptors) {
+    public static void processSuperTypes(final Iterable<MemoryBean> allBeans, final Iterable<HippoEssentialsGeneratedObject> descriptors) {
         for (HippoEssentialsGeneratedObject descriptor : descriptors) {
             for (MemoryBean myBean : allBeans) {
                 final String fullName = myBean.getPrefixedName();

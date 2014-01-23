@@ -9,7 +9,7 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 @HippoEssentialsGenerated(internalName = "{{namespace}}:newsdocument")
-@Node(jcrType=NewsDocument.DOCUMENT_TYPE)
+@Node(jcrType="{{namespace}}:newsdocument")
 public class NewsDocument extends HippoDocument {
 
     /**
