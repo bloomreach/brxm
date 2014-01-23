@@ -46,11 +46,7 @@
                 $scope.onAddProvider = function (docName) {
                     $scope.providerInput = "";
                     // TODO: put providers
-                    $http({
-                        method: 'PUT',
-                        url: $rootScope.REST.compoundsCreate + docName,
-                        data: docName
-                    }).success(function (data) {
+                    $http.put($rootScope.REST.compoundsCreate + docName, docName).success(function (data) {
                         // reload providers, we added new one:
                         $scope.loadProviders();
                     });
@@ -84,13 +80,10 @@
                 $scope.saveBlocksConfiguration = function () {
                     $scope.payload = {"cbpayload": {"items": {"items": []}}};
                     $scope.payload.cbpayload.items.items = $scope.documentTypes;
-
                     $http.post($rootScope.REST.contentblocksCreate, $scope.payload
-                    ).success(function (data) {
-                        // TODO on prviders
-                        //$scope.documentTypes.providers = [];
-
-                    });
+                            ).success(function (data) {
+                                // ignore
+                            });
                 };
 
                 $scope.toggleCheckBox = function (docName) {
@@ -116,35 +109,27 @@
                             $scope.map[provider.key] = provider;
                         });
                     });
+
                 };
                 $scope.init = function () {
                     // check if plugin is installed
-                    $http.get( $rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
+                    $http.get($rootScope.REST.pluginInstallState + $scope.pluginClass).success(function (data) {
                         //{"installed":false,"pluginLink":"contentBlocks","title":"Content Blocks Plugin"}
                         // TODO enable check:
                         $scope.pluginInstalled = true;
                         //$scope.pluginInstalled = data.installed;
-
                     });
-
-                    // TODO: fetch docTypes
                     $scope.loadProviders();
                     $http.get($rootScope.REST.documentTypes).success(function (data) {
                         $scope.documentTypes = data.items;
                         angular.forEach($scope.documentTypes, function (docType, key) {
                             docType.providers.ritems = [];
-                            /*angular.forEach(docType.providers.items, function (providerItem, key) {
-                             $log.info($scope.map[providerItem.key]);
-                             $log.info(docType.providers.ritems.push($scope.map[providerItem.key]));
-                             });*/
+                            angular.forEach(docType.providers.items, function (providerItem, key) {
+                                docType.providers.ritems.push($scope.map[providerItem.key]);
+                            });
                         });
-
                     });
-
-
                 };
-
-
                 $scope.init();
             })
 })();

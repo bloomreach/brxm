@@ -186,7 +186,7 @@ public class ContentBlocksResource extends BaseResource {
                 workflow.addContentBlockToType(model);
             }
         }
-        return new MessageRestful("Successfully added content blocks");
+        return new MessageRestful("Successfully updated content blocks settings");
     }
 
 
