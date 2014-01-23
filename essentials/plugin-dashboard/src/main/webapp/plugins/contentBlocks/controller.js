@@ -63,8 +63,8 @@
 
                 };
                 $scope.removeProviderFromDocType = function (prov, docName) {
-                    var index = $scope.documentTypes.indexOf(docName)
-                    var providers = $scope.documentTypes[index].providers.items
+                    var index = $scope.documentTypes.indexOf(docName);
+                    var providers = $scope.documentTypes[index].providers.items;
                     var providerIndex = providers.indexOf(prov);
                     $scope.documentTypes[index].providers.items.splice(providerIndex, 1);
                 };
