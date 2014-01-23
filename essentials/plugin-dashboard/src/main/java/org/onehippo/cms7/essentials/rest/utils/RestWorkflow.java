@@ -202,14 +202,14 @@ public class RestWorkflow {
                     }
                     data.put("fieldType", fieldType);
 
-                    String parsed = TemplateUtils.injectTemplate("nodetype.xml", data, getClass());
+                    String parsed = TemplateUtils.injectTemplate("content_block_nodetype.xml", data, getClass());
 
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
 
-                    parsed = TemplateUtils.injectTemplate("template.xml", data, getClass());
+                    parsed = TemplateUtils.injectTemplate("content_block_templates.xml", data, getClass());
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,

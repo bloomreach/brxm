@@ -15,7 +15,4 @@
   <sv:property sv:name="hipposysedit:type" sv:type="String">
     <sv:value>nt:base</sv:value>
   </sv:property>
-  <!--<sv:property sv:name="hipposysedit:validators" sv:type="String" sv:multiple="true">
-    <sv:value>contentblocks-validator</sv:value>
-  </sv:property>-->
 </sv:node>

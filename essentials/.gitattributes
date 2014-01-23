@@ -304,8 +304,8 @@ dashboard-plugins/dashboard-contentblocks-plugin/pom.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/ContentBlocksPlugin.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/contentblocks/installer/ContentBlocksInstaller.java -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/plugin.xml -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/nodetype.xml -text
-dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/template.xml -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_nodetype.xml -text
+dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_template.xml -text
 dashboard-plugins/dashboard-easyforms-plugin/pom.xml -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/EasyFormsPlugin.html -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/EasyFormsPlugin.java -text
