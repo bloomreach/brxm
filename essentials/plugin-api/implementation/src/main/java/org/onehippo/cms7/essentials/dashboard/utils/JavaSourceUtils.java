@@ -817,7 +817,9 @@ public final class JavaSourceUtils {
         // add annotation at first position:
         if (node instanceof TypeDeclaration) {
             TypeDeclaration type = (TypeDeclaration) node;
-            type.modifiers().add(0, annotation);
+            if (!hasAnnotation(type.modifiers(), annotation)) {
+                type.modifiers().add(0, annotation);
+            }
         } else if (node instanceof VariableDeclarationStatement) {
             VariableDeclarationStatement localVariable = (VariableDeclarationStatement) node;
             localVariable.modifiers().add(0, annotation);
@@ -833,6 +835,23 @@ public final class JavaSourceUtils {
         } else {
             log.info("Couldn't add annotation to node: {}", node);
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static boolean hasAnnotation(final List modifiers, final IExtendedModifier annotation) {
+        for (Object modifier : modifiers) {
+            if (modifier instanceof NormalAnnotation && annotation instanceof NormalAnnotation) {
+                final NormalAnnotation existing = (NormalAnnotation) modifier;
+                final NormalAnnotation newOne = (NormalAnnotation) annotation;
+                final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
+                if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
+                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static Path createJavaSourcePath(final String sourceRoot, final String className, final CharSequence packageName, final String fileExtension) throws IOException {
