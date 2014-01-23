@@ -72,7 +72,7 @@ public final class EssentialConst {
                     "hippostdpubwf",
                     "hipposysedit",
                     "hippotaxonomy",
-                    "hippogallerypicker");
+                    "hippogallerypi cker");
     public static final String[] XML_FILTER = new String[]{"xml"};
     public static final String[] JAR_FILTER = new String[]{"jar"};
     public static final String NS_JCR_PRIMARY_TYPE = "jcr:primaryType";
@@ -99,6 +99,9 @@ public final class EssentialConst {
     public static final String XPATH = "xpath";
     public static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
+    public static final String HIPPO_COMPOUND = "hippo:compound";
+    public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
+    public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
 
 
     private EssentialConst() {

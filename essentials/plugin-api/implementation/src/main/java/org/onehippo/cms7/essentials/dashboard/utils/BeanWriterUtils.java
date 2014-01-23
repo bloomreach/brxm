@@ -188,18 +188,33 @@ public final class BeanWriterUtils {
         for (MemoryBean memoryBean : missing) {
             populateSupertypes(memoryBean, memoryBeans);
             final MemoryBean supertype = memoryBean.getSupertype();
-            if (supertype != null && supertype.getBeanPath() != null) {
-                final String extendsName = FilenameUtils.removeExtension(supertype.getBeanPath().toFile().getName());
+            if (supertype != null) {
+                if (supertype.getBeanPath() != null) {
+                    final String extendsName = FilenameUtils.removeExtension(supertype.getBeanPath().toFile().getName());
 
-                final String prefixedName = memoryBean.getPrefixedName();
-                final String className = GlobalUtils.createClassName(prefixedName);
-                final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), fileExtension);
-                JavaSourceUtils.addExtendsClass(javaClass, extendsName);
-                JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
-                memoryBean.setBeanPath(javaClass);
-                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                    final String prefixedName = memoryBean.getPrefixedName();
+                    final String className = GlobalUtils.createClassName(prefixedName);
+                    final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), fileExtension);
+                    JavaSourceUtils.addExtendsClass(javaClass, extendsName);
+                    JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
+                    memoryBean.setBeanPath(javaClass);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                }
+
+            } else {
+                // we have supertype, check if compound type:
+                if (memoryBean.getSuperTypeValues().contains(EssentialConst.HIPPO_COMPOUND)) {
+                    final String extendsName = EssentialConst.HIPPO_COMPOUND_BASE_CLASS;
+                    final String prefixedName = memoryBean.getPrefixedName();
+                    final String className = GlobalUtils.createClassName(prefixedName);
+                    final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), fileExtension);
+                    JavaSourceUtils.addExtendsClass(javaClass, extendsName);
+                    JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
+                    JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
+                    memoryBean.setBeanPath(javaClass);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                }
             }
-
         }
         missing = new ArrayList<>();
         for (MemoryBean memoryBean : memoryBeans) {
@@ -368,7 +383,7 @@ public final class BeanWriterUtils {
         final Set<String> superTypeValues = bean.getSuperTypeValues();
         String supertypeName = null;
         for (String superTypeValue : superTypeValues) {
-            if (superTypeValue.startsWith(bean.getNamespace())) {
+            if (superTypeValue.startsWith(bean.getNamespace()) ||superTypeValue.equals(EssentialConst.HIPPO_COMPOUND)) {
                 supertypeName = superTypeValue;
             }
         }
