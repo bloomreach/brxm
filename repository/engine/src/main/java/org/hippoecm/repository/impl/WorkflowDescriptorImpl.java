@@ -18,21 +18,16 @@ package org.hippoecm.repository.impl;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
@@ -47,42 +42,28 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     private final String serviceName;
     private Map<String, Serializable> hints = null;
 
-    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Document document) throws RepositoryException {
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition node, Document document) throws RepositoryException {
         this(manager, category, node, document.getIdentity());
     }
 
-    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
+    WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition node, Node item) throws RepositoryException {
         this(manager, category, node, item.getIdentifier());
     }
 
-    private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, String uuid) throws RepositoryException {
+    private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, WorkflowDefinition node, String uuid) throws RepositoryException {
         this.manager = manager;
         this.category = category;
         this.uuid = uuid;
         try {
             try {
-                serviceName = node.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
-                displayName = node.getProperty(HippoNodeType.HIPPO_DISPLAY).getString();
+                serviceName = node.getWorkflowClass().getName();
+                displayName = node.getDisplayName();
             } catch (PathNotFoundException ex) {
                 WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
                 throw new RepositoryException("workflow specification corrupt", ex);
             }
 
-            attributes = new HashMap<String, String>();
-            for (PropertyIterator attributeIter = node.getProperties(); attributeIter.hasNext(); ) {
-                Property p = attributeIter.nextProperty();
-                if (!p.getName().startsWith("hippo:") && !p.getName().startsWith("hipposys:")) {
-                    if (!p.getDefinition().isMultiple()) {
-                        attributes.put(p.getName(), p.getString());
-                    }
-                }
-            }
-            for (NodeIterator attributeIter = node.getNodes(); attributeIter.hasNext(); ) {
-                Node n = attributeIter.nextNode();
-                if (!n.getName().startsWith("hippo:") && !n.getName().startsWith("hipposys:")) {
-                    attributes.put(n.getName(), n.getPath());
-                }
-            }
+            attributes = node.getAttributes();
         } catch (ValueFormatException ex) {
             WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
             throw new RepositoryException("workflow specification corrupt", ex);

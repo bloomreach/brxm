@@ -51,12 +51,12 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
     String sourceIdentity;
     boolean isDocumentResult;
     Node wfSubject;
-    Node wfNode;
+    WorkflowDefinition wfNode;
     Set<String> preconditionSet;
     String workflowCategory;
     String workflowMethod;
 
-    WorkflowPostActionSimpleQuery(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, Node wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
+    WorkflowPostActionSimpleQuery(WorkflowManagerImpl workflowManager, Node wfSubject, boolean isDocumentResult, WorkflowDefinition wfNode, String workflowCategory, String workflowMethod) throws RepositoryException {
         this.workflowManager = workflowManager;
         this.sourceIdentity = wfSubject.getIdentifier();
         this.wfSubject = wfSubject;
@@ -64,13 +64,14 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
         this.wfNode = wfNode;
         this.workflowCategory = workflowCategory;
         this.workflowMethod = workflowMethod;
-        if (wfNode.hasNode("hipposys:eventdocument")) {
-            // TODO
-        } else if (wfNode.hasProperty("hipposys:eventdocument")) {
-            this.wfSubject = wfNode.getProperty("hipposys:eventdocument").getNode();
+
+        Node eventDocument = wfNode.getEventDocument();
+        if (eventDocument != null) {
+            this.wfSubject = eventDocument;
         }
-        if (wfNode.hasNode("hipposys:eventprecondition")) {
-            Query preQuery = workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:eventprecondition"));
+
+        Query preQuery = wfNode.getPreConditionQuery();
+        if (preQuery != null) {
             preconditionSet = evaluateQuery(preQuery, null);
         } else {
             preconditionSet = new HashSet<String>();
@@ -132,14 +133,11 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
                 log.debug("silently ignoring the workflow event on deleted item");
                 return;
             }
-            Query postQuery = (wfNode.hasNode("hipposys:eventpostcondition") ? workflowManager.rootSession.getWorkspace().getQueryManager().getQuery(wfNode.getNode("hipposys:eventpostcondition")) : null);
+            Query postQuery = wfNode.getPostConditionQuery();
             Set<String> postconditionSet = null;
             if (postQuery != null) {
                 postconditionSet = evaluateQuery(postQuery, (resultIdentity == null ? "" : resultIdentity));
-                String conditionOperator = "post\\pre";
-                if (wfNode.hasProperty("hipposys:eventconditionoperator")) {
-                    conditionOperator = wfNode.getProperty("hipposys:eventconditionoperator").getString();
-                }
+                String conditionOperator = wfNode.getConditionOperator();
                 if (conditionOperator.equals("post\\pre")) {
                     postconditionSet.removeAll(preconditionSet);
                     if (postconditionSet.isEmpty()) {
@@ -149,7 +147,7 @@ class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
                     log.warn("workflow event operator " + conditionOperator + " unrecognized");
                 }
             }
-            Workflow workflow = workflowManager.getWorkflowInternal(wfNode, wfSubject);
+            Workflow workflow = workflowManager.createProxiedWorkflow(wfNode, wfSubject);
             if (workflow instanceof WorkflowEventWorkflow) {
                 WorkflowEventWorkflow event = (WorkflowEventWorkflow)workflow;
                 if (event instanceof WorkflowEventsWorkflow) {

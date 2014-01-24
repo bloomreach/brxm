@@ -26,7 +26,7 @@ import javax.jcr.Value;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.ext.WorkflowInvocation;
-import org.hippoecm.repository.impl.WorkflowManagerImpl;
+import org.hippoecm.repository.impl.WorkflowInvocationImpl;
 import org.hippoecm.repository.quartz.JCRJobDetail;
 import org.hippoecm.repository.util.JcrUtils;
 
@@ -38,7 +38,6 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_M
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_PARAMETER_TYPES;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_SUBJECT_ID;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_NAME;
-
 import static org.hippoecm.repository.util.RepoUtils.PRIMITIVE_TO_OBJECT_TYPES;
 
 public class WorkflowJobDetail extends JCRJobDetail {
@@ -84,7 +83,7 @@ public class WorkflowJobDetail extends JCRJobDetail {
         } else {
             arguments = new Object[] {};
         }
-        this.invocation = new WorkflowManagerImpl.WorkflowInvocationImpl(category, workflowName, subjectId, methodName,
+        this.invocation = new WorkflowInvocationImpl(category, workflowName, subjectId, methodName,
                 parameterTypes, arguments, interactionId, interaction);
     }
 

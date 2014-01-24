@@ -109,40 +109,17 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         });
     }
 
-    private static Node getVersionableHandle(Node subject) throws RepositoryException {
-        try {
-            Node handle = subject.getParent();
-            if (!handle.isNodeType(HippoNodeType.NT_HANDLE) || !handle.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
-                handle = null;
-            }
-            return handle;
-        } catch (ItemNotFoundException ex) {
-            // subject is root, deliberately ignore this exception
-        }
-        return null;
-    }
-
     private static void clear(Node node) throws RepositoryException {
         Set<String> immune = new TreeSet<String>();
 
-        Node handle = getVersionableHandle(node);
-        if (handle != null && handle.isNodeType(HippoNodeType.NT_HANDLE)
-                && handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-            Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-            for (Value discriminator : discriminators) {
-                String key = discriminator.getString();
-                if (node.hasProperty(key)) {
-                    immune.add(key);
-                }
-            }
-        } else if (node.hasProperty("hippostd:state")) {
+        if (node.hasProperty("hippostd:state")) {
             // backwards compatibility
             immune.add("hippostd:state");
         }
         immune.add(HippoNodeType.HIPPO_RELATED);
         immune.add(HippoNodeType.HIPPO_COMPUTE);
         immune.add(HippoNodeType.HIPPO_PATHS);
-        for (NodeIterator childIter = node.getNodes(); childIter.hasNext();) {
+        for (NodeIterator childIter = node.getNodes(); childIter.hasNext(); ) {
             Node child = childIter.nextNode();
             if (child != null) {
                 if (child.getDefinition().isAutoCreated()) {
@@ -153,7 +130,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             }
         }
 
-        for (PropertyIterator propIter = node.getProperties(); propIter.hasNext();) {
+        for (PropertyIterator propIter = node.getProperties(); propIter.hasNext(); ) {
             Property property = propIter.nextProperty();
             if (property.getName().startsWith("jcr:") || property.getDefinition().isProtected()
                     || immune.contains(property.getName())) {
@@ -182,118 +159,33 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         return new TreeMap<>();
     }
 
-    private Version lookup(Calendar historic, boolean returnHandle) throws WorkflowException, RepositoryException {
-        Node handle = getVersionableHandle(subject);
-        if (handle == null) {
-            VersionHistory versionHistory = subject.getVersionHistory();
-            Map<String, String> criteria = getCriteria(subject, null);
-            for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext();) {
-                Version version = iter.nextVersion();
-                if (version.getCreated().equals(historic) && matches(version.getNode("jcr:frozenNode"), criteria)) {
-                    return version;
-                }
-            }
-        } else {
-            Map<String, String> criteria = getCriteria(subject, handle);
-            return lookup(historic, returnHandle, criteria);
-        }
-        return null;
-    }
-
-    private Version lookup(Calendar historic, boolean returnHandle, Map<String, String> criteria)
-            throws WorkflowException, RepositoryException {
-        Node handle = getVersionableHandle(subject);
-        VersionHistory handleHistory = handle.getVersionHistory();
-        for (VersionIterator iter = handleHistory.getAllVersions(); iter.hasNext(); ) {
-            Version handleVersion = iter.nextVersion();
-            if (!handleVersion.getName().equals("jcr:rootVersion")) {
-                for (NodeIterator children = handleVersion.getNode("jcr:frozenNode").getNodes(); children.hasNext(); ) {
-                    Node child = children.nextNode();
-                    if (child.isNodeType("nt:versionedChild")) {
-                        String ref = child.getProperty("jcr:childVersionHistory").getString();
-                        VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(ref);
-                        for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext(); ) {
-                            Version version = childIter.nextVersion();
-                            if (!version.getName().equals("jcr:rootVersion")) {
-                                if (version.getCreated().equals(historic)) {
-                                    if (matches(version.getNode("jcr:frozenNode"), criteria)) {
-                                        if (returnHandle) {
-                                            return handleVersion;
-                                        } else {
-                                            return version;
-                                        }
-                                    } else {
-                                        return null;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+    private Version lookup(Calendar historic) throws WorkflowException, RepositoryException {
+        VersionHistory versionHistory = subject.getVersionHistory();
+        Map<String, String> criteria = getCriteria(subject, null);
+        for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
+            Version version = iter.nextVersion();
+            if (version.getCreated().equals(historic) && matches(version.getNode("jcr:frozenNode"), criteria)) {
+                return version;
             }
         }
         return null;
     }
 
     public Document version() throws WorkflowException, RepositoryException {
-        Document result;
-
-        Node handle = getVersionableHandle(subject);
-        result = new Document(subject.checkin());
-
-        if (handle != null) {
-            handle.checkin();
-        }
-        return result;
+        return new Document(subject.checkin());
     }
 
     public Document revert(Calendar historic) throws WorkflowException, RepositoryException {
-        Version version = lookup(historic, false);
-        if (version == null)
+        Version version = lookup(historic);
+        if (version == null) {
             throw new WorkflowException("No such historic version");
+        }
+
         try {
             subject.restore(version, true);
             return new Document(subject);
         } catch (VersionException ex) {
-            Node handle = subject.getParent();
-            if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-                throw new WorkflowException("version never existed");
-            }
-
-            Map<String, Value> requiredProperties = new TreeMap<String, Value>();
-            if (handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
-                Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                for (Value discriminator : discriminators) {
-                    String key = discriminator.getString();
-                    if (subject.hasProperty(key)) {
-                        requiredProperties.put(key, subject.getProperty(key).getValue());
-                    }
-                }
-            }
-
-            version = lookup(historic, true);
-            handle.restore(version, false);
-
-            for (NodeIterator iter = handle.getNodes(); iter.hasNext();) {
-                Node result = iter.nextNode();
-                if (result.getName().equals(handle.getName())) {
-                    try {
-                        for (Map.Entry<String, Value> required : requiredProperties.entrySet()) {
-                            if (!result.getProperty(required.getKey()).getString().equals(
-                                    required.getValue().getString())) {
-                                result = null;
-                                break;
-                            }
-                        }
-                        if (result != null) {
-                            return new Document(result);
-                        }
-                    } catch (RepositoryException e) {
-                    }
-                }
-            }
-
-            return null;
+            throw new WorkflowException("Unable to revert version " + historic, ex);
         }
     }
 
@@ -303,10 +195,6 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         }
 
         Node target = subject.getSession().getNodeByIdentifier(targetDocument.getIdentity());
-        Node handle = getVersionableHandle(target);
-        if (handle != null) {
-            handle.checkin();
-        }
         clear(target);
         restore(target, version.getNode("jcr:frozenNode"));
         if (target.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
@@ -318,9 +206,10 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     public Document restore(Calendar historic) throws WorkflowException, RepositoryException {
-        Version version = lookup(historic, false);
-        if (version == null)
+        Version version = lookup(historic);
+        if (version == null) {
             throw new WorkflowException("No such historic version");
+        }
         Node handle = subject.getParent();
         if (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
             throw new WorkflowException("version never existed");
@@ -363,7 +252,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         return new Document(subject);
     }
 
-    public Document restore(Calendar historic, Map <String, String[]> providedReplacements) throws WorkflowException,
+    public Document restore(Calendar historic, Map<String, String[]> providedReplacements) throws WorkflowException,
             RepositoryException {
         throw new UnsupportedRepositoryOperationException();
     }
@@ -373,7 +262,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             final SortedMap<Calendar, Set<String>> listing = new TreeMap<>();
             VersionHistory versionHistory = subject.getVersionHistory();
 
-            for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext();) {
+            for (VersionIterator iter = versionHistory.getAllVersions(); iter.hasNext(); ) {
                 Version version = iter.nextVersion();
                 if (version.getName().equals("jcr:rootVersion")) {
                     continue;
@@ -390,7 +279,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
     }
 
     public Document retrieve(Calendar historic) throws WorkflowException, RepositoryException {
-        Version version = lookup(historic, false);
+        Version version = lookup(historic);
         return (version == null ? null : new Document(version.getNode("jcr:frozenNode")));
     }
 }

@@ -69,7 +69,7 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
                     }
                     Node wfSubject = workflowManager.rootSession.getNodeByIdentifier(sourceIdentity);
                     try {
-                        Node wfNode = workflowManager.getWorkflowNode(category.getName(), wfSubject);
+                        WorkflowDefinition wfNode = workflowManager.getWorkflowDefinition(category.getName(), wfSubject);
                         if (wfNode != null) {
                             if (WorkflowManagerImpl.log.isDebugEnabled()) {
                                 WorkflowManagerImpl.log.debug("inspect workflow for event workflow selected "+wfNode.getPath());
