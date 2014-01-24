@@ -130,14 +130,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for node {}", category, item.getPath());
 
-            if (item.isNodeType(HippoNodeType.NT_HANDLE)) {
-                if (!item.hasNode(item.getName())) {
-                    log.error("No child node exists for handle {}", item.getPath());
-                    return null;
-                }
-                item = item.getNode(item.getName());
-            }
-
             Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
             if (node != null) {
                 for (Node workflowNode : new NodeIterable(node.getNodes())) {
