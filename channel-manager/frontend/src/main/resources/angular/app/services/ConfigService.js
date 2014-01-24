@@ -18,16 +18,15 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .service('hippo.channelManager.menuManagement.Config', ['$window', function($window) {
-                var config;
+        .service('hippo.channelManager.menuManagement.Config', ['hippo.channelManager.menuManagement.IFrame', function(IFrame) {
+                var config = {
+                    menuId: 'hardcodedMenuId',
+                    apiUrlPrefix: 'hardcodedApiUrlPrefix'
+                };
 
-                if (isInIFrame($window)) {
-                    config = readConfigFromIFrame($window);
-                } else {
-                    config = {
-                        menuId: 'hardcodedMenuId',
-                        apiUrlPrefix: 'hardcodedApiUrlPrefix'
-                    };
+                // override default config when app runs in iframe
+                if (IFrame.isActive) {
+                    config = IFrame.getConfig();
                 }
 
                 return config;

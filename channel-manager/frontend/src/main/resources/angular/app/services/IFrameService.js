@@ -19,24 +19,21 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .service('hippo.channelManager.menuManagement.IFrame', [function () {
+        .service('hippo.channelManager.menuManagement.IFrame', ['$window', function ($window) {
 
-
-            function isInIFrame($window) {
-                return $window.self !== $window.top;
-            }
-
-            function getParentIFramePanelId($window) {
+            function getParentIFramePanelId() {
                 var idParam = 'parentExtIFramePanelId',
                     search = $window.location.search,
                     keyValue = search.split('=');
+
                 if (keyValue[0] === ('?' + idParam)) {
                     return keyValue[1];
                 }
+
                 throw new Error("Expected query parameter '" + idParam + "'");
             }
 
-            function getParentIFramePanel($window) {
+            function getParentIFramePanel() {
                 var iframePanelId = getParentIFramePanelId($window),
                     iframePanel = parent.Ext.getCmp(iframePanelId);
 
@@ -47,17 +44,18 @@
                 return iframePanel;
             }
 
-            function readConfigFromIFrame($window) {
-                var iframePanel = getParentIFramePanel($window),
-                    config = iframePanel.initialConfig.pageManagementConfig;
+            return {
+                isActive: ($window.self !== $window.top),
+                getConfig: function () {
+                    var iframePanel = getParentIFramePanel(),
+                        config = iframePanel.initialConfig.pageManagementConfig;
 
-                if (config === undefined) {
-                    throw new Error("Parent iframe panel does not contain page management config");
+                    if (config === undefined) {
+                        throw new Error("Parent iframe panel does not contain page management config");
+                    }
+
+                    return config;
                 }
-
-                return config;
-            }
-
-
+            };
         }]);
 })();

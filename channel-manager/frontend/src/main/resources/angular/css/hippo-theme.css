@@ -1,15 +1,19 @@
-/*!
- * Hippo Bootstrap Theme
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
- * This theme includes all the Bootstrap (BS) Less files.
- * Don't make changes directly in the Bootstrap core, so we can easily upgrade to BS version x.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Please don't wrap everything inside #angular-xo, because this
- * makes it impossible to select specific elements (eg. html, body...)
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- * For an overview of all variables you can customize,
- * see http://getbootstrap.com/customize/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 /* FONT PATH
  * -------------------------- */
 @font-face {
