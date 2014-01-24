@@ -85,7 +85,7 @@ public interface HstNode {
 
     /**
      * marks the HstNode as stale: The JCRValueProvider is out-of-date
-     * @deprecated  since 7.9.0 : use {@link #markStaleByPropertyEvent()} or {@link #markStaleByNodeEvent(boolean)}
+     * @deprecated  since 7.9.0 : use {@link #markStaleByPropertyEvent()} or {@link #markStaleByNodeEvent()}
      */
     void markStale();
 
@@ -95,13 +95,10 @@ public interface HstNode {
     void markStaleByPropertyEvent();
 
     /**
-     * marks the HstNode as stale due to node event: The JCRValueProvider might be out-of-date and/or the child nodes. If the
-     * children's order matter, use childOrderedReload = true
-     * @param childOrderedReload when the children's order is not of any meaning, orderAgnostic = true : This can result in
-     *                      much more efficient reload
+     * marks the HstNode as stale due to node event: The JCRValueProvider might be out-of-date and/or the child nodes.
      */
-    void markStaleByNodeEvent(boolean childOrderedReload);
-    
+    void markStaleByNodeEvent();
+
     /**
      * @return <code>true</code> when this HstNode is stale
      */
@@ -112,5 +109,6 @@ public interface HstNode {
      * @param session
      */
     void update(Session session) throws RepositoryException;
+
 
 }
