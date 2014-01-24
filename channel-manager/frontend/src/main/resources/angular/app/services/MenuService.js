@@ -13,18 +13,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function () {
-
-    angular.module('hippo.channelManager.menuManagement')
-
-        .controller('hippo.channelManager.menuManagement.main', ['hippo.channelManager.menuManagement.config', 'hippo.channelManager.menuManagement.Container',
-            function(Config, Container) {
-                this.items = [ 'one', 'two', 'three' ];
-
-                this.close = function() {
-                    Container.close();
-                };
-            }
-        ]);
-
-})();
+ 

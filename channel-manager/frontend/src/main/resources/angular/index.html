@@ -26,7 +26,7 @@
 
 <body>
 
-    <div data-ng-app="hippo.channelManager.pageManagementApp">
+    <div data-ng-app="hippo.channelManager.menuManagement">
       <div data-ng-view></div>
     </div>
 
@@ -36,7 +36,26 @@
     <script src="vendors/chosen.jquery.js"></script>
     <script src="vendors/hippo-plugins.js"></script>
     <script src="vendors/hippo-theme.js"></script>
-    <script src="app/app.js"></script>
+
+    <!-- Tree component -->
     <script src="app/theme/tree-component.js"></script>
+
+    <!-- App -->
+    <script src="app/app.js"></script>
+
+    <script src="app/components/AddPageFormCtrl.js"></script>
+    <script src="app/components/EditMenuItemFormCtrl.js"></script>
+    <script src="app/components/MenuItemActionsCtrl.js"></script>
+    <script src="app/components/TreeActionsCtrl.js"></script>
+    <script src="app/components/TreeCtrl.js"></script>
+
+    <script src="app/controllers/AddPageCtrl.js"></script>
+    <script src="app/controllers/EditMenuItemCtrl.js"></script>
+    <script src="app/controllers/LoaderCtrl.js"></script>
+
+    <script src="app/services/ConfigService.js"></script>
+    <script src="app/services/ContainerService.js"></script>
+    <script src="app/services/IFrameService.js"></script>
+    <script src="app/services/MenuService.js"></script>
 </body>
 </html>

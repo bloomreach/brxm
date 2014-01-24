@@ -212,6 +212,10 @@ frontend/src/main/resources/angular/app/components/TreeCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/AddPageCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/EditMenuItemCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/LoaderCtrl.js -text
+frontend/src/main/resources/angular/app/services/ConfigService.js -text
+frontend/src/main/resources/angular/app/services/ContainerService.js -text
+frontend/src/main/resources/angular/app/services/IFrameService.js -text
+frontend/src/main/resources/angular/app/services/MenuService.js -text
 frontend/src/main/resources/angular/app/theme/tree-component.js -text
 frontend/src/main/resources/angular/app/views/add-page.html -text
 frontend/src/main/resources/angular/app/views/loader.html -text

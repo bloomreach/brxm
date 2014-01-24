@@ -13,18 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 (function () {
+    "use strict";
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.main', ['hippo.channelManager.menuManagement.config', 'hippo.channelManager.menuManagement.Container',
-            function(Config, Container) {
-                this.items = [ 'one', 'two', 'three' ];
+        .service('hippo.channelManager.menuManagement.Container', ['$window', function($window) {
+                var iframePanel;
 
-                this.close = function() {
-                    Container.close();
+                if (isInIFrame($window)) {
+                    iframePanel = getParentIFramePanel($window);
+                }
+
+                return {
+
+                    close: function() {
+                        if (iframePanel) {
+                            iframePanel.iframeToHost.publish('close');
+                        } else {
+                            console.info("Ignoring close, there is no parent iframe");
+                        }
+                    }
+
                 };
             }
-        ]);
-
+        ])
 })();

@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 (function () {
+    "use strict";
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.main', ['hippo.channelManager.menuManagement.config', 'hippo.channelManager.menuManagement.Container',
-            function(Config, Container) {
-                this.items = [ 'one', 'two', 'three' ];
+        .service('hippo.channelManager.menuManagement.Config', ['$window', function($window) {
+                var config;
 
-                this.close = function() {
-                    Container.close();
-                };
+                if (isInIFrame($window)) {
+                    config = readConfigFromIFrame($window);
+                } else {
+                    config = {
+                        menuId: 'hardcodedMenuId',
+                        apiUrlPrefix: 'hardcodedApiUrlPrefix'
+                    };
+                }
+
+                return config;
             }
         ]);
-
 })();
