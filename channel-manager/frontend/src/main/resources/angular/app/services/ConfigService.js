@@ -18,10 +18,10 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .service('hippo.channelManager.menuManagement.Config', ['hippo.channelManager.menuManagement.IFrame', function(IFrame) {
+        .service('hippo.channelManager.menuManagement.ConfigService', ['hippo.channelManager.menuManagement.IFrameService', function(IFrame) {
                 var config = {
-                    menuId: 'hardcodedMenuId',
-                    apiUrlPrefix: 'hardcodedApiUrlPrefix'
+                    menuId: '041d02f5-2dbe-4aa4-86b4-03d47651a068',
+                    apiUrlPrefix: '/site/_rp'
                 };
 
                 // override default config when app runs in iframe

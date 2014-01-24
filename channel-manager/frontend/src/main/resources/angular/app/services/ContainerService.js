@@ -19,7 +19,7 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .service('hippo.channelManager.menuManagement.Container', ['$window', function($window) {
+        .service('hippo.channelManager.menuManagement.ContainerService', ['$window', function($window) {
                 var iframePanel;
 
                 if (isInIFrame($window)) {

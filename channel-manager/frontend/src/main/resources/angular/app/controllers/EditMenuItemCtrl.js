@@ -13,4 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
+(function () {
+    "use strict";
+
+    angular.module('hippo.channelManager.menuManagement')
+
+        .controller('hippo.channelManager.menuManagement.EditMenuItemCtrl', [
+            '$scope',
+            function ($scope) {
+                console.log('Edit menu item ctrl');
+        }]);
+});

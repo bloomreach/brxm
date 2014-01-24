@@ -19,7 +19,7 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .service('hippo.channelManager.menuManagement.IFrame', ['$window', function ($window) {
+        .service('hippo.channelManager.menuManagement.IFrameService', ['$window', function ($window) {
 
             function getParentIFramePanelId() {
                 var idParam = 'parentExtIFramePanelId',
@@ -44,18 +44,20 @@
                 return iframePanel;
             }
 
+            function getConfig() {
+                var iframePanel = getParentIFramePanel(),
+                    config = iframePanel.initialConfig.pageManagementConfig;
+
+                if (config === undefined) {
+                    throw new Error("Parent iframe panel does not contain page management config");
+                }
+
+                return config;
+            }
+
             return {
                 isActive: ($window.self !== $window.top),
-                getConfig: function () {
-                    var iframePanel = getParentIFramePanel(),
-                        config = iframePanel.initialConfig.pageManagementConfig;
-
-                    if (config === undefined) {
-                        throw new Error("Parent iframe panel does not contain page management config");
-                    }
-
-                    return config;
-                }
+                getConfig: getConfig
             };
         }]);
 })();

@@ -17,5 +17,25 @@
 (function () {
     "use strict";
 
-    angular.module('hippo.')
+    angular.module('hippo.channelManager.menuManagement')
+
+        .service('hippo.channelManager.menuManagement.MenuService', ['hippo.channelManager.menuManagement.ConfigService', '$q', '$http', function (ConfigService, $q, $http) {
+            var menuService = {};
+
+            menuService.getMenu = function(menuId) {
+                var deferred = $q.defer();
+
+                $http.get(ConfigService.apiUrlPrefix + '/' + menuId).success(function (response) {
+                    deferred.resolve(response.data);
+                }).error(function (error) {
+                        deferred.reject('An error occured while fetching all personas');
+                    });
+
+                return deferred.promise;
+            };
+
+            return menuService;
+
+        }]);
+
 })();
