@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 (function () {
     "use strict";
 
@@ -11,10 +26,10 @@
             return {
                 restrict: 'A',
                 template: '<div class="list-group abn-tree">' +
-                    '<a ng-repeat="row in treeRows | filter:{visible:true} track by row.branch.uid"' +
+                    '<a data-ng-repeat="row in treeRows | filter:{visible:true} track by row.branch.uid"' +
                     'ng-animate="\'abn-tree-animate\'" ng-class="\'level-\' + {{ row.level }} + (row.branch.selected ? \' active\':\'\')"' +
                     'class="list-group-item abn-tree-row level-1" ng-click="selectBranch(row.branch)">' +
-                    '<i class="indented fa" ng-class="row.tree_icon" ng-click="row.branch.expanded = !row.branch.expanded"></i>' +
+                    '<i class="indented fa" data-ng-class="row.tree_icon" data-ng-click="row.branch.expanded = !row.branch.expanded"></i>' +
                     '<span class="indented tree-label">{{ row.label }}</span>' +
                     '<span class="badge"><i class="fa fa-bars"></i></span>' +
                     '</a>' +
@@ -40,7 +55,7 @@
                     }
 
                     if (!scope.treeData.length) {
-                        if (treeData.label) {
+                        if (treeData && treeData.label) {
                             scope.treeData = [ treeData ];
                         } else {
                             console.warn('treeData should be an array of root branches');

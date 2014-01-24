@@ -204,7 +204,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_fr
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JsonUtil.java -text
-frontend/src/main/resources/angular/app/controllers/theme-tree.js -text
+frontend/src/main/resources/angular/app/theme/tree-component.js -text
 frontend/src/main/resources/angular/components/font-awesome/.bower.json -text
 frontend/src/main/resources/angular/components/font-awesome/CONTRIBUTING.md -text
 frontend/src/main/resources/angular/components/font-awesome/Gemfile -text
