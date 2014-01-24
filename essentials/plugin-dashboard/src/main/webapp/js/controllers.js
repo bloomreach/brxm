@@ -24,7 +24,7 @@
                 // does nothing for time being
             })
         // loads plugin list
-            .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http) {
 
                 $scope.tabs = [
                     {name: "Installed Plugins", link: "/plugins"},
@@ -57,7 +57,7 @@
          // ON LOAD CONTROLLER
          //############################################
          */
-            .controller('homeCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            .controller('homeCtrl', function ($scope, $sce, $log) {
                 $scope.init = function () {
                     $log.info("...Essentials loaded...");
                 };

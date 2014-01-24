@@ -14227,6 +14227,12 @@ plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/atlassian-ide-plugi
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/hippo-plugins.iws
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/target
 plugin-dashboard/src/main/webapp/plugins/target
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/*.iml
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/.DS_Store
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/.idea
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/hippo-plugins.iws
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/target
 plugin-dashboard/src/main/webapp/target
 plugin-dashboard/src/main/webapp/theme/*.iml
 plugin-dashboard/src/main/webapp/theme/.DS_Store

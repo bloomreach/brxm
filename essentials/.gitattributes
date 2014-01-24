@@ -677,6 +677,7 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ContentBlocksRe
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/ControllersResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/KeyValueResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/MenuResource.java -text
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/NodeResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PluginResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PowerpackResource.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/PropertiesResource.java -text
@@ -1977,6 +1978,8 @@ plugin-dashboard/src/main/webapp/plugins/galleryPlugin/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/galleryPlugin/index.html -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/controller.js -text
 plugin-dashboard/src/main/webapp/plugins/newsEventsPowerpack/index.html -text
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/controller.js -text
+plugin-dashboard/src/main/webapp/plugins/xinhaPlugin/index.html -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/_font-awesome.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/main.css -text
 plugin-dashboard/src/main/webapp/theme/hippo-theme/theme.html -text

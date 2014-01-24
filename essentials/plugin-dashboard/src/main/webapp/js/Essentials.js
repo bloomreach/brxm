@@ -10,23 +10,14 @@
         var payload = {};
         payload.values = {};
         payload.values.entry = [];
-
         return {"payload": payload};
     };
 
-    Essentials.addPayloadData = function (payload, key, value) {
-        if (payload == null) {
+    Essentials.addPayloadData = function (key, value, payload) {
+        if (payload === undefined || payload == null) {
             payload = Essentials.emptyPayload();
         }
-        else {
-            if (!payload.values) {
-                payload.values = {};
-                payload.values.entry = [];
-            } else if (!payload.values.entry) {
-                payload.values.entry = [];
-            }
-        }
-        payload.values.entry.push({"key": key, "value": value});
+        payload['payload'].values.entry.push({"key": key, "value": value});
         return payload;
     };
 

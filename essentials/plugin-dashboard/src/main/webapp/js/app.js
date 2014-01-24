@@ -111,6 +111,7 @@
         $rootScope.REST = {
             root: root,
             menus: root + '/menus/',
+
             /**
              * Returns list of all plugins
              * //TODO: change this once we have marketplace up and running
@@ -146,7 +147,13 @@
             compounds: root + '/documenttypes/compounds',
             compoundsCreate: root + '/documenttypes/compounds/create/' ,
             compoundsDelete: root + '/documenttypes/compounds/delete/' ,
-            contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/'
+            contentblocksCreate: root + '/documenttypes/compounds/contentblocks/create/',
+            //############################################
+            // NODE
+            //############################################
+            node: root + '/node/',
+            getProperty: root + '/node/property',
+            setProperty: root + '/node/property/save'
 
 
         };

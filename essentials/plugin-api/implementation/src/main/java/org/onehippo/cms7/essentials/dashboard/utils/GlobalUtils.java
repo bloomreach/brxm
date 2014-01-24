@@ -190,4 +190,11 @@ public final class GlobalUtils {
         }
         return null;
     }
+
+    public static void cleanupSession(final Session session) {
+        if(session !=null){
+            session.logout();
+        }
+
+    }
 }
