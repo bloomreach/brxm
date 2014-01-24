@@ -58,7 +58,7 @@
                 $routeProvider
                     .when('/', {
                         controller: 'hippo.channelManager.main',
-                        templateUrl: 'app/views/main.html'
+                        templateUrl: 'app/views/edit-menu-item.html'
                     })
                     .otherwise({
                         redirectTo: '/'
