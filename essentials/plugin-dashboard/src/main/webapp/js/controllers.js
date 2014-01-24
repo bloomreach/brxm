@@ -2,18 +2,28 @@
     "use strict";
     angular.module('hippo.essentials')
 
-            //############################################
-            // PLUGINS CONTROLLER LOADER
-            //############################################
-            .controller('pluginLoaderCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+        //############################################
+        // MENU DATA
+        //############################################
+            .service('menuService', function () {
+                this.getMenu = function () {
+                    return [
+                        {name: "Plugins", link: "#/plugins"},
+                        {name: "Tools", link: "#/tools"}
+                    ];
+                };
 
             })
 
+        //############################################
+        // PLUGINS CONTROLLER LOADER
+        //############################################
+            .controller('pluginLoaderCtrl',function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
-            .controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
+            }).controller('toolCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
                 // does nothing for time being
             })
-            // loads plugin list
+        // loads plugin list
             .controller('pluginCtrl', function ($scope, $location, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
                 $scope.tabs = [
@@ -60,13 +70,13 @@
          // MENU CONTROLLER
          //############################################
          */
-            .controller('mainMenuCtrl', function ($scope, $log, $location, $rootScope, $http, MyHttpInterceptor) {
+            .controller('mainMenuCtrl', ['$scope', '$location', '$rootScope',  'menuService', function ($scope, $location, $rootScope, menuService) {
 
-
-                $scope.menu = [
-                    {name: "Plugins", link: "#/plugins"},
-                    {name: "Tools", link: "#/tools"}
-                ];
+                $scope.$watch(function () {
+                    return $rootScope.busyLoading;
+                }, function () {
+                    $scope.menu = menuService.getMenu();
+                });
 
                 $scope.isPageSelected = function (path) {
                     var myPath = $location.path();
@@ -80,9 +90,9 @@
                     return  '#' + myPath == path;
                 };
                 $scope.onMenuClick = function (menuItem) {
-                    $log.info(menuItem);
+                   //
                 };
 
+            }]);
 
-            })
 })();
