@@ -1,0 +1,55 @@
+#container {
+    max-width: initial;
+    padding: 0;
+}
+
+#container > .row {
+    margin-left: 0;
+    margin-right: 0;
+    display: table-row;
+}
+
+#container .row:first-child {
+    height: 433px;
+}
+
+/* --- Tree --- */
+#menu-tree {
+    padding: 0;
+    display: table-cell;
+    float: none;
+    vertical-align: top;
+    background: white;
+    border-right: 1px solid #dddddd;
+}
+
+#menu-tree button {
+    margin: 10px auto;
+    width: 90%;
+}
+
+#form-panel {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: table-cell;
+    float: none;
+}
+
+#add, #remove {
+    display: table-cell;
+    float: none;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+#add {
+    border-right: 1px solid #dddddd;
+}
+
+#add button {
+    margin: 10px 0;
+}
+
+#remove button {
+    margin: 10px 0;
+}
