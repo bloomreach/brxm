@@ -26,16 +26,16 @@
                 var deferred = $q.defer();
 
                 $http.get(ConfigService.apiUrlPrefix + '/' + menuId).success(function (response) {
+
+                    // re-map REST response
                     deferred.resolve(response.data);
                 }).error(function (error) {
-                        deferred.reject('An error occured while fetching all personas');
-                    });
+                    deferred.reject('An error occured while fetching all personas');
+                });
 
                 return deferred.promise;
             };
 
             return menuService;
-
         }]);
-
 })();

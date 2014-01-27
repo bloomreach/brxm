@@ -21,7 +21,43 @@
 
         .controller('hippo.channelManager.menuManagement.EditMenuItemCtrl', [
             '$scope',
-            function ($scope) {
-                console.log('Edit menu item ctrl');
+            '$routeParams',
+            '$location',
+            'hippo.channelManager.menuManagement.MenuService',
+            'hippo.channelManager.menuManagement.ConfigService',
+            function ($scope, $routeParams, $location, MenuService, ConfigService) {
+                // scope values
+                $scope.selectedMenuItemId = $routeParams.menuItemId;
+                $scope.menuTree = [{name: 'Placeholder'}];
+                $scope.menuItemDestinations = [{}];
+
+                // methods
+                $scope.navigateTo = function (branch) {
+                    if ($scope.selectedMenuItemId !== branch.id) {
+                        $location.path('/' + branch.id + '/edit');
+                    }
+                };
+
+                $scope.createNewPage = function () {
+                    $location.path('/' + $scope.selectedMenuItemId + '/add-page');
+                };
+
+                // fetch initial data
+                MenuService.getMenu(ConfigService.menuId).then(function (response) {
+                    $scope.menuTree = response.children;
+                });
+
+                // make sure there is a destination property
+                $scope.$watch('selectedMenuItem', function (item) {
+                    if (item && !item.destination) {
+                        if (item.externalLink) {
+                            item.destination = 2;
+                        } else if (item.siteMapItemPath) {
+                            item.destination = 1;
+                        } else {
+                            item.destination = 3;
+                        }
+                    }
+                });
         }]);
-});
+})();

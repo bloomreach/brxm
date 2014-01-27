@@ -26,8 +26,6 @@
             // add:  2
             $scope.page = 1;
 
-            $http.get('site/_rp/fd694c53-5be6-4690-b83e-7b78cf7a2268')
-
             $scope.exampleTreedata = [{
                 label: 'Home',
                 destination: 1,

@@ -30,7 +30,7 @@
                     'ng-animate="\'abn-tree-animate\'" ng-class="\'level-\' + {{ row.level }} + (row.branch.selected ? \' active\':\'\')"' +
                     'class="list-group-item abn-tree-row level-1" ng-click="selectBranch(row.branch)">' +
                     '<i class="indented fa" data-ng-class="row.tree_icon" data-ng-click="row.branch.expanded = !row.branch.expanded"></i>' +
-                    '<span class="indented tree-label">{{ row.label }}</span>' +
+                    '<span class="indented tree-label">{{ row.name }}</span>' +
                     '<span class="badge"><i class="fa fa-bars"></i></span>' +
                     '</a>' +
                     '</div>',
@@ -55,7 +55,7 @@
                     }
 
                     if (!scope.treeData.length) {
-                        if (treeData && treeData.label) {
+                        if (treeData && treeData.name) {
                             scope.treeData = [ treeData ];
                         } else {
                             console.warn('treeData should be an array of root branches');
@@ -115,13 +115,13 @@
                         }
                     }
 
-                    // make sure each branch has a label and a children property
+                    // make sure each branch has a name and a children property
                     function formatBranchStructure(branch) {
                         if (branch.children && branch.children.length > 0) {
                             branch.children = branch.children.map(function(e) {
                                 if (typeof e === 'string') {
                                     return {
-                                        label: e,
+                                        name: e,
                                         children: []
                                     };
                                 } else {
@@ -149,7 +149,7 @@
                         scope.treeRows.push({
                             'level': level,
                             'branch': branch,
-                            'label': branch.label,
+                            'name': branch.name,
                             'tree_icon': treeIcon,
                             'visible': visible
                         });
@@ -176,6 +176,8 @@
                         for (var i = 0; i < scope.treeData.length; i++) {
                             addBranchToList(1, scope.treeData[i], true);
                         }
+
+                        onInitialSelectionChange();
                     }
 
                     forEachBranch(function(b, level) {
@@ -184,8 +186,22 @@
                     });
 
                     if (attrs.initialSelection) {
+                        console.log('Initial selection value: ' + attrs.initialSelection);
+
                         forEachBranch(function (b) {
-                            if (b.label === attrs.initialSelection) {
+                            if (b.id === attrs.initialSelection) {
+                                selectBranch(b);
+                            }
+                        });
+                    }
+
+                    function onInitialSelectionChange() {
+                        console.log('Initial selection change.');
+                        console.log(scope.initialSelection);
+
+                        forEachBranch(function (b) {
+                            console.log(b.id + ': ' + scope.initialSelection);
+                            if (b.id === scope.initialSelection) {
                                 selectBranch(b);
                             }
                         });
@@ -193,6 +209,7 @@
 
                     // watch for data changes
                     scope.$watch('treeData', onTreedataChange, true);
+                    scope.$watch('initialSelection', onInitialSelectionChange, true);
                 }
             };
         }]);
