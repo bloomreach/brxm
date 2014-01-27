@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,46 +24,45 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-public class CmsEditTest extends AbstractTemplateComposerTest {
+public class CmsEditMenuTest extends AbstractTemplateComposerTest {
 
     @Before
     public void startPage() throws Exception {
-        setUp("cmseditlink.html");
+        setUp("cmseditmenu.html");
         initializeIFrameHead();
-        initializeTemplateComposer(false, true);
+        initializeTemplateComposer(false, false);
     }
 
     @Test
-    public void testSurfAndEdit() throws Exception {
-        assertFalse(isPublished(iframeToHostMessages, "exception"));
-
-        // test if container is present
-        HtmlElement link = getLink();
-        assertTrue(isPublished(iframeToHostMessages, "documents"));
-        assertTrue(isMetaDataConsumed(link));
+    public void buttonReplacesHtmlComment() throws Exception {
+        final HtmlElement editMenuLink = getEditMenuLink();
+        assertTrue("The 'hst:cmseditmenu' tag should replace the HTML comment", isMetaDataConsumed(getEditMenuLink()));
+        assertFalse("There should be no 'exception' events'", isPublished(iframeToHostMessages, "exception"));
     }
 
-    private HtmlElement getLink() {
+    private HtmlElement getEditMenuLink() {
         final List<HtmlElement> divs = page.getElementsByTagName("a");
         for (HtmlElement div : divs) {
-            if (eval("HST.CLASS.EDITLINK").equals(div.getAttribute("class"))) {
+            if (eval("HST.CLASS.EDITMENU").equals(div.getAttribute("class"))) {
                 return div;
             }
         }
-        throw new NoSuchElementException();
+        return null;
     }
 
     @Test
-    public void clickLinkSendsMessage() throws Exception {
-        HtmlElement link = getLink();
-        link.click();
+    public void clickButtonSendsMessage() throws Exception {
+        HtmlElement editMenuLink = getEditMenuLink();
+        editMenuLink.click();
 
-        assertTrue(isPublished(hostToIFrameMessages, "init"));
-        assertTrue(isPublished(iframeToHostMessages, "iframeloaded"));
-        assertTrue(isPublished(iframeToHostMessages, "documents"));
-        assertTrue(isPublished(iframeToHostMessages, "edit-document"));
+        page.getWebClient().waitForBackgroundJavaScript(100);
+
+        assertTrue("Clicking the 'edit menu' button should fire the 'edit-menu' event", isPublished(iframeToHostMessages, "edit-menu"));
     }
 
 }

@@ -313,14 +313,16 @@
 
             if (this.previewMode) {
                 hostToIFrame.publish('hideoverlay');
-                hostToIFrame.publish('showlinks');
+                hostToIFrame.publish('hide-edit-menu-buttons');
+                hostToIFrame.publish('show-edit-content-buttons');
                 self._complete();
             } else {
 
                 if (hasPreviewHstConfig) {
                     doneCallback = function() {
                         hostToIFrame.publish('showoverlay');
-                        hostToIFrame.publish('hidelinks');
+                        hostToIFrame.publish('hide-edit-menu-buttons');
+                        hostToIFrame.publish('hide-edit-content-buttons');
                         self._complete();
                     }.createDelegate(this);
                     // reset pageContext, the page and toolkit stores must be reloaded
@@ -544,12 +546,16 @@
             }.createDelegate(this));
         },
 
-        _handleEdit: function(uuid) {
+        _handleEditDocument: function(uuid) {
             this.fireEvent('edit-document', uuid);
         },
 
         _handleDocuments: function(documents) {
             this.fireEvent('documents', documents);
+        },
+
+        _handleEditMenu: function(uuid) {
+            this.fireEvent('edit-menu', uuid);
         },
 
         _onClick: function(data) {
@@ -645,7 +651,8 @@
             iframeToHost.subscribe('remove', tryOrReinitialize(this._removeByElement, this));
             iframeToHost.subscribe('refresh', tryOrReinitialize(this.refreshIframe, this));
             iframeToHost.subscribe('exception', tryOrReinitialize(this._showError, this));
-            iframeToHost.subscribe('edit-document', tryOrReinitialize(this._handleEdit, this));
+            iframeToHost.subscribe('edit-document', tryOrReinitialize(this._handleEditDocument, this));
+            iframeToHost.subscribe('edit-menu', tryOrReinitialize(this._handleEditMenu, this));
             iframeToHost.subscribe('documents', tryOrReinitialize(this._handleDocuments, this));
         }
 

@@ -41,7 +41,6 @@
                 width: 860,
                 height: 550,
                 modal: true,
-                closable: false,
                 layout: 'fit',
                 items: [
                     {

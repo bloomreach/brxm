@@ -932,6 +932,7 @@ test/pom.xml -text
 test/src/main/webapp/HST-vbox.html -text
 test/src/main/webapp/WEB-INF/web.xml -text
 test/src/main/webapp/cmseditlink.html -text
+test/src/main/webapp/cmseditmenu.html -text
 test/src/main/webapp/emptycontaineritem.html -text
 test/src/main/webapp/extjs-test.html -text
 test/src/main/webapp/pageeditor-test.html -text
@@ -940,7 +941,7 @@ test/src/test/java/org/onehippo/cms7/channelmanager/AbstractJavascriptTest.java 
 test/src/test/java/org/onehippo/cms7/channelmanager/ExtTest.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/ResourceServlet.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/AbstractTemplateComposerTest.java -text
-test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/CmsEditTest.java -text
+test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/CmsEditContentTest.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/InitializationTest.java -text
 test/src/test/resources/log4j.dtd -text
 test/src/test/resources/log4j.xml -text

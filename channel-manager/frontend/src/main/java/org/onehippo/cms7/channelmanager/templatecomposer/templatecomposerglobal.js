@@ -21,6 +21,7 @@
         CONTAINER       : 'CONTAINER_COMPONENT',
         CONTAINERITEM   : 'CONTAINER_ITEM_COMPONENT',
         CMSLINK : 'cmslink',
+        MENU : 'menu',
 
         ATTR : {
             ID : 'uuid',
@@ -40,7 +41,8 @@
         CLASS : {
             CONTAINER : 'hst-container',
             ITEM : 'hst-container-item',
-            EDITLINK : 'hst-cmseditlink'
+            EDITLINK : 'hst-cmseditlink',
+            EDITMENU : 'hst-cmseditmenu'
         },
 
         DIR : {

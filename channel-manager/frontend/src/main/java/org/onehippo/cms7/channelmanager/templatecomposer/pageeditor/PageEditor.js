@@ -402,26 +402,6 @@
             }
             if (this.fullscreen || this.pageContainer.canEdit) {
                 this.addToolbarPlugins(toolbar, 'view');
-
-                // TODO: remove this test button once the 'Edit Menu' button is finished
-                toolbar.add(new Ext.Toolbar.Button({
-                    id: 'template-composer-toolbar-edit-menu',
-                    text: 'Test Edit Menu',
-                    width: 90,
-                    listeners: {
-                        click: {
-                            fn: function() {
-                                var editMenuWindow = new Hippo.ChannelManager.TemplateComposer.EditMenuWindow({
-                                    resources: this.resources,
-                                    composerRestMountUrl: this.composerRestMountUrl,
-                                    menuId: 'dummyMenuId' // TODO: pass real ID of edited menu
-                                });
-                                editMenuWindow.show();
-                            },
-                            scope: this
-                        }
-                    }
-                }));
             }
             if (toolbar.rendered) {
                 toolbar.doLayout();
@@ -661,7 +641,8 @@
                 this.createEditToolbar();
 
                 hostToIFrame.publish('showoverlay');
-                hostToIFrame.publish('hidelinks');
+                hostToIFrame.publish('hide-edit-content-buttons');
+                hostToIFrame.publish('show-edit-menu-buttons');
 
                 if (this.propertiesWindow) {
                     this.propertiesWindow.destroy();
@@ -677,10 +658,11 @@
                 this.createViewToolbar();
 
                 hostToIFrame.publish('hideoverlay');
+                hostToIFrame.publish('hide-edit-menu-buttons');
                 if (this.fullscreen) {
-                    hostToIFrame.publish('hidelinks');
+                    hostToIFrame.publish('hide-edit-content-buttons');
                 } else {
-                    hostToIFrame.publish('showlinks');
+                    hostToIFrame.publish('show-edit-content-buttons');
                 }
 
                 if (this.propertiesWindow) {
@@ -864,6 +846,8 @@
                 }
             }, this);
 
+            this.pageContainer.on('edit-menu', this.editMenu, this);
+
             this.on('mountChanged', function(data) {
                 this.channelStoreFuture.when(function(config) {
                     var collection = config.store.query('mountId', data.mountId),
@@ -1031,6 +1015,15 @@
 
         selectVariant: function(id, variant) {
             this.pageContainer.pageContext.selectVariant(id, variant);
+        },
+
+        editMenu: function(uuid) {
+            var editMenuWindow = new Hippo.ChannelManager.TemplateComposer.EditMenuWindow({
+                resources: this.resources,
+                composerRestMountUrl: this.composerRestMountUrl,
+                menuId: uuid
+            });
+            editMenuWindow.show();
         },
 
         getToolbarButtons: function() {

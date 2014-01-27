@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -198,53 +198,44 @@ li.hst-empty-container-item {
     list-style: none;
 }
 
-li.placeholdert {
-    list-style: none;
-}
-
-/* New containerItems get this class, removed again after refresh */
-.hst-temporary {
-  padding: 5px;
-  background-color: red;
-  color: white;
-}
-
-button.title-button {
-    background-image: url(hippologo.png) !important;
-    width: 150px;
-}
-
-a.hst-cmseditlink {
-    /* button-edit-end.png */
+a.hst-cmseditlink,
+a.hst-cmseditmenu {
     color: #444;
     display: block;
-    float: left;
     font: normal 12px arial, sans-serif;
     height: 24px;
     text-decoration: none;
+}
+
+a.hst-cmseditlink {
+    float: left;
     position: absolute;
     top: 0;
     right: 0;
 }
 
-a.hst-cmseditlink span {
-    display: inline-block;	
+a.hst-cmseditlink span,
+a.hst-cmseditmenu span {
+    display: inline-block;
     height:23px;
 }
 
-a.hst-cmseditlink span.hst-cmseditlink-left {
+a.hst-cmseditlink span.hst-cmseditlink-left,
+a.hst-cmseditmenu span.hst-cmseditmenu-left {
     background: transparent no-repeat left top url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAXCAYAAAD+4+QTAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA9lJREFUeNq0ll1sU2UYx3+npz39Wr/WjX11HxhhTkCKLCwiw4gCukS5IIR4JReGC6+EW01M8IJbNTHRhCgXcmUMUdSEqyVeMKeiAiEYWDY2HB3t2q7d6cfp+fJtV51m7YzJ9iRvTtqc8/zO//88z/seiXosju8Li8tbYh0TK84GhrMOqCb9zBXaHXd3H0dpG91IBlJdwbjS/kLcv+0smxFVJaecgSfj3q2nsQx10yCvK1teBLPU8IZ3P/6Fzq4uZLeFZes4XR4Kqk6nZfFzegFLszlx+BC79vYTsjQoalQqBTJRG58dxqfO1iBxZ8sQttEY8lQsxCuvHsLtF+9R/88Wy2XB0RR8Mv4DF6/f4ZTSwki3wszE1wwsZShToPPgEfSgtFJ42yg0lbrsipAXd/3xoEB6KY1ugMcT5tkuhfRyiXA4SH/fE1y8PcfkPZXj7TEy9+8ycP131JyNcnK0DmliVTV8mkabAt4OPzt7/Qh3cEpCiXgvM2KiFVIkNBefp7IElvP4PDH2jxyhs2AxncwwKHLXIcWmEMPho6jD9IMk3oCP1GJO9KSPaFuEPr+fvft28OX3t9AESOsY5M1rE7z3zCDR54bIJ8u13HW7mivJV5wEhUV7eqJMeWS2b5GxKl4iUp45V5Az305xI+Ve6aF0ArR2zl3JMHoywvCeSi13DcI6dsnhbSSFPYnUAknx25GeJxDYyryznZcmrpFddOHVy1SErfpDG0kp8MZ+neEBC4dRWZ349ZRUylqtDh0t3Qy4JEIdPcyIepyYSJCeFS1n6YjGxpfIkJMtzhx0cm5nGskwa124CllHidtVxO2DO4+SLJU82KL/z165zMJSv7DGRO6MUfk1heS1CFtTvL0jIpxR/wasQqzmELtUoJItMBLtQBc1vzn5Ha9RxOtN8anXZubeIgTc7I7KvKx0I9nZNfn+U4ntjmCH/Fz9aZJYMMDQYxqxXh+tap6FGy4+qmg8PdTL+cMH+ObyF5jVXcFsBFlHiaZqRMR0xx8fJhqWsccn6A+KblLy9IiBOdrXzfmxMVSnxpyYJ5eprcnn+GtOmq1QyE1GdOat+RwXbk8z9uEH3DdsSlYrsZDF6ed3kfWIJI8UDughUSZ1TY66Xc23Fb2UxgzB9nArvVoroxd+JK84UDWFwX4DTXZgCKUZZ4mEbeIwy2vyVSG/WXomLjk8DSF3Z1UeXrqKWtZxCHsckl3bjSWRWXeYmLJE9VmH6SKXzaHrJWSruAbyFUYujmw2hLwzeun/HR564/Pkfds2jtlmPi6tlGjDQ/rnGb/RHxD/gmz218qfAgwAVQDJ5bP2j34AAAAASUVORK5CYII=);
     padding-left: 25px;
 }
 
-a.hst-cmseditlink span.hst-cmseditlink-center {
+a.hst-cmseditlink span.hst-cmseditlink-center,
+a.hst-cmseditmenu span.hst-cmseditmenu-center {
     background: transparent repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAXCAIAAAC57ZmSAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAFJJREFUeNqskcsNgDAMQ1PUmVifhTgCveTTBfwORfX1ybEjt/s6TamlvxL0ik+D9EcDiwGnHAGGj8VWmPGjFTpyo4P+iNU9jB0wVJVLcBhoCjAAFcw9F5iszKwAAAAASUVORK5CYII=);
     display: table-cell;
     vertical-align: middle;
     white-space: nowrap;
 }
 
-a.hst-cmseditlink span.hst-cmseditlink-right {
+a.hst-cmseditlink span.hst-cmseditlink-right,
+a.hst-cmseditmenu span.hst-cmseditmenu-right {
     background: transparent no-repeat right top url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAXCAYAAADZTWX7AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAMxJREFUeNpifLPf7D8DKrgAxBuBeIKI46kPIAHGf3++oij69eYww89naxl+f7wIUpwIVHiB8e/P1+gmgcHX230Mv17vBSl0ZPn35ws2NQycimkM/348N/jz+VoBC8Pf7wy4AJuYCwNQkT/L/z+4FbHwaIIoA6CirwyEAMt/PNYhKfpGhKI/RJjEQJR1f75Ty+H/6GwSMeH09ytlJv3/9wOcUoGBicekv+C0thFoEvZE95/hH8goUMqcwPL//x9c5sDS+AcWHJIouQUgwACAP3MVfgbNEAAAAABJRU5ErkJggg==);
     padding-right: 9px;
 }
