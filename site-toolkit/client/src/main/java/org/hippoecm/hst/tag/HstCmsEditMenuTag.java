@@ -34,7 +34,9 @@ public class HstCmsEditMenuTag extends TagSupport  {
     
     private final static Logger log = LoggerFactory.getLogger(HstCmsEditMenuTag.class);
     
-    private static final long serialVersionUID = 1L;
+    private final static long serialVersionUID = 1L;
+
+    private final static String MENU_ATTR_NAME = "menu";
 
     protected HstSiteMenu menu;
 
@@ -103,21 +105,14 @@ public class HstCmsEditMenuTag extends TagSupport  {
     }
 
     /* -------------------------------------------------------------------*/
-        
-    /**
-     * TagExtraInfo class for HstCmsEditMenuTag.
-     */
+
     public static class TEI extends TagExtraInfo {
-        
+
         public VariableInfo[] getVariableInfo(TagData tagData) {
-            VariableInfo vi[] = null;
-            String var = tagData.getAttributeString("menu");
-            if (var != null) {
-                vi = new VariableInfo[1];
-                vi[0] =
-                    new VariableInfo(var, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
-                                 VariableInfo.AT_BEGIN);
-            }
+            VariableInfo vi[] = new VariableInfo[1];
+            vi[0] = new VariableInfo(MENU_ATTR_NAME, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
+                            VariableInfo.AT_BEGIN);
+
             return vi;
         }
 
