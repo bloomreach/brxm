@@ -521,8 +521,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
         }
 
-        // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
-        // needed in the future though, for example for performance reasons
         try {
             if (mountPoint == null) {
                 log.info("Mount '{}' at '{}' does have an empty mountPoint. This means the Mount is not using a HstSite and does not have a content path", getName(), mount.getValueProvider().getPath());

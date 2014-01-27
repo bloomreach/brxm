@@ -74,12 +74,12 @@ public class HstCmsEditMenuTag extends TagSupport  {
             HstRequestContext requestContext = RequestContextProvider.get();
 
             if (requestContext == null) {
-                log.warn("Cannot create a cms edit menu outside the hst request processing for '{}'");
+                log.warn("Cannot create a cms edit menu outside the hst request processing");
                 return EVAL_PAGE;
             }
 
             if (!requestContext.isCmsRequest()) {
-                log.debug("Skipping cms edit url because not cms preview.");
+                log.debug("Skipping cms edit menu because not cms preview.");
                 return EVAL_PAGE;
             }
 
