@@ -186,8 +186,6 @@
                     });
 
                     if (attrs.initialSelection) {
-                        console.log('Initial selection value: ' + attrs.initialSelection);
-
                         forEachBranch(function (b) {
                             if (b.id === attrs.initialSelection) {
                                 selectBranch(b);
@@ -196,11 +194,7 @@
                     }
 
                     function onInitialSelectionChange() {
-                        console.log('Initial selection change.');
-                        console.log(scope.initialSelection);
-
                         forEachBranch(function (b) {
-                            console.log(b.id + ': ' + scope.initialSelection);
                             if (b.id === scope.initialSelection) {
                                 selectBranch(b);
                             }
