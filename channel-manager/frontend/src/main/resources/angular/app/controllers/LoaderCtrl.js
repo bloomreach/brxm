@@ -24,17 +24,11 @@
             'hippo.channelManager.menuManagement.ConfigService',
             'hippo.channelManager.menuManagement.MenuService',
             function ($scope, $location, ConfigService, MenuService) {
-
-                console.log('LoaderCtrl init');
-
-                // get config info
-                console.log(ConfigService);
-
                 // load menu to show
                 MenuService.getMenu(ConfigService.menuId).then(function (data) {
 
                     // redirect to edit menu item for first item
-                    $location.path('/' + data.id + '/edit');
+                    $location.path('/' + data.children[0].id + '/edit');
 
                 }, function (error) {
                     console.error(error);
