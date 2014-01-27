@@ -24,12 +24,13 @@
             'hippo.channelManager.menuManagement.ConfigService',
             'hippo.channelManager.menuManagement.MenuService',
             function ($scope, $location, ConfigService, MenuService) {
-                // load menu to show
+
                 MenuService.getMenu(ConfigService.menuId).then(function (data) {
                     // redirect to edit menu item for first item
                     $location.path('/' + data.children[0].id + '/edit');
                 }, function (error) {
                     console.error(error);
                 });
+
         }]);
 })();

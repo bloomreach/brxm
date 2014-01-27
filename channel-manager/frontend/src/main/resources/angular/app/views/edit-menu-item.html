@@ -18,7 +18,7 @@
     <div class="row">
 
         <!-- START Tree Component -->
-        <div class="col-sm-4" id="menu-tree">
+        <div class="col-sm-4" id="menu-tree" data-ng-controller="hippo.channelManager.menuManagement.TreeCtrl">
             <div file-tree tree-data="menuTree" on-select="setSelectedItem(branch)" initial-selection="selectedMenuItemId"></div>
         </div>
         <!-- END Tree Component -->

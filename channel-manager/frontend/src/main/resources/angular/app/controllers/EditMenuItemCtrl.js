@@ -29,24 +29,6 @@
                 // scope values
                 $scope.selectedMenuItemId = $routeParams.menuItemId;
                 $scope.selectedMenuItem = {};
-                $scope.menuTree = [{}];
 
-                // fetch initial data
-                MenuService.getMenu(ConfigService.menuId).then(function (response) {
-                    $scope.menuTree = response.children;
-                });
-
-                // methods
-                $scope.setSelectedItem = function (branch) {
-                    // set selected menu item so child-controllers can access it
-                    $scope.selectedMenuItem = branch;
-
-                    if (branch && branch.id) {
-                        // redirect if the selected item is different from the current
-                        if ($scope.selectedMenuItemId !== branch.id) {
-                            $location.path('/' + branch.id + '/edit');
-                        }
-                    }
-                };
         }]);
 })();
