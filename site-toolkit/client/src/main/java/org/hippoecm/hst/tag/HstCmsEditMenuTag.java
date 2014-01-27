@@ -31,10 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstCmsEditMenuTag extends TagSupport  {
-    
+
     private final static Logger log = LoggerFactory.getLogger(HstCmsEditMenuTag.class);
-    
-    private static final long serialVersionUID = 1L;
+
+    private final static long serialVersionUID = 1L;
+
+    private final static String MENU_ATTR_NAME = "menu";
 
     protected HstSiteMenu menu;
 
@@ -80,7 +82,7 @@ public class HstCmsEditMenuTag extends TagSupport  {
 
     protected void write(String menuId, boolean inherited) throws IOException {
         JspWriter writer = pageContext.getOut();
-        StringBuilder htmlComment = new StringBuilder(); 
+        StringBuilder htmlComment = new StringBuilder();
         htmlComment.append("<!-- ");
         htmlComment.append(" {\"type\":\"menu\"");
         // add uuid
@@ -97,27 +99,20 @@ public class HstCmsEditMenuTag extends TagSupport  {
     public HstSiteMenu getMenu(){
         return menu;
     }
-     
+
     public void setMenu(HstSiteMenu menu) {
         this.menu = menu;
     }
 
     /* -------------------------------------------------------------------*/
-        
-    /**
-     * TagExtraInfo class for HstCmsEditMenuTag.
-     */
+
     public static class TEI extends TagExtraInfo {
-        
+
         public VariableInfo[] getVariableInfo(TagData tagData) {
-            VariableInfo vi[] = null;
-            String var = tagData.getAttributeString("menu");
-            if (var != null) {
-                vi = new VariableInfo[1];
-                vi[0] =
-                    new VariableInfo(var, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
-                                 VariableInfo.AT_BEGIN);
-            }
+            VariableInfo vi[] = new VariableInfo[1];
+            vi[0] = new VariableInfo(MENU_ATTR_NAME, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
+                    VariableInfo.AT_BEGIN);
+
             return vi;
         }
 
