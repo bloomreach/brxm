@@ -16,21 +16,12 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import java.util.List;
-
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 /**
  * Service used to read/write plugin configuration(s)
@@ -48,7 +39,7 @@ public class JcrPluginConfigService implements PluginConfigService {
     public JcrPluginConfigService(final PluginContext context) {
         this.context = context;
         this.session = context.getSession();
-        this.manager = new DefaultDocumentManager(session);
+        this.manager = new DefaultDocumentManager(context);
     }
 
     public PluginContext getContext() {
@@ -57,77 +48,42 @@ public class JcrPluginConfigService implements PluginConfigService {
 
     @Override
     public boolean write(final Document document) {
-        log.debug("Writing document: {}", document);
-        log.debug("Writing node: {}", context);
-        boolean saved =false;
-        try {
-            final Plugin descriptor = context.getDescriptor();
-            if(descriptor==null){
-                log.error("Plugin descriptor was null");
-                return false;
-            }
-            final String configRoot = getFullConfigPath(descriptor.getPluginClass());
-            document.setPath(configRoot);
-
-            saved = manager.saveDocument(document);
-            session.save();
-            return saved;
-        } catch (RepositoryException e) {
-            log.error("Error writing configuration", e);
-            GlobalUtils.refreshSession(session, false);
-        }
-
-        return saved;
+        return manager.saveDocument(document);
     }
 
     @Override
     public boolean write(final Document document, final String pluginClass) {
-        log.debug("Writing document: {}, class:{}", document, pluginClass);
-        log.debug("Writing node: {}", context);
-        boolean saved = false;
-        try {
-
-            if (Strings.isNullOrEmpty(pluginClass)) {
-                log.error("Plugin clas  was null");
-                return false;
-            }
-            final String configRoot = getFullConfigPath(pluginClass);
-            document.setPath(configRoot);
-            saved = manager.saveDocument(document);
-            session.save();
-            return saved;
-        } catch (RepositoryException e) {
-            log.error("Error writing configuration", e);
-            GlobalUtils.refreshSession(session, false);
-        }
-
-        return saved;
+        return manager.saveDocument(document);
     }
+
 
     @Override
-    public <T extends Document> T read(final String pluginClass) {
-        final String path = getFullConfigPath(pluginClass);
-        return getConfigDocument(path);
+    public <T extends Document> T read(final String pluginClass, final Class<T> clazz) {
+        final String path = GlobalUtils.getFullConfigPath(pluginClass);
+        return getConfigDocument(path, clazz);
+
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Document> T read() {
-        final String path = getFullConfigPath(context.getDescriptor().getPluginClass());
-        return getConfigDocument(path);
+        final String pluginClass = context.getDescriptor().getPluginClass();
+        final String path = GlobalUtils.getFullConfigPath(pluginClass);
+        try {
+            final Class<T> aClass = (Class<T>) Class.forName(pluginClass);
+            return getConfigDocument(path, aClass);
+        } catch (ClassNotFoundException e) {
+            log.error("Error loading class", e);
+        }
+        return null;
     }
 
-    private String getFullConfigPath(final CharSequence pluginClass) {
-        final List<String> configList = Lists.newLinkedList(Splitter.on('/').split(CONFIG_PATH));
-        configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
-        return '/' + Joiner.on('/').join(configList);
-    }
-
-    private <T extends Document> T getConfigDocument(final String path) {
+    private <T extends Document> T getConfigDocument(final String path, final Class<T> clazz) {
         // NOTE: added null check so we can test dashboard without repository (CMS) running
         if (session == null) {
             return null;
         }
-        return manager.fetchDocument(path);
+        return manager.fetchDocument(path, clazz);
 
     }
 

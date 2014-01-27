@@ -42,17 +42,9 @@ public interface DocumentManager {
     /**
      * Fetches a JCR repository item
      *
-     * @param path repository path (absolute)
+     * @param className name of the class
      * @return null if no item was found, instance of a document otherwise
      */
-    <T extends Document> T fetchDocument(String path);
+    <T extends Document> T fetchDocument(String className);
 
-    /**
-     * Fetches a JCR repository item
-     *
-     * @param path        repository path (absolute)
-     * @param documentType DocumentType value as annotated on the Document implementation class
-     * @return null if no item was found, instance of a content otherwise
-     */
-    <T extends Document> T fetchDocument(String path, String documentType);
 }

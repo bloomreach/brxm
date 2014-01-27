@@ -5,6 +5,7 @@
 package org.onehippo.cms7.essentials.dashboard.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -39,6 +40,7 @@ public class EssentialsPlugin implements Plugin {
     private String issuesLink;
     private List<Screenshot> screenshots;
     private List<Asset> assets;
+    private String parentPath;
 
     @Override
     public void addScreenShot(final Screenshot screenShot) {
@@ -161,6 +163,21 @@ public class EssentialsPlugin implements Plugin {
     }
 
 
+    @Override
+    public List<String> getProperties() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setProperties(final List<String> properties) {
+
+    }
+
+    @Override
+    public void addProperty(final String value) {
+
+    }
+
     @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)
     @Override
     public String getName() {
@@ -170,6 +187,21 @@ public class EssentialsPlugin implements Plugin {
     @Override
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getParentPath() {
+        return parentPath;
+    }
+
+    @Override
+    public String getPath() {
+        return parentPath + '/' +name;
+    }
+
+    @Override
+    public void setParentPath(final String parentPath) {
+         this.parentPath = parentPath;
     }
 
     @XmlElement(namespace = URI_ESSENTIALS_PLUGIN)

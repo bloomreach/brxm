@@ -10,10 +10,4 @@
   <type>system</type>
   <vendor>Hippo</vendor>
   <description>HST bean generator plugin</description>
-  <assets>
-    <asset id="test" type="text/plain" url="" />
-    <asset id="as" type="application/pdf">
-      adsas
-    </asset>
-  </assets>
 </plugin>

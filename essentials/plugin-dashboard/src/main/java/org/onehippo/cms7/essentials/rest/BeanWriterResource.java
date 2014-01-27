@@ -64,7 +64,7 @@ public class BeanWriterResource extends BaseResource {
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
         final RestfulList<MessageRestful> messages = new RestfulList<>();
-        final ProjectSettingsBean document = service.read(className);
+        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
         if (document != null) {
             context.setBeansPackageName(document.getSelectedBeansPackage());
             context.setComponentsPackageName(document.getSelectedComponentsPackage());

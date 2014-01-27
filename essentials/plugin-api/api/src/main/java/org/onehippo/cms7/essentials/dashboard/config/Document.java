@@ -41,10 +41,13 @@ public interface Document {
 
 
     /**
-     * Returns content path
+     * Returns content parent path
      *
-     * @return absolute content path
+     * @return absolute parent content path
      */
+    String getParentPath();
+
+
     String getPath();
 
     /**
@@ -52,7 +55,7 @@ public interface Document {
      *
      * @param path
      */
-    void setPath(String path);
+    void setParentPath(String path);
 
 
 }

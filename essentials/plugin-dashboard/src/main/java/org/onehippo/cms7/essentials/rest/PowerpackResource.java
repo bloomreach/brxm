@@ -99,7 +99,7 @@ public class PowerpackResource extends BaseResource {
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
 
-        final ProjectSettingsBean document = service.read(className);
+        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
         if (document != null) {
             context.setBeansPackageName(document.getSelectedBeansPackage());
             context.setComponentsPackageName(document.getSelectedComponentsPackage());
@@ -161,7 +161,7 @@ public class PowerpackResource extends BaseResource {
         // inject project settings:
         final PluginConfigService service = context.getConfigService();
 
-        final ProjectSettingsBean document = service.read(className);
+        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
         if (document != null) {
             context.setBeansPackageName(document.getSelectedBeansPackage());
             context.setComponentsPackageName(document.getSelectedComponentsPackage());

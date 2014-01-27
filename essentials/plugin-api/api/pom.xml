@@ -29,11 +29,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache</groupId>
-      <artifactId>jackrabbit-ocm</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-modules</artifactId>
       <scope>provided</scope>

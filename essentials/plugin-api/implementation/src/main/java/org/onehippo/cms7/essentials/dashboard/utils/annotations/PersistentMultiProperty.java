@@ -29,12 +29,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Processes JCR multi property item
@@ -51,11 +53,33 @@ public @interface PersistentMultiProperty {
     Class<?> type() default String[].class;
 
     enum ProcessAnnotation implements PersistentHandler<PersistentMultiProperty, Property> {
-        MULTI_PROPERTY_WRITER;
+        MULTI_PROPERTY {
+            @Override
+            public Property read(final PluginContext context, final Node parent, final String path, final PersistentMultiProperty annotation) {
+                try {
+                    if (parent == null) {
+                        log.error("Parent node was null for path: {}", path);
+                        return null;
+                    }
+                    if (Strings.isNullOrEmpty(path)) {
+                        log.error("Path was null for parent: {}", parent.getPath());
+                        return null;
+                    }
+                    if (!parent.hasProperty(path)) {
+                        return null;
+                    }
+                    return parent.getProperty(path);
+                } catch (RepositoryException | IllegalArgumentException e) {
+                    log.error("Error loading property", e);
+                }
+                return null;
+            }
+
+        };
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
 
         @Override
-        public Property execute(final PluginContext context, final JcrModel model, final PersistentMultiProperty annotation) {
+        public Property execute(final PluginContext context, final Document model, final PersistentMultiProperty annotation) {
 
             final SimplePropertyModel ourModel = (SimplePropertyModel) model;
             final Object value = ourModel.getValue();

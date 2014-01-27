@@ -112,9 +112,6 @@
                   <sv:property sv:name="selectedComponentsPackage" sv:type="String">
                     <sv:value>${package}.components</sv:value>
                   </sv:property>
-                  <sv:property sv:name="ocm_classname" sv:type="String">
-                    <sv:value>org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean</sv:value>
-                  </sv:property>
                   <sv:property sv:name="jcr:created" sv:type="Date">
                     <sv:value>2013-08-21T16:43:57.496+02:00</sv:value>
                   </sv:property>

@@ -26,8 +26,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
@@ -55,11 +55,37 @@ public @interface PersistentNode {
     String[] mixins() default {"mix:referenceable", "hst:descriptive", "mix:simpleVersionable"};
 
     enum ProcessAnnotation implements PersistentHandler<PersistentNode, Node> {
-        NODE_WRITER;
+        NODE {
+            @Override
+            public Node read(final PluginContext context, final Node parent, final String path, final PersistentNode annotation) {
+                if (Strings.isNullOrEmpty(path)) {
+                    log.error("Cannot read node for empty path");
+                    return null;
+                }
+                final Session session = context.getSession();
+                try {
+                    if(parent !=null && !parent.hasNode(path)){
+                        log.warn("Item: {} does not exists for parent {}", path, parent.getPath());
+                        return null;
+                    }
+
+                    else if (!session.itemExists(path)) {
+                        log.warn("Item does not exists {}", path);
+                        return null;
+                    }
+
+                    return session.getNode(path);
+
+                }catch (RepositoryException e){
+                    log.error("Error fetching node {}", e);
+                }
+                return null;
+            }
+        };
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
 
         @Override
-        public Node execute(final PluginContext context, final JcrModel model, final PersistentNode annotation) {
+        public Node execute(final PluginContext context, final Document model, final PersistentNode annotation) {
             log.info("Executing node persisting {}", model);
             final String parentPath = model.getParentPath();
             if (Strings.isNullOrEmpty(parentPath)) {

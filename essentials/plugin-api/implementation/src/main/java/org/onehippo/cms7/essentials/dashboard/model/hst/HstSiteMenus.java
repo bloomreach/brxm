@@ -36,7 +36,7 @@ public class HstSiteMenus extends BaseJcrModel{
     }
 
     public void addMenu(final HstSiteMenu menu){
-        menu.setParentPath(getParentPath() +'/'+getName());
+        menu.setParentPath(getParentPath() + '/' + getName());
         menus.add(menu);
     }
 

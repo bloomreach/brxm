@@ -1,5 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
@@ -11,6 +12,7 @@ public class DummyTestPlugin implements Plugin {
 
     private static final long serialVersionUID = 1L;
 
+    private String parentPath;
 
     @Override
     public void addScreenShot(final Screenshot screenShot) {
@@ -108,12 +110,42 @@ public class DummyTestPlugin implements Plugin {
     }
 
     @Override
+    public List<String> getProperties() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setProperties(final List<String> properties) {
+
+    }
+
+    @Override
+    public void addProperty(final String value) {
+
+    }
+
+    @Override
     public String getName() {
         return getClass().getName();
     }
 
     @Override
     public void setName(final String name) {
+
+    }
+
+    @Override
+    public String getParentPath() {
+        return parentPath;
+    }
+
+    @Override
+    public String getPath() {
+        return parentPath + '/' + getClass().getSimpleName();
+    }
+
+    @Override
+    public void setParentPath(final String path) {
 
     }
 

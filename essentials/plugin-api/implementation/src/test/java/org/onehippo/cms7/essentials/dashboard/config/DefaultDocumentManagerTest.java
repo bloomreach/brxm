@@ -18,6 +18,9 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,26 +30,38 @@ import static org.junit.Assert.assertTrue;
  */
 public class DefaultDocumentManagerTest extends BaseRepositoryTest {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultDocumentManagerTest.class);
     @Test
     public void testSaveDocument() throws Exception {
 
-        final DocumentManager manager = new DefaultDocumentManager(session);
-        final String path = "/foo/bar";
-        final Document document = new BaseDocument("myConfig", path);
+        // TODO mm: introduce porperties or remove testcase:
+
+        final DocumentManager manager = new DefaultDocumentManager(getContext());
+        final String parentPath = "/foo/bar";
+        Document document = new BaseDocument("myConfig", parentPath);
         document.addProperty("foo");
         document.addProperty("bar");
         document.addProperty("foobar");
         final boolean saved = manager.saveDocument(document);
         assertTrue("Expected document to be saved", saved);
-        Document fetched = manager.fetchDocument(path, BaseDocument.class);
+        Document fetched = manager.fetchDocument(document.getPath(), BaseDocument.class);
+        assertEquals("myConfig", fetched.getName());
+        assertEquals("/foo/bar", fetched.getParentPath());
+        assertEquals("/foo/bar/myConfig", fetched.getPath());
         assertEquals(fetched.getProperties().get(0), "foo");
         assertEquals(fetched.getProperties().get(1), "bar");
         assertEquals(fetched.getProperties().get(2), "foobar");
-        fetched = manager.fetchDocument(path);
+        // save as class
+        final String classPath = BaseDocument.class.getName();
+        document = new BaseDocument(BaseDocument.class.getSimpleName(), GlobalUtils.getParentConfigPath(classPath));
+        document.addProperty("foo");
+        document.addProperty("bar");
+        document.addProperty("foobar");
+        manager.saveDocument(document);
+        fetched = manager.fetchDocument(classPath);
         assertEquals(fetched.getProperties().get(0), "foo");
         assertEquals(fetched.getProperties().get(1), "bar");
         assertEquals(fetched.getProperties().get(2), "foobar");
-
 
     }
 }

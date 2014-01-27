@@ -97,7 +97,7 @@ public class BaseResource {
     protected ProjectRestful getProjectRestful(){
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
         // inject project settings:
-        final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+        final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
         final ProjectRestful projectRestful = new ProjectRestful();
         if (document != null) {
             projectRestful.setNamespace(document.getProjectNamespace());
@@ -114,7 +114,7 @@ public class BaseResource {
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), getPluginByClassName(className, servletContext));
         final PluginConfigService service = context.getConfigService();
 
-        final ProjectSettingsBean document = service.read(className);
+        final ProjectSettingsBean document = service.read(className, ProjectSettingsBean.class);
         if (document != null) {
             context.setBeansPackageName(document.getSelectedBeansPackage());
             context.setComponentsPackageName(document.getSelectedComponentsPackage());

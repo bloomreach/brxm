@@ -23,9 +23,11 @@ import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.AnnotationUtils;
@@ -44,14 +46,17 @@ import com.google.common.base.Strings;
  */
 public class JcrPersistenceWriter {
 
+    public static final char PATH_SEPARATOR = '/';
     private static Logger log = LoggerFactory.getLogger(JcrPersistenceWriter.class);
     private final PluginContext context;
 
     public JcrPersistenceWriter(final PluginContext context) {
         this.context = context;
+
     }
 
-    public Item write(final JcrModel model) {
+
+    public Item write(final Document model) {
         final Node rootNode = writeNode(model);
         if (rootNode == null) {
             return null;
@@ -67,7 +72,16 @@ public class JcrPersistenceWriter {
         return null;
     }
 
-    private Node writeNode(final JcrModel model) {
+    private Node writeNode(final Document model) {
+
+        try {
+            createSubfolders(model.getParentPath());
+        } catch (RepositoryException e) {
+            log.error("Error creating subfolders", e);
+            return null;
+        }
+
+
         final PersistentNode node = AnnotationUtils.getClassAnnotation(model.getClass(), PersistentNode.class);
         if (node == null) {
             log.error("No @PersistentNode annotation found for object: {}", model);
@@ -80,13 +94,13 @@ public class JcrPersistenceWriter {
             return null;
         }
 
-        final PersistentHandler<PersistentNode, Node> nodeWriter = PersistentNode.ProcessAnnotation.NODE_WRITER;
+        final PersistentHandler<PersistentNode, Node> nodeWriter = PersistentNode.ProcessAnnotation.NODE;
         final Node jcrNode = nodeWriter.execute(context, model, node);
         if (jcrNode == null) {
             return null;
         }
         // process single properties:
-        final PersistentHandler<PersistentProperty, Property> propWriter = PersistentProperty.ProcessAnnotation.PROPERTY_WRITER;
+        final PersistentHandler<PersistentProperty, Property> propWriter = PersistentProperty.ProcessAnnotation.PROPERTY;
         final Collection<Field> fields = AnnotationUtils.getAnnotatedFields(model.getClass(), PersistentProperty.class);
         for (Field field : fields) {
             try {
@@ -94,7 +108,7 @@ public class JcrPersistenceWriter {
                 if (value != null) {
                     final PersistentProperty property = field.getAnnotation(PersistentProperty.class);
                     final String name = property.name();
-                    final JcrModel myModel = new SimplePropertyModel(value);
+                    final Document myModel = new SimplePropertyModel(value);
                     myModel.setParentPath(jcrNode.getPath());
                     myModel.setName(name);
                     // write single property:
@@ -107,7 +121,7 @@ public class JcrPersistenceWriter {
             }
         }
 
-        final PersistentMultiProperty.ProcessAnnotation multiWriter = PersistentMultiProperty.ProcessAnnotation.MULTI_PROPERTY_WRITER;
+        final PersistentMultiProperty.ProcessAnnotation multiWriter = PersistentMultiProperty.ProcessAnnotation.MULTI_PROPERTY;
         final Collection<Field> multiFields = AnnotationUtils.getAnnotatedFields(model.getClass(), PersistentMultiProperty.class);
         for (Field multiField : multiFields) {
             try {
@@ -115,7 +129,7 @@ public class JcrPersistenceWriter {
                 if (value != null) {
                     final PersistentMultiProperty p = multiField.getAnnotation(PersistentMultiProperty.class);
                     final String name = p.name();
-                    final JcrModel myModel = new SimplePropertyModel(value);
+                    final Document myModel = new SimplePropertyModel(value);
                     myModel.setParentPath(jcrNode.getPath());
                     myModel.setName(name);
                     // write single property:
@@ -132,13 +146,13 @@ public class JcrPersistenceWriter {
         for (Field persistentField : persistentFields) {
             try {
                 final Object value = persistentField.get(model);
-                if (value instanceof JcrModel) {
+                if (value instanceof Document) {
                     final PersistentNode myNode = AnnotationUtils.getClassAnnotation(value.getClass(), PersistentNode.class);
                     if (myNode == null) {
                         log.error("Item is not annotated by @PersistentNode annotation: {}", value.getClass());
                         continue;
                     }
-                    writeNode((JcrModel) value);
+                    writeNode((Document) value);
                 }
             } catch (IllegalAccessException e) {
                 log.error("Error processing value", e);
@@ -152,8 +166,8 @@ public class JcrPersistenceWriter {
                 if (value instanceof Collection) {
                     Iterable<?> collection = (Iterable<?>) value;
                     for (Object o : collection) {
-                        if (o instanceof JcrModel) {
-                            writeNode((JcrModel) o);
+                        if (o instanceof Document) {
+                            writeNode((Document) o);
                         } else {
                             if (o != null) {
                                 log.error("Value is within collection is not JcrModel type:  {}", o.getClass());
@@ -171,6 +185,31 @@ public class JcrPersistenceWriter {
 
 
         return jcrNode;
+    }
+
+    private Node createSubfolders(final String path) throws RepositoryException {
+
+        final String[] pathParts = StringUtils.split(path, PATH_SEPARATOR);
+        // exclude document part:
+        final int length = pathParts.length;
+        final StringBuilder parent = new StringBuilder();
+        final Session session = context.getSession();
+        Node parentNode = session.getRootNode();
+        for (final String pathPart : pathParts) {
+            parent.append(PATH_SEPARATOR);
+            String folderPath = parent.append(pathPart).toString();
+            if (session.itemExists(folderPath)) {
+                log.info("folderPath {}", folderPath);
+                parentNode = parentNode.getNode(pathPart);
+                continue;
+            }
+            log.info("folderPath {}", folderPath);
+            parentNode = parentNode.addNode(pathPart, "essentials:folder");
+            session.save();
+
+        }
+
+        return parentNode;
     }
 
 }

@@ -28,12 +28,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
 import org.onehippo.cms7.essentials.dashboard.model.PersistentHandler;
 import org.onehippo.cms7.essentials.dashboard.model.hst.SimplePropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Processes JCR property item
@@ -48,11 +50,35 @@ public @interface PersistentProperty {
     String name();
 
     enum ProcessAnnotation implements PersistentHandler<PersistentProperty, Property> {
-        PROPERTY_WRITER;
+        PROPERTY {
+            @Override
+            public Property read(final PluginContext context, final Node parent, final String path, final PersistentProperty annotation) {
+                try {
+                    if (parent == null) {
+                        log.error("Parent node was null for path: {}", path);
+                        return null;
+                    }
+                    if (Strings.isNullOrEmpty(path)) {
+                        log.error("Path was null for parent: {}", parent.getPath());
+                        return null;
+                    }
+                    if (!parent.hasProperty(path)) {
+
+                        return null;
+                    }
+                    return parent.getProperty(path);
+                } catch (RepositoryException e) {
+                    log.error("Error loading property", e);
+                }
+
+
+                return null;
+            }
+        };
         private static final Logger log = LoggerFactory.getLogger(ProcessAnnotation.class);
 
         @Override
-        public Property execute(final PluginContext context, final JcrModel model, final PersistentProperty annotation) {
+        public Property execute(final PluginContext context, final Document model, final PersistentProperty annotation) {
 
             final SimplePropertyModel ourModel = (SimplePropertyModel) model;
             final Object value = ourModel.getValue();

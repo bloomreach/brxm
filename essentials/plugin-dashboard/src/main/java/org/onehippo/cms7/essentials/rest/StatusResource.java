@@ -60,7 +60,7 @@ public class StatusResource extends BaseResource {
             ProjectSettingsBean b =new ProjectSettingsBean();
             b.setProjectNamespace("marktpla");
             context.getConfigService().write(b);
-            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
 
             if (document != null && document.getSetupDone()) {
                 status.setStatus(true);
