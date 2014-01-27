@@ -915,6 +915,7 @@ frontend/src/main/resources/angular/components/font-awesome/src/whats-new.html -
 frontend/src/main/resources/angular/css/hippo-theme.css -text
 frontend/src/main/resources/angular/css/main.css -text
 frontend/src/main/resources/angular/css/tree.css -text
+frontend/src/main/resources/angular/images/loader.gif -text
 frontend/src/main/resources/angular/vendors/chosen.jquery.js -text
 frontend/src/main/resources/angular/vendors/hippo-plugins.js -text
 frontend/src/main/resources/angular/vendors/hippo-theme.js -text
