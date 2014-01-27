@@ -61,16 +61,6 @@
           <sv:value>hst:catalog</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="hst:workspace">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hst:workspace</sv:value>
-        </sv:property>
-        <sv:node sv:name="hst:containers">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:containercomponentfolder</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
     </sv:node>
   </sv:node>
   <sv:node sv:name="hst:blueprints">
