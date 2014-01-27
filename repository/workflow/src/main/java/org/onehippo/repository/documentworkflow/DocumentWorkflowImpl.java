@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,26 +25,23 @@ import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
+import org.onehippo.repository.util.JcrConstants;
 
 public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkflow {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String SCXML_DEFINITION_ID = "document-workflow";
-
-    private SCXMLWorkflowExecutor workflowExecutor;
-    private DocumentHandle dm;
+    private HandleDocumentWorkflow handleDocumentWorkflow;
+    private Node subject;
 
     public DocumentWorkflowImpl() throws RemoteException {
-    }
-
-    SCXMLWorkflowExecutor getWorkflowExecutor() {
-        return workflowExecutor;
     }
 
     protected Document toUserDocument(Document document) throws RepositoryException {
@@ -70,12 +67,20 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
 
-        // Critical: MUST use getNonChainingWorkflowContext() or getWorkflowContext(null), NOT getWorkflowContext()!
-        dm = new DocumentHandle(getNonChainingWorkflowContext(), node);
+        this.subject = node;
+
+        Node parent = node.getParent();
+        if (!parent.isNodeType(HippoNodeType.NT_HANDLE) && !parent.isNodeType(JcrConstants.NT_VERSION)) {
+            throw new RepositoryException("Invalid workflow subject " + node.getPath() + ", does not have a handle or version as it's parent");
+        }
 
         try {
-            workflowExecutor = new SCXMLWorkflowExecutor(SCXML_DEFINITION_ID, dm);
-            workflowExecutor.start();
+            final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(parent));
+            if (!(handleWorkflow instanceof HandleDocumentWorkflow)) {
+                throw new RepositoryException("Workflow on handle, in category 'document', is not a HandleDocumentWorkflow");
+            }
+
+            handleDocumentWorkflow = (HandleDocumentWorkflow) handleWorkflow;
         }
         catch (WorkflowException wfe) {
             if (wfe.getCause() != null && wfe.getCause() instanceof RepositoryException) {
@@ -88,10 +93,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Map<String, Serializable> hints() {
         Map<String, Serializable> hints = super.hints();
-        if (workflowExecutor.isStarted()) {
-            hints.putAll(dm.getInfo());
-            hints.putAll(dm.getActions());
-        }
+        hints.putAll(handleDocumentWorkflow.getInfo());
+        hints.putAll(handleDocumentWorkflow.getActions());
         return hints;
     }
 
@@ -99,49 +102,49 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public boolean isModified() throws WorkflowException, RepositoryException {
-        return (Boolean)workflowExecutor.triggerAction("checkModified");
+        return (Boolean) handleDocumentWorkflow.triggerAction("checkModified");
     }
 
     @Override
     public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("obtainEditableInstance"));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("obtainEditableInstance"));
     }
 
     @Override
     public Document commitEditableInstance() throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("commitEditableInstance"));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("commitEditableInstance"));
     }
 
     @Override
     public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("disposeEditableInstance"));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("disposeEditableInstance"));
     }
 
     // BasicReviewedActionsWorkflow implementation
 
     @Override
     public void requestDeletion() throws WorkflowException {
-        workflowExecutor.triggerAction("requestDelete");
+        handleDocumentWorkflow.triggerAction("requestDelete");
     }
 
     @Override
     public void requestDepublication() throws WorkflowException {
-        workflowExecutor.triggerAction("requestDepublish");
+        handleDocumentWorkflow.triggerAction("requestDepublish");
     }
 
     @Override
     public void requestDepublication(final Date publicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("requestDepublish", publicationDate);
+        handleDocumentWorkflow.triggerAction("requestDepublish", publicationDate);
     }
 
     @Override
     public void requestPublication() throws WorkflowException {
-        workflowExecutor.triggerAction("publish");
+        handleDocumentWorkflow.triggerAction("publish");
     }
 
     @Override
     public void requestPublication(final Date publicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("requestPublish", publicationDate);
+        handleDocumentWorkflow.triggerAction("requestPublish", publicationDate);
     }
 
     @Override
@@ -153,42 +156,42 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void delete() throws WorkflowException {
-        workflowExecutor.triggerAction("delete");
+        handleDocumentWorkflow.triggerAction("delete");
     }
 
     @Override
     public void rename(final String newName) throws WorkflowException {
-        workflowExecutor.triggerAction("rename", newName);
+        handleDocumentWorkflow.triggerAction("rename", newName);
     }
 
     @Override
     public void copy(final Document destination, final String newName) throws WorkflowException {
-        workflowExecutor.triggerAction("copy", new DocumentCopyMovePayload(destination, newName));
+        handleDocumentWorkflow.triggerAction("copy", new DocumentCopyMovePayload(destination, newName));
     }
 
     @Override
     public void move(final Document destination, final String newName) throws WorkflowException {
-        workflowExecutor.triggerAction("move", new DocumentCopyMovePayload(destination, newName));
+        handleDocumentWorkflow.triggerAction("move", new DocumentCopyMovePayload(destination, newName));
     }
 
     @Override
     public void depublish() throws WorkflowException {
-        workflowExecutor.triggerAction("depublish");
+        handleDocumentWorkflow.triggerAction("depublish");
     }
 
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("depublish", depublicationDate);
+        handleDocumentWorkflow.triggerAction("depublish", depublicationDate);
     }
 
     @Override
     public void publish() throws WorkflowException {
-        workflowExecutor.triggerAction("publish");
+        handleDocumentWorkflow.triggerAction("publish");
     }
 
     @Override
     public void publish(final Date publicationDate) throws WorkflowException {
-        workflowExecutor.triggerAction("publish", publicationDate);
+        handleDocumentWorkflow.triggerAction("publish", publicationDate);
     }
 
     @Override
@@ -200,48 +203,61 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
 
     @Override
     public void cancelRequest() throws WorkflowException {
-        workflowExecutor.triggerAction("cancelRequest");
+        try {
+            handleDocumentWorkflow.triggerAction("cancelRequest", new RequestPayload(new PublicationRequest(subject), null));
+        } catch (RepositoryException e) {
+            throw new WorkflowException("Unable to create PublicationRequest from subject", e);
+        }
     }
 
     // FullRequestWorkflow implementation
 
     @Override
     public void acceptRequest() throws WorkflowException {
-        workflowExecutor.triggerAction("acceptRequest");
+        try {
+            handleDocumentWorkflow.triggerAction("acceptRequest", new RequestPayload(new PublicationRequest(subject), null));
+        } catch (RepositoryException e) {
+            throw new WorkflowException("Unable to create PublicationRequest from subject", e);
+        }
     }
 
     @Override
     public void rejectRequest(final String reason) throws WorkflowException {
-        workflowExecutor.triggerAction("rejecctRequest", reason);
+        try {
+            handleDocumentWorkflow.triggerAction("rejectRequest", new RequestPayload(new PublicationRequest(subject), reason));
+        } catch (RepositoryException e) {
+            throw new WorkflowException("Unable to create PublicationRequest from subject", e);
+        }
     }
 
     // UnlockWorkflow implementation
 
     @Override
     public void unlock() throws WorkflowException {
-        workflowExecutor.triggerAction("unlock");
+        handleDocumentWorkflow.triggerAction("unlock");
     }
 
     // VersionWorkflow implementation
 
     @Override
     public Document version() throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("version"));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("version"));
     }
 
     @Override
     public Document revert(final Calendar historic) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("revert", historic));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("revert", new VersionPayload(historic, null)));
     }
 
     @Override
     public Document restoreTo(final Document target) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreTo", target));
+        Calendar historic = ((Version) subject).getCreated();
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("restoreTo", new VersionPayload(historic, new PublishableDocument(subject))));
     }
 
     @Override
     public Document restore(final Calendar historic) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("restore", historic));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("restore", new VersionPayload(historic, null)));
     }
 
     @Override
@@ -252,11 +268,11 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     @SuppressWarnings("unchecked")
     public SortedMap<Calendar, Set<String>> list() throws WorkflowException {
-        return (SortedMap<Calendar, Set<String>>) workflowExecutor.triggerAction("listVersions");
+        return (SortedMap<Calendar, Set<String>>) handleDocumentWorkflow.triggerAction("listVersions");
     }
 
     @Override
     public Document retrieve(final Calendar historic) throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(workflowExecutor.triggerAction("retrieve", historic));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("retrieve", historic));
     }
 }

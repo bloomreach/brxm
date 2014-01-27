@@ -54,7 +54,7 @@ public class WorkflowPostActionsTest {
         eventsWorkflow = EasyMock.createMock(WorkflowEventsWorkflow.class);
         // preparing the mock for workflowManager which just returns the eventsWorkflow
         workflowManager = EasyMock.createNiceMock(WorkflowManagerImpl.class);
-        workflowDefinition = new WorkflowDefinition(wfNode);
+        workflowDefinition = new WorkflowDefinition(wfNode, null);
         EasyMock.expect(workflowManager.createProxiedWorkflow(workflowDefinition, wfSubject)).andReturn(eventsWorkflow).anyTimes();
         EasyMock.replay(workflowManager);
 

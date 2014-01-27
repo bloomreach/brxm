@@ -75,11 +75,11 @@ public class WorkflowPostActionsImpl implements WorkflowPostActions {
                                 WorkflowManagerImpl.log.debug("inspect workflow for event workflow selected "+wfNode.getPath());
                             }
                             WorkflowPostActions action = null;
-                            if (wfNode.isNodeType("hipposys:workflowsimplequeryevent")) {
+                            if (wfNode.isSimpleQueryPostAction()) {
                                 action = new WorkflowPostActionSimpleQuery(workflowManager, wfSubject,
                                         isDocumentResult, wfNode,
                                         workflowCategory, workflowMethod.getName());
-                            } else if (wfNode.isNodeType("hipposys:workflowboundmethodevent")) {
+                            } else if (wfNode.isMethodBoundPostAction()) {
                                 action = new WorkflowPostActionsBoundMethod(workflowManager, wfSubject,
                                         isDocumentResult, wfNode,
                                         workflowCategory, workflowMethod.getName());

@@ -47,5 +47,5 @@ public interface DocumentWorkflow extends FullRequestWorkflow, FullReviewedActio
         public boolean isVersion() {
             return this == all || this == version;
         }
-    };
+    }
 }

@@ -16,12 +16,7 @@
 
 package org.onehippo.repository.documentworkflow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
@@ -30,70 +25,68 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.mock.MockVersion;
-import org.onehippo.repository.util.JcrConstants;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class DocumentHandleTest {
 
-    protected MockNode addVariant(MockNode handle, String state) throws RepositoryException {
-        MockNode variant = handle.addMockNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+    protected Node addVariant(Node handle, String state) throws RepositoryException {
+        Node variant = handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
         variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
         return variant;
     }
 
-    protected MockNode addRequest(MockNode handle, String type) throws RepositoryException {
-        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
+    protected Node addRequest(Node handle, String type) throws RepositoryException {
+        Node variant = handle.addNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
         variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
 
     @SuppressWarnings("unchecked")
     protected void putWorkflowConfig(RepositoryMap workflowConfig, String key, String value) {
-        workflowConfig.put(key,value);
+        workflowConfig.put(key, value);
     }
 
     @Test
     public void initDocumentHandle() throws Exception {
-        DocumentHandle dm;
 
+        // create handle with publication request
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode publishRequest = addRequest(handle, PublicationRequest.PUBLISH);
+        Node publishRequest = addRequest(handle, PublicationRequest.PUBLISH);
+        DocumentHandle dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
 
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), publishRequest);
         assertEquals("", dm.getStates());
-        assertNotNull(dm.getRequest());
+        assertEquals("testuser", dm.getUser());
+        assertEquals(publishRequest, dm.getRequest().getNode());
 
-        MockNode publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
-        MockNode unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
+
+        // add published, unpublished variants & rejected request
+        Node publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
+        Node unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
         addRequest(handle, PublicationRequest.REJECTED);
-        MockNode rejectedRequest2 = addRequest(handle, PublicationRequest.REJECTED);
-        MockNode draftVariant;
+        Node rejectedRequest = addRequest(handle, PublicationRequest.REJECTED);
+        rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
 
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), unpublishedVariant);
         assertEquals("up", dm.getStates());
         assertNull(dm.getDraft());
+        assertEquals(publishedVariant, dm.getPublished().getNode());
+        assertEquals(unpublishedVariant, dm.getUnpublished().getNode());
+        assertEquals(rejectedRequest, dm.getRejectedRequest().getNode());
 
-        draftVariant = addVariant(handle, HippoStdNodeType.DRAFT);
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), unpublishedVariant);
+
+        // add draft
+        Node draftVariant = addVariant(handle, HippoStdNodeType.DRAFT);
+        dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
+
         assertEquals("dup", dm.getStates());
         assertNotNull(dm.getDraft());
 
-        assertEquals(publishedVariant,dm.getPublished().getNode());
-        assertEquals(unpublishedVariant,dm.getUnpublished().getNode());
-        assertEquals(HippoStdNodeType.UNPUBLISHED, dm.getSubjectState());
-        assertEquals("testuser", dm.getUser());
-        assertNull(dm.getRejectedRequest());
-        assertEquals(publishRequest, dm.getRequest().getNode());
-
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), publishRequest);
-        assertEquals("", dm.getSubjectState());
-        assertNull(dm.getRejectedRequest());
-        assertEquals(publishRequest, dm.getRequest().getNode());
-
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), rejectedRequest2);
-        assertEquals(rejectedRequest2, dm.getRejectedRequest().getNode());
-        assertEquals(publishRequest, dm.getRequest().getNode());
-
+/*
         MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
         ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
         MockNode frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
@@ -111,40 +104,32 @@ public class DocumentHandleTest {
         assertNull(dm.getDraft());
         assertNull(dm.getUnpublished());
         assertNull(dm.getPublished());
+*/
     }
 
     @Test
     public void testWorkflowSupportedFeatures() throws Exception {
         MockWorkflowContext context = new MockWorkflowContext("testuser");
         MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        addVariant(handleNode, HippoStdNodeType.DRAFT);
         RepositoryMap workflowConfig = context.getWorkflowConfiguration();
 
-        DocumentHandle dm = new DocumentHandle(context, draftVariant);
+        DocumentHandle dm = new DocumentHandle(context, handleNode);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertTrue(dm.getSupportedFeatures().isRequest());
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        dm = new DocumentHandle(context, draftVariant);
+        dm = new DocumentHandle(context, handleNode);
         assertEquals(DocumentWorkflow.SupportedFeatures.document, dm.getSupportedFeatures());
         assertTrue(dm.getSupportedFeatures().isDocument());
         assertFalse(dm.getSupportedFeatures().isRequest());
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", "undefined");
-        dm = new DocumentHandle(context, draftVariant);
+        dm = new DocumentHandle(context, handleNode);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
 
-        context.getWorkflowConfiguration().remove("workflow.supportedFeatures");
-
-        MockNode request = addRequest(handleNode, PublicationRequest.PUBLISH);
-        dm = new DocumentHandle(context, request);
-        assertEquals(DocumentWorkflow.SupportedFeatures.request, dm.getSupportedFeatures());
-
-        putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        dm = new DocumentHandle(context, request);
-        assertEquals(DocumentWorkflow.SupportedFeatures.request, dm.getSupportedFeatures());
-
+        /*
         MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
         ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
@@ -155,6 +140,7 @@ public class DocumentHandleTest {
         assertEquals(DocumentWorkflow.SupportedFeatures.version, dm.getSupportedFeatures());
         assertEquals(versionNode, dm.getVersion());
         assertEquals("unpublished", dm.getSubjectState());
+        */
     }
 
     @Test
@@ -162,9 +148,9 @@ public class DocumentHandleTest {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         session.setPermissions("/test/test", "hippo:admin", false);
         MockWorkflowContext context = new MockWorkflowContext("testuser", session);
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        DocumentHandle dm = new DocumentHandle(context, draftVariant);
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
+        DocumentHandle dm = new DocumentHandle(context, handleNode);
 
         // testing with only hippo:admin being denied
         assertTrue(dm.hasPermission("foo"));
@@ -173,7 +159,7 @@ public class DocumentHandleTest {
         assertFalse(dm.hasPermission("hippo:admin"));
 
         session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
-        dm = new DocumentHandle(context, draftVariant);
+        dm = new DocumentHandle(context, handleNode);
 
         // testing with only hippo:author,hippo:editor being allowed
         assertFalse(dm.hasPermission("foo"));

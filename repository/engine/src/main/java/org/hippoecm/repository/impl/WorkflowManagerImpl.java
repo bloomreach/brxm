@@ -96,8 +96,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     HippoNodeType.WORKFLOWS_PATH).getIdentifier();
             if (session.nodeExists("/hippo:log")) {
                 final Node logFolder = session.getNode("/hippo:log");
-                final WorkflowDefinition worlflowNode = getWorkflowDefinition("internal", logFolder);
-                Workflow workflow = createWorkflow(logFolder, worlflowNode);
+                final WorkflowDefinition workflowDefinition = getWorkflowDefinition("internal", logFolder);
+                Workflow workflow = createWorkflow(logFolder, workflowDefinition);
                 if (workflow instanceof WorkflowEventLoggerWorkflow) {
                     eventLoggerWorkflow = (WorkflowEventLoggerWorkflow) workflow;
                 }
@@ -130,8 +130,19 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for node {}", category, item.getPath());
 
+            Node variant = item;
+            if (item.isNodeType(HippoNodeType.NT_HANDLE)) {
+                if (!item.hasNode(item.getName())) {
+                    log.error("No child node exists for handle {}", item.getPath());
+                    return null;
+                }
+                variant = item.getNode(item.getName());
+            }
+
             Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
             if (node != null) {
+                Node variantWorkflowNode = null;
+                Node handleWorkflowNode = null;
                 for (Node workflowNode : new NodeIterable(node.getNodes())) {
                     if (!workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                         continue;
@@ -140,12 +151,27 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     final String nodeTypeName = workflowNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString();
                     log.debug("Matching item against {}", nodeTypeName);
 
-                    if (item.isNodeType(nodeTypeName)) {
-                        if (checkWorkflowPermission(item, workflowNode)) {
-                            log.debug("Found workflow in category {} for node {}", category, item.getPath());
-                            return new WorkflowDefinition(workflowNode);
+                    if (variantWorkflowNode == null) {
+                        if (variant.isNodeType(nodeTypeName)) {
+                            if (checkWorkflowPermission(variant, workflowNode)) {
+                                variantWorkflowNode = workflowNode;
+                            }
                         }
                     }
+
+                    if (HippoNodeType.NT_HANDLE.equals(nodeTypeName) && variant != item) {
+                        handleWorkflowNode = workflowNode;
+                    }
+                }
+                if (variantWorkflowNode != null) {
+                    log.debug("Found workflow in category {} for node {}", category, item.getPath());
+                    if (variantWorkflowNode.hasProperty("hipposys:delegating")) {
+                        boolean delegating = variantWorkflowNode.getProperty("hipposys:delegating").getBoolean();
+                        if (delegating) {
+                            return new WorkflowDefinition(variantWorkflowNode, handleWorkflowNode);
+                        }
+                    }
+                    return new WorkflowDefinition(variantWorkflowNode, null);
                 }
             } else {
                 log.debug("Workflow in category {} for node {} not found", category, item.getPath());
@@ -283,13 +309,14 @@ public class WorkflowManagerImpl implements WorkflowManager {
         if (workflowDefinition == null) {
             return null;
         }
-        Class clazz = workflowDefinition.getWorkflowClass();
+
         String uuid = item.getIdentifier();
         /* The synchronized must operate on the core root session, because there is
          * only one such session, while there may be many decorated ones.
          */
         synchronized (SessionDecorator.unwrap(rootSession)) {
             Workflow workflow = null;
+            Class<? extends Workflow> clazz = workflowDefinition.getWorkflowClass();
             if (InternalWorkflow.class.isAssignableFrom(clazz)) {
                 try {
                     Constructor[] constructors = clazz.getConstructors();
@@ -325,19 +352,16 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
             } else if (WorkflowImpl.class.isAssignableFrom(clazz)) {
                 try {
-                    Object object = clazz.newInstance();
-                    workflow = (Workflow) object;
+                    workflow = clazz.newInstance();
+                    Node rootSessionNode = rootSession.getNodeByIdentifier(uuid);
+                    ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowDefinition, item.getSession(), item));
+                    ((WorkflowImpl) workflow).setNode(rootSessionNode);
                 } catch (Exception ex) {
                     // TODO DEJDO?
                     throw new RepositoryException("Workflow class [" + clazz.getName() + "] instantiation exception", ex);
                 }
             } else {
                 throw new RepositoryException("Unsupported type of workflow class [" + clazz.getName() + "]");
-            }
-            if (workflow instanceof WorkflowImpl) {
-                Node rootSessionNode = rootSession.getNodeByIdentifier(uuid);
-                ((WorkflowImpl) workflow).setWorkflowContext(new WorkflowContextNodeImpl(workflowDefinition, item.getSession(), item));
-                ((WorkflowImpl) workflow).setNode(rootSessionNode);
             }
             return workflow;
         }

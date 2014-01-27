@@ -38,8 +38,12 @@ class WorkflowDefinition {
 
     private final Node node;
 
-    WorkflowDefinition(final Node node) {
-        this.node = node;
+    WorkflowDefinition(final Node variantWorkflowNode, Node handleWorkflowNode) {
+        if (handleWorkflowNode != null) {
+            this.node = handleWorkflowNode;
+        } else {
+            this.node = variantWorkflowNode;
+        }
     }
 
     Class<? extends Workflow> getWorkflowClass() throws RepositoryException {
@@ -113,8 +117,12 @@ class WorkflowDefinition {
         return new RepositoryMapImpl();
     }
 
-    boolean isNodeType(final String nodeTypeName) throws RepositoryException {
-        return node.isNodeType(nodeTypeName);
+    boolean isSimpleQueryPostAction() throws RepositoryException {
+        return node.isNodeType("hipposys:workflowsimplequeryevent");
+    }
+
+    boolean isMethodBoundPostAction() throws RepositoryException {
+        return node.isNodeType("hipposys:workflowboundmethodevent");
     }
 
     Node getEventDocument() throws RepositoryException {

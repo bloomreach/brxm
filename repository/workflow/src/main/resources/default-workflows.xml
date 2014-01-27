@@ -19,12 +19,34 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:workflowcategory</sv:value>
   </sv:property>
+  <sv:node sv:name="handle">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:classname" sv:type="String">
+      <sv:value>org.onehippo.repository.handleworkflow.HandleDocumentWorkflowImpl</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:display" sv:type="String">
+      <sv:value>Handle workflow</sv:value>
+    </sv:property>
+    <sv:property sv:name="hipposys:nodetype" sv:type="String">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="hipposys:config">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>nt:unstructured</sv:value>
+      </sv:property>
+      <sv:property sv:name="scxml-definition" sv:type="String">
+        <sv:value>reviewed-actions-workflow</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
   <sv:node sv:name="reviewedactions">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflowImpl</sv:value>
+      <sv:value>org.onehippo.repository.documentworkflow.DocumentWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Reviewed actions workflow</sv:value>
@@ -32,8 +54,8 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippostdpubwf:document</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:editor</sv:value>
+    <sv:property sv:name="hipposys:delegating" sv:type="Boolean">
+      <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="scheduledrequests">
@@ -41,7 +63,7 @@
       <sv:value>hipposys:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.ScheduledRequestWorkflowImpl</sv:value>
+      <sv:value>org.onehippo.repository.documentworkflow.DocumentWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Scheduled workflow</sv:value>
@@ -49,42 +71,8 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hipposched:job</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:editor</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="basicscheduledrequests">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.ScheduledRequestWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Scheduled workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hipposched:job</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="authorreviewedactions">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Author Reviewed actions workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostdpubwf:document</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
+    <sv:property sv:name="hipposys:delegating" sv:type="Boolean">
+      <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="reviewedrequests">
@@ -92,7 +80,7 @@
       <sv:value>hipposys:workflow</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.FullRequestWorkflowImpl</sv:value>
+      <sv:value>org.onehippo.repository.documentworkflow.DocumentWorkflowImpl</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:display" sv:type="String">
       <sv:value>Reviewed requests workflow</sv:value>
@@ -100,25 +88,8 @@
     <sv:property sv:name="hipposys:nodetype" sv:type="String">
       <sv:value>hippostdpubwf:request</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:editor</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="authorreviewedrequests">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.reviewedactions.BasicRequestWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Author Reviewed requests workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippostdpubwf:request</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
+    <sv:property sv:name="hipposys:delegating" sv:type="Boolean">
+      <sv:value>true</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="default">

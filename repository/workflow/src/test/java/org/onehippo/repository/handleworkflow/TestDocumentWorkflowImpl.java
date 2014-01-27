@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.repository.documentworkflow;
+package org.onehippo.repository.handleworkflow;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
@@ -38,27 +39,31 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.documentworkflow.MockAccessManagedSession;
+import org.onehippo.repository.documentworkflow.MockWorkflowContext;
+import org.onehippo.repository.documentworkflow.PublicationRequest;
 import org.onehippo.repository.documentworkflow.action.ArchiveAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
 import org.onehippo.repository.documentworkflow.action.CopyVariantAction;
 import org.onehippo.repository.documentworkflow.action.DeleteRequestAction;
-import org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction;
-import org.onehippo.repository.documentworkflow.action.SetHolderAction;
-import org.onehippo.repository.documentworkflow.action.WorkflowExceptionAction;
-import org.onehippo.repository.scxml.ActionAction;
-import org.onehippo.repository.scxml.ResultAction;
 import org.onehippo.repository.documentworkflow.action.InfoAction;
+import org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.IsModifiedAction;
 import org.onehippo.repository.documentworkflow.action.MoveDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RenameDocumentAction;
 import org.onehippo.repository.documentworkflow.action.RequestAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleRequestAction;
+import org.onehippo.repository.documentworkflow.action.SetHolderAction;
+import org.onehippo.repository.documentworkflow.action.WorkflowExceptionAction;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockValue;
 import org.onehippo.repository.mock.MockVersion;
+import org.onehippo.repository.scxml.ActionAction;
 import org.onehippo.repository.scxml.MockRepositorySCXMLRegistry;
 import org.onehippo.repository.scxml.RepositorySCXMLExecutorFactory;
+import org.onehippo.repository.scxml.ResultAction;
 import org.onehippo.repository.scxml.SCXMLExecutorFactory;
 import org.onehippo.repository.scxml.SCXMLRegistry;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
@@ -121,14 +126,14 @@ public class TestDocumentWorkflowImpl {
     }
 */
 
-    protected MockNode addVariant(MockNode handle, String state) throws RepositoryException {
-        MockNode variant = handle.addMockNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+    protected Node addVariant(Node handle, String state) throws RepositoryException {
+        Node variant = handle.addNode(handle.getName(), HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
         variant.setProperty(HippoStdNodeType.HIPPOSTD_STATE, state);
         return variant;
     }
 
-    protected MockNode addRequest(MockNode handle, String type) throws RepositoryException {
-        MockNode variant = handle.addMockNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
+    protected Node addRequest(Node handle, String type) throws RepositoryException {
+        Node variant = handle.addNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
         variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
@@ -155,45 +160,47 @@ public class TestDocumentWorkflowImpl {
         return ids;
     }
 
-    protected void assertMatchingStateIds(SCXMLWorkflowExecutor executor, String ... ids) {
+    protected void assertMatchingStateIds(SCXMLWorkflowExecutor executor, String... ids) {
         Set<String> stateIds = getCurrentStateIds(executor);
         if (ids.length == stateIds.size()) {
             for (String id : ids) {
-                if (!stateIds.contains(id))
-                    Assert.fail("Current SCXML states "+stateIds+" not matching expected states "+set(ids)+"");
+                if (!stateIds.contains(id)) {
+                    Assert.fail("Current SCXML states " + stateIds + " not matching expected states " + set(ids) + "");
+                }
             }
             return;
         }
-        Assert.fail("Current SCXML states ["+stateIds+"] not matching expected states "+set(ids)+"");
+        Assert.fail("Current SCXML states [" + stateIds + "] not matching expected states " + set(ids) + "");
     }
 
-    protected void assertContainsStateIds(SCXMLWorkflowExecutor executor, String ... ids) {
+    protected void assertContainsStateIds(SCXMLWorkflowExecutor executor, String... ids) {
         Set<String> stateIds = getCurrentStateIds(executor);
         if (ids.length <= stateIds.size()) {
             for (String id : ids) {
-                if (!stateIds.contains(id))
-                    Assert.fail("Current SCXML states "+stateIds+" not containing expected states "+set(ids)+"");
+                if (!stateIds.contains(id)) {
+                    Assert.fail("Current SCXML states " + stateIds + " not containing expected states " + set(ids) + "");
+                }
             }
             return;
         }
-        Assert.fail("Current SCXML states ["+stateIds+"] not containing expected states "+set(ids)+"");
+        Assert.fail("Current SCXML states [" + stateIds + "] not containing expected states " + set(ids) + "");
     }
 
     protected void assertContainsHint(Map<String, Serializable> hints, String hint, Object value) {
-        if (!hints.containsKey(hint) || ! hints.get(hint).toString().equals(value.toString())) {
-            Assert.fail("Current hints "+hints+" not containing expected hint ["+hint+"] with value ["+value+"]");
+        if (!hints.containsKey(hint) || !hints.get(hint).toString().equals(value.toString())) {
+            Assert.fail("Current hints " + hints + " not containing expected hint [" + hint + "] with value [" + value + "]");
         }
     }
 
     protected void assertNotContainsHint(Map<String, Serializable> hints, String hint) {
         if (hints.containsKey(hint)) {
-            Assert.fail("Current hints "+hints+" contains not expected hint ["+hint+"]");
+            Assert.fail("Current hints " + hints + " contains not expected hint [" + hint + "]");
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void putWorkflowConfig(RepositoryMap workflowConfig, String key, String value) {
-        workflowConfig.put(key,value);
+        workflowConfig.put(key, value);
     }
 
     @Test
@@ -202,91 +209,76 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant;
+        Node handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant, unpublishedVariant, publishedVariant;
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "status");
         assertNotContainsHint(wf.hints(), "status");
         assertNotContainsHint(wf.hints(), "checkModified");
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
-        assertContainsHint(wf.hints(), "checkModified", false);
-
-        wf.setNode(draftVariant);
-
-        assertContainsHint(wf.hints(), "status", false);
         assertContainsHint(wf.hints(), "checkModified", true);
 
-        wf.setNode(publishedVariant);
-
-        assertContainsHint(wf.hints(), "status", false);
-        assertContainsHint(wf.hints(), "checkModified", false);
-
         unpublishedVariant.remove();
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
-        assertContainsHint(wf.hints(), "checkModified", false);
-
-        wf.setNode(draftVariant);
-
-        assertContainsHint(wf.hints(), "status", false);
         assertContainsHint(wf.hints(), "checkModified", false);
 
         publishedVariant.remove();
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", false);
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", false);
 
         draftVariant.remove();
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "status", true);
     }
 
-        @Test
+    @Test
     public void testEditState() throws Exception {
 
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant, unpublishedVariant, publishedVariant, rejectedRequest, publishRequest;
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
         assertNotContainsHint(wf.hints(), "obtainEditableInstance");
@@ -295,54 +287,50 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "unlock");
 
         workflowConfig.remove("workflow.supportedFeatures");
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         // test state not-editable
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
 
         rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
 
         rejectedRequest.remove();
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
 
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-editable");
 
         publishRequest.remove();
 
         // test state not-editing
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
         assertContainsHint(wf.hints(), "unlock", false);
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
         assertNotContainsHint(wf.hints(), "unlock");
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.unlock.name());
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "unlock", false);
         assertNotContainsHint(wf.hints(), "obtainEditableInstance");
 
         workflowConfig.remove("workflow.supportedFeatures");
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(draftVariant);
-
-        assertContainsHint(wf.hints(), "obtainEditableInstance", false);
-
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
 
@@ -350,19 +338,15 @@ public class TestDocumentWorkflowImpl {
         draftVariant.remove();
 
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
 
         rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
-        wf.setNode(publishedVariant);
-
-        assertContainsHint(wf.hints(), "obtainEditableInstance", true);
-        assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
-
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
+
 
         // test state editing
         publishedVariant.remove();
@@ -371,7 +355,7 @@ public class TestDocumentWorkflowImpl {
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
@@ -380,7 +364,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "unlock");
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.unlock.name());
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
         assertNotContainsHint(wf.hints(), "obtainEditableInstance");
@@ -389,7 +373,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "unlock", true);
 
         workflowConfig.remove("workflow.supportedFeatures");
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
@@ -400,7 +384,7 @@ public class TestDocumentWorkflowImpl {
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
         session.setPermissions(draftVariant.getPath(), "hippo:admin", false);
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
         assertContainsHint(wf.hints(), "obtainEditableInstance", false);
@@ -410,7 +394,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "inUseBy", "otheruser");
 
         session.setPermissions(draftVariant.getPath(), "hippo:admin", true);
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editing");
         assertContainsHint(wf.hints(), "obtainEditableInstance", false);
@@ -424,35 +408,31 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode unpublishedVariant, rejectedRequest, publishRequest;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node unpublishedVariant, rejectedRequest, publishRequest;
 
         // test state not-requested
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-requested");
 
         // test state requested
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
 
         rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
-        wf.setNode(unpublishedVariant);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
-
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
 
         session.setPermissions(publishRequest.getPath(), "hippo:editor", false);
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
         assertContainsHint(wf.hints(), "cancelRequest", false);
@@ -460,7 +440,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "rejectRequest");
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
         assertContainsHint(wf.hints(), "cancelRequest", false);
@@ -470,26 +450,26 @@ public class TestDocumentWorkflowImpl {
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
         session.setPermissions(publishRequest.getPath(), "hippo:editor", true);
 
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
         assertContainsHint(wf.hints(), "cancelRequest", false);
         assertContainsHint(wf.hints(), "acceptRequest", true);
         assertContainsHint(wf.hints(), "rejectRequest", true);
 
         publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
         publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", true);
 
         session.setPermissions(publishRequest.getPath(), "hippo:editor", false);
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", false);
         assertNotContainsHint(wf.hints(), "acceptRequest");
@@ -497,7 +477,7 @@ public class TestDocumentWorkflowImpl {
 
         publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
 
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertNotContainsHint(wf.hints(), "acceptRequest");
@@ -506,7 +486,7 @@ public class TestDocumentWorkflowImpl {
         // test state request-rejected
 
         session.setPermissions(rejectedRequest.getPath(), "hippo:editor", false);
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
         assertContainsHint(wf.hints(), "cancelRequest", false);
@@ -514,41 +494,41 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
 
         workflowConfig.remove("workflow.supportedFeatures");
         rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
         rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", false);
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
         session.setPermissions(rejectedRequest.getPath(), "hippo:editor", true);
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
         publishRequest.getProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME).remove();
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
         session.setPermissions(rejectedRequest.getPath(), "hippo:editor", false);
-        wf.setNode(rejectedRequest);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", false);
         assertContainsHint(wf.hints(), "acceptRequest", false);
@@ -560,76 +540,76 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-publish");
         assertNotContainsHint(wf.hints(), "publish");
 
         workflowConfig.remove("workflow.supportedFeatures");
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "publishable");
         assertContainsHint(wf.hints(), "publish", true);
 
         unpublishedVariant.remove();
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "no-publish");
-        assertNotContainsHint(wf.hints(), "publish");
+        assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
+        assertContainsHint(wf.hints(), "publish", false);
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", false);
 
         workflowContext.setUserIdentity("system");
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", true);
 
         workflowContext.setUserIdentity("testuser");
         publishRequest.remove();
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", false);
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", true);
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", true);
 
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", false);
 
         publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", true);
 
@@ -637,17 +617,17 @@ public class TestDocumentWorkflowImpl {
 
         Calendar publishedModified = Calendar.getInstance();
         Calendar unpublishedModified = Calendar.getInstance();
-        publishedModified.setTimeInMillis(unpublishedModified.getTimeInMillis()-1000);
+        publishedModified.setTimeInMillis(unpublishedModified.getTimeInMillis() - 1000);
         unpublishedVariant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new MockValue(PropertyType.DATE, ISO8601.format(unpublishedModified)));
         publishedVariant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new MockValue(PropertyType.DATE, ISO8601.format(publishedModified)));
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", true);
 
         publishedVariant.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, new MockValue(PropertyType.DATE, ISO8601.format(unpublishedModified)));
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "publish", false);
     }
@@ -657,21 +637,21 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
         assertNotContainsHint(wf.hints(), "depublish");
 
         workflowConfig.remove("workflow.supportedFeatures");
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         // note: empty/no availability means allways available
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
@@ -679,80 +659,80 @@ public class TestDocumentWorkflowImpl {
 
         publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"foo"});
 
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
         assertContainsHint(wf.hints(), "depublish", false);
 
-        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"foo","live"});
+        publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"foo", "live"});
 
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", true);
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
+        assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
 
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
 
         workflowContext.setUserIdentity("system");
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", true);
 
         workflowContext.setUserIdentity("testuser");
 
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", false);
 
         publishRequest.remove();
 
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", true);
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", false);
 
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", false);
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", true);
 
         unpublishedVariant.remove();
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", false);
 
         draftVariant.remove();
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "depublishable");
         assertContainsHint(wf.hints(), "depublish", true);
@@ -763,20 +743,20 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode unpublishedVariant, frozenNode;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node unpublishedVariant, frozenNode;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
         MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
-        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
+        ((MockNode) unpublishedVariant.getParent()).addNode(versionNode);
         frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
         frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "version");
         assertContainsHint(wf.hints(), "version", true);
@@ -786,13 +766,13 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "restoreVersionTo");
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.document.name());
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-versioning");
         assertNotContainsHint(wf.hints(), "version");
         assertNotContainsHint(wf.hints(), "restoreVersionTo");
 
-        wf.setNode(frozenNode);
+        wf.setNode(handleNode);
         assertContainsStateIds(wf.getWorkflowExecutor(), "version");
         assertContainsHint(wf.hints(), "restoreVersionTo", true);
         assertNotContainsHint(wf.hints(), "version");
@@ -803,15 +783,15 @@ public class TestDocumentWorkflowImpl {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
         RepositoryMap workflowConfig = workflowContext.getWorkflowConfiguration();
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
         assertContainsHint(wf.hints(), "delete", true);
@@ -822,14 +802,14 @@ public class TestDocumentWorkflowImpl {
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
         assertContainsHint(wf.hints(), "delete", true);
         assertContainsHint(wf.hints(), "move", true);
         assertContainsHint(wf.hints(), "rename", true);
 
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-terminateable");
         assertContainsHint(wf.hints(), "delete", false);
@@ -837,7 +817,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "rename", false);
 
         session.setPermissions(publishedVariant.getPath(), "hippo:editor", false);
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-terminateable");
         assertContainsHint(wf.hints(), "delete", false);
@@ -845,7 +825,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "rename");
 
         session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", false);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
         assertContainsHint(wf.hints(), "delete", true);
@@ -853,44 +833,44 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "rename");
 
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", DocumentWorkflow.SupportedFeatures.request.name());
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
 
         workflowConfig.remove("workflow.supportedFeatures");
         publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[]{"live"});
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
 
         publishedVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "testuser");
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
 
         publishRequest.remove();
         unpublishedVariant.remove();
 
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
         assertContainsHint(wf.hints(), "delete", true);
 
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-terminateable");
         assertContainsHint(wf.hints(), "delete", false);
 
         publishedVariant.remove();
 
-        wf.setNode(draftVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "terminateable");
         assertContainsHint(wf.hints(), "delete", true);
@@ -900,11 +880,11 @@ public class TestDocumentWorkflowImpl {
     public void testCopyState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode draftVariant, unpublishedVariant, publishedVariant, publishRequest;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node draftVariant, unpublishedVariant, publishedVariant, publishRequest;
 
         draftVariant = addVariant(handleNode, HippoStdNodeType.DRAFT);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
@@ -912,40 +892,32 @@ public class TestDocumentWorkflowImpl {
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
         publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
 
-        wf.setNode(unpublishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "copyable");
         assertContainsHint(wf.hints(), "copy", true);
 
-        wf.setNode(publishedVariant);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-copyable");
-        assertContainsHint(wf.hints(), "copy", false);
+        wf.setNode(handleNode);
 
         unpublishedVariant.remove();
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "copyable");
         assertContainsHint(wf.hints(), "copy", true);
 
         session.setPermissions(publishedVariant.getPath(), "hippo:editor", false);
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-copy");
         assertNotContainsHint(wf.hints(), "copy");
 
         session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
-        wf.setNode(publishRequest);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-copy");
         assertNotContainsHint(wf.hints(), "copy");
 
-        wf.setNode(draftVariant);
-
-        assertContainsStateIds(wf.getWorkflowExecutor(), "not-copyable");
-        assertContainsHint(wf.hints(), "copy", false);
-
-        wf.setNode(publishedVariant);
+        wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "copyable");
         assertContainsHint(wf.hints(), "copy", true);
@@ -955,21 +927,21 @@ public class TestDocumentWorkflowImpl {
     public void testNoState() throws Exception {
         MockAccessManagedSession session = new MockAccessManagedSession(MockNode.root());
         MockWorkflowContext workflowContext = new MockWorkflowContext("testuser", session);
-        DocumentWorkflowImpl wf = new DocumentWorkflowImpl();
+        HandleDocumentWorkflowImpl wf = new HandleDocumentWorkflowImpl();
         wf.setWorkflowContext(workflowContext);
 
-        MockNode handleNode = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        MockNode unpublishedVariant, frozenNode;
+        Node handleNode = session.getRootNode().addNode("test", HippoNodeType.NT_HANDLE);
+        Node unpublishedVariant, frozenNode;
 
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
 
         MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
-        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
+        ((MockNode) unpublishedVariant.getParent()).addNode(versionNode);
         frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
         frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
 
         unpublishedVariant.remove();
-        wf.setNode(frozenNode);
+        wf.setNode(handleNode);
 
         assertMatchingStateIds(wf.getWorkflowExecutor(), "status", "no-edit", "no-request", "no-publish", "no-depublish", "no-versioning", "no-terminate", "no-copy");
         assertEquals(0, wf.hints().size());

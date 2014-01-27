@@ -24,225 +24,410 @@
     </sv:property>
     <sv:property sv:name="hipposcxml:source" sv:type="String">
       <sv:value><![CDATA[
-<scxml xmlns="http://www.w3.org/2005/07/scxml" xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml" version="1.0" initial="reset-event-result">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
 
-  <state id="reset-event-result" initial="handle">
-    <onentry>
-      <script>
-        // clear possible previous result, always start empty
-        eventResult = null;
-      </script>
-    </onentry>
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
-    <parallel id="handle">
+          http://www.apache.org/licenses/LICENSE-2.0
 
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<scxml version="1.0"
+       xmlns="http://www.w3.org/2005/07/scxml"
+       xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
+       initial="handle">
+
+  <parallel id="handle">
+
+    <state id="status">
       <onentry>
-        <script>
-          notEditing = !dm.d or !dm.d.holder;
-
-          editable = notEditing or dm.d.holder == dm.user;
-          canEdit = !dm.r and editable;
-          canDispose = dm.d and dm.d.holder and dm.d.holder == dm.user;
-          // Note: current workflow doesn't check against empty request
-          canCommit = !dm.r and canDispose;
-
-          // system user is allowed to (de)publish when a dm.r exists because that's how a scheduled request is processed
-          systemUser = dm.user == 'system';
-          canPublish = (systemUser or !dm.r) and notEditing and dm.u and (!dm.p or dm.p.stateSummary =~ ['new','changed']);
-          canDepublish = (systemUser or !dm.r) and notEditing and dm.p and dm.p.stateSummary =~ ['changed','live'];
-
-          canDelete = !dm.r and notEditing and (!dm.p or dm.p.stateSummary == 'new');
-          canCopy = dm.u or dm.p;
-
-          dm.hints["obtainEditableInstance"] = canEdit;
-          dm.hints["disposeEditableInstance"] = canDispose;
-          dm.hints["commitEditableInstance"] = canCommit;
-          dm.hints["publish"] = canPublish;
-          dm.hints["depublish"] = canDepublish;
-          dm.hints["delete"] = canDelete;
-          dm.hints["rename"] = canDelete;
-          dm.hints["move"] = canDelete;
-          dm.hints["copy"] = canCopy;
-
-          dm.hints["status"] = editable;
-          if (dm.ss == 'draft' and !editable) {
-          dm.hints["inUseBy"] = dm.holder;
-          }
-        </script>
-        <hippo:ismodified/>
+        <if cond="dm.sf.document">
+          <hippo:info info="status" value="false"/>
+          <hippo:action action="checkModified" value="!empty(dm.d) and !empty(dm.u)"/>
+          <if cond="empty(dm.d?.holder) or dm.d.holder==dm.user">
+            <!--not draft in use by other user -->
+            <hippo:info info="status" value="true"/>
+          </if>
+        </if>
       </onentry>
 
-      <transition event="workflow.event.document.copy" cond="dm.hints['copy']" target="handle">
-        <hippo:copydocument destinationExpr="_eventdata.destination" newNameExpr="_eventdata.newName" />
+      <transition event="checkModified">
+        <hippo:isModified/>
+        <hippo:result value="dm.info['modified']"/>
       </transition>
+    </state>
 
-      <transition event="workflow.event.document.move" cond="dm.hints['move']" target="handle">
-        <hippo:movedocument destinationExpr="_eventdata.destination" newNameExpr="_eventdata.newName" />
-      </transition>
+    <state id="edit" initial="no-edit">
 
-      <transition event="workflow.event.document.rename" cond="dm.hints['rename']" target="handle">
-        <hippo:renamedocument newNameExpr="_eventdata" />
-      </transition>
+      <state id="no-edit">
+        <transition target="init-edit"
+                    cond="empty(dm.rr) and (dm.sf.document or dm.sf.unlock)"/>
+      </state>
 
-      <transition event="workflow.event.document.delete" cond="dm.hints['delete']" target="deleted">
-        <hippo:archive />
-      </transition>
+      <state id="init-edit">
+        <onentry>
+          <if cond="dm.sf.document">
+            <hippo:action action="disposeEditableInstance" value="false"/>
+            <hippo:action action="obtainEditableInstance" value="false"/>
+            <hippo:action action="commitEditableInstance" value="false"/>
+          </if>
+          <if cond="dm.sf.unlock">
+            <hippo:action action="unlock" value="false"/>
+          </if>
+        </onentry>
+        <transition target="not-editable"
+                    cond="!empty(dm.r) or !empty(dm.rr)"/>
+        <transition target="editing"
+                    cond="!empty(dm.d?.holder)"/>
+        <transition target="editable"/>
+      </state>
 
-      <state id="draft" initial="draft-init">
+      <state id="not-editable"/>
 
-        <transition event="workflow.event.document.edit.obtain" cond="dm.hints['obtainEditableInstance']" target="handle">
-          <if cond="!dm.d or !dm.d.holder">
-            <if cond="not empty(dm.u)">
-              <hippo:copyvariant sourceState="unpublished" targetState="draft" skipIndex="true" applyModified="true"/>
-              <else/>
-              <hippo:copyvariant sourceState="published" targetState="draft" skipIndex="true" applyModified="true"/>
+      <state id="editing">
+        <onentry>
+          <if cond="dm.sf.document">
+            <if cond="dm.d.holder==dm.user">
+              <hippo:action action="disposeEditableInstance" value="true"/>
+              <hippo:action action="obtainEditableInstance" value="true"/>
+              <hippo:action action="commitEditableInstance" value="true"/>
             </if>
-            <script>
-              dm.d.holder = dm.user;
-            </script>
+            <if cond="dm.d.holder!=dm.user">
+              <hippo:info info="inUseBy" value="dm.d.holder"/>
+            </if>
           </if>
-          <script>
-            eventResult = dm.d;
-          </script>
-        </transition>
-
-        <transition event="workflow.event.document.edit.commit" cond="dm.hints['commitEditableInstance']" target="handle">
-          <script>
-            dm.d.holder = null;
-          </script>
-          <hippo:copyvariant sourceState="draft" targetState="unpublished" versionable="true" applyModified="true"/>
-          <script>
-            dm.u.availability = ["preview"];
-            if (dm.p and dm.p.stateSummary =~ "live") {
-            dm.p.availability = ["live"];
-            }
-            eventResult = dm.u;
-          </script>
-        </transition>
-
-        <transition event="workflow.event.document.edit.dispose" cond="dm.hints['disposeEditableInstance']" target="handle">
-          <script>
-            dm.d.holder = null;
-            eventResult = dm.u and dm.u.availability =~ "preview" ? dm.u : dm.p ?: null;
-          </script>
-        </transition>
-
-        <state id="draft-init">
-          <transition cond="dm.d and !dm.d.holder and dm.d.stateSummary == 'new'" target="draft-nonediting-new" />
-          <transition cond="dm.d and !dm.d.holder and dm.d.stateSummary == 'live'" target="draft-nonediting-live" />
-          <transition cond="dm.d and !dm.d.holder and dm.d.stateSummary == 'changed'" target="draft-nonediting-changed" />
-          <transition cond="dm.d and dm.d.stateSummary == 'new'" target="draft-editing-new" />
-          <transition cond="dm.d and dm.d.stateSummary == 'live'" target="draft-editing-live" />
-          <transition cond="dm.d and dm.d.stateSummary == 'changed'" target="draft-editing-changed" />
-          <transition target="draft-unavailable" />
-        </state>
-
-        <state id="draft-nonediting-new"/>
-        <state id="draft-nonediting-live"/>
-        <state id="draft-nonediting-changed"/>
-        <state id="draft-editing-new"/>
-        <state id="draft-editing-live"/>
-        <state id="draft-editing-changed"/>
-        <state id="draft-unavailable"/>
-
-      </state>
-
-      <state id="unpublished" initial="unpublished-init">
-
-        <transition event="workflow.event.document.publish" cond="dm.hints['publish']" target="handle">
-          <hippo:copyvariant sourceState="unpublished" targetState="published" applyModified="true"/>
-          <script>
-            dm.p.availability = ["preview", "live"];
-            dm.p.publicationDate = new("java.util.Date");
-            dm.u.availability = null;
-            // must save JCR session first before checkin
-            dm.u.node.session.save();
-            // now make version
-            dm.u.node.checkin();
-          </script>
-        </transition>
-
-        <transition event="workflow.event.document.schedule.publish" cond="dm.hints['publish']" target="handle">
-          <hippo:schedulerequest type="publish" targetDateExpr="_eventdata"/>
-        </transition>
-
-        <state id="unpublished-init">
-          <transition cond="dm.u and dm.u.stateSummary == 'new'" target="unpublished-new" />
-          <transition cond="dm.u and dm.u.stateSummary == 'live'" target="unpublished-live" />
-          <transition cond="dm.u and dm.u.stateSummary == 'changed'" target="unpublished-changed" />
-          <transition target="unpublished-unavailable" />
-        </state>
-
-        <state id="unpublished-new"/>
-        <state id="unpublished-live"/>
-        <state id="unpublished-changed"/>
-        <state id="unpublished-unavailable"/>
-
-      </state>
-
-      <state id="published" initial="published-init">
-
-        <transition event="workflow.event.document.depublish" cond="dm.hints['depublish']" target="handle">
-          <if cond="!dm.u">
-            <hippo:copyvariant sourceState="published" targetState="unpublished" versionable="true"/>
+          <if cond="dm.sf.unlock">
+            <if cond="dm.d.holder==dm.user or dm.pm('hippo:admin')">
+              <hippo:action action="unlock" value="true"/>
+            </if>
           </if>
-          <script>
-            dm.p.availability = null;
-            dm.u.availability = ["preview"];
-            dm.u.modified = dm.user;
-            // must save JCR session first before checkin
-            dm.u.node.session.save();
-            // now make version
-            dm.u.node.checkin();
-          </script>
-        </transition>
-
-        <transition event="workflow.event.document.schedule.depublish" cond="dm.hints['depublish']" target="handle">
-          <hippo:schedulerequest type="depublish" targetDateExpr="_eventdata"/>
-        </transition>
-
-        <state id="published-init">
-          <transition cond="dm.p and dm.p.stateSummary == 'live'" target="published-live" />
-          <transition cond="dm.p and dm.p.stateSummary == 'new'" target="published-new" />
-          <transition cond="dm.p and dm.p.stateSummary == 'changed'" target="published-changed" />
-          <transition target="published-unavailable" />
-        </state>
-
-        <state id="published-new"/>
-        <state id="published-live"/>
-        <state id="published-changed"/>
-        <state id="published-unavailable"/>
-
+        </onentry>
       </state>
 
-      <state id="request" initial="request-init">
-
-        <state id="request-init">
-          <transition cond="dm.r and dm.r.type == 'publish'" target="request-publication" />
-          <transition cond="dm.r and dm.r.type == 'depublish'" target="request-depublication" />
-          <transition cond="dm.r and dm.r.type == 'scheduledpublish'" target="request-schedule-publication" />
-          <transition cond="dm.r and dm.r.type == 'scheduleddepublish'" target="request-schedule-depublication" />
-          <transition target="request-unavailable" />
-        </state>
-
-        <state id="request-publication"/>
-        <state id="request-depublication"/>
-        <state id="request-schedule-publication"/>
-        <state id="request-schedule-depublication"/>
-        <state id="request-unavailable"/>
-
+      <state id="editable">
+        <onentry>
+          <if cond="dm.sf.document">
+            <hippo:action action="obtainEditableInstance" value="true"/>
+          </if>
+        </onentry>
       </state>
 
-    </parallel>
+      <transition event="disposeEditableInstance" target="reset">
+        <hippo:setHolder holder="null"/>
+        <if cond="!empty(dm.u) and dm.u.isAvailable('preview')">
+          <hippo:result value="dm.u"/>
+        <elseif cond="!empty(dm.p)"/>
+          <hippo:result value="dm.p"/>
+        </if>
+      </transition>
 
-  </state>
+      <transition event="obtainEditableInstance" target="reset">
+        <if cond="!empty(dm.u)">
+          <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+        <elseif cond="!empty(dm.p)"/>
+          <hippo:copyVariant sourceState="published" targetState="draft"/>
+        </if>
+        <hippo:configVariant variant="dm.d" applyModified="true" setHolder="true"/>
+        <hippo:result value="dm.d"/>
+      </transition>
 
-  <final id="deleted" />
+      <transition event="commitEditableInstance" target="reset">
+        <hippo:setHolder holder="null"/>
+        <if cond="!empty(dm.u)">
+          <hippo:isModified/>
+        </if>
+        <if cond="empty(dm.u) or dm.info['modified']">
+          <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
+          <hippo:configVariant variant="dm.u" versionable="true" applyModified="true" availabilities="preview"/>
+          <if cond="!empty(dm.p)">
+            <if cond="dm.p.isAvailable('live')">
+              <hippo:configVariant variant="dm.p" availabilities="live"/>
+            <else/>
+              <hippo:configVariant variant="dm.p" availabilities="null"/>
+            </if>
+          </if>
+        </if>
+      </transition>
+
+      <transition event="unlock" target="reset">
+        <hippo:setHolder holder="dm.user"/>
+      </transition>
+
+    </state>
+
+    <state id="request" initial="no-request">
+
+      <state id="no-request">
+        <transition target="init-request"
+                    cond="dm.sf.request"/>
+      </state>
+
+      <state id="init-request">
+        <!-- Note: transition for request-rejected MUST be evaluated before transition for requested
+                   because if the subject is a rejected request only its state is to be considered
+        -->
+        <transition target="request-rejected"
+                    cond="!empty(dm.rr)"/>
+        <transition target="requested"
+                    cond="!empty(dm.r)"/>
+        <transition target="not-requested"/>
+      </state>
+
+      <state id="request-rejected">
+        <onentry>
+          <hippo:action action="acceptRequest" value="false"/>
+          <hippo:action action="rejectRequest" value="false"/>
+          <hippo:action action="cancelRequest" value="true"/>
+        </onentry>
+      </state>
+
+      <state id="requested">
+        <onentry>
+          <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
+            <hippo:action action="cancelRequest" value="true"/>
+          <else/>
+            <hippo:action action="cancelRequest" value="false"/>
+          </if>
+          <if cond="dm.pm('hippo:editor')">
+            <hippo:action action="acceptRequest" value="true"/>
+            <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
+              <hippo:action action="rejectRequest" value="false"/>
+            <else/>
+              <hippo:action action="rejectRequest" value="true"/>
+            </if>
+          </if>
+        </onentry>
+      </state>
+
+      <state id="not-requested"/>
+
+      <transition event="acceptRequest" target="reset">
+        <if cond="dm.r.type=='delete'">
+          <hippo:workflowException errorExpr="'Cannot delete document when still published'"
+                                   cond="!empty(dm.p) and dm.p.isAvailable('live')"/>
+          <hippo:workflowException errorExpr="'Cannot delete document which is being edited'"
+                                   cond="!empty(dm.d?.holder)"/>
+
+          <hippo:deleteRequest/>
+          <hippo:invokeDocumentWorkflow action="delete"
+                                        subjectExpr="!empty(dm.u) ? dm.u : empty(dm.p) ? dm.p : dm.d"/>
+
+        <elseif cond="dm.r.type=='publish' or dm.r.type=='schedpublish"/>
+          <hippo:workflowException errorExpr="'Cannot publish document which is being edited'"
+                                   cond="!empty(dm.d?.holder)"/>
+          <hippo:workflowException errorExpr="'Cannot publish document when no changes present'"
+                                   cond="!empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))" />
+
+          <hippo:deleteRequest/>
+          <if cond="dm.r.type=='publish'">
+            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.u"/>
+          <else/>
+            <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
+          </if>
+
+        <elseif cond="dm.r.type=='depublish' or dm.r.type=='schedpublish"/>
+          <hippo:workflowException errorExpr="'Cannot depublish document which is being edited'"
+                                   cond="!empty(dm.d?.holder)"/>
+          <hippo:workflowException errorExpr="'Cannot depublish document when not published'"
+                                   cond="!empty(dm.p) and dm.p.isAvailable('live')" />
+
+          <hippo:deleteRequest/>
+          <if cond="dm.r.type='depublish'">
+            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.p"/>
+          <else/>
+            <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
+          </if>
+
+        <elseif cond="dm.r.type=='rejected"/>
+          <hippo:workflowException errorExpr="'Request has already been rejected'"/>
+        <else/>
+          <hippo:workflowException errorExpr="'Unknown request type '+dm.r.type"/>
+        </if>
+      </transition>
+
+    </state>
+
+    <state id="publish" initial="no-publish">
+
+      <state id="no-publish">
+        <transition target="init-publish"
+                    cond="dm.sf.document"/>
+      </state>
+
+      <state id="init-publish">
+        <onentry>
+          <hippo:action action="publish" value="false"/>
+        </onentry>
+        <transition target="publishable"
+                    cond="empty(dm.d?.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))"/>
+        <transition target="not-publishable"/>
+      </state>
+
+      <state id="not-publishable"/>
+
+      <state id="publishable">
+        <onentry>
+          <if cond="(empty(dm.r) or dm.user=='system')">
+            <hippo:action action="publish" value="true"/>
+            <hippo:action action="requestPublish" value="true"/>
+          </if>
+        </onentry>
+      </state>
+
+    </state>
+
+    <state id="depublish" initial="no-depublish">
+
+      <state id="no-depublish">
+        <transition target="init-depublish"
+                    cond="dm.sf.document"/>
+      </state>
+
+      <state id="init-depublish">
+        <onentry>
+          <hippo:action action="depublish" value="false"/>
+        </onentry>
+        <transition target="depublishable"
+                    cond="empty(dm.d?.holder) and !empty(dm.p) and dm.p.isAvailable('live')"/>
+        <transition target="not-depublishable"/>
+      </state>
+
+      <state id="not-depublishable"/>
+
+      <state id="depublishable">
+        <onentry>
+          <if cond="(empty(dm.r) or dm.user=='system') and (dm.s=='p' or dm.s=='dp')">
+            <hippo:action action="depublish" value="true"/>
+            <hippo:action action="requestDepublish" value="true"/>
+          </if>
+        </onentry>
+      </state>
+
+    </state>
+
+    <state id="versioning" initial="no-versioning">
+
+      <state id="no-versioning">
+        <transition target="version"
+                    cond="dm.sf.version"/>
+      </state>
+
+      <state id="version">
+        <onentry>
+<!--
+          <if cond="empty(dm.v)">
+-->
+          <hippo:action action="version" value="true"/>
+          <hippo:action action="listVersions" value="true"/>
+          <hippo:action action="restoreVersion" value="true"/>
+          <hippo:action action="revertVersion" value="true"/>
+<!--
+          <else/>
+            <hippo:action action="restoreVersionTo" value="true"/>
+          </if>
+-->
+        </onentry>
+      </state>
+
+    </state>
+
+    <state id="terminate" initial="no-terminate">
+
+      <state id="no-terminate">
+        <transition target="terminateable"
+                    cond="dm.sf.document and (empty(dm.p) or !dm.p.isAvailable('live')) and empty(dm.d?.holder) and empty(dm.r)"/>
+      </state>
+
+      <state id="terminateable">
+        <onentry>
+          <hippo:action action="delete" value="true"/>
+          <hippo:action action="requestDelete" value="true"/>
+          <if cond="dm.pm('hippo:editor')">
+            <hippo:action action="move" value="true"/>
+            <hippo:action action="rename" value="true"/>
+          </if>
+        </onentry>
+      </state>
+
+    </state>
+
+    <state id="copy" initial="no-copy">
+
+      <state id="no-copy">
+        <transition target="copyable"
+                    cond="dm.sf.document and dm.pm('hippo:editor')"/>
+      </state>
+
+      <state id="copyable">
+        <onentry>
+          <hippo:action action="copy" value="true"/>
+        </onentry>
+      </state>
+
+    </state>
+
+  </parallel>
+
+  <final id="reset"/>
+  <final id="terminated" />
+  <final id="invalid-context" />
 
 </scxml>
           ]]></sv:value>
     </sv:property>
-    <sv:node sv:name="copyvariant">
+    <sv:node sv:name="action">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.scxml.ActionAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="result">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.scxml.ResultAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="info">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.InfoAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="configVariant">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.ConfigVariantAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="copyVariant">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -275,7 +460,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.ArchiveAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="ismodified">
+    <sv:node sv:name="isModified">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -286,7 +471,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.IsModifiedAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="schedulerequest">
+    <sv:node sv:name="scheduleRequest">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -297,7 +482,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.ScheduleRequestAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="copydocument">
+    <sv:node sv:name="copyDocument">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -308,7 +493,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.CopyDocumentAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="movedocument">
+    <sv:node sv:name="moveDocument">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -319,7 +504,7 @@
         <sv:value>org.onehippo.repository.documentworkflow.action.MoveDocumentAction</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="renamedocument">
+    <sv:node sv:name="renameDocument">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposcxml:action</sv:value>
       </sv:property>
@@ -328,6 +513,50 @@
       </sv:property>
       <sv:property sv:name="hipposcxml:classname" sv:type="String">
         <sv:value>org.onehippo.repository.documentworkflow.action.RenameDocumentAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="setHolder">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.SetHolderAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="deleteRequest">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.DeleteRequestAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="invokeDocumentWorkflow">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.InvokeDocumentWorkflowAction</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="workflowException">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposcxml:action</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:namespace" sv:type="String">
+        <sv:value>http://www.onehippo.org/cms7/repository/scxml</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposcxml:classname" sv:type="String">
+        <sv:value>org.onehippo.repository.documentworkflow.action.WorkflowExceptionAction</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

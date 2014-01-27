@@ -70,7 +70,7 @@ public class RequestTask extends AbstractDocumentTask {
         DocumentHandle dm = getDocumentHandle();
 
         if (dm.getRequest() == null) {
-            PublicationRequest req = null;
+            PublicationRequest req;
 
             if (targetDate == null) {
                 req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser());
@@ -79,7 +79,7 @@ public class RequestTask extends AbstractDocumentTask {
             }
 
             req.getNode().getSession().save();
-            dm.setRequest(req);
+//            dm.setRequest(req);
         } else {
             throw new WorkflowException("publication request already pending");
         }
