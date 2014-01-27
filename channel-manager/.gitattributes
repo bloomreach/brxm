@@ -204,11 +204,13 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_fr
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JcrPathWidget_nl.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/JsonUtil.java -text
+frontend/src/main/resources/angular/app/components/AddMenuItemFormCtrl.js -text
 frontend/src/main/resources/angular/app/components/AddPageFormCtrl.js -text
 frontend/src/main/resources/angular/app/components/EditMenuItemFormCtrl.js -text
 frontend/src/main/resources/angular/app/components/MenuItemActionsCtrl.js -text
 frontend/src/main/resources/angular/app/components/TreeActionsCtrl.js -text
 frontend/src/main/resources/angular/app/components/TreeCtrl.js -text
+frontend/src/main/resources/angular/app/controllers/AddMenuItemCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/AddPageCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/EditMenuItemCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/LoaderCtrl.js -text

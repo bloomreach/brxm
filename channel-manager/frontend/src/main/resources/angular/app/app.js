@@ -24,6 +24,10 @@
                         controller: 'hippo.channelManager.menuManagement.LoaderCtrl',
                         templateUrl: 'app/views/loader.html'
                     })
+                    .when('/add-menu-item', {
+                        controller: 'hippo.channelManager.menuManagement.AddMenuItemCtrl',
+                        templateUrl: 'app/views/add-menu-item.html'
+                    })
                     .when('/:menuItemId/edit', {
                         controller: 'hippo.channelManager.menuManagement.EditMenuItemCtrl',
                         templateUrl: 'app/views/edit-menu-item.html'
