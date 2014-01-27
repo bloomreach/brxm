@@ -29,6 +29,5 @@
                 // scope values
                 $scope.selectedMenuItemId = $routeParams.menuItemId;
                 $scope.selectedMenuItem = {};
-
         }]);
 })();

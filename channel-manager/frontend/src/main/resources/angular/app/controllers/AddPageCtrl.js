@@ -17,13 +17,16 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.main', ['hippo.channelManager.menuManagement.config', 'hippo.channelManager.menuManagement.Container',
-            function(Config, Container) {
-                this.items = [ 'one', 'two', 'three' ];
-
-                this.close = function() {
-                    Container.close();
-                };
+        .controller('hippo.channelManager.menuManagement.AddPageCtrl', [
+            '$scope',
+            '$routeParams',
+            '$location',
+            'hippo.channelManager.menuManagement.MenuService',
+            'hippo.channelManager.menuManagement.ConfigService',
+            function ($scope, $routeParams, $location, MenuService, ConfigService) {
+                // scope values
+                $scope.selectedMenuItemId = $routeParams.menuItemId;
+                $scope.selectedMenuItem = {};
             }
         ]);
 
