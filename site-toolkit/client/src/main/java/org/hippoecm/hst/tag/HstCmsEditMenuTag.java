@@ -17,10 +17,8 @@ package org.hippoecm.hst.tag;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -39,29 +37,12 @@ public class HstCmsEditMenuTag extends TagSupport  {
     private static final long serialVersionUID = 1L;
 
     protected HstSiteMenu menu;
-    
-    protected String var;
-    
-    protected String scope;
 
-    
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
-     */
     @Override
     public int doStartTag() throws JspException{
-    
-        if (var != null) {
-            pageContext.removeAttribute(var, PageContext.PAGE_SCOPE);
-        }
-        
         return EVAL_BODY_INCLUDE;
     }
-    
-    
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
-     */
+
     @Override
     public int doEndTag() throws JspException{
         try {
@@ -82,30 +63,11 @@ public class HstCmsEditMenuTag extends TagSupport  {
                 log.debug("Skipping cms edit menu because not cms preview.");
                 return EVAL_PAGE;
             }
-
-            if (var == null) {
-                try {
-                    write(menu.getCanonicalIdentifier(), menu.isInherited());
-                 } catch (IOException ioe) {
-                    throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
-                }
+            try {
+                write(menu.getCanonicalIdentifier(), menu.isInherited());
+            } catch (IOException ioe) {
+                throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
             }
-            else {
-                int varScope = PageContext.PAGE_SCOPE;
-
-                if (this.scope != null) {
-                    if ("request".equals(this.scope)) {
-                        varScope = PageContext.REQUEST_SCOPE;
-                    } else if ("session".equals(this.scope)) {
-                        varScope = PageContext.SESSION_SCOPE;
-                    } else if ("application".equals(this.scope)) {
-                        varScope = PageContext.APPLICATION_SCOPE;
-                    }
-                }
-
-                pageContext.setAttribute(var, menu.getCanonicalIdentifier(), varScope);
-            }
-
             return EVAL_PAGE;
         } finally {
             cleanup();
@@ -113,9 +75,7 @@ public class HstCmsEditMenuTag extends TagSupport  {
     }
 
     protected void cleanup() {
-        var = null;
         menu = null;
-        scope = null;
     }
 
     protected void write(String menuId, boolean inherited) throws IOException {
@@ -134,26 +94,6 @@ public class HstCmsEditMenuTag extends TagSupport  {
     }
 
 
-    /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#release()
-     */
-    @Override
-    public void release(){
-        super.release();        
-    }
-    
-    /**
-     * Returns the var property.
-     * @return String
-     */
-    public String getVar() {
-        return var;
-    }
-    
-    public String getScope() {
-        return scope;
-    }
-    
     public HstSiteMenu getMenu(){
         return menu;
     }
@@ -161,33 +101,21 @@ public class HstCmsEditMenuTag extends TagSupport  {
     public void setMenu(HstSiteMenu menu) {
         this.menu = menu;
     }
-    
-    /**
-     * Sets the var property.
-     * @param var The var to set
-     */
-    public void setVar(String var) {
-        this.var = var;
-    }
-    
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-    
+
     /* -------------------------------------------------------------------*/
         
     /**
-     * TagExtraInfo class for HstCmsEditLinkTag.
+     * TagExtraInfo class for HstCmsEditMenuTag.
      */
     public static class TEI extends TagExtraInfo {
         
         public VariableInfo[] getVariableInfo(TagData tagData) {
             VariableInfo vi[] = null;
-            String var = tagData.getAttributeString("var");
+            String var = tagData.getAttributeString("menu");
             if (var != null) {
                 vi = new VariableInfo[1];
                 vi[0] =
-                    new VariableInfo(var, "java.lang.String", true,
+                    new VariableInfo(var, "org.hippoecm.hst.core.sitemenu.HstSiteMenu", true,
                                  VariableInfo.AT_BEGIN);
             }
             return vi;
