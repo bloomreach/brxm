@@ -311,7 +311,6 @@ client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/s
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/ExceptionResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/MountResource.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/RootResource.java -text
-client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/SiteMenuItemResource.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/services/SiteMenuResource.java -text
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/util/HstConfigurationUtils.java -text
 client-modules/page-composer/src/main/resources/org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml -text svneol=unset#text/plain

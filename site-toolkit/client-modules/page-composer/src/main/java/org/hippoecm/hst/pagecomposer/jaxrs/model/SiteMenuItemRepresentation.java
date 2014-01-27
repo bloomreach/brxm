@@ -16,17 +16,12 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
-@XmlRootElement(name = "sitemenuitem")
 public class SiteMenuItemRepresentation {
 
     String id;
