@@ -19,7 +19,7 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.EditMenuItemFormCtrl', ['$scope', function ($scope) {
+        .controller('hippo.channelManager.menuManagement.EditMenuItemFormCtrl', ['$scope', '$location', function ($scope, $location) {
             console.log('EditMenuItemFormCtrl init + scope');
 
             $scope.menuItemDestinations = [{}];
