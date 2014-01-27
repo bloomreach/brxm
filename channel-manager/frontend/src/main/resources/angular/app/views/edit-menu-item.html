@@ -14,44 +14,44 @@
   limitations under the License.
   -->
 
-<div class="container" id="container" ng-controller="TreeController">
+<div class="container" id="container">
     <div class="row">
 
         <!-- START Tree Component -->
         <div class="col-sm-4" id="menu-tree">
-            <div file-tree tree-data="exampleTreedata" on-select="viewItem(branch)" initial-selection="Home"></div>
+            <div file-tree tree-data="menuTree" on-select="navigateTo(branch)" initial-selection="selectedMenuItemId"></div>
         </div>
         <!-- END Tree Component -->
 
         <div class="col-sm-8" id="form-panel">
-            <form role="form" ng-show="page === 1">
+            <form role="form">
                 <legend>Edit menu item</legend>
                 <div class="form-group">
                     <label for="label">Label</label>
-                    <input type="text" class="form-control" id="label" placeholder="Label" ng-model="selectedItem.label">
+                    <input type="text" class="form-control" id="label" placeholder="Label" ng-model="selectedMenuItem.name">
                 </div>
                 <label for="url">Destination</label>
                 <div class="form-group">
                     <div class="radio">
                         <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" ng-model="selectedItem.destination" value="1" checked>
+                            <input type="radio" name="destination"  ng-model="selectedMenuItem.destination" value="1" checked>
                             Sitemap item
                         </label>
                     </div>
                     <div class="radio">
                         <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios2" ng-model="selectedItem.destination" value="2">
+                            <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="2">
                             External link
                         </label>
                     </div>
                     <div class="radio">
                         <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios3" value="false" ng-model="selectedItem.destination">
+                            <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="3">
                             None
                         </label>
                     </div>
                 </div>
-                <div class="form-group" ng-show="selectedItem.destination == 1">
+                <div class="form-group" ng-show="selectedMenuItem.destination == 1">
                     <label for="url">Internal link</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="url">
@@ -60,47 +60,23 @@
                           </span>
                     </div>
                 </div>
-                <div class="form-group" ng-show="selectedItem.destination == 2">
-                    <label for="link">External link</label>
-                    <input type="text" class="form-control" id="link" placeholder="http://www.example.com" ng-model="selectedItem.externalLink">
-                </div>
-                <div class="form-group" ng-show="selectedItem.destination == 1">
+                <div class="form-group" ng-show="selectedMenuItem.destination == 1">
                     <button type="button" class="btn btn-default btn-sm">
                         <i class="fa fa-crosshairs"></i> Select document
                     </button>
                     <button type="button" class="btn btn-default btn-sm">
                         <i class="fa fa-crosshairs"></i> Select landing page
                     </button>
-                    <button type="button" class="btn btn-default btn-sm" ng-click="addPage()">
+                    <button type="button" class="btn btn-default btn-sm" ng-click="createNewPage()">
                         <i class="fa fa-plus"></i> Create new page
                     </button>
                 </div>
+                <div class="form-group" ng-show="selectedMenuItem.destination == 2">
+                    <label for="link">External link</label>
+                    <input type="text" class="form-control" id="link" placeholder="http://www.example.com" ng-model="selectedMenuItem.externalLink">
+                </div>
             </form>
-            <form role="form" ng-show="page === 2">
-                <legend>Create new page</legend>
-                <div class="form-group">
-                    <label for="title">Page title</label>
-                    <input type="text" class="form-control" id="title" placeholder="Label" ng-model="newpage.title">
-                </div>
-                <div class="form-group">
-                    <label for="url">Page URL</label>
-                    <div class="input-group">
-                        <span class="input-group-addon">www.gogreen.com/</span>
-                        <input type="text" class="form-control" placeholder="" ng-model="newpage.url">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="template">Page template</label>
-                    <select hippo.theme.select-box
-                            id="template"
-                            ng-model="newpage.template"
-                            ng-options="o.name for o in templates"
-                            data-placeholder="Search for template...">
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-default" ng-click="createPage(newpage)">Create page</button>
-                <button type="submit" class="btn btn-link" ng-click="cancel()">Cancel</button>
-            </form>
+
         </div>
     </div>
     <div class="row">
