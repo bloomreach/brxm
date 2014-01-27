@@ -22,12 +22,25 @@
         .service('hippo.channelManager.menuManagement.MenuService', ['hippo.channelManager.menuManagement.ConfigService', '$q', '$http', function (ConfigService, $q, $http) {
             var menuService = {};
 
+            // fetch menu tree
             menuService.getMenu = function(menuId) {
                 var deferred = $q.defer();
 
                 $http.get(ConfigService.apiUrlPrefix + '/' + menuId).success(function (response) {
+                    deferred.resolve(response.data);
+                }).error(function (error) {
+                    deferred.reject('An error occured while fetching the menu tree with id `' + menuId + '`: ' + error);
+                });
 
-                    // re-map REST response
+                return deferred.promise;
+            };
+
+            // create new child item
+            // TODO: finish this implementation
+            menuService.createItem = function (parentId, menuItem) {
+                var deferred = $q.defer();
+
+                $http.post(ConfigService.apiUrlPrefix + '/' + parentId, menuItem).success(function (response) {
                     deferred.resolve(response.data);
                 }).error(function (error) {
                     deferred.reject('An error occured while fetching all personas');

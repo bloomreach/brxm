@@ -13,4 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+(function () {
+    "use strict";
+
+    angular.module('hippo.channelManager.menuManagement')
+
+        .controller('hippo.channelManager.menuManagement.AddPageFormCtrl', [
+            '$scope',
+            '$routeParams',
+            '$location',
+            function ($scope, $routeParams, $location) {
+                $scope.templates = [{name: 'Template 1'}, {name: 'TODO: fetch templates via HTTP-call'}];
+
+                $scope.cancel = function () {
+                    $location.path($routeParams.menuItemId + '/edit');
+                };
+
+                $scope.submit = function (page) {
+                    // TODO: save page implementation
+                    console.log('Submit add page form');
+                    console.log(page);
+
+                    // redirect to the active menu item with the new page data as destination
+                };
+            }
+        ]);
+})();

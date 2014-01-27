@@ -40,7 +40,7 @@
         </div>
         <!-- END Tree Component -->
 
-        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.AddPageCtrl">
+        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.AddPageFormCtrl">
             <form role="form">
                 <legend>Create new page</legend>
                 <div class="form-group">
@@ -63,8 +63,8 @@
                             data-placeholder="Search for template...">
                     </select>
                 </div>
-                <button type="submit" class="btn btn-default" ng-click="createPage(newpage)">Create page</button>
-                <button type="submit" class="btn btn-link" ng-click="close()">Cancel</button>
+                <button type="submit" class="btn btn-default" ng-click="submit(newpage)">Create page</button>
+                <button type="submit" class="btn btn-link" ng-click="cancel()">Cancel</button>
             </form>
 
         </div>
