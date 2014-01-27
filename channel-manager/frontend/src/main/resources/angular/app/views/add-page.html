@@ -51,7 +51,7 @@
                     <label for="url">Page URL</label>
                     <div class="input-group">
                         <span class="input-group-addon">www.gogreen.com/</span>
-                        <input type="text" class="form-control" placeholder="" ng-model="newpage.url">
+                        <input type="text" id="url" class="form-control" placeholder="" ng-model="newpage.url">
                     </div>
                 </div>
                 <div class="form-group">
@@ -73,8 +73,6 @@
         <div id="add" class="col-sm-4">
             <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> Add menu item</button>
         </div>
-        <div id="remove" class="col-md-8">
-            <button type="button" class="btn btn-default" ng-click="removeMenuItem(selectedMenuItem)"><i class="fa fa-trash-o"></i> Delete menu item</button>
-        </div>
+        <div id="remove" class="col-md-8">&#160;</div>
     </div>
 </div>

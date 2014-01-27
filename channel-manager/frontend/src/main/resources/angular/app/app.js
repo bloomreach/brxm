@@ -40,9 +40,11 @@
 
         .run([
             '$rootScope',
-            'hippo.channelManager.menuManagement.Container', function ($rootScope, Container) {
-            $rootScope.close = function() {
-                Container.close();
-            };
-        }]);
+            'hippo.channelManager.menuManagement.Container',
+            function ($rootScope, Container) {
+                $rootScope.close = function() {
+                    Container.close();
+                };
+            }
+        ]);
 }());
