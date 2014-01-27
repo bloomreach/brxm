@@ -19,11 +19,11 @@
 
         <!-- START Tree Component -->
         <div class="col-sm-4" id="menu-tree">
-            <div file-tree tree-data="menuTree" on-select="navigateTo(branch)" initial-selection="selectedMenuItemId"></div>
+            <div file-tree tree-data="menuTree" on-select="setSelectedItem(branch)" initial-selection="selectedMenuItemId"></div>
         </div>
         <!-- END Tree Component -->
 
-        <div class="col-sm-8" id="form-panel">
+        <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.EditMenuItemFormCtrl">
             <form role="form">
                 <legend>Edit menu item</legend>
                 <div class="form-group">
@@ -54,7 +54,7 @@
                 <div class="form-group" ng-show="selectedMenuItem.destination == 1">
                     <label for="url">Internal link</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="url">
+                        <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.siteMapItemPath">
                           <span class="input-group-btn">
                             <button class="btn btn-default" type="button"><i class="fa fa-external-link"></i></button>
                           </span>

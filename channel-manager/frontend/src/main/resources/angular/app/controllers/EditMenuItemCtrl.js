@@ -28,36 +28,25 @@
             function ($scope, $routeParams, $location, MenuService, ConfigService) {
                 // scope values
                 $scope.selectedMenuItemId = $routeParams.menuItemId;
-                $scope.menuTree = [{name: 'Placeholder'}];
-                $scope.menuItemDestinations = [{}];
-
-                // methods
-                $scope.navigateTo = function (branch) {
-                    if ($scope.selectedMenuItemId !== branch.id) {
-                        $location.path('/' + branch.id + '/edit');
-                    }
-                };
-
-                $scope.createNewPage = function () {
-                    $location.path('/' + $scope.selectedMenuItemId + '/add-page');
-                };
+                $scope.selectedMenuItem = {};
+                $scope.menuTree = [{}];
 
                 // fetch initial data
                 MenuService.getMenu(ConfigService.menuId).then(function (response) {
                     $scope.menuTree = response.children;
                 });
 
-                // make sure there is a destination property
-                $scope.$watch('selectedMenuItem', function (item) {
-                    if (item && !item.destination) {
-                        if (item.externalLink) {
-                            item.destination = 2;
-                        } else if (item.siteMapItemPath) {
-                            item.destination = 1;
-                        } else {
-                            item.destination = 3;
+                // methods
+                $scope.setSelectedItem = function (branch) {
+                    // set selected menu item so child-controllers can access it
+                    $scope.selectedMenuItem = branch;
+
+                    if (branch && branch.id) {
+                        // redirect if the selected item is different from the current
+                        if ($scope.selectedMenuItemId !== branch.id) {
+                            $location.path('/' + branch.id + '/edit');
                         }
                     }
-                });
+                };
         }]);
 })();

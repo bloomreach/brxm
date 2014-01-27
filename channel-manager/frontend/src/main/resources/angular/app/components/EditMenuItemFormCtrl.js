@@ -13,4 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
+(function () {
+    "use strict";
+
+    angular.module('hippo.channelManager.menuManagement')
+
+        .controller('hippo.channelManager.menuManagement.EditMenuItemFormCtrl', ['$scope', function ($scope) {
+            console.log('EditMenuItemFormCtrl init + scope');
+
+            $scope.menuItemDestinations = [{}];
+
+            // make sure there is a destination property
+            $scope.$watch('selectedMenuItem', function (item) {
+                console.log(item);
+                setDestinationProperty(item);
+            });
+
+            function setDestinationProperty(item) {
+                if (item && !item.destination) {
+                    if (item.externalLink) {
+                        item.destination = 2;
+                    } else if (item.siteMapItemPath) {
+                        item.destination = 1;
+                    } else {
+                        item.destination = 3;
+                    }
+                }
+            }
+
+            $scope.createNewPage = function () {
+                $location.path('/' + $scope.selectedMenuItemId + '/add-page');
+            };
+
+        }]);
+})();
