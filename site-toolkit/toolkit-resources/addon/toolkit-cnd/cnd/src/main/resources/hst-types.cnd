@@ -187,6 +187,7 @@
 
 [hst:workspace] > nt:base orderable
 + hst:containers (hst:containercomponentfolder) = hst:containercomponentfolder
++ hst:sitemenus (hst:sitemenus) = hst:sitemenus
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple

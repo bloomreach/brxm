@@ -111,6 +111,10 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
         if (elems.length == 1) {
             return rootConfigurationsPrefix + elems[0];
         }
+        if (elems.length > 2 && elems[1].equals(HstNodeTypes.NODENAME_HST_WORKSPACE)) {
+            // for workspace the main nodes are directly below the workspace
+            return  rootConfigurationsPrefix + elems[0] + "/" + elems[1] + "/" + elems[2];
+        }
         return rootConfigurationsPrefix + elems[0] + "/" + elems[1];
     }
 
@@ -138,7 +142,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
                 HstNodeTypes.NODENAME_HST_PAGES,
                 HstNodeTypes.NODENAME_HST_COMPONENTS,
                 HstNodeTypes.NODENAME_HST_TEMPLATES,
-                HstNodeTypes.NODENAME_HST_WORKSPACE,
+                HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_CONTAINERS,
                 HstNodeTypes.NODENAME_HST_CATALOG);
 
         List<UUID> cachekey = ccn.getCacheKey();
@@ -207,7 +211,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
 
 
     public CompositeConfigurationNodes getCompositeConfigurationNodes(final String configurationPath,
-                                                                      final String... nodeNames) {
+                                                                      final String... relPaths) {
         final HstNode rootConfigNode = hstNodeLoadingCache.getNode(configurationPath);
         if (rootConfigNode == null) {
             throw new ModelLoadingException("No configuration node found at '"+configurationPath+"'. Cannot load model for it.");
@@ -216,7 +220,7 @@ public class HstConfigurationLoadingCache implements HstEventConsumer {
             throw new ModelLoadingException("Configuration node for '"+configurationPath+"' must be of type '"+
                     HstNodeTypes.NODETYPE_HST_CONFIGURATION+"'");
         }
-        return new CompositeConfigurationNodes(rootConfigNode,nodeNames);
+        return new CompositeConfigurationNodes(rootConfigNode,relPaths);
     }
 
 

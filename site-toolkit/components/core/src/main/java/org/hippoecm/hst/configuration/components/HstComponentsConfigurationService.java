@@ -66,25 +66,34 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
 
         id = ccn.getConfigurationRootNode().getValueProvider().getPath();
 
-        HstNode modifiableContainers = null;
-        final CompositeConfigurationNodes.CompositeConfigurationNode workspace = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_WORKSPACE);
-        if (workspace != null) {
-            modifiableContainers = workspace.getCompositeChildren().get(HstNodeTypes.NODENAME_HST_CONTAINERS);
+        final CompositeConfigurationNodes.CompositeConfigurationNode modifiableContainers = ccn.getCompositeConfigurationNodes().get(
+                HstNodeTypes.NODENAME_HST_WORKSPACE + "/" + HstNodeTypes.NODENAME_HST_CONTAINERS);
+
+        final Map<String, HstNode> containers;
+        if (modifiableContainers != null) {
+            containers = modifiableContainers.getCompositeChildren();
+        } else {
+            containers = Collections.emptyMap();
         }
+
+//        final CompositeConfigurationNodes.CompositeConfigurationNode workspace = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_WORKSPACE);
+//        if (workspace != null) {
+//            modifiableContainers = workspace.getCompositeChildren().get(HstNodeTypes.NODENAME_HST_CONTAINERS);
+//        }
 
         final CompositeConfigurationNodes.CompositeConfigurationNode components = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_COMPONENTS);
 
         final String rootConfigurationPathPrefix = ccn.getConfigurationRootNode().getValueProvider().getPath() + "/";
         if (components != null) {
             log.debug("Initializing the components");
-            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, rootConfigurationPathPrefix, modifiableContainers);
+            init(components, HstNodeTypes.NODENAME_HST_COMPONENTS, rootConfigurationPathPrefix, containers);
         }
 
         final CompositeConfigurationNodes.CompositeConfigurationNode pages = ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_PAGES);
 
         if (pages != null) {
             log.debug("Initializing the pages");
-            init(pages, HstNodeTypes.NODENAME_HST_PAGES, rootConfigurationPathPrefix, modifiableContainers);
+            init(pages, HstNodeTypes.NODENAME_HST_PAGES, rootConfigurationPathPrefix, containers);
         }
 
         // populate all the available containeritems that are part of hst:catalog. These container items do *not* need to be enhanced as they
@@ -207,7 +216,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     private void init(final CompositeConfigurationNodes.CompositeConfigurationNode node,
                       final String rootNodeName,
                       final String rootConfigurationPathPrefix,
-                      final HstNode modifiableContainers) {
+                      final Map<String, HstNode> modifiableContainers) {
 
         for (HstNode child : node.getCompositeChildren().values()) {
             if (isHstComponentType(child)) {

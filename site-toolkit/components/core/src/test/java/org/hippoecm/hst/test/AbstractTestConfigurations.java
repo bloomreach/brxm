@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.test;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.hippoecm.repository.util.JcrUtils;
+
 public class AbstractTestConfigurations extends AbstractSpringTestCase {
 
     @Override
@@ -22,5 +27,24 @@ public class AbstractTestConfigurations extends AbstractSpringTestCase {
         String classXmlFileName = AbstractTestConfigurations.class.getName().replace(".", "/") + ".xml";
         String classXmlFileName2 = AbstractTestConfigurations.class.getName().replace(".", "/") + "-*.xml";
         return new String[] { classXmlFileName, classXmlFileName2 };
+    }
+
+
+    protected void createHstConfigBackup(Session session) throws RepositoryException {
+        if (!session.nodeExists("/hst-backup")) {
+            JcrUtils.copy(session, "/hst:hst", "/hst-backup");
+            session.save();
+        }
+    }
+
+    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
+        if (session.nodeExists("/hst-backup")) {
+            if (session.nodeExists("/hst:hst")) {
+                session.removeItem("/hst:hst");
+            }
+            JcrUtils.copy(session, "/hst-backup", "/hst:hst");
+            session.removeItem("/hst-backup");
+            session.save();
+        }
     }
 }

@@ -181,7 +181,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public HstComponentConfigurationService(final HstNode node,
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
-                                            final HstNode referenceableContainers,
+                                            final Map<String, HstNode> referenceableContainers,
                                             final boolean inherited) {
         this(node, parent, rootNodeName, true, referenceableContainers, inherited, null);
     }
@@ -194,7 +194,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                                             final HstComponentConfiguration parent,
                                             final String rootNodeName,
                                             final boolean traverseDescendants,
-                                            final HstNode referenceableContainers,
+                                            final Map<String, HstNode> referenceableContainers,
                                             final boolean inherited,
                                             final String explicitName) {
 
@@ -347,7 +347,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private HstComponentConfigurationService loadChildComponent(final HstNode child,
                                                                 final String rootNodeName,
-                                                                final HstNode referenceableContainers) {
+                                                                final Map<String, HstNode> referenceableContainers) {
         if (isHstComponentOrReferenceType(child)) {
             if (child.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)) {
                 usedChildReferenceNames.add(StringPool.get(child.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_REFERECENCENAME)));
@@ -388,8 +388,8 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 || HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE.equals(node.getNodeTypeName());
     }
 
-    private HstNode getReferencedContainer(final HstNode child, final HstNode referenceableContainers) {
-        if (referenceableContainers == null) {
+    private HstNode getReferencedContainer(final HstNode child, final Map<String, HstNode> referenceableContainers) {
+        if (referenceableContainers == null || referenceableContainers.isEmpty()) {
             log.warn("Component '{}' is of type '{}' but there are no referenceable containers at '{}'. Component '{}' will be ignored.",
                     new String[]{child.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTREFERENCE,
                             HstNodeTypes.RELPATH_HST_WORKSPACE_CONTAINERS, child.getValueProvider().getPath()});
@@ -403,7 +403,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             reference = reference.substring(1);
         }
         try {
-            final HstNode refNode = referenceableContainers.getNode(reference);
+            final String[] elements = reference.split("/");
+            HstNode refNode = null;
+            final HstNode hstNode = referenceableContainers.get(elements[0]);
+            if (hstNode != null) {
+                if (elements.length == 1) {
+                    refNode = hstNode;
+                } else {
+                    String subPath = reference.substring(elements[0].length() + 1);
+                    refNode = hstNode.getNode(subPath);
+                }
+            }
             if (refNode == null) {
                 log.warn("Component '{}' contains an unresolvable reference '{}'. It should be a location relative to '{}'. " +
                         "Component '{}' will be ignored.",
