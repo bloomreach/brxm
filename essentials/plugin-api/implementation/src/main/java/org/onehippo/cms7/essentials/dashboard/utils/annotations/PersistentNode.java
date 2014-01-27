@@ -96,7 +96,12 @@ public @interface PersistentNode {
             try {
                 if (session.itemExists(parentPath)) {
                     final Node parent = session.getNode(parentPath);
-                    final Node node = parent.addNode(model.getName(), annotation.type());
+                    final String name = model.getName();
+                    if(parent.hasNode(name)){
+                        parent.getNode(name).remove();
+                    }
+
+                    final Node node = parent.addNode(name, annotation.type());
                     final String[] mixins = annotation.mixins();
                     for (String mixin : mixins) {
                         node.addMixin(mixin);

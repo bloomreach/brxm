@@ -57,9 +57,6 @@ public class StatusResource extends BaseResource {
         try {
             final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
-            ProjectSettingsBean b =new ProjectSettingsBean();
-            b.setProjectNamespace("marktpla");
-            context.getConfigService().write(b);
             final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
 
             if (document != null && document.getSetupDone()) {

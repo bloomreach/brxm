@@ -66,16 +66,11 @@ public class JcrPluginConfigService implements PluginConfigService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Document> T read() {
-        final String pluginClass = context.getDescriptor().getPluginClass();
+    public <T extends Document> T read(final Class<T> clazz) {
+        final String pluginClass = clazz.getName();
         final String path = GlobalUtils.getFullConfigPath(pluginClass);
-        try {
-            final Class<T> aClass = (Class<T>) Class.forName(pluginClass);
-            return getConfigDocument(path, aClass);
-        } catch (ClassNotFoundException e) {
-            log.error("Error loading class", e);
-        }
-        return null;
+        return getConfigDocument(path, clazz);
+
     }
 
     private <T extends Document> T getConfigDocument(final String path, final Class<T> clazz) {
