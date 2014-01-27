@@ -39,7 +39,7 @@
             Ext.apply(config, {
                 title: 'Edit Menu',
                 width: 860,
-                height: 550,
+                height: 555,
                 modal: true,
                 layout: 'fit',
                 items: [
