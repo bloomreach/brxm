@@ -79,12 +79,12 @@
 
         </div>
     </div>
-    <div class="row">
+    <div class="row" data-ng-controller="hippo.channelManager.menuManagement.MenuItemActionsCtrl">
         <div id="add" class="col-sm-4">
             <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> Add menu item</button>
         </div>
         <div id="remove" class="col-md-8">
-            <button type="button" class="btn btn-default" ng-show="page == 1" ng-click="deleteItem(selectedItem)"><i class="fa fa-trash-o"></i> Delete menu item</button>
+            <button type="button" class="btn btn-default" ng-click="removeMenuItem(selectedMenuItem)"><i class="fa fa-trash-o"></i> Delete menu item</button>
         </div>
     </div>
 </div>
