@@ -36,6 +36,13 @@
                         redirectTo: '/loader'
                     });
             }
-        ]);
+        ])
 
+        .run([
+            '$rootScope',
+            'hippo.channelManager.menuManagement.Container', function ($rootScope, Container) {
+            $rootScope.close = function() {
+                Container.close();
+            };
+        }]);
 }());

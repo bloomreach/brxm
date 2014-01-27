@@ -19,23 +19,26 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .service('hippo.channelManager.menuManagement.ContainerService', ['$window', function($window) {
-                var iframePanel;
+        .service('hippo.channelManager.menuManagement.Container', [
+            '$window',
+            'hippo.channelManager.menuManagement.IFrameService',
+            function($window, IFrameService) {
+                function closeIFrame() {
+                    var iframePanel;
 
-                if (isInIFrame($window)) {
-                    iframePanel = getParentIFramePanel($window);
-                }
+                    if (IFrameService.isActive) {
+                        iframePanel = IFrameService.getContainer();
 
-                return {
-
-                    close: function() {
                         if (iframePanel) {
                             iframePanel.iframeToHost.publish('close');
                         } else {
                             console.info("Ignoring close, there is no parent iframe");
                         }
                     }
+                }
 
+                return {
+                    close: closeIFrame
                 };
             }
         ])

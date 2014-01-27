@@ -57,7 +57,8 @@
 
             return {
                 isActive: ($window.self !== $window.top),
-                getConfig: getConfig
+                getConfig: getConfig,
+                getContainer: getParentIFramePanel
             };
         }]);
 })();
