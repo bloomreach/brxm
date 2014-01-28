@@ -19,26 +19,26 @@
     angular.module('hippo.channelManager.menuManagement', ['ngRoute', 'hippo.theme'])
 
         .config(['$routeProvider', function($routeProvider) {
-                $routeProvider
-                    .when('/loader', {
-                        controller: 'hippo.channelManager.menuManagement.LoaderCtrl',
-                        templateUrl: 'app/views/loader.html'
-                    })
-                    .when('/add-menu-item', {
-                        controller: 'hippo.channelManager.menuManagement.AddMenuItemCtrl',
-                        templateUrl: 'app/views/add-menu-item.html'
-                    })
-                    .when('/:menuItemId/edit', {
-                        controller: 'hippo.channelManager.menuManagement.EditMenuItemCtrl',
-                        templateUrl: 'app/views/edit-menu-item.html'
-                    })
-                    .when('/:menuItemId/add-page', {
-                        controller: 'hippo.channelManager.menuManagement.AddPageCtrl',
-                        templateUrl: 'app/views/add-page.html'
-                    })
-                    .otherwise({
-                        redirectTo: '/loader'
-                    });
+            $routeProvider
+                .when('/loader', {
+                    controller: 'hippo.channelManager.menuManagement.LoaderCtrl',
+                    templateUrl: 'app/views/loader.html'
+                })
+                .when('/add-menu-item', {
+                    controller: 'hippo.channelManager.menuManagement.AddMenuItemCtrl',
+                    templateUrl: 'app/views/add-menu-item.html'
+                })
+                .when('/:menuItemId/edit', {
+                    controller: 'hippo.channelManager.menuManagement.EditMenuItemCtrl',
+                    templateUrl: 'app/views/edit-menu-item.html'
+                })
+                .when('/:menuItemId/add-page', {
+                    controller: 'hippo.channelManager.menuManagement.AddPageCtrl',
+                    templateUrl: 'app/views/add-page.html'
+                })
+                .otherwise({
+                    redirectTo: '/loader'
+                });
             }
         ])
 

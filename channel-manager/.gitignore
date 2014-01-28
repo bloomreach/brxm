@@ -9,6 +9,7 @@ frontend-api/.project
 frontend-api/target
 frontend/*.iml
 frontend/.classpath
+frontend/.idea
 frontend/.project
 frontend/.settings
 frontend/target
