@@ -702,7 +702,6 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/GistF
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/GistRevision.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/User.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/UserPlan.java -text
-plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/plugin_desc.json -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/RestWorkflow.java -text
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/servlet/JarResourceServlet.java -text
 plugin-dashboard/src/main/resources/log4j.xml -text
