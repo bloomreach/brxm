@@ -90,7 +90,6 @@ public class NodeResource extends BaseResource {
         final Map<String, String> values = payload.getValues();
         final String path = values.remove("path");
         final String name = values.remove("property");
-        final boolean multiple = Boolean.valueOf(values.remove("multiple"));
         Session session = null;
         try {
 

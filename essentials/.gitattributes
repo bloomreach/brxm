@@ -407,7 +407,6 @@ dashboard-plugins/essentials-powerpacks/essentials-powerpack-themes/src/test/res
 dashboard-plugins/essentials-powerpacks/pom.xml -text
 dashboard-plugins/pom.xml -text
 plugin-api/api/pom.xml -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DashboardPlugin.html -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DashboardPlugin.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/DependencyType.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/Panel.java -text
@@ -425,9 +424,7 @@ plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/Displa
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEvent.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/event/PluginEventListener.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallState.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallablePlugin.html -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallablePlugin.java -text
-plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/InstallablePlugin.properties -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/installer/Installer.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/Instruction.java -text
 plugin-api/api/src/main/java/org/onehippo/cms7/essentials/dashboard/instructions/InstructionExecutor.java -text

@@ -190,8 +190,6 @@ public class JcrPersistenceWriter {
     private Node createSubfolders(final String path) throws RepositoryException {
 
         final String[] pathParts = StringUtils.split(path, PATH_SEPARATOR);
-        // exclude document part:
-        final int length = pathParts.length;
         final StringBuilder parent = new StringBuilder();
         final Session session = context.getSession();
         Node parentNode = session.getRootNode();
