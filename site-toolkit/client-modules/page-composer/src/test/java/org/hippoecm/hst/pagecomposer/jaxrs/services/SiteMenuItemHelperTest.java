@@ -58,7 +58,7 @@ public class SiteMenuItemHelperTest {
     }
 
     @Test
-    public void testUpdateExtenalLink() throws RepositoryException {
+    public void testUpdateExternalLink() throws RepositoryException {
 
         final String newExternalLink = "link";
         expect(node.setProperty(SiteMenuItemHelper.HST_EXTERNALLINK, newExternalLink)).andReturn(null);
@@ -76,16 +76,16 @@ public class SiteMenuItemHelperTest {
     @Test
     public void testUpdateSiteMapItemPath() throws RepositoryException {
 
-        final String newSitemmapItemPath = "link";
-        expect(node.setProperty(SiteMenuItemHelper.HST_REFERENCESITEMAPITEM, newSitemmapItemPath)).andReturn(null);
+        final String newSiteMapItemPath = "link";
+        expect(node.setProperty(SiteMenuItemHelper.HST_REFERENCESITEMAPITEM, newSiteMapItemPath)).andReturn(null);
 
         final SiteMenuItemRepresentation currentItem = new SiteMenuItemRepresentation();
         final SiteMenuItemRepresentation newItem = new SiteMenuItemRepresentation();
-        newItem.setSiteMapItemPath(newSitemmapItemPath);
+        newItem.setSiteMapItemPath(newSiteMapItemPath);
 
         replay(mocks);
         siteMenuItemHelper.update(node, currentItem, newItem);
-        assertThat(currentItem.getSiteMapItemPath(), is(newSitemmapItemPath));
+        assertThat(currentItem.getSiteMapItemPath(), is(newSiteMapItemPath));
         verify(mocks);
     }
 

@@ -12,9 +12,8 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- */package org.hippoecm.hst.configuration.internal;
-
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+ */
+package org.hippoecm.hst.configuration.internal;
 
 /**
  * Created with IntelliJ IDEA. User: aschrijvers Date: 1/28/14 Time: 2:16 PM To change this template use File | Settings
