@@ -30,6 +30,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.util.JcrUtils;
@@ -52,12 +53,12 @@ public class DocumentHandle implements SCXMLDataModel {
     private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
     private Map<String, DocumentVariant> documents = null;
-    private WorkflowRequest rejectedRequest = null;
+    private Map<String, WorkflowRequest> requests = null;
     private WorkflowRequest request = null;
 
     private String states;
 
-    private Map<String, Boolean> privilegesMap;
+    private Map<String, Map<String, Boolean>> pathPrivilegesMap;
 
     private Map<String, Serializable> info = new HashMap<>();
 
@@ -96,21 +97,9 @@ public class DocumentHandle implements SCXMLDataModel {
             WorkflowRequest req = new WorkflowRequest(requestNode);
             String requestType = JcrUtils.getStringProperty(requestNode, WorkflowRequest.HIPPOSTDPUBWF_TYPE, "");
             if ("rejected".equals(requestType)) {
-                if (req.getOwner() != null && !req.getOwner().equals(user)) {
+                if (req.getOwner() == null || !req.getOwner().equals(user)) {
                     continue;
                 }
-                if (rejectedRequest != null) {
-                    if (rejectedRequest.getOwner() != null && req.getOwner() != null) {
-                        log.warn("Document at path {} has multiple rejected requests. Request with identifier {} ignored.",
-                                new String[]{handle.getPath(), requestNode.getIdentifier()});
-                        continue;
-                    }
-                    if (rejectedRequest.getOwner() != null) {
-                        continue;
-                    }
-                }
-                // ignore all rejected requests
-                rejectedRequest = req;
             } else {
                 if (request != null) {
                     log.warn("Document at path {} has multiple outstanding requests. Request with identifier {} ignored.",
@@ -119,6 +108,7 @@ public class DocumentHandle implements SCXMLDataModel {
                 }
                 request = req;
             }
+            getRequests(true).put(req.getIdentity(), req);
         }
     }
 
@@ -132,16 +122,39 @@ public class DocumentHandle implements SCXMLDataModel {
         return Collections.emptyMap();
     }
 
+    protected Map<String, WorkflowRequest> getRequests(boolean create) {
+        if (create && requests == null) {
+            requests = new HashMap<>();
+        }
+        if (requests != null) {
+            return requests;
+        }
+        return Collections.emptyMap();
+    }
+
+    public Map<String, WorkflowRequest> getRequests() {
+        return getRequests(false);
+    }
+
     /**
-     * Checks if specific privileges (e.g. hippo:editor) are allowed for the current user session against the workflow
-     * subject node. <p> Implementation note: previously evaluated privileges are cached within the DocumentHandle
-     * instance </p>
-     *
-     * @param privileges the privileges (, separated) to check permission for
-     * @return true if for the current user session the workflow subject node allows the specified privileges
+     * @return the active Request or null if none
      */
-    public boolean hasPermission(String privileges) {
-        if (privileges == null) {
+    public WorkflowRequest getRequest() {
+        return request;
+    }
+
+    /**
+     * Checks if specific privileges (e.g. hippo:editor) are granted to the current user session against a specific
+     * {@link Document}.
+     * <p> Implementation note: previously evaluated privileges are cached against the Document node its path
+     * within the DocumentHandle instance </p>
+     *
+     * @param document the document to check permission against
+     * @param privileges the privileges (, separated) to check permission for
+     * @return true if the current user session has been granted all of the specified privileges for the document node
+     */
+    public boolean isGranted(Document document, String privileges) {
+        if (privileges == null || document == null || document.getIdentity() == null) {
             return false;
         }
 
@@ -150,44 +163,40 @@ public class DocumentHandle implements SCXMLDataModel {
             return false;
         }
 
-        if (privilegesMap == null) {
-            privilegesMap = new HashMap<>();
+        if (pathPrivilegesMap == null) {
+            pathPrivilegesMap = new HashMap<>();
         }
-        for (String priv : privs) {
-            Boolean hasPrivilege = privilegesMap.get(priv);
-            if (hasPrivilege == null) {
-                hasPrivilege = Boolean.FALSE;
-                try {
-                    final Session userSession = context.getUserSession();
-                    Node userHandle = userSession.getNodeByIdentifier(handle.getIdentifier());
-                    for (Node child : new NodeIterable(userHandle.getNodes())) {
-                        if (userSession.hasPermission(child.getPath(), priv)) {
-                            hasPrivilege = Boolean.TRUE;
-                            break;
-                        }
-                    }
-                } catch (AccessControlException e) {
-                } catch (AccessDeniedException e) {
-                } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
-                } catch (RepositoryException e) {
+        final Session userSession = context.getUserSession();
+        try {
+            Node userDocumentNode = userSession.getNodeByIdentifier(document.getIdentity());
+            String userDocumentPath = userDocumentNode.getPath();
+            for (String priv : privs) {
+                Map<String, Boolean> privilegesMap = pathPrivilegesMap.get(userDocumentPath);
+                if (privilegesMap == null) {
+                    privilegesMap = new HashMap<>();
+                    pathPrivilegesMap.put(userDocumentPath, privilegesMap);
                 }
-                this.privilegesMap.put(priv, hasPrivilege);
+                Boolean hasPrivilege = privilegesMap.get(priv);
+                if (hasPrivilege == null) {
+                    hasPrivilege = Boolean.FALSE;
+                    try {
+                        hasPrivilege = Boolean.valueOf(userSession.hasPermission(userDocumentPath, priv));
+                    } catch (AccessControlException e) {
+                    } catch (AccessDeniedException e) {
+                    } catch (IllegalArgumentException e) { // the underlying repository does not recognized the privileges requested.
+                    } catch (RepositoryException e) {
+                    }
+                    privilegesMap.put(priv, hasPrivilege);
+                }
+                if (!hasPrivilege) {
+                    return false;
+                }
             }
-            if (!hasPrivilege) {
-                return false;
-            }
+            return true;
         }
-        return true;
-    }
-
-    /**
-     * Script supporting shortened version of {@link #hasPermission(String)}
-     *
-     * @param privileges the privileges (, separated) to check permission for
-     * @return true if for the current user session the current workflow subject node allows the specified privileges
-     */
-    public boolean pm(String privileges) {
-        return hasPermission(privileges);
+        catch (RepositoryException e) {
+            return false;
+        }
     }
 
     /**
@@ -196,16 +205,6 @@ public class DocumentHandle implements SCXMLDataModel {
      */
     public DocumentWorkflow.SupportedFeatures getSupportedFeatures() {
         return supportedFeatures;
-    }
-
-    /**
-     * Script supporting shortened version of {@link #getSupportedFeatures()}
-     *
-     * @return configured SupportedFeatures or {@link org.onehippo.repository.documentworkflow.DocumentWorkflow.SupportedFeatures#all}
-     * by default
-     */
-    public DocumentWorkflow.SupportedFeatures getSf() {
-        return getSupportedFeatures();
     }
 
     public WorkflowContext getWorkflowContext() {
@@ -234,50 +233,8 @@ public class DocumentHandle implements SCXMLDataModel {
         return states;
     }
 
-    /**
-     * Script supporting shortened version of {@link #getStates}
-     *
-     * @return concatenation of: "d" if Draft variant exists, "u" if Unpublished variant exists, "p" if Published
-     * variant exists. Never returns null
-     */
-    public String getS() {
-        return getStates();
-    }
-
     public String getUser() {
         return user;
-    }
-
-    /**
-     * @return the active Request or null if none
-     */
-    public WorkflowRequest getRequest() {
-        return request;
-    }
-
-    /**
-     * Script supporting shortened version of {@link #getRequest}
-     *
-     * @return the active Request or null if none
-     */
-    public WorkflowRequest getR() {
-        return getRequest();
-    }
-
-    /**
-     * @return the rejected Request which is subject of this workflow or null if none
-     */
-    public WorkflowRequest getRejectedRequest() {
-        return rejectedRequest;
-    }
-
-    /**
-     * Script supporting shortened version of {@link #getRejectedRequest}
-     *
-     * @return the rejected Request which is subject of this workflow or null if none
-     */
-    public WorkflowRequest getRr() {
-        return getRejectedRequest();
     }
 
     public void putDocumentVariant(DocumentVariant variant) throws RepositoryException {
@@ -297,13 +254,6 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     /**
-     * @return Draft variant if it exists or null otherwise
-     */
-    public DocumentVariant getD() {
-        return getDraft();
-    }
-
-    /**
      * @return Unpublished variant if it exists or null otherwise
      */
     public DocumentVariant getUnpublished() {
@@ -311,24 +261,10 @@ public class DocumentHandle implements SCXMLDataModel {
     }
 
     /**
-     * @return Unpublished variant if it exists or null otherwise
-     */
-    public DocumentVariant getU() {
-        return getUnpublished();
-    }
-
-    /**
      * @return Published variant if it exists or null otherwise
      */
     public DocumentVariant getPublished() {
         return getDocuments(false).get(DocumentVariant.PUBLISHED);
-    }
-
-    /**
-     * @return Published variant if it exists or null otherwise
-     */
-    public DocumentVariant getP() {
-        return getPublished();
     }
 
     public Map<String, Serializable> getInfo() {

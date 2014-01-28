@@ -76,7 +76,8 @@ public class DocumentHandleTest {
         assertNull(dm.getDraft());
         assertEquals(publishedVariant, dm.getPublished().getNode());
         assertEquals(unpublishedVariant, dm.getUnpublished().getNode());
-        assertEquals(rejectedRequest, dm.getRejectedRequest().getNode());
+        assertEquals(publishRequest, dm.getRequest().getNode());
+        assertEquals(2, dm.getRequests().size());
 
 
         // add draft
@@ -85,26 +86,7 @@ public class DocumentHandleTest {
 
         assertEquals("dup", dm.getStates());
         assertNotNull(dm.getDraft());
-
-/*
-        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
-        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
-        MockNode frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
-        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
-
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), frozenNode);
-        assertEquals(versionNode, dm.getVersion());
-        assertEquals(draftVariant,dm.getDraft().getNode());
-        assertEquals(unpublishedVariant, dm.getUnpublished().getNode());
-        assertEquals(publishedVariant,dm.getPublished().getNode());
-
-        unpublishedVariant.remove();
-        dm = new DocumentHandle(new MockWorkflowContext("testuser"), frozenNode);
-        assertEquals(versionNode, dm.getVersion());
-        assertNull(dm.getDraft());
-        assertNull(dm.getUnpublished());
-        assertNull(dm.getPublished());
-*/
+        assertEquals(draftVariant, dm.getDraft().getNode());
     }
 
     @Test
@@ -128,19 +110,6 @@ public class DocumentHandleTest {
         putWorkflowConfig(workflowConfig, "workflow.supportedFeatures", "undefined");
         dm = new DocumentHandle(context, handleNode);
         assertEquals(DocumentWorkflow.SupportedFeatures.all, dm.getSupportedFeatures());
-
-        /*
-        MockNode unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
-        MockVersion versionNode = new MockVersion("1.0", JcrConstants.NT_VERSION);
-        ((MockNode)unpublishedVariant.getParent()).addNode(versionNode);
-        MockNode frozenNode = versionNode.addMockNode(JcrConstants.JCR_FROZEN_NODE, JcrConstants.NT_FROZEN_NODE);
-        frozenNode.setProperty(JcrConstants.JCR_FROZEN_UUID, unpublishedVariant.getIdentifier());
-
-        dm = new DocumentHandle(context, frozenNode);
-        assertEquals(DocumentWorkflow.SupportedFeatures.version, dm.getSupportedFeatures());
-        assertEquals(versionNode, dm.getVersion());
-        assertEquals("unpublished", dm.getSubjectState());
-        */
     }
 
     @Test
@@ -153,28 +122,28 @@ public class DocumentHandleTest {
         DocumentHandle dm = new DocumentHandle(context, handleNode);
 
         // testing with only hippo:admin being denied
-        assertTrue(dm.hasPermission("foo"));
-        assertTrue(dm.hasPermission("foo,bar"));
-        assertTrue(dm.hasPermission("bar,foo"));
-        assertFalse(dm.hasPermission("hippo:admin"));
+        assertTrue(dm.isGranted(dm.getDraft(), "foo"));
+        assertTrue(dm.isGranted(dm.getDraft(), "foo,bar"));
+        assertTrue(dm.isGranted(dm.getDraft(), "bar,foo"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:admin"));
 
         session.setPermissions("/test/test", "hippo:author,hippo:editor", true);
         dm = new DocumentHandle(context, handleNode);
 
         // testing with only hippo:author,hippo:editor being allowed
-        assertFalse(dm.hasPermission("foo"));
-        assertFalse(dm.hasPermission("foo,bar"));
-        assertFalse(dm.hasPermission("bar,foo"));
-        assertFalse(dm.hasPermission("hippo:author,foo"));
-        assertFalse(dm.hasPermission("hippo:author,hippo:editor,foo"));
-        assertTrue(dm.hasPermission("hippo:author"));
-        assertTrue(dm.hasPermission("hippo:editor"));
-        assertTrue(dm.hasPermission("hippo:author,hippo:editor"));
-        assertTrue(dm.hasPermission("hippo:editor,hippo:author"));
-        assertFalse(dm.hasPermission("hippo:admin"));
-        assertFalse(dm.hasPermission("hippo:admin,foo"));
-        assertFalse(dm.hasPermission("hippo:admin,hippo:author"));
-        assertFalse(dm.hasPermission("hippo:admin,hippo:author,hippo:editor"));
-        assertFalse(dm.hasPermission("hippo:author,hippo:editor,hippo:admin"));
+        assertFalse(dm.isGranted(dm.getDraft(), "foo"));
+        assertFalse(dm.isGranted(dm.getDraft(), "foo,bar"));
+        assertFalse(dm.isGranted(dm.getDraft(), "bar,foo"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:author,foo"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:author,hippo:editor,foo"));
+        assertTrue(dm.isGranted(dm.getDraft(), "hippo:author"));
+        assertTrue(dm.isGranted(dm.getDraft(), "hippo:editor"));
+        assertTrue(dm.isGranted(dm.getDraft(), "hippo:author,hippo:editor"));
+        assertTrue(dm.isGranted(dm.getDraft(), "hippo:editor,hippo:author"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:admin"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:admin,foo"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:admin,hippo:author"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:admin,hippo:author,hippo:editor"));
+        assertFalse(dm.isGranted(dm.getDraft(), "hippo:author,hippo:editor,hippo:admin"));
     }
 }

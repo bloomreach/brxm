@@ -32,13 +32,20 @@ public class DeleteRequestTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
+    private String identity;
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(final String identity) {
+        this.identity = identity;
+    }
+
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         DocumentHandle dm = getDocumentHandle();
-        WorkflowRequest request = dm.getRejectedRequest();
-        if (request == null) {
-            request = dm.getRequest();
-        }
+        WorkflowRequest request = dm.getRequests().get(getIdentity());
         if (request != null) {
             Node requestNode = request.getCheckedOutNode();
             JcrUtils.ensureIsCheckedOut(requestNode.getParent());

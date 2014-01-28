@@ -16,6 +16,8 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
+import org.apache.commons.scxml2.SCXMLExpressionException;
+import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.DeleteRequestTask;
 
 /**
@@ -25,8 +27,25 @@ public class DeleteRequestAction extends AbstractDocumentTaskAction<DeleteReques
 
     private static final long serialVersionUID = 1L;
 
+    public void SetIdentity(String identity) {
+        setParameter("identityExpr", identity);
+    }
+
+    public String getIdentity() {
+        return getParameter("identityExpr");
+    }
+
     @Override
     protected DeleteRequestTask createWorkflowTask() {
         return new DeleteRequestTask();
+    }
+
+    @Override
+    protected void initTask(DeleteRequestTask task) throws ModelException, SCXMLExpressionException {
+        super.initTask(task);
+        String identity = getIdentity();
+        if (identity != null) {
+            task.setIdentity((String) eval(getIdentity()));
+        }
     }
 }
