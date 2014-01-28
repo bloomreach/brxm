@@ -16,9 +16,19 @@ public class PluginRestful implements Restful {
     private VendorRestful vendor;
     private List<DependencyRestful> dependencies;
     private String title;
+    private String name;
     private String introduction;
     private String pluginLink;
     private String pluginClass;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     private boolean installed;
     private boolean needsInstallation;
 

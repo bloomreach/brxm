@@ -39,12 +39,10 @@
                         method: 'GET',
                         url: $rootScope.REST.plugins
                     }).success(function (data) {
-                        var content = data.files['gistfile1.json'].content;
-                        $scope.plugins = JSON.parse(content).items;
-
-
-                        // TODO enable once marketplace is in place
-                        //$scope.plugins = data.items;
+                        console.log("===================");
+                        console.log(data);
+                        console.log("===================");
+                        $scope.plugins = data.items;
                     });
 
                 };

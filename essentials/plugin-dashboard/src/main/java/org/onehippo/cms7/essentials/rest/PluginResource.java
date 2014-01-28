@@ -16,6 +16,8 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
@@ -31,9 +33,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
-import org.onehippo.cms7.essentials.dashboard.installer.Installer;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
@@ -53,8 +57,8 @@ import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 
 /**
- *
  * Rest resource which provides information about plugins: e.g. installed or available plugins
+ *
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
@@ -68,6 +72,7 @@ public class PluginResource extends BaseResource {
 
     /**
      * Fetches a (remote) service and checks for available Hippo Essentials plugins
+     *
      * @param servletContext servlet context
      * @return JSON file of available plugins
      */
@@ -79,20 +84,26 @@ public class PluginResource extends BaseResource {
         final RestClient client = new RestClient("https://api.github.com/gists/8453217");
 
         final String pluginList = client.getPluginList();
-        final List<PluginRestful> items = parseGist(pluginList);
-        if(items==null || items.size() ==0){
-
+        List<PluginRestful> items = parseGist(pluginList);
+        // GIST may not be available (too many requests)
+        if (items == null || items.size() == 0) {
+            final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
+            final String json = GlobalUtils.readStreamAsText(stream);
+            items = parseGist(json);
         }
 
-
         for (PluginRestful item : items) {
+            plugins.add(item);
             if (item.isNeedsInstallation()) {
                 final String pluginClass = item.getPluginClass();
                 if (pluginClass != null) {
                     try {
-                        final Class<?> clazz = Class.forName(pluginClass);
-                        final Installer plugin = (Installer) GlobalUtils.newInstance(clazz);
-                        final InstallState installState = plugin.getInstallState();
+                        @SuppressWarnings("unchecked")
+                        final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
+                        final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
+                        final org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin dummy = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                        final EssentialsPlugin instance = constructor.newInstance(dummy, new DashboardPluginContext(GlobalUtils.createSession(), dummy));
+                        final InstallState installState = instance.getInstallState();
                         if (installState == InstallState.INSTALLED_AND_RESTARTED) {
                             item.setNeedsInstallation(false);
                         }
@@ -161,7 +172,6 @@ public class PluginResource extends BaseResource {
         }
         return plugins;
     }
-
 
 
     @GET
