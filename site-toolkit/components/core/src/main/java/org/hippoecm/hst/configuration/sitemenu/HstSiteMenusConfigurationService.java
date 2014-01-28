@@ -39,8 +39,7 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
         Map<String, HstSiteMenuConfiguration> menus = new HashMap<>();
         for(HstNode siteMenu: siteMenusNode.getCompositeChildren().values()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMENU.equals(siteMenu.getNodeTypeName())) {
-                boolean workspaceConfiguration = siteMenu.getParent().getParent().getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE);
-                HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu, workspaceConfiguration);
+                HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu);
                 HstSiteMenuConfiguration old = menus.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
                 if(old != null) {
                     log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");

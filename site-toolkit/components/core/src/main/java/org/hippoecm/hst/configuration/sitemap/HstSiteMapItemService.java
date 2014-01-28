@@ -152,11 +152,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
         String nodePath = StringPool.get(node.getValueProvider().getPath());
 
         canonicalIdentifier = node.getValueProvider().getIdentifier();
-        if (this.parentItem == null) {
-            workspaceConfiguration = node.getParent().getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE);
-        } else {
-            workspaceConfiguration = this.parentItem.isWorkspaceConfiguration();
-        }
+        workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(node);
 
         this.qualifiedId = nodePath;
 

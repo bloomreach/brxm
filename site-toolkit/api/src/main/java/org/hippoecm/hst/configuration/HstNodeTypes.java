@@ -31,6 +31,7 @@ public interface HstNodeTypes {
     static final String NODETYPE_HST_CONTAINERCOMPONENT = "hst:containercomponent";
     static final String NODETYPE_HST_CONTAINERITEMCOMPONENT = "hst:containeritemcomponent";
     static final String NODETYPE_HST_CATALOG = "hst:catalog";
+    static final String NODETYPE_HST_WORKSPACE = "hst:workspace";
     static final String NODETYPE_HST_CONTAINERITEM_PACKAGE = "hst:containeritempackage";
     static final String NODETYPE_HST_SITEMENUS = "hst:sitemenus";
     static final String NODETYPE_HST_SITEMENU = "hst:sitemenu";

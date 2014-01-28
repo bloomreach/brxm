@@ -22,7 +22,6 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -99,7 +98,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
             assertEquals(1, unitTestSubProjectMenus.size());
             final HstSiteMenuConfiguration mainUnitTestSubProjectMenu = unitTestSubProjectMenus.values().iterator().next();
             // sub project inherits main menu
-            assertFalse(((CanonicalInfo)mainUnitTestSubProjectMenu).isWorkspaceConfiguration());
+            assertFalse(((CanonicalInfo) mainUnitTestSubProjectMenu).isWorkspaceConfiguration());
             mainUnitTestSubProjectMenuIdentifier = ((CanonicalInfo)mainUnitTestSubProjectMenu).getCanonicalIdentifier();
             assertFalse(mainUnitTestProjectMenuIdentifier.equals(mainUnitTestSubProjectMenuIdentifier));
             final Node unitTestSubProjectJcrNode = session.getNodeByIdentifier(mainUnitTestSubProjectMenuIdentifier);
@@ -122,7 +121,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
             assertEquals(1, unitTestProjectMenus.size());
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
             // menu is now inherited
-            assertFalse(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
+            assertFalse(((CanonicalInfo) mainUnitTestProjectMenu).isWorkspaceConfiguration());
             final String newMainUnitTestProjectMenuIdentifier = ((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier();
             assertFalse(mainUnitTestProjectMenuIdentifier.equals(newMainUnitTestProjectMenuIdentifier));
             // now the unittestproject inherits the menu from common config
@@ -140,7 +139,6 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
                 "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemenus/main");
 
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
-        System.out.println(ArrayUtils.toString(pathsToBeChanged));
         session.save();
         invalidator.eventPaths(pathsToBeChanged);
 
@@ -150,7 +148,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
-            assertTrue(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
+            assertTrue(((CanonicalInfo) mainUnitTestProjectMenu).isWorkspaceConfiguration());
             final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier());
             assertTrue(unitTestMenuJcrNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemenus"));
 
@@ -180,7 +178,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
 
             {
                 final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.get("main");
-                assertFalse(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
+                assertFalse(((CanonicalInfo) mainUnitTestProjectMenu).isWorkspaceConfiguration());
                 final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier());
                 assertTrue(unitTestMenuJcrNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:sitemenus"));
 
@@ -194,7 +192,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
 
             {
                 final HstSiteMenuConfiguration footerUnitTestProjectMenu = unitTestProjectMenus.get("footer");
-                assertTrue(((CanonicalInfo)footerUnitTestProjectMenu).isWorkspaceConfiguration());
+                assertTrue(((CanonicalInfo) footerUnitTestProjectMenu).isWorkspaceConfiguration());
                 final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)footerUnitTestProjectMenu).getCanonicalIdentifier());
                 assertTrue(unitTestMenuJcrNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemenus"));
 
@@ -224,7 +222,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
-            assertFalse(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
+            assertFalse(((CanonicalInfo) mainUnitTestProjectMenu).isWorkspaceConfiguration());
             final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier());
             assertTrue(unitTestMenuJcrNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:sitemenus"));
 
@@ -274,7 +272,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
-            assertTrue(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
+            assertTrue(((CanonicalInfo) mainUnitTestProjectMenu).isWorkspaceConfiguration());
             final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier());
             assertTrue(unitTestMenuJcrNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemenus"));
 
@@ -299,7 +297,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
             final HstSite hstSite = mount.getMount().getHstSite();
             final Map<String,HstSiteMenuConfiguration> unitTestProjectMenus = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations();
             final HstSiteMenuConfiguration mainUnitTestProjectMenu = unitTestProjectMenus.values().iterator().next();
-            assertTrue(((CanonicalInfo)mainUnitTestProjectMenu).isWorkspaceConfiguration());
+            assertTrue(((CanonicalInfo) mainUnitTestProjectMenu).isWorkspaceConfiguration());
             final Node unitTestMenuJcrNode = session.getNodeByIdentifier(((CanonicalInfo)mainUnitTestProjectMenu).getCanonicalIdentifier());
             assertTrue(unitTestMenuJcrNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemenus"));
 

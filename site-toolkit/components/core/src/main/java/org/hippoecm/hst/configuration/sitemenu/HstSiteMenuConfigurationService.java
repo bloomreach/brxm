@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.ConfigurationUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
@@ -31,11 +33,11 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
 
-    public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu, boolean workspaceConfiguration) {
+    public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu) {
         this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
         this.name = StringPool.get(siteMenu.getValueProvider().getName());
         this.canonicalIdentifier = siteMenu.getValueProvider().getIdentifier();
-        this.workspaceConfiguration = workspaceConfiguration;
+        this.workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMenu);
         for(HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
             siteMenuItems.add(siteMenuItemConfiguration);

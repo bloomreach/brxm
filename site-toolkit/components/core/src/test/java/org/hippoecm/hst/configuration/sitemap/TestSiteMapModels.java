@@ -15,10 +15,12 @@
  */
 package org.hippoecm.hst.configuration.sitemap;
 
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.EventPathsInvalidator;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
@@ -26,9 +28,15 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TestSiteMapModels extends AbstractTestConfigurations {
 
@@ -62,10 +70,177 @@ public class TestSiteMapModels extends AbstractTestConfigurations {
 
     @Test
     public void test_sitemap_inheritance_without_workspace_sitemap() throws Exception {
-        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/subsite");
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
         final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+        assertTrue(siteMap instanceof CanonicalInfo);
 
-        //hstSite.getSiteMap()
+        CanonicalInfo siteMapCanonicalInfo = (CanonicalInfo)siteMap;
+        assertFalse(siteMapCanonicalInfo.isWorkspaceConfiguration());
+        final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
 
+        for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
+            CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
+            assertFalse(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
+            final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
+            assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:sitemap"));
+        }
+
+    }
+
+    @Test
+    public void test_sitemap_completely_in_workspace() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap");
+        session.save();
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+
+        CanonicalInfo siteMapCanonicalInfo = (CanonicalInfo)siteMap;
+        assertTrue(siteMapCanonicalInfo.isWorkspaceConfiguration());
+        final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+
+        for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
+            CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
+            assertTrue(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
+            final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
+            assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+        }
+    }
+
+    @Test
+    public void test_sitemap_partially_in_workspace() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
+        session.save();
+
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+
+        CanonicalInfo siteMapCanonicalInfo = (CanonicalInfo)siteMap;
+        // since not the entire sitemap is in workspace, below gives false
+        assertFalse(siteMapCanonicalInfo.isWorkspaceConfiguration());
+
+        final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
+
+        HstSiteMapItem home = siteMap.getSiteMapItem("home");
+        CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
+        assertTrue(homeCanonicalInfo.isWorkspaceConfiguration());
+        final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
+        assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+
+        for (HstSiteMapItem hstSiteMapItem : siteMap.getSiteMapItems()) {
+            CanonicalInfo siteMapItemCanonicalInfo = (CanonicalInfo)hstSiteMapItem;
+            if (hstSiteMapItem.getValue().equals("home")) {
+                assertTrue(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
+                final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
+                assertTrue(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+            } else {
+                assertFalse(siteMapItemCanonicalInfo.isWorkspaceConfiguration());
+                final Node siteMapItemNode = session.getNodeByIdentifier(siteMapItemCanonicalInfo.getCanonicalIdentifier());
+                assertFalse(siteMapItemNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
+            }
+        }
+    }
+
+    @Test
+    public void test_sitemap_duplicate_node_in_workspace_is_skipped() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
+
+        session.save();
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+
+        CanonicalInfo siteMapCanonicalInfo = (CanonicalInfo)siteMap;
+        // since not the entire sitemap is in workspace, below gives false
+        assertFalse(siteMapCanonicalInfo.isWorkspaceConfiguration());
+
+        final Node siteMapNode = session.getNodeByIdentifier(siteMapCanonicalInfo.getCanonicalIdentifier());
+        assertTrue(siteMapNode.getPath().equals(hstSite.getConfigurationPath()+"/hst:sitemap"));
+
+        HstSiteMapItem home = siteMap.getSiteMapItem("home");
+        CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
+        // since 'home' item is duplicate, it will be taken from 'unittestproject/hst:sitemap' and not from
+        // 'unittestproject/hst:workspace/hst:sitemap'
+        assertFalse(homeCanonicalInfo.isWorkspaceConfiguration());
+        final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
+        assertFalse(homeNode.getPath().startsWith(hstSite.getConfigurationPath() + "/hst:workspace/hst:sitemap"));
+    }
+
+    @Test
+    public void test_sitemap_node_in_workspace_and_inherited_config() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
+        session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:sitemap");
+
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
+                "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/news");
+        session.save();
+
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+
+        {
+            HstSiteMapItem home = siteMap.getSiteMapItem("home");
+            CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
+            assertTrue(homeCanonicalInfo.isWorkspaceConfiguration());
+            final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
+            assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+        }
+
+        {
+            HstSiteMapItem news = siteMap.getSiteMapItem("news");
+            CanonicalInfo newsCanonicalInfo = (CanonicalInfo)news;
+            assertFalse(newsCanonicalInfo.isWorkspaceConfiguration());
+            final Node newsNode = session.getNodeByIdentifier(newsCanonicalInfo.getCanonicalIdentifier());
+            assertFalse(newsNode.getPath().startsWith(hstSite.getConfigurationPath()));
+            assertEquals("/hst:hst/hst:configurations/unittestcommon/hst:sitemap/news", newsNode.getPath());
+        }
+    }
+
+    @Test
+    public void test_sitemap_node_in_workspace_same_as_inherited_takes_workspace() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemap");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home");
+        session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:sitemap");
+
+        JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestcommon/hst:sitemap/home");
+        session.save();
+
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+
+        HstSiteMapItem home = siteMap.getSiteMapItem("home");
+        CanonicalInfo homeCanonicalInfo = (CanonicalInfo)home;
+        assertTrue(homeCanonicalInfo.isWorkspaceConfiguration());
+        final Node homeNode = session.getNodeByIdentifier(homeCanonicalInfo.getCanonicalIdentifier());
+        assertTrue(homeNode.getPath().startsWith(hstSite.getConfigurationPath()+"/hst:workspace/hst:sitemap"));
+    }
+
+    @Test
+    public void test_workspace_in_inherited_sitemap_is_ignored() throws Exception {
+        session.getNode("/hst:hst/hst:configurations/unittestcommon").addNode("hst:workspace").addNode("hst:sitemap");
+        session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemap/home",
+                "/hst:hst/hst:configurations/unittestcommon/hst:workspace/hst:sitemap/home");
+        session.save();
+        ResolvedMount mount = hstManager.getVirtualHosts().matchMount("localhost", "", "/");
+        final HstSite hstSite = mount.getMount().getHstSite();
+        final HstSiteMap siteMap = hstSite.getSiteMap();
+        assertNull(siteMap.getSiteMapItem("home"));
     }
 }

@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
@@ -68,7 +69,7 @@ public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
 
         canonicalIdentifier = siteMapNode.getMainConfigNode().getValueProvider().getIdentifier();
 
-        workspaceConfiguration = siteMapNode.getMainConfigNode().getParent().getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        workspaceConfiguration = ConfigurationUtils.isWorkspaceConfig(siteMapNode.getMainConfigNode());
 
         // initialize all sitemap items
         for(HstNode child : siteMapNode.getCompositeChildren().values()) {
