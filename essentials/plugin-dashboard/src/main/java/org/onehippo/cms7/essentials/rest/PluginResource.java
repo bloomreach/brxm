@@ -69,6 +69,7 @@ import com.google.inject.Inject;
 @Path("/plugins/")
 public class PluginResource extends BaseResource {
 
+    public static final int WEEK_OLD = -7;
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
@@ -98,26 +99,42 @@ public class PluginResource extends BaseResource {
 
         }
 
+        final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
         for (PluginRestful item : items) {
             plugins.add(item);
+            final String pluginClass = item.getPluginClass();
+            final boolean hasClass = !Strings.isNullOrEmpty(pluginClass);
+            if (!hasClass) {
+                continue;
+            }
             if (item.isNeedsInstallation()) {
-                final String pluginClass = item.getPluginClass();
-                if (pluginClass != null) {
-                    try {
-                        @SuppressWarnings("unchecked")
-                        final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
-                        final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
-                        final org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin dummy = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
-                        final EssentialsPlugin instance = constructor.newInstance(dummy, new DashboardPluginContext(GlobalUtils.createSession(), dummy));
-                        final InstallState installState = instance.getInstallState();
-                        if (installState == InstallState.INSTALLED_AND_RESTARTED) {
-                            item.setNeedsInstallation(false);
-                        }
-                    } catch (Exception e) {
-                        log.error("Error checking install state", e);
+                try {
+                    @SuppressWarnings("unchecked")
+                    final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
+                    final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
+                    final org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin dummy = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                    final EssentialsPlugin instance = constructor.newInstance(dummy, new DashboardPluginContext(GlobalUtils.createSession(), dummy));
+                    final InstallState installState = instance.getInstallState();
+                    if (installState == InstallState.INSTALLED_AND_RESTARTED) {
+                        item.setNeedsInstallation(false);
                     }
+                } catch (Exception e) {
+                    log.error("Error checking install state", e);
+                }
+
+            }
+            // check if recently installed:
+            // TODO: move to client?
+            final InstallerDocument document = manager.fetchDocument(GlobalUtils.getFullConfigPath(pluginClass), InstallerDocument.class);
+            if (document != null && document.getDateInstalled() != null) {
+                final Calendar dateInstalled = document.getDateInstalled();
+                final Calendar lastWeek = Calendar.getInstance();
+                lastWeek.add(Calendar.DAY_OF_MONTH, WEEK_OLD);
+                if (dateInstalled.after(lastWeek)) {
+                    item.setDateInstalled(dateInstalled);
                 }
             }
+
         }
         return plugins;
     }
@@ -213,14 +230,14 @@ public class PluginResource extends BaseResource {
         final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
         for (PluginRestful plugin : pluginList.getItems()) {
             final String pluginClass = plugin.getPluginClass();
-            if(Strings.isNullOrEmpty(pluginClass)){
+            if (Strings.isNullOrEmpty(pluginClass)) {
                 continue;
             }
             if (pluginClass.equals(className)) {
                 final Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
                 p.setDescription(plugin.getIntroduction());
                 p.setPluginClass(pluginClass);
-                if(checkInstalled(p)){
+                if (checkInstalled(p)) {
                     message.setValue("Plugin was already installed. Please rebuild and restart your application");
                     return message;
                 }

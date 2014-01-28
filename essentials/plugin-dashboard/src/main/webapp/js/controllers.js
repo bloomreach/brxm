@@ -27,6 +27,7 @@
 
                 $scope.allPluginsInstalled = "No additional plugins could be found";
                 $scope.plugins = [];
+                $scope.pluginNeedsInstall = [];
                 $scope.selectedPlugin = null;
                 $scope.tabs = [
                     {name: "Installed Plugins", link: "/plugins"},
@@ -51,14 +52,17 @@
                 };
 
 
-                //plugin list
+                //fetch plugin list
                 $scope.init = function () {
-                    $http({
-                        method: 'GET',
-                        url: $rootScope.REST.plugins
-                    }).success(function (data) {
-
+                    $http.get($rootScope.REST.plugins).success(function (data) {
                         $scope.plugins = data.items;
+                        $scope.pluginNeedsInstall = [];
+                        for (var i = 0; i < data.items.length; i++) {
+                            var obj = data.items[i];
+                            if(obj.needsInstallation){
+                                $scope.pluginNeedsInstall.push(obj);
+                            }
+                        }
                     });
 
                 };
@@ -83,9 +87,22 @@
          // ON LOAD CONTROLLER
          //############################################
          */
-            .controller('homeCtrl', function ($scope, $sce, $log) {
+            .controller('homeCtrl', function ($scope, $http, $rootScope) {
+                $scope.plugins = [];
                 $scope.init = function () {
-                    $log.info("...Essentials loaded...");
+                    $http.get($rootScope.REST.plugins).success(function (data) {
+                        $scope.plugins =  [];
+                        var items = data.items;
+                        for (var i = 0; i < items.length; i++) {
+                            var plugin = items[i];
+
+                            if(plugin.dateInstalled){
+                                $scope.plugins.push(plugin);
+                            }
+
+                        }
+                    });
+
                 };
                 $scope.init();
 
