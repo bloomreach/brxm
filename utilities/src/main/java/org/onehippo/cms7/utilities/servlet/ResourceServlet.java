@@ -212,6 +212,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpeg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.swf"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.woff"));
     }
     
     private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<String, String>();
@@ -224,6 +225,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_MIME_TYPES.put(".jpg", "image/jpeg");
         DEFAULT_MIME_TYPES.put(".jpeg", "image/jpeg");
         DEFAULT_MIME_TYPES.put(".swf", "application/x-shockwave-flash");
+        DEFAULT_MIME_TYPES.put(".woff", "application/font-woff");
     }
     
     private static final Set<Pattern> DEFAULT_COMPRESSED_MIME_TYPES = new HashSet<Pattern>();
