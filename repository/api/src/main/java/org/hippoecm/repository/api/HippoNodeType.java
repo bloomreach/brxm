@@ -350,6 +350,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_SEQUENCE = "hippo:sequence";
 
+    public static final String HIPPOSYS_SUBTYPE = "hipposys:subtype";
+
     public static final String HIPPO_SUPERTYPE = "hipposysedit:supertype";
 
     public static final String HIPPO_TEMPLATE = "hipposysedit:template";

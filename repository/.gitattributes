@@ -523,6 +523,7 @@ workflow/src/main/resources/gallerytemplate-images.xml -text svneol=unset#text/p
 workflow/src/main/resources/hippogallery.cnd svneol=native#text/plain
 workflow/src/main/resources/hipposcxml.cnd -text
 workflow/src/main/resources/hippostdpubwf.cnd -text
+workflow/src/main/resources/reviewed-actions-workflow.scxml -text
 workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/scxml-definitions.xml svneol=native#text/plain
@@ -534,6 +535,5 @@ workflow/src/test/java/org/onehippo/repository/scxml/ActionAndResultActionTest.j
 workflow/src/test/java/org/onehippo/repository/scxml/RepositorySCXMLRegistryTest.java -text
 workflow/src/test/java/org/onehippo/repository/scxml/SCXMLStrictErrorReporterTest.java -text
 workflow/src/test/resources/log4j-filters.txt -text
-workflow/src/test/resources/org/onehippo/repository/handleworkflow/test-document-workflow.scxml -text
 workflow/src/test/resources/repository-test.cnd -text
 workflow/src/test/resources/reviewedaction-test.cnd -text

@@ -65,7 +65,7 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
     }
 
     public void setSetHolder(String setHolder) {
-        getParameter("setHolder", setHolder);
+        setParameter("setHolder", setHolder);
     }
 
     @Override

@@ -107,6 +107,10 @@ public class ConfigVariantTask extends AbstractDocumentTask {
             variant.setModified(dm.getUser());
         }
 
+        if (isSetHolder()) {
+            variant.setHolder(dm.getUser());
+        }
+
         variant.setAvailability(getAvailabilities() != null ? StringUtils.split(getAvailabilities(), "\t\r\n, ") : null);
 
         return null;

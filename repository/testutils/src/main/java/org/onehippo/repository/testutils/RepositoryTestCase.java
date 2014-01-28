@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -304,6 +305,37 @@ public abstract class RepositoryTestCase {
                 }
             }
         }
+    }
+
+    protected static String[] mount(String path, String[] content) {
+        String[] result = new String[content.length];
+        for (int i = 0; i < content.length; i++) {
+            String value = content[i];
+            if (value.startsWith("/")) {
+                result[i] = path + value;
+            } else {
+                result[i] = value;
+            }
+        }
+        return result;
+    }
+
+    protected static String[] instantiate(String[] content, Map<String, String> parameters) {
+        String[] result = new String[content.length];
+        for (int i = 0; i < content.length; i++) {
+            String value = content[i];
+            while (value.contains("${")) {
+                String parameter = value.substring(value.indexOf('{') + 1, value.indexOf('}'));
+                if (parameters.containsKey(parameter)) {
+                    value = value.substring(0, value.indexOf('$')) + parameters.get(parameter)
+                            + value.substring(value.indexOf('}') + 1);
+                } else {
+                    throw new IllegalArgumentException("parameters does not contain variable " + parameter);
+                }
+            }
+            result[i] = value;
+        }
+        return result;
     }
 
     protected Node traverse(Session session, String path) throws RepositoryException {

@@ -38,12 +38,8 @@ class WorkflowDefinition {
 
     private final Node node;
 
-    WorkflowDefinition(final Node variantWorkflowNode, Node handleWorkflowNode) {
-        if (handleWorkflowNode != null) {
-            this.node = handleWorkflowNode;
-        } else {
-            this.node = variantWorkflowNode;
-        }
+    WorkflowDefinition(Node workflowNode) {
+        this.node = workflowNode;
     }
 
     Class<? extends Workflow> getWorkflowClass() throws RepositoryException {

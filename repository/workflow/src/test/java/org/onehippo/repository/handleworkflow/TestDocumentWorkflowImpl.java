@@ -107,7 +107,7 @@ public class TestDocumentWorkflowImpl {
     }
 
     protected static String loadTestSCXML() throws Exception {
-        return IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("test-document-workflow.scxml"));
+        return IOUtils.toString(TestDocumentWorkflowImpl.class.getResourceAsStream("/reviewed-actions-workflow.scxml"));
     }
 
 /*

@@ -130,19 +130,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
         try {
             log.debug("Looking for workflow in category {} for node {}", category, item.getPath());
 
-            Node variant = item;
-            if (item.isNodeType(HippoNodeType.NT_HANDLE)) {
-                if (!item.hasNode(item.getName())) {
-                    log.error("No child node exists for handle {}", item.getPath());
-                    return null;
-                }
-                variant = item.getNode(item.getName());
-            }
-
             Node node = JcrUtils.getNodeIfExists(rootSession.getNodeByIdentifier(configuration), category);
             if (node != null) {
-                Node variantWorkflowNode = null;
-                Node handleWorkflowNode = null;
                 for (Node workflowNode : new NodeIterable(node.getNodes())) {
                     if (!workflowNode.isNodeType(HippoNodeType.NT_WORKFLOW)) {
                         continue;
@@ -150,28 +139,37 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                     final String nodeTypeName = workflowNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString();
                     log.debug("Matching item against {}", nodeTypeName);
+                    if (!item.isNodeType(nodeTypeName)) {
+                        continue;
+                    }
 
-                    if (variantWorkflowNode == null) {
-                        if (variant.isNodeType(nodeTypeName)) {
+                    if (workflowNode.hasProperty(HippoNodeType.HIPPOSYS_SUBTYPE)) {
+                        if (!HippoNodeType.NT_HANDLE.equals(nodeTypeName)) {
+                            log.warn("Unsupported property 'hipposys:subtype' on nodetype '" + nodeTypeName + "'");
+                        } else {
+                            if (!item.hasNode(item.getName())) {
+                                log.warn("No child node exists for handle {}", item.getPath());
+                                return null;
+                            }
+                            final String subTypeName = workflowNode.getProperty(HippoNodeType.HIPPOSYS_SUBTYPE).getString();
+                            Node variant = item.getNode(item.getName());
+                            if (!variant.isNodeType(subTypeName)) {
+                                continue;
+                            }
                             if (checkWorkflowPermission(variant, workflowNode)) {
-                                variantWorkflowNode = workflowNode;
+                                return new WorkflowDefinition(workflowNode);
+                            } else {
+                                return null;
                             }
                         }
                     }
 
-                    if (HippoNodeType.NT_HANDLE.equals(nodeTypeName) && variant != item) {
-                        handleWorkflowNode = workflowNode;
-                    }
-                }
-                if (variantWorkflowNode != null) {
                     log.debug("Found workflow in category {} for node {}", category, item.getPath());
-                    if (variantWorkflowNode.hasProperty("hipposys:delegating")) {
-                        boolean delegating = variantWorkflowNode.getProperty("hipposys:delegating").getBoolean();
-                        if (delegating) {
-                            return new WorkflowDefinition(variantWorkflowNode, handleWorkflowNode);
-                        }
+                    if (checkWorkflowPermission(item, workflowNode)) {
+                        return new WorkflowDefinition(workflowNode);
+                    } else {
+                        return null;
                     }
-                    return new WorkflowDefinition(variantWorkflowNode, null);
                 }
             } else {
                 log.debug("Workflow in category {} for node {} not found", category, item.getPath());
@@ -390,7 +388,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         Set<Class> result = new HashSet<>();
         Class<?> klass = workflowClass;
         while (Workflow.class.isAssignableFrom(klass)) {
-            Class[] interfaces = workflowClass.getInterfaces();
+            Class[] interfaces = klass.getInterfaces();
             for (final Class anInterface : interfaces) {
                 if (Remote.class.isAssignableFrom(anInterface)) {
                     result.add(anInterface);

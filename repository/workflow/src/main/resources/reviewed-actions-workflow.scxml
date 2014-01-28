@@ -129,6 +129,7 @@
             </if>
           </if>
         </if>
+        <hippo:result value="dm.u"/>
       </transition>
 
       <transition event="unlock" target="reset">
@@ -255,6 +256,11 @@
           </if>
         </onentry>
       </state>
+
+      <transition event="publish" target="reset">
+        <hippo:copyVariant sourceState="unpublished" targetState="published"/>
+        <hippo:configVariant variant="dm.p" versionable="false" availabilities="live"/>
+      </transition>
 
     </state>
 

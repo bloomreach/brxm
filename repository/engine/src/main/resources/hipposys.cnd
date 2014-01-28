@@ -54,6 +54,7 @@
 
 [hipposys:type] > nt:base
 - hipposys:nodetype (string) mandatory
+- hipposys:subtype (string)
 - hipposys:classname (string) mandatory
 - hipposys:display (string)
 
@@ -62,7 +63,6 @@
 
 [hipposys:workflow] > hipposys:type
 - hipposys:privileges (string) multiple
-- hipposys:delegating (boolean)
 + hipposys:types (hipposys:types) = hipposys:types // deprecated
 + hipposys:config (nt:unstructured) = nt:unstructured
 
