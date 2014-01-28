@@ -16,15 +16,84 @@
 
 <ul class="nav nav-tabs">
 
-    <li ng-repeat="tab in tabs" ng-class="{true:'active', false:''}[isPageSelected('{{tab.link}}')]"><a href="#{{tab.link}}"><span>{{tab.name}}</span></a></li>
+    <li ng-repeat="tab in tabs" ng-class="{true:'active', false:''}[isPageSelected('{{tab.link}}')]">
+        <a href="#{{tab.link}}"><span>{{tab.name}}</span></a></li>
 </ul>
 <div class="tab-panel">
-    <div class="col-lg-2" style="padding-left: 0;">
 
-        <div class="list-group">
-            <a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item" ng-repeat="plugin in plugins">{{plugin.name}}</a>
-        </div>
+     <!--http://jsfiddle.net/plantface/L6cQN/-->
+
+    <div class="col-lg-3">
+        <ul class="list-group" ng-repeat="pluginss in pluginsToFilter() | filter:filterPlugins">
+            <li class="list-group-item"  >{{pluginss.type}}</li>
+            <ul ng-repeat="plugin in plugins  | filter:{type: pluginss.type}" >
+                <li  class="list-group-item"><a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item">{{plugin.name}}</a></li>
+            </ul>
+        </ul>
     </div>
+
+    <!--<div class="col-sm-12">-->
+        <!--<table class="table table-striped">-->
+            <!--<thead>-->
+            <!--<tr>-->
+                <!--<th>Name</th>-->
+                <!--<th>Description</th>-->
+                <!--<th>Vendor</th>-->
+                <!--<th>Action</th>-->
+            <!--</tr>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+
+            <!--<tr ng-repeat="plugin in plugins | filter:{ needsInstallation:true }">-->
+                <!--&lt;!&ndash; EVEN&ndash;&gt;-->
+                <!--<td>-->
+                    <!--{{plugin.name}}-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--{{plugin.introduction}}-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--{{plugin.vendor.name}}-->
+                <!--</td>-->
+                <!--<td>-->
+                    <!--<div ng-switch on="plugin.installed">-->
+                        <!--<div ng-switch-when="true">-->
+                            <!--&lt;!&ndash; code to render a large video block&ndash;&gt;-->
+                            <!--<a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item">Run</a>-->
+                        <!--</div>-->
+                        <!--<div ng-switch-default>-->
+                            <!--&lt;!&ndash; code to render the regular video block &ndash;&gt;-->
+                            <!--<a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item">Install</a>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</td>-->
+
+            <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
+    <!--</div>-->
+
+    <!--<div class="col-sm-12">-->
+        <!--<table class="table table-striped">-->
+            <!--<tbody>-->
+            <!--<tr ng-repeat="plugin in plugins | filter:{ needsInstallation:false }">-->
+                <!--&lt;!&ndash; EVEN&ndash;&gt;-->
+                <!--<td>-->
+                    <!--<a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item">{{plugin.name}}</a>-->
+                <!--</td>-->
+
+            <!--</tr>-->
+            <!--</tbody>-->
+        <!--</table>-->
+    <!--</div>-->
+
+    <!--<div class="list-group">-->
+    <!--<a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item" ng-repeat="plugin in plugins | filter:{ needsInstallation:true }">{{plugin.name}}</a>-->
+    <!--</div>-->
+    <!--<div class="list-group">-->
+    <!--<a href="#/plugins/{{plugin.pluginLink}}" class="list-group-item" ng-repeat="plugin in plugins | filter:{ needsInstallation:false }">{{plugin.name}}</a>-->
+    <!--</div>-->
+    <!--</div>-->
     <div class="col-lg-10">
 
         <!-- TODO add some content-->
