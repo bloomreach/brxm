@@ -21,6 +21,9 @@ public class PluginRestful implements Restful {
     private String pluginLink;
     private String pluginClass;
     private String type;
+    private boolean installed;
+    private boolean needsInstallation;
+
 
     public String getType() {
         return type;
@@ -38,8 +41,7 @@ public class PluginRestful implements Restful {
         this.name = name;
     }
 
-    private boolean installed;
-    private boolean needsInstallation;
+
 
     public boolean isNeedsInstallation() {
         return needsInstallation;

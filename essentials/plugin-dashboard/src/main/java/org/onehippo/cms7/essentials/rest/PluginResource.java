@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 
@@ -81,10 +80,8 @@ public class PluginResource extends BaseResource {
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
         final RestfulList<PluginRestful> plugins = new RestfulList<>();
 
-       // final RestClient client = new RestClient("https://api.github.com/gists/8453217");
 
-       // final String pluginList = client.getPluginList();
-        List<PluginRestful> items = null;//parseGist(pluginList);
+        List<PluginRestful> items = parseGist();
         // GIST may not be available (too many requests)
         if (items == null || items.size() == 0) {
             final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
@@ -121,8 +118,10 @@ public class PluginResource extends BaseResource {
         return plugins;
     }
 
-    public static List<PluginRestful> parseGist(final String pluginList) {
+    public static List<PluginRestful> parseGist() {
         try {
+            final RestClient client = new RestClient("https://api.github.com/gists/8453217");
+            final String pluginList = client.getPluginList();
             final Gson gson = new Gson();
             final Gist gist = gson.fromJson(pluginList, Gist.class);
             final Map<String, GistFile> files = gist.getFiles();
@@ -133,7 +132,7 @@ public class PluginResource extends BaseResource {
             }.getType();
             final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
             return restfulList.getItems();
-        } catch (JsonParseException e) {
+        } catch (Exception e) {
             log.error("Error parsing gist", e);
         }
         return Collections.emptyList();
@@ -202,7 +201,7 @@ public class PluginResource extends BaseResource {
         return resource;
     }
 
-    @GET
+    @POST
     @Path("/install/{className}")
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {
 
@@ -214,17 +213,25 @@ public class PluginResource extends BaseResource {
                 continue;
             }
             if (pluginClass.equals(className)) {
-                Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                final Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
                 p.setDescription(plugin.getIntroduction());
                 p.setPluginClass(pluginClass);
+                if(checkInstalled(p)){
+                    message.setValue("Plugin was already installed. Please rebuild and restart your application");
+                    return message;
+                }
+
+
                 final boolean installed = installPlugin(p);
                 if (installed) {
-                    message.setValue("Plugin successfully installed");
+                    message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
                 }
             }
         }
-        message.setValue("Plugin could not be installed");
+
+        message.setSuccessMessage(false);
+        message.setValue("Plugin was not found and could not be installed");
         return message;
     }
 }
