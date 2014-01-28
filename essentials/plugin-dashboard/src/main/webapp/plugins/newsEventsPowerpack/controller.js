@@ -6,7 +6,7 @@
             .controller('newsEventsCtrl', function ($scope, $sce, $log, $rootScope, $http, MyHttpInterceptor) {
 
                 $scope.hideAll = false;
-                $scope.installSampleData = false;
+                $scope.installSampleData = true;
                 $scope.stepVisible = [true, false];
                 $scope.resultMessages = null;
                 $scope.selectedDescription = "Please make a selection";

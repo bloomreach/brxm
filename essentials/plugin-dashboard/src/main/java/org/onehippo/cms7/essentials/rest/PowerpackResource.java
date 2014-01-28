@@ -193,6 +193,9 @@ public class PowerpackResource extends BaseResource {
         final PowerpackRestful dummy1 = new PowerpackRestful();
         dummy1.setName("Headless REST based content repository.");
         dummy1.setValue("empty-rest");
+        dummy1.setEnabled(false);
+
+
 
         // add packs
         powerpacks.addPowerpack(pack);
