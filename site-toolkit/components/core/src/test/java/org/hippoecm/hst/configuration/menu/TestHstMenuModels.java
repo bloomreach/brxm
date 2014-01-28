@@ -73,7 +73,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_non_workspace_shared_and_non_shared_hst_menu() throws Exception {
+    public void test_hst_menu_inheritance_without_workspace_menus() throws Exception {
         // mount1 has its own menu stored at /unittestproject/hst:sitemenus and
         // mount2 inherits it via unittestsubproject from /unittestcommon
         final String mainUnitTestProjectMenuIdentifier;
@@ -130,8 +130,6 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
         }
 
     }
-
-
 
     @Test
     public void test_hst_menu_in_workspace() throws Exception {
