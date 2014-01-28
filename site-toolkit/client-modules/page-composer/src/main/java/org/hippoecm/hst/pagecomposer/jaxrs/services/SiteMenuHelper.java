@@ -15,58 +15,52 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.jcr.RepositoryException;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import java.util.Map;
 
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
-import static com.google.common.base.Optional.fromNullable;
-
 class SiteMenuHelper {
 
-    public HstSite getEditingPreviewHstSite(HstSite editingPreviewHstSite) throws RepositoryException {
+    public HstSite getEditingPreviewHstSite(HstSite editingPreviewHstSite) throws IllegalStateException {
         if (editingPreviewHstSite == null) {
-            throw new RepositoryException("Could not get the editing site to create the page model representation.");
+            throw new IllegalStateException("Could not get the editing site to create the page model representation.");
         }
         return editingPreviewHstSite;
     }
 
-    public HstSiteMenuConfiguration getMenuConfig(final String menuId, HstSite hstSite) throws RepositoryException {
-        final Collection<HstSiteMenuConfiguration> configs = hstSite.getSiteMenusConfiguration().getSiteMenuConfigurations().values();
-        final Optional<HstSiteMenuConfiguration> result = Iterables.tryFind(configs, new Predicate<HstSiteMenuConfiguration>() {
-            @Override
-            public boolean apply(HstSiteMenuConfiguration menuConfiguration) {
-                return menuConfiguration.getCanonicalIdentifier().equals(menuId);
+    public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
+        final Map<String,HstSiteMenuConfiguration> siteMenuConfigurations = site.getSiteMenusConfiguration().getSiteMenuConfigurations();
+        for (HstSiteMenuConfiguration menuConfiguration : siteMenuConfigurations.values()) {
+            if (menuConfiguration.getCanonicalIdentifier().equals(menuId)) {
+                return menuConfiguration;
             }
-        });
-        if (!result.isPresent()) {
-            throw new RepositoryException(String.format("Site menu with id '%s' is not part of currently edited preview site.", menuId));
         }
-        return result.get();
+        throw new IllegalStateException(String.format("Site menu with id '%s' is not part of currently edited preview site.", menuId));
     }
 
-    public HstSiteMenuItemConfiguration getMenuItemConfig(final String itemId, HstSiteMenuConfiguration hstSiteMenuConfiguration) throws RepositoryException {
-        final Collection<HstSiteMenuItemConfiguration> configs =
-                fromNullable(hstSiteMenuConfiguration.getSiteMenuConfigurationItems())
-                        .or(Collections.<HstSiteMenuItemConfiguration>emptyList());
-        final Optional<HstSiteMenuItemConfiguration> result = Iterables.tryFind(configs, new Predicate<HstSiteMenuItemConfiguration>() {
-            @Override
-            public boolean apply(HstSiteMenuItemConfiguration itemConfiguration) {
-                return itemConfiguration.getCanonicalIdentifier().equals(itemId);
+    public HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuConfiguration menu, String menuItemId) {
+        for (HstSiteMenuItemConfiguration itemConfiguration : menu.getSiteMenuConfigurationItems()) {
+            HstSiteMenuItemConfiguration menuItem = getMenuItem(itemConfiguration, menuItemId);
+            if (menuItem != null) {
+                return menuItem;
             }
-        });
-        if (!result.isPresent()) {
-            throw new RepositoryException(String.format("Site menu item with id '%s' is not part of currently edited preview site.", itemId));
         }
-        return result.get();
+        throw new IllegalStateException(String.format("Site menu item with id '%s' is not part of currently edited preview site.", menuItemId));
+    }
+
+    private HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuItemConfiguration menuItem, String menuItemId) {
+        if (menuItem.getCanonicalIdentifier().equals(menuItemId)) {
+            return menuItem;
+        }
+        for (HstSiteMenuItemConfiguration child : menuItem.getChildItemConfigurations()) {
+            HstSiteMenuItemConfiguration o = getMenuItem(child, menuItemId);
+            if (o != null) {
+                return o;
+            }
+        }
+        return null;
     }
 
 }

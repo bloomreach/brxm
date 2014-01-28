@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
@@ -45,16 +43,16 @@ public class SiteMenuHelperTest {
         this.siteMenuHelper = new SiteMenuHelper();
     }
 
-    @Test(expected = RepositoryException.class)
-    public void testGetEditingPreviewHstSiteThrowsWhenSiteIsNull() throws RepositoryException {
+    @Test(expected = IllegalStateException.class)
+    public void testGetEditingPreviewHstSiteThrowsWhenSiteIsNull() {
         siteMenuHelper.getEditingPreviewHstSite(null);
     }
 
     @Test
-    public void testGetMenuConfig() throws RepositoryException {
+    public void testGetMenuConfig() {
         final HstSite site = createMock(HstSite.class);
         final HstSiteMenusConfiguration menusConfig = createMock(HstSiteMenusConfiguration.class);
-        final HstSiteMenuConfiguration menuConfig = createMock(HstSiteMenuConfiguration.class);
+        final HstSiteMenuConfiguration menu = createMock(HstSiteMenuConfiguration.class);
 
         expect(site.getSiteMenusConfiguration()).andReturn(menusConfig);
 
@@ -62,22 +60,22 @@ public class SiteMenuHelperTest {
         expect(menusConfig.getSiteMenuConfigurations()).andReturn(map);
 
         final String menuId = "menuId";
-        map.put(menuId, menuConfig);
-        expect(menuConfig.getCanonicalIdentifier()).andReturn(menuId);
+        map.put(menuId, menu);
+        expect(menu.getCanonicalIdentifier()).andReturn(menuId);
 
-        replay(site, menusConfig, menuConfig);
-        assertThat(siteMenuHelper.getMenuConfig(menuId, site), is(menuConfig));
+        replay(site, menusConfig, menu);
+        assertThat(siteMenuHelper.getMenu(site, menuId), is(menu));
     }
 
     @Test
-    public void testGetMenuItemConfig() throws RepositoryException {
+    public void testGetMenuItemConfig() {
         final String itemId = "itemId";
-        final HstSiteMenuConfiguration menuConfig = createMock(HstSiteMenuConfiguration.class);
+        final HstSiteMenuConfiguration menu = createMock(HstSiteMenuConfiguration.class);
         final HstSiteMenuItemConfiguration item = createMock(HstSiteMenuItemConfiguration.class);
         final List<HstSiteMenuItemConfiguration> items = Arrays.asList(item);
-        expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(items);
+        expect(menu.getSiteMenuConfigurationItems()).andReturn(items);
         expect(item.getCanonicalIdentifier()).andReturn(itemId);
-        replay(menuConfig, item);
-        assertThat(siteMenuHelper.getMenuItemConfig(itemId, menuConfig), is(item));
+        replay(menu, item);
+        assertThat(siteMenuHelper.getMenuItem(menu, itemId), is(item));
     }
 }

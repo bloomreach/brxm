@@ -69,7 +69,7 @@ public class SiteMenuResourceTest {
     private HstSite site;
     private HstSiteMenuConfiguration menuConfig;
     private HstSiteMenuItemConfiguration itemConfig;
-    private Node node;
+    private Node node, parentNode, childNode;
 
     @Before
     public void setUp() {
@@ -87,35 +87,19 @@ public class SiteMenuResourceTest {
         this.menuConfig = createMock(HstSiteMenuConfiguration.class);
         this.itemConfig = createNiceMock(HstSiteMenuItemConfiguration.class);
         this.node = createMock(Node.class);
-        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node};
+        this.parentNode = createMock(Node.class);
+        this.childNode = createMock(Node.class);
+        this.mocks = new Object[]{siteMenuHelper, siteMenuItemHelper, request, context, session, httpSession, virtualHost, virtualHosts, mount, site, menuConfig, itemConfig, node, parentNode, childNode};
     }
 
     @Test
     public void testUpdate() throws RepositoryException {
 
-        // Due to the inheritance the following mock calls are required to get the preview site
-        expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
-        expect(context.getSession()).andReturn(session);
-        expect(context.getServletRequest()).andReturn(request);
-        expect(request.getSession(true)).andReturn(httpSession);
-        expect(httpSession.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID)).andReturn("mount");
-        expect(context.getVirtualHost()).andReturn(virtualHost);
-        expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
-        expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
-        expect(mount.getPreviewHstSite()).andReturn(site);
+        mockGetPreviewSite();
+        mockGetSiteMenu();
 
-        // Mock getting the site menu
-        expect(siteMenuHelper.getEditingPreviewHstSite(site)).andReturn(site);
-        final String menuId = "uuid-of-menu";
-        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId);
-        expect(siteMenuHelper.getMenuConfig(menuId, site)).andReturn(menuConfig);
-
-        // Mock getting the site menu item and the corresponding node
         final String id = "uuid-of-menu-item";
-        expect(siteMenuHelper.getMenuItemConfig(id, menuConfig)).andReturn(itemConfig);
-        expect(itemConfig.getCanonicalIdentifier()).andReturn(id);
-        expect(itemConfig.getChildItemConfigurations()).andReturn(Collections.<HstSiteMenuItemConfiguration>emptyList());
-        expect(session.getNodeByIdentifier(id)).andReturn(node);
+        mockGetMenuItem(node, id);
 
         // Mock updating the site menu item
         final Capture<SiteMenuItemRepresentation> currentItem = new Capture<>();
@@ -138,7 +122,7 @@ public class SiteMenuResourceTest {
 
         final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(extResponse.isSuccess(), is(true));
-        assertThat(extResponse.getData(), is(SiteMenuItemRepresentation.class));
+        assertThat(extResponse.getData().toString(), is(id));
     }
 
     @Test
@@ -155,6 +139,72 @@ public class SiteMenuResourceTest {
         assertThat(extResponse.isSuccess(), is(false));
         assertThat(extResponse.getData(), is(String[].class));
 
+    }
+
+    @Test
+    public void testMove() throws RepositoryException {
+
+        mockGetPreviewSite();
+        mockGetSiteMenu();
+        final String sourceId = "sourceId";
+        mockGetMenuItem(node, sourceId);
+        final String childTargetId = "child";
+        mockGetMenuItem(childNode, childTargetId);
+
+        final String parentTargetId = "parentId";
+        expect(menuConfig.getCanonicalIdentifier()).andReturn("parentId");
+        expect(session.getNodeByIdentifier(parentTargetId)).andReturn(parentNode);
+        expect(node.getParent()).andReturn(parentNode);
+        expect(parentNode.getIdentifier()).andReturn(parentTargetId);
+
+        expect(node.getName()).andReturn("src");
+        expect(childNode.getName()).andReturn("dest");
+        parentNode.orderBefore("src", "dest");
+        expectLastCall().once();
+
+        // Return false, so that we don't have to mock all method calls in
+        // HstConfigurationUtils.persistChanges()
+        expect(session.hasPendingChanges()).andReturn(false);
+
+        replay(mocks);
+
+        final Response response = siteMenuResource.move(request, sourceId, parentTargetId, childTargetId);
+        assertThat(response.getStatus(), is(200));
+        assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
+
+        final ExtResponseRepresentation extResponse = ExtResponseRepresentation.class.cast(response.getEntity());
+        assertThat(extResponse.isSuccess(), is(true));
+        assertThat(extResponse.getData().toString(), is(sourceId));
+    }
+
+    private String mockGetMenuItem(Node node, String id) throws RepositoryException {
+        // Mock getting the site menu item and the corresponding node
+        expect(siteMenuHelper.getMenuItem(menuConfig, id)).andReturn(itemConfig);
+        expect(itemConfig.getCanonicalIdentifier()).andReturn(id);
+        expect(itemConfig.getChildItemConfigurations()).andReturn(Collections.<HstSiteMenuItemConfiguration>emptyList());
+        expect(session.getNodeByIdentifier(id)).andReturn(node);
+        return id;
+    }
+
+    private void mockGetSiteMenu() {
+        // Mock getting the site menu
+        expect(siteMenuHelper.getEditingPreviewHstSite(site)).andReturn(site);
+        final String menuId = "uuid-of-menu";
+        expect(context.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER)).andReturn(menuId);
+        expect(siteMenuHelper.getMenu(site, menuId)).andReturn(menuConfig);
+    }
+
+    private void mockGetPreviewSite() throws RepositoryException {
+        // Due to the inheritance the following mock calls are required to get the preview site
+        expect(request.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT)).andReturn(context);
+        expect(context.getSession()).andReturn(session);
+        expect(context.getServletRequest()).andReturn(request);
+        expect(request.getSession(true)).andReturn(httpSession);
+        expect(httpSession.getAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID)).andReturn("mount");
+        expect(context.getVirtualHost()).andReturn(virtualHost);
+        expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
+        expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
+        expect(mount.getPreviewHstSite()).andReturn(site);
     }
 
 }

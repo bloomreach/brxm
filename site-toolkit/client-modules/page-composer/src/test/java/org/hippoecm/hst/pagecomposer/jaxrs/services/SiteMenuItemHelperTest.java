@@ -96,19 +96,19 @@ public class SiteMenuItemHelperTest {
         expect(node.getParent()).andReturn(parent);
 
         final String oldName = "hst";
-        final String pathPrefix = "hst:hst/hst/hst/hst/";
-        expect(node.getPath()).andReturn(pathPrefix + oldName);
-        expect(node.getName()).andReturn(oldName);
-        expect(node.getIndex()).andReturn(0);
+        final String pathPrefix = "hst:hst/hst/hst/hst";
+        expect(node.getName()).andReturn(oldName).times(2);
+        expect(node.getPath()).andReturn(pathPrefix + "/" + oldName);
 
         expect(parent.getNodes()).andReturn(childIterator);
-        expect(childIterator.hasNext()).andReturn(true).times(2).andReturn(false);
-        expect(childIterator.next()).andReturn(sibling).times(2);
+        expect(parent.getPath()).andReturn(pathPrefix);
+        expect(childIterator.hasNext()).andReturn(true).times(2);
+        expect(childIterator.next()).andReturn(node).andReturn(sibling);
         final String siblingName = "someSiblingName";
         expect(sibling.getName()).andReturn(siblingName);
 
         final String newName = "newName";
-        session.move(pathPrefix + oldName, pathPrefix + newName);
+        session.move(pathPrefix + "/" + oldName, pathPrefix + "/" + newName);
         expectLastCall().once();
 
         parent.orderBefore(newName, siblingName);

@@ -22,15 +22,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -61,12 +64,14 @@ public class SiteMenuResource extends AbstractConfigResource {
         try {
             final HstRequestContext requestContext = getRequestContext(servletRequest);
 
-            final HstSiteMenuConfiguration menuConfig = getHstSiteMenuConfiguration(requestContext);
-            final SiteMenuRepresentation siteMenuRepresentation = new SiteMenuRepresentation().represent(menuConfig);
+            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+            final SiteMenuRepresentation siteMenuRepresentation = new SiteMenuRepresentation().represent(menu);
 
             return ok("Menu loaded successfully", siteMenuRepresentation);
         } catch (RepositoryException e) {
             return logAndReturnError(e.getMessage());
+        } catch (IllegalStateException e) {
+            return logAndReturnClientError(e.getMessage());
         }
     }
 
@@ -77,31 +82,94 @@ public class SiteMenuResource extends AbstractConfigResource {
             final HstRequestContext requestContext = getRequestContext(servletRequest);
             final Session session = requestContext.getSession();
 
-            final HstSiteMenuConfiguration menuConfig = getHstSiteMenuConfiguration(requestContext);
+            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
             final String itemId = newMenuItem.getId();
-            final HstSiteMenuItemConfiguration menuItemConfig = siteMenuHelper.getMenuItemConfig(itemId, menuConfig);
-            final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItemConfig, menuItemConfig.getParentItemConfiguration());
+            final HstSiteMenuItemConfiguration menuItem = siteMenuHelper.getMenuItem(menu, itemId);
+            final SiteMenuItemRepresentation currentMenuItem = new SiteMenuItemRepresentation().represent(menuItem, menuItem.getParentItemConfiguration());
 
             final Node menuItemNode = session.getNodeByIdentifier(currentMenuItem.getId());
             siteMenuItemHelper.update(menuItemNode, currentMenuItem, newMenuItem);
             HstConfigurationUtils.persistChanges(session);
 
-            // TODO (meggermont): Get the menu item from the repository instead of echoing the client's representation
-            // I tried the following, but it seems that I query the stale model.
-            // final HstSiteMenuConfiguration updatedMenuConfig = getHstSiteMenuConfiguration(requestContext);
-            // final SiteMenuItemRepresentation updatedMenuItem = new SiteMenuItemRepresentation().represent(SiteMenuHelper.getMenuItemConfig(itemId, updatedMenuConfig));
-            return ok("Item updated successfully", newMenuItem);
+            return ok("Item updated successfully", itemId);
         } catch (RepositoryException e) {
-            // TODO (meggermont): should we always return 500?
             return logAndReturnError(e.getMessage());
+        } catch (IllegalStateException e) {
+            return logAndReturnClientError(e.getMessage());
         }
     }
 
+    @POST
+    @Path("/move/{sourceId}/{parentTargetId}/{childTargetId}")
+    public Response move(@Context HttpServletRequest servletRequest,
+                         @PathParam("sourceId") String sourceId,
+                         @PathParam("parentTargetId") String parentTargetId,
+                         @PathParam("childTargetId") final String childTargetId) {
+        try {
+            final HstRequestContext requestContext = getRequestContext(servletRequest);
+            final Session session = requestContext.getSession();
+
+            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+            final Node parent = getParentNode(parentTargetId, session, menu);
+
+            final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
+            final Node source = session.getNodeByIdentifier(sourceItem.getCanonicalIdentifier());
+
+            if (!parentTargetId.equals(source.getParent().getIdentifier())) {
+                siteMenuItemHelper.move(source, parent);
+            }
+
+            if (StringUtils.isNotBlank(childTargetId)) {
+                final HstSiteMenuItemConfiguration targetChildItem = siteMenuHelper.getMenuItem(menu, childTargetId);
+                final Node child = session.getNodeByIdentifier(targetChildItem.getCanonicalIdentifier());
+                parent.orderBefore(source.getName(), child.getName());
+            }
+            HstConfigurationUtils.persistChanges(session);
+            return ok("Item moved successfully", sourceId);
+
+        } catch (RepositoryException e) {
+            return logAndReturnError(e.getMessage());
+        } catch (IllegalStateException e) {
+            return logAndReturnClientError(e.getMessage());
+        }
+    }
+
+    @POST
+    @Path("/delete/{sourceId}")
+    public Response delete(@Context HttpServletRequest servletRequest,
+                           @PathParam("sourceId") String sourceId) {
+        try {
+            final HstRequestContext requestContext = getRequestContext(servletRequest);
+            final Session session = requestContext.getSession();
+
+            final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
+
+            final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
+            final Node source = session.getNodeByIdentifier(sourceItem.getCanonicalIdentifier());
+            source.getSession().removeItem(source.getPath());
+            HstConfigurationUtils.persistChanges(session);
+            return ok("Item deleted successfully", sourceId);
+
+        } catch (RepositoryException e) {
+            return logAndReturnError(e.getMessage());
+        } catch (IllegalStateException e) {
+            return logAndReturnClientError(e.getMessage());
+        }
+    }
+
+    private Node getParentNode(String parentTargetId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
+        if (menu.getCanonicalIdentifier().equals(parentTargetId)) {
+            return session.getNodeByIdentifier(parentTargetId);
+        } else {
+            final HstSiteMenuItemConfiguration targetParentItem = siteMenuHelper.getMenuItem(menu, parentTargetId);
+            return session.getNodeByIdentifier(targetParentItem.getCanonicalIdentifier());
+        }
+    }
 
     private HstSiteMenuConfiguration getHstSiteMenuConfiguration(final HstRequestContext requestContext) throws RepositoryException {
         final HstSite editingPreviewHstSite = siteMenuHelper.getEditingPreviewHstSite(getEditingPreviewSite(requestContext));
         final String menuId = getRequestConfigIdentifier(requestContext);
-        return siteMenuHelper.getMenuConfig(menuId, editingPreviewHstSite);
+        return siteMenuHelper.getMenu(editingPreviewHstSite, menuId);
     }
 
     private Response logAndReturnError(String errorMessage) {
@@ -109,5 +177,12 @@ public class SiteMenuResource extends AbstractConfigResource {
         return error(errorMessage);
     }
 
+    private Response logAndReturnClientError(String errorMessage) {
+        log.warn(errorMessage);
+        final ExtResponseRepresentation entity = new ExtResponseRepresentation();
+        entity.setSuccess(false);
+        entity.setMessage(errorMessage);
+        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+    }
 
 }
