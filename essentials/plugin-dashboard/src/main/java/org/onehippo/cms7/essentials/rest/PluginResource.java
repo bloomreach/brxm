@@ -207,16 +207,22 @@ public class PluginResource extends BaseResource {
     public MessageRestful installPlugin(@Context ServletContext servletContext, @PathParam("className") String className) {
 
         final MessageRestful message = new MessageRestful();
-        final List<Plugin> pluginList = getPlugins(servletContext);
-        for (Plugin plugin : pluginList) {
-            if (plugin.getPluginClass().equals(className)) {
-                final boolean installed = installPlugin(plugin);
+        final RestfulList<PluginRestful> pluginList = getPluginList(servletContext);
+        for (PluginRestful plugin : pluginList.getItems()) {
+            final String pluginClass = plugin.getPluginClass();
+            if(Strings.isNullOrEmpty(pluginClass)){
+                continue;
+            }
+            if (pluginClass.equals(className)) {
+                Plugin p = new org.onehippo.cms7.essentials.dashboard.model.EssentialsPlugin();
+                p.setDescription(plugin.getIntroduction());
+                p.setPluginClass(pluginClass);
+                final boolean installed = installPlugin(p);
                 if (installed) {
                     message.setValue("Plugin successfully installed");
+                    return message;
                 }
             }
-
-
         }
         message.setValue("Plugin could not be installed");
         return message;
