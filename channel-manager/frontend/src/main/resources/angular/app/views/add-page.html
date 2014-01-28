@@ -69,8 +69,8 @@
 
         </div>
     </div>
-    <div class="row" data-ng-controller="hippo.channelManager.menuManagement.MenuItemActionsCtrl">
-        <div id="add" class="col-sm-4">
+    <div class="row">
+        <div id="add" class="col-sm-4" data-ng-controller="hippo.channelManager.menuManagement.TreeActionsCtrl">
             <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}</button>
         </div>
         <div id="remove" class="col-md-8">&#160;</div>

@@ -18,12 +18,7 @@
 
     angular.module('hippo.channelManager.menuManagement')
 
-        .controller('hippo.channelManager.menuManagement.MenuItemActionsCtrl', ['$scope', '$location', function ($scope, $location) {
-            $scope.addMenuItem = function () {
-                console.log('Add menu item');
-                $location.path('/add-menu-item');
-            };
-
+        .controller('hippo.channelManager.menuManagement.MenuItemActionsCtrl', ['$scope', function ($scope) {
             $scope.removeMenuItem = function () {
                 console.log('Remove menu item');
             };
