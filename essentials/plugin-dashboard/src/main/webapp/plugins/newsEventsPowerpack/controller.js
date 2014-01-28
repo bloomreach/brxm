@@ -40,13 +40,10 @@
                     for (var i = 0; i < $scope.packs.items.length; i++) {
                         var powerpack = $scope.packs.items[i];
                         if (powerpack.value === $scope.selectedItem) {
-
-                            console.log(powerpack.name);
                             $scope.selectedDescription = $scope.getDescription(powerpack.name);
                         }
                     }
                 };
-
 
                 $scope.onWizardButton = function (idx) {
                     if (idx == 0) {
