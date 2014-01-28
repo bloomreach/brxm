@@ -35,6 +35,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
+import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
+import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
@@ -224,6 +228,11 @@ public class PluginResource extends BaseResource {
 
                 final boolean installed = installPlugin(p);
                 if (installed) {
+                    final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
+                    final Document document = new InstallerDocument();
+                    document.setParentPath(GlobalUtils.getParentConfigPath(pluginClass));
+                    document.setName(GlobalUtils.getClassName(pluginClass));
+                    manager.saveDocument(document);
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
                 }

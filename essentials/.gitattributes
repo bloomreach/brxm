@@ -438,6 +438,7 @@ plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/A
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/BaseFolder.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManager.java -text
+plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocument.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigService.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/config/ProjectSettingsBean.java -text
 plugin-api/implementation/src/main/java/org/onehippo/cms7/essentials/dashboard/ctx/DashboardPluginContext.java -text
@@ -541,6 +542,7 @@ plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/MemoryRepos
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/TestPluginContext.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DefaultDocumentManagerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/DummyTestPlugin.java -text
+plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/InstallerDocumentTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/config/JcrPluginConfigServiceTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/MemoryPluginEventListenerTest.java -text
 plugin-api/implementation/src/test/java/org/onehippo/cms7/essentials/dashboard/event/listeners/ValidationEventListenerTest.java -text

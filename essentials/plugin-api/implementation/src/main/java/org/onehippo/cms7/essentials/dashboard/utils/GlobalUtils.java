@@ -197,7 +197,7 @@ public final class GlobalUtils {
     }
 
     public static <T extends Document> void cleanupSession(final Session session) {
-        if(session !=null){
+        if (session != null) {
             session.logout();
         }
 
@@ -219,9 +219,13 @@ public final class GlobalUtils {
         return fullConfigPath.substring(0, fullConfigPath.lastIndexOf('/'));
     }
 
-    public  static String getFullConfigPath(final CharSequence pluginClass) {
+    public static String getFullConfigPath(final CharSequence pluginClass) {
         final List<String> configList = Lists.newLinkedList(Splitter.on('/').split(JcrPluginConfigService.CONFIG_PATH));
         configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
         return '/' + Joiner.on('/').join(configList);
+    }
+
+    public static String getClassName(final String fullPluginClassName) {
+        return fullPluginClassName.substring(fullPluginClassName.lastIndexOf('.') + 1, fullPluginClassName.length());
     }
 }
