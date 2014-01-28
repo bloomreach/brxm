@@ -73,7 +73,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_hst_menu_inheritance_without_workspace_menus() throws Exception {
+    public void test_menu_inheritance_without_workspace_menus() throws Exception {
         // mount1 has its own menu stored at /unittestproject/hst:sitemenus and
         // mount2 inherits it via unittestsubproject from /unittestcommon
         final String mainUnitTestProjectMenuIdentifier;
@@ -132,7 +132,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_hst_menu_in_workspace() throws Exception {
+    public void test_menu_in_workspace() throws Exception {
         // start with moving shared menu from 'unittestcommon' to hst:workspace of 'unittestcommon'
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemenus");
         session.move("/hst:hst/hst:configurations/unittestproject/hst:sitemenus/main",
@@ -163,7 +163,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_combined_hst_menus_in_workspace_and_non_workspace() throws Exception {
+    public void test_combined_menus_in_workspace_and_non_workspace() throws Exception {
         // start with COPYING 'main' to 'footer' in workspace
         session.getNode("/hst:hst/hst:configurations/unittestproject").addNode("hst:workspace").addNode("hst:sitemenus");
         JcrUtils.copy(session,
@@ -208,7 +208,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_inherited_configuration_workspace_hst_menu_is_only_included_when_no_own_sitemenus() throws Exception {
+    public void test_inherited_configuration_workspace_menu_is_only_included_when_no_own_sitemenus() throws Exception {
         String commonConfigPath = "/hst:hst/hst:configurations/unittestcommon";
         session.getNode(commonConfigPath).addNode("hst:workspace").addNode("hst:sitemenus");
         // start with moving shared menu from 'unittestcommon' to hst:workspace of 'unittestcommon'
@@ -339,7 +339,7 @@ public class TestHstMenuModels extends AbstractTestConfigurations {
     }
 
     @Test
-    public void test_workspace_and_non_workspace_hst_menu_duplicate_nodes_skips_workspace_nodes() throws Exception {
+    public void test_workspace_and_non_workspace_menu_duplicate_nodes_skips_workspace_nodes() throws Exception {
 
         ResolvedMount beforeMount = hstManager.getVirtualHosts().matchMount("localhost", "", "/subsite");
         final HstSite beforeSite = beforeMount.getMount().getHstSite();
