@@ -47,6 +47,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.onehippo.cms7.essentials.rest.exc.RestException;
@@ -213,7 +214,7 @@ public class RestWorkflow {
                     ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
 
-                    parsed = TemplateUtils.injectTemplate("content_blocks_templates.xml", data, getClass());
+                    parsed = TemplateUtils.injectTemplate(EssentialConst.CONTENT_BLOCKS_TEMPLATE_XML, data, getClass());
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,

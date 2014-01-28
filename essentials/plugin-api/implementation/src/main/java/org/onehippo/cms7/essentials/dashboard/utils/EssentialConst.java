@@ -102,6 +102,7 @@ public final class EssentialConst {
     public static final String HIPPO_COMPOUND = "hippo:compound";
     public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
+    public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
 
 
     private EssentialConst() {
