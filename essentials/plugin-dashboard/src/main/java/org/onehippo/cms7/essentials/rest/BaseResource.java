@@ -22,14 +22,13 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
+import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.PluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
-import org.onehippo.cms7.essentials.dashboard.installer.InstallablePlugin;
 import org.onehippo.cms7.essentials.dashboard.setup.ProjectSetupPlugin;
 import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.PluginScanner;
@@ -50,23 +49,22 @@ public class BaseResource {
     protected boolean installPlugin(final Plugin plugin) {
 
         final String pluginClass = plugin.getPluginClass();
-        final DashboardPlugin dashboardPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
-        if (dashboardPlugin instanceof InstallablePlugin) {
-            final InstallablePlugin<?> installable = (InstallablePlugin<?>) dashboardPlugin;
-            installable.getInstaller().install();
+        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        if (essentialsPlugin != null) {
+            essentialsPlugin.install();
             return true;
         }
         return false;
     }
 
-    @SuppressWarnings("InstanceofInterfaces")
+
     protected boolean checkInstalled(final Plugin plugin) {
 
         final String pluginClass = plugin.getPluginClass();
-        final DashboardPlugin dashboardPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
-        if (dashboardPlugin instanceof InstallablePlugin) {
-            final InstallablePlugin<?> installable = (InstallablePlugin<?>) dashboardPlugin;
-            final InstallState installState = installable.getInstallState();
+        final EssentialsPlugin essentialsPlugin = instantiatePlugin(plugin, new DashboardPluginContext(GlobalUtils.createSession(), plugin), pluginClass);
+        if (essentialsPlugin != null) {
+
+            final InstallState installState = essentialsPlugin.getInstallState();
             if (installState == InstallState.INSTALLED_AND_RESTARTED) {
                 return true;
             }
@@ -74,12 +72,12 @@ public class BaseResource {
         return false;
     }
 
-    public static DashboardPlugin instantiatePlugin(final Plugin plugin, final PluginContext context, final String pluginClass) {
+    public static EssentialsPlugin instantiatePlugin(final Plugin plugin, final PluginContext context, final String pluginClass) {
         try {
             @SuppressWarnings("unchecked")
-            final Class<DashboardPlugin> clazz = (Class<DashboardPlugin>) Class.forName(pluginClass);
-            final Constructor<DashboardPlugin> constructor = clazz.getConstructor(String.class, Plugin.class, PluginContext.class);
-            return constructor.newInstance("plugin", plugin, context);
+            final Class<EssentialsPlugin> clazz = (Class<EssentialsPlugin>) Class.forName(pluginClass);
+            final Constructor<EssentialsPlugin> constructor = clazz.getConstructor(Plugin.class, PluginContext.class);
+            return constructor.newInstance(plugin, context);
         } catch (ClassNotFoundException e) {
             log.error("Couldn't find plugin class", e);
         } catch (InstantiationException e) {
@@ -94,7 +92,7 @@ public class BaseResource {
         return null;
     }
 
-    protected ProjectRestful getProjectRestful(){
+    protected ProjectRestful getProjectRestful() {
         final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), null);
         // inject project settings:
         final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
@@ -104,7 +102,6 @@ public class BaseResource {
         }
 
         return projectRestful;
-
 
 
     }
@@ -141,11 +138,12 @@ public class BaseResource {
         }
         return null;
     }
+
     protected Plugin getPluginByClassName(final String name, final ServletContext context) {
         final List<Plugin> plugins = getPlugins(context);
         for (final Plugin next : plugins) {
             final String pluginClass = next.getPluginClass();
-            if(Strings.isNullOrEmpty(pluginClass)){
+            if (Strings.isNullOrEmpty(pluginClass)) {
                 continue;
             }
             if (pluginClass.equals(name)) {

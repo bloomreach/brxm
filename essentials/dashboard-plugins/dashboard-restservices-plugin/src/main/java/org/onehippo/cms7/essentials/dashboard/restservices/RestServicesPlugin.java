@@ -4,7 +4,7 @@
 
 package org.onehippo.cms7.essentials.dashboard.restservices;
 
-import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
+import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 
@@ -12,12 +12,11 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 /**
  * @version "$Id$"
  */
-public class RestServicesPlugin extends DashboardPlugin {
+public class RestServicesPlugin extends EssentialsPlugin {
 
 
-    public RestServicesPlugin(final String id, final Plugin descriptor, final PluginContext context) {
-        super(id, descriptor, context);
-
+    public RestServicesPlugin(final Plugin descriptor, final PluginContext context) {
+        super(descriptor, context);
     }
 
 
