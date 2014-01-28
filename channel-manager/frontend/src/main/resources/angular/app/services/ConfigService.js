@@ -20,8 +20,9 @@
 
         .service('hippo.channelManager.menuManagement.ConfigService', ['hippo.channelManager.menuManagement.IFrameService', function(IFrame) {
                 var config = {
-                    menuId: '041d02f5-2dbe-4aa4-86b4-03d47651a068',
-                    apiUrlPrefix: '/site/_rp'
+                    apiUrlPrefix: '/site/_rp',
+                    locale: 'en',
+                    menuId: '041d02f5-2dbe-4aa4-86b4-03d47651a068'
                 };
 
                 // override default config when app runs in iframe

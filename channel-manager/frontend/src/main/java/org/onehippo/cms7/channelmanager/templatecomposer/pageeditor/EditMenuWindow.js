@@ -46,6 +46,7 @@
                         url: Ext.urlAppend('./angular/index.html', 'parentExtIFramePanelId=' + this.iframePanelId),
                         pageManagementConfig: {
                             apiUrlPrefix: config.composerRestMountUrl,
+                            locale: config.locale,
                             menuId: config.menuId
                         }
                     }
