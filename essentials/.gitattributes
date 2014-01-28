@@ -303,7 +303,6 @@ dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/META-INF/plu
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_nodetype.xml -text
 dashboard-plugins/dashboard-contentblocks-plugin/src/main/resources/content_blocks_template.xml -text
 dashboard-plugins/dashboard-easyforms-plugin/pom.xml -text
-dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/EasyFormsPlugin.html -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/EasyFormsPlugin.java -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/easyforms/installer/EasyFormsInstaller.java -text
 dashboard-plugins/dashboard-easyforms-plugin/src/main/resources/META-INF/plugin.xml -text
@@ -313,9 +312,7 @@ dashboard-plugins/dashboard-gallery-plugin/src/main/resources/META-INF/plugin.xm
 dashboard-plugins/dashboard-relateddocs-plugin/pom.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/HasRelatedDocMatcher.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/NotRelatedDocMatcher.java -text
-dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/RelatedDocsPlugin.html -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/RelatedDocsPlugin.java -text
-dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/RelatedDocsPlugin.properties -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/installer/RelatedDocsInstaller.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/relateddocs/query/RelatedDocQueryBuilder.java -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/main/resources/META-INF/plugin.xml -text
@@ -332,7 +329,6 @@ dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/project/site/p
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater-test.xml -text
 dashboard-plugins/dashboard-relateddocs-plugin/src/test/resources/related-doc-updater.xml -text
 dashboard-plugins/dashboard-restservices-plugin/pom.xml -text
-dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPlugin.html -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/java/org/onehippo/cms7/essentials/dashboard/restservices/RestServicesPlugin.java -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldContentResource.txt -text
 dashboard-plugins/dashboard-restservices-plugin/src/main/resources/HelloWorldPlainResource.txt -text
@@ -343,7 +339,6 @@ dashboard-plugins/dashboard-restservices-plugin/src/test/resources/log4j.xml -te
 dashboard-plugins/dashboard-setup-plugin/pom.xml -text
 dashboard-plugins/dashboard-setup-plugin/src/main/resources/META_INF/project.xml -text
 dashboard-plugins/dashboard-xinha-plugin/pom.xml -text
-dashboard-plugins/dashboard-xinha-plugin/src/main/java/org/onehippo/cms7/essentials/xinha/gui/XinhaPlugin.html -text
 dashboard-plugins/dashboard-xinha-plugin/src/main/java/org/onehippo/cms7/essentials/xinha/gui/XinhaPlugin.java -text
 dashboard-plugins/dashboard-xinha-plugin/src/main/resources/META-INF/plugin.xml -text
 dashboard-plugins/dashboard-xinha-plugin/src/main/resources/root.xml -text

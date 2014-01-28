@@ -13,7 +13,7 @@ import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
  */
 public class XinhaPlugin extends EssentialsPlugin {
 
-    public XinhaPlugin(final String id, final Plugin descriptor, final PluginContext context) {
+    public XinhaPlugin(final Plugin descriptor, final PluginContext context) {
         super(descriptor, context);
 
     }
