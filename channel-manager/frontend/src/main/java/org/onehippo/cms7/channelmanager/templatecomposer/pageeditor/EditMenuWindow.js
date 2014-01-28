@@ -21,12 +21,9 @@
     Hippo.ChannelManager.TemplateComposer.EditMenuWindow = Ext.extend(Ext.Window, {
 
         constructor: function(config) {
-            var closeButton;
-
-            this.resources = config.resources;
             this.iframePanelId = Ext.id();
 
-            closeButton = new Ext.Toolbar.Button({
+            var closeButton = new Ext.Toolbar.Button({
                 text: 'Close',
                 listeners: {
                     click: {
@@ -37,7 +34,7 @@
             });
 
             Ext.apply(config, {
-                title: 'Edit Menu',
+                title: config.resources['edit-menu'],
                 width: 860,
                 height: 555,
                 modal: true,
