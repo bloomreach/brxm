@@ -202,14 +202,18 @@ public class RestWorkflow {
                     }
                     data.put("fieldType", fieldType);
 
-                    String parsed = TemplateUtils.injectTemplate("content_block_nodetype.xml", data, getClass());
+                    String parsed = TemplateUtils.injectTemplate("content_blocks_nodetype.xml", data, getClass());
+                    if (parsed == null) {
+                        throw new RestException("Error updating content blocks, template with name: content_block_nodetype.xml couldn't be found", Response.Status.NOT_FOUND);
+
+                    }
 
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(nodeType.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                             ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_OVERWRITE);
 
-                    parsed = TemplateUtils.injectTemplate("content_block_templates.xml", data, getClass());
+                    parsed = TemplateUtils.injectTemplate("content_blocks_templates.xml", data, getClass());
                     in = new ByteArrayInputStream(parsed.getBytes("UTF-8"));
 
                     ((HippoSession) session).importDereferencedXML(ntemplate.getPath(), in, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,

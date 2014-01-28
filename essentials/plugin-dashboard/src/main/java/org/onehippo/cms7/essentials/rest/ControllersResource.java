@@ -29,8 +29,6 @@ import javax.ws.rs.core.MediaType;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -42,8 +40,6 @@ import com.google.common.base.Strings;
 @Path("/controllers/")
 public class ControllersResource extends BaseResource {
 
-    private static Logger log = LoggerFactory.getLogger(ControllersResource.class);
-
 
     @GET
     @Path("/")
@@ -53,13 +49,12 @@ public class ControllersResource extends BaseResource {
         for (Plugin plugin : plugins) {
             final String pluginLink = plugin.getPluginLink();
             if (Strings.isNullOrEmpty(pluginLink)) {
-                log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
                 continue;
             }
             controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
 
         }
-        // TODO implement
+        // TODO load from remote
 
         return controllers;
 

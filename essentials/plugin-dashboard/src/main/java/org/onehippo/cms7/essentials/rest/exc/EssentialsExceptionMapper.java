@@ -34,6 +34,7 @@ public class EssentialsExceptionMapper implements ExceptionMapper<Throwable> {
     @SuppressWarnings("InstanceofInterfaces")
     @Override
     public Response toResponse(Throwable e) {
+
         if(e instanceof RestException){
             return Response.status(((RestException) e).getErrorCode()).entity(e.getMessage()).build();
         }
