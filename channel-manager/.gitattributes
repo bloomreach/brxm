@@ -923,6 +923,16 @@ frontend/src/main/resources/angular/vendors/angular-translate.js -text
 frontend/src/main/resources/angular/vendors/chosen.jquery.js -text
 frontend/src/main/resources/angular/vendors/hippo-plugins.js -text
 frontend/src/main/resources/angular/vendors/hippo-theme.js -text
+frontend/src/main/resources/angular/vendors/jstree/dist/jstree.js -text
+frontend/src/main/resources/angular/vendors/jstree/dist/jstree.min.js -text
+frontend/src/main/resources/angular/vendors/jstree/dist/libs/jquery.js -text
+frontend/src/main/resources/angular/vendors/jstree/dist/libs/jquery.ui.touch.js -text
+frontend/src/main/resources/angular/vendors/jstree/dist/libs/require.js -text
+frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/32px.png -text
+frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/40px.png -text
+frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/style.css -text
+frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/style.min.css -text
+frontend/src/main/resources/angular/vendors/jstree/dist/themes/default/throbber.gif -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ChannelGridPanelTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/channels/ReflectionUtilTest.java -text
 frontend/src/test/java/org/onehippo/cms7/channelmanager/widgets/JsonUtilTest.java -text
