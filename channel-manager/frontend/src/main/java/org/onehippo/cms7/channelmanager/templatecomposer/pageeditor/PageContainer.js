@@ -300,7 +300,7 @@
         },
 
         toggleMode: function() {
-            var self, hostToIFrame, mountId, hasPreviewHstConfig, doneCallback;
+            var self, hostToIFrame, mountId, hasPreviewHstConfig;
 
             self = this;
             hostToIFrame = Ext.getCmp('pageEditorIFrame').hostToIFrame;
@@ -316,51 +316,41 @@
                 hostToIFrame.publish('hide-edit-menu-buttons');
                 hostToIFrame.publish('show-edit-content-buttons');
                 self._complete();
+            } else if (hasPreviewHstConfig) {
+                // reset pageContext, the page and toolkit stores must be reloaded
+                self.pageContext = null;
+                // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
+                self.refreshIframe.call(self, null);
             } else {
-
-                if (hasPreviewHstConfig) {
-                    doneCallback = function() {
-                        hostToIFrame.publish('showoverlay');
-                        hostToIFrame.publish('hide-edit-menu-buttons');
-                        hostToIFrame.publish('hide-edit-content-buttons');
-                        self._complete();
-                    }.createDelegate(this);
-                    // reset pageContext, the page and toolkit stores must be reloaded
-                    self.pageContext = null;
-                    // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
-                    self.refreshIframe.call(self, null);
-
-                } else {
-                    // create new preview hst configuration
-                    Ext.Ajax.request({
-                        method: 'POST',
-                        headers: {
-                            'FORCE_CLIENT_HOST': 'true'
-                        },
-                        url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
-                        success: function() {
-                            // reset pageContext, the page and toolkit stores must be reloaded
-                            self.pageContext = null;
-                            // refresh iframe to get new hst config uuids.
-                            self.fireEvent('previewCreated');
-                        },
-                        failure: function(result) {
-                            if (result.isTimeout) {
-                                console.error(self.resources['preview-hst-config-creation-timeout-title']);
-                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-timeout-title'],
-                                        self.resources['preview-hst-config-creation-timeout'] + self.resources['increase-timeout-location-helper-message'],function() {
-                                            self.initComposer.call(self);
-                                        });
-                            } else {
-                                var jsonData = Ext.util.JSON.decode(result.responseText);
-                                console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
-                                Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                                    self.initComposer.call(self);
-                                });
-                            }
+                // create new preview hst configuration
+                Ext.Ajax.request({
+                    method: 'POST',
+                    headers: {
+                        'FORCE_CLIENT_HOST': 'true'
+                    },
+                    url: this.composerRestMountUrl + '/' + mountId + './edit?FORCE_CLIENT_HOST=true',
+                    success: function() {
+                        // reset pageContext, the page and toolkit stores must be reloaded
+                        self.pageContext = null;
+                        // refresh iframe to get new hst config uuids.
+                        self.fireEvent('previewCreated');
+                    },
+                    failure: function(result) {
+                        if (result.isTimeout) {
+                            console.error(self.resources['preview-hst-config-creation-timeout-title']);
+                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-timeout-title'],
+                                    self.resources['preview-hst-config-creation-timeout'] + self.resources['increase-timeout-location-helper-message'],function() {
+                                        self.initComposer.call(self);
+                                    });
+                        } else {
+                            var jsonData = Ext.util.JSON.decode(result.responseText);
+                            console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
+                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
+                                self.initComposer.call(self);
+                            });
                         }
-                    });
-                }
+                    }
+                });
             }
         },
 
