@@ -16,9 +16,11 @@
 (function() {
     "use strict";
 
-    angular.module('hippo.channelManager.menuManagement', ['ngRoute', 'hippo.theme'])
+    angular.module('hippo.channelManager.menuManagement', ['ngRoute', 'hippo.theme', 'pascalprecht.translate'])
 
-        .config(['$routeProvider', function($routeProvider) {
+        .config(['$routeProvider', '$translateProvider', function($routeProvider, $translateProvider) {
+
+            // routing
             $routeProvider
                 .when('/loader', {
                     controller: 'hippo.channelManager.menuManagement.LoaderCtrl',
@@ -39,16 +41,28 @@
                 .otherwise({
                     redirectTo: '/loader'
                 });
-            }
-        ])
+
+            // translations
+            $translateProvider.useStaticFilesLoader({
+                prefix: 'app/i18n/',
+                suffix: '.json'
+            });
+
+            $translateProvider.preferredLanguage('en');
+        }])
 
         .run([
             '$rootScope',
+            '$translate',
             'hippo.channelManager.menuManagement.Container',
-            function ($rootScope, Container) {
+            'hippo.channelManager.menuManagement.ConfigService',
+            function ($rootScope, $translate, Container, Config) {
                 $rootScope.close = function() {
                     Container.close();
                 };
+
+                // set language
+                $translate.uses(Config.locale);
             }
         ]);
 }());

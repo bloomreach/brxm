@@ -214,6 +214,8 @@ frontend/src/main/resources/angular/app/controllers/AddMenuItemCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/AddPageCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/EditMenuItemCtrl.js -text
 frontend/src/main/resources/angular/app/controllers/LoaderCtrl.js -text
+frontend/src/main/resources/angular/app/i18n/en.json -text
+frontend/src/main/resources/angular/app/i18n/nl.json -text
 frontend/src/main/resources/angular/app/services/ConfigService.js -text
 frontend/src/main/resources/angular/app/services/ContainerService.js -text
 frontend/src/main/resources/angular/app/services/IFrameService.js -text
@@ -916,6 +918,8 @@ frontend/src/main/resources/angular/css/hippo-theme.css -text
 frontend/src/main/resources/angular/css/main.css -text
 frontend/src/main/resources/angular/css/tree.css -text
 frontend/src/main/resources/angular/images/loader.gif -text
+frontend/src/main/resources/angular/vendors/angular-translate-loader-static-files.min.js -text
+frontend/src/main/resources/angular/vendors/angular-translate.js -text
 frontend/src/main/resources/angular/vendors/chosen.jquery.js -text
 frontend/src/main/resources/angular/vendors/hippo-plugins.js -text
 frontend/src/main/resources/angular/vendors/hippo-theme.js -text
