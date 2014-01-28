@@ -81,10 +81,10 @@ public class PluginResource extends BaseResource {
     public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
         final RestfulList<PluginRestful> plugins = new RestfulList<>();
 
-        final RestClient client = new RestClient("https://api.github.com/gists/8453217");
+       // final RestClient client = new RestClient("https://api.github.com/gists/8453217");
 
-        final String pluginList = client.getPluginList();
-        List<PluginRestful> items = parseGist(pluginList);
+       // final String pluginList = client.getPluginList();
+        List<PluginRestful> items = null;//parseGist(pluginList);
         // GIST may not be available (too many requests)
         if (items == null || items.size() == 0) {
             final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");

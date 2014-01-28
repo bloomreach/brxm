@@ -20,6 +20,15 @@ public class PluginRestful implements Restful {
     private String introduction;
     private String pluginLink;
     private String pluginClass;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;

@@ -33,6 +33,8 @@
                 $scope.isPageSelected = function (path) {
                     return $location.path() == path;
                 };
+
+
                 //plugin list
                 $scope.init = function () {
                     $http({
@@ -47,6 +49,21 @@
 
                 };
                 $scope.init();
+
+                var indexedPlugins = [];
+
+                $scope.pluginsToFilter = function () {
+                    indexedPlugins = [];
+                    return $scope.plugins;
+                }
+
+                $scope.filterPlugins = function (plugin) {
+                    var pluginIsNew = indexedPlugins.indexOf(plugin.type) == -1;
+                    if (pluginIsNew) {
+                        indexedPlugins.push(plugin.type);
+                    }
+                    return pluginIsNew;
+                }
 
             })
 
