@@ -27,32 +27,32 @@
             <form role="form">
                 <legend>Edit menu item</legend>
                 <div class="form-group">
-                    <label for="label">Label</label>
-                    <input type="text" class="form-control" id="label" placeholder="Label" ng-model="selectedMenuItem.name">
+                    <label for="label">{{ 'LABEL' | translate }}</label>
+                    <input type="text" class="form-control" id="label" placeholder="{{ 'LABEL' | translate }}" ng-model="selectedMenuItem.name">
                 </div>
-                <label for="url">Destination</label>
+                <label for="url">{{ 'DESTINATION' | translate }}</label>
                 <div class="form-group">
                     <div class="radio">
                         <label>
-                            <input type="radio" name="destination"  ng-model="selectedMenuItem.destination" value="1" checked>
-                            Sitemap item
+                            <input type="radio" name="destination"  ng-model="selectedMenuItem.destination" value="1" checked="checked">
+                            {{ 'SITEMAP_ITEM' | translate }}
                         </label>
                     </div>
                     <div class="radio">
                         <label>
                             <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="2">
-                            External link
+                            {{ 'EXTERNAL_LINK' | translate }}
                         </label>
                     </div>
                     <div class="radio">
                         <label>
                             <input type="radio" name="destination" ng-model="selectedMenuItem.destination" value="3">
-                            None
+                            {{ 'NONE' | translate }}
                         </label>
                     </div>
                 </div>
                 <div class="form-group" ng-show="selectedMenuItem.destination == 1">
-                    <label for="url">Internal link</label>
+                    <label for="url">{{ 'INTERNAL_LINK' | translate }}</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="url" data-ng-model="selectedMenuItem.siteMapItemPath">
                           <span class="input-group-btn">
@@ -62,18 +62,18 @@
                 </div>
                 <div class="form-group" ng-show="selectedMenuItem.destination == 1">
                     <button type="button" class="btn btn-default btn-sm">
-                        <i class="fa fa-crosshairs"></i> Select document
+                        <i class="fa fa-crosshairs"></i> {{ 'SELECT_DOCUMENT' | translate }}
                     </button>
                     <button type="button" class="btn btn-default btn-sm">
-                        <i class="fa fa-crosshairs"></i> Select landing page
+                        <i class="fa fa-crosshairs"></i> {{ 'SELECT_LANDING_PAGE' | translate }}
                     </button>
                     <button type="button" class="btn btn-default btn-sm" ng-click="createNewPage()">
-                        <i class="fa fa-plus"></i> Create new page
+                        <i class="fa fa-plus"></i> {{ 'CREATE_NEW_PAGE' | translate }}
                     </button>
                 </div>
                 <div class="form-group" ng-show="selectedMenuItem.destination == 2">
-                    <label for="link">External link</label>
-                    <input type="text" class="form-control" id="link" placeholder="http://www.example.com" ng-model="selectedMenuItem.externalLink">
+                    <label for="link">{{ 'EXTERNAL_LINK' | translate }}</label>
+                    <input type="text" class="form-control" id="link" placeholder="{{ 'EXAMPLE_DOMAIN' | translate }}" ng-model="selectedMenuItem.externalLink">
                 </div>
             </form>
 
@@ -81,10 +81,10 @@
     </div>
     <div class="row" data-ng-controller="hippo.channelManager.menuManagement.MenuItemActionsCtrl">
         <div id="add" class="col-sm-4">
-            <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> Add menu item</button>
+            <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}</button>
         </div>
         <div id="remove" class="col-md-8">
-            <button type="button" class="btn btn-default" ng-click="removeMenuItem(selectedMenuItem)"><i class="fa fa-trash-o"></i> Delete menu item</button>
+            <button type="button" class="btn btn-default" ng-click="removeMenuItem(selectedMenuItem)"><i class="fa fa-trash-o"></i> {{ 'DELETE_MENU_ITEM' | translate }}</button>
         </div>
     </div>
 </div>

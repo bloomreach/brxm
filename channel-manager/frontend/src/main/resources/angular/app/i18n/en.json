@@ -18,5 +18,6 @@
     "PAGE_URL": "Page URL",
     "SEARCH_FOR_TEMPLATE": "Search for template",
     "CREATE_PAGE": "Create page",
-    "ADD_MENU_ITEM": "Add menu item"
+    "ADD_MENU_ITEM": "Add menu item",
+    "DELETE_MENU_ITEM": "Delete menu item"
 }
