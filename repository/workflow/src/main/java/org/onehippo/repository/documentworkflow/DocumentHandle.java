@@ -51,9 +51,9 @@ public class DocumentHandle implements SCXMLDataModel {
 
     private DocumentWorkflow.SupportedFeatures supportedFeatures = DocumentWorkflow.SupportedFeatures.all;
 
-    private Map<String, PublishableDocument> documents = null;
-    private PublicationRequest rejectedRequest = null;
-    private PublicationRequest request = null;
+    private Map<String, DocumentVariant> documents = null;
+    private WorkflowRequest rejectedRequest = null;
+    private WorkflowRequest request = null;
 
     private String states;
 
@@ -84,7 +84,7 @@ public class DocumentHandle implements SCXMLDataModel {
         }
 
         for (Node variant : new NodeIterable(handle.getNodes(handle.getName()))) {
-            PublishableDocument doc = new PublishableDocument(variant);
+            DocumentVariant doc = new DocumentVariant(variant);
             if (documents != null && documents.containsKey(doc.getState())) {
                 log.warn("Document at path {} has multiple variants with state {}. Variant with identifier {} ignored.",
                         new String[]{handle.getPath(), doc.getState(), variant.getIdentifier()});
@@ -92,9 +92,9 @@ public class DocumentHandle implements SCXMLDataModel {
             getDocuments(true).put(doc.getState(), doc);
         }
 
-        for (Node requestNode : new NodeIterable(handle.getNodes(PublicationRequest.HIPPO_REQUEST))) {
-            PublicationRequest req = new PublicationRequest(requestNode);
-            String requestType = JcrUtils.getStringProperty(requestNode, PublicationRequest.HIPPOSTDPUBWF_TYPE, "");
+        for (Node requestNode : new NodeIterable(handle.getNodes(WorkflowRequest.HIPPO_REQUEST))) {
+            WorkflowRequest req = new WorkflowRequest(requestNode);
+            String requestType = JcrUtils.getStringProperty(requestNode, WorkflowRequest.HIPPOSTDPUBWF_TYPE, "");
             if ("rejected".equals(requestType)) {
                 if (req.getOwner() != null && !req.getOwner().equals(user)) {
                     continue;
@@ -122,7 +122,7 @@ public class DocumentHandle implements SCXMLDataModel {
         }
     }
 
-    protected Map<String, PublishableDocument> getDocuments(boolean create) {
+    protected Map<String, DocumentVariant> getDocuments(boolean create) {
         if (create && documents == null) {
             documents = new HashMap<>();
         }
@@ -251,7 +251,7 @@ public class DocumentHandle implements SCXMLDataModel {
     /**
      * @return the active Request or null if none
      */
-    public PublicationRequest getRequest() {
+    public WorkflowRequest getRequest() {
         return request;
     }
 
@@ -260,14 +260,14 @@ public class DocumentHandle implements SCXMLDataModel {
      *
      * @return the active Request or null if none
      */
-    public PublicationRequest getR() {
+    public WorkflowRequest getR() {
         return getRequest();
     }
 
     /**
      * @return the rejected Request which is subject of this workflow or null if none
      */
-    public PublicationRequest getRejectedRequest() {
+    public WorkflowRequest getRejectedRequest() {
         return rejectedRequest;
     }
 
@@ -276,58 +276,58 @@ public class DocumentHandle implements SCXMLDataModel {
      *
      * @return the rejected Request which is subject of this workflow or null if none
      */
-    public PublicationRequest getRr() {
+    public WorkflowRequest getRr() {
         return getRejectedRequest();
     }
 
-    public void putDocumentVariant(PublishableDocument variant) throws RepositoryException {
+    public void putDocumentVariant(DocumentVariant variant) throws RepositoryException {
         states = null;
         getDocuments(true).put(variant.getState(), variant);
     }
 
-    public PublishableDocument getDocumentVariantByState(String state) {
+    public DocumentVariant getDocumentVariantByState(String state) {
         return getDocuments(false).get(state);
     }
 
     /**
      * @return Draft variant if it exists or null otherwise
      */
-    public PublishableDocument getDraft() {
-        return getDocuments(false).get(PublishableDocument.DRAFT);
+    public DocumentVariant getDraft() {
+        return getDocuments(false).get(DocumentVariant.DRAFT);
     }
 
     /**
      * @return Draft variant if it exists or null otherwise
      */
-    public PublishableDocument getD() {
+    public DocumentVariant getD() {
         return getDraft();
     }
 
     /**
      * @return Unpublished variant if it exists or null otherwise
      */
-    public PublishableDocument getUnpublished() {
-        return getDocuments(false).get(PublishableDocument.UNPUBLISHED);
+    public DocumentVariant getUnpublished() {
+        return getDocuments(false).get(DocumentVariant.UNPUBLISHED);
     }
 
     /**
      * @return Unpublished variant if it exists or null otherwise
      */
-    public PublishableDocument getU() {
+    public DocumentVariant getU() {
         return getUnpublished();
     }
 
     /**
      * @return Published variant if it exists or null otherwise
      */
-    public PublishableDocument getPublished() {
-        return getDocuments(false).get(PublishableDocument.PUBLISHED);
+    public DocumentVariant getPublished() {
+        return getDocuments(false).get(DocumentVariant.PUBLISHED);
     }
 
     /**
      * @return Published variant if it exists or null otherwise
      */
-    public PublishableDocument getP() {
+    public DocumentVariant getP() {
         return getPublished();
     }
 

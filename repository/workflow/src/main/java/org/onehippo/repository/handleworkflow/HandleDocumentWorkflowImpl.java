@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,17 +17,27 @@ package org.onehippo.repository.handleworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
+import org.onehippo.repository.documentworkflow.DocumentCopyMovePayload;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
+import org.onehippo.repository.documentworkflow.RequestPayload;
+import org.onehippo.repository.documentworkflow.WorkflowRequest;
 import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 
 public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDocumentWorkflow {
@@ -44,6 +54,23 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
 
     SCXMLWorkflowExecutor getWorkflowExecutor() {
         return workflowExecutor;
+    }
+
+    protected Document toUserDocument(Document document) throws RepositoryException {
+        return new Document(getWorkflowContext().getUserSession().getNodeByIdentifier(document.getIdentity()));
+    }
+
+    protected Document workflowResultToUserDocument(Object obj) throws RepositoryException {
+        Document document = null;
+        if (obj != null) {
+            if (obj instanceof DocumentVariant) {
+                document = (DocumentVariant)obj;
+            }
+            if (obj instanceof Document) {
+                document = (Document)obj;
+            }
+        }
+        return document != null && document.getIdentity() != null ? toUserDocument(document) : null;
     }
 
     // Workflow implementation / WorkflowImpl override
@@ -111,4 +138,161 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
         return workflowExecutor.triggerAction(action, payload);
     }
 
+    // EditableWorkflow implementation
+
+    @Override
+    public boolean isModified() throws WorkflowException, RepositoryException {
+        return (Boolean)workflowExecutor.triggerAction("checkModified");
+    }
+
+    @Override
+    public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("obtainEditableInstance"));
+    }
+
+    @Override
+    public Document commitEditableInstance() throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("commitEditableInstance"));
+    }
+
+    @Override
+    public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("disposeEditableInstance"));
+    }
+
+    // BasicReviewedActionsWorkflow implementation
+
+    @Override
+    public void requestDeletion() throws WorkflowException {
+        workflowExecutor.triggerAction("requestDelete");
+    }
+
+    @Override
+    public void requestDepublication() throws WorkflowException {
+        workflowExecutor.triggerAction("requestDepublish");
+    }
+
+    @Override
+    public void requestDepublication(final Date publicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("requestDepublish", publicationDate);
+    }
+
+    @Override
+    public void requestPublication() throws WorkflowException {
+        workflowExecutor.triggerAction("publish");
+    }
+
+    @Override
+    public void requestPublication(final Date publicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("requestPublish", publicationDate);
+    }
+
+    @Override
+    public void requestPublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
+        throw new WorkflowException("unsupported");
+    }
+
+    // FullReviewedActionsWorkflow implementation
+
+    @Override
+    public void delete() throws WorkflowException {
+        workflowExecutor.triggerAction("delete");
+    }
+
+    @Override
+    public void rename(final String newName) throws WorkflowException {
+        workflowExecutor.triggerAction("rename", newName);
+    }
+
+    @Override
+    public void copy(final Document destination, final String newName) throws WorkflowException {
+        workflowExecutor.triggerAction("copy", new DocumentCopyMovePayload(destination, newName));
+    }
+
+    @Override
+    public void move(final Document destination, final String newName) throws WorkflowException {
+        workflowExecutor.triggerAction("move", new DocumentCopyMovePayload(destination, newName));
+    }
+
+    @Override
+    public void depublish() throws WorkflowException {
+        workflowExecutor.triggerAction("depublish");
+    }
+
+    @Override
+    public void depublish(final Date depublicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("depublish", depublicationDate);
+    }
+
+    @Override
+    public void publish() throws WorkflowException {
+        workflowExecutor.triggerAction("publish");
+    }
+
+    @Override
+    public void publish(final Date publicationDate) throws WorkflowException {
+        workflowExecutor.triggerAction("publish", publicationDate);
+    }
+
+    @Override
+    public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
+        throw new WorkflowException("unsupported");
+    }
+
+    // Request Workflow on Document handle level
+
+    @Override
+    public void cancelRequest(Node request) throws WorkflowException, RepositoryException {
+        workflowExecutor.triggerAction("cancelRequest", new WorkflowRequest(request));
+    }
+
+    @Override
+    public void acceptRequest(Node request) throws WorkflowException, RepositoryException {
+        workflowExecutor.triggerAction("acceptRequest", new WorkflowRequest(request));
+    }
+
+    @Override
+    public void rejectRequest(Node request, final String reason) throws WorkflowException, RepositoryException {
+        workflowExecutor.triggerAction("rejectRequest", new RequestPayload(new WorkflowRequest(request), reason));
+    }
+
+    // UnlockWorkflow implementation
+
+    @Override
+    public void unlock() throws WorkflowException {
+        workflowExecutor.triggerAction("unlock");
+    }
+
+    // Version Workflow on Document handle level
+
+    @Override
+    public Document version() throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("version"));
+    }
+
+    @Override
+    public Document revertFromVersion(final Calendar historic) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("revert", historic));
+    }
+
+    @Override
+    public Document restoreFromVersion(final Version version) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("restoreFrom", version));
+    }
+
+    @Override
+    public Document restoreFromVersion(final Calendar historic) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("restore", historic));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public SortedMap<Calendar, Set<String>> listVersions() throws WorkflowException {
+        return (SortedMap<Calendar, Set<String>>) workflowExecutor.triggerAction("listVersions");
+    }
+
+    @Override
+    public Document retrieveVersion(final Calendar historic) throws WorkflowException, RepositoryException {
+        return workflowResultToUserDocument(workflowExecutor.triggerAction("retrieve", historic));
+    }
 }

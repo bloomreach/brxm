@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.PublicationRequest;
+import org.onehippo.repository.documentworkflow.WorkflowRequest;
 
 /**
  * Custom workflow task for deleting a request
@@ -35,7 +35,7 @@ public class DeleteRequestTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         DocumentHandle dm = getDocumentHandle();
-        PublicationRequest request = dm.getRejectedRequest();
+        WorkflowRequest request = dm.getRejectedRequest();
         if (request == null) {
             request = dm.getRequest();
         }

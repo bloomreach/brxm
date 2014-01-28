@@ -21,8 +21,8 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
 
 /**
  * Custom workflow task for deleting a variant through a chained workflow call
@@ -33,7 +33,7 @@ public class InvokeDocumentWorkflowTask extends AbstractDocumentTask {
 
     private Date when;
     private String action;
-    private PublishableDocument subject;
+    private DocumentVariant subject;
 
     public Date getWhen() {
         return when;
@@ -51,11 +51,11 @@ public class InvokeDocumentWorkflowTask extends AbstractDocumentTask {
         this.action = action;
     }
 
-    public PublishableDocument getSubject() {
+    public DocumentVariant getSubject() {
         return subject;
     }
 
-    public void setSubject(final PublishableDocument subject) {
+    public void setSubject(final DocumentVariant subject) {
         this.subject = subject;
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,16 +26,16 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
-public class PublishableDocument extends Document {
+public class DocumentVariant extends Document {
 
     final public static String PUBLISHED = HippoStdNodeType.PUBLISHED;
     final public static String UNPUBLISHED = HippoStdNodeType.UNPUBLISHED;
     final public static String DRAFT = HippoStdNodeType.DRAFT;
 
-    public PublishableDocument() {
+    public DocumentVariant() {
     }
 
-    public PublishableDocument(Node node) throws RepositoryException {
+    public DocumentVariant(Node node) throws RepositoryException {
         super(node);
     }
 

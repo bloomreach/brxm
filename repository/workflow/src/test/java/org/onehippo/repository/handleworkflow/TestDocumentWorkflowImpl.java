@@ -42,7 +42,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.documentworkflow.MockAccessManagedSession;
 import org.onehippo.repository.documentworkflow.MockWorkflowContext;
-import org.onehippo.repository.documentworkflow.PublicationRequest;
+import org.onehippo.repository.documentworkflow.WorkflowRequest;
 import org.onehippo.repository.documentworkflow.action.ArchiveAction;
 import org.onehippo.repository.documentworkflow.action.ConfigVariantAction;
 import org.onehippo.repository.documentworkflow.action.CopyDocumentAction;
@@ -133,8 +133,8 @@ public class TestDocumentWorkflowImpl {
     }
 
     protected Node addRequest(Node handle, String type) throws RepositoryException {
-        Node variant = handle.addNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
-        variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
+        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
+        variant.setProperty(WorkflowRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
 
@@ -292,7 +292,7 @@ public class TestDocumentWorkflowImpl {
         // test state not-editable
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
 
-        rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
+        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
@@ -302,7 +302,7 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "editable");
 
-        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-editable");
@@ -342,7 +342,7 @@ public class TestDocumentWorkflowImpl {
 
         assertContainsHint(wf.hints(), "obtainEditableInstance", true);
 
-        rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
+        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-edit");
@@ -421,12 +421,12 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-requested");
 
         // test state requested
-        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "requested");
 
-        rejectedRequest = addRequest(handleNode, PublicationRequest.REJECTED);
+        rejectedRequest = addRequest(handleNode, WorkflowRequest.REJECTED);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
@@ -456,13 +456,13 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "acceptRequest", true);
         assertContainsHint(wf.hints(), "rejectRequest", true);
 
-        publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        publishRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
-        publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
+        publishRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", false);
@@ -475,7 +475,7 @@ public class TestDocumentWorkflowImpl {
         assertNotContainsHint(wf.hints(), "acceptRequest");
         assertNotContainsHint(wf.hints(), "rejectRequest");
 
-        publishRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        publishRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
 
         wf.setNode(handleNode);
 
@@ -499,14 +499,14 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "request-rejected");
 
         workflowConfig.remove("workflow.supportedFeatures");
-        rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        rejectedRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
-        rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
+        rejectedRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "otheruser");
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", false);
@@ -520,7 +520,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "acceptRequest", false);
         assertContainsHint(wf.hints(), "rejectRequest", false);
 
-        publishRequest.getProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME).remove();
+        publishRequest.getProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME).remove();
         wf.setNode(handleNode);
 
         assertContainsHint(wf.hints(), "cancelRequest", true);
@@ -560,7 +560,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsHint(wf.hints(), "publish", true);
 
         unpublishedVariant.remove();
-        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-publishable");
@@ -683,7 +683,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "not-depublishable");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
-        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-depublish");
@@ -850,7 +850,7 @@ public class TestDocumentWorkflowImpl {
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
 
         draftVariant.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).remove();
-        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
         wf.setNode(handleNode);
 
         assertContainsStateIds(wf.getWorkflowExecutor(), "no-terminate");
@@ -890,7 +890,7 @@ public class TestDocumentWorkflowImpl {
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER, "otheruser");
         unpublishedVariant = addVariant(handleNode, HippoStdNodeType.UNPUBLISHED);
         publishedVariant = addVariant(handleNode, HippoStdNodeType.PUBLISHED);
-        publishRequest = addRequest(handleNode, PublicationRequest.PUBLISH);
+        publishRequest = addRequest(handleNode, WorkflowRequest.PUBLISH);
 
         wf.setNode(handleNode);
 

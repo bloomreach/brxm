@@ -22,8 +22,8 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.PublicationRequest;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
+import org.onehippo.repository.documentworkflow.WorkflowRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class RequestTask extends AbstractDocumentTask {
     private static Logger log = LoggerFactory.getLogger(RequestTask.class);
 
     private String type;
-    private PublishableDocument contextVariant;
+    private DocumentVariant contextVariant;
     private Date targetDate;
 
     public String getType() {
@@ -48,11 +48,11 @@ public class RequestTask extends AbstractDocumentTask {
         this.type = type;
     }
 
-    public PublishableDocument getContextVariant() {
+    public DocumentVariant getContextVariant() {
         return contextVariant;
     }
 
-    public void setContextVariant(PublishableDocument contextVariant) {
+    public void setContextVariant(DocumentVariant contextVariant) {
         this.contextVariant = contextVariant;
     }
 
@@ -70,12 +70,12 @@ public class RequestTask extends AbstractDocumentTask {
         DocumentHandle dm = getDocumentHandle();
 
         if (dm.getRequest() == null) {
-            PublicationRequest req;
+            WorkflowRequest req;
 
             if (targetDate == null) {
-                req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser());
+                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser());
             } else {
-                req = new PublicationRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser(), targetDate);
+                req = new WorkflowRequest(getType(), contextVariant.getNode(), contextVariant, dm.getUser(), targetDate);
             }
 
             req.getNode().getSession().save();

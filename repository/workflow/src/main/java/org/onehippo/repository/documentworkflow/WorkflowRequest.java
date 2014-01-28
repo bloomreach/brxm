@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.hippoecm.repository.reviewedactions.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 
-public class PublicationRequest extends Document {
+public class WorkflowRequest extends Document {
 
     public static final String HIPPO_REQUEST = "hippo:request";
     public static final String NT_HIPPOSTDPUBWF_REQUEST = "hippostdpubwf:request";
@@ -41,9 +41,9 @@ public class PublicationRequest extends Document {
     public static final String DELETE = "delete";
     public static final String COLLECTION = "collection";
 
-    public PublicationRequest() {}
+    public WorkflowRequest() {}
 
-    public PublicationRequest(Node node) throws RepositoryException {
+    public WorkflowRequest(Node node) throws RepositoryException {
         super(node);
     }
 
@@ -54,7 +54,7 @@ public class PublicationRequest extends Document {
         return requestNode;
     }
 
-    public PublicationRequest(String type, Node sibling, PublishableDocument document, String username) throws RepositoryException {
+    public WorkflowRequest(String type, Node sibling, DocumentVariant document, String username) throws RepositoryException {
         super(newRequestNode(sibling.getParent()));
         setStringProperty(HIPPOSTDPUBWF_TYPE, type);
         setStringProperty(HIPPOSTDPUBWF_USERNAME, username);
@@ -63,7 +63,7 @@ public class PublicationRequest extends Document {
         }
     }
 
-    public PublicationRequest(String type, Node sibling, PublishableDocument document, String username, Date scheduledDate) throws RepositoryException {
+    public WorkflowRequest(String type, Node sibling, DocumentVariant document, String username, Date scheduledDate) throws RepositoryException {
         this(type, sibling, document, username);
         setDateProperty(HIPPOSTDPUBWF_REQDATE, scheduledDate);
     }
@@ -80,7 +80,7 @@ public class PublicationRequest extends Document {
         return getDateProperty(HIPPOSTDPUBWF_REQDATE);
     }
 
-    public void setRejected(PublishableDocument stale, String reason) throws RepositoryException  {
+    public void setRejected(DocumentVariant stale, String reason) throws RepositoryException  {
         setStringProperty(HIPPOSTDPUBWF_TYPE, REJECTED);
         if (stale != null) {
             setNodeProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT, stale.getNode());

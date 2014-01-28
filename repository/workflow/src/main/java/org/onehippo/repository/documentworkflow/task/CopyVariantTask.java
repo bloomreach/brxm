@@ -23,7 +23,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
  * Custom workflow task for copying (creating if necessary) from one variant node to another variant node
@@ -56,8 +56,8 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        PublishableDocument sourceDoc = dm.getDocumentVariantByState(getSourceState());
-        PublishableDocument targetDoc = dm.getDocumentVariantByState(getTargetState());
+        DocumentVariant sourceDoc = dm.getDocumentVariantByState(getSourceState());
+        DocumentVariant targetDoc = dm.getDocumentVariantByState(getTargetState());
 
         if (sourceDoc == null || sourceDoc.getNode() == null) {
             throw new WorkflowException("Source document variant (node) is not available.");
@@ -72,13 +72,13 @@ public class CopyVariantTask extends AbstractDocumentTask {
             saveNeeded = true;
             targetNode = cloneDocumentNode(sourceNode);
 
-            if (PublishableDocument.DRAFT.equals(getTargetState())) {
+            if (DocumentVariant.DRAFT.equals(getTargetState())) {
                 if (targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                     targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
                 }
             }
 
-            targetDoc = new PublishableDocument(targetNode);
+            targetDoc = new DocumentVariant(targetNode);
             targetDoc.setState(getTargetState());
         }
         else {

@@ -18,7 +18,7 @@ package org.onehippo.repository.documentworkflow.action;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.ConfigVariantTask;
 
 /**
@@ -76,7 +76,7 @@ public class ConfigVariantAction extends AbstractDocumentTaskAction<ConfigVarian
     @Override
     protected void initTask(ConfigVariantTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
-        task.setVariant((PublishableDocument)eval(getVariant()));
+        task.setVariant((DocumentVariant)eval(getVariant()));
         task.setAvailabilities(getAvailabilities());
         task.setApplyModified(isApplyModified());
         task.setVersionable(isVersionable());

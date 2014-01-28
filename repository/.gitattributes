@@ -481,8 +481,8 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublicationState.
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocument.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
-workflow/src/main/java/org/onehippo/repository/documentworkflow/PublicationRequest.java -text
-workflow/src/main/java/org/onehippo/repository/documentworkflow/PublishableDocument.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/DocumentVariant.java -text
+workflow/src/main/java/org/onehippo/repository/documentworkflow/WorkflowRequest.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ArchiveAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/ConfigVariantAction.java -text
 workflow/src/main/java/org/onehippo/repository/documentworkflow/action/CopyDocumentAction.java -text

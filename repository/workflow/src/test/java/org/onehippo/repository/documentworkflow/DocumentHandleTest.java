@@ -41,8 +41,8 @@ public class DocumentHandleTest {
     }
 
     protected Node addRequest(Node handle, String type) throws RepositoryException {
-        Node variant = handle.addNode(PublicationRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
-        variant.setProperty(PublicationRequest.HIPPOSTDPUBWF_TYPE, type);
+        Node variant = handle.addNode(WorkflowRequest.HIPPO_REQUEST, HippoNodeType.NT_REQUEST);
+        variant.setProperty(WorkflowRequest.HIPPOSTDPUBWF_TYPE, type);
         return variant;
     }
 
@@ -56,7 +56,7 @@ public class DocumentHandleTest {
 
         // create handle with publication request
         MockNode handle = MockNode.root().addMockNode("test", HippoNodeType.NT_HANDLE);
-        Node publishRequest = addRequest(handle, PublicationRequest.PUBLISH);
+        Node publishRequest = addRequest(handle, WorkflowRequest.PUBLISH);
         DocumentHandle dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
 
         assertEquals("", dm.getStates());
@@ -67,9 +67,9 @@ public class DocumentHandleTest {
         // add published, unpublished variants & rejected request
         Node publishedVariant = addVariant(handle, HippoStdNodeType.PUBLISHED);
         Node unpublishedVariant = addVariant(handle, HippoStdNodeType.UNPUBLISHED);
-        addRequest(handle, PublicationRequest.REJECTED);
-        Node rejectedRequest = addRequest(handle, PublicationRequest.REJECTED);
-        rejectedRequest.setProperty(PublicationRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
+        addRequest(handle, WorkflowRequest.REJECTED);
+        Node rejectedRequest = addRequest(handle, WorkflowRequest.REJECTED);
+        rejectedRequest.setProperty(WorkflowRequest.HIPPOSTDPUBWF_USERNAME, "testuser");
         dm = new DocumentHandle(new MockWorkflowContext("testuser"), handle);
 
         assertEquals("up", dm.getStates());

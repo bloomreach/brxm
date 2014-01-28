@@ -20,9 +20,9 @@ import java.util.Calendar;
 public class VersionPayload {
 
     private final Calendar version;
-    private final PublishableDocument target;
+    private final DocumentVariant target;
 
-    public VersionPayload(final Calendar version, final PublishableDocument target) {
+    public VersionPayload(final Calendar version, final DocumentVariant target) {
         this.version = version;
         this.target = target;
     }
@@ -31,7 +31,7 @@ public class VersionPayload {
         return version;
     }
 
-    public PublishableDocument getTarget() {
+    public DocumentVariant getTarget() {
         return target;
     }
 }

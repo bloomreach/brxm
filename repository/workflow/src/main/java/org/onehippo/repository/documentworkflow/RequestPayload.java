@@ -17,15 +17,15 @@ package org.onehippo.repository.documentworkflow;
 
 public class RequestPayload {
 
-    private final PublicationRequest subject;
+    private final WorkflowRequest subject;
     private final String reason;
 
-    public RequestPayload(final PublicationRequest subject, final String reason) {
+    public RequestPayload(final WorkflowRequest subject, final String reason) {
         this.subject = subject;
         this.reason = reason;
     }
 
-    public PublicationRequest getSubject() {
+    public WorkflowRequest getSubject() {
         return subject;
     }
 

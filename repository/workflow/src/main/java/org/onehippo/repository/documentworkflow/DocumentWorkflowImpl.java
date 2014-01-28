@@ -51,8 +51,8 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     protected Document workflowResultToUserDocument(Object obj) throws RepositoryException {
         Document document = null;
         if (obj != null) {
-            if (obj instanceof PublishableDocument) {
-                document = (PublishableDocument)obj;
+            if (obj instanceof DocumentVariant) {
+                document = (DocumentVariant)obj;
             }
             if (obj instanceof Document) {
                 document = (Document)obj;
@@ -204,7 +204,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void cancelRequest() throws WorkflowException {
         try {
-            handleDocumentWorkflow.triggerAction("cancelRequest", new RequestPayload(new PublicationRequest(subject), null));
+            handleDocumentWorkflow.triggerAction("cancelRequest", new RequestPayload(new WorkflowRequest(subject), null));
         } catch (RepositoryException e) {
             throw new WorkflowException("Unable to create PublicationRequest from subject", e);
         }
@@ -215,7 +215,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void acceptRequest() throws WorkflowException {
         try {
-            handleDocumentWorkflow.triggerAction("acceptRequest", new RequestPayload(new PublicationRequest(subject), null));
+            handleDocumentWorkflow.triggerAction("acceptRequest", new RequestPayload(new WorkflowRequest(subject), null));
         } catch (RepositoryException e) {
             throw new WorkflowException("Unable to create PublicationRequest from subject", e);
         }
@@ -224,7 +224,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void rejectRequest(final String reason) throws WorkflowException {
         try {
-            handleDocumentWorkflow.triggerAction("rejectRequest", new RequestPayload(new PublicationRequest(subject), reason));
+            handleDocumentWorkflow.triggerAction("rejectRequest", new RequestPayload(new WorkflowRequest(subject), reason));
         } catch (RepositoryException e) {
             throw new WorkflowException("Unable to create PublicationRequest from subject", e);
         }
@@ -252,7 +252,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document restoreTo(final Document target) throws WorkflowException, RepositoryException {
         Calendar historic = ((Version) subject).getCreated();
-        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("restoreTo", new VersionPayload(historic, new PublishableDocument(subject))));
+        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("restoreTo", new VersionPayload(historic, new DocumentVariant(subject))));
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.util.Date;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.InvokeDocumentWorkflowTask;
 
 /**
@@ -67,6 +67,6 @@ public class InvokeDocumentWorkflowAction extends AbstractDocumentTaskAction<Inv
         if (getWhenExpr() != null) {
             task.setWhen((Date)eval(getWhenExpr()));
         }
-        task.setSubject((PublishableDocument) eval(getSubjectExpr()));
+        task.setSubject((DocumentVariant) eval(getSubjectExpr()));
     }
 }

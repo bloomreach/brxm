@@ -20,7 +20,7 @@ import java.util.Date;
 
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.RequestTask;
 
 /**
@@ -63,7 +63,7 @@ public class RequestAction extends AbstractDocumentTaskAction<RequestTask> {
     protected void initTask(RequestTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setType(getType());
-        task.setContextVariant((PublishableDocument) eval(getContextVariantExpr()));
+        task.setContextVariant((DocumentVariant) eval(getContextVariantExpr()));
         task.setTargetDate((Date) eval(getTargetDateExpr()));
     }
 }

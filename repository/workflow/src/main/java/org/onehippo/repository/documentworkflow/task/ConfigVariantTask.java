@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
 
 /**
@@ -35,17 +35,17 @@ public class ConfigVariantTask extends AbstractDocumentTask {
 
     private static final long serialVersionUID = 1L;
 
-    private PublishableDocument variant;
+    private DocumentVariant variant;
     private String availabilities;
     private boolean applyModified;
     private boolean versionable;
     private boolean setHolder;
 
-    public PublishableDocument getVariant() {
+    public DocumentVariant getVariant() {
         return variant;
     }
 
-    public void setVariant(PublishableDocument variant) {
+    public void setVariant(DocumentVariant variant) {
         this.variant = variant;
     }
 

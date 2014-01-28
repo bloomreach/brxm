@@ -28,7 +28,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.PublishableDocument;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class MoveDocumentTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        PublishableDocument document = null;
+        DocumentVariant document = null;
 
         if (dm.getUnpublished() != null) {
             document = dm.getUnpublished();
