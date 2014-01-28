@@ -89,7 +89,12 @@ public class PluginResource extends BaseResource {
         if (items == null || items.size() == 0) {
             final InputStream stream = getClass().getResourceAsStream("/plugin_descriptor.json");
             final String json = GlobalUtils.readStreamAsText(stream);
-            items = parseGist(json);
+            final Gson gson = new Gson();
+            final Type listType = new TypeToken<RestfulList<PluginRestful>>() {
+            }.getType();
+            final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
+            items = restfulList.getItems();
+
         }
 
         for (PluginRestful item : items) {
