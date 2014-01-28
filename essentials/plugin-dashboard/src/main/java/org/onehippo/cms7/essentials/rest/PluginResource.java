@@ -16,7 +16,10 @@
 
 package org.onehippo.cms7.essentials.rest;
 
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -29,19 +32,29 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
+import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
+import org.onehippo.cms7.essentials.dashboard.installer.Installer;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.onehippo.cms7.essentials.rest.client.RestClient;
 import org.onehippo.cms7.essentials.rest.model.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
 import org.onehippo.cms7.essentials.rest.model.PostPayloadRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
+import org.onehippo.cms7.essentials.rest.model.tmp.Gist;
+import org.onehippo.cms7.essentials.rest.model.tmp.GistFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 
 /**
+ *
+ * Rest resource which provides information about plugins: e.g. installed or available plugins
  * @version "$Id$"
  */
 @Produces({MediaType.APPLICATION_JSON})
@@ -52,6 +65,64 @@ public class PluginResource extends BaseResource {
     @Inject
     private EventBus eventBus;
     private static Logger log = LoggerFactory.getLogger(PluginResource.class);
+
+    /**
+     * Fetches a (remote) service and checks for available Hippo Essentials plugins
+     * @param servletContext servlet context
+     * @return JSON file of available plugins
+     */
+    @GET
+    @Path("/")
+    public RestfulList<PluginRestful> getPluginList(@Context ServletContext servletContext) {
+        final RestfulList<PluginRestful> plugins = new RestfulList<>();
+
+        final RestClient client = new RestClient("https://api.github.com/gists/8453217");
+
+        final String pluginList = client.getPluginList();
+        final List<PluginRestful> items = parseGist(pluginList);
+        if(items==null || items.size() ==0){
+
+        }
+
+
+        for (PluginRestful item : items) {
+            if (item.isNeedsInstallation()) {
+                final String pluginClass = item.getPluginClass();
+                if (pluginClass != null) {
+                    try {
+                        final Class<?> clazz = Class.forName(pluginClass);
+                        final Installer plugin = (Installer) GlobalUtils.newInstance(clazz);
+                        final InstallState installState = plugin.getInstallState();
+                        if (installState == InstallState.INSTALLED_AND_RESTARTED) {
+                            item.setNeedsInstallation(false);
+                        }
+                    } catch (Exception e) {
+                        log.error("Error checking install state", e);
+                    }
+                }
+            }
+        }
+        return plugins;
+    }
+
+    public static List<PluginRestful> parseGist(final String pluginList) {
+        try {
+            final Gson gson = new Gson();
+            final Gist gist = gson.fromJson(pluginList, Gist.class);
+            final Map<String, GistFile> files = gist.getFiles();
+            final GistFile gistFile = files.get("gistfile1.json");
+            final String json = gistFile.getContent();
+
+            final Type listType = new TypeToken<RestfulList<PluginRestful>>() {
+            }.getType();
+            final RestfulList<PluginRestful> restfulList = gson.fromJson(json, listType);
+            return restfulList.getItems();
+        } catch (JsonParseException e) {
+            log.error("Error parsing gist", e);
+        }
+        return Collections.emptyList();
+
+    }
 
 
     @POST
@@ -68,7 +139,7 @@ public class PluginResource extends BaseResource {
 
             resource.setTitle(p.getName());
             resource.setInstalled(checkInstalled(p));
-
+            // TODO save this list
             plugins.add(resource);
         }
         return plugins;
@@ -91,15 +162,7 @@ public class PluginResource extends BaseResource {
         return plugins;
     }
 
-    @GET
-    @Path("/")
-    public String getPluginList(@Context ServletContext servletContext) {
 
-        RestClient client = new RestClient("https://api.github.com/gists/8453217");
-        return client.getPluginList();
-
-
-    }
 
     @GET
     @Path("/installstate/{className}")

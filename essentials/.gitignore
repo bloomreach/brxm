@@ -2392,6 +2392,12 @@ plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentbl
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/contentblocks/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/hippo-plugins.iws
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/target
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/*.iml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/.DS_Store
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/.idea
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/atlassian-ide-plugin.xml
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/hippo-plugins.iws
+plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/model/tmp/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/target
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/*.iml
 plugin-dashboard/src/main/java/org/onehippo/cms7/essentials/rest/utils/.DS_Store

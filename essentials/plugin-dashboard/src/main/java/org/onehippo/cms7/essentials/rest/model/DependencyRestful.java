@@ -15,6 +15,7 @@ public class DependencyRestful implements Restful {
     private String repositoryUrl;
     private String version;
     private String scope;
+    private String type;
 
 
     public String getGroupId() {
@@ -59,6 +60,14 @@ public class DependencyRestful implements Restful {
 
     public String getScope() {
         return scope;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
     }
 
     public void setScope(final String scope) {
