@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.rest;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,6 @@ import javax.ws.rs.core.MediaType;
 import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.DefaultDocumentManager;
-import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.config.DocumentManager;
 import org.onehippo.cms7.essentials.dashboard.config.InstallerDocument;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
@@ -229,9 +229,11 @@ public class PluginResource extends BaseResource {
                 final boolean installed = installPlugin(p);
                 if (installed) {
                     final DocumentManager manager = new DefaultDocumentManager(getContext(servletContext));
-                    final Document document = new InstallerDocument();
+                    final InstallerDocument document = new InstallerDocument();
                     document.setParentPath(GlobalUtils.getParentConfigPath(pluginClass));
                     document.setName(GlobalUtils.getClassName(pluginClass));
+                    document.setDateInstalled(Calendar.getInstance());
+                    document.setPluginClass(pluginClass);
                     manager.saveDocument(document);
                     message.setValue("Plugin successfully installed. Please rebuild and restart your application");
                     return message;
