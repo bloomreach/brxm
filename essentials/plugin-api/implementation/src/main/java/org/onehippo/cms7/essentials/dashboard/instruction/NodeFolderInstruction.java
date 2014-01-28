@@ -19,7 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.instruction;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.ImportUUIDBehavior;
@@ -91,7 +90,7 @@ public class NodeFolderInstruction extends PluginInstruction {
                 log.error("Template was not found: {}", template);
                 return InstructionStatus.FAILED;
             }
-            String content = GlobalUtils.readStreamAsText(stream).toString();
+            String content = GlobalUtils.readStreamAsText(stream);
             final Map<String, Object> data = context.getPlaceholderData();
             final Iterable<String> pathParts = Splitter.on('/').omitEmptyStrings().split(path);
             Node parent = session.getRootNode();

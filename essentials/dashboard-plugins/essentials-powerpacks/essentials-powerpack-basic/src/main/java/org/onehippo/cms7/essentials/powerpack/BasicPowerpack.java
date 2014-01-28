@@ -16,12 +16,14 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import java.io.InputStream;
+import java.util.Set;
+
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 import org.onehippo.cms7.essentials.dashboard.instruction.executors.PluginInstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instruction.parser.InstructionParser;
+import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
@@ -30,8 +32,8 @@ import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.util.Set;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -39,8 +41,8 @@ import java.util.Set;
 public class BasicPowerpack implements PowerpackPackage {
 
     private static Logger log = LoggerFactory.getLogger(BasicPowerpack.class);
-    public static final String PACK_ID = "";
-    protected Instructions instructions;
+
+    private Instructions instructions;
     @Inject
     private EventBus eventBus;
 
@@ -58,7 +60,7 @@ public class BasicPowerpack implements PowerpackPackage {
     @Override
     public InstructionStatus execute(final PluginContext context) {
         if (instructions == null) {
-            getInstructions();
+            instructions = getInstructions();
         }
         if (instructions == null) {
             eventBus.post(new DisplayEvent("Couldn't parse instructions"));
@@ -67,7 +69,7 @@ public class BasicPowerpack implements PowerpackPackage {
         }
         final Set<InstructionSet> instructionSets = instructions.getInstructionSets();
         InstructionStatus status = InstructionStatus.SUCCESS;
-        final PluginInstructionExecutor executor = new PluginInstructionExecutor();
+        final InstructionExecutor executor = new PluginInstructionExecutor();
         for (InstructionSet instructionSet : instructionSets) {
             // currently we return fail if any of instructions is failed
             if (status == InstructionStatus.FAILED) {
@@ -79,4 +81,5 @@ public class BasicPowerpack implements PowerpackPackage {
         // TODO
         return status;
     }
+
 }

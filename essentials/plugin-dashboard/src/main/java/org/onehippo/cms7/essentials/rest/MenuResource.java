@@ -22,12 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-
 import org.onehippo.cms7.essentials.rest.model.PluginRestful;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -37,9 +32,6 @@ import org.slf4j.LoggerFactory;
 @Path("/menu/")
 public class MenuResource {
 
-    @Inject
-    private EventBus eventBus;
-    private static Logger log = LoggerFactory.getLogger(MenuResource.class);
 
 
     @GET

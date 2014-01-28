@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public enum InstallState implements Serializable {
     UNINSTALLED("uninstalled"), INSTALLED("installed"), INSTALLED_AND_RESTARTED("installed_and_restarted");
-    String state;
+    private String state;
 
     InstallState(String state) {
         this.state = state;

@@ -82,7 +82,7 @@
   </category>
 
   <category name="org.onehippo.cms7.essentials.dashboard">
-    <level value="debug"/>
+    <level value="warn"/>
   </category>
 
   <root>

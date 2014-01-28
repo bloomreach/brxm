@@ -13,7 +13,7 @@
     <version>7.8.5</version>
   </parent>
 
-  <name>Hippo Essentials  plugins sdk</name>
+  <name>Hippo Essentials plugins sdk</name>
   <description>Hippo Essentials plugins sdk</description>
   <artifactId>hippo-essentials-plugin-sdk</artifactId>
   <groupId>org.onehippo.cms7.essentials</groupId>
@@ -39,7 +39,6 @@
     <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
     <geronimo-jta_1.1_spec.version>1.1.1</geronimo-jta_1.1_spec.version>
     <mustache.version>0.8.13</mustache.version>
-    <jackrabbit-ocm.version>2.0.0</jackrabbit-ocm.version>
   </properties>
 
   <modules>
@@ -80,11 +79,6 @@
         <groupId>com.github.spullara.mustache.java</groupId>
         <artifactId>compiler</artifactId>
         <version>${mustache.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache</groupId>
-        <artifactId>jackrabbit-ocm</artifactId>
-        <version>${jackrabbit-ocm.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>

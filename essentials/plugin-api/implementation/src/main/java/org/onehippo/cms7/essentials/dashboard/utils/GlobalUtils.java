@@ -16,18 +16,23 @@ import javax.jcr.Session;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
+import org.onehippo.cms7.essentials.dashboard.config.JcrPluginConfigService;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * @version "$Id: GlobalUtils.java 174806 2013-08-23 09:22:46Z mmilicevic $"
  */
-public class GlobalUtils {
+public final class GlobalUtils {
 
     private static final String PREFIX_GET = "get";
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
@@ -189,5 +194,34 @@ public class GlobalUtils {
             log.error("Error creating repository connection", e);
         }
         return null;
+    }
+
+    public static <T extends Document> void cleanupSession(final Session session) {
+        if(session !=null){
+            session.logout();
+        }
+
+    }
+
+    public static <T> T newInstance(final Class<T> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException e) {
+            log.error("Error instantiating", e);
+        } catch (IllegalAccessException e) {
+            log.error("Access exception", e);
+        }
+        return null;
+    }
+
+    public static String getParentConfigPath(final CharSequence pluginClass) {
+        final String fullConfigPath = getFullConfigPath(pluginClass);
+        return fullConfigPath.substring(0, fullConfigPath.lastIndexOf('/'));
+    }
+
+    public  static String getFullConfigPath(final CharSequence pluginClass) {
+        final List<String> configList = Lists.newLinkedList(Splitter.on('/').split(JcrPluginConfigService.CONFIG_PATH));
+        configList.addAll(Lists.newLinkedList(Splitter.on('.').split(pluginClass)));
+        return '/' + Joiner.on('/').join(configList);
     }
 }

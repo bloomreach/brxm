@@ -16,27 +16,27 @@
 
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import org.apache.jackrabbit.ocm.manager.ManagerConstant;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentProperty;
 
 /**
  * @version "$Id$"
  */
-@DocumentType("ProjectSettingsBean")
-@Node(discriminator = true, jcrType = "essentials:document")
+
+@PersistentNode(type = "essentials:document")
 public class ProjectSettingsBean extends BaseDocument {
 
 
-    @Field
+    @PersistentProperty(name = "projectNamespace")
     private String projectNamespace;
-    @Field
+    @PersistentProperty(name = "selectedBeansPackage")
     private String selectedBeansPackage;
-    @Field
+    @PersistentProperty(name = "selectedComponentsPackage")
     private String selectedComponentsPackage;
-    @Field
+    @PersistentProperty(name = "selectedRestPackage")
     private String selectedRestPackage;
-    @Field
+    @PersistentProperty(name = "setupDone")
     private Boolean setupDone;
 
     public ProjectSettingsBean() {

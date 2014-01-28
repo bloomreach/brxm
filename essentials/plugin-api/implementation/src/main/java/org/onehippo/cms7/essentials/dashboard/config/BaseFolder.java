@@ -18,13 +18,12 @@ package org.onehippo.cms7.essentials.dashboard.config;
 
 import java.util.regex.Pattern;
 
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 
 /**
  * @version "$Id$"
  */
-@DocumentType("BaseFolder")
-@Node(discriminator = false, jcrType = "essentials:folder")
+@PersistentNode(type = "essentials:folder")
 public class BaseFolder extends BaseDocument implements Folder {
 
     private static final Pattern PATH_SPLITTER = Pattern.compile("/");
@@ -33,17 +32,9 @@ public class BaseFolder extends BaseDocument implements Folder {
     }
 
     public BaseFolder(String path) {
-        setPath(path);
+        setParentPath(path);
         final String[] splitter = PATH_SPLITTER.split(path);
         setName(splitter[splitter.length -1]);
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("BaseFolder");
-        sb.append("{path='").append(getPath()).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
 }

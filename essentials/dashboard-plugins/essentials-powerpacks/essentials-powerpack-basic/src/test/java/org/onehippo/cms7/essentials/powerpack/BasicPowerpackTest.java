@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.essentials.powerpack;
 
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
+import java.io.File;
+
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -27,10 +27,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.instructions.Instructions;
 import org.onehippo.cms7.essentials.dashboard.packaging.PowerpackPackage;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,9 +35,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class BasicPowerpackTest extends BaseRepositoryTest {
 
-    private static Logger log = LoggerFactory.getLogger(BasicPowerpackTest.class);
-    @Inject
-    private EventBus eventBus;
+
     private File jspDirectory;
 
     @Override
@@ -70,7 +64,6 @@ public class BasicPowerpackTest extends BaseRepositoryTest {
 
 
     }
-
 
 
     @Override

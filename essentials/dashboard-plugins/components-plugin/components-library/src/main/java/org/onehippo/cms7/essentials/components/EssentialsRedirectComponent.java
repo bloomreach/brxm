@@ -18,7 +18,6 @@ package org.onehippo.cms7.essentials.components;
 
 import java.io.IOException;
 
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;

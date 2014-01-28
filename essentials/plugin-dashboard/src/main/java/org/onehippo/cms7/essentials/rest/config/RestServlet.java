@@ -18,17 +18,17 @@ package org.onehippo.cms7.essentials.rest.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import com.google.inject.Injector;
-
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
+import org.onehippo.cms7.essentials.rest.exc.EssentialsExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Injector;
 
 /**
  * @version "$Id$"
@@ -62,17 +62,8 @@ public class RestServlet extends CXFNonSpringJaxrsServlet {
         final JsonProvider provider = new JsonProvider();
         //provider.setIncludeRoot(false);
         providers.add(provider);
+        providers.add(new EssentialsExceptionMapper());
         return providers;
-    }
-
-    private String getClassNameAndProperties(String cName, Map<String, List<String>> props) {
-        String theName = cName.trim();
-        int ind = theName.indexOf('(');
-        if (ind != -1 && theName.endsWith(")")) {
-            props.putAll(parseMapListSequence(theName.substring(ind + 1, theName.length() - 1)));
-            theName = theName.substring(0, ind).trim();
-        }
-        return theName;
     }
 
 

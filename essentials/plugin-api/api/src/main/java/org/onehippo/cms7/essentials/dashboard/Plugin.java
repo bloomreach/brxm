@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.onehippo.cms7.essentials.dashboard.config.Asset;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 import org.onehippo.cms7.essentials.dashboard.config.Screenshot;
 
 
@@ -17,7 +18,7 @@ import org.onehippo.cms7.essentials.dashboard.config.Screenshot;
  * @version "$Id: Plugin.java 174057 2013-08-16 13:45:41Z dvandiepen $"
  */
 @XmlTransient
-public interface Plugin extends Serializable {
+public interface Plugin extends Serializable, Document {
 
 
     void addScreenShot(Screenshot screenShot);

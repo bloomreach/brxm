@@ -24,7 +24,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
-import org.onehippo.cms7.essentials.rest.model.MessageRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 
 /**

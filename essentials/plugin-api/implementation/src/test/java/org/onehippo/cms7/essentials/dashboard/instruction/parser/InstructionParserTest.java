@@ -72,7 +72,7 @@ public class InstructionParserTest {
         //############################################
 
         final Instructions value = new PluginInstructions();
-        final HashSet<InstructionSet> instructionSets = new HashSet<>();
+        final Set<InstructionSet> instructionSets = new HashSet<>();
         final PluginInstructionSet instructionSet = new PluginInstructionSet();
         addInstructions(instructionSet);
 

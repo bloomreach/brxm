@@ -36,7 +36,7 @@ import com.google.inject.spi.TypeListener;
  *
  * @version "$Id$"
  */
-public class EventBusModule extends AbstractModule {
+public final class EventBusModule extends AbstractModule {
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
     private static final EventBusModule instance = new EventBusModule();

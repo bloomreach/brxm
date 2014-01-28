@@ -87,7 +87,6 @@
 }
 .wizard-steps li:before {
   /* the line running through each step*/
-
   display: block;
   content: "";
   width: 100%;
@@ -159,14 +158,12 @@
   width: 100%;
   height: 80px;
   /*background-color: #C84A4B;*/
-
   text-align: center;
   vertical-align: middle;
   table-layout: fixed;
   font-size: 20px;
   font-weight: bold;
   /*background: url("../images/top-back.png") repeat;*/
-
   color: #4f5e67;
 }
 .hippo-header-logo,
@@ -216,4 +213,28 @@ form {
 }
 .tabs {
   width: 160px;
+}
+.essentials-group-item {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.messages {
+  padding: 8px;
+  text-align: center;
+}
+.sep-10 {
+  margin-bottom: 10px;
+}
+.sep-20 {
+  margin-bottom: 20px;
+}
+.sep-30 {
+  margin-bottom: 30px;
+}
+/* HIPPO CHOSEN FONT SIZE FIX*/
+.chosen-container-multi .chosen-choices li.search-field {
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  font-size: 12px;
 }

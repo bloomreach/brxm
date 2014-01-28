@@ -56,7 +56,7 @@ public abstract class BaseRestResource extends AbstractResource {
         } catch (QueryException e) {
             log.error("Error creating HST query", e);
         } catch (RepositoryException e) {
-            throw new WebServiceException(INVALID_SCOPE);
+            throw new WebServiceException(INVALID_SCOPE, e);
         }
         if (query == null) {
             throw new WebServiceException("Query was null (failed to create it)");
@@ -110,13 +110,12 @@ public abstract class BaseRestResource extends AbstractResource {
         return restful;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T extends HippoBean> T getSingleBean(HstQuery query) throws QueryException {
         final HstQueryResult results = query.execute();
         final HippoBeanIterator beans = results.getHippoBeans();
         if (beans.hasNext()) {
-            @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
-            final T bean = (T) beans.nextHippoBean();
-            return bean;
+            return  (T) beans.nextHippoBean();
         }
 
         return null;
@@ -125,7 +124,7 @@ public abstract class BaseRestResource extends AbstractResource {
     protected <T extends HippoBean> List<T> populateBeans(HstQuery query) throws QueryException {
         final HstQueryResult results = query.execute();
         final HippoBeanIterator beans = results.getHippoBeans();
-        List<T> retval = new ArrayList<T>();
+        List<T> retval = new ArrayList<>();
         if (beans.hasNext()) {
             @SuppressWarnings({"unchecked"})
             final T bean = (T) beans.nextHippoBean();

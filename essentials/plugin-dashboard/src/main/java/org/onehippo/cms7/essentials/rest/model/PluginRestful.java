@@ -1,11 +1,9 @@
 package org.onehippo.cms7.essentials.rest.model;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -14,13 +12,33 @@ import org.slf4j.LoggerFactory;
 public class PluginRestful implements Restful {
 
     private static final long serialVersionUID = 1L;
-    private static Logger log = LoggerFactory.getLogger(PluginRestful.class);
+
     private VendorRestful vendor;
-    private DependencyRestful dependency;
+    private List<DependencyRestful> dependencies;
     private String title;
+    private String name;
     private String introduction;
     private String pluginLink;
+    private String pluginClass;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     private boolean installed;
+    private boolean needsInstallation;
+
+    public boolean isNeedsInstallation() {
+        return needsInstallation;
+    }
+
+    public void setNeedsInstallation(final boolean needsInstallation) {
+        this.needsInstallation = needsInstallation;
+    }
 
     public boolean isInstalled() {
         return installed;
@@ -47,6 +65,25 @@ public class PluginRestful implements Restful {
     }
 
 
+    public List<DependencyRestful> getDependencies() {
+        if(dependencies ==null){
+            return new ArrayList<>();
+        }
+        return dependencies;
+    }
+
+    public void setDependencies(final List<DependencyRestful> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    public void addDependency(final DependencyRestful dependency){
+        if(dependencies ==null){
+            dependencies = new ArrayList<>();
+        }
+        dependencies.add(dependency);
+
+    }
+
     public String getTitle() {
         return title;
     }
@@ -63,21 +100,25 @@ public class PluginRestful implements Restful {
         this.introduction = introduction;
     }
 
-    public DependencyRestful getDependency() {
-        return dependency;
+
+    public String getPluginClass() {
+        return pluginClass;
     }
 
-    public void setDependency(final DependencyRestful dependency) {
-        this.dependency = dependency;
+    public void setPluginClass(final String pluginClass) {
+        this.pluginClass = pluginClass;
     }
-
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PluginRestful{");
         sb.append("vendor=").append(vendor);
+        sb.append(", dependencies=").append(dependencies);
         sb.append(", title='").append(title).append('\'');
         sb.append(", introduction='").append(introduction).append('\'');
+        sb.append(", pluginLink='").append(pluginLink).append('\'');
+        sb.append(", pluginClass='").append(pluginClass).append('\'');
+        sb.append(", installed=").append(installed);
         sb.append('}');
         return sb.toString();
     }

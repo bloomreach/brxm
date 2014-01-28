@@ -28,11 +28,17 @@ public class RestClient {
         this.baseResourceUri = baseResourceUri;
     }
 
+    public String getPluginList(){
+        final WebClient client = WebClient.create(baseResourceUri);
+        return client.accept(MediaType.WILDCARD).get(String.class);
+    }
+
+
     @SuppressWarnings("unchecked")
     public RestfulList<PluginRestful> getPlugins() {
 
         // TODO use rest client
-        if (true) {
+        if (isEnabled()) {
             try {
                 final JAXBContext context = JAXBContext.newInstance(RestfulList.class);
                 final Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -46,6 +52,10 @@ public class RestClient {
             return client.path("plugins").accept(MediaType.APPLICATION_XML).get(RestfulList.class);
         }
         return null;
+    }
+
+    private boolean isEnabled() {
+        return true;
     }
 
 

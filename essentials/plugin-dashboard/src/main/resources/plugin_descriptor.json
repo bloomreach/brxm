@@ -1,0 +1,57 @@
+{"items": [
+
+    {
+        "needsInstallation": true,
+        "artifacts": [],
+        "assets": [],
+        "introduction": "Content blocks configuration plugin",
+        "name": "Content Blocks",
+        "pluginClass": "org.onehippo.cms7.essentials.dashboard.contentblocks.ContentBlocksPlugin",
+        "pluginLink": "contentBlocks",
+        "screenshots": [],
+        "type": null,
+        "vendor": {
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        },
+        "dependencies": [
+            {
+                "groupId": "org.onehippo.forge",
+                "artifactId": "relateddocs",
+                "scope": "compile",
+                "type": "cms"
+            }
+        ]
+    },
+    {
+
+        "needsInstallation": false,
+        "artifacts": [],
+        "assets": [],
+        "introduction": "Xinha configuration plugin",
+        "name": "Xinha configuration",
+        "pluginClass": "org.onehippo.cms7.essentials.xinha.gui.XinhaPlugin",
+        "pluginLink": "xinhaPlugin",
+        "screenshots": [],
+        "type": null,
+        "vendor": {
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
+    },
+    {
+        "needsInstallation": false,
+        "artifacts": [],
+        "assets": [],
+        "introduction": "Configuration of Hippo image sets",
+        "name": "Gallery plugin",
+        "pluginClass": "org.onehippo.cms7.essentials.dashboard.gallery.GalleryPlugin",
+        "pluginLink": "galleryPlugin",
+        "screenshots": [],
+        "type": null,
+        "vendor": {
+            "name": "Hippo",
+            "url": "http://www.onehippo.com"
+        }
+    }
+]}

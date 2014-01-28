@@ -17,15 +17,12 @@
 package org.onehippo.cms7.essentials.dashboard.utils.annotations;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public class ProcessAnnotationTest {
 
-    private static Logger log = LoggerFactory.getLogger(ProcessAnnotationTest.class);
 
     @Test
     public void testExecute() throws Exception {

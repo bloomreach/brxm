@@ -11,7 +11,7 @@ import org.onehippo.cms7.essentials.BaseRepositoryTest;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @version "$Id: CndUtilsTest.java 176263 2013-09-06 09:31:16Z dvandiepen $"
+ * @version "$Id$"
  */
 public class CndUtilsTest extends BaseRepositoryTest {
 
@@ -31,5 +31,13 @@ public class CndUtilsTest extends BaseRepositoryTest {
         assertTrue(exists);
         CndUtils.registerDocumentType(getContext(), TEST_PREFIX, "myname", false, false, GalleryUtils.HIPPOGALLERY_IMAGE_SET, GalleryUtils.HIPPOGALLERY_RELAXED);
         assertTrue("CndUtils.registerDocumentType", true);
+        // test un-register type
+        boolean removed = CndUtils.unRegisterDocumentType(getContext(),TEST_PREFIX, "myname");
+        assertTrue("Expected type to be removed", removed);
+
+
     }
+
+
+
 }

@@ -26,7 +26,7 @@
       <artifactId>hst-repository-dependencies</artifactId>
       <type>pom</type>
     </dependency>
- 
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.dependencies</groupId>
       <artifactId>hst-cms-dependencies</artifactId>
@@ -72,7 +72,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-   
+
   </dependencies>
 
   <profiles>

@@ -14,12 +14,12 @@ public interface PluginConfigService {
 
     boolean write(Document document, String pluginClass);
 
-    <T extends Document> T read(String pluginClass);
+    <T extends Document> T read(String pluginClass, Class<T> clazz);
 
     /**
      * Reads config document
      *
      * @return null object if nothing found
      */
-    <T extends Document> T  read();
+    <T extends Document> T  read(Class<T> clazz);
 }

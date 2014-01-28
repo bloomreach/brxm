@@ -1,6 +1,6 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
-import java.util.AbstractList;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,11 +23,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -35,10 +30,20 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+
 /**
  * @version "$Id: HippoNodeUtils.java 169724 2013-07-05 08:32:08Z dvandiepen $"
  */
 public final class HippoNodeUtils {
+
+
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]+$");
+    private static final Pattern URL_PATTERN = Pattern.compile("^http:.*/[0-9].[0-9]$");
 
     public static final String HIPPOSYSEDIT_PATH = HippoNodeType.HIPPO_PATH;
     public static final String HIPPO_NAMESPACE_PREFIX = "hippo:";
@@ -48,7 +53,9 @@ public final class HippoNodeUtils {
     private static final Predicate<String> INTERNAL_TYPES_PREDICATE = new Predicate<String>() {
         @Override
         public boolean apply(String documentType) {
-            if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
+
+            if (documentType!=null
+                    && !documentType.startsWith(HIPPO_NAMESPACE_PREFIX)
                     && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX)
                     && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX)
                     && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
@@ -250,13 +257,14 @@ public final class HippoNodeUtils {
     //############################################
 
     private static Node getPrototypeNode(final Node namespaceNode) throws RepositoryException {
-        return namespaceNode.getNode("hipposysedit:prototypes").getNode("hipposysedit:prototype");
+        return namespaceNode.getNode("hipposysedit:prototypes").getNode(EssentialConst.HIPPOSYSEDIT_PROTOTYPE);
     }
 
     private static Node getSupertypeNode(final Node namespaceNode) throws RepositoryException {
-        return namespaceNode.getNode("hipposysedit:nodetype").getNode("hipposysedit:nodetype");
+        return namespaceNode.getNode(EssentialConst.HIPPOSYSEDIT_NODETYPE).getNode(EssentialConst.HIPPOSYSEDIT_NODETYPE);
     }
 
+    /*
     private static Map<String, Set<String>> prototypes(final Session session, final String... templates) throws RepositoryException {
         Map<String, Set<String>> types = new LinkedHashMap<>();
         try {
@@ -268,12 +276,12 @@ public final class HippoNodeUtils {
                     foldertypes.add(hippoTemplates.getNode(template));
                 }
             }
-            for (Node foldertype : foldertypes) {
+            for (Node queryTemplate : foldertypes) {
                 try {
                     Set<String> prototypes = new TreeSet<>();
-                    if (foldertype.isNodeType("nt:query")) {
-                        Query query = qmgr.getQuery(foldertype);
-                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
+                    if (queryTemplate.isNodeType("nt:query")) {
+                        Query query = qmgr.getQuery(queryTemplate);
+                        query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
                             Node typeNode = iter.nextNode();
@@ -289,7 +297,7 @@ public final class HippoNodeUtils {
                             }
                         }
                     }
-                    types.put(foldertype.getName(), prototypes);
+                    types.put(queryTemplate.getName(), prototypes);
                 } catch (InvalidQueryException ex) {
                     log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                 }
@@ -299,6 +307,7 @@ public final class HippoNodeUtils {
         }
         return types;
     }
+    */
 
     /**
      * Partially ripped from org.hippoecm.repository.standardworkflow.FolderWorkflowImpl#prototypes() to retrieve a list
@@ -311,7 +320,7 @@ public final class HippoNodeUtils {
      * @return
      * @throws RepositoryException
      */
-    private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates) throws RepositoryException {
+    private static Map<String, Set<String>> prototypes(final Session session, JcrMatcher matcher, final String... templates)  {
         Map<String, Set<String>> types = new LinkedHashMap<>();
         if (session == null) {
             // WHEN RUNNING WITHOUT CMS
@@ -320,26 +329,20 @@ public final class HippoNodeUtils {
         }
         try {
             QueryManager qmgr = session.getWorkspace().getQueryManager();
-            AbstractList<Node> foldertypes = new Vector<>();
-            Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
-            for (String template : templates) {
-                if (hippoTemplates.hasNode(template)) {
-                    foldertypes.add(hippoTemplates.getNode(template));
-                }
-            }
-            for (Node foldertype : foldertypes) {
+            List<Node> queryTemplateNodes = getQueryTemplateNodes(session, templates);
+            for (Node queryTemplate : queryTemplateNodes) {
                 try {
                     Set<String> prototypes = new TreeSet<>();
-                    if (foldertype.isNodeType("nt:query")) {
-                        Query query = qmgr.getQuery(foldertype);
-                        query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
+                    if (queryTemplate.isNodeType("nt:query")) {
+                        Query query = qmgr.getQuery(queryTemplate);
+                        query = qmgr.createQuery(queryTemplate.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
                             Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals("hipposysedit:prototype")) {
+                            if (typeNode.getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
                                 String documentType = typeNode.getPrimaryNodeType().getName();
                                 final boolean isTemplate = INTERNAL_TYPES_PREDICATE.apply(documentType);
-                                if (isTemplate && (matcher == null || matcher != null && matcher.matches(typeNode))) {
+                                if (isTemplate && (matcher == null || matcher.matches(typeNode))) {
                                     prototypes.add(documentType);
                                 }
                             } else {
@@ -347,15 +350,26 @@ public final class HippoNodeUtils {
                             }
                         }
                     }
-                    types.put(foldertype.getName(), prototypes);
+                    types.put(queryTemplate.getName(), prototypes);
                 } catch (InvalidQueryException ex) {
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                    log.error(MessageFormat.format("{0}: {1}", ex.getClass().getName(), ex.getMessage()), ex);
                 }
             }
         } catch (RepositoryException ex) {
             log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         }
         return types;
+    }
+
+    private static List<Node> getQueryTemplateNodes(Session session, String[] templates) throws RepositoryException {
+        List<Node> queryTemplates = new Vector<>();
+        Node hippoTemplates = session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
+        for (String template : templates) {
+            if (hippoTemplates.hasNode(template)) {
+                queryTemplates.add(hippoTemplates.getNode(template));
+            }
+        }
+        return queryTemplates;
     }
 
     /**
@@ -383,13 +397,46 @@ public final class HippoNodeUtils {
         String query = "//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:compound)";
         final QueryManager queryManager = session.getWorkspace().getQueryManager();
         @SuppressWarnings("deprecation")
-        final QueryResult queryResult = queryManager.createQuery(query, Query.XPATH).execute();
+        final QueryResult queryResult = queryManager.createQuery(query, EssentialConst.XPATH).execute();
         Set<String> prototypes = new TreeSet<>();
         for (NodeIterator iter = queryResult.getNodes(); iter.hasNext(); ) {
             Node typeNode = iter.nextNode();
-            if (typeNode.getName().equals("hipposysedit:prototype")) {
+            if (typeNode.getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
                 String documentType = typeNode.getPrimaryNodeType().getName();
-                if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX) && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
+                if (documentType != null) {
+                    if (!documentType.startsWith(HIPPO_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYS_NAMESPACE_PREFIX) && !documentType.startsWith(HIPPOSYSEDIT_NAMESAPCE_PREFIX) && !documentType.startsWith(REPORTING_NAMESPACE_PREFIX)
+                            && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
+                        prototypes.add(documentType);
+                    }
+                }
+            } else {
+                prototypes.add(typeNode.getName());
+            }
+        }
+        return prototypes;
+    }
+
+    /**
+     * Similar to the org.onehippo.cms7.essentials.dashboard.utils.HippoNodeUtils#prototypes(javax.jcr.Session,
+     * java.lang.String...) but instead of retrieving document. This method retrieves all available compound types
+     *
+     * @param session
+     * @param matcher
+     * @return
+     * @throws RepositoryException
+     */
+    public static Set<String> getContentBlocksProviders(final Session session, final JcrMatcher matcher) throws RepositoryException {
+        String query = "//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)[@editor:templates/_default_/cbprovider='true']";
+        final QueryManager queryManager = session.getWorkspace().getQueryManager();
+        @SuppressWarnings("deprecation")
+        final QueryResult queryResult = queryManager.createQuery(query, EssentialConst.XPATH).execute();
+        Set<String> prototypes = new TreeSet<>();
+        for (NodeIterator iter = queryResult.getNodes(); iter.hasNext(); ) {
+            Node typeNode = iter.nextNode();
+
+            if (!Strings.isNullOrEmpty(typeNode.getName()) && typeNode.getParent().getName().equals(EssentialConst.HIPPOSYSEDIT_PROTOTYPE)) {
+                String documentType = typeNode.getPrimaryNodeType().getName();
+                if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:") && (matcher != null && matcher.matches(typeNode))) {
                     prototypes.add(documentType);
                 }
@@ -474,12 +521,9 @@ public final class HippoNodeUtils {
     }
 
 
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]+$");
-    private static final Pattern URL_PATTERN = Pattern.compile("^http:.*/[0-9].[0-9]$");
-
 
     public static void checkName(String name) throws Exception {
-        if (name == null || "".equals(name)) {
+        if (Strings.isNullOrEmpty(name)) {
             throw new Exception("No name specified");
         }
         if (!NAME_PATTERN.matcher(name).matches()) {

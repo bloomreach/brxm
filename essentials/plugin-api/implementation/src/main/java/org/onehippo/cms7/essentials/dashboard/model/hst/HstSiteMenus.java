@@ -21,8 +21,6 @@ import java.util.List;
 
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentCollection;
 import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
@@ -38,7 +36,7 @@ public class HstSiteMenus extends BaseJcrModel{
     }
 
     public void addMenu(final HstSiteMenu menu){
-        menu.setParentPath(getParentPath() +'/'+getName());
+        menu.setParentPath(getParentPath() + '/' + getName());
         menus.add(menu);
     }
 

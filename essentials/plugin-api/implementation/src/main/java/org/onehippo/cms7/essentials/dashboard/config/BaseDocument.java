@@ -19,25 +19,21 @@ package org.onehippo.cms7.essentials.dashboard.config;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.jackrabbit.ocm.manager.collectionconverter.impl.MultiValueCollectionConverterImpl;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
-import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentMultiProperty;
+import org.onehippo.cms7.essentials.dashboard.utils.annotations.PersistentNode;
 
 /**
  * @version "$Id$"
  */
-@DocumentType("BaseDocument")
-@Node(discriminator = true, jcrType = "essentials:document")
+
+@PersistentNode(type = "essentials:document")
 public class BaseDocument implements Document {
 
-    @Field(path = true)
-    private String path;
 
-    @Field
+    private String parentPath;
     private String name;
 
-    @Collection(elementClassName = String.class, collectionConverter = MultiValueCollectionConverterImpl.class)
+    @PersistentMultiProperty(name = "properties")
     private List<String> properties = new LinkedList<>();
 
 
@@ -48,9 +44,9 @@ public class BaseDocument implements Document {
         this.name = name;
     }
 
-    public BaseDocument(final String name, final String path) {
+    public BaseDocument(final String name, final String parentPath) {
         this.name = name;
-        this.path = path;
+        this.parentPath = parentPath;
     }
 
 
@@ -81,13 +77,18 @@ public class BaseDocument implements Document {
     }
 
     @Override
-    public String getPath() {
-        return path;
+    public String getParentPath() {
+        return parentPath;
     }
 
     @Override
-    public void setPath(String path) {
-        this.path = path;
+    public String getPath() {
+        return parentPath + '/' + name;
+    }
+
+    @Override
+    public void setParentPath(String parentPath) {
+        this.parentPath = parentPath;
     }
 
 
@@ -96,7 +97,7 @@ public class BaseDocument implements Document {
         final StringBuilder sb = new StringBuilder();
         sb.append("BaseDocument");
         sb.append("{name='").append(name).append('\'');
-        sb.append(", path='").append(path).append('\'');
+        sb.append(", path='").append(parentPath).append('\'');
         sb.append('}');
         return sb.toString();
     }

@@ -19,6 +19,7 @@ package org.onehippo.cms7.essentials.dashboard.utils.annotations;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -75,7 +76,7 @@ public final class AnnotationUtils {
                 try {
                     field.setAccessible(true);
                 } catch (SecurityException se) {
-                    log.error("Security exception while setting accessible: " + se);
+                    log.error(MessageFormat.format("Security exception while setting accessible: {0}", se));
                 }
             }
         }

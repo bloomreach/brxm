@@ -26,6 +26,16 @@ import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
 @XmlRootElement(name = "items")
 public class MessageRestful implements Restful {
 
+    private boolean successMessage = true;
+
+    public boolean isSuccessMessage() {
+        return successMessage;
+    }
+
+    public void setSuccessMessage(final boolean successMessage) {
+        this.successMessage = successMessage;
+    }
+
     private static final long serialVersionUID = 1L;
 
     private DisplayEvent.DisplayType displayType;

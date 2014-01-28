@@ -6,15 +6,11 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.onehippo.cms7.essentials.dashboard.AbstractDependencyInstaller;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public class ContentBlocksInstaller extends AbstractDependencyInstaller {
-
-    private static Logger log = LoggerFactory.getLogger(ContentBlocksInstaller.class);
 
 
     @Override

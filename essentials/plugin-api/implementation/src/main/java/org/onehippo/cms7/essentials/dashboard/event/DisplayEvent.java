@@ -39,6 +39,11 @@ public class DisplayEvent extends MessageEvent {
      */
     private boolean addAsFirst;
 
+    public DisplayEvent(final String message, final DisplayType type, final boolean addFirst) {
+        this(message, type);
+        this.addAsFirst = addFirst;
+    }
+
     public boolean isSelected() {
         return selected;
     }
@@ -77,7 +82,7 @@ public class DisplayEvent extends MessageEvent {
     }
 
     public enum DisplayType {
-        A, P, PRE, DIV, H1, H2, H3, H4, H5, STRONG
+        A, P, PRE, DIV, H1, H2, H3, H4, H5, STRONG, BR
     }
 
 }

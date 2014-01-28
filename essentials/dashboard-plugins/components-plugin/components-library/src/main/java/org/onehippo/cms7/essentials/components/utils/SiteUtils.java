@@ -15,8 +15,6 @@ import javax.annotation.Nullable;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.core.component.HstRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -26,7 +24,7 @@ import com.google.common.base.Strings;
  */
 public final class SiteUtils {
 
-    private static Logger log = LoggerFactory.getLogger(SiteUtils.class);
+
     public static final int DEFAULT_PAGE = 1;
     public static final int DEFAULT_PAGE_SIZE = 10;
 

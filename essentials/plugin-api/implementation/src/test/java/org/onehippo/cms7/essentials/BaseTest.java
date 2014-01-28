@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
@@ -20,19 +19,18 @@ import org.onehippo.cms7.essentials.dashboard.utils.inject.PropertiesModule;
 
 import com.google.common.collect.ImmutableSet;
 
-import static org.junit.Assert.assertTrue;
-
 /**
  * @version "$Id$"
  */
 @RunWith(GuiceJUnitRunner.class)
 @GuiceJUnitModules({EventBusModule.class, PropertiesModule.class})
 public abstract class BaseTest {
-    public static final int NONE_EXISTING_BEANS_SIZE = 2;
+
     public static final String HIPPOPLUGINS_NAMESPACE = "hippoplugins";
     public static final String PROJECT_NAMESPACE_TEST = "testnamespace";
     public static final Set<String> NAMESPACES_TEST_SET = new ImmutableSet.Builder<String>()
             .add("hippoplugins:extendingnews")
+            .add("myproject:newsdocument")
             .add("hippoplugins:extendedbase")
             .add("hippoplugins:textdocument")
             .add("hippoplugins:basedocument")

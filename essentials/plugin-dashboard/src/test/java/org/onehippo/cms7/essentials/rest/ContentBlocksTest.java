@@ -5,10 +5,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -17,10 +13,11 @@ import org.onehippo.cms7.essentials.rest.model.KeyValueRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.CBPayload;
 import org.onehippo.cms7.essentials.rest.model.contentblocks.DocumentTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,7 +25,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class ContentBlocksTest {
 
-    private static Logger log = LoggerFactory.getLogger(ContentBlocksTest.class);
 
     @Test
     public void testUnmarshalling() throws Exception {
@@ -46,7 +42,7 @@ public class ContentBlocksTest {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         CBPayload cbPayload = new CBPayload();
         final RestfulList<DocumentTypes> types = new RestfulList<>();
-        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList();
+        final RestfulList<KeyValueRestful> keyValueRestfulRestfulList = new RestfulList<>();
         keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 1", "Provider 1"));
         keyValueRestfulRestfulList.add(new KeyValueRestful("Provider 2", "Provider 2"));
         types.add(new DocumentTypes("News document", "namespace:news", keyValueRestfulRestfulList));

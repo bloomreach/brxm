@@ -184,7 +184,7 @@ public final class GalleryUtils {
         return null;
     }
 
-    public static String getPathForGalleryProcessorVariant(final String variant) throws RepositoryException {
+    public static String getPathForGalleryProcessorVariant(final String variant) {
         StringBuilder sb = new StringBuilder();
         sb.append(GALLERY_PROCESSOR_SERVICE_PATH);
         sb.append('/');

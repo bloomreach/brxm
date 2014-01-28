@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +99,10 @@ public class JarResourceServlet extends HttpServlet {
     }
 
     private static class StaticFile {
-        protected final long lastModified;
-        protected final String mimeType;
-        protected final int contentLength;
-        protected final URL url;
+        private final long lastModified;
+        private final String mimeType;
+        private final int contentLength;
+        private final URL url;
 
         @SuppressWarnings("NumericCastThatLosesPrecision")
         public StaticFile(long lastModified, String mimeType, long contentLength, URL url) {

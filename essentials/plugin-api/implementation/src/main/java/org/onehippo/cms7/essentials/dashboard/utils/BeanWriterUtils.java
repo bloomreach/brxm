@@ -34,8 +34,9 @@ import com.google.common.base.Strings;
 /**
  * @version "$Id$"
  */
-public class BeanWriterUtils {
+public final class BeanWriterUtils {
     public static final String CONTEXT_DATA_KEY = BeanWriterUtils.class.getName();
+    public static final String MSG_ADDED_METHOD = "@@@ added [{}] method";
     private static Logger log = LoggerFactory.getLogger(BeanWriterUtils.class);
 
     private BeanWriterUtils() {
@@ -101,14 +102,14 @@ public class BeanWriterUtils {
                             JavaSourceUtils.addBeanMethodString(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Boolean":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodBoolean(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Long":
                             methodName = GlobalUtils.createMethodName(name);
@@ -116,35 +117,35 @@ public class BeanWriterUtils {
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "Double":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodDouble(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "hippostd:html":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodHippoHtml(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "hippo:mirror":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodHippoMirror(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         case "hippogallerypicker:imagelink":
                             methodName = GlobalUtils.createMethodName(name);
                             JavaSourceUtils.addBeanMethodImageLink(beanPath, methodName, name, multiple);
                             existing.add(name);
                             context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(beanPath.toString(), methodName, ActionType.CREATED_METHOD));
-                            log.debug("@@@ added [{}] method", methodName);
+                            log.debug(MSG_ADDED_METHOD, methodName);
                             break;
                         default:
                             methodName = GlobalUtils.createMethodName(name);
@@ -187,18 +188,33 @@ public class BeanWriterUtils {
         for (MemoryBean memoryBean : missing) {
             populateSupertypes(memoryBean, memoryBeans);
             final MemoryBean supertype = memoryBean.getSupertype();
-            if (supertype != null && supertype.getBeanPath() != null) {
-                final String extendsName = FilenameUtils.removeExtension(supertype.getBeanPath().toFile().getName());
+            if (supertype != null) {
+                if (supertype.getBeanPath() != null) {
+                    final String extendsName = FilenameUtils.removeExtension(supertype.getBeanPath().toFile().getName());
 
-                final String prefixedName = memoryBean.getPrefixedName();
-                final String className = GlobalUtils.createClassName(prefixedName);
-                final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), fileExtension);
-                JavaSourceUtils.addExtendsClass(javaClass, extendsName);
-                JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
-                memoryBean.setBeanPath(javaClass);
-                context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                    final String prefixedName = memoryBean.getPrefixedName();
+                    final String className = GlobalUtils.createClassName(prefixedName);
+                    final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), fileExtension);
+                    JavaSourceUtils.addExtendsClass(javaClass, extendsName);
+                    JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
+                    memoryBean.setBeanPath(javaClass);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                }
+
+            } else {
+                // we have supertype, check if compound type:
+                if (memoryBean.getSuperTypeValues().contains(EssentialConst.HIPPO_COMPOUND)) {
+                    final String extendsName = EssentialConst.HIPPO_COMPOUND_BASE_CLASS;
+                    final String prefixedName = memoryBean.getPrefixedName();
+                    final String className = GlobalUtils.createClassName(prefixedName);
+                    final Path javaClass = JavaSourceUtils.createJavaClass(context.getSiteJavaRoot(), className, context.beansPackageName(), fileExtension);
+                    JavaSourceUtils.addExtendsClass(javaClass, extendsName);
+                    JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), prefixedName, prefixedName);
+                    JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
+                    memoryBean.setBeanPath(javaClass);
+                    context.addPluginContextData(CONTEXT_DATA_KEY, new BeanWriterLogEntry(javaClass.getFileName().toString(), ActionType.CREATED_CLASS));
+                }
             }
-
         }
         missing = new ArrayList<>();
         for (MemoryBean memoryBean : memoryBeans) {
@@ -228,7 +244,7 @@ public class BeanWriterUtils {
             MemoryBean bean = processTemplate(templateDocument, projectNamespacePrefix);
             beans.add(bean);
         }
-        // we need to annotate existing beans before pro
+        // we need to annotate existing beans before we start processing
         BeanWriterUtils.annotateExistingBeans(context, sourceExtension);
         final List<Path> existing = BeanWriterUtils.findExitingBeans(context, sourceExtension);
         final Collection<HippoEssentialsGeneratedObject> generatedObjectList = new ArrayList<>();
@@ -238,12 +254,12 @@ public class BeanWriterUtils {
                 generatedObjectList.add(generatedObject);
             }
         }
-        BeanWriterUtils.processSupertypes(beans, generatedObjectList);
+        BeanWriterUtils.processSuperTypes(beans, generatedObjectList);
         return beans;
 
     }
 
-    public static void processSupertypes(final Iterable<MemoryBean> allBeans, final Iterable<HippoEssentialsGeneratedObject> descriptors) {
+    public static void processSuperTypes(final Iterable<MemoryBean> allBeans, final Iterable<HippoEssentialsGeneratedObject> descriptors) {
         for (HippoEssentialsGeneratedObject descriptor : descriptors) {
             for (MemoryBean myBean : allBeans) {
                 final String fullName = myBean.getPrefixedName();
@@ -367,7 +383,7 @@ public class BeanWriterUtils {
         final Set<String> superTypeValues = bean.getSuperTypeValues();
         String supertypeName = null;
         for (String superTypeValue : superTypeValues) {
-            if (superTypeValue.startsWith(bean.getNamespace())) {
+            if (superTypeValue.startsWith(bean.getNamespace()) ||superTypeValue.equals(EssentialConst.HIPPO_COMPOUND)) {
                 supertypeName = superTypeValue;
             }
         }

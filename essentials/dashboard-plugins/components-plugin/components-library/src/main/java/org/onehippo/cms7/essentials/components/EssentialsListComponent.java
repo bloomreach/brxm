@@ -6,10 +6,6 @@ package org.onehippo.cms7.essentials.components;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -25,6 +21,10 @@ import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 /**
  * HST component used for listing of documents.

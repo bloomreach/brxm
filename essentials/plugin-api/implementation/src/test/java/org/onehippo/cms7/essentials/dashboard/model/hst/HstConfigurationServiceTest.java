@@ -19,8 +19,6 @@ package org.onehippo.cms7.essentials.dashboard.model.hst;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +28,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class HstConfigurationServiceTest extends BaseRepositoryTest {
 
-    private static Logger log = LoggerFactory.getLogger(HstConfigurationServiceTest.class);
 
     @Override
     @Before

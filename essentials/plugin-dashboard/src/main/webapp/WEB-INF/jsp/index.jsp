@@ -1,5 +1,5 @@
 <!doctype html>
-<html data-ng-app="Essentials">
+<html ng-app="hippo.essentials">
 <head>
   <title>Hippo Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/theme/hippo-theme/main.css"/>
@@ -31,6 +31,7 @@
   <script src="${pageContext.request.contextPath}/plugins/contentBlocks/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/galleryPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/plugins/newsEventsPowerpack/controller.js"></script>
+  <script src="${pageContext.request.contextPath}/plugins/xinhaPlugin/controller.js"></script>
   <script src="${pageContext.request.contextPath}/tools/beanwriter/controller.js"></script>
 
 
@@ -42,10 +43,15 @@
   <img src="${pageContext.request.contextPath}/images/loader.gif"/>
 </div>
 <!-- ERROR MESSAGES -->
-<div class="alert-danger" ng-show="globalError.length > 0">
+<div class="alert-danger messages" ng-show="globalError.length > 0">
   <strong>An error occurred:</strong>
   <div ng-repeat="message in globalError">
     {{message}}
+  </div>
+</div>
+<div class="alert-success messages" ng-show="feedbackMessages.length > 0">
+  <div ng-repeat="message in feedbackMessages">
+    <strong>{{message}}</strong>
   </div>
 </div>
 <%--
@@ -73,9 +79,11 @@
   <div class="col-sm-9" ng-controller="homeCtrl">
     <div ng-view></div>
   </div>
+  <div class="clearfix"></div>
+  <div class="col-sm-12 footer">&copy; Hippo B.V., All Rights Reserved</div>
 </div>
 
-<div class="footer">&copy; Hippo B.V., All Rights Reserved</div>
+
 
 
 </body>

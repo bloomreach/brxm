@@ -21,17 +21,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DefaultPagination
+ *
  * @version $Id$
  */
 public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
-
-    @SuppressWarnings("unused")
-    private static Logger log = LoggerFactory.getLogger(DefaultPagination.class);
 
 
     private List<T> items;
@@ -41,6 +37,7 @@ public class DefaultPagination<T extends HippoBean> extends Pageable<T> {
 
     /**
      * Returns empty immutable collection
+     *
      * @param <E> return type
      * @return empty, immutable list
      */

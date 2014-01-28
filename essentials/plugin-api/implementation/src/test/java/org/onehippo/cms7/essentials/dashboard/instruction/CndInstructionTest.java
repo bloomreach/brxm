@@ -23,8 +23,6 @@ import org.onehippo.cms7.essentials.dashboard.instructions.InstructionExecutor;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionSet;
 import org.onehippo.cms7.essentials.dashboard.instructions.InstructionStatus;
 import org.onehippo.cms7.essentials.dashboard.utils.CndUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
@@ -37,7 +35,7 @@ public class CndInstructionTest extends BaseRepositoryTest {
 
     public static final String TEST_URI = "http://www.test.com";
     public static final String TEST_PREFIX = "test";
-    private static Logger log = LoggerFactory.getLogger(CndInstructionTest.class);
+
     @Inject
     private InstructionExecutor executor;
     @Inject

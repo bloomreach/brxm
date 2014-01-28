@@ -17,13 +17,11 @@
 package org.onehippo.cms7.essentials.dashboard.event.listeners;
 
 import java.util.List;
-import java.util.Queue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.dashboard.event.DisplayEvent;
-import org.onehippo.cms7.essentials.dashboard.event.listeners.MemoryPluginEventListener;
 
 import com.google.common.eventbus.EventBus;
 

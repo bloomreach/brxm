@@ -20,8 +20,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.onehippo.cms7.essentials.components.info.EssentialsSearchComponentInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HST component used for searching
@@ -30,8 +28,6 @@ import org.slf4j.LoggerFactory;
  */
 @ParametersInfo(type = EssentialsSearchComponentInfo.class)
 public class EssentialsSearchComponent extends CommonComponent {
-
-    private static Logger log = LoggerFactory.getLogger(EssentialsSearchComponent.class);
 
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {

@@ -72,7 +72,7 @@ public final class EssentialConst {
                     "hippostdpubwf",
                     "hipposysedit",
                     "hippotaxonomy",
-                    "hippogallerypicker");
+                    "hippogallerypi cker");
     public static final String[] XML_FILTER = new String[]{"xml"};
     public static final String[] JAR_FILTER = new String[]{"jar"};
     public static final String NS_JCR_PRIMARY_TYPE = "jcr:primaryType";
@@ -94,7 +94,16 @@ public final class EssentialConst {
     public static final String NODE_ANNOTATION_NAME = "Node";
     public static final String INVALID_METHOD_NAME = "getTODO";
     public static final String INVALID_CLASS_NAME = "InvalidClassName";
-    public static final String ANNOTATION_INTERNAL_NAME_ATTRIUBUTE = "internalName";
+    public static final String ANNOTATION_INTERNAL_NAME_ATTRIBUTE = "internalName";
+    public static final String POM_XML = "pom.xml";
+    public static final String XPATH = "xpath";
+    public static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
+    public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
+    public static final String HIPPO_COMPOUND = "hippo:compound";
+    public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
+    public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
+    public static final String CONTENT_BLOCKS_TEMPLATE_XML = "content_blocks_template.xml";
+
 
     private EssentialConst() {
     }

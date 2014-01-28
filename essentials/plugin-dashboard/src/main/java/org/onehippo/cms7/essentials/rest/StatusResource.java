@@ -23,8 +23,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.ws.WebServiceException;
 
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.config.ProjectSettingsBean;
@@ -59,10 +57,7 @@ public class StatusResource extends BaseResource {
         try {
             final Plugin plugin = getPluginByClassName(ProjectSetupPlugin.class.getName(), servletContext);
             final PluginContext context = new DashboardPluginContext(GlobalUtils.createSession(), plugin);
-            ProjectSettingsBean b =new ProjectSettingsBean();
-            b.setProjectNamespace("marktpla");
-            context.getConfigService().write(b);
-            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName());
+            final ProjectSettingsBean document = context.getConfigService().read(ProjectSetupPlugin.class.getName(), ProjectSettingsBean.class);
 
             if (document != null && document.getSetupDone()) {
                 status.setStatus(true);

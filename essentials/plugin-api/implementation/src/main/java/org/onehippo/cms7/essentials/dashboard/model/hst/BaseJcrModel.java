@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,20 @@
 
 package org.onehippo.cms7.essentials.dashboard.model.hst;
 
-import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.List;
 
-import org.onehippo.cms7.essentials.dashboard.model.JcrModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.onehippo.cms7.essentials.dashboard.config.Document;
 
 /**
  * @version "$Id$"
  */
-public abstract class BaseJcrModel implements JcrModel {
-
-    private static Logger log = LoggerFactory.getLogger(BaseJcrModel.class);
+public abstract class BaseJcrModel implements Document {
 
     private String name;
     private String parentPath;
+
 
     @Override
     public String getParentPath() {
@@ -53,6 +51,25 @@ public abstract class BaseJcrModel implements JcrModel {
         this.name = name;
     }
 
+    @Override
+    public List<String> getProperties() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setProperties(final List<String> properties) {
+        // ignore
+    }
+
+    @Override
+    public void addProperty(final String value) {
+        // ignore
+    }
+
+    @Override
+    public String getPath() {
+        return parentPath + '/' + name;
+    }
 
     @Override
     public String toString() {

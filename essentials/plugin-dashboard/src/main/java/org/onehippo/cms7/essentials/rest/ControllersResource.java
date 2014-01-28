@@ -29,12 +29,8 @@ import javax.ws.rs.core.MediaType;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.rest.model.ControllerRestful;
 import org.onehippo.cms7.essentials.rest.model.RestfulList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
 
 /**
  * @version "$Id$"
@@ -43,10 +39,6 @@ import com.google.inject.Inject;
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
 @Path("/controllers/")
 public class ControllersResource extends BaseResource {
-
-    @Inject
-    private EventBus eventBus;
-    private static Logger log = LoggerFactory.getLogger(ControllersResource.class);
 
 
     @GET
@@ -57,13 +49,12 @@ public class ControllersResource extends BaseResource {
         for (Plugin plugin : plugins) {
             final String pluginLink = plugin.getPluginLink();
             if (Strings.isNullOrEmpty(pluginLink)) {
-                log.error("Plugin has no pluginLink defined, please check plugin.xml file: {}", plugin);
                 continue;
             }
             controllers.add(new ControllerRestful(pluginLink, String.format("%sCtrl", pluginLink), String.format("plugins/%s/index.html", pluginLink)));
 
         }
-        // TODO implement
+        // TODO load from remote
 
         return controllers;
 

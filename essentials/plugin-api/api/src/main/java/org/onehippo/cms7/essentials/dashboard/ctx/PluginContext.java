@@ -55,7 +55,6 @@ public interface PluginContext extends Serializable, AutoCloseable {
      * <p>Sessions will be logout after plugin is unloaded by plugin framework</p>
      *
      * @return instance of JCR session, with admin rights
-     * @see org.onehippo.cms7.essentials.dashboard.DashboardPlugin#onRemove()
      */
     Session getSession();
 

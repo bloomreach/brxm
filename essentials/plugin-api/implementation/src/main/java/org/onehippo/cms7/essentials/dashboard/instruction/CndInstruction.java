@@ -16,12 +16,13 @@
 
 package org.onehippo.cms7.essentials.dashboard.instruction;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.eventbus.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.util.Map;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeExistsException;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.event.InstructionEvent;
@@ -33,11 +34,12 @@ import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.nodetype.NodeTypeExistsException;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Map;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * @version "$Id$"

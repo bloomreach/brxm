@@ -1,0 +1,38 @@
+package org.onehippo.cms7.essentials.site.beans;
+
+
+import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+import org.hippoecm.hst.content.beans.standard.HippoHtml;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+
+
+@HippoEssentialsGenerated(internalName = "myproject:newsdocument")
+@Node(jcrType = DuplicatedAnnotations.MYPROJECT_NEWSDOCUMENT)
+public class DuplicatedAnnotations extends HippoDocument {
+	public static final String MYPROJECT_NEWSDOCUMENT = "myproject:newsdocument";
+
+	@HippoEssentialsGenerated(internalName = "myproject:summary")
+	public String getSummary() {
+		return getProperty("myproject:summary");
+	}
+
+	@HippoEssentialsGenerated(internalName = "myproject:title")
+	public String getTitle() {
+		return getProperty("myproject:title");
+	}
+
+	@HippoEssentialsGenerated(internalName = "myproject:body")
+	public HippoHtml getBody() {
+		return getHippoHtml("myproject:body");
+	}
+
+	@HippoEssentialsGenerated(internalName = "myproject:image")
+	public HippoGalleryImageSetBean getImage() {
+		return getLinkedBean("myproject:image",
+				HippoGalleryImageSetBean.class);
+	}
+}

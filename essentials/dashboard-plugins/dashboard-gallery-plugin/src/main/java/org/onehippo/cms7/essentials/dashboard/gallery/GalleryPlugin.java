@@ -16,20 +16,16 @@
 
 package org.onehippo.cms7.essentials.dashboard.gallery;
 
-import org.onehippo.cms7.essentials.dashboard.DashboardPlugin;
+import org.onehippo.cms7.essentials.dashboard.EssentialsPlugin;
 import org.onehippo.cms7.essentials.dashboard.Plugin;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-public class GalleryPlugin extends DashboardPlugin {
+public class GalleryPlugin extends EssentialsPlugin {
 
-    private static Logger log = LoggerFactory.getLogger(GalleryPlugin.class);
-
-    public GalleryPlugin(final String id, final Plugin descriptor, final PluginContext context) {
-        super(id, descriptor, context);
+    public GalleryPlugin(final Plugin descriptor, final PluginContext context) {
+        super(descriptor, context);
     }
 }

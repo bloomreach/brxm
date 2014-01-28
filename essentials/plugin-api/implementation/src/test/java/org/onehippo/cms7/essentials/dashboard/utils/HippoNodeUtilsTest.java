@@ -20,9 +20,9 @@ import static org.junit.Assert.assertFalse;
 /**
  * @version "$Id: HippoNodeUtilsTest.java 167907 2013-06-17 08:34:55Z mmilicevic $"
  */
-@Ignore
 public class HippoNodeUtilsTest {
 
+    @Ignore
     @Test
     public void testGetProjectNamespaces() throws Exception {
         final HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
@@ -38,9 +38,23 @@ public class HippoNodeUtilsTest {
     }
 
     @Test
+    public void testGetNameFromType() throws Exception {
+        assertEquals(null,HippoNodeUtils.getNameFromType(""));
+        assertEquals("document",HippoNodeUtils.getNameFromType("hippo:document"));
+        assertEquals("document",HippoNodeUtils.getNameFromType("document"));
+    }
+
+    @Test
     public void testGetPrefixFromType() throws Exception {
         assertEquals("prefix", HippoNodeUtils.getPrefixFromType("prefix:name"));
         assertEquals("", HippoNodeUtils.getPrefixFromType(":name"));
         assertEquals(null, HippoNodeUtils.getPrefixFromType("name"));
+    }
+
+    @Test
+    public void testResolvePath() throws Exception {
+        assertEquals("/hippo:namespaces/someprefix/document", HippoNodeUtils.resolvePath("someprefix:document"));
+        assertEquals("/hippo:namespaces/system/String", HippoNodeUtils.resolvePath("String"));
+
     }
 }

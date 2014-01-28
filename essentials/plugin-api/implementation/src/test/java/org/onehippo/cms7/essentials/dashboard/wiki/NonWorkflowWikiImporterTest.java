@@ -6,10 +6,7 @@ import javax.jcr.Node;
 
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -17,7 +14,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
 
-    private static Logger log = LoggerFactory.getLogger(NonWorkflowWikiImporterTest.class);
+
 
     @Test
     public void testNonWorkflowJCRImportAction() throws Exception {
@@ -33,8 +30,8 @@ public class NonWorkflowWikiImporterTest extends BaseRepositoryTest {
         final Node documents = content.getNode("documents");
         final Node gallery = content.addNode("gallery", "hippogallery:stdImageGallery");
 
-        final Node testDocuments = documents.addNode("test", "hippostd:folder");
-        final Node testGallery = gallery.addNode("test", "hippogallery:stdImageGallery");
+        documents.addNode("test", "hippostd:folder");
+        gallery.addNode("test", "hippogallery:stdImageGallery");
 
         session.save();
 

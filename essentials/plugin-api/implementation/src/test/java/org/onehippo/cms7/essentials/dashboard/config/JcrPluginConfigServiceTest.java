@@ -1,17 +1,12 @@
 package org.onehippo.cms7.essentials.dashboard.config;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 
-import org.apache.xmlbeans.impl.xb.xmlconfig.ConfigDocument;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseRepositoryTest;
-import org.onehippo.cms7.essentials.MemoryRepository;
 import org.onehippo.cms7.essentials.dashboard.ctx.DashboardPluginContext;
+import org.onehippo.cms7.essentials.dashboard.utils.GlobalUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -36,21 +31,26 @@ public class JcrPluginConfigServiceTest extends BaseRepositoryTest{
         session.save();
         final DashboardPluginContext context = new DashboardPluginContext(session, new DummyTestPlugin());
         PluginConfigService service = new JcrPluginConfigService(context);
-        final ProjectSettingsBean document = new ProjectSettingsBean("test");
-        document.addProperty("test");
+        final ProjectSettingsBean document = new ProjectSettingsBean("DummyTestPlugin");
+        //document.addProperty("test");
         document.setSetupDone(true);
+        document.setParentPath(GlobalUtils.getParentConfigPath(DummyTestPlugin.class.getName()));
         document.setSelectedBeansPackage("beanspackage");
         document.setSelectedComponentsPackage("comppackage");
         document.setProjectNamespace("projectns");
         document.setSelectedRestPackage("rest");
         document.setSetupDone(true);
-        document.setSetupDone(true);
         service.write(document);
         // now read it:
-        final ProjectSettingsBean copy = service.read();
-        assertEquals(copy.getName(), document.getName());
-        assertEquals(copy.getProperties().get(0), "test");
+        final ProjectSettingsBean copy = service.read(DummyTestPlugin.class.getName(), ProjectSettingsBean.class);
+        assertEquals("DummyTestPlugin", copy.getName());
+        //assertEquals(copy.getProperties().get(0), "test");
         assertTrue("Expected setup to be done", copy.getSetupDone());
+        // delete:
+        getContext().getSession().getNode("/essentials/plugins/").remove();
+        getContext().getSession().save();
+        service.write(document, DummyTestPlugin.class.getName());
+
 
 
 

@@ -23,17 +23,17 @@ import com.google.inject.Injector;
 
 public class SubresourceInterceptor implements MethodInterceptor {
 
-	private Injector injector;
+    private Injector injector;
 
-	@Override
-	public Object invoke(MethodInvocation method) throws Throwable {
-		final Class<?> rt = method.getMethod().getReturnType();
-		return injector.getInstance(rt);
-	}
+    @Override
+    public Object invoke(MethodInvocation method) throws Throwable {
+        final Class<?> rt = method.getMethod().getReturnType();
+        return injector.getInstance(rt);
+    }
 
-	@Inject
-	public void setInjector(Injector injector) {
-		this.injector = injector;
-	}
+    @Inject
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
 
 }

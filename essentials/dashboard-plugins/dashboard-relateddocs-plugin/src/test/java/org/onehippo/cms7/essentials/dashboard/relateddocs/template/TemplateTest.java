@@ -1,15 +1,13 @@
 package org.onehippo.cms7.essentials.dashboard.relateddocs.template;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public class TemplateTest {
 
-    private static Logger log = LoggerFactory.getLogger(TemplateTest.class);
+
 
     private final String TEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" sv:name=\"related-doc-updater\">\n" +
             "  <sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\">\n" +

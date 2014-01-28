@@ -18,16 +18,14 @@ package org.onehippo.cms7.essentials.dashboard.model.hst;
 
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.utils.JcrPersistenceWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
 public class HstConfigurationService {
 
-    private static Logger log = LoggerFactory.getLogger(HstConfigurationService.class);
-    final HstConfiguration config;
+
+    private final HstConfiguration config;
     private final PluginContext context;
 
     public HstConfigurationService(final String name, final PluginContext context) {

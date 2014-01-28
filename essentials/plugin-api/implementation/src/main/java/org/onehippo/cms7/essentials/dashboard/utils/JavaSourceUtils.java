@@ -44,9 +44,9 @@ import com.google.common.base.Strings;
 /**
  * Utility class for manipulating java source files.
  *
- * @version "$Id: JavaSourceUtils.java 175636 2013-08-30 14:55:58Z mmilicevic $"
+ * @version "$Id$"
  */
-public class JavaSourceUtils {
+public final class JavaSourceUtils {
 
     private static final Pattern DOT_SPLITTER = Pattern.compile("\\.");
     /**
@@ -295,7 +295,7 @@ public class JavaSourceUtils {
         generatedAnnotation.setTypeName(ast.newName(HippoEssentialsGenerated.class.getSimpleName()));
         // name
         final MemberValuePair generatedMemberValue = ast.newMemberValuePair();
-        generatedMemberValue.setName(ast.newSimpleName(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIUBUTE));
+        generatedMemberValue.setName(ast.newSimpleName(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE));
         final StringLiteral internalNameLiteral = ast.newStringLiteral();
         internalNameLiteral.setLiteralValue(internalName);
         generatedMemberValue.setValue(internalNameLiteral);
@@ -600,7 +600,13 @@ public class JavaSourceUtils {
                 final NormalAnnotation annotation = (NormalAnnotation) modifier;
                 final Name typeName = annotation.getTypeName();
                 final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                if (!fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_FULLY_QUALIFIED) && !fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_NAME)) {
+                // check Node & HippoGenerated annotations
+                if (
+                        (!fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_FULLY_QUALIFIED) && !fullyQualifiedName.equals(EssentialConst.NODE_ANNOTATION_NAME))
+                                &&
+                                (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getName()) && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName()))
+
+                        ) {
                     log.debug("Skipping annotation: {}", fullyQualifiedName);
                     continue;
                 }
@@ -615,11 +621,22 @@ public class JavaSourceUtils {
                             final String identifier = name.getIdentifier();
                             if (identifier.equals("jcrType")) {
                                 final Expression literalValue = pair.getValue();
-                                if(literalValue instanceof StringLiteral){
+                                if (literalValue instanceof StringLiteral) {
                                     final StringLiteral ex = (StringLiteral) literalValue;
                                     jcrType = ex.getLiteralValue();
-                                }else{
-                                    log.warn("Couldn't resolve value for: {}", literalValue);
+                                } else {
+
+
+                                    log.warn("Couldn't resolve value for jcrType: {}, we'll retry with internalName one", literalValue);
+                                }
+                            }
+                            if (jcrType == null && identifier.equals(EssentialConst.ANNOTATION_INTERNAL_NAME_ATTRIBUTE)) {
+                                final Expression literalValue = pair.getValue();
+                                if (literalValue instanceof StringLiteral) {
+                                    final StringLiteral ex = (StringLiteral) literalValue;
+                                    jcrType = ex.getLiteralValue();
+                                } else {
+                                    log.warn("Couldn't resolve value for internalName: {}", literalValue);
                                 }
                             }
                         }
@@ -800,7 +817,9 @@ public class JavaSourceUtils {
         // add annotation at first position:
         if (node instanceof TypeDeclaration) {
             TypeDeclaration type = (TypeDeclaration) node;
-            type.modifiers().add(0, annotation);
+            if (!hasAnnotation(type.modifiers(), annotation)) {
+                type.modifiers().add(0, annotation);
+            }
         } else if (node instanceof VariableDeclarationStatement) {
             VariableDeclarationStatement localVariable = (VariableDeclarationStatement) node;
             localVariable.modifiers().add(0, annotation);
@@ -816,6 +835,23 @@ public class JavaSourceUtils {
         } else {
             log.info("Couldn't add annotation to node: {}", node);
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static boolean hasAnnotation(final List modifiers, final IExtendedModifier annotation) {
+        for (Object modifier : modifiers) {
+            if (modifier instanceof NormalAnnotation && annotation instanceof NormalAnnotation) {
+                final NormalAnnotation existing = (NormalAnnotation) modifier;
+                final NormalAnnotation newOne = (NormalAnnotation) annotation;
+                final String fullyQualifiedName = existing.getTypeName().getFullyQualifiedName();
+                if (fullyQualifiedName.equals(newOne.getTypeName().getFullyQualifiedName())) {
+                    log.debug("Annotation already exists: {}", fullyQualifiedName);
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static Path createJavaSourcePath(final String sourceRoot, final String className, final CharSequence packageName, final String fileExtension) throws IOException {

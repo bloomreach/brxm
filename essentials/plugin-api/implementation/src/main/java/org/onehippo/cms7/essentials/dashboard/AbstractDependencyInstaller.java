@@ -14,6 +14,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.onehippo.cms7.essentials.dashboard.installer.InstallState;
 import org.onehippo.cms7.essentials.dashboard.installer.Installer;
+import org.onehippo.cms7.essentials.dashboard.utils.EssentialConst;
 import org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,10 +41,10 @@ public abstract class AbstractDependencyInstaller implements Installer {
      */
     public abstract List<Dependency> getSiteDependencies();
 
-    FileReader fileReader = null;
-    FileWriter fileWriter = null;
-    final MavenXpp3Reader reader = new MavenXpp3Reader();
-    final MavenXpp3Writer writer = new MavenXpp3Writer();
+    private FileReader fileReader = null;
+    private FileWriter fileWriter = null;
+    private final MavenXpp3Reader reader = new MavenXpp3Reader();
+    private final MavenXpp3Writer writer = new MavenXpp3Writer();
 
     @Override
     public void install() {
@@ -56,7 +57,7 @@ public abstract class AbstractDependencyInstaller implements Installer {
      */
     public void installCmsDependencies() {
         try {
-            fileReader = new FileReader(ProjectUtils.getCms().getPath() + File.separatorChar + "pom.xml");
+            fileReader = new FileReader(ProjectUtils.getCms().getPath() + File.separatorChar + EssentialConst.POM_XML);
             final Model model = reader.read(fileReader);
             final List<Dependency> cmsDependencies = getCmsDependencies();
             if (cmsDependencies != null && !cmsDependencies.isEmpty()) {
@@ -64,7 +65,7 @@ public abstract class AbstractDependencyInstaller implements Installer {
                     model.addDependency(dependency);
                 }
             }
-            fileWriter = new FileWriter(ProjectUtils.getCms().getPath() + File.separatorChar + "pom.xml");
+            fileWriter = new FileWriter(ProjectUtils.getCms().getPath() + File.separatorChar + EssentialConst.POM_XML);
             writer.write(fileWriter, model);
         } catch (IOException e) {
             log.error("io exception while trying to add cms dependency {}", e);
@@ -82,7 +83,7 @@ public abstract class AbstractDependencyInstaller implements Installer {
      */
     public void installSiteDependencies() {
         try {
-            fileReader = new FileReader(ProjectUtils.getSite().getPath() + File.separatorChar + "pom.xml");
+            fileReader = new FileReader(ProjectUtils.getSite().getPath() + File.separatorChar + EssentialConst.POM_XML);
             final Model model = reader.read(fileReader);
             final List<Dependency> siteDependencies = getSiteDependencies();
             if (siteDependencies != null && !siteDependencies.isEmpty()) {
@@ -90,7 +91,7 @@ public abstract class AbstractDependencyInstaller implements Installer {
                     model.addDependency(dependency);
                 }
             }
-            fileWriter = new FileWriter(ProjectUtils.getSite().getPath() + File.separatorChar + "pom.xml");
+            fileWriter = new FileWriter(ProjectUtils.getSite().getPath() + File.separatorChar + EssentialConst.POM_XML);
             writer.write(fileWriter, model);
         } catch (IOException e) {
             log.error("io exception while trying to add cms dependency {}", e);

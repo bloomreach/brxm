@@ -15,9 +15,6 @@
  */
 package com.google.code.inject.jaxrs.util;
 
-import static com.google.inject.Scopes.NO_SCOPE;
-import static com.google.inject.Scopes.SINGLETON;
-
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
@@ -36,192 +33,196 @@ import com.google.inject.spi.ExposedBinding;
 import com.google.inject.spi.ProviderInstanceBinding;
 import com.google.inject.util.Providers;
 
-public class ScopeUtils {
-	public static final Class<?> PROVIDERS_OF_CLASS = Providers.of(null)
-			.getClass();
+import static com.google.inject.Scopes.NO_SCOPE;
+import static com.google.inject.Scopes.SINGLETON;
 
-	private static final BindingScopingVisitor<Boolean> IS_SINGLETON_VISITOR = new BindingScopingVisitor<Boolean>() {
-		public Boolean visitNoScoping() {
-			return false;
-		}
+public final  class ScopeUtils {
 
-		public Boolean visitScopeAnnotation(
-				Class<? extends Annotation> scopeAnnotation) {
-			return scopeAnnotation == Singleton.class
-					|| scopeAnnotation == javax.inject.Singleton.class;
-		}
+    private ScopeUtils() {
+    }
 
-		public Boolean visitScope(Scope scope) {
-			return scope == com.google.inject.Scopes.SINGLETON;
-		}
+    public static final Class<?> PROVIDERS_OF_CLASS = Providers.of(null)
+            .getClass();
 
-		public Boolean visitEagerSingleton() {
-			return true;
-		}
-	};
+    private static final BindingScopingVisitor<Boolean> IS_SINGLETON_VISITOR = new BindingScopingVisitor<Boolean>() {
+        public Boolean visitNoScoping() {
+            return false;
+        }
 
-	/**
-	 * Returns true if {@code binding} is singleton-scoped. If the binding is a
-	 * {@link com.google.inject.spi.LinkedKeyBinding linked key binding} and
-	 * belongs to an injector (ie. it was retrieved via
-	 * {@link com.google.inject.Injector#getBinding Injector.getBinding()}), then this method will
-	 * also true if the target binding is singleton-scoped.
-	 *
-	 * @since 3.0
-	 */
-	public static boolean isSingleton(Binding<?> binding) {
-		do {
-			final boolean singleton = binding
-					.acceptScopingVisitor(IS_SINGLETON_VISITOR);
-			if (singleton) {
-				return true;
-			}
+        public Boolean visitScopeAnnotation(
+                Class<? extends Annotation> scopeAnnotation) {
+            return scopeAnnotation == Singleton.class
+                    || scopeAnnotation == javax.inject.Singleton.class;
+        }
 
-			if (binding instanceof LinkedBindingImpl) {
-				final LinkedBindingImpl<?> linkedBinding = (LinkedBindingImpl<?>) binding;
-				final Injector injector = linkedBinding.getInjector();
-				if (injector != null) {
-					binding = injector.getBinding(linkedBinding.getLinkedKey());
-					continue;
-				}
-			} else if (binding instanceof ExposedBinding) {
-				final ExposedBinding<?> exposedBinding = (ExposedBinding<?>) binding;
-				final Injector injector = exposedBinding.getPrivateElements()
-						.getInjector();
-				if (injector != null) {
-					binding = injector.getBinding(exposedBinding.getKey());
-					continue;
-				}
-			}
+        public Boolean visitScope(Scope scope) {
+            return scope == com.google.inject.Scopes.SINGLETON;
+        }
 
-			return false;
-		} while (true);
-	}
+        public Boolean visitEagerSingleton() {
+            return true;
+        }
+    };
 
-	/**
-	 *
-	 * Returns true if {@code binding} has the given scope. If the binding is a
-	 * {@link com.google.inject.spi.LinkedKeyBinding linked key binding} and
-	 * belongs to an injector (ie. it was retrieved via
-	 * {@link com.google.inject.Injector#getBinding Injector.getBinding()}), then this method will
-	 * also true if the target binding has the given scope.
-	 *
-	 * @param binding
-	 *            binding to check
-	 * @param scope
-	 *            scope implementation instance
-	 * @param scopeAnnotation
-	 *            scope annotation class
-	 */
-	public static boolean isScoped(Binding<?> binding, final Scope scope,
-			final Class<? extends Annotation> scopeAnnotation) {
-		do {
-			final boolean matches = binding
-					.acceptScopingVisitor(new BindingScopingVisitor<Boolean>() {
-						public Boolean visitNoScoping() {
-							return false;
-						}
+    /**
+     * Returns true if {@code binding} is singleton-scoped. If the binding is a
+     * {@link com.google.inject.spi.LinkedKeyBinding linked key binding} and
+     * belongs to an injector (ie. it was retrieved via
+     * {@link com.google.inject.Injector#getBinding Injector.getBinding()}), then this method will
+     * also true if the target binding is singleton-scoped.
+     *
+     * @since 3.0
+     */
+    public static boolean isSingleton(Binding<?> binding) {
+        do {
+            final boolean singleton = binding
+                    .acceptScopingVisitor(IS_SINGLETON_VISITOR);
+            if (singleton) {
+                return true;
+            }
 
-						public Boolean visitScopeAnnotation(
-								Class<? extends Annotation> visitedAnnotation) {
-							return visitedAnnotation == scopeAnnotation;
-						}
+            if (binding instanceof LinkedBindingImpl) {
+                final LinkedBindingImpl<?> linkedBinding = (LinkedBindingImpl<?>) binding;
+                final Injector injector = linkedBinding.getInjector();
+                if (injector != null) {
+                    binding = injector.getBinding(linkedBinding.getLinkedKey());
+                    continue;
+                }
+            } else if (binding instanceof ExposedBinding) {
+                final ExposedBinding<?> exposedBinding = (ExposedBinding<?>) binding;
+                final Injector injector = exposedBinding.getPrivateElements()
+                        .getInjector();
+                if (injector != null) {
+                    binding = injector.getBinding(exposedBinding.getKey());
+                    continue;
+                }
+            }
 
-						public Boolean visitScope(Scope visitedScope) {
-							return visitedScope == scope;
-						}
+            return false;
+        } while (true);
+    }
 
-						public Boolean visitEagerSingleton() {
-							return false;
-						}
-					});
+    /**
+     * Returns true if {@code binding} has the given scope. If the binding is a
+     * {@link com.google.inject.spi.LinkedKeyBinding linked key binding} and
+     * belongs to an injector (ie. it was retrieved via
+     * {@link com.google.inject.Injector#getBinding Injector.getBinding()}), then this method will
+     * also true if the target binding has the given scope.
+     *
+     * @param binding         binding to check
+     * @param scope           scope implementation instance
+     * @param scopeAnnotation scope annotation class
+     */
+    public static boolean isScoped(Binding<?> binding, final Scope scope,
+                                   final Class<? extends Annotation> scopeAnnotation) {
+        do {
+            final boolean matches = binding
+                    .acceptScopingVisitor(new BindingScopingVisitor<Boolean>() {
+                        public Boolean visitNoScoping() {
+                            return false;
+                        }
 
-			if (matches) {
-				return true;
-			}
+                        public Boolean visitScopeAnnotation(
+                                Class<? extends Annotation> visitedAnnotation) {
+                            return visitedAnnotation == scopeAnnotation;
+                        }
 
-			if (binding instanceof LinkedBindingImpl) {
-				final LinkedBindingImpl<?> linkedBinding = (LinkedBindingImpl<?>) binding;
-				final Injector injector = linkedBinding.getInjector();
-				if (injector != null) {
-					binding = injector.getBinding(linkedBinding.getLinkedKey());
-					continue;
-				}
-			} else if (binding instanceof ExposedBinding) {
-				final ExposedBinding<?> exposedBinding = (ExposedBinding<?>) binding;
-				final Injector injector = exposedBinding.getPrivateElements()
-						.getInjector();
-				if (injector != null) {
-					binding = injector.getBinding(exposedBinding.getKey());
-					continue;
-				}
-			}
+                        public Boolean visitScope(Scope visitedScope) {
+                            return visitedScope == scope;
+                        }
 
-			return false;
-		} while (true);
-	}
+                        public Boolean visitEagerSingleton() {
+                            return false;
+                        }
+                    });
 
-	/**
-	 * Returns true if the object is a proxy for a circular dependency,
-	 * constructed by Guice because it encountered a circular dependency. Scope
-	 * implementations should be careful to <b>not cache circular proxies</b>,
-	 * because the proxies are not intended for general purpose use. (They are
-	 * designed just to fulfill the immediate injection, not all injections.
-	 * Caching them can lead to IllegalArgumentExceptions or
-	 * ClassCastExceptions.)
-	 */
-	public static boolean isCircularProxy(Object object) {
-		return object instanceof CircularDependencyProxy;
-	}
+            if (matches) {
+                return true;
+            }
 
-	public static Scope scopeOfBinding(final Binding<?> binding,
-			final Map<Class<? extends Annotation>, Scope> scopeBindings) {
+            if (binding instanceof LinkedBindingImpl) {
+                final LinkedBindingImpl<?> linkedBinding = (LinkedBindingImpl<?>) binding;
+                final Injector injector = linkedBinding.getInjector();
+                if (injector != null) {
+                    binding = injector.getBinding(linkedBinding.getLinkedKey());
+                    continue;
+                }
+            } else if (binding instanceof ExposedBinding) {
+                final ExposedBinding<?> exposedBinding = (ExposedBinding<?>) binding;
+                final Injector injector = exposedBinding.getPrivateElements()
+                        .getInjector();
+                if (injector != null) {
+                    binding = injector.getBinding(exposedBinding.getKey());
+                    continue;
+                }
+            }
 
-		if (binding instanceof ProviderInstanceBinding<?>) {
-			final Provider<?> providerInstance = ((ProviderInstanceBinding<?>) binding)
-					.getProviderInstance();
+            return false;
+        } while (true);
+    }
 
-			if (providerInstance instanceof Multibinder) {
-				// multibinder scope is effectively equal to the scope of it's member bindings
-				return null;
-			}
+    /**
+     * Returns true if the object is a proxy for a circular dependency,
+     * constructed by Guice because it encountered a circular dependency. Scope
+     * implementations should be careful to <b>not cache circular proxies</b>,
+     * because the proxies are not intended for general purpose use. (They are
+     * designed just to fulfill the immediate injection, not all injections.
+     * Caching them can lead to IllegalArgumentExceptions or
+     * ClassCastExceptions.)
+     */
+    public static boolean isCircularProxy(Object object) {
+        return object instanceof CircularDependencyProxy;
+    }
 
-			if (PROVIDERS_OF_CLASS.equals(providerInstance.getClass()))
-				return SINGLETON;
+    public static Scope scopeOfBinding(final Binding<?> binding,
+                                       final Map<Class<? extends Annotation>, Scope> scopeBindings) {
 
-		}
+        if (binding instanceof ProviderInstanceBinding<?>) {
+            final Provider<?> providerInstance = ((ProviderInstanceBinding<?>) binding)
+                    .getProviderInstance();
 
-		if (binding instanceof ConvertedConstantBinding) {
-			return SINGLETON;
-		}
+            if (providerInstance instanceof Multibinder) {
+                // multibinder scope is effectively equal to the scope of it's member bindings
+                return null;
+            }
 
-		return binding
-				.acceptScopingVisitor(new DefaultBindingScopingVisitor<Scope>() {
-					@Override
-					public Scope visitEagerSingleton() {
-						return SINGLETON;
-					}
+            if (PROVIDERS_OF_CLASS.equals(providerInstance.getClass())) {
+                return SINGLETON;
+            }
 
-					@Override
-					public Scope visitNoScoping() {
-						return NO_SCOPE;
-					}
+        }
 
-					@Override
-					protected Scope visitOther() {
-						return null;
-					}
+        if (binding instanceof ConvertedConstantBinding) {
+            return SINGLETON;
+        }
 
-					@Override
-					public Scope visitScope(Scope scope) {
-						return scope;
-					}
+        return binding
+                .acceptScopingVisitor(new DefaultBindingScopingVisitor<Scope>() {
+                    @Override
+                    public Scope visitEagerSingleton() {
+                        return SINGLETON;
+                    }
 
-					@Override
-					public Scope visitScopeAnnotation(
-							Class<? extends Annotation> scopeAnnotation) {
-						return scopeBindings.get(scopeAnnotation);
-					}
-				});
-	}
+                    @Override
+                    public Scope visitNoScoping() {
+                        return NO_SCOPE;
+                    }
+
+                    @Override
+                    protected Scope visitOther() {
+                        return null;
+                    }
+
+                    @Override
+                    public Scope visitScope(Scope scope) {
+                        return scope;
+                    }
+
+                    @Override
+                    public Scope visitScopeAnnotation(
+                            Class<? extends Annotation> scopeAnnotation) {
+                        return scopeBindings.get(scopeAnnotation);
+                    }
+                });
+    }
 }
