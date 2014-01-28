@@ -14,7 +14,14 @@
             "name": "Hippo",
             "url": "http://www.onehippo.com"
         },
-        "dependencies":[ {"groupId":"org.onehippo.forge","artifactId":"relateddocs","scope":"compile", "type":"cms"}]
+        "dependencies": [
+            {
+                "groupId": "org.onehippo.forge",
+                "artifactId": "relateddocs",
+                "scope": "compile",
+                "type": "cms"
+            }
+        ]
     },
     {
 
