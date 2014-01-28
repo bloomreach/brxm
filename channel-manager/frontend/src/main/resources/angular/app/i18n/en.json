@@ -1,3 +1,16 @@
 {
-    "ADD_NEW_MENU_ITEM": "Add new menu item"
+    "ADD_NEW_MENU_ITEM": "Add new menu item",
+    "LABEL": "Label",
+    "DESTINATION": "Destination",
+    "SITEMAP_ITEM": "Sitemap item",
+    "EXTERNAL_LINK": "External link",
+    "NONE": "None",
+    "INTERNAL_LINK": "Internal link",
+    "SELECT_DOCUMENT": "Select document",
+    "SELECT_LANDING_PAGE": "Select landing page",
+    "CREATE_NEW_PAGE": "Create new page",
+    "EXTERNAL_LINK": "External link",
+    "EXAMPLE_DOMAIN": "http://www.example.com",
+    "CREATE_MENU_ITEM": "Create menu item",
+    "CANCEL": "Cancel"
 }
