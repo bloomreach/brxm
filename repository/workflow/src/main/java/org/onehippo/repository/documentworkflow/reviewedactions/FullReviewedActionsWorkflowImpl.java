@@ -21,7 +21,6 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 
@@ -60,7 +59,7 @@ public class FullReviewedActionsWorkflowImpl extends AbstractReviewedActionsWork
     // BasicReviewedActionsWorkflow implementation
 
     @Override
-    public void requestDeletion() throws WorkflowException, RemoteException, MappingException {
+    public void requestDeletion() throws WorkflowException, RepositoryException, RemoteException {
         handleDocumentWorkflow.requestDeletion();
     }
 
@@ -102,7 +101,7 @@ public class FullReviewedActionsWorkflowImpl extends AbstractReviewedActionsWork
     }
 
     @Override
-    public void copy(final Document destination, final String newName) throws WorkflowException, RemoteException, MappingException {
+    public void copy(final Document destination, final String newName) throws WorkflowException, RepositoryException, RemoteException {
         handleDocumentWorkflow.copy(destination, newName);
     }
 
