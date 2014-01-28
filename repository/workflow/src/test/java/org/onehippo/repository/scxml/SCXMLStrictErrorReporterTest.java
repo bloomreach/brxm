@@ -29,7 +29,7 @@ import org.onehippo.repository.mock.MockNode;
 public class SCXMLStrictErrorReporterTest {
 
     private static final String SCXML_HELLO_WITH_ERROR_JEXL_SCRIPTS =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" version=\"1.0\" initial=\"hello\">\n" +
             "  <state id=\"hello\">\n" +
             "    <initial>\n" +
             "      <transition target=\"world\" />\n" +

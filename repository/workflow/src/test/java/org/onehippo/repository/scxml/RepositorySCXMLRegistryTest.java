@@ -44,7 +44,7 @@ import org.onehippo.repository.testutils.slf4j.LoggerRecordingWrapper;
 public class RepositorySCXMLRegistryTest {
 
     private static final String SCXML_HELLO = 
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" version=\"1.0\" initial=\"hello\">\n" +
             "  <state id=\"hello\">\n" +
             "    <onentry>\n" +
             "      <log expr=\"'Hello, World'\"/>\n" +
@@ -53,7 +53,7 @@ public class RepositorySCXMLRegistryTest {
             "</scxml>";
 
     private static final String SCXML_HELLO2 = 
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello2\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" version=\"1.0\" initial=\"hello2\">\n" +
             "  <state id=\"hello2\">\n" +
             "    <onentry>\n" +
             "      <log expr=\"'Hello, World 2'\"/>\n" +
@@ -62,7 +62,7 @@ public class RepositorySCXMLRegistryTest {
             "</scxml>";
 
     private static final String SCXML_HELLO_NO_INITIAL = // no initial attribute
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" version=\"1.0\">\n" +
             "  <state id=\"hello-noinit\">\n" +
             "    <onentry>\n" +
             "      <log expr=\"'Hello, Invalid World'\"/>\n" +
@@ -71,7 +71,7 @@ public class RepositorySCXMLRegistryTest {
             "</scxml>";
 
     private static final String SCXML_HELLO_NONEXISTING_INITIAL = // nonexisting initial attribute
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"nonexisting\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" version=\"1.0\" initial=\"nonexisting\">\n" +
             "  <state id=\"hello-invalid\">\n" +
             "    <onentry>\n" +
             "      <log expr=\"'Hello, Invalid World'\"/>\n" +
@@ -80,14 +80,14 @@ public class RepositorySCXMLRegistryTest {
             "</scxml>";
 
     private static final String SCXML_HELLO_WRONG_EXECUTION_IN_STATE = // execution without onentry
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" initial=\"hello-invalid\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" version=\"1.0\" initial=\"hello-invalid\">\n" +
             "  <state id=\"hello-invalid\">\n" +
             "    <log expr=\"'Hello, Invalid World'\"/>\n" +
             "  </state>\n" +
             "</scxml>";
 
     private static final String SCXML_HELLO_WITH_UNKNOWN_CUSTOM_ACTIONS =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
             "  <state id=\"hello\">\n" +
             "    <onentry>\n" +
             "      <hippo:unknown-custom-action/>\n" +
@@ -96,7 +96,7 @@ public class RepositorySCXMLRegistryTest {
             "</scxml>";
 
     private static final String SCXML_HELLO_WITH_UNKNOWN_NS_CUSTOM_ACTIONS =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
             "  <state id=\"hello\">\n" +
             "    <onentry>\n" +
             "      <hippo2:unknown-custom-action/>\n" +

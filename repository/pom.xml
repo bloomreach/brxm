@@ -43,6 +43,15 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
+    <!-- TODO: temporary adding Apache snapshots repository for commons-scxml2 -->
+    <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
   </repositories>
 
   <modules>

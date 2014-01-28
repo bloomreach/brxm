@@ -35,7 +35,7 @@ import static org.junit.Assert.fail;
 public class SCXMLWorkflowExecutorTest {
 
     private static final String SCXML_TEST =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
                     "  <state id=\"hello\">\n" +
                     "    <onentry>\n" +
                     "      <hippo:action action=\"hello\" value=\"true\"/>\n" +
@@ -45,7 +45,7 @@ public class SCXMLWorkflowExecutorTest {
                     "</scxml>";
 
     private static final String SCXML_FAILING_TEST =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
                     "  <state id=\"hello\">\n" +
                     "    <onentry>\n" +
                     "      <hippo:action action=\"hello\" value=\"unknown\"/>\n" +
@@ -54,7 +54,7 @@ public class SCXMLWorkflowExecutorTest {
                     "</scxml>";
 
     private static final String SCXML_RESET_TERMINATE_TEST =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"hello\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"hello\">\n" +
                     "  <state id=\"hello\">\n" +
                     "    <onentry>\n" +
                     "      <hippo:action action=\"hello\" value=\"true\"/>\n" +
@@ -70,7 +70,7 @@ public class SCXMLWorkflowExecutorTest {
                     "</scxml>";
 
     private static final String SCXML_RESETTING_TEST =
-            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" initial=\"reset\">\n" +
+            "<scxml xmlns=\"http://www.w3.org/2005/07/scxml\" xmlns:hippo=\"http://www.onehippo.org/cms7/repository/scxml\" version=\"1.0\" initial=\"reset\">\n" +
                     "  <final id=\"reset\"/>\n" +
                     "</scxml>";
 
