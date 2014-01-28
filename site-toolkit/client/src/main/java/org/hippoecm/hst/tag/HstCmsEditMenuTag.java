@@ -24,6 +24,9 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
@@ -65,8 +68,36 @@ public class HstCmsEditMenuTag extends TagSupport  {
                 log.debug("Skipping cms edit menu because not cms preview.");
                 return EVAL_PAGE;
             }
+
+
+            final HstSite hstSite = requestContext.getResolvedMount().getMount().getHstSite();
+            if (hstSite == null) {
+                log.debug("Skipping cms edit menu because no hst site for matched mount '{}'.",
+                        requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+
+            final HstSiteMenuConfiguration siteMenuConfiguration = hstSite.getSiteMenusConfiguration().getSiteMenuConfiguration(menu.getName());
+
+            if (siteMenuConfiguration == null) {
+                log.debug("Skipping cms edit menu because no siteMenuConfiguration '{}' found for matched mount '{}'.",
+                        menu.getName(),  requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+
+            if (!(siteMenuConfiguration instanceof CanonicalInfo)) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found not instanceof CanonicalInfo " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
+            CanonicalInfo canonicalInfo = (CanonicalInfo) siteMenuConfiguration;
+            if (!canonicalInfo.isWorkspaceConfiguration()) {
+                log.debug("Skipping cms edit menu because siteMenuConfiguration found not part of workspace " +
+                        "for matched mount '{}'.", requestContext.getResolvedMount().getMount().toString());
+                return EVAL_PAGE;
+            }
             try {
-                write(menu.getCanonicalIdentifier(), menu.isInherited());
+                write(canonicalInfo.getCanonicalIdentifier());
             } catch (IOException ioe) {
                 throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
             }
@@ -80,7 +111,7 @@ public class HstCmsEditMenuTag extends TagSupport  {
         menu = null;
     }
 
-    protected void write(String menuId, boolean inherited) throws IOException {
+    protected void write(String menuId) throws IOException {
         JspWriter writer = pageContext.getOut();
         StringBuilder htmlComment = new StringBuilder();
         htmlComment.append("<!-- ");
@@ -88,9 +119,6 @@ public class HstCmsEditMenuTag extends TagSupport  {
         // add uuid
         htmlComment.append(", \"uuid\":\"");
         htmlComment.append(menuId);
-        if (inherited) {
-            htmlComment.append(", \"inherited\":\"true\"");
-        }
         htmlComment.append("\" } -->");
         writer.print(htmlComment.toString());
     }

@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-@XmlRootElement(name = "sitemenu")
 public class SiteMenuRepresentation {
 
     private String id;
@@ -37,9 +37,11 @@ public class SiteMenuRepresentation {
     private long lastModifiedTimestamp;
     private List<SiteMenuItemRepresentation> children = new ArrayList<>();
 
-    public SiteMenuRepresentation represent(HstSiteMenuConfiguration siteMenuConfiguration) {
-
-        id = siteMenuConfiguration.getCanonicalIdentifier();
+    public SiteMenuRepresentation represent(HstSiteMenuConfiguration siteMenuConfiguration) throws IllegalArgumentException {
+        if (!(siteMenuConfiguration instanceof CanonicalInfo)) {
+            throw new IllegalArgumentException("Expected object of type CanonicalInfo");
+        }
+        id = ((CanonicalInfo)siteMenuConfiguration).getCanonicalIdentifier();
         name = siteMenuConfiguration.getName();
 
         // TODO last modified timestamp / etc etc

@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
@@ -33,7 +34,10 @@ class SiteMenuHelper {
     public HstSiteMenuConfiguration getMenu(HstSite site, String menuId) {
         final Map<String,HstSiteMenuConfiguration> siteMenuConfigurations = site.getSiteMenusConfiguration().getSiteMenuConfigurations();
         for (HstSiteMenuConfiguration menuConfiguration : siteMenuConfigurations.values()) {
-            if (menuConfiguration.getCanonicalIdentifier().equals(menuId)) {
+            if (!(menuConfiguration instanceof CanonicalInfo)) {
+                continue;
+            }
+            if (((CanonicalInfo)menuConfiguration).getCanonicalIdentifier().equals(menuId)) {
                 return menuConfiguration;
             }
         }
@@ -51,7 +55,10 @@ class SiteMenuHelper {
     }
 
     private HstSiteMenuItemConfiguration getMenuItem(HstSiteMenuItemConfiguration menuItem, String menuItemId) {
-        if (menuItem.getCanonicalIdentifier().equals(menuItemId)) {
+        if (!(menuItem instanceof CanonicalInfo)) {
+            return null;
+        }
+        if (((CanonicalInfo)menuItem).getCanonicalIdentifier().equals(menuItemId)) {
             return menuItem;
         }
         for (HstSiteMenuItemConfiguration child : menuItem.getChildItemConfigurations()) {

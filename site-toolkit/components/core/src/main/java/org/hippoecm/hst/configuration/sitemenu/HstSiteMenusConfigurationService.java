@@ -15,10 +15,8 @@
  */
 package org.hippoecm.hst.configuration.sitemenu;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -33,18 +31,17 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
     private static final Logger log = LoggerFactory.getLogger(HstSiteMenusConfigurationService.class);
     
     private HstSite hstSite;
-    private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurations = new HashMap<String, HstSiteMenuConfiguration>();
-    private Map<String, List<HstSiteMenuItemConfiguration>> hstSiteMenuItemsBySiteMapId = new HashMap<String, List<HstSiteMenuItemConfiguration>>();
+    private Map<String, HstSiteMenuConfiguration> hstSiteMenuConfigurations = new HashMap<>();
     
     public HstSiteMenusConfigurationService(final HstSite hstSite,
-                                            final CompositeConfigurationNodes.CompositeConfigurationNode siteMenusNode,
-                                            final String rootConfigurationPathPrefix) {
+                                            final CompositeConfigurationNodes.CompositeConfigurationNode siteMenusNode) {
         this.hstSite = hstSite;
+        Map<String, HstSiteMenuConfiguration> menus = new HashMap<>();
         for(HstNode siteMenu: siteMenusNode.getCompositeChildren().values()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMENU.equals(siteMenu.getNodeTypeName())) {
-                boolean inherited = !siteMenu.getValueProvider().getPath().startsWith(rootConfigurationPathPrefix);
-                HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu, inherited);
-                HstSiteMenuConfiguration old = hstSiteMenuConfigurations.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
+                boolean workspaceConfiguration = siteMenu.getParent().getParent().getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE);
+                HstSiteMenuConfiguration hstSiteMenuConfiguration = new HstSiteMenuConfigurationService(this, siteMenu, workspaceConfiguration);
+                HstSiteMenuConfiguration old = menus.put(hstSiteMenuConfiguration.getName(), hstSiteMenuConfiguration);
                 if(old != null) {
                     log.error("Duplicate name for HstSiteMenuConfiguration found. The first one is replaced");
                 }
@@ -52,25 +49,15 @@ public class HstSiteMenusConfigurationService implements HstSiteMenusConfigurati
                 log.error("Skipping siteMenu '{}' because not of type '{}'", siteMenu.getValueProvider().getPath(), HstNodeTypes.NODETYPE_HST_SITEMENU);
             }
         }
+        hstSiteMenuConfigurations = Collections.unmodifiableMap(menus);
     }
 
-    public void addHstSiteMenuItem(String hstSiteMapItemId, HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration) {
-        List<HstSiteMenuItemConfiguration> itemsForSiteMapItemId = hstSiteMenuItemsBySiteMapId.get(hstSiteMapItemId);
-        if(itemsForSiteMapItemId == null) {
-            itemsForSiteMapItemId = new ArrayList<HstSiteMenuItemConfiguration>();
-            itemsForSiteMapItemId.add(hstSiteMenuItemConfiguration);
-            hstSiteMenuItemsBySiteMapId.put(hstSiteMapItemId, itemsForSiteMapItemId);
-        } else {
-            itemsForSiteMapItemId.add(hstSiteMenuItemConfiguration);
-        }
-    }
-    
     public HstSite getSite() {
         return this.hstSite;
     }
 
     public Map<String, HstSiteMenuConfiguration> getSiteMenuConfigurations() {
-        return Collections.unmodifiableMap(hstSiteMenuConfigurations);
+        return hstSiteMenuConfigurations;
     }
 
     public HstSiteMenuConfiguration getSiteMenuConfiguration(String name) {

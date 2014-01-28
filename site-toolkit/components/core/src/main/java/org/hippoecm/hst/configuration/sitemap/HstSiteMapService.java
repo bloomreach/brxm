@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.cache.CompositeConfigurationNodes;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -33,13 +34,16 @@ import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapService implements HstSiteMap {
+public class HstSiteMapService implements HstSiteMap, CanonicalInfo {
     
     private static final long serialVersionUID = 1L;
 
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteMapService.class);
-    
+
+    private final String canonicalIdentifier;
+
+    private final boolean workspaceConfiguration;
     
     private HstSite hstSite;
     
@@ -61,6 +65,10 @@ public class HstSiteMapService implements HstSiteMap {
                              final MountSiteMapConfiguration mountSiteMapConfiguration,
                              final HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration) throws ModelLoadingException {
         this.hstSite = hstSite;
+
+        canonicalIdentifier = siteMapNode.getMainConfigNode().getValueProvider().getIdentifier();
+
+        workspaceConfiguration = siteMapNode.getMainConfigNode().getParent().getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE);
 
         // initialize all sitemap items
         for(HstNode child : siteMapNode.getCompositeChildren().values()) {
@@ -91,7 +99,6 @@ public class HstSiteMapService implements HstSiteMap {
         
     }
 
-
     private void populateDescendants(HstSiteMapItem hstSiteMapItem)  throws ModelLoadingException {
         try {
             siteMapDescendants.put(hstSiteMapItem.getId(), hstSiteMapItem);
@@ -108,7 +115,17 @@ public class HstSiteMapService implements HstSiteMap {
             populateDescendants(child);
         }
     }
-    
+
+    @Override
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
+
+    @Override
+    public boolean isWorkspaceConfiguration() {
+        return workspaceConfiguration;
+    }
+
     public Service[] getChildServices() {
         return rootSiteMapItems.values().toArray(new Service[rootSiteMapItems.size()]);
     }
@@ -134,6 +151,5 @@ public class HstSiteMapService implements HstSiteMap {
     public HstSite getSite() {
         return this.hstSite;
     }
-
 
 }

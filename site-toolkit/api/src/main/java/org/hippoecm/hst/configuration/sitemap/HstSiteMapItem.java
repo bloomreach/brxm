@@ -320,7 +320,7 @@ public interface HstSiteMapItem {
     int getSchemeNotMatchingResponseCode();
 
     /**
-     * @deprecated Use {@link #getDefaultResourceBundleIds()} instead.
+     * @deprecated Use {@link #getResourceBundleIds()} instead.
      * @return the first item of default resource bundle IDs or null if not configured or empty.
      */
     String getResourceBundleId();

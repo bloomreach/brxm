@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
@@ -113,7 +114,8 @@ public class SiteMenuResource extends AbstractConfigResource {
             final Node parent = getParentNode(parentTargetId, session, menu);
 
             final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
-            final Node source = session.getNodeByIdentifier(sourceItem.getCanonicalIdentifier());
+            assertCanonicalInfoInstance(sourceItem);
+            final Node source = session.getNodeByIdentifier(((CanonicalInfo)sourceItem).getCanonicalIdentifier());
 
             if (!parentTargetId.equals(source.getParent().getIdentifier())) {
                 siteMenuItemHelper.move(source, parent);
@@ -121,7 +123,8 @@ public class SiteMenuResource extends AbstractConfigResource {
 
             if (StringUtils.isNotBlank(childTargetId)) {
                 final HstSiteMenuItemConfiguration targetChildItem = siteMenuHelper.getMenuItem(menu, childTargetId);
-                final Node child = session.getNodeByIdentifier(targetChildItem.getCanonicalIdentifier());
+                assertCanonicalInfoInstance(targetChildItem);
+                final Node child = session.getNodeByIdentifier(((CanonicalInfo)targetChildItem).getCanonicalIdentifier());
                 parent.orderBefore(source.getName(), child.getName());
             }
             HstConfigurationUtils.persistChanges(session);
@@ -145,7 +148,9 @@ public class SiteMenuResource extends AbstractConfigResource {
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration(requestContext);
 
             final HstSiteMenuItemConfiguration sourceItem = siteMenuHelper.getMenuItem(menu, sourceId);
-            final Node source = session.getNodeByIdentifier(sourceItem.getCanonicalIdentifier());
+
+            assertCanonicalInfoInstance(sourceItem);
+            final Node source = session.getNodeByIdentifier(((CanonicalInfo)sourceItem).getCanonicalIdentifier());
             source.getSession().removeItem(source.getPath());
             HstConfigurationUtils.persistChanges(session);
             return ok("Item deleted successfully", sourceId);
@@ -158,11 +163,13 @@ public class SiteMenuResource extends AbstractConfigResource {
     }
 
     private Node getParentNode(String parentTargetId, Session session, HstSiteMenuConfiguration menu) throws RepositoryException {
-        if (menu.getCanonicalIdentifier().equals(parentTargetId)) {
+        assertCanonicalInfoInstance(menu);
+        if (((CanonicalInfo)menu).getCanonicalIdentifier().equals(parentTargetId)) {
             return session.getNodeByIdentifier(parentTargetId);
         } else {
             final HstSiteMenuItemConfiguration targetParentItem = siteMenuHelper.getMenuItem(menu, parentTargetId);
-            return session.getNodeByIdentifier(targetParentItem.getCanonicalIdentifier());
+            assertCanonicalInfoInstance(targetParentItem);
+            return session.getNodeByIdentifier(((CanonicalInfo)targetParentItem).getCanonicalIdentifier());
         }
     }
 
@@ -183,6 +190,12 @@ public class SiteMenuResource extends AbstractConfigResource {
         entity.setSuccess(false);
         entity.setMessage(errorMessage);
         return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+    }
+
+    private void assertCanonicalInfoInstance(final Object o) throws IllegalStateException{
+        if (!(o instanceof CanonicalInfo)) {
+            throw new IllegalStateException("HstSiteMenuItemConfiguration not instanceof CanonicalInfo");
+        }
     }
 
 }

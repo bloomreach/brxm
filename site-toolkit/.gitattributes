@@ -25,6 +25,7 @@ api/src/main/java/org/hippoecm/hst/configuration/hosting/PortMount.java -text sv
 api/src/main/java/org/hippoecm/hst/configuration/hosting/VirtualHost.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/VirtualHosts.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/hosting/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/configuration/internal/CanonicalInfo.java -text
 api/src/main/java/org/hippoecm/hst/configuration/internal/ContextualizableMount.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationAugmenter.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstManager.java -text svneol=unset#text/plain
@@ -684,6 +685,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/menu/TestHstMenuMod
 components/core/src/test/java/org/hippoecm/hst/configuration/model/TestBrokenModelConfigurations.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/site/TestSiteService.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/TestHstSiteMapItemIntegerPlaceHolders.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/sitemap/TestSiteMapModels.java -text
 components/core/src/test/java/org/hippoecm/hst/core/beans/AbstractBeanTestCase.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/beans/NewsBean.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/beans/TestRequestContextBeansCaching.java -text

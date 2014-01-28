@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 import org.easymock.Capture;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
@@ -84,8 +85,8 @@ public class SiteMenuResourceTest {
         this.virtualHosts = createMock(VirtualHosts.class);
         this.mount = createMock(ContextualizableMount.class);
         this.site = createMock(HstSite.class);
-        this.menuConfig = createMock(HstSiteMenuConfiguration.class);
-        this.itemConfig = createNiceMock(HstSiteMenuItemConfiguration.class);
+        this.menuConfig = createMock(MockSiteMenuConfiguration.class);
+        this.itemConfig = createNiceMock(MockSiteMenuItemConfiguration.class);
         this.node = createMock(Node.class);
         this.parentNode = createMock(Node.class);
         this.childNode = createMock(Node.class);
@@ -152,7 +153,7 @@ public class SiteMenuResourceTest {
         mockGetMenuItem(childNode, childTargetId);
 
         final String parentTargetId = "parentId";
-        expect(menuConfig.getCanonicalIdentifier()).andReturn("parentId");
+        expect(((CanonicalInfo)menuConfig).getCanonicalIdentifier()).andReturn("parentId");
         expect(session.getNodeByIdentifier(parentTargetId)).andReturn(parentNode);
         expect(node.getParent()).andReturn(parentNode);
         expect(parentNode.getIdentifier()).andReturn(parentTargetId);
@@ -180,7 +181,7 @@ public class SiteMenuResourceTest {
     private String mockGetMenuItem(Node node, String id) throws RepositoryException {
         // Mock getting the site menu item and the corresponding node
         expect(siteMenuHelper.getMenuItem(menuConfig, id)).andReturn(itemConfig);
-        expect(itemConfig.getCanonicalIdentifier()).andReturn(id);
+        expect(((CanonicalInfo)itemConfig).getCanonicalIdentifier()).andReturn(id);
         expect(itemConfig.getChildItemConfigurations()).andReturn(Collections.<HstSiteMenuItemConfiguration>emptyList());
         expect(session.getNodeByIdentifier(id)).andReturn(node);
         return id;
@@ -205,6 +206,13 @@ public class SiteMenuResourceTest {
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts);
         expect(virtualHosts.getMountByIdentifier("mount")).andReturn(mount);
         expect(mount.getPreviewHstSite()).andReturn(site);
+    }
+
+
+    interface MockSiteMenuConfiguration extends HstSiteMenuConfiguration, CanonicalInfo {
+    }
+
+    interface MockSiteMenuItemConfiguration extends HstSiteMenuItemConfiguration, CanonicalInfo {
     }
 
 }

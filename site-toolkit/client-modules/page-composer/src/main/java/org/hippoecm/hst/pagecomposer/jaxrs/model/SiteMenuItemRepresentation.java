@@ -20,15 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
 
 public class SiteMenuItemRepresentation {
 
     String id;
     String name;
-    // when there is a parent SiteMenuItemRepresentation, the parentId contains it id. Otherwise
-    // it is null
-    String parentId;
     String externalLink;
     String siteMapItemPath;
     boolean repositoryBased;
@@ -42,12 +40,14 @@ public class SiteMenuItemRepresentation {
         return represent(rootItem, null);
     }
 
-    public SiteMenuItemRepresentation represent(HstSiteMenuItemConfiguration item, HstSiteMenuItemConfiguration parent) {
-        name = item.getName();
-        id = item.getCanonicalIdentifier();
-        if (parent != null) {
-            parentId = parent.getCanonicalIdentifier();
+    public SiteMenuItemRepresentation represent(HstSiteMenuItemConfiguration item, HstSiteMenuItemConfiguration parent)
+            throws IllegalArgumentException {
+        if (!(item instanceof CanonicalInfo)) {
+            throw new IllegalArgumentException("Expected object of type CanonicalInfo");
         }
+
+        name = item.getName();
+        id = ((CanonicalInfo)item).getCanonicalIdentifier();
         externalLink = item.getExternalLink();
         siteMapItemPath = item.getSiteMapItemPath();
         repositoryBased = item.isRepositoryBased();
@@ -76,14 +76,6 @@ public class SiteMenuItemRepresentation {
 
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(final String parentId) {
-        this.parentId = parentId;
     }
 
     public String getExternalLink() {

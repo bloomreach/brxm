@@ -53,4 +53,5 @@ public class HstNoopSiteMap implements HstSiteMap {
     public HstSiteMapItem getSiteMapItemByRefId(final String refId) {
         return null;
     }
+
 }

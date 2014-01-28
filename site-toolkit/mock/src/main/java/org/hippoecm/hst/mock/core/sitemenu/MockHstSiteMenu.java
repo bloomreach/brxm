@@ -38,8 +38,6 @@ public class MockHstSiteMenu implements HstSiteMenu {
     private EditableMenu editableMenu;
     private String name;
     private boolean expanded;
-    private String canonicalIdentifier = UUID.randomUUID().toString();
-    private boolean inherited;
     
     public List<HstSiteMenuItem> getSiteMenuItems() {
         return Collections.unmodifiableList(siteMenuItems);
@@ -105,13 +103,4 @@ public class MockHstSiteMenu implements HstSiteMenu {
         this.expanded = expanded;
     }
 
-    @Override
-    public String getCanonicalIdentifier() {
-        return canonicalIdentifier;
-    }
-
-    @Override
-    public boolean isInherited() {
-        return inherited;
-    }
 }

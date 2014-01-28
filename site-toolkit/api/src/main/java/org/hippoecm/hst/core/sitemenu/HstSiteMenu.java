@@ -21,7 +21,7 @@ import java.util.List;
  * The interface for a SiteMenu implementation, containing possibly a tree of {@link HstSiteMenuItem}'s
  *
  */
-public interface HstSiteMenu extends CommonMenu{
+public interface HstSiteMenu extends CommonMenu {
     /**
      * 
      * @return the currently selected <code>HstSiteMenuItem</code> or <code>null</code> if none is selected
@@ -53,17 +53,4 @@ public interface HstSiteMenu extends CommonMenu{
      */
     EditableMenu getEditableMenu();
 
-    /**
-     * Returns the identifier of the menu configuration. Note that multiple <code>HstSiteMenu</code>'s can share the same
-     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers
-     *
-     * @return the identifier of the backing stored menu configuration
-     */
-    String getCanonicalIdentifier();
-
-    /**
-     * @return <code>true</code> when the backing provider of  {@link org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration}
-     * for this {@link HstSiteMenu} is inherited
-     */
-    boolean isInherited();
 }

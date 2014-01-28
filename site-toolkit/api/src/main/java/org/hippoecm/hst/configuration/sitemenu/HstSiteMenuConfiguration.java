@@ -24,19 +24,6 @@ public interface HstSiteMenuConfiguration {
      * @return the name of this SiteMenuConfiguration
      */
     String getName();
-
-    /**
-     * Returns the identifier of the backing stored menu configuration. Note that multiple <code>HstSiteMenuConfiguration</code>'s can share the same
-     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers
-     *
-     * @return the identifier of the backing stored menu configuration
-     */
-    String getCanonicalIdentifier();
-
-    /**
-     * @return <code>true</code> when the backing provider ({@link org.hippoecm.hst.configuration.model.HstNode}) of this {@link HstSiteMenuConfiguration} is inherited
-     */
-    boolean isInherited();
     
     /**
      * @return returns all direct child {@link HstSiteMenuItemConfiguration}'s of this SiteMenuConfiguration

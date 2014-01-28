@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.configuration.sitemenu;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,25 +22,12 @@ import java.util.Set;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-/**
- * Implementations should return an unmodifiable map for {@link #getSiteMenuItemConfigurations()} because clients should not
- * be able to modify the configuration
- *
- */
 public interface HstSiteMenuItemConfiguration {
     /**
      * 
      * @return the name of this SiteMenuItem
      */
     String getName();
-
-    /**
-     * Returns the identifier of the backing stored menu item configuration. Note that multiple <code>HstSiteMenuItemConfiguration</code>'s can share the same
-     * canonical identifier due to inheritance. Also, multiple subsites can share the same backing configuration, and thus share the same canonical identifiers
-     *
-     * @return the identifier of the backing stored menu item configuration
-     */
-    String getCanonicalIdentifier();
     
     /**
      * The sitemapitem path can point to a sitemap item that contains wildcards. The sitemapitem path can be for example 'news/2009/may', and

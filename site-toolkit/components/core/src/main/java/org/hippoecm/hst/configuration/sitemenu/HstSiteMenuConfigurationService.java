@@ -19,22 +19,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
 
-public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration {
+public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration, CanonicalInfo {
 
     private String name;
     private final String canonicalIdentifier;
-    private final boolean inherited;
+    private final boolean workspaceConfiguration;
     private HstSiteMenusConfiguration hstSiteMenusConfiguration;
     private List<HstSiteMenuItemConfiguration> siteMenuItems = new ArrayList<HstSiteMenuItemConfiguration>();
 
-    public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu, boolean inherited) {
+    public HstSiteMenuConfigurationService(HstSiteMenusConfiguration hstSiteMenusConfiguration, HstNode siteMenu, boolean workspaceConfiguration) {
         this.hstSiteMenusConfiguration = hstSiteMenusConfiguration;
         this.name = StringPool.get(siteMenu.getValueProvider().getName());
         this.canonicalIdentifier = siteMenu.getValueProvider().getIdentifier();
-        this.inherited = inherited;
+        this.workspaceConfiguration = workspaceConfiguration;
         for(HstNode siteMenuItem : siteMenu.getNodes()) {
             HstSiteMenuItemConfiguration siteMenuItemConfiguration = new HstSiteMenuItemConfigurationService(siteMenuItem, null, this);
             siteMenuItems.add(siteMenuItemConfiguration);
@@ -52,8 +53,8 @@ public class HstSiteMenuConfigurationService implements HstSiteMenuConfiguration
     }
 
     @Override
-    public boolean isInherited() {
-        return inherited;
+    public boolean isWorkspaceConfiguration() {
+        return workspaceConfiguration;
     }
 
     public List<HstSiteMenuItemConfiguration> getSiteMenuConfigurationItems() {

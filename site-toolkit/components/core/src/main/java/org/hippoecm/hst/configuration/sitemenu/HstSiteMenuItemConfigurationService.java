@@ -25,13 +25,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfiguration {
+public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfiguration, CanonicalInfo {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMenuItemConfigurationService.class);
     
@@ -139,6 +140,11 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
             childItems.add(child);
         }
         
+    }
+
+    @Override
+    public boolean isWorkspaceConfiguration() {
+        return false;
     }
 
     public List<HstSiteMenuItemConfiguration> getChildItemConfigurations() {

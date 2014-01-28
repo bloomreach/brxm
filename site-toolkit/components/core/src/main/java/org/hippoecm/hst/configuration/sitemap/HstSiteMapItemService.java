@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.MountSiteMapConfiguration;
@@ -44,7 +45,7 @@ import org.hippoecm.hst.core.util.PropertyParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstSiteMapItemService implements HstSiteMapItem {
+public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
 
@@ -55,6 +56,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new LinkedHashMap<>();
 
     private String id;
+
+    private final String canonicalIdentifier;
+
+    private final boolean workspaceConfiguration;
 
     // note refId is frequently just null. Only when it is configured, it is not null. The id is however never null!
     private String refId;
@@ -145,6 +150,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.hstSiteMap = hstSiteMap;
         this.depth = depth;
         String nodePath = StringPool.get(node.getValueProvider().getPath());
+
+        canonicalIdentifier = node.getValueProvider().getIdentifier();
+        if (this.parentItem == null) {
+            workspaceConfiguration = node.getParent().getName().equals(HstNodeTypes.NODENAME_HST_WORKSPACE);
+        } else {
+            workspaceConfiguration = this.parentItem.isWorkspaceConfiguration();
+        }
 
         this.qualifiedId = nodePath;
 
@@ -460,6 +472,17 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public String getId() {
         return this.id;
     }
+
+    @Override
+    public String getCanonicalIdentifier() {
+        return canonicalIdentifier;
+    }
+
+    @Override
+    public boolean isWorkspaceConfiguration() {
+        return workspaceConfiguration;
+    }
+
 
     public String getRefId() {
         return refId;
