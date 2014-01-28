@@ -12,5 +12,11 @@
     "EXTERNAL_LINK": "External link",
     "EXAMPLE_DOMAIN": "http://www.example.com",
     "CREATE_MENU_ITEM": "Create menu item",
-    "CANCEL": "Cancel"
+    "CANCEL": "Cancel",
+    "CREATE_NEW_PAGE": "Create new page",
+    "PAGE_TITLE": "Page title",
+    "PAGE_URL": "Page URL",
+    "SEARCH_FOR_TEMPLATE": "Search for template",
+    "CREATE_PAGE": "Create page",
+    "ADD_MENU_ITEM": "Add menu item"
 }

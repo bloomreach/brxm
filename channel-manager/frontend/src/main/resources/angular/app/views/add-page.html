@@ -42,13 +42,13 @@
 
         <div class="col-sm-8" id="form-panel" data-ng-controller="hippo.channelManager.menuManagement.AddPageFormCtrl">
             <form role="form">
-                <legend>Create new page</legend>
+                <legend>{{ 'CREATE_NEW_PAGE' | translate }}</legend>
                 <div class="form-group">
-                    <label for="title">Page title</label>
-                    <input type="text" class="form-control" id="title" placeholder="Label" ng-model="newpage.title">
+                    <label for="title">{{ 'PAGE_TITLE' | translate }}</label>
+                    <input type="text" class="form-control" id="title" placeholder="{{ 'LABEL' | translate }}" ng-model="newpage.title">
                 </div>
                 <div class="form-group">
-                    <label for="url">Page URL</label>
+                    <label for="url">{{ 'PAGE_URL' | translate }}</label>
                     <div class="input-group">
                         <span class="input-group-addon">www.gogreen.com/</span>
                         <input type="text" id="url" class="form-control" placeholder="" ng-model="newpage.url">
@@ -60,18 +60,18 @@
                             id="template"
                             ng-model="newpage.template"
                             ng-options="o.name for o in templates"
-                            data-placeholder="Search for template...">
+                            data-placeholder="{{ 'SEARCH_FOR_TEMPLATE' | translate }}...">
                     </select>
                 </div>
-                <button type="submit" class="btn btn-default" ng-click="submit(newpage)">Create page</button>
-                <button type="submit" class="btn btn-link" ng-click="cancel()">Cancel</button>
+                <button type="submit" class="btn btn-default" ng-click="submit(newpage)">{{ 'CREATE_PAGE' | translate }}</button>
+                <button type="submit" class="btn btn-link" ng-click="cancel()">{{ 'CANCEL' | translate }}</button>
             </form>
 
         </div>
     </div>
     <div class="row" data-ng-controller="hippo.channelManager.menuManagement.MenuItemActionsCtrl">
         <div id="add" class="col-sm-4">
-            <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> Add menu item</button>
+            <button type="button" class="btn btn-default btn-block" ng-click="addMenuItem()"><i class="fa fa-plus"></i> {{ 'ADD_MENU_ITEM' | translate }}</button>
         </div>
         <div id="remove" class="col-md-8">&#160;</div>
     </div>
