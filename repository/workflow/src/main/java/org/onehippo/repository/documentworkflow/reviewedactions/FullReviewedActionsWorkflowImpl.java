@@ -21,9 +21,9 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
-import org.onehippo.repository.documentworkflow.DocumentCopyMovePayload;
 
 public class FullReviewedActionsWorkflowImpl extends AbstractReviewedActionsWorkflow implements FullReviewedActionsWorkflow {
 
@@ -38,102 +38,102 @@ public class FullReviewedActionsWorkflowImpl extends AbstractReviewedActionsWork
     // EditableWorkflow implementation
 
     @Override
-    public boolean isModified() throws WorkflowException, RepositoryException {
-        return (Boolean) handleDocumentWorkflow.triggerAction("checkModified");
+    public boolean isModified() throws WorkflowException, RepositoryException, RemoteException {
+        return handleDocumentWorkflow.isModified();
     }
 
     @Override
-    public Document obtainEditableInstance() throws RepositoryException, WorkflowException {
-        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("obtainEditableInstance"));
+    public Document obtainEditableInstance() throws RepositoryException, WorkflowException, RemoteException {
+        return handleDocumentWorkflow.obtainEditableInstance();
     }
 
     @Override
-    public Document commitEditableInstance() throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("commitEditableInstance"));
+    public Document commitEditableInstance() throws WorkflowException, RepositoryException, RemoteException {
+        return handleDocumentWorkflow.commitEditableInstance();
     }
 
     @Override
-    public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
-        return workflowResultToUserDocument(handleDocumentWorkflow.triggerAction("disposeEditableInstance"));
+    public Document disposeEditableInstance() throws WorkflowException, RepositoryException, RemoteException {
+        return handleDocumentWorkflow.disposeEditableInstance();
     }
 
     // BasicReviewedActionsWorkflow implementation
 
     @Override
-    public void requestDeletion() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("requestDelete");
+    public void requestDeletion() throws WorkflowException, RemoteException, MappingException {
+        handleDocumentWorkflow.requestDeletion();
     }
 
     @Override
-    public void requestDepublication() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("requestDepublish");
+    public void requestDepublication() throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.requestDepublication();
     }
 
     @Override
-    public void requestDepublication(final Date publicationDate) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("requestDepublish", publicationDate);
+    public void requestDepublication(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.requestDepublication(publicationDate);
     }
 
     @Override
-    public void requestPublication() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("publish");
+    public void requestPublication() throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.requestPublication();
     }
 
     @Override
-    public void requestPublication(final Date publicationDate) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("requestPublish", publicationDate);
+    public void requestPublication(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.requestPublication(publicationDate);
     }
 
     @Override
-    public void requestPublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
-        throw new WorkflowException("unsupported");
+    public void requestPublication(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.requestPublication(publicationDate, unpublicationDate);
     }
 
     // FullReviewedActionsWorkflow implementation
 
     @Override
-    public void delete() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("delete");
+    public void delete() throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.delete();
     }
 
     @Override
-    public void rename(final String newName) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("rename", newName);
+    public void rename(final String newName) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.rename(newName);
     }
 
     @Override
-    public void copy(final Document destination, final String newName) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("copy", new DocumentCopyMovePayload(destination, newName));
+    public void copy(final Document destination, final String newName) throws WorkflowException, RemoteException, MappingException {
+        handleDocumentWorkflow.copy(destination, newName);
     }
 
     @Override
-    public void move(final Document destination, final String newName) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("move", new DocumentCopyMovePayload(destination, newName));
+    public void move(final Document destination, final String newName) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.move(destination, newName);
     }
 
     @Override
-    public void depublish() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("depublish");
+    public void depublish() throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.depublish();
     }
 
     @Override
-    public void depublish(final Date depublicationDate) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("depublish", depublicationDate);
+    public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.depublish(depublicationDate);
     }
 
     @Override
-    public void publish() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("publish");
+    public void publish() throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.publish();
     }
 
     @Override
-    public void publish(final Date publicationDate) throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("publish", publicationDate);
+    public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.publish(publicationDate);
     }
 
     @Override
-    public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException {
-        throw new WorkflowException("unsupported");
+    public void publish(final Date publicationDate, final Date unpublicationDate) throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.publish(publicationDate, unpublicationDate);
     }
 
 }

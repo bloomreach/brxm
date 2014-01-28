@@ -35,32 +35,20 @@ public class FullRequestWorkflowImpl extends AbstractReviewedActionsWorkflow imp
     // BasicRequestWorkflow implementation
 
     @Override
-    public void cancelRequest() throws WorkflowException, RemoteException {
-        try {
-            handleDocumentWorkflow.cancelRequest(getNode());
-        } catch (RepositoryException e) {
-            throw new WorkflowException("Unable to create PublicationRequest from subject", e);
-        }
+    public void cancelRequest() throws WorkflowException, RemoteException, RepositoryException {
+        handleDocumentWorkflow.cancelRequest(getNode());
     }
 
     // FullRequestWorkflow implementation
 
     @Override
-    public void acceptRequest() throws WorkflowException, RemoteException {
-        try {
-            handleDocumentWorkflow.acceptRequest(getNode());
-        } catch (RepositoryException e) {
-            throw new WorkflowException("Unable to create PublicationRequest from subject", e);
-        }
+    public void acceptRequest() throws WorkflowException, RemoteException, RepositoryException {
+        handleDocumentWorkflow.acceptRequest(getNode());
     }
 
     @Override
-    public void rejectRequest(final String reason) throws WorkflowException, RemoteException {
-        try {
-            handleDocumentWorkflow.rejectRequest(getNode(), reason);
-        } catch (RepositoryException e) {
-            throw new WorkflowException("Unable to create PublicationRequest from subject", e);
-        }
+    public void rejectRequest(final String reason) throws WorkflowException, RemoteException, RepositoryException {
+        handleDocumentWorkflow.rejectRequest(getNode(), reason);
     }
 
 }

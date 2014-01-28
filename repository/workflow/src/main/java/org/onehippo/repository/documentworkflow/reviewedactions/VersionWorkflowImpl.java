@@ -26,12 +26,30 @@ import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.onehippo.repository.util.JcrConstants;
 
 public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow implements VersionWorkflow {
 
     public VersionWorkflowImpl() throws RemoteException {
+    }
+
+    protected Node getSubjectHandleNode() throws RepositoryException {
+        Node node = getNode();
+        // override needed to handle dereferencing document handle for a jcr:frozenNode subject
+        if (node.isNodeType(JcrConstants.JCR_FROZEN_NODE)) {
+            Node subject = node.getSession().getNodeByIdentifier(node.getProperty(JcrConstants.JCR_FROZEN_UUID).getString());
+            Node handleNode = subject.getParent();
+            if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                throw new RepositoryException("Invalid workflow subject " + node.getPath() + ", is not a frozen node referencing a node with a handle as parent");
+            }
+            return handleNode;
+        }
+        else {
+            return super.getSubjectHandleNode();
+        }
     }
 
     // VersionWorkflow implementation
@@ -48,9 +66,7 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
 
     @Override
     public Document restoreTo(final Document target) throws WorkflowException, RepositoryException, RemoteException {
-        final Node subject = getNode();
-        Calendar historic = ((Version) subject).getCreated();
-        return handleDocumentWorkflow.restoreFromVersion(historic);
+        return handleDocumentWorkflow.restoreFromVersion((Version)getNode().getParent());
     }
 
     @Override
@@ -64,7 +80,6 @@ public class VersionWorkflowImpl extends AbstractReviewedActionsWorkflow impleme
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public SortedMap<Calendar, Set<String>> list() throws WorkflowException, RemoteException, RepositoryException {
         return handleDocumentWorkflow.listVersions();
     }

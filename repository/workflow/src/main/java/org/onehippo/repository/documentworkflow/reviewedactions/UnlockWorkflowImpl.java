@@ -17,6 +17,8 @@ package org.onehippo.repository.documentworkflow.reviewedactions;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 
@@ -32,8 +34,8 @@ public class UnlockWorkflowImpl extends AbstractReviewedActionsWorkflow implemen
     // UnlockWorkflow implementation
 
     @Override
-    public void unlock() throws WorkflowException {
-        handleDocumentWorkflow.triggerAction("unlock");
+    public void unlock() throws WorkflowException, RepositoryException, RemoteException {
+        handleDocumentWorkflow.unlock();
     }
 
 }

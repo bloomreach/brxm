@@ -27,9 +27,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.HandleDocumentWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 
 public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
 
@@ -49,13 +47,10 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
     public void setNode(final Node node) throws RepositoryException {
         super.setNode(node);
 
-        Node parent = node.getParent();
-        if (!parent.isNodeType(HippoNodeType.NT_HANDLE) && !parent.isNodeType(JcrConstants.NT_VERSION)) {
-            throw new RepositoryException("Invalid workflow subject " + node.getPath() + ", does not have a handle or version as it's parent");
-        }
+        Node handleNode = getSubjectHandleNode();
 
         try {
-            final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(parent));
+            final Workflow handleWorkflow = getNonChainingWorkflowContext().getWorkflow("default", new Document(handleNode));
             if (!(handleWorkflow instanceof HandleDocumentWorkflow)) {
                 throw new RepositoryException("Workflow on handle, in category 'document', is not a HandleDocumentWorkflow");
             }
@@ -70,21 +65,12 @@ public class AbstractReviewedActionsWorkflow extends WorkflowImpl {
         }
     }
 
-    protected Document toUserDocument(Document document) throws RepositoryException {
-        return new Document(getWorkflowContext().getUserSession().getNodeByIdentifier(document.getIdentity()));
-    }
-
-    protected Document workflowResultToUserDocument(Object obj) throws RepositoryException {
-        Document document = null;
-        if (obj != null) {
-            if (obj instanceof DocumentVariant) {
-                document = (DocumentVariant)obj;
-            }
-            if (obj instanceof Document) {
-                document = (Document)obj;
-            }
+    protected Node getSubjectHandleNode() throws RepositoryException {
+        Node parent = getNode().getParent();
+        if (!parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+            throw new RepositoryException("Invalid workflow subject " + getNode().getPath() + ", does not have a handle as it's parent");
         }
-        return document != null && document.getIdentity() != null ? toUserDocument(document) : null;
+        return parent;
     }
 
     @Override
