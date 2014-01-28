@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -140,7 +140,12 @@ import org.slf4j.LoggerFactory;
  * ^/.*\\.ico, 
  * ^/.*\\.jpg, 
  * ^/.*\\.jpeg, 
- * ^/.*\\.swf
+ * ^/.*\\.eot,
+ * ^/.*\\.otf,
+ * ^/.*\\.svg,
+ * ^/.*\\.swf,
+ * ^/.*\\.ttf,
+ * ^/.*\\.woff
  *     <pre></td>
  *   </tr>
  *   <tr>
@@ -168,7 +173,12 @@ import org.slf4j.LoggerFactory;
  * .ico = image/vnd.microsoft.icon,
  * .jpg = image/jpeg,
  * .jpeg = image/jpeg,
+ * .eot = application/vnd.ms-fontobject,
+ * .otf = application/vnd.ms-opentype,
+ * .svg = image/svg+xml,
  * .swf = application/x-shockwave-flash
+ * .ttf = application/x-font-ttf,
+ * .woff = application/font-woff,
  *     </pre></td>
  *   </tr>
  *   <tr>
@@ -211,7 +221,11 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.ico"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.jpeg"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.eot"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.otf"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.svg"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.swf"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.ttf"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.woff"));
     }
     
@@ -224,7 +238,11 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_MIME_TYPES.put(".ico", "image/vnd.microsoft.icon");
         DEFAULT_MIME_TYPES.put(".jpg", "image/jpeg");
         DEFAULT_MIME_TYPES.put(".jpeg", "image/jpeg");
+        DEFAULT_MIME_TYPES.put(".eot", "application/vnd.ms-fontobject");
+        DEFAULT_MIME_TYPES.put(".otf", "application/vnd.ms-opentype");
+        DEFAULT_MIME_TYPES.put(".svg", "image/svg+xml");
         DEFAULT_MIME_TYPES.put(".swf", "application/x-shockwave-flash");
+        DEFAULT_MIME_TYPES.put(".ttf", "application/x-font-ttf");
         DEFAULT_MIME_TYPES.put(".woff", "application/font-woff");
     }
     
