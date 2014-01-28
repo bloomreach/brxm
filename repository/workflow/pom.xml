@@ -172,6 +172,7 @@
           <excludes>
             <exclude>**/AcceptRequestTest.java</exclude>
             <exclude>**/TranslationWorkflowTest.java</exclude>
+            <exclude>**/TestDocumentWorkflowImpl.java</exclude>
           </excludes>
         </configuration>
       </plugin>
