@@ -28,7 +28,7 @@
     <div class="col-lg-10" style="margin-top: 40px;" ng-hide="pluginNeedsInstall.length">
         <p>{{allPluginsInstalled}}</p>
     </div>
-    <div class="col-lg-10" ng-show="selectedPlugin">
+    <div class="col-lg-10" ng-show="selectedPlugin && pluginNeedsInstall.length">
         <div class="panel">
             <div class="panel-heading">{{selectedPlugin.name}}</div>
             <div class="list-group">
