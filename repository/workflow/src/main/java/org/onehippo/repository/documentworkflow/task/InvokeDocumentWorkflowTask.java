@@ -21,8 +21,8 @@ import java.util.Date;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.reviewedactions.FullReviewedActionsWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 /**
  * Custom workflow task for deleting a variant through a chained workflow call
@@ -62,19 +62,19 @@ public class InvokeDocumentWorkflowTask extends AbstractDocumentTask {
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
         if ("delete".equals(action)) {
-            ((DocumentWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).delete();
+            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).delete();
         }
         else if ("publish".equals(action)) {
-            ((DocumentWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).publish();
+            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).publish();
         }
         else if ("depublish".equals(action)) {
-            ((DocumentWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).depublish();
+            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).depublish();
         }
         else if ("scheduledpublish".equals(action)) {
-            ((DocumentWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).publish(when);
+            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).publish(when);
         }
         else if ("scheduleddepublish".equals(action)) {
-            ((DocumentWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).depublish(when);
+            ((FullReviewedActionsWorkflow)getDocumentHandle().getWorkflowContext().getWorkflow("default", subject)).depublish(when);
         }
         else {
             throw new WorkflowException("Unsupported workflow action: "+(action));

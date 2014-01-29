@@ -128,16 +128,6 @@ public class HandleDocumentWorkflowImpl extends WorkflowImpl implements HandleDo
         }
     }
 
-    @Override
-    public Object triggerAction(final String action) throws WorkflowException {
-        return workflowExecutor.triggerAction(action);
-    }
-
-    @Override
-    public Object triggerAction(final String action, final Object payload) throws WorkflowException {
-        return workflowExecutor.triggerAction(action, payload);
-    }
-
     // EditableWorkflow implementation
 
     @Override

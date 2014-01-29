@@ -47,10 +47,6 @@ public interface HandleDocumentWorkflow extends Workflow, FullReviewedActionsWor
 
     Map<String, Boolean> getActions();
 
-    Object triggerAction(String action) throws WorkflowException;
-
-    Object triggerAction(String action, Object payload) throws WorkflowException;
-
     // Request Workflow on Document handle level
 
     /**
