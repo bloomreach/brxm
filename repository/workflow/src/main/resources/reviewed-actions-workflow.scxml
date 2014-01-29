@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2014 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,17 +19,26 @@
        xmlns:hippo="http://www.onehippo.org/cms7/repository/scxml"
        initial="handle">
 
+  <script>
+    def sf() { dm.supportedFeatures }
+    def copySource() { dm.published ?: dm.unpublished ?: null }
+    def deleteSource() { dm.unpublished ?: dm.published ?: dm.draft }
+    def isEditable() { !dm.draft?.holder or dm.draft?.holder==dm.user }
+    def isEditing() { !!dm.draft?.holder }
+    def isEditor() { dm.draft?.holder==dm.user }
+    def isMyRequest() { dm.request?.owner==dm.user }
+    def editor() { dm.draft?.holder }
+    def hasPublishedLive() { dm.published?.isAvailable('live') }
+    def hasUnpublishedPreview() { dm.unpublished?.isAvailable('preview') }
+  </script>
+
   <parallel id="handle">
 
     <state id="status">
       <onentry>
-        <if cond="dm.sf.document">
-          <hippo:info info="status" value="false"/>
-          <hippo:action action="checkModified" value="!empty(dm.d) and !empty(dm.u)"/>
-          <if cond="empty(dm.d?.holder) or dm.d.holder==dm.user">
-            <!--not draft in use by other user -->
-            <hippo:info info="status" value="true"/>
-          </if>
+        <if cond="sf().document">
+          <hippo:info info="status" value="isEditable()"/>
+          <hippo:action action="checkModified" value="dm.draft and dm.unpublished"/>
         </if>
       </onentry>
 
@@ -43,24 +52,24 @@
 
       <state id="no-edit">
         <transition target="init-edit"
-                    cond="empty(dm.rr) and (dm.sf.document or dm.sf.unlock)"/>
+                    cond="(sf().document or sf().unlock)"/>
       </state>
 
       <state id="init-edit">
         <onentry>
-          <if cond="dm.sf.document">
+          <if cond="sf().document">
             <hippo:action action="disposeEditableInstance" value="false"/>
             <hippo:action action="obtainEditableInstance" value="false"/>
             <hippo:action action="commitEditableInstance" value="false"/>
           </if>
-          <if cond="dm.sf.unlock">
+          <if cond="sf().unlock">
             <hippo:action action="unlock" value="false"/>
           </if>
         </onentry>
         <transition target="not-editable"
-                    cond="!empty(dm.r) or !empty(dm.rr)"/>
+                    cond="!!dm.request"/>
         <transition target="editing"
-                    cond="!empty(dm.d?.holder)"/>
+                    cond="isEditing()"/>
         <transition target="editable"/>
       </state>
 
@@ -68,18 +77,17 @@
 
       <state id="editing">
         <onentry>
-          <if cond="dm.sf.document">
-            <if cond="dm.d.holder==dm.user">
+          <if cond="sf().document">
+            <if cond="isEditor()">
               <hippo:action action="disposeEditableInstance" value="true"/>
               <hippo:action action="obtainEditableInstance" value="true"/>
               <hippo:action action="commitEditableInstance" value="true"/>
-            </if>
-            <if cond="dm.d.holder!=dm.user">
-              <hippo:info info="inUseBy" value="dm.d.holder"/>
+            <else/>
+              <hippo:info info="inUseBy" value="editor()"/>
             </if>
           </if>
-          <if cond="dm.sf.unlock">
-            <if cond="dm.d.holder==dm.user or dm.pm('hippo:admin')">
+          <if cond="sf().unlock">
+            <if cond="isEditor() or dm.isGranted(dm.draft,'hippo:admin')">
               <hippo:action action="unlock" value="true"/>
             </if>
           </if>
@@ -88,7 +96,7 @@
 
       <state id="editable">
         <onentry>
-          <if cond="dm.sf.document">
+          <if cond="sf().document">
             <hippo:action action="obtainEditableInstance" value="true"/>
           </if>
         </onentry>
@@ -96,40 +104,36 @@
 
       <transition event="disposeEditableInstance" target="reset">
         <hippo:setHolder holder="null"/>
-        <if cond="!empty(dm.u) and dm.u.isAvailable('preview')">
-          <hippo:result value="dm.u"/>
-        <elseif cond="!empty(dm.p)"/>
-          <hippo:result value="dm.p"/>
-        </if>
+        <hippo:result value="hasUnpublishedPreview() ? dm.unpublished : dm.published"/>
       </transition>
 
       <transition event="obtainEditableInstance" target="reset">
-        <if cond="!empty(dm.u)">
+        <if cond="!!dm.unpublished">
           <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
-        <elseif cond="!empty(dm.p)"/>
+        <elseif cond="!!dm.published"/>
           <hippo:copyVariant sourceState="published" targetState="draft"/>
         </if>
-        <hippo:configVariant variant="dm.d" applyModified="true" setHolder="true"/>
-        <hippo:result value="dm.d"/>
+        <hippo:configVariant variant="dm.draft" applyModified="true" setHolder="true"/>
+        <hippo:result value="dm.draft"/>
       </transition>
 
       <transition event="commitEditableInstance" target="reset">
         <hippo:setHolder holder="null"/>
-        <if cond="!empty(dm.u)">
+        <if cond="!!dm.unpublished">
           <hippo:isModified/>
         </if>
-        <if cond="empty(dm.u) or dm.info['modified']">
+        <if cond="!dm.unpublished or dm.info['modified']">
           <hippo:copyVariant sourceState="draft" targetState="unpublished"/>
-          <hippo:configVariant variant="dm.u" versionable="true" applyModified="true" availabilities="preview"/>
-          <if cond="!empty(dm.p)">
-            <if cond="dm.p.isAvailable('live')">
-              <hippo:configVariant variant="dm.p" availabilities="live"/>
+          <hippo:configVariant variant="dm.unpublished" versionable="true" applyModified="true" availabilities="preview"/>
+          <if cond="!!dm.published">
+            <if cond="hasPublishedLive()">
+              <hippo:configVariant variant="dm.published" availabilities="live"/>
             <else/>
-              <hippo:configVariant variant="dm.p" availabilities="null"/>
+              <hippo:configVariant variant="dm.published" availabilities="null"/>
             </if>
           </if>
         </if>
-        <hippo:result value="dm.u"/>
+        <hippo:result value="dm.unpublished"/>
       </transition>
 
       <transition event="unlock" target="reset">
@@ -142,17 +146,19 @@
 
       <state id="no-request">
         <transition target="init-request"
-                    cond="dm.sf.request"/>
+                    cond="sf().request"/>
       </state>
 
       <state id="init-request">
         <!-- Note: transition for request-rejected MUST be evaluated before transition for requested
                    because if the subject is a rejected request only its state is to be considered
         -->
+        <!-- TODO: fixup request handling
         <transition target="request-rejected"
                     cond="!empty(dm.rr)"/>
         <transition target="requested"
                     cond="!empty(dm.r)"/>
+        -->
         <transition target="not-requested"/>
       </state>
 
@@ -166,14 +172,14 @@
 
       <state id="requested">
         <onentry>
-          <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
+          <if cond="isMyRequest()">
             <hippo:action action="cancelRequest" value="true"/>
           <else/>
             <hippo:action action="cancelRequest" value="false"/>
           </if>
-          <if cond="dm.pm('hippo:editor')">
+          <if cond="dm.isGranted(dm.request,'hippo:editor')">
             <hippo:action action="acceptRequest" value="true"/>
-            <if cond="!empty(dm.r.owner) and dm.r.owner==dm.user">
+            <if cond="isMyRequest()">
               <hippo:action action="rejectRequest" value="false"/>
             <else/>
               <hippo:action action="rejectRequest" value="true"/>
@@ -185,46 +191,46 @@
       <state id="not-requested"/>
 
       <transition event="acceptRequest" target="reset">
-        <if cond="dm.r.type=='delete'">
+        <if cond="dm.request?.type=='delete'">
           <hippo:workflowException errorExpr="'Cannot delete document when still published'"
-                                   cond="!empty(dm.p) and dm.p.isAvailable('live')"/>
+                                   cond="hasPublishedLive()"/>
           <hippo:workflowException errorExpr="'Cannot delete document which is being edited'"
-                                   cond="!empty(dm.d?.holder)"/>
+                                   cond="isEditing()"/>
 
           <hippo:deleteRequest/>
           <hippo:invokeDocumentWorkflow action="delete"
-                                        subjectExpr="!empty(dm.u) ? dm.u : empty(dm.p) ? dm.p : dm.d"/>
+                                        subjectExpr="deleteSource()"/>
 
-        <elseif cond="dm.r.type=='publish' or dm.r.type=='schedpublish"/>
+        <elseif cond="dm.request?.type in (String[])['publish','schedpublish]"/>
           <hippo:workflowException errorExpr="'Cannot publish document which is being edited'"
-                                   cond="!empty(dm.d?.holder)"/>
+                                   cond="isEditing()"/>
           <hippo:workflowException errorExpr="'Cannot publish document when no changes present'"
-                                   cond="!empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))" />
+                                   cond="dm.unpublished and (!dm.published or dm.unpublished.lastModified!=dm.published.lastModified or !hasPublishedLive())" />
 
           <hippo:deleteRequest/>
-          <if cond="dm.r.type=='publish'">
-            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.u"/>
+          <if cond="dm.request?.type=='publish'">
+            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.unpublished"/>
           <else/>
-            <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
+            <hippo:invokeDocumentWorkflow action="schedpublish" whenExpr="dm.request.scheduledDate" subjectExpr="dm.request.reference"/>
           </if>
 
-        <elseif cond="dm.r.type=='depublish' or dm.r.type=='schedpublish"/>
+        <elseif cond="dm.request?.type in (String[])['depublish','schedpublish]"/>
           <hippo:workflowException errorExpr="'Cannot depublish document which is being edited'"
-                                   cond="!empty(dm.d?.holder)"/>
+                                   cond="isEditing()"/>
           <hippo:workflowException errorExpr="'Cannot depublish document when not published'"
-                                   cond="!empty(dm.p) and dm.p.isAvailable('live')" />
+                                   cond="hasPublishedLive()" />
 
           <hippo:deleteRequest/>
-          <if cond="dm.r.type='depublish'">
-            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.p"/>
+          <if cond="dm.request?.type=='depublish'">
+            <hippo:invokeDocumentWorkflow action="publish" subjectExpr="dm.published"/>
           <else/>
-            <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.r.scheduledDate" subjectExpr="dm.r.reference"/>
+            <hippo:invokeDocumentWorkflow action="scheddepublish" whenExpr="dm.request.scheduledDate" subjectExpr="dm.request.reference"/>
           </if>
 
-        <elseif cond="dm.r.type=='rejected"/>
+        <elseif cond="dm.request?.type=='rejected"/>
           <hippo:workflowException errorExpr="'Request has already been rejected'"/>
         <else/>
-          <hippo:workflowException errorExpr="'Unknown request type '+dm.r.type"/>
+          <hippo:workflowException errorExpr="'Unknown request type '+dm.request?.type"/>
         </if>
       </transition>
 
@@ -234,7 +240,7 @@
 
       <state id="no-publish">
         <transition target="init-publish"
-                    cond="dm.sf.document"/>
+                    cond="sf().document"/>
       </state>
 
       <state id="init-publish">
@@ -242,7 +248,7 @@
           <hippo:action action="publish" value="false"/>
         </onentry>
         <transition target="publishable"
-                    cond="empty(dm.d?.holder) and !empty(dm.u) and (empty(dm.p) or dm.u.lastModified!=dm.p.lastModified or !dm.p.isAvailable('live'))"/>
+                    cond="!isEditing() and dm.unpublished and (!dm.published or dm.unpublished.lastModified!=dm.published.lastModified or !hasPublishedLive())"/>
         <transition target="not-publishable"/>
       </state>
 
@@ -250,7 +256,7 @@
 
       <state id="publishable">
         <onentry>
-          <if cond="(empty(dm.r) or dm.user=='system')">
+          <if cond="!dm.request or dm.user=='system'">
             <hippo:action action="publish" value="true"/>
             <hippo:action action="requestPublish" value="true"/>
           </if>
@@ -259,7 +265,7 @@
 
       <transition event="publish" target="reset">
         <hippo:copyVariant sourceState="unpublished" targetState="published"/>
-        <hippo:configVariant variant="dm.p" versionable="false" availabilities="live"/>
+        <hippo:configVariant variant="dm.published" versionable="false" availabilities="live"/>
       </transition>
 
     </state>
@@ -268,7 +274,7 @@
 
       <state id="no-depublish">
         <transition target="init-depublish"
-                    cond="dm.sf.document"/>
+                    cond="sf().document"/>
       </state>
 
       <state id="init-depublish">
@@ -276,7 +282,7 @@
           <hippo:action action="depublish" value="false"/>
         </onentry>
         <transition target="depublishable"
-                    cond="empty(dm.d?.holder) and !empty(dm.p) and dm.p.isAvailable('live')"/>
+                    cond="!isEditing() and hasPublishedLive()"/>
         <transition target="not-depublishable"/>
       </state>
 
@@ -284,7 +290,7 @@
 
       <state id="depublishable">
         <onentry>
-          <if cond="(empty(dm.r) or dm.user=='system') and (dm.s=='p' or dm.s=='dp')">
+          <if cond="(!dm.request or dm.user=='system') and dm.states in (String[])['p','dp']">
             <hippo:action action="depublish" value="true"/>
             <hippo:action action="requestDepublish" value="true"/>
           </if>
@@ -297,7 +303,7 @@
 
       <state id="no-versioning">
         <transition target="version"
-                    cond="dm.sf.version"/>
+                    cond="sf().version"/>
       </state>
 
       <state id="version">
@@ -323,14 +329,14 @@
 
       <state id="no-terminate">
         <transition target="terminateable"
-                    cond="dm.sf.document and (empty(dm.p) or !dm.p.isAvailable('live')) and empty(dm.d?.holder) and empty(dm.r)"/>
+                    cond="sf().document and (!dm.published or !hasPublishedLive()) and !isEditing() and !dm.request"/>
       </state>
 
       <state id="terminateable">
         <onentry>
           <hippo:action action="delete" value="true"/>
           <hippo:action action="requestDelete" value="true"/>
-          <if cond="dm.pm('hippo:editor')">
+          <if cond="dm.isGranted(deleteSource(), 'hippo:editor')">
             <hippo:action action="move" value="true"/>
             <hippo:action action="rename" value="true"/>
           </if>
@@ -343,7 +349,7 @@
 
       <state id="no-copy">
         <transition target="copyable"
-                    cond="dm.sf.document and dm.pm('hippo:editor')"/>
+                    cond="sf().document and dm.isGranted(copySource(),'hippo:editor')"/>
       </state>
 
       <state id="copyable">
