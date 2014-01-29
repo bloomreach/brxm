@@ -36,12 +36,35 @@ import org.onehippo.repository.api.annotation.WorkflowAction;
 
 /**
  * Aggregate HandleDocumentWorkflow, combining all Document handle based workflow operations into one generic interface.
- * <p>
- * The -Request- and VersionWorkflows operations have been re-defined inline to be able to use different parameters (and methodNames)
- * as needed to be functional on Document handle level
- * </p>
+ * <p> The -Request- and VersionWorkflows operations have been re-defined inline to be able to use different parameters
+ * (and methodNames) as needed to be functional on Document handle level </p>
  */
 public interface HandleDocumentWorkflow extends Workflow, FullReviewedActionsWorkflow, UnlockWorkflow {
+
+    /**
+     * The SupportedFeatures enumeration can be used to 'filter' which subset of the DocumentWorkflow functionality
+     * should be used and exposed
+     */
+    enum SupportedFeatures {
+
+        all, request, document, unlock, version;
+
+        public boolean isRequest() {
+            return this == all || this == request;
+        }
+
+        public boolean isDocument() {
+            return this == all || this == document;
+        }
+
+        public boolean isUnlock() {
+            return this == all || this == unlock;
+        }
+
+        public boolean isVersion() {
+            return this == all || this == version;
+        }
+    }
 
     Map<String, Serializable> getInfo();
 
@@ -68,69 +91,83 @@ public interface HandleDocumentWorkflow extends Workflow, FullReviewedActionsWor
             throws WorkflowException, RepositoryException, RemoteException;
 
 
-
     // Version Workflow on Document handle level
 
     /**
-     * Creates a version of the current document state, such that the current state of the document may be re-retrieved or restored
-     * later.  Even if the document has been changed, republished or archived later on.
+     * Creates a version of the current document state, such that the current state of the document may be re-retrieved
+     * or restored later.  Even if the document has been changed, republished or archived later on.
+     *
      * @return the same document on which version call has been made
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
      */
     public Document version()
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Restore a specific version
+     *
      * @param version the version to restore
      * @return the updated target node
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
      */
     public Document restoreFromVersion(Version version)
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Restore a version from a specific historic date
+     *
      * @param historic
      * @return
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
      */
     public Document restoreFromVersion(Calendar historic)
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
-     * Lists the historic versions of a documents that are available.  A historic version is created using the {@link #version()}
-     * call.  The time at which such a call is made is listed at key item in the returned map.  This time may be used in a call
-     * to {@link #restoreFromVersion}
-     * @return A time-ordered map from earliest to latest of historic version (the timestamps at which {@link #version} was called)
-     * mapped to a list of symbolic names that were given to the versions.  The symbolic names currently cannot be set using
-     * this work-flow interface, but can be set using the regular JCR API.
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     * Lists the historic versions of a documents that are available.  A historic version is created using the {@link
+     * #version()} call.  The time at which such a call is made is listed at key item in the returned map.  This time
+     * may be used in a call to {@link #restoreFromVersion}
+     *
+     * @return A time-ordered map from earliest to latest of historic version (the timestamps at which {@link #version}
+     * was called) mapped to a list of symbolic names that were given to the versions.  The symbolic names currently
+     * cannot be set using this work-flow interface, but can be set using the regular JCR API.
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
      */
     @WorkflowAction(loggable = false)
-    public SortedMap<Calendar,Set<String>> listVersions()
+    public SortedMap<Calendar, Set<String>> listVersions()
             throws WorkflowException, RepositoryException, RemoteException;
 
     /**
      * Returns a Version from a specific historic date as Document
+     *
      * @param historic
      * @return
-     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
-     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
+     *                             repository
+     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
+     *                             repository
      */
     @WorkflowAction(loggable = false)
     public Document retrieveVersion(Calendar historic)
